@@ -4,7 +4,7 @@ import { UserModel, RolModel } from '@suite/services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, from } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { ToastController, LoadingController } from '@ionic/angular';
+import {ToastController, LoadingController, NavParams, ModalController} from '@ionic/angular';
 import {
   Router,
   ActivatedRoute,
@@ -64,7 +64,9 @@ export class UpdateComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private loadingController: LoadingController,
-    private zone: NgZone
+    private zone: NgZone,
+    private navParams: NavParams,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -91,56 +93,50 @@ export class UpdateComponent implements OnInit {
   }
 
   goToList() {
-    this.zone.runTask(() => this.router.navigate([`${this.redirectTo}`]));
+    this.modalController.dismiss();
   }
 
   getUser() {
-    this.route.paramMap
-      .pipe(
-        switchMap((params: ParamMap) => {
-          return from(
-            this.crudService
-              .getShow(params.get('id'), this.apiEndpoint)
-              .then(
-                (
-                  data: Observable<
-                    HttpResponse<UserModel.ResponseShow | RolModel.ResponseShow>
-                  >
-                ) => {
-                  data.subscribe(
-                    (
-                      res: HttpResponse<
-                        UserModel.ResponseShow | RolModel.ResponseShow
-                      >
-                    ) => {
-                      let updateFormValue: { string: any };
-                      this.paramId = params.get('id');
+    let id = this.navParams.data.id;
 
-                      for (const key in res.body.data) {
-                        if (res.body.data.hasOwnProperty(key)) {
-                          updateFormValue = {
-                            ...updateFormValue,
-                            [key]: res.body.data[key]
-                          };
-                        }
-                      }
+    return from(
+      this.crudService
+        .getShow(id, this.apiEndpoint)
+        .then(
+          (
+            data: Observable<
+              HttpResponse<UserModel.ResponseShow | RolModel.ResponseShow>
+            >
+          ) => {
+            data.subscribe(
+              (
+                res: HttpResponse<
+                  UserModel.ResponseShow | RolModel.ResponseShow
+                >
+              ) => {
+                let updateFormValue: { string: any };
+                this.paramId = id;
 
-                      console.log('updateFormValue', updateFormValue);
-
-                      this.updateForm.patchValue(updateFormValue);
-                    },
-                    (errorResponse: HttpErrorResponse) => {
-                      this.presentToast('Error - Errores no estandarizados');
-                    }
-                  );
+                for (const key in res.body.data) {
+                  if (res.body.data.hasOwnProperty(key)) {
+                    updateFormValue = {
+                      ...updateFormValue,
+                      [key]: res.body.data[key]
+                    };
+                  }
                 }
-              )
-          );
-        })
-      )
-      .subscribe(data => {
-        console.log(data);
-      });
+
+                console.log('updateFormValue', updateFormValue);
+
+                this.updateForm.patchValue(updateFormValue);
+              },
+              (errorResponse: HttpErrorResponse) => {
+                this.presentToast('Error - Errores no estandarizados');
+              }
+            );
+          }
+        )
+    );
   }
 
   onSubmit() {

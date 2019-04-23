@@ -1,7 +1,14 @@
-<ion-content>
-  <ion-text color="primary">
-    <h1>{{ title }}</h1>
-  </ion-text>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToList()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
   <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
     <ion-grid class="wrapper-form">
       <ion-row class="input-wrapper">
@@ -109,18 +116,18 @@
       </ion-row>
     </ion-grid>
   </form>
-</ion-content>
-<ion-footer>
-  <ion-toolbar>
-    <ion-button slot="end" color="light" (click)="goToList()"
+  <ion-footer padding>
+    <ion-toolbar>
+      <ion-button slot="end" color="light" (click)="goToList()"
       >Cancelar</ion-button
-    >
-    <ion-button
-      slot="end"
-      color="primary"
-      [disabled]="storeForm.invalid"
-      (click)="onSubmit()"
+      >
+      <ion-button
+        slot="end"
+        color="primary"
+        [disabled]="storeForm.invalid"
+        (click)="onSubmit()"
       >Guardar</ion-button
-    >
-  </ion-toolbar>
-</ion-footer>
+      >
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

@@ -20,7 +20,11 @@ import {
   ModalController,
   LoadingController
 } from '@ionic/angular';
-import {StoreComponent} from "../../../../../../../apps/sga/src/app/users/store/store.component";
+
+import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app/users/store/store.component";
+import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
+import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
+import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
 
 @Component({
   selector: 'suite-ui-crud-list',
@@ -103,12 +107,39 @@ export class ListComponent implements OnInit {
     this.showDeleteButton = false;
   }
 
-  goToStore() {
-    this.router.navigate([`${this.routePath}/store`]);
+  async goToStore() {
+    let storeComponent = null;
+
+    if (this.routePath == '/roles') {
+      storeComponent = storeRol;
+    } else if (this.routePath == '/users') {
+      storeComponent = storeUser;
+    }
+
+    if (storeComponent) {
+      const modal = await this.modalController.create({
+        component: storeComponent
+      });
+      return await modal.present();
+    }
   }
 
-  goToUpdate(id: number | string) {
-    this.router.navigate([`${this.routePath}/store`, id]);
+  async goToUpdate(id: number | string) {
+    let updateComponent = null;
+
+    if (this.routePath == '/roles') {
+      updateComponent = updateRol;
+    } else if (this.routePath == '/users') {
+      updateComponent = updateUser;
+    }
+
+    if (updateComponent) {
+      const modal = await this.modalController.create({
+        component: updateComponent,
+        componentProps: { id: id }
+      });
+      return await modal.present();
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

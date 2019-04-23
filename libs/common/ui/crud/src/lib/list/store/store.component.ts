@@ -4,7 +4,7 @@ import { UserModel, RolModel } from '@suite/services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { ToastController, LoadingController } from '@ionic/angular';
+import {ToastController, LoadingController, ModalController} from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { CrudService } from '../../service/crud.service';
@@ -51,7 +51,8 @@ export class StoreComponent implements OnInit {
     private toastController: ToastController,
     private router: Router,
     private loadingController: LoadingController,
-    private zone: NgZone
+    private zone: NgZone,
+    private modalController: ModalController
   ) {}
 
   ngOnInit() {
@@ -78,7 +79,7 @@ export class StoreComponent implements OnInit {
   }
 
   goToList() {
-    this.zone.runTask(() => this.router.navigate([this.redirectTo]));
+    this.modalController.dismiss();
   }
 
   onSubmit() {
@@ -99,7 +100,7 @@ export class StoreComponent implements OnInit {
         data.subscribe(
           (res: HttpResponse<UserModel.ResponseStore>) => {
             this.dismissLoading();
-            this.zone.run(() => this.router.navigate([this.redirectTo]));
+            this.modalController.dismiss();
             this.presentToast(`Usuario ${res.body.data.name} creado`);
           },
           (errorResponse: HttpErrorResponse) => {
