@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import {ModalController} from "@ionic/angular";
+import { Validators } from '@angular/forms';
+import { COLLECTIONS } from 'config/base';
 
 @Component({
-  selector: 'suite-store',
-  templateUrl: './store.component.html',
-  styleUrls: ['./store.component.scss']
+  selector: 'suite-update',
+  templateUrl: './update.component.html',
+  styleUrls: ['./update.component.scss']
 })
-export class StoreComponent implements OnInit {
+export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
     email: ['', [Validators.required, Validators.email]],
@@ -36,10 +36,11 @@ export class StoreComponent implements OnInit {
       type: 'password'
     }
   ];
-  title = 'Crear Usuario';
-  apiEndpoint = 'Users';
-  redirectTo = '/users';
-
+  title = 'Actualizar Usuario';
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users')
+    .name;
+  redirectTo = 'users/list';
+  routePath = '/users';
   customValidators: {
     name: string;
     params: [];
@@ -48,12 +49,7 @@ export class StoreComponent implements OnInit {
     params: []
   };
 
-  constructor(private modalCtrl:ModalController) {}
+  constructor() {}
 
   ngOnInit() {}
-
-  closeModal()
-  {
-    this.modalCtrl.dismiss();
-  }
 }

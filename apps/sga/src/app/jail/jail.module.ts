@@ -1,30 +1,29 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule, MatCheckboxModule } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
-import { UsersRoutingModule } from './users-routing.module';
-import { UsersComponent } from './users.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
-import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import {CommonUiCrudModule, ListComponent} from '@suite/common/ui/crud';
+import { FormsModule } from '@angular/forms';
+import { JailRoutingModule } from './jail-routing.module';
+import { JailComponent } from './jail.component';
 
 
 @NgModule({
-  declarations: [UsersComponent, StoreComponent, UpdateComponent],
+  declarations: [JailComponent, StoreComponent, UpdateComponent],
   imports: [
     CommonModule,
+    JailRoutingModule,
+    FormsModule,
     ReactiveFormsModule,
     IonicModule,
     MatTableModule,
     MatCheckboxModule,
-    UsersRoutingModule,
     CommonUiCrudModule,
-    CdkTableModule
-  ],
-  entryComponents: [
-    StoreComponent
+    CdkTableModule,
   ]
 })
-export class UsersModule {}
+export class JailModule { }

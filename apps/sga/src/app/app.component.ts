@@ -16,7 +16,8 @@ interface MenuItem {
 
 @Component({
   selector: 'suite-root',
-  templateUrl: 'app.component.html'
+  templateUrl: 'app.component.html',
+  styles: []
 })
 export class AppComponent implements OnInit {
   public appPages: MenuItem[] = [
@@ -43,6 +44,11 @@ export class AppComponent implements OnInit {
     {
       title: 'Asignar Permiso a Rol',
       url: '/assign/per/rol',
+      icon: 'person'
+    },
+    {
+      title: 'Jaulas',
+      url: '/jail/menu',
       icon: 'person'
     },
     {

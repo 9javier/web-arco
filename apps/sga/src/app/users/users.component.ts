@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserModel } from '@suite/services';
 import { COLLECTIONS } from 'config/base';
+import {ModalController} from "@ionic/angular";
 
 @Component({
   selector: 'suite-users',
@@ -15,7 +16,21 @@ export class UsersComponent implements OnInit {
     .name;
   routePath = '/users';
 
-  constructor() {}
+  constructor(private modalCtrl:ModalController) {}
 
   ngOnInit() {}
+
+  closeModal()
+  {
+    this.modalCtrl.dismiss();
+  }
+  async moveToFirst()
+  {
+    const modal = await this.modalCtrl.create({
+      component: 'StoreComponent'
+    });
+
+    return await modal.present();
+  }
+
 }

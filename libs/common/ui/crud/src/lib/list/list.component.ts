@@ -17,8 +17,10 @@ import { filter, last, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   AlertController,
   ToastController,
+  ModalController,
   LoadingController
 } from '@ionic/angular';
+import {StoreComponent} from "../../../../../../../apps/sga/src/app/users/store/store.component";
 
 @Component({
   selector: 'suite-ui-crud-list',
@@ -43,6 +45,7 @@ export class ListComponent implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController,
+    private modalController: ModalController,
     public loadingController: LoadingController
   ) {
     console.log(this.dataSource);

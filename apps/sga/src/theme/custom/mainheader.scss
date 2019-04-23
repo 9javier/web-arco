@@ -61,6 +61,9 @@ ion-router-outlet {
     margin: 0;
     padding: 0;
   }
+  ion-router-outlet{
+    margin-left: 0 !important;
+  }
 }
 
 // animations

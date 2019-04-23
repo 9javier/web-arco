@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import {ModalController} from "@ionic/angular";
 
 @Component({
   selector: 'suite-store',
@@ -48,12 +47,7 @@ export class StoreComponent implements OnInit {
     params: []
   };
 
-  constructor(private modalCtrl:ModalController) {}
+  constructor() {}
 
   ngOnInit() {}
-
-  closeModal()
-  {
-    this.modalCtrl.dismiss();
-  }
 }
