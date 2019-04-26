@@ -52,6 +52,11 @@ export class AppComponent implements OnInit {
       icon: 'person'
     },
     {
+      title: 'Pasillos',
+      url: '/halls',
+      icon: 'grid'
+    },
+    {
       title: 'Logout',
       icon: 'log-out'
     }

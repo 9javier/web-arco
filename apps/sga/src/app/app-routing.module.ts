@@ -37,6 +37,11 @@ const routes: Routes = [
   {
     path: 'permissions',
     loadChildren: './permissions/permissions.module#PermissionsPageModule'
+  },
+  {
+    path: 'halls',
+    canActivate: [AuthGuard],
+    loadChildren: './halls/halls.module#HallsModule'
   }
 ];
 

@@ -23,8 +23,11 @@ import {
 
 import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app/users/store/store.component";
 import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
+import {StoreComponent as storeHall} from "../../../../../../../apps/sga/src/app/halls/store/store.component";
 import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
+import {HallsService} from "../../../../../../services/src/lib/endpoint/halls/halls.service";
+import {HallModel} from "../../../../../../services/src/models/endpoints/Hall";
 
 @Component({
   selector: 'suite-ui-crud-list',
@@ -50,7 +53,9 @@ export class ListComponent implements OnInit {
     private alertController: AlertController,
     private toastController: ToastController,
     private modalController: ModalController,
-    public loadingController: LoadingController
+    public loadingController: LoadingController,
+    private hallsService: HallsService
+
   ) {
     console.log(this.dataSource);
     console.log('LIST COMPONENT');
@@ -76,7 +81,39 @@ export class ListComponent implements OnInit {
   isLoading = false;
 
   ngOnInit() {
-    this.initUsers();
+    if (this.routePath == '/roles' || this.routePath == '/users') {
+      this.initUsers();
+    } else if (this.routePath == '/halls') {
+      this.initHalls();
+    }
+  }
+
+  initHalls() {
+    this.hallsService
+      .getIndex(1)
+      .then(
+        (
+          data: Observable<
+            HttpResponse<HallModel.ResponseIndex | RolModel.ResponseIndex>
+          >
+        ) => {
+          data.subscribe(
+            (
+              res: HttpResponse<
+                HallModel.ResponseIndex
+              >
+            ) => {
+              this.dataSource = res.body.data;
+              console.debug('Test::Data -> ', this.dataSource);
+            }
+          );
+        }
+      );
+    this.selection = new SelectionModel<UserModel.User | RolModel.Rol>(
+      true,
+      []
+    );
+    this.showDeleteButton = false;
   }
 
   initUsers() {
@@ -114,6 +151,8 @@ export class ListComponent implements OnInit {
       storeComponent = storeRol;
     } else if (this.routePath == '/users') {
       storeComponent = storeUser;
+    } else if (this.routePath == '/halls') {
+      storeComponent = storeHall;
     }
 
     if (storeComponent) {
