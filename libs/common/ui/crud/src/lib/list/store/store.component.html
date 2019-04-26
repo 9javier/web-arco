@@ -47,6 +47,14 @@
               </mat-list-option>
             </mat-selection-list>
           </div>
+          <div *ngIf="input.type === 'select'">
+            <ion-item lines="full">
+              <i class="material-icons">{{input.icon}}</i>
+              <ion-select [placeholder]="input.label" [value]="input.defaultValue">
+                <ion-select-option *ngFor="let value of input.value" [value]="value">{{value}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
           <!-- End Input per Type -->
           <!-- Special Cases -->
           <div *ngIf="input.name === 'password'">

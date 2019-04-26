@@ -21,24 +21,31 @@ export class StoreComponent implements OnInit {
       type: 'text'
     },
     {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email'
+      name: 'selectRow',
+      label: 'Número de Filas',
+      type: 'select',
+      value: [1, 2, 3, 4, 5],
+      icon: 'view_stream'
     },
     {
-      name: 'password',
-      label: 'Contraseña',
-      type: 'password'
+      name: 'selectColumn',
+      label: 'Número de Columnas',
+      type: 'select',
+      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+      icon: 'view_column'
     },
     {
-      name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
-      type: 'password'
+      name: 'enable',
+      label: 'Activar o Desactivar',
+      type: 'select',
+      value: ['Activado', 'Desactivado'],
+      defaultValue: 'Desactivado',
+      icon: 'visibility'
     }
   ];
-  title = 'Crear Usuario';
-  apiEndpoint = 'Users';
-  redirectTo = '/users';
+  title = 'Añadir Pasillo';
+  apiEndpoint = 'Wharehouse Maps';
+  redirectTo = '/halls';
 
   customValidators: {
     name: string;
