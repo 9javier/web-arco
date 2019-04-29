@@ -157,7 +157,8 @@ export class ListComponent implements OnInit {
 
     if (storeComponent) {
       const modal = await this.modalController.create({
-        component: storeComponent
+        component: storeComponent,
+        componentProps: { routePath: this.routePath }
       });
       return await modal.present();
     }

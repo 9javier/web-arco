@@ -2,9 +2,19 @@ export namespace HallModel {
   export interface Hall {
     id?: number;
     enabled?: boolean;
-    hall: number;
+    hall?: number;
     columns?: number;
     rows?: number;
+    warehouse?: {id: number};
+  }
+  export function formToMap(formHall) {
+    return {
+      rows: formHall.rows,
+      columns: formHall.columns,
+      warehouse: {
+        id: formHall.warehouse
+      }
+    }
   }
   export interface ResponseIndex {
     data: Hall[];

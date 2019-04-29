@@ -4,10 +4,12 @@ import { UserModel, RolModel } from '@suite/services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import {ToastController, LoadingController, ModalController} from '@ionic/angular';
+import {ToastController, LoadingController, ModalController, NavParams} from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { CrudService } from '../../service/crud.service';
+import {HallsService} from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
+import {HallModel} from "../../../../../../../services/src/models/endpoints/Hall";
 
 interface FormBuilderInputs {
   string: [string, Validators[]];
@@ -44,6 +46,7 @@ export class StoreComponent implements OnInit {
   submitted = false;
   isLoading = false;
   validator = {};
+  routePath: string;
 
   constructor(
     private crudService: CrudService,
@@ -52,17 +55,19 @@ export class StoreComponent implements OnInit {
     private router: Router,
     private loadingController: LoadingController,
     private zone: NgZone,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private navParams: NavParams,
+    private hallsService: HallsService
   ) {}
 
   ngOnInit() {
-    console.log('formBuilderDataInputs', this.formBuilderDataInputs);
     this.initCustomValidators();
     this.storeForm = this.formBuilder.group(
       this.formBuilderDataInputs,
       this.validator
     );
     console.log(this.f);
+    this.routePath = this.navParams.data.routePath;
   }
 
   // convenience getter for easy access to form fields
@@ -94,6 +99,32 @@ export class StoreComponent implements OnInit {
 
     this.presentLoading();
 
+    if (this.routePath == '/roles' || this.routePath == '/users') {
+      this.postStore();
+    } else if (this.routePath == '/halls') {
+      this.postStoreHall();
+    }
+  }
+
+  postStoreHall() {
+    this.hallsService
+      .postStore(this.storeForm.value)
+      .then((data: Observable<HttpResponse<HallModel.ResponseStore>>) => {
+      data.subscribe(
+        (res: HttpResponse<HallModel.ResponseStore>) => {
+          this.dismissLoading();
+          this.modalController.dismiss();
+          this.presentToast(`Pasillo ${res.body.data.hall} creado`);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.dismissLoading();
+          this.presentToast('Error - Errores no estandarizados');
+        }
+      );
+    });
+  }
+
+  postStore() {
     this.crudService
       .postStore(this.storeForm.value, this.apiEndpoint)
       .then((data: Observable<HttpResponse<UserModel.ResponseStore>>) => {
