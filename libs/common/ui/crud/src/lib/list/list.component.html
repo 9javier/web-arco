@@ -2,6 +2,7 @@
   <h1>{{ title }}</h1>
 </ion-text>
 
+<div class="example-container">
 <table mat-table [dataSource]="dataSource" class="">
   <!-- Position Column -->
   <ng-container *ngFor="let column of dataColumns" matColumnDef="{{column}}">
@@ -11,7 +12,7 @@
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
   <tr
     mat-row
     *matRowDef="let row; columns: displayedColumns"
@@ -41,6 +42,7 @@
     </td>
   </ng-container>
 </table>
+</div>
 
 <!-- fab placed to the bottom end -->
 <ion-row class="fab-row-actions">
