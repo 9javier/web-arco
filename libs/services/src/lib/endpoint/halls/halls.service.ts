@@ -16,8 +16,8 @@ import { forkJoin, concat } from 'rxjs';
 export const PATH_GET_INDEX: string = PATH('Warehouses Maps', 'Listar estantes de un almacén');
 export const PATH_POST_STORE: string = PATH('Warehouses Maps', 'Crear estante');
 export const PATH_GET_SHOW: string = PATH('Warehouses Maps', 'Listar ubicaciones de un estante');
-export const PATH_PUT_UPDATE: string = PATH('Warehouses Maps', 'Redimensionar un estante').slice(0, -1);
-export const PATH_DEL_DESTROY: string = PATH('Warehouses Maps', 'Eliminar un estante').slice(0, -1);
+export const PATH_PUT_UPDATE: string = PATH('Warehouses Maps', 'Redimensionar un estante').replace('{{rackId}}', '');
+export const PATH_DEL_DESTROY: string = PATH('Warehouses Maps', 'Eliminar un estante').replace('{{rackId}}', '');
 
 @Injectable({
   providedIn: 'root'
