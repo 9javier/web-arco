@@ -9,35 +9,46 @@ import {ModalController} from "@ionic/angular";
 })
 export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
-    warehouse: ['', Validators.required],
-    rows: ['', Validators.required],
-    columns: ['', Validators.required]
+    name: ['', [Validators.required, Validators.minLength(4)]],
+    description: ['', Validators.required],
+    reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
+    is_store: [false, []],
+    is_main: [false, []]
   };
   formBuilderTemplateInputs = [
     {
-      name: 'warehouse',
-      label: 'Almacén',
-      type: 'select',
-      value: [{id: 1, name: 'Almacén General'}, {id: 2, name: 'Tienda Pontevedra'}, {id: 3, name: 'Tienda Madrid'}, {id: 4, name: 'Tienda de algún sitio'}],
-      icon: {type: 'ionic', name: 'home'}
+      name: 'name',
+      label: 'Nombre',
+      type: 'text',
+      icon: { type: 'md', name: 'title'}
     },
     {
-      name: 'rows',
-      label: 'Número de Filas',
-      type: 'select',
-      value: [1, 2, 3, 4, 5],
-      icon: {type: 'md', name: 'view_stream'}
+      name: 'description',
+      label: 'Descripción',
+      type: 'text',
+      icon: { type: 'md', name: 'description'}
     },
     {
-      name: 'columns',
-      label: 'Número de Columnas',
-      type: 'select',
-      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-      icon: {type: 'md', name: 'view_column'}
+      name: 'reference',
+      label: 'Referencia',
+      type: 'text',
+      icon: { type: 'ionic', name: 'barcode'}
+    },
+    {
+      name: 'is_store',
+      label: 'Es almacén',
+      type: 'checkbox',
+      value: false
+    },
+    {
+      name: 'is_main',
+      label: 'Establecer como almacén principal',
+      type: 'checkbox',
+      value: false
     }
   ];
   title = 'Añadir Almacén';
-  apiEndpoint = 'Wharehouses';
+  apiEndpoint = 'Warehouses';
   redirectTo = '/warehouses';
 
   constructor(private modalCtrl:ModalController) {}

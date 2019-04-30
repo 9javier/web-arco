@@ -99,7 +99,7 @@ export class StoreComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
       this.postStore();
     } else if (this.routePath == '/halls') {
       this.postStoreHall();

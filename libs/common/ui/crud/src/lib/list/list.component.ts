@@ -24,6 +24,7 @@ import {
 import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app/users/store/store.component";
 import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
 import {StoreComponent as storeHall} from "../../../../../../../apps/sga/src/app/halls/store/store.component";
+import {StoreComponent as storeWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
 import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
 import {UpdateComponent as updateHall} from "../../../../../../../apps/sga/src/app/halls/update/update.component";
@@ -181,6 +182,8 @@ export class ListComponent implements OnInit {
       storeComponent = storeUser;
     } else if (this.routePath == '/halls') {
       storeComponent = storeHall;
+    } else if (this.routePath == '/warehouses') {
+      storeComponent = storeWarehouse;
     }
 
     if (storeComponent) {

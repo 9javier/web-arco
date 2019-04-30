@@ -16,8 +16,10 @@
           <!-- Input per Type -->
           <div *ngIf="input.type === 'text'">
             <ion-item lines="full">
-              <ion-icon name="person"></ion-icon
-              ><ion-input
+              <i *ngIf="input.icon && input.icon.type == 'md'" class="material-icons">{{input.icon.name}}</i>
+              <ion-icon *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
+              <ion-icon *ngIf="!input.icon" name="person"></ion-icon>
+              <ion-input
                 placeholder="{{input.label}}"
                 class="ion-margin-horizontal"
                 type="{{input.type}}"
