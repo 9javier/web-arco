@@ -81,6 +81,9 @@ export class ListComponent implements OnInit {
   showDeleteButton = false;
   isLoading = false;
 
+  listWarehouses: any[] = [];
+  warehouseSelected: number = 1;
+
   ngOnInit() {
     this.loadData();
   }
@@ -95,7 +98,7 @@ export class ListComponent implements OnInit {
 
   initHalls() {
     this.hallsService
-      .getIndex(1)
+      .getIndex(this.warehouseSelected)
       .then(
         (
           data: Observable<
@@ -119,6 +122,26 @@ export class ListComponent implements OnInit {
       []
     );
     this.showDeleteButton = false;
+
+    this.crudService
+      .getIndex('Warehouses')
+      .then(
+        (
+          data: Observable<
+            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
+            >
+        ) => {
+          data.subscribe(
+            (
+              res: HttpResponse<
+                UserModel.ResponseIndex | RolModel.ResponseIndex
+                >
+            ) => {
+              this.listWarehouses = res.body.data;
+            }
+          );
+        }
+      );
   }
 
   initUsers() {
@@ -245,6 +268,11 @@ export class ListComponent implements OnInit {
       this.presentUsertDeleteAlert(this.selection);
     }
     console.log('confirmDelete', this.selection.selected);
+  }
+
+  changeWarehouse (event) {
+    this.warehouseSelected = event.detail.value;
+    this.loadData();
   }
 
   async presentUsertDeleteAlert(
