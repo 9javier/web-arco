@@ -1,5 +1,5 @@
 <ion-text color="primary">
-  <h1>{{ title }}</h1>
+  <h1><span *ngIf="parentPage"><span (click)="goPreviousPage()" class="previous-page-link" style="cursor: pointer">{{parentPage}}</span> > </span>{{ title }}</h1>
 </ion-text>
 
 <div class="example-container">

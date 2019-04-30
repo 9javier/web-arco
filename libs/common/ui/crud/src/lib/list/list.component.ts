@@ -20,6 +20,7 @@ import {
   ModalController,
   LoadingController
 } from '@ionic/angular';
+import { Location } from '@angular/common';
 
 import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app/users/store/store.component";
 import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
@@ -58,7 +59,8 @@ export class ListComponent implements OnInit {
     private modalController: ModalController,
     public loadingController: LoadingController,
     private hallsService: HallsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private location: Location
 
   ) {
     console.log(this.dataSource);
@@ -87,6 +89,7 @@ export class ListComponent implements OnInit {
   warehouseSelected: number = 1;
 
   paramsReceived: any = null;
+  parentPage: string = null;
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
@@ -99,9 +102,11 @@ export class ListComponent implements OnInit {
   loadData() {
     if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
       this.initUsers();
+      this.parentPage = null;
     } else if (this.routePath == '/halls') {
       this.warehouseSelected = this.paramsReceived.params.id;
       this.initHalls();
+      this.parentPage = 'Almacenes';
     }
   }
 
@@ -159,6 +164,10 @@ export class ListComponent implements OnInit {
       []
     );
     this.showDeleteButton = false;
+  }
+
+  goPreviousPage () {
+    this.location.back();
   }
 
   async goToStore() {
