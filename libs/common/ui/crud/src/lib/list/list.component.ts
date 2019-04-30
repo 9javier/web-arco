@@ -284,10 +284,6 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/warehouses/halls/${row.id}`]);
   }
 
-  showWarehousePoints (event, row) {
-    event.stopPropagation();
-  }
-
   async presentUsertDeleteAlert(
     selectedUsers: SelectionModel<UserModel.User | RolModel.Rol>
   ) {
