@@ -15,6 +15,8 @@ import {
 
 import { CrudService } from '../../service/crud.service';
 import { switchMap, filter } from 'rxjs/operators';
+import {HallsService} from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
+import {HallModel} from "../../../../../../../services/src/models/endpoints/Hall";
 
 interface FormBuilderInputs {
   string: [string, Validators[]];
@@ -56,6 +58,7 @@ export class UpdateComponent implements OnInit {
   updateForm: FormGroup;
   submitted = false;
   isLoading = false;
+  routePath: string;
 
   constructor(
     private crudService: CrudService,
@@ -66,7 +69,8 @@ export class UpdateComponent implements OnInit {
     private loadingController: LoadingController,
     private zone: NgZone,
     private navParams: NavParams,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private hallsService: HallsService
   ) {}
 
   ngOnInit() {
@@ -75,7 +79,14 @@ export class UpdateComponent implements OnInit {
       this.formBuilderDataInputs,
       this.validator
     );
-    this.getUser();
+    this.routePath = this.navParams.data.routePath;
+    let id = this.navParams.data.id;
+    let row = this.navParams.data.row;
+    if (this.routePath == '/roles' || this.routePath == '/users') {
+      this.getUser(id);
+    } else if (this.routePath == '/halls') {
+      this.getHalls(row);
+    }
     console.log(this.updateForm);
   }
 
@@ -96,9 +107,12 @@ export class UpdateComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  getUser() {
-    let id = this.navParams.data.id;
+  getHalls(row) {
+    this.updateForm.patchValue(row);
+    this.paramId = row.id;
+  }
 
+  getUser(id) {
     return from(
       this.crudService
         .getShow(id, this.apiEndpoint)
@@ -161,20 +175,54 @@ export class UpdateComponent implements OnInit {
 
     this.presentLoading();
 
+    if (this.routePath == '/roles' || this.routePath == '/users') {
+      this.postUpdate(dataToUpdate);
+    } else if (this.routePath == '/halls') {
+      this.postUpdateHall(dataToUpdate);
+    }
+  }
+
+  postUpdateHall(dataToUpdate) {
+    this.hallsService
+      .putUpdate(dataToUpdate)
+      .then(
+        (
+          data: Observable<
+            HttpResponse<HallModel.ResponseStore>
+            >
+        ) => {
+          data.subscribe(
+            (
+              res: HttpResponse<HallModel.ResponseStore>
+            ) => {
+              this.dismissLoading();
+              this.modalController.dismiss();
+              this.presentToast(`Pasillo ${res.body.data.hall} actualizado`);
+            },
+            (errorResponse: HttpErrorResponse) => {
+              this.dismissLoading();
+              this.presentToast('Error - Errores no estandarizados');
+            }
+          );
+        }
+      );
+  }
+
+  postUpdate(dataToUpdate) {
     this.crudService
       .putUpdate(dataToUpdate, this.apiEndpoint)
       .then(
         (
           data: Observable<
             HttpResponse<UserModel.ResponseStore | RolModel.ResponseShow>
-          >
+            >
         ) => {
           data.subscribe(
             (
               res: HttpResponse<UserModel.ResponseStore | RolModel.ResponseShow>
             ) => {
               this.dismissLoading();
-              this.zone.runTask(() => this.router.navigate([this.redirectTo]));
+              this.modalController.dismiss();
               this.presentToast(`Usuario ${res.body.data.name} actualizado`);
             },
             (errorResponse: HttpErrorResponse) => {

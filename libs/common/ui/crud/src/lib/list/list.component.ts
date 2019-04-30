@@ -26,6 +26,7 @@ import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/
 import {StoreComponent as storeHall} from "../../../../../../../apps/sga/src/app/halls/store/store.component";
 import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
+import {UpdateComponent as updateHall} from "../../../../../../../apps/sga/src/app/halls/update/update.component";
 import {HallsService} from "../../../../../../services/src/lib/endpoint/halls/halls.service";
 import {HallModel} from "../../../../../../services/src/models/endpoints/Hall";
 
@@ -164,19 +165,21 @@ export class ListComponent implements OnInit {
     }
   }
 
-  async goToUpdate(id: number | string) {
+  async goToUpdate(row) {
     let updateComponent = null;
 
     if (this.routePath == '/roles') {
       updateComponent = updateRol;
     } else if (this.routePath == '/users') {
       updateComponent = updateUser;
+    } else if (this.routePath == '/halls') {
+      updateComponent = updateHall;
     }
 
     if (updateComponent) {
       const modal = await this.modalController.create({
         component: updateComponent,
-        componentProps: { id: id }
+        componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
       return await modal.present();
     }

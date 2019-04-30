@@ -45,6 +45,15 @@
               >{{ input.label }}</mat-checkbox
             >
           </div>
+          <div *ngIf="input.type === 'select'">
+            <ion-item lines="full">
+              <i *ngIf="input.icon && input.icon.type == 'md'" class="material-icons">{{input.icon.name}}</i>
+              <ion-icon *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
+              <ion-select [placeholder]="input.label" [formControl]="f[input.name]">
+                <ion-select-option *ngFor="let value of input.value" [value]="value.id || value">{{value.name || value}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </div>
           <!-- End Input per Type -->
           <!-- Special Cases -->
           <div *ngIf="input.name === 'password'">

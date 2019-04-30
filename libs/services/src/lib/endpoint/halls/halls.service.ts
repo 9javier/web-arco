@@ -61,13 +61,13 @@ export class HallsService {
   }
 
   async putUpdate(
-    user: HallModel.Hall
+    hall: HallModel.Hall
   ): Promise<Observable<HttpResponse<HallModel.ResponseUpdate>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.put<HallModel.ResponseUpdate>(
-      `${PATH_PUT_UPDATE}${user.id}`,
-      user,
+      `${PATH_PUT_UPDATE}${hall.id}`,
+      hall,
       {
         headers: headers,
         observe: 'response'

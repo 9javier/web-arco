@@ -9,45 +9,28 @@ import { COLLECTIONS } from 'config/base';
 })
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
-    name: ['', [Validators.required, Validators.minLength(4)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    rows: ['', Validators.required],
+    columns: ['', Validators.required]
   };
   formBuilderTemplateInputs = [
     {
-      name: 'name',
-      label: 'Nombre',
-      type: 'text'
+      name: 'rows',
+      label: 'Número de Filas',
+      type: 'select',
+      value: [1, 2, 3, 4, 5],
+      icon: {type: 'md', name: 'view_stream'}
     },
     {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email'
-    },
-    {
-      name: 'password',
-      label: 'Contraseña',
-      type: 'password'
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
-      type: 'password'
+      name: 'columns',
+      label: 'Número de Columnas',
+      type: 'select',
+      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+      icon: {type: 'md', name: 'view_column'}
     }
   ];
-  title = 'Actualizar Usuario';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users')
-    .name;
-  redirectTo = 'users/list';
-  routePath = '/users';
-  customValidators: {
-    name: string;
-    params: [];
-  } = {
-    name: 'MustMach',
-    params: []
-  };
+  title = 'Actualizar Pasillo';
+  apiEndpoint = 'Wharehouse Maps';
+  redirectTo = '/halls';
 
   constructor() {}
 
