@@ -10,6 +10,10 @@ const routes: Routes = [
     component: HallsComponent
   },
   {
+    path: ':id',
+    component: HallsComponent
+  },
+  {
     path: 'store',
     component: StoreComponent
   },

@@ -107,6 +107,7 @@ export class StoreComponent implements OnInit {
   }
 
   postStoreHall() {
+    this.storeForm.value.warehouse = this.navParams.data.warehouse;
     this.hallsService
       .postStore(this.storeForm.value)
       .then((data: Observable<HttpResponse<HallModel.ResponseStore>>) => {

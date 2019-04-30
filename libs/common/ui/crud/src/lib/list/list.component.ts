@@ -12,7 +12,7 @@ import { UserModel, RolModel } from '@suite/services';
 import { CrudService } from '../service/crud.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Router, NavigationStart, NavigationEnd } from '@angular/router';
+import {Router, NavigationStart, NavigationEnd, ActivatedRoute} from '@angular/router';
 import { filter, last, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   AlertController,
@@ -57,7 +57,8 @@ export class ListComponent implements OnInit {
     private toastController: ToastController,
     private modalController: ModalController,
     public loadingController: LoadingController,
-    private hallsService: HallsService
+    private hallsService: HallsService,
+    private route: ActivatedRoute
 
   ) {
     console.log(this.dataSource);
@@ -83,10 +84,15 @@ export class ListComponent implements OnInit {
   showDeleteButton = false;
   isLoading = false;
 
-  listWarehouses: any[] = [];
   warehouseSelected: number = 1;
 
+  paramsReceived: any = null;
+
   ngOnInit() {
+    this.route.paramMap.subscribe((params: any )=> {
+      this.paramsReceived = params;
+    });
+
     this.loadData();
   }
 
@@ -94,6 +100,7 @@ export class ListComponent implements OnInit {
     if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
       this.initUsers();
     } else if (this.routePath == '/halls') {
+      this.warehouseSelected = this.paramsReceived.params.id;
       this.initHalls();
     }
   }
@@ -124,26 +131,6 @@ export class ListComponent implements OnInit {
       []
     );
     this.showDeleteButton = false;
-
-    this.crudService
-      .getIndex('Warehouses')
-      .then(
-        (
-          data: Observable<
-            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
-            >
-        ) => {
-          data.subscribe(
-            (
-              res: HttpResponse<
-                UserModel.ResponseIndex | RolModel.ResponseIndex
-                >
-            ) => {
-              this.listWarehouses = res.body.data;
-            }
-          );
-        }
-      );
   }
 
   initUsers() {
@@ -176,6 +163,7 @@ export class ListComponent implements OnInit {
 
   async goToStore() {
     let storeComponent = null;
+    let componentProps: any = {routePath: this.routePath};
 
     if (this.routePath == '/roles') {
       storeComponent = storeRol;
@@ -183,6 +171,7 @@ export class ListComponent implements OnInit {
       storeComponent = storeUser;
     } else if (this.routePath == '/halls') {
       storeComponent = storeHall;
+      componentProps.warehouse = this.warehouseSelected;
     } else if (this.routePath == '/warehouses') {
       storeComponent = storeWarehouse;
     }
@@ -190,7 +179,7 @@ export class ListComponent implements OnInit {
     if (storeComponent) {
       const modal = await this.modalController.create({
         component: storeComponent,
-        componentProps: { routePath: this.routePath }
+        componentProps: componentProps
       });
 
       modal.onDidDismiss()
@@ -279,6 +268,15 @@ export class ListComponent implements OnInit {
   changeWarehouse (event) {
     this.warehouseSelected = event.detail.value;
     this.loadData();
+  }
+
+  showWarehouseMaps (event, row) {
+    event.stopPropagation();
+    this.router.navigate([`/warehouses/halls/${row.id}`]);
+  }
+
+  showWarehousePoints (event, row) {
+    event.stopPropagation();
   }
 
   async presentUsertDeleteAlert(

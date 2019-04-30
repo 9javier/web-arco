@@ -9,18 +9,10 @@ import {ModalController} from "@ionic/angular";
 })
 export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
-    warehouse: ['', Validators.required],
     rows: ['', Validators.required],
     columns: ['', Validators.required]
   };
   formBuilderTemplateInputs = [
-    {
-      name: 'warehouse',
-      label: 'Almacén',
-      type: 'select',
-      value: [{id: 1, name: 'Almacén General'}, {id: 2, name: 'Tienda Pontevedra'}, {id: 3, name: 'Tienda Madrid'}, {id: 4, name: 'Tienda de algún sitio'}],
-      icon: {type: 'ionic', name: 'home'}
-    },
     {
       name: 'rows',
       label: 'Número de Filas',

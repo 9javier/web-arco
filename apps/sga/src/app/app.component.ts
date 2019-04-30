@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     {
       title: 'Almacenes',
       url: '/warehouses',
-      icon: 'grid'
+      icon: 'filing'
     },
     {
       title: 'Logout',
