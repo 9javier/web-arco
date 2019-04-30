@@ -89,7 +89,7 @@ export class ListComponent implements OnInit {
   }
 
   loadData() {
-    if (this.routePath == '/roles' || this.routePath == '/users') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
       this.initUsers();
     } else if (this.routePath == '/halls') {
       this.initHalls();

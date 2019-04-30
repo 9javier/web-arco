@@ -39,9 +39,9 @@ const routes: Routes = [
     loadChildren: './permissions/permissions.module#PermissionsPageModule'
   },
   {
-    path: 'halls',
+    path: 'warehouses',
     canActivate: [AuthGuard],
-    loadChildren: './halls/halls.module#HallsModule'
+    loadChildren: './warehouses/warehouses.module#WarehousesModule'
   }
 ];
 
