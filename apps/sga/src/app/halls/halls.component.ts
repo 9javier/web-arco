@@ -9,8 +9,8 @@ import {ModalController} from "@ionic/angular";
 })
 export class HallsComponent implements OnInit {
   title = 'Pasillos';
-  displayedColumns: string[] = ['id', 'hall', 'columns', 'rows', 'select'];
-  columns: string[] = ['id', 'hall', 'columns','rows'];
+  displayedColumns: string[] = ['id', 'hall', 'rows', 'columns', 'select'];
+  columns: string[] = ['id', 'hall', 'rows', 'columns'];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Maps')
     .name;
   routePath = '/halls';
