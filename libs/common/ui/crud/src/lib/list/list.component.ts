@@ -82,6 +82,10 @@ export class ListComponent implements OnInit {
   isLoading = false;
 
   ngOnInit() {
+    this.loadData();
+  }
+
+  loadData() {
     if (this.routePath == '/roles' || this.routePath == '/users') {
       this.initUsers();
     } else if (this.routePath == '/halls') {
@@ -161,6 +165,12 @@ export class ListComponent implements OnInit {
         component: storeComponent,
         componentProps: { routePath: this.routePath }
       });
+
+      modal.onDidDismiss()
+        .then(() => {
+          this.loadData();
+        });
+
       return await modal.present();
     }
   }
@@ -181,6 +191,12 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
+
+      modal.onDidDismiss()
+        .then(() => {
+          this.loadData();
+        });
+
       return await modal.present();
     }
   }
