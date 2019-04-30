@@ -40,14 +40,14 @@
             </ion-item>
           </div>
           <div *ngIf="input.type === 'checkbox'">
-            <mat-selection-list>
-              <mat-list-option
-                [selected]="f[input.value]"
+            <ion-item lines="none">
+              <mat-checkbox
+                [formControl]="f[input.name]"
+                [checked]="f[input.value]"
                 [value]="f[input.value]"
+              >{{ input.label }}</mat-checkbox
               >
-                {{ input.label }}
-              </mat-list-option>
-            </mat-selection-list>
+            </ion-item>
           </div>
           <div *ngIf="input.type === 'select'">
             <ion-item lines="full">
