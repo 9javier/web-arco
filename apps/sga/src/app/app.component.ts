@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Jaulas',
-      url: '/jail/menu',
+      url: '/jails',
       icon: 'person'
     },
     {
