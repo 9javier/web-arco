@@ -50,11 +50,11 @@ export class HallsService {
   }
 
   async getShow(
-    userId: string | number
+    hallId: string | number
   ): Promise<Observable<HttpResponse<HallModel.ResponseShow>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<HallModel.ResponseShow>(`${PATH_GET_SHOW}${userId}`, {
+    return this.http.get<HallModel.ResponseShow>(PATH_GET_SHOW.replace('{{rackId}}', String(hallId)), {
       headers: headers,
       observe: 'response'
     });

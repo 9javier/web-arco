@@ -1,0 +1,56 @@
+<ion-text color="primary">
+  <h1><span (click)="goPreviousPage()" class="previous-page-link">{{parentPage}} > </span>{{ title }}</h1>
+</ion-text>
+
+<div class="example-container">
+  <table mat-table [dataSource]="dataSource" class="">
+    <!-- Position Column -->
+    <ng-container *ngFor="let column of dataColumns" matColumnDef="{{column.value}}">
+      <th mat-header-cell *matHeaderCellDef>{{ column.name }}</th>
+      <td mat-cell *matCellDef="let element; let i = index">
+        <span>{{ element[column.value] }}</span>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+      <td mat-cell *matCellDef="let detail" [attr.colspan]="displayedColumns.length" [class.collapsed-detail]="!detail.element.expanded">
+        <div [@detailExpand]="detail.element.expanded ? 'expanded' : 'collapsed'" [style.height]="detail.element.expanded ? 'unset' : '0 !important'">
+          <table class="element-detail">
+            <tr *ngFor="let row of detail.element.container">
+              <td *ngFor="let column of row; let i = index" [class.location-free]="!column.enabled"></td>
+            </tr>
+          </table>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      style="cursor: pointer"
+      [class.expanded]="expandedElement == row"
+      (click)="selectRowToExpand(row)"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+      [@detailExpand]="row == expandedElement ? 'expanded' : 'collapsed'"
+      style="overflow: hidden"
+    ></tr>
+
+    <ng-container matColumnDef="icon">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <ion-icon name="grid"></ion-icon>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="dropdown">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let row">
+        <ion-icon [name]="row.dropdown_icon"></ion-icon>
+      </td>
+    </ng-container>
+  </table>
+</div>
