@@ -24,6 +24,8 @@ import { JailComponent } from './jail.component';
     MatCheckboxModule,
     CommonUiCrudModule,
     CdkTableModule,
+  ], entryComponents: [
+    StoreComponent
   ]
 })
 export class JailModule { }
