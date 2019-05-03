@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UserModel } from '@suite/services';
 import { COLLECTIONS } from 'config/base';
-import { ListComponent } from "@suite/common/ui/crud";
+import {ModalController} from "@ionic/angular";
 
 @Component({
   selector: 'app-jail',
@@ -11,22 +10,29 @@ import { ListComponent } from "@suite/common/ui/crud";
 
 export class JailComponent implements OnInit {
   public title = 'Jaulas';
-  public displayedColumns: string[] = ['id', 'name', 'email', 'select'];
-  public columns: string[] = ['id', 'name', 'email'];
-  public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users').name;
-  public routePath = '/jail';
+  public displayedColumns: string[] = ['select','id', 'reference', 'createdAt', 'updatedAt'];
+  public columns: string[] = ['id', 'reference', 'createdAt', 'updatedAt'];
+  public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
+  public routePath = '/jails';
 
-  constructor() {
+  constructor(private modalCtrl:ModalController) {
   }
 
-  ngOnInit() {
-  this.title = 'Jaulas';
-  this.displayedColumns = ['id', 'name', 'email', 'select'];
-  this.columns = ['id', 'name', 'email'];
-  this.apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users').name;
-  this.routePath = '/jail';
+  ngOnInit() {}
+
+  closeModal()
+  {
+    this.modalCtrl.dismiss();
   }
 
+  async moveToFirst()
+  {
+    const modal = await this.modalCtrl.create({
+      component: 'StoreComponent'
+    });
+
+    return await modal.present();
+  }
 }
 
 
