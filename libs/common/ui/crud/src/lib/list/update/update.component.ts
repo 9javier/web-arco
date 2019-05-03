@@ -82,7 +82,7 @@ export class UpdateComponent implements OnInit {
     this.routePath = this.navParams.data.routePath;
     let id = this.navParams.data.id;
     let row = this.navParams.data.row;
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails') {
       this.getUser(id);
     } else if (this.routePath == '/halls') {
       this.getHalls(row);
@@ -175,7 +175,7 @@ export class UpdateComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails') {
       this.postUpdate(dataToUpdate);
     } else if (this.routePath == '/halls') {
       this.postUpdateHall(dataToUpdate);
