@@ -9,45 +9,32 @@ import { COLLECTIONS } from 'config/base';
 })
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
-    name: ['', [Validators.required, Validators.minLength(4)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    reference: ['', [Validators.required, Validators.maxLength(5)]],
+    createdAt: ['', Validators.required],
+    updatedAt: ['', Validators.required]
   };
   formBuilderTemplateInputs = [
     {
-      name: 'name',
-      label: 'Nombre',
+      name: 'reference',
+      label: 'Referencia',
       type: 'text'
     },
     {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email'
+      name: 'createdAt',
+      label: 'Creado',
+      type: 'datetime'
     },
     {
-      name: 'password',
-      label: 'Contraseña',
-      type: 'password'
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
-      type: 'password'
+      name: 'updatedAt',
+      label: 'Actualizado',
+      type: 'datetime'
     }
   ];
-  title = 'Actualizar Usuario';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users')
+  title = 'Actualizar Jaula';
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
     .name;
-  redirectTo = 'users/list';
-  routePath = '/users';
-  customValidators: {
-    name: string;
-    params: [];
-  } = {
-    name: 'MustMach',
-    params: []
-  };
+
+  redirectTo = '/jails';
 
   constructor() {}
 
