@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import {ModalController} from "@ionic/angular";
+import {COLLECTIONS} from "../../../../../../config/base";
 
 @Component({
   selector: 'suite-store',
@@ -8,46 +10,38 @@ import { FormGroup, Validators } from '@angular/forms';
 })
 export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
-    name: ['', [Validators.required, Validators.minLength(4)]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    reference: ['', [Validators.required, Validators.maxLength(5)]],
+    createdAt: ['', Validators.required],
+    updatedAt: ['', Validators.required]
   };
   formBuilderTemplateInputs = [
     {
-      name: 'name',
-      label: 'Nombre',
+      name: 'reference',
+      label: 'Referencia',
       type: 'text'
     },
     {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email'
+      name: 'createdAt',
+      label: 'Creado',
+      type: 'text'
     },
     {
-      name: 'password',
-      label: 'Contraseña',
-      type: 'password'
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
-      type: 'password'
+      name: 'updatedAt',
+      label: 'Actualizado',
+      type: 'text'
     }
   ];
-  title = 'Crear Usuario';
-  apiEndpoint = 'Users';
-  redirectTo = '/users';
+  title = 'Crear Jaula';
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
+    .name;
+  redirectTo = '/jails';
 
-  customValidators: {
-    name: string;
-    params: [];
-  } = {
-    name: 'MustMach',
-    params: []
-  };
-
-  constructor() {}
+  constructor(private modalCtrl:ModalController) {}
 
   ngOnInit() {}
+
+  closeModal()
+  {
+    this.modalCtrl.dismiss();
+  }
 }
