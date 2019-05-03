@@ -30,7 +30,7 @@ const routes: Routes = [
   },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   {
-    path: 'jail',
+    path: 'jails',
     canActivate: [AuthGuard],
     loadChildren: './jail/jail.module#JailModule'
   },
