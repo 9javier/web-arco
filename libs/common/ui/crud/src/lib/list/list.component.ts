@@ -26,10 +26,12 @@ import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app
 import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
 import {StoreComponent as storeHall} from "../../../../../../../apps/sga/src/app/halls/store/store.component";
 import {StoreComponent as storeWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
+import {StoreComponent as storeJail} from "../../../../../../../apps/sga/src/app/jail/store/store.component";
 import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
 import {UpdateComponent as updateHall} from "../../../../../../../apps/sga/src/app/halls/update/update.component";
 import {UpdateComponent as updateWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
+import {UpdateComponent as updateJail} from "../../../../../../../apps/sga/src/app/jail/update/update.component";
 import {HallsService} from "../../../../../../services/src/lib/endpoint/halls/halls.service";
 import {HallModel} from "../../../../../../services/src/models/endpoints/Hall";
 
@@ -100,7 +102,7 @@ export class ListComponent implements OnInit {
   }
 
   loadData() {
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails') {
       this.initUsers();
       this.parentPage = null;
     } else if (this.routePath == '/halls') {
@@ -183,6 +185,8 @@ export class ListComponent implements OnInit {
       componentProps.warehouse = this.warehouseSelected;
     } else if (this.routePath == '/warehouses') {
       storeComponent = storeWarehouse;
+    } else if (this.routePath == '/jails') {
+      storeComponent = storeJail;
     }
 
     if (storeComponent) {
@@ -211,6 +215,8 @@ export class ListComponent implements OnInit {
       updateComponent = updateHall;
     } else if (this.routePath == '/warehouses') {
       updateComponent = updateWarehouse;
+    } else if (this.routePath == '/jails'){
+      updateComponent = updateJail;
     }
 
     if (updateComponent) {
