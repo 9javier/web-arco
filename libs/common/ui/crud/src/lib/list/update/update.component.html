@@ -60,19 +60,6 @@
           </div>
           <!-- End Input per Type -->
           <!-- Special Cases -->
-          <div *ngIf="input.type === 'datetime'">
-              <ion-item>
-                <ion-icon name="calendar"></ion-icon>
-                <ion-input
-                  placeholder="{{input.label}}"
-                  class="ion-margin-horizontal"
-                  type="{{input.type}}"
-                  [value]="f[input.value]"
-                 [formControl]="f[input.name]"
-                  #datetimelocalInput
-                ></ion-input>
-              </ion-item>
-          </div>
           <div *ngIf="input.name === 'password'">
             <ion-item>
               <ion-icon name="lock"></ion-icon>
