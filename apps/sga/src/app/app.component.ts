@@ -48,8 +48,8 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Jaulas',
-      url: '/jails',
-      icon: 'person'
+      url: '/jails/menu',
+      icon: 'grid'
     },
     {
       title: 'Almacenes',
