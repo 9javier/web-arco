@@ -10,8 +10,8 @@ import {ModalController} from "@ionic/angular";
 
 export class JailComponent implements OnInit {
   public title = 'Jaulas';
-  public displayedColumns: string[] = ['select','id', 'reference', 'createdAt', 'updatedAt'];
-  public columns: string[] = ['id', 'reference', 'createdAt', 'updatedAt'];
+  public displayedColumns: string[] = ['id', 'reference', 'select'];
+  public columns: string[] = ['id', 'reference'];
   public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
   public routePath = '/jails';
 
