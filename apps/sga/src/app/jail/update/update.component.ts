@@ -9,32 +9,21 @@ import { COLLECTIONS } from 'config/base';
 })
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.maxLength(5)]],
-    createdAt: ['', Validators.required],
-    updatedAt: ['', Validators.required]
+    reference: ['', [Validators.required, Validators.pattern('^J[0-9]{4}')]]
   };
   formBuilderTemplateInputs = [
     {
       name: 'reference',
       label: 'Referencia',
-      type: 'text'
-    },
-    {
-      name: 'createdAt',
-      label: 'Creado',
-      type: 'datetime'
-    },
-    {
-      name: 'updatedAt',
-      label: 'Actualizado',
-      type: 'datetime'
+      type: 'text',
+      icon: { type: 'ionic', name: 'filing'}
     }
   ];
   title = 'Actualizar Jaula';
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
     .name;
 
-  redirectTo = '/jails';
+  redirectTo = '/jails/list';
 
   constructor() {}
 
