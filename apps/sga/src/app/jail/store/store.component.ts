@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import {ModalController} from "@ionic/angular";
-import {COLLECTIONS} from "../../../../../../config/base";
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { COLLECTIONS } from 'config/base';
 
 @Component({
   selector: 'suite-store',
@@ -24,12 +23,7 @@ export class StoreComponent implements OnInit {
     .name;
   redirectTo = '/jails';
 
-  constructor(private modalCtrl:ModalController) {}
+  constructor() {}
 
   ngOnInit() {}
-
-  closeModal()
-  {
-    this.modalCtrl.dismiss();
-  }
 }
