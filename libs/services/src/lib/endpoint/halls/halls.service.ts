@@ -18,6 +18,8 @@ export const PATH_POST_STORE: string = PATH('Warehouses Maps', 'Crear estante');
 export const PATH_GET_SHOW: string = PATH('Warehouses Maps', 'Listar ubicaciones de un estante');
 export const PATH_PUT_UPDATE: string = PATH('Warehouses Maps', 'Redimensionar un estante').replace('{{rackId}}', '');
 export const PATH_DEL_DESTROY: string = PATH('Warehouses Maps', 'Eliminar un estante').replace('{{rackId}}', '');
+export const PATH_PUT_ENABLE: string = PATH('Warehouses Maps', 'Habilitar ubicación').replace('{{containerId}}', '');
+export const PATH_PUT_DISABLE: string = PATH('Warehouses Maps', 'Deshabilitar ubicación').replace('{{containerId}}', '');
 
 @Injectable({
   providedIn: 'root'
@@ -92,5 +94,33 @@ export class HallsService {
         )
       );
     });
+  }
+
+  async updateDisable(
+    containerId: string | number
+  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateDisable>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<HallModel.ResponseUpdateDisable>(`${PATH_PUT_DISABLE}${containerId}`,
+      {enabled: false},
+      {
+        headers: headers,
+        observe: 'response'
+      }
+      );
+  }
+
+  async updateEnable(
+    containerId: string | number
+  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateEnable>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<HallModel.ResponseUpdateEnable>(`${PATH_PUT_ENABLE}${containerId}`,
+      {enabled: true},
+      {
+        headers: headers,
+        observe: 'response'
+      }
+      );
   }
 }

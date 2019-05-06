@@ -16,8 +16,9 @@
       <td mat-cell *matCellDef="let detail" [attr.colspan]="displayedColumns.length" [class.collapsed-detail]="!detail.element.expanded">
         <div [@detailExpand]="detail.element.expanded ? 'expanded' : 'collapsed'" [style.height]="detail.element.expanded ? 'unset' : '0 !important'">
           <table class="element-detail">
-            <tr *ngFor="let row of detail.element.container">
-              <td *ngFor="let column of row; let i = index" [class.location-free]="!column.enabled"></td>
+            <tr *ngFor="let row of detail.element.container; let iRow = index">
+              <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.empty" [class.location-disabled]="!column.enabled" (click)="selectLocation($event, detail, row, column, iRow, iColumn)"[class.location-selected]="column.selected" >
+              </td>
             </tr>
           </table>
         </div>
@@ -54,3 +55,41 @@
     </ng-container>
   </table>
 </div>
+
+<ion-row class="fab-row-actions">
+  <ion-col size="1" size-xs [offset]="countLocationsSelected > 1 ? 8 : 7" *ngIf="countLocationsSelected > 0">
+    <ion-fab [@EnterLeave]="'flyIn'" (click)="selectAllLocations()">
+      <ion-fab-button color="light">
+        <i class="material-icons">select_all</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
+    <ion-fab [@EnterLeave]="'flyIn'">
+      <ion-fab-button color="light">
+        <i class="material-icons">delete</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
+    <ion-fab [@EnterLeave]="'flyIn'" (click)="printReferencesLocations()">
+      <ion-fab-button color="light">
+        <i class="material-icons">local_printshop</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
+    <ion-fab [@EnterLeave]="'flyIn'" (click)="disableLocations()">
+      <ion-fab-button color="light">
+        <i class="material-icons">visibility_off</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="1" size-xs *ngIf="countLocationsSelected == 1">
+    <ion-fab [@EnterLeave]="'flyIn'" (click)="editLocation()">
+      <ion-fab-button>
+        <i class="material-icons">edit</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+</ion-row>

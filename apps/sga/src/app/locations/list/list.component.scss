@@ -57,12 +57,26 @@ table {
   td {
     height: 24px;
     width: 24px;
+    outline: none;
+    outline-offset: 0;
     background: rgba(33, 33, 33, 0.12);
   }
   td.location-free {
     outline: 3px solid #000;
     outline-offset: -3px;
     background: #fff;
+  }
+  td.location-disabled {
+    background: #fff;
+    background-image: url('../../../assets/img/md-close.svg');
+    background-position: center;
+  }
+  td.location-selected {
+    outline: 3px solid #0c9d58;
+    outline-offset: -3px;
+    background: rgba(12, 157, 88, 0.12);
+    background-image: url('../../../assets/img/md-check.svg');
+    background-position: center;
   }
 }
 

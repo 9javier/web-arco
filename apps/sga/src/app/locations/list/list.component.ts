@@ -6,10 +6,11 @@ import {Location} from "@angular/common";
 import {SelectionModel} from "@angular/cdk/collections";
 import {RolModel, UserModel} from "@suite/services";
 import {Observable, of} from "rxjs";
-import {HttpResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../../../../libs/services/src/models/endpoints/Hall";
 import {HallsService} from "../../../../../../libs/services/src/lib/endpoint/halls/halls.service";
 import {ActivatedRoute} from "@angular/router";
+import {ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'suite-list-locations',
@@ -39,7 +40,8 @@ export class ListComponent implements OnInit {
   constructor(
     private location: Location,
     private hallsService: HallsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastController: ToastController
   ) {
 
   }
@@ -60,6 +62,10 @@ export class ListComponent implements OnInit {
 
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any = null;
+
+  locationsSelected: any = {};
+  countLocationsSelected: number = 0;
+  listRowsExpanded: any = {};
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
@@ -86,13 +92,17 @@ export class ListComponent implements OnInit {
             ) => {
               this.dataSource = res.body.data
                 .map(hall => {
+                  let expanded = false;
+                  if (this.listRowsExpanded[hall.id] && this.listRowsExpanded[hall.id].expanded) {
+                    expanded = true;
+                  }
                   return {
                     id: hall.id,
                     hall: hall.hall+' . '+hall.columns+' . '+hall.rows,
                     columns: hall.columns,
                     rows: hall.rows,
                     use: '',
-                    expanded: false,
+                    expanded: expanded,
                     dropdown_icon: 'ios-arrow-down'
                   }
                 });
@@ -109,6 +119,7 @@ export class ListComponent implements OnInit {
                       let freeLocations = 0;
                       res.body.data.forEach(containers => {
                         let rowIndex = containers.row - 1;
+                        containers.selected = false;
                         if (typeof element.container[rowIndex] == 'undefined') {
                           element.container[rowIndex] = [];
                         }
@@ -142,11 +153,24 @@ export class ListComponent implements OnInit {
   selectRowToExpand(row) {
     row.expanded = !row.expanded;
     if (row.expanded) {
+      this.listRowsExpanded[row.id] = row;
       row.dropdown_icon = 'ios-arrow-up';
     } else {
+      delete this.listRowsExpanded[row.id];
       row.dropdown_icon = 'ios-arrow-down';
     }
     this.expandedElement = row;
+  }
+
+  selectLocation(event, data, row, column, iRow, iColumn) {
+    column.selected = !column.selected;
+    if (column.selected) {
+      this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
+      this.countLocationsSelected++;
+    } else {
+      delete this.locationsSelected[column.id];
+      this.countLocationsSelected--;
+    }
   }
 
   rangeFromValue(value) {
@@ -155,5 +179,61 @@ export class ListComponent implements OnInit {
       items.push(i);
     }
     return items;
+  }
+
+  selectAllLocations() {
+
+  }
+
+  printReferencesLocations() {
+
+  }
+
+  disableLocations() {
+    for (let idLocation in this.locationsSelected) {
+      let container = this.locationsSelected[idLocation].column;
+      if (container.enabled) {
+        this.hallsService
+          .updateDisable(container.id)
+          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
+            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
+              this.presentToast('Posición desactivada', null);
+            }));
+          }, (errorResponse: HttpErrorResponse) => {
+            this.presentToast('Error - Errores no estandarizados', 'danger');
+          });
+      } else {
+        this.hallsService
+          .updateEnable(container.id)
+          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
+            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
+              this.presentToast('Posición activada', null);
+            }));
+          }, (errorResponse: HttpErrorResponse) => {
+            this.presentToast('Error - Errores no estandarizados', 'danger');
+          });
+      }
+    }
+    this.reloadData();
+  }
+
+  editLocation() {
+
+  }
+
+  reloadData() {
+    this.locationsSelected = {};
+    this.countLocationsSelected = 0;
+    this.initHalls();
+  }
+
+  async presentToast(msg, color) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 3750,
+      color: color || "primary"
+    });
+    toast.present();
   }
 }

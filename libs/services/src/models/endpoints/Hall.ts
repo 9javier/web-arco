@@ -43,6 +43,7 @@ export namespace HallModel {
         enabled: boolean;
         reference: string;
         on_right_side: boolean;
+        selected: boolean;
       }
     ];
     message: string;
@@ -72,6 +73,18 @@ export namespace HallModel {
     statusCode: number;
     status: number;
     code: number;
+    message: string;
+    name: string;
+  }
+
+  export interface ResponseUpdateEnable {
+    data?: any;
+    message: string;
+    name: string;
+  }
+
+  export interface ResponseUpdateDisable {
+    data?: any;
     message: string;
     name: string;
   }
