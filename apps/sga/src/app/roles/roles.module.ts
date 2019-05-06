@@ -21,6 +21,9 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
     RolesRoutingModule,
     CdkTableModule,
     CommonUiCrudModule
+  ],
+  entryComponents: [
+    StoreComponent
   ]
 })
 export class RolesModule {}
