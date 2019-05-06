@@ -93,8 +93,10 @@ export class ListComponent implements OnInit {
               this.dataSource = res.body.data
                 .map(hall => {
                   let expanded = false;
-                  if (this.listRowsExpanded[hall.id] && this.listRowsExpanded[hall.id].expanded) {
+                  let dropdown_icon = 'ios-arrow-down';
+                  if (this.expandedElement && this.expandedElement.id == hall.id) {
                     expanded = true;
+                    dropdown_icon = 'ios-arrow-up';
                   }
                   return {
                     id: hall.id,
@@ -103,7 +105,7 @@ export class ListComponent implements OnInit {
                     rows: hall.rows,
                     use: '',
                     expanded: expanded,
-                    dropdown_icon: 'ios-arrow-down'
+                    dropdown_icon: dropdown_icon
                   }
                 });
 
@@ -160,6 +162,14 @@ export class ListComponent implements OnInit {
       row.dropdown_icon = 'ios-arrow-down';
     }
     this.expandedElement = row;
+    this.locationsSelected = {};
+    this.countLocationsSelected = 0;
+    for (let rowData of this.dataSource) {
+      if (rowData.id != row.id) {
+        rowData.expanded = false;
+        rowData.dropdown_icon = 'ios-arrow-down';
+      }
+    }
   }
 
   selectLocation(event, data, row, column, iRow, iColumn) {

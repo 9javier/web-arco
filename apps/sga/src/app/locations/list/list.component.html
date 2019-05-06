@@ -17,7 +17,7 @@
         <div [@detailExpand]="detail.element.expanded ? 'expanded' : 'collapsed'" [style.height]="detail.element.expanded ? 'unset' : '0 !important'">
           <table class="element-detail">
             <tr *ngFor="let row of detail.element.container; let iRow = index">
-              <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.empty" [class.location-disabled]="!column.enabled" (click)="selectLocation($event, detail, row, column, iRow, iColumn)"[class.location-selected]="column.selected" >
+              <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.empty" [class.location-disabled]="!column.enabled" (click)="selectLocation($event, detail, row, column, iRow, iColumn)" [class.location-selected]="locationsSelected[column.id]" >
               </td>
             </tr>
           </table>
