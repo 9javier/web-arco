@@ -10,24 +10,12 @@ import {COLLECTIONS} from "../../../../../../config/base";
 })
 export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.maxLength(5)]],
-    createdAt: ['', Validators.required],
-    updatedAt: ['', Validators.required]
+    reference: ['', [Validators.required, Validators.pattern('^J[0-9]{4}')]]
   };
   formBuilderTemplateInputs = [
     {
       name: 'reference',
       label: 'Referencia',
-      type: 'text'
-    },
-    {
-      name: 'createdAt',
-      label: 'Creado',
-      type: 'text'
-    },
-    {
-      name: 'updatedAt',
-      label: 'Actualizado',
       type: 'text'
     }
   ];
