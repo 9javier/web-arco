@@ -119,6 +119,7 @@ export class ListComponent implements OnInit {
                       element.container = [];
                       let totalLocations = res.body.data.length;
                       let freeLocations = 0;
+                      element.totalContainers = totalLocations;
                       res.body.data.forEach(containers => {
                         let rowIndex = containers.row - 1;
                         containers.selected = false;
@@ -161,7 +162,19 @@ export class ListComponent implements OnInit {
       delete this.listRowsExpanded[row.id];
       row.dropdown_icon = 'ios-arrow-down';
     }
+    if (this.expandedElement) {
+      for (let rowContainer of this.expandedElement.container) {
+        for (let container of rowContainer) {
+          if (!container.selected) {
+            container.selected = true;
+          }
+        }
+      }
+    }
     this.expandedElement = row;
+    for (let containerIndex in this.locationsSelected) {
+      this.locationsSelected[containerIndex].column.selected = false;
+    }
     this.locationsSelected = {};
     this.countLocationsSelected = 0;
     for (let rowData of this.dataSource) {
@@ -173,8 +186,8 @@ export class ListComponent implements OnInit {
   }
 
   selectLocation(event, data, row, column, iRow, iColumn) {
-    column.selected = !column.selected;
-    if (column.selected) {
+    // column.selected = !column.selected;
+    if (!this.locationsSelected[column.id]) {
       this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
       this.countLocationsSelected++;
     } else {
@@ -192,7 +205,25 @@ export class ListComponent implements OnInit {
   }
 
   selectAllLocations() {
-
+    if (this.expandedElement.totalContainers != this.countLocationsSelected) {
+      for (let row of this.expandedElement.container) {
+        for (let container of row) {
+          if (!container.selected) {
+            container.selected = true;
+            this.locationsSelected[container.id] = {row: row, column: container};
+            this.countLocationsSelected++;
+          }
+        }
+      }
+    } else {
+      this.locationsSelected = {};
+      this.countLocationsSelected = 0;
+      for (let row of this.expandedElement.container) {
+        for (let container of row) {
+          container.selected = false;
+        }
+      }
+    }
   }
 
   printReferencesLocations() {
@@ -232,6 +263,9 @@ export class ListComponent implements OnInit {
   }
 
   reloadData() {
+    for (let containerIndex in this.locationsSelected) {
+      this.locationsSelected[containerIndex].column.selected = false;
+    }
     this.locationsSelected = {};
     this.countLocationsSelected = 0;
     this.initHalls();
