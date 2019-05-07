@@ -126,7 +126,6 @@ export class ListComponent implements OnInit {
               >
             ) => {
               this.dataSource = res.body.data;
-              console.debug('Test::Data -> ', this.dataSource);
             }
           );
         }

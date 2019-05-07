@@ -42,7 +42,6 @@ export class HallsService {
     warehouseMapForm
   ): Promise<Observable<HttpResponse<HallModel.ResponseStore>>> {
     const warehouseMap: HallModel.Hall = HallModel.formToMap(warehouseMapForm);
-    console.debug('Test::WarehouseMap -> ', warehouseMap);
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<HallModel.ResponseStore>(PATH_POST_STORE, warehouseMap, {
