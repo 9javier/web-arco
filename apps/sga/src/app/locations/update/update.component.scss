@@ -1,0 +1,15 @@
+mat-tab-header {
+  background-color: #222428;
+
+  .mat-tab-label {
+    color: #fff;
+  }
+  .mat-tab-label.mat-tab-label-active {
+    background-color: rgba(255, 255, 255, 0.24);
+  }
+}
+.mat-tab-group.mat-primary {
+  mat-ink-bar.mat-ink-bar {
+    background-color: rgba(255, 255, 255, 0.24);
+  }
+}

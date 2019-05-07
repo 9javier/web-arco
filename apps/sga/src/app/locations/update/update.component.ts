@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Validators } from '@angular/forms';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
+import {ModalController, NavParams} from "@ionic/angular";
 
 @Component({
   selector: 'suite-update',
   templateUrl: './update.component.html',
-  styleUrls: ['./update.component.scss']
+  styleUrls: ['./update.component.scss'],
+  encapsulation : ViewEncapsulation.None
 })
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
@@ -28,11 +30,59 @@ export class UpdateComponent implements OnInit {
       icon: {type: 'md', name: 'view_column'}
     }
   ];
-  title = 'Actualizar Pasillo';
+  title = 'Ubicación ';
   apiEndpoint = 'Wharehouse Maps';
   redirectTo = '/locations';
+  updateForm: FormGroup;
 
-  constructor() {}
+  listProducts: any[] = [
+    {
+      reference: '00126456',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00124540',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00122626',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00127457',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    }
+    ];
 
-  ngOnInit() {}
+  constructor(
+    private modalController: ModalController,
+    private navParams: NavParams,
+    private formBuilder: FormBuilder,
+    ) {}
+
+  ngOnInit() {
+    let container = this.navParams.data.container;
+    this.title += container.column + ' . ' + container.row;
+    this.updateForm = this.formBuilder.group(
+      this.formBuilderDataInputs,
+      {}
+    );
+  }
+
+  goToList() {
+    this.modalController.dismiss();
+  }
+
+  get f() {
+    return this.updateForm.controls;
+  }
+
+  scanProduct() {
+
+  }
+
 }

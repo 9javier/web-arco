@@ -1,5 +1,5 @@
 <ion-text color="primary">
-  <h1><span (click)="goPreviousPage()" class="previous-page-link">{{parentPage}} > </span>{{ title }}</h1>
+  <h1><span *ngIf="parentPage" (click)="goPreviousPage()" class="previous-page-link">{{parentPage}} > </span>{{ title }}</h1>
 </ion-text>
 
 <div class="example-container">
@@ -68,17 +68,24 @@
 </div>
 
 <ion-row class="fab-row-actions">
-  <ion-col size="1" size-xs="2" [offset]="10" [offsetXs]="9" *ngIf="countLocationsSelected > 0">
+  <ion-col size="1" size-xs="2" [offset]="10" [offsetXs]="9" *ngIf="origin == 'list' && countLocationsSelected > 0">
     <ion-fab [@EnterLeave]="'flyIn'" (click)="selectAllLocations()">
       <ion-fab-button color="light">
         <i class="material-icons">select_all</i>
       </ion-fab-button>
     </ion-fab>
   </ion-col>
-  <ion-col size="1" size-xs="1" *ngIf="countLocationsSelected > 0">
+  <ion-col size="1" size-xs="1" *ngIf="origin == 'list' && countLocationsSelected > 0">
     <ion-fab [@EnterLeave]="'flyIn'" (click)="disableLocations()">
       <ion-fab-button color="light">
         <i class="material-icons">visibility_off</i>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="1" [offset]="11" *ngIf="origin == 'manage' && countLocationsSelected == 1">
+    <ion-fab [@EnterLeave]="'flyIn'" (click)="editLocation()">
+      <ion-fab-button>
+        <i class="material-icons">edit</i>
       </ion-fab-button>
     </ion-fab>
   </ion-col>

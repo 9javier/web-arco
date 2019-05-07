@@ -47,6 +47,11 @@ const routes: Routes = [
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
     loadChildren: './locations/locations.module#LocationsModule'
+  },
+  {
+    path: 'warehouse',
+    canActivate: [AuthGuard],
+    loadChildren: './locations/locations.module#LocationsModule'
   }
 ];
 

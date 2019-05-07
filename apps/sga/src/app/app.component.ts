@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
+import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 
 interface MenuItem {
   title: string;
@@ -25,6 +26,11 @@ export class AppComponent implements OnInit {
       title: 'Home',
       url: '/home',
       icon: 'home'
+    },
+    {
+      title: 'Gestión Almacén',
+      url: '/warehouse/manage',
+      icon: 'people'
     },
     {
       title: 'Usuarios',
@@ -72,7 +78,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private menu: MenuController,
     private loginService: Oauth2Service,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private warehouseService: WarehouseService
   ) {
     this.menu.enable(false, 'sidebar');
   }
@@ -103,6 +110,7 @@ export class AppComponent implements OnInit {
           this.showMainHeader = false;
           this.router.navigate(['login']);
         }
+        this.warehouseService.init();
       });
 
       /* Update to display current route on Access Denied from Server */

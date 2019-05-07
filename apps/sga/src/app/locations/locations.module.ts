@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatTableModule, MatCheckboxModule } from '@angular/material';
+import { MatTableModule, MatCheckboxModule , MatTabsModule, MatExpansionModule} from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { LocationsRoutingModule } from "./locations-routing.module";
 import { LocationsComponent } from "./locations.component";
@@ -19,6 +19,8 @@ import {ListComponent} from "./list/list.component";
     IonicModule,
     MatTableModule,
     MatCheckboxModule,
+    MatTabsModule,
+    MatExpansionModule,
     LocationsRoutingModule,
     CommonUiCrudModule,
     CdkTableModule
