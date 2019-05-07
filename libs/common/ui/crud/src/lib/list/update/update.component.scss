@@ -6,7 +6,14 @@
     display: flex;
     flex-direction: column;
     flex: 0 1 18rem;
+    ion-col {
+      padding-left: 0px;
+      padding-right: 0px;   
+    }
   }
+}
+ion-grid {
+  --ion-grid-column-padding: 32px;
 }
 ion-footer:before {
   height: 0;
@@ -14,9 +21,9 @@ ion-footer:before {
 ion-item {
   --border-style: none;
   ion-input, ion-select {
-    border-style: solid;
-    border-width: 2px;
-    border-color: var(--ion-color-medium);
+    --background: var(--ion-color-white);
+    --color: var(--ion-color-dark);
+    border: 2px solid var(--ion-color-tertiary);
     --padding-start: 8px;
   }
 }

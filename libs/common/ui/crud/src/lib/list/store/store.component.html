@@ -8,7 +8,7 @@
     <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
+<ion-content color="light">
   <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
     <ion-grid class="wrapper-form">
       <ion-row class="input-wrapper">
@@ -60,7 +60,7 @@
                   <i  color="medium" *ngIf="input.icon && input.icon.type == 'md'" class="material-icons">{{input.icon.name}}</i>
                   <ion-icon color="medium" *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
               </div>
-              <ion-select class="ion-margin-horizontal" [placeholder]="input.label" [formControl]="f[input.name]" required>
+              <ion-select class="ion-margin-horizontal" [placeholder]="input.label" interface="popover" [formControl]="f[input.name]" required>
                 <ion-select-option *ngFor="let value of input.value" [value]="value.id || value">{{value.name || value}}</ion-select-option>
               </ion-select>
             </ion-item>
