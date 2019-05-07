@@ -57,6 +57,11 @@ export class AppComponent implements OnInit {
       icon: 'filing'
     },
     {
+      title: 'Palets',
+      url: '/pallets/menu',
+      icon: 'cube'
+    },
+    {
       title: 'Logout',
       icon: 'log-out'
     }
