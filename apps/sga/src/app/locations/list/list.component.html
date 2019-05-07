@@ -58,7 +58,7 @@
 </div>
 
 <ion-row class="fab-row-actions">
-  <ion-col size="1" size-xs [offset]="countLocationsSelected > 1 ? 8 : 7" *ngIf="countLocationsSelected > 0">
+  <ion-col size="1" size-xs [offset]="10" *ngIf="countLocationsSelected > 0">
     <ion-fab [@EnterLeave]="'flyIn'" (click)="selectAllLocations()">
       <ion-fab-button color="light">
         <i class="material-icons">select_all</i>
@@ -66,30 +66,9 @@
     </ion-fab>
   </ion-col>
   <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
-    <ion-fab [@EnterLeave]="'flyIn'">
-      <ion-fab-button color="light">
-        <i class="material-icons">delete</i>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
-  <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
-    <ion-fab [@EnterLeave]="'flyIn'" (click)="printReferencesLocations()">
-      <ion-fab-button color="light">
-        <i class="material-icons">local_printshop</i>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
-  <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
     <ion-fab [@EnterLeave]="'flyIn'" (click)="disableLocations()">
       <ion-fab-button color="light">
         <i class="material-icons">visibility_off</i>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
-  <ion-col size="1" size-xs *ngIf="countLocationsSelected == 1">
-    <ion-fab [@EnterLeave]="'flyIn'" (click)="editLocation()">
-      <ion-fab-button>
-        <i class="material-icons">edit</i>
       </ion-fab-button>
     </ion-fab>
   </ion-col>
