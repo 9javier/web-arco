@@ -11,3 +11,30 @@
 ion-footer:before {
   height: 0;
 }
+ion-item {
+  --border-style: none;
+  ion-input, ion-select {
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--ion-color-medium);
+    --padding-start: 8px;
+  }
+}
+ion-select {
+  max-width: 100%;
+  width: 100%;
+}
+.slot-start-icon {
+  margin-inline-end: 0px;
+}
+.slot-end-icon {
+  margin-inline-start: 0px;
+}
+.icon-show-password {
+  position: absolute;
+  z-index: 1200;
+  right: 5px;
+}
+ion-icon {
+  font-size: 24px;
+}

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
+import { RolesService, RolModel } from '@suite/services';
+import { HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'suite-update',
@@ -10,7 +13,9 @@ import { COLLECTIONS } from 'config/base';
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
+    role: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
+    address: ['', [Validators.required, Validators.minLength(4)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required]
   };
@@ -21,18 +26,31 @@ export class UpdateComponent implements OnInit {
       type: 'text'
     },
     {
+      name: 'role',
+      label: 'Rol de usuario',
+      type: 'select',
+      icon: {type: 'ionic', name: 'list-box'},
+      value: []
+    },
+    {
       name: 'email',
       label: 'Correo Electrónico',
       type: 'email'
     },
     {
+      name: 'address',
+      label: 'Dirección',
+      type: 'text',
+      icon: {type: 'ionic', name: 'home'}
+    },
+    {
       name: 'password',
-      label: 'Contraseña',
+      label: 'Nueva Contraseña',
       type: 'password'
     },
     {
       name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
+      label: 'Repetir nueva Contraseña',
       type: 'password'
     }
   ];
@@ -49,7 +67,21 @@ export class UpdateComponent implements OnInit {
     params: []
   };
 
-  constructor() {}
+  constructor(
+    private rolesService: RolesService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.rolesService
+      .getIndex()
+      .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
+        data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
+          this.formBuilderTemplateInputs.map(item => {
+            if (item.name == 'role') {
+              item.value = res.body.data;
+            }
+          });
+        });
+      });
+  }
 }
