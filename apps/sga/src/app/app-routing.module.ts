@@ -35,6 +35,11 @@ const routes: Routes = [
     loadChildren: './jail/jail.module#JailModule'
   },
   {
+    path: 'pallets',
+    canActivate: [AuthGuard],
+    loadChildren: './pallets/pallets.module#PalletsModule'
+  },
+  {
     path: 'permissions',
     loadChildren: './permissions/permissions.module#PermissionsPageModule'
   },
