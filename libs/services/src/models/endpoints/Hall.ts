@@ -46,6 +46,7 @@ export namespace HallModel {
         on_right_side: boolean;
         selected: boolean;
         items: number;
+        incidence: string;
       }
     ];
     message: string;

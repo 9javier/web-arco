@@ -18,6 +18,7 @@
           <table class="element-detail">
             <tr *ngFor="let row of detail.element.container; let iRow = index">
               <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.items == 0 && column.enabled" [class.location-disabled]="!column.enabled" (click)="selectLocation($event, detail, row, column, iRow, iColumn)" [class.location-selected]="locationsSelected[column.id]" >
+                <div *ngIf="column.enabled && column.items > 0 && column.incidence" class="incidence-element-detail" [class.slight-incidence]="column.incidence == 'slight'" [class.serious-incidence]="column.incidence == 'serious'"></div>
               </td>
             </tr>
           </table>
