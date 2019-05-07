@@ -13,11 +13,11 @@
     </ng-container>
 
     <ng-container matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let detail" [attr.colspan]="displayedColumns.length" [class.collapsed-detail]="!detail.element.expanded">
+      <td mat-cell *matCellDef="let detail" [attr.colspan]="displayedColumns.length" [class.collapsed-detail]="!detail.element.expanded" class="row-element-detail">
         <div [@detailExpand]="detail.element.expanded ? 'expanded' : 'collapsed'" [style.height]="detail.element.expanded ? 'unset' : '0 !important'">
           <table class="element-detail">
             <tr *ngFor="let row of detail.element.container; let iRow = index">
-              <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.empty" [class.location-disabled]="!column.enabled" (click)="selectLocation($event, detail, row, column, iRow, iColumn)" [class.location-selected]="locationsSelected[column.id]" >
+              <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.items == 0 && column.enabled" [class.location-disabled]="!column.enabled" (click)="selectLocation($event, detail, row, column, iRow, iColumn)" [class.location-selected]="locationsSelected[column.id]" >
               </td>
             </tr>
           </table>
@@ -42,7 +42,7 @@
 
     <ng-container matColumnDef="icon">
       <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let row">
+      <td mat-cell *matCellDef="let row" class="row-icon-location">
         <ion-icon name="grid"></ion-icon>
       </td>
     </ng-container>

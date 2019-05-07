@@ -6,6 +6,7 @@ export namespace HallModel {
     columns?: number;
     rows?: number;
     warehouse?: {id: number};
+    items?: number;
   }
   export function formToMap(formHall) {
     return {
@@ -44,6 +45,7 @@ export namespace HallModel {
         reference: string;
         on_right_side: boolean;
         selected: boolean;
+        items: number;
       }
     ];
     message: string;

@@ -127,11 +127,14 @@ export class ListComponent implements OnInit {
                           element.container[rowIndex] = [];
                         }
                         element.container[rowIndex].push(containers);
-                        if (containers.enabled) {
+                        if (containers.enabled && containers.items <= 0) {
                           freeLocations++;
                         }
                       });
                       element.locations = freeLocations+'/'+totalLocations+' libres';
+                      if (element.expanded) {
+                        this.expandedElement = element;
+                      }
                     }));
                   });
 
@@ -162,15 +165,6 @@ export class ListComponent implements OnInit {
       delete this.listRowsExpanded[row.id];
       row.dropdown_icon = 'ios-arrow-down';
     }
-    if (this.expandedElement) {
-      for (let rowContainer of this.expandedElement.container) {
-        for (let container of rowContainer) {
-          if (!container.selected) {
-            container.selected = true;
-          }
-        }
-      }
-    }
     this.expandedElement = row;
     for (let containerIndex in this.locationsSelected) {
       this.locationsSelected[containerIndex].column.selected = false;
@@ -186,11 +180,12 @@ export class ListComponent implements OnInit {
   }
 
   selectLocation(event, data, row, column, iRow, iColumn) {
-    // column.selected = !column.selected;
     if (!this.locationsSelected[column.id]) {
       this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
+      this.expandedElement.container[iRow][iColumn].selected = true;
       this.countLocationsSelected++;
     } else {
+      this.expandedElement.container[iRow][iColumn].selected = false;
       delete this.locationsSelected[column.id];
       this.countLocationsSelected--;
     }
