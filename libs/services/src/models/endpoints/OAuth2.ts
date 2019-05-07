@@ -19,6 +19,19 @@ export interface ResponseLogout {
   }
 }
 
+export interface ErrorResponseLogout {
+  data: {
+    error: {
+      statusCode: number
+      status: number
+      code: number
+      message: string
+      name: string
+    }
+    msg: string
+  }
+}
+
 export interface ErrorResponseLogin {
   data: {
     error: {
