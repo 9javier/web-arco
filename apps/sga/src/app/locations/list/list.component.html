@@ -68,14 +68,14 @@
 </div>
 
 <ion-row class="fab-row-actions">
-  <ion-col size="1" size-xs [offset]="10" *ngIf="countLocationsSelected > 0">
+  <ion-col size="1" size-xs="2" [offset]="10" [offsetXs]="9" *ngIf="countLocationsSelected > 0">
     <ion-fab [@EnterLeave]="'flyIn'" (click)="selectAllLocations()">
       <ion-fab-button color="light">
         <i class="material-icons">select_all</i>
       </ion-fab-button>
     </ion-fab>
   </ion-col>
-  <ion-col size="1" size-xs *ngIf="countLocationsSelected > 0">
+  <ion-col size="1" size-xs="1" *ngIf="countLocationsSelected > 0">
     <ion-fab [@EnterLeave]="'flyIn'" (click)="disableLocations()">
       <ion-fab-button color="light">
         <i class="material-icons">visibility_off</i>
