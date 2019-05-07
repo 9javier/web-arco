@@ -9,7 +9,7 @@ import { COLLECTIONS } from 'config/base';
 })
 export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.pattern('/^[P][0-9]{4}$')]]
+    reference: ['', [Validators.required, Validators.pattern('^P[0-9]{4}')]]
   };
   formBuilderTemplateInputs = [
     {
