@@ -130,7 +130,13 @@ export class ListComponent implements OnInit {
                         if (containers.enabled && containers.items <= 0) {
                           freeLocations++;
                         }
+                        if (containers.incidence) {
+                          if (!element.incidence || (element.incidence && element.incidence != 'serious')) {
+                            element.incidence = containers.incidence;
+                          }
+                        }
                       });
+                      element.freeLocations = freeLocations;
                       element.locations = freeLocations+'/'+totalLocations+' libres';
                       if (element.expanded) {
                         this.expandedElement = element;

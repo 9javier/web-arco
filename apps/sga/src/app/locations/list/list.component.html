@@ -44,7 +44,17 @@
     <ng-container matColumnDef="icon">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let row" class="row-icon-location">
-        <ion-icon name="grid"></ion-icon>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <div class="cell-resume-use"></div>
+            </ion-col>
+            <ion-col>
+              <div class="cell-resume-incidence" [class.cell-incidence-serious]="row.incidence == 'serious'" [class.cell-incidence-slight]="row.incidence == 'slight'"></div>
+              <div class="cell-resume-free" [class.cell-not-free]="row.freeLocations <= 0"></div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </td>
     </ng-container>
 
