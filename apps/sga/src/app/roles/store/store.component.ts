@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
-import { RolModel } from '@suite/services';
+import { RolModel, PermissionsModel, PermissionsService } from '@suite/services';
+import { HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'suite-store',
@@ -9,9 +11,12 @@ import { RolModel } from '@suite/services';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
+
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
+    description: ['', [Validators.required, Validators.minLength(4)]],
     sga_enabled: [false, []],
+    groups: [[]],
     app_enabled: [false, []]
   };
   formBuilderTemplateInputs = [
@@ -19,6 +24,12 @@ export class StoreComponent implements OnInit {
       name: 'name',
       label: 'Nombre',
       type: 'text'
+    },
+    {
+      name: 'description',
+      label: 'Descripción',
+      type: 'text',
+      icon: {type: 'ionic', name: 'list-box'},
     },
     {
       name: 'sga_enabled',
@@ -31,6 +42,13 @@ export class StoreComponent implements OnInit {
       label: 'Habilitar en APP',
       type: 'checkbox',
       value: false
+    },
+    {
+      name: 'groups',
+      label: 'Permisos',
+      type: 'checkbox-multiple',
+      icon: {type: 'ionic', name: 'list'},
+      items: []
     }
   ];
   title = 'Crear Rol';
@@ -38,7 +56,22 @@ export class StoreComponent implements OnInit {
     .name;
   redirectTo = '/roles';
 
-  constructor() {}
+  constructor(     
+    private permissionService: PermissionsService,
+    ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.permissionService
+      .getIndex()
+      .then((data: Observable<HttpResponse<PermissionsModel.ResponseIndex>>) => {
+        data.subscribe((res: HttpResponse<PermissionsModel.ResponseIndex>) => {
+          this.formBuilderTemplateInputs.map(item => {
+            if (item.name === 'groups') {
+              item.items = res.body.data;
+            }
+          });
+        });
+      });
+    
+  }
 }

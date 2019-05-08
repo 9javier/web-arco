@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { RemoteTokenResolver } from './guards/auth.remove-token-resolver';
-import { AuthGuardTest } from './guards/auth.guard.1';
 
 const routes: Routes = [
   {

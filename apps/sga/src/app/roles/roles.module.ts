@@ -9,6 +9,7 @@ import { RolesComponent } from './roles.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { AssignModule } from '../assign/assign.module';
 
 @NgModule({
   declarations: [RolesComponent, StoreComponent, UpdateComponent],
@@ -20,7 +21,8 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
     MatCheckboxModule,
     RolesRoutingModule,
     CdkTableModule,
-    CommonUiCrudModule
+    CommonUiCrudModule,
+    AssignModule
   ]
 })
 export class RolesModule {}

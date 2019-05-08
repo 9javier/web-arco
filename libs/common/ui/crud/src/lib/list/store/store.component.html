@@ -65,6 +65,33 @@
               </ion-select>
             </ion-item>
           </div>
+
+          <div *ngIf="input.type === 'checkbox-multiple'">
+              <ion-item>
+                  <div slot="start" class="slot-start-icon">
+                      <i  color="medium" *ngIf="input.icon && input.icon.type == 'md'" class="material-icons">{{input.icon.name}}</i>
+                      <ion-icon color="medium" *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
+                  </div>
+                  <ion-label lines="none" (click)="toggleGroup(input.name)" no-padding>
+                      <span class="btn-title" >{{input.label}}</span>
+                  </ion-label>
+                  <div slot="end" class="slot-start-icon" (click)="toggleGroup(input.name)">
+                      <ion-icon [name]="isGroupShown(input.name) ? 'arrow-dropup' : 'arrow-dropdown'"></ion-icon>
+                    </div>
+              </ion-item>
+              <ion-item>
+                  <ion-label lines="none" no-padding>
+                      <div *ngIf="input.items && isGroupShown(input.name)" inset lines="none">
+                          <ion-item *ngFor="let child of input.items; let j = index" no-padding lines="none">
+                            <mat-checkbox
+                              [checked]="false"
+                              (click)="addValueArray(input.name, child)"
+                            >{{ child.name }}</mat-checkbox>
+                          </ion-item>
+                        </div>
+                  </ion-label>
+              </ion-item>
+          </div>
           <!-- End Input per Type -->
           <!-- Special Cases -->
           <div *ngIf="input.name === 'password'">
@@ -121,7 +148,9 @@
       </ion-row>
     </ion-grid>
   </form>
-  <ion-footer padding>
+
+</ion-content>
+<ion-footer>
     <ion-toolbar>
       <ion-button slot="end" color="light" (click)="goToList()"
       >Cancelar</ion-button
@@ -135,4 +164,3 @@
       >
     </ion-toolbar>
   </ion-footer>
-</ion-content>

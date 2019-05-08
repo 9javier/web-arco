@@ -59,6 +59,7 @@ export class UpdateComponent implements OnInit {
   submitted = false;
   isLoading = false;
   routePath: string;
+  shownGroup = [];
 
   constructor(
     private crudService: CrudService,
@@ -265,7 +266,25 @@ export class UpdateComponent implements OnInit {
       .dismiss()
       .then(() => console.log('dismissed'));
   }
+
+  toggleGroup(group) {
+    if (this.isGroupShown(group)) {
+      this.shownGroup[group] = true;
+    } else {
+      this.shownGroup[group] = group;
+    }
+  };
+
+  isGroupShown(group) {
+    return this.shownGroup[group] === group;
+  };
+
+  addValueArray(name, child){
+    this.f[name].value.push(child.id);
+  }
 }
+
+
 
 // custom validator to check that two fields match
 function MustMatch(controlName: string, matchingControlName: string) {
