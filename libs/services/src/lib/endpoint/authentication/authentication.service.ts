@@ -1,4 +1,3 @@
-import { Platform } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
@@ -9,19 +8,21 @@ const TOKEN_KEY = 'access_token';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  authenticationState = new BehaviorSubject(false);
+  authenticationState = new BehaviorSubject(null);
 
-  constructor(private storage: Storage, private plt: Platform) {
-    this.plt.ready().then(() => {
-      this.checkToken();
-    });
-  }
+  constructor(private storage: Storage) {}
 
-  checkToken() {
-    this.storage.get(TOKEN_KEY).then(res => {
+  async checkToken() {
+    return await this.storage.get(TOKEN_KEY).then(res => {
       if (res) {
         this.authenticationState.next(true);
+        return true;
+      } else {
+        this.authenticationState.next(false);
+        return false;
       }
+    }, error => {
+      return false
     });
   }
 
@@ -32,8 +33,10 @@ export class AuthenticationService {
   }
 
   logout() {
-    return this.storage.remove(TOKEN_KEY).then(() => {
-      this.authenticationState.next(false);
+    return this.storage.remove(TOKEN_KEY).then((data) => {
+      if(this.authenticationState.value) {
+        this.authenticationState.next(false);
+      }
     });
   }
 

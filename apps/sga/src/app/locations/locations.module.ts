@@ -4,28 +4,27 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule, MatCheckboxModule } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
-import { RolesRoutingModule } from './roles-routing.module';
-import { RolesComponent } from './roles.component';
-import { StoreComponent } from './store/store.component';
+import { LocationsRoutingModule } from "./locations-routing.module";
+import { LocationsComponent } from "./locations.component";
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
-import { AssignModule } from '../assign/assign.module';
+import {ListComponent} from "./list/list.component";
+
 
 @NgModule({
-  declarations: [RolesComponent, StoreComponent, UpdateComponent],
+  declarations: [LocationsComponent, UpdateComponent, ListComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
     MatTableModule,
     MatCheckboxModule,
-    RolesRoutingModule,
-    CdkTableModule,
+    LocationsRoutingModule,
     CommonUiCrudModule,
-    AssignModule
+    CdkTableModule
   ],
   entryComponents: [
-    StoreComponent
+    ListComponent
   ]
 })
-export class RolesModule {}
+export class LocationsModule {}

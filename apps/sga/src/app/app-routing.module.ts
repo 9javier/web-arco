@@ -1,13 +1,9 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { RemoteTokenResolver } from './guards/auth.remove-token-resolver';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full'
-  },
   {
     path: 'home',
     canActivate: [AuthGuard],
@@ -28,7 +24,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: './assign/assign.module#AssignModule'
   },
-  { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
+  { path: 'login',
+    resolve: {
+     token: RemoteTokenResolver
+  },
+  loadChildren: './login/login.module#LoginPageModule' },
   {
     path: 'jails',
     canActivate: [AuthGuard],
@@ -52,13 +52,24 @@ const routes: Routes = [
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: './halls/halls.module#HallsModule'
+  },
+  {
+    path: 'warehouses/locations',
+    canActivate: [AuthGuard],
+    loadChildren: './locations/locations.module#LocationsModule'
+  },
+  {
+     path: '',
+     redirectTo: 'login',
+     pathMatch: 'full'
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules  })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [RemoteTokenResolver]
 })
 export class AppRoutingModule {}

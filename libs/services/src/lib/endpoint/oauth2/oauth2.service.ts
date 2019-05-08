@@ -9,7 +9,8 @@ import {
 import {
   RequestLogin,
   ResponseLogin,
-  ResponseLogout
+  ResponseLogout,
+  ErrorResponseLogout
 } from '../../../models/endpoints/OAuth2';
 
 import {
@@ -79,10 +80,18 @@ export class Oauth2Service {
     const authType = `${currentAccessToken}`;
     const headers = new HttpHeaders(this._headers(authType));
 
-    return this.http.get<ResponseLogout>(PATH_GET_LOGOUT, {
-      headers: headers,
-      observe: 'response'
-    });
+    return Observable.create(obs => {
+      this.http.get<ResponseLogout>(PATH_GET_LOGOUT, {
+        headers: headers,
+        observe: 'response'
+      }).subscribe(
+        (data: HttpResponse<ResponseLogout>) => {
+          obs.next(true);
+        }, (error: HttpResponse<ErrorResponseLogout>) => {
+          obs.next(true);
+        }
+      )});
+
   }
 
   private _headers(authValue: string) {
