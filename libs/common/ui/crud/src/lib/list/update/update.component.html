@@ -8,7 +8,7 @@
     <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content padding>
+<ion-content>
   <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
     <ion-grid class="wrapper-form">
       <ion-row class="input-wrapper">
@@ -61,8 +61,10 @@
                     <i  color="medium" *ngIf="input.icon && input.icon.type == 'md'" class="material-icons">{{input.icon.name}}</i>
                     <ion-icon color="medium" *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
                 </div>
-                <ion-select class="ion-margin-horizontal" [placeholder]="input.label" [formControl]="f[input.name]" required>
-                  <ion-select-option *ngFor="let value of input.value" [value]="value.id || value">{{value.name || value}}</ion-select-option>
+                <ion-select class="ion-margin-horizontal" [placeholder]="input.label" interface="popover"
+                  [formControl]="f[input.name]" required [compareWith]="isSelected">
+                  <ion-select-option *ngFor="let value of input.value" 
+                  [value]="input.name == 'roles' ? [{id: value.id}] : value.id || value" >{{value.name || value}}</ion-select-option>
                 </ion-select>
               </ion-item>
           </div>
@@ -148,14 +150,13 @@
       </ion-row>
     </ion-grid>
   </form>
-
 </ion-content>
 <ion-footer>
     <ion-toolbar>
       <ion-button slot="end" color="light" (click)="goToList()"
       >Cancelar</ion-button
       >
-      <ion-button
+      <ion-button 
         slot="end"
         color="primary"
         [disabled]="updateForm.invalid"

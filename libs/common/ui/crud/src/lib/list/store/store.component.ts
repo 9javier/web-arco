@@ -88,7 +88,13 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-
+  isSelected = (o1, o2) => {
+    if(o1 === o2 || (o1[0] && o2.id === o1[0].id) ) {  
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   onSubmit() {
     this.submitted = true;

@@ -88,7 +88,7 @@ export class UpdateComponent implements OnInit {
     } else if (this.routePath == '/halls') {
       this.getHalls(row);
     }
-    console.log(this.updateForm);
+    //console.log(this.updateForm);
   }
 
   // convenience getter for easy access to form fields
@@ -112,6 +112,15 @@ export class UpdateComponent implements OnInit {
     this.updateForm.patchValue(row);
     this.paramId = row.id;
   }
+
+
+  isSelected = (o1, o2) => {
+    if(o1 === o2 || (o1[0] && o2.id === o1[0].id) ) {  
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   getUser(id) {
     return from(

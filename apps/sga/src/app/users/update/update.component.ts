@@ -13,11 +13,11 @@ import { Observable } from 'rxjs';
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
-    role: ['', [Validators.required]],
+    roles: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     address: ['', [Validators.required, Validators.minLength(4)]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    password: [''],
+    confirmPassword: ['']
   };
   formBuilderTemplateInputs = [
     {
@@ -26,7 +26,7 @@ export class UpdateComponent implements OnInit {
       type: 'text'
     },
     {
-      name: 'role',
+      name: 'roles',
       label: 'Rol de usuario',
       type: 'select',
       icon: {type: 'ionic', name: 'list-box'},
@@ -77,7 +77,7 @@ export class UpdateComponent implements OnInit {
       .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
           this.formBuilderTemplateInputs.map(item => {
-            if (item.name == 'role') {
+            if (item.name === 'roles') {
               item.value = res.body.data;
             }
           });
