@@ -32,6 +32,7 @@ import {UpdateComponent as updateHall} from "../../../../../../../apps/sga/src/a
 import {UpdateComponent as updateWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
 import {HallsService} from "../../../../../../services/src/lib/endpoint/halls/halls.service";
 import {HallModel} from "../../../../../../services/src/models/endpoints/Hall";
+import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 
 @Component({
   selector: 'suite-ui-crud-list',
@@ -60,7 +61,8 @@ export class ListComponent implements OnInit {
     public loadingController: LoadingController,
     private hallsService: HallsService,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private warehouseService: WarehouseService
 
   ) {
     console.log(this.dataSource);
@@ -221,6 +223,9 @@ export class ListComponent implements OnInit {
       modal.onDidDismiss()
         .then(() => {
           this.loadData();
+          if (this.routePath == '/warehouses') {
+            this.warehouseService.init();
+          }
         });
 
       return await modal.present();

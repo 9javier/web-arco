@@ -1450,6 +1450,39 @@
 						"description": "Solo se puede agregar una categoría si es un Warehouse de tipo Tienda (Store)"
 					},
 					"response": []
+				},
+				{
+					"name": "Main",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/warehouses/main",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"warehouses",
+								"main"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

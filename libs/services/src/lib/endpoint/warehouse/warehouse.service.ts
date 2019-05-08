@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import { AuthenticationService } from '../authentication/authentication.service';
 import {PATH} from "../../../../../../config/base";
 
-const PATH_GET_WAREHOUSE_MAIN: string = PATH('Permissions', 'Show');
+const PATH_GET_WAREHOUSE_MAIN: string = PATH('Warehouses', 'Main');
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,6 @@ export class WarehouseService {
     }).subscribe((res: HttpResponse<any>) => {
       console.debug('Test::Response -> ', res);
       this.idWarehouseMain = res.body.data.id;
-      this.idWarehouseMain = 1;
     });
   }
 
