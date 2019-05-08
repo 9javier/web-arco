@@ -193,14 +193,18 @@ export class ListComponent implements OnInit {
   }
 
   selectLocation(event, data, row, column, iRow, iColumn) {
-    if (!this.locationsSelected[column.id]) {
-      this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
-      this.expandedElement.container[iRow][iColumn].selected = true;
-      this.countLocationsSelected++;
+    if (this.origin == 'list') {
+      if (!this.locationsSelected[column.id]) {
+        this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
+        this.expandedElement.container[iRow][iColumn].selected = true;
+        this.countLocationsSelected++;
+      } else {
+        this.expandedElement.container[iRow][iColumn].selected = false;
+        delete this.locationsSelected[column.id];
+        this.countLocationsSelected--;
+      }
     } else {
-      this.expandedElement.container[iRow][iColumn].selected = false;
-      delete this.locationsSelected[column.id];
-      this.countLocationsSelected--;
+      this.editLocation(column);
     }
   }
 
@@ -266,8 +270,7 @@ export class ListComponent implements OnInit {
     this.reloadData();
   }
 
-  async editLocation() {
-    let container = this.locationsSelected[Object.keys(this.locationsSelected)[0]].column;
+  async editLocation(container) {
     const modal = await this.modalController.create({
       component: UpdateComponent,
       componentProps: { container: container }

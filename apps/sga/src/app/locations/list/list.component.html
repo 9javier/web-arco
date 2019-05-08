@@ -82,11 +82,4 @@
       </ion-fab-button>
     </ion-fab>
   </ion-col>
-  <ion-col size="1" [offset]="11" *ngIf="origin == 'manage' && countLocationsSelected == 1">
-    <ion-fab [@EnterLeave]="'flyIn'" (click)="editLocation()">
-      <ion-fab-button>
-        <i class="material-icons">edit</i>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
 </ion-row>
