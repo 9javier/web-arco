@@ -9,8 +9,8 @@ import {ModalController} from "@ionic/angular";
 })
 export class WarehousesComponent implements OnInit {
   title = 'Almacenes';
-  displayedColumns: string[] = ['select', 'id', 'name', 'description', 'reference', 'is_store', 'is_main', 'buttons-warehouse'];
-  columns: string[] = ['id', 'name', 'description', 'reference', 'is_store', 'is_main'];
+  displayedColumns: string[] = ['select', 'name', 'description', 'reference', 'buttons-warehouse'];
+  columns: string[] = ['name', 'description', 'reference'];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses')
     .name;
   routePath = '/warehouses';

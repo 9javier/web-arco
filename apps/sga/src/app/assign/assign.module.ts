@@ -20,6 +20,7 @@ import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.
     MatExpansionModule,
     MatSlideToggleModule,
     MatListModule
-  ]
+  ],
+  exports: [RolToUserComponent, PermissionToRolComponent]
 })
 export class AssignModule {}

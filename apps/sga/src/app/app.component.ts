@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
     this.showMainHeader = false;
     this.displaySmallSidebar = false;
     this.showSidebar = false;
-    this.platform.ready().then(() => {
+    this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.menu.enable(false, 'sidebar');
@@ -92,31 +92,32 @@ export class AppComponent implements OnInit {
         : (this.deploySidebarSmallDevices = false);
 
       /* Check for Authenticated user */
+      await this.authenticationService.checkToken();
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
           this.router.navigate(['home']).then(sucess => {
-            this.showMainHeader = true;
-            this.menu.enable(true, 'sidebar');
+          this.showMainHeader = true;
+          this.menu.enable(true, 'sidebar');
           });
         } else {
           this.menu.enable(false, 'sidebar');
           this.showMainHeader = false;
           this.router.navigate(['login']);
         }
+
       });
 
       /* Update to display current route on Access Denied from Server */
-
-      this.router.events.subscribe(ev => {
-        if (ev instanceof NavigationEnd) {
-          console.log(ev.url);
-          this.appPages.map((page, i) =>
-            page.url === ev.url
-              ? (this.currentRoute = this.appPages[i].title)
-              : null
-          );
-        }
-      });
+      // this.router.events.subscribe(ev => {
+      //   if (ev instanceof NavigationEnd) {
+      //     console.log(ev.url);
+      //     this.appPages.map((page, i) =>
+      //       page.url === ev.url
+      //         ? (this.currentRoute = this.appPages[i].title)
+      //         : null
+      //     );
+      //   }
+      // });
     });
   }
 
