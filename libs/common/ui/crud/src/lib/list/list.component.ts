@@ -103,7 +103,7 @@ export class ListComponent implements OnInit {
     if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
       this.initUsers();
       this.parentPage = null;
-    } else if (this.routePath == '/halls') {
+    } else if (this.routePath == '/halls' || this.routePath == '/locations') {
       this.warehouseSelected = this.paramsReceived.params.id;
       this.initHalls();
       this.parentPage = 'Almacenes';
@@ -126,7 +126,6 @@ export class ListComponent implements OnInit {
               >
             ) => {
               this.dataSource = res.body.data;
-              console.debug('Test::Data -> ', this.dataSource);
             }
           );
         }
@@ -282,6 +281,11 @@ export class ListComponent implements OnInit {
   showWarehouseMaps (event, row) {
     event.stopPropagation();
     this.router.navigate([`/warehouses/halls/${row.id}`]);
+  }
+
+  showWarehousePoints (event, row) {
+    event.stopPropagation();
+    this.router.navigate([`/warehouses/locations/${row.id}`]);
   }
 
   async presentUsertDeleteAlert(

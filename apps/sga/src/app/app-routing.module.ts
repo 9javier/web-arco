@@ -44,10 +44,15 @@ const routes: Routes = [
     loadChildren: './halls/halls.module#HallsModule'
   },
   {
+    path: 'warehouses/locations',
+    canActivate: [AuthGuard],
+    loadChildren: './locations/locations.module#LocationsModule'
+  },
+  {
      path: '',
      redirectTo: 'login',
      pathMatch: 'full'
-  },
+  }
 ];
 
 @NgModule({
