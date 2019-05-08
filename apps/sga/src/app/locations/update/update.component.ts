@@ -1,6 +1,5 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { COLLECTIONS } from 'config/base';
 import {ModalController, NavParams} from "@ionic/angular";
 
 @Component({
@@ -55,8 +54,49 @@ export class UpdateComponent implements OnInit {
     {
       reference: '00121123',
       name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo'
     }
     ];
+
+  listRacks: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  listRows: number[] = [1, 2, 3, 4, 5];
+  listColumns: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+  listEnable: string[] = ['Activar', 'Desactivar'];
 
   constructor(
     private modalController: ModalController,

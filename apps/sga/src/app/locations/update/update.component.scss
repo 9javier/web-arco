@@ -13,3 +13,64 @@ mat-tab-header {
     background-color: rgba(255, 255, 255, 0.24);
   }
 }
+
+@media (max-width: 767px) {
+  div.mat-tab-body-wrapper {
+    height: 86vh;
+  }
+  .fab-row-actions {
+    position: fixed;
+    bottom: 70px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  div.mat-tab-body-wrapper {
+    height: 52vh;
+  }
+  .fab-row-actions {
+    position: fixed;
+    bottom: 70px;
+    width: 100%;
+  }
+}
+
+.footer-save {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.footer-save:before {
+  background: none;
+}
+
+.mat-accordion.accordion-products .mat-expansion-panel:last-of-type {
+  padding-bottom: 76px;
+}
+
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
+.fab-row-actions ion-fab {
+  margin: 10px 0;
+}
+
+.wrapper-form {
+  display: flex;
+  flex-direction: column;
+
+  ion-row.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 16rem;
+  }
+}
+ion-footer:before {
+  height: 0;
+}
