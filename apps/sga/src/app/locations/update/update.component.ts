@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ModalController, NavParams} from "@ionic/angular";
+import {AlertController, LoadingController, ModalController, NavParams, ToastController} from "@ionic/angular";
 import {InventoryService} from "../../../../../../libs/services/src/lib/endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../../../../../libs/services/src/models/endpoints/Inventory";
 import {Observable} from "rxjs";
@@ -39,6 +39,7 @@ export class UpdateComponent implements OnInit {
   updateForm: FormGroup;
 
   container = null;
+  warehouseId: number;
 
   listProducts: any[] = [];
   listRacks: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -160,15 +161,21 @@ export class UpdateComponent implements OnInit {
     }
   ];
 
+  loading = null;
+
   constructor(
     private modalController: ModalController,
     private navParams: NavParams,
     private formBuilder: FormBuilder,
-    private inventoryService: InventoryService
-    ) {}
+    private alertController: AlertController,
+    private inventoryService: InventoryService,
+    private loadingController: LoadingController,
+    private toastController: ToastController
+  ) {}
 
   ngOnInit() {
     this.container = this.navParams.data.container;
+    this.warehouseId = this.navParams.data.warehouseId;
     this.title += this.container.column + ' . ' + this.container.row;
     this.updateForm = this.formBuilder.group(
       this.formBuilderDataInputs,
@@ -205,6 +212,76 @@ export class UpdateComponent implements OnInit {
 
   scanProduct() {
 
+  }
+
+  async addProduct() {
+    const alert = await this.alertController.create({
+      header: 'Nueva entrada',
+      inputs: [
+        {
+          name: 'productReference',
+          type: 'text',
+          placeholder: 'Referencia'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          }
+        }, {
+          text: 'Vale',
+          handler: (result) => {
+            let productReference = result.productReference;
+            if (productReference) {
+              if (!this.loading) {
+                this.showLoading('Ubicando producto...');
+              }
+
+              let inventoryProcess: InventoryModel.Inventory = {
+                productReference: productReference,
+                containerReference: this.container.reference,
+                warehouseId: this.warehouseId
+              };
+              this.inventoryService
+                .postStore(inventoryProcess)
+                .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
+                  data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+                    if (this.loading) {
+                      this.loading.dismiss();
+                      this.loading = null;
+                    }
+                    this.presentToast('Producto ' + productReference + ' añadido a la ubicación ' + this.title, 'success');
+                  });
+                });
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async showLoading(message: string) {
+    this.loading = await this.loadingController.create({
+      message: message,
+      translucent: true,
+    });
+    return await this.loading.present();
+  }
+
+  async presentToast(msg, color) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 3750,
+      color: color || "primary"
+    });
+    toast.present();
   }
 
 }

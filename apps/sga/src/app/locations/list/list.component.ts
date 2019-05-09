@@ -273,7 +273,7 @@ export class ListComponent implements OnInit {
   async editLocation(container) {
     const modal = await this.modalController.create({
       component: UpdateComponent,
-      componentProps: { container: container }
+      componentProps: { container: container, warehouseId: this.warehouseSelected }
     });
 
     modal.onDidDismiss()
