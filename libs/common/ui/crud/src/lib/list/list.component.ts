@@ -80,6 +80,7 @@ export class ListComponent implements OnInit {
   @Input() dataColumns: string[];
   @Input() displayedColumns: string[];
   @Input() routePath: string;
+  @Input() printable: boolean;
 
   // Presentation Layer
   dataSource: any[] = [];
