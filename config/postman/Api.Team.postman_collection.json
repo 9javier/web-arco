@@ -2436,8 +2436,715 @@
 					}
 				}
 			]
-		}
-	],
+		},
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show by Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/product/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "product",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by Warehouse",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/warehouse/2",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "warehouse",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by Rack",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/rack/2",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "rack",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by Container",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/container/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "container",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by Container Reference",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/warehouse/2/container/P001A01C001",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "warehouse",
+                "2",
+                "container",
+                "P001A01C001"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by Containers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"ids\":[1,2,3,4]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/container",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "container"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by Containers References",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/container/reference",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "container",
+                "reference"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Inventory Process",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Store",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"productReference\": \"000000030100100001\",\n    \"containerReference\": \"P000A05C001\",\n    \"warehouseId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process/product/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process",
+                "product",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Rollback",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process/rollback/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process",
+                "rollback",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by container",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process/container/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process",
+                "container",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by containers",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"ids\":[1,2,3]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process/container",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process",
+                "container"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by containers references",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/inventory/process/container/reference",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "inventory",
+                "process",
+                "container",
+                "reference"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
 	"auth": {
 		"type": "oauth2",
 		"oauth2": [
