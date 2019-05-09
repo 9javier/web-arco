@@ -13,6 +13,14 @@ export * from './lib/endpoint/permissions/permissions.service';
 export * from './models/endpoints/User';
 export * from './lib/endpoint/users/users.service';
 
+/** Group */
+export * from './models/endpoints/Group';
+export * from './lib/endpoint/groups/groups.service';
+
+/** Warehouse */
+export * from './models/endpoints/Warehouse';
+export * from './lib/endpoint/warehouses/warehouses.service';
+
 /** Roles */
 export * from './models/endpoints/Rol';
 export * from './lib/endpoint/roles/roles.service';
