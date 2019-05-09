@@ -45,6 +45,120 @@ export class UpdateComponent implements OnInit {
   listRows: number[] = [1, 2, 3, 4, 5];
   listColumns: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
   listEnable: string[] = ['Activar', 'Desactivar'];
+  listHistory: any[] = [
+    {
+      reference: '00126456',
+      name: 'MARCA Modelo Modelo',
+      date_add: '01/10/2020',
+      date_upd: '05/02/2021',
+      date_access: '03/11/2021',
+      errors: '1'
+    },
+    {
+      reference: '00124540',
+      name: 'MARCA Modelo Modelo',
+      date_add: '2/21/2020',
+      date_upd: '602/2021',
+      date_access: '03/11/2021',
+      errors: '2'
+    },
+    {
+      reference: '00122626',
+      name: 'MARCA Modelo Modelo',
+      date_add: '3/21/2020',
+      date_upd: '702/2021',
+      date_access: '03/11/2021',
+      errors: '3'
+    },
+    {
+      reference: '00127457',
+      name: 'MARCA Modelo Modelo',
+      date_add: '4/21/2020',
+      date_upd: '802/2021',
+      date_access: '03/11/2021',
+      errors: 'Ninguno'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '5/21/2020',
+      date_upd: '902/2021',
+      date_access: '03/11/2021',
+      errors: '5'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '6/21/2020',
+      date_upd: '1002/2021',
+      date_access: '03/11/2021',
+      errors: '6'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '7/21/2020',
+      date_upd: '1102/2021',
+      date_access: '03/11/2021',
+      errors: '7'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '8/21/2020',
+      date_upd: '1202/2021',
+      date_access: '03/11/2021',
+      errors: 'Ninguno'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '9/21/2020',
+      date_upd: '1302/2021',
+      date_access: '03/11/2021',
+      errors: '9'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '10/10/2020',
+      date_upd: '14/02/2021',
+      date_access: '03/11/2021',
+      errors: '10'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '11/10/2020',
+      date_upd: '15/02/2021',
+      date_access: '03/11/2021',
+      errors: 'Ninguno'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '12/10/2020',
+      date_upd: '16/02/2021',
+      date_access: '03/11/2021',
+      errors: '12'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '13/10/2020',
+      date_upd: '17/02/2021',
+      date_access: '03/11/2021',
+      errors: '13'
+    },
+    {
+      reference: '00121123',
+      name: 'MARCA Modelo Modelo',
+      date_add: '14/10/2020',
+      date_upd: '18/02/2021',
+      date_access: '03/11/2021',
+      errors: 'Ninguno'
+    }
+  ];
 
   constructor(
     private modalController: ModalController,

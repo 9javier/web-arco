@@ -108,18 +108,21 @@
   </ng-template>
 
   <ng-template #historyContainer let-lessonsCounter="estimate">
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let product of listProducts">
+    <mat-accordion class="accordion-history">
+      <mat-expansion-panel *ngFor="let productHistory of listHistory">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{product.reference}}
+            {{productHistory.reference}}
           </mat-panel-title>
           <mat-panel-description>
-            {{product.name}}
+            {{productHistory.name}}
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <p>I'm visible because I am open</p>
+        <p>Añadido: <span class="value-history">{{productHistory.date_add}}</span></p>
+        <p>Modificado: <span class="value-history">{{productHistory.date_upd}}</span></p>
+        <p>Último Acceso: <span class="value-history">{{productHistory.date_access}}</span></p>
+        <p>Errores: <span class="value-history">{{productHistory.errors}}</span></p>
       </mat-expansion-panel>
     </mat-accordion>
   </ng-template>

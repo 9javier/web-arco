@@ -63,6 +63,18 @@ mat-tab-header {
   padding: 0;
 }
 
+.mat-accordion.accordion-history {
+  p {
+    -webkit-text-stroke: 0 #000000;
+    font-size: 16px;
+    line-height: 1.25;
+    color: #979797;
+    span.value-history {
+      color: #212121;
+    }
+  }
+}
+
 .horizontal-fab {
   display: flex;
   flex: 1;
