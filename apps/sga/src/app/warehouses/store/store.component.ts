@@ -36,7 +36,7 @@ export class StoreComponent implements OnInit {
     },
     {
       name: 'is_store',
-      label: 'Es almacén',
+      label: 'Es tienda',
       type: 'checkbox',
       value: false
     },
