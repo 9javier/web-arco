@@ -20,6 +20,26 @@ npm install
 
 then for
 
+
+### API requests config
+
+- Go to: 
+```bash
+Krack/config/postman/Server.postman_enviroment.json
+```
+
+- Set the value of your local server where the API is running
+```bash
+"values": [
+    {
+      "key": "url",
+      "value": "http://localhost:8080",
+      ...
+     }
+ ...
+ ]
+```
+
 ### Web development
 
 SGA development
