@@ -8,8 +8,8 @@ import { COLLECTIONS } from 'config/base';
 })
 export class RolesComponent implements OnInit {
   title = 'Roles';
-  displayedColumns: string[] = ['name', 'description', 'select'];
-  columns: string[] = ['name', 'description'];
+  displayedColumns: string[] = ['id', 'name', 'sga_enabled', 'app_enabled' , 'select'];
+  columns: string[] = ['id', 'name', 'sga_enabled', 'app_enabled'];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Roles')
     .name;
   routePath = '/roles';
