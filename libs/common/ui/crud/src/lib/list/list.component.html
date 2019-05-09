@@ -70,6 +70,16 @@
     </ion-fab>
   </ion-col>
   <ion-col size="2" size-xs>
+    <ion-fab
+      *ngIf="showDeleteButton"
+      [@EnterLeave]="'flyIn'"
+     >
+      <ion-fab-button color="light">
+        <ion-icon name="print"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="2" size-xs>
     <ion-fab>
       <ion-fab-button (click)="goToStore()">
         <ion-icon name="add"></ion-icon>
