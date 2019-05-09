@@ -1,0 +1,41 @@
+<ion-content padding>
+  <ion-text color="primary"> <h1>Asignar grupo a tienda</h1> </ion-text>
+  <mat-expansion-panel
+    *ngFor="let group of groups"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> {{ group.id }} </mat-panel-title>
+      <mat-panel-description> {{ group.name }} </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <h2 class="example-h2"> Tiendas </h2>
+    <div *ngIf="!isLoadingWarehouses">
+      <mat-selection-list
+        #rolesSelection
+        *ngFor="
+            let warehouse of groupWarehousesSelected;
+            let i = index;
+            trackBy: trackById
+          "
+        (selectionChange)="
+            indexSelected = i;
+            assignGroupToWarehouse(group, i, warehouse, matListOption)
+          "
+      >
+        <mat-list-option
+          #matListOption
+          [hidden]="isLoadingAssignGroupToWarehouse && indexSelected === i"
+          [selected]="warehouse.selected"
+          [value]="warehouse.name"
+        >
+          <p>{{ warehouse.name }}</p>
+        </mat-list-option>
+        <mat-list
+          *ngIf="isLoadingAssignGroupToWarehouse && indexSelected === i"
+          style="display: flex; justify-content:center;"
+        ><ion-spinner></ion-spinner
+        ></mat-list>
+      </mat-selection-list>
+    </div>
+  </mat-expansion-panel>
+</ion-content>
