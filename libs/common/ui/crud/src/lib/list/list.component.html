@@ -48,6 +48,12 @@
       <ion-button fill="outline" (click)="showWarehousePoints($event, row)"><i class="material-icons">grid_on</i></ion-button>
     </td>
   </ng-container>
+  <ng-container matColumnDef="buttons-print">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let row">
+      <ion-button fill="outline"><i class="material-icons">print</i></ion-button>
+    </td>
+  </ng-container>
 </table>
 </div>
 
@@ -61,6 +67,16 @@
     >
       <ion-fab-button color="light">
         <ion-icon name="trash"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-col>
+  <ion-col size="2" size-xs>
+    <ion-fab
+      *ngIf="showDeleteButton && printable"
+      [@EnterLeave]="'flyIn'"
+    >
+      <ion-fab-button color="light">
+        <ion-icon name="print"></ion-icon>
       </ion-fab-button>
     </ion-fab>
   </ion-col>
