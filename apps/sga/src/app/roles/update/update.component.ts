@@ -35,19 +35,19 @@ export class UpdateComponent implements OnInit {
       type: 'checkbox',
       value: false
     },
-    {
-      name: 'groups',
-      label: 'Permisos',
-      type: 'checkbox-multiple',
-      icon: {type: 'ionic', name: 'list'},
-      items: []
-    }
+    // {
+    //   name: 'groups',
+    //   label: 'Permisos',
+    //   type: 'checkbox-multiple',
+    //   icon: {type: 'ionic', name: 'list'},
+    //   items: []
+    // }
   ];
   formBuilderDataInputs = {
-    name: ['', [Validators.required, Validators.minLength(4)]],
+    name: ['', [Validators.required, Validators.minLength(3)]],
     description: ['', [Validators.required, Validators.minLength(4)]],
     sga_enabled: [this.formBuilderTemplateInputs[1].value, []],
-    groups: [[]],
+    // groups: [[]],
     app_enabled: [this.formBuilderTemplateInputs[2].value, []]
   };
   title = 'Actualizar Rol';
@@ -59,16 +59,16 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.permissionService
-      .getIndex()
-      .then((data: Observable<HttpResponse<PermissionsModel.ResponseIndex>>) => {
-        data.subscribe((res: HttpResponse<PermissionsModel.ResponseIndex>) => {
-          this.formBuilderTemplateInputs.map(item => {
-            if (item.name === 'groups') {
-              item.items = res.body.data;
-            }
-          });
-        });
-      });
+    // this.permissionService
+    //   .getIndex()
+    //   .then((data: Observable<HttpResponse<PermissionsModel.ResponseIndex>>) => {
+    //     data.subscribe((res: HttpResponse<PermissionsModel.ResponseIndex>) => {
+    //       this.formBuilderTemplateInputs.map(item => {
+    //         if (item.name === 'groups') {
+    //           item.items = res.body.data;
+    //         }
+    //       });
+    //     });
+    //   });
   }
 }

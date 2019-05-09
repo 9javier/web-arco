@@ -41,11 +41,11 @@ export class AppComponent implements OnInit {
       url: '/assign/rol/user',
       icon: 'person'
     },
-    {
-      title: 'Asignar Permiso a Rol',
-      url: '/assign/per/rol',
-      icon: 'person'
-    },
+    // {
+    //   title: 'Asignar Permiso a Rol',
+    //   url: '/assign/per/rol',
+    //   icon: 'person'
+    // },
     {
       title: 'Almacenes',
       url: '/warehouses',
