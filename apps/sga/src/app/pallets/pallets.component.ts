@@ -10,7 +10,7 @@ import {ModalController} from "@ionic/angular";
 
 export class PalletsComponent implements OnInit {
   public title = 'Palets';
-  public displayedColumns: string[] = ['id', 'reference', 'select'];
+  public displayedColumns: string[] = ['select', 'id', 'reference', 'buttons-print' ];
   public columns: string[] = ['id', 'reference'];
   public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Pallets').name;
   public routePath = '/pallets';
