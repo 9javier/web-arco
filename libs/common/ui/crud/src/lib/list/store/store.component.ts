@@ -102,7 +102,8 @@ export class StoreComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/groups') {
+
       this.postStore();
     } else if (this.routePath == '/halls') {
       this.postStoreHall();
