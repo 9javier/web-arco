@@ -9,32 +9,22 @@
     </mat-expansion-panel-header>
 
     <h2 class="example-h2"> Tiendas </h2>
-    <div *ngIf="!isLoadingWarehouses">
+    <div *ngIf="true">
       <mat-selection-list
-        #rolesSelection
+        #warehousesSelection
         *ngFor="
-            let warehouse of groupWarehousesSelected;
+            let warehouse of warehouses;
             let i = index;
-            trackBy: trackById
           "
-        (selectionChange)="
-            indexSelected = i;
-            assignGroupToWarehouse(group, i, warehouse, matListOption)
-          "
-      >
+       >
         <mat-list-option
           #matListOption
-          [hidden]="isLoadingAssignGroupToWarehouse && indexSelected === i"
-          [selected]="warehouse.selected"
+          [selected]="warehouse.groupId == group.id"
           [value]="warehouse.name"
+          (click)="assignGroupToWarehouse(warehouse, group)"
         >
           <p>{{ warehouse.name }}</p>
         </mat-list-option>
-        <mat-list
-          *ngIf="isLoadingAssignGroupToWarehouse && indexSelected === i"
-          style="display: flex; justify-content:center;"
-        ><ion-spinner></ion-spinner
-        ></mat-list>
       </mat-selection-list>
     </div>
   </mat-expansion-panel>
