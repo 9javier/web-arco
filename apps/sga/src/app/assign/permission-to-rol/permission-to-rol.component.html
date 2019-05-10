@@ -12,7 +12,11 @@
         <ion-row>
           <ion-col size="3"><mat-panel-title> {{ rol.name }} </mat-panel-title></ion-col>
           <ion-col size="7"><mat-panel-description> {{ rol.description }} </mat-panel-description></ion-col>
-          <ion-col size="1"><ion-icon color="primary" name="create" (click)="$event.stopPropagation(); goToUpdate(rol)"></ion-icon></ion-col>
+          <ion-col size="1">
+              <ion-button color="primary" fill="outline" size="small" (click)="$event.stopPropagation(); goToUpdate(rol)">
+                  <ion-icon slot="icon-only" color="primary" name="create"></ion-icon>
+                </ion-button>
+          </ion-col>
         </ion-row>
       </ion-grid>
         

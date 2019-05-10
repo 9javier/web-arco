@@ -115,7 +115,7 @@ export class UpdateComponent implements OnInit {
 
 
   isSelected = (o1, o2) => {
-    if(o1 === o2 || (o1[0] && o2.id === o1[0].id) ) {  
+    if(o1 === o2 || o2.id === o1 ) {  
       return true;
     } else {
       return false;

@@ -64,7 +64,7 @@
                 <ion-select class="ion-margin-horizontal" [placeholder]="input.label" interface="popover"
                   [formControl]="f[input.name]" required [compareWith]="isSelected">
                   <ion-select-option *ngFor="let value of input.value" 
-                  [value]="input.name == 'roles' ? [{id: value.id}] : value.id || value" >{{value.name || value}}</ion-select-option>
+                  [value]="value.id || value" >{{value.name || value}}</ion-select-option>
                 </ion-select>
               </ion-item>
           </div>
