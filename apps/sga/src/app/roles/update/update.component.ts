@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormControl, FormArray } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
+import { PermissionsService, PermissionsModel } from '@suite/services';
+import { Observable } from 'rxjs';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'suite-update',
@@ -15,6 +18,12 @@ export class UpdateComponent implements OnInit {
       type: 'text'
     },
     {
+      name: 'description',
+      label: 'Descripción',
+      type: 'text',
+      icon: {type: 'ionic', name: 'list-box'},
+    },
+    {
       name: 'sga_enabled',
       label: 'Habilitar SGA',
       type: 'checkbox',
@@ -25,11 +34,20 @@ export class UpdateComponent implements OnInit {
       label: 'Habilitar APP',
       type: 'checkbox',
       value: false
+    },
+    {
+      name: 'groups',
+      label: 'Permisos',
+      type: 'checkbox-multiple',
+      icon: {type: 'ionic', name: 'list'},
+      items: []
     }
   ];
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
+    description: ['', [Validators.required, Validators.minLength(4)]],
     sga_enabled: [this.formBuilderTemplateInputs[1].value, []],
+    groups: [[]],
     app_enabled: [this.formBuilderTemplateInputs[2].value, []]
   };
   title = 'Actualizar Rol';
@@ -37,7 +55,20 @@ export class UpdateComponent implements OnInit {
     .name;
   redirectTo = '/roles/list';
 
-  constructor() {}
+  constructor(private permissionService: PermissionsService) {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.permissionService
+      .getIndex()
+      .then((data: Observable<HttpResponse<PermissionsModel.ResponseIndex>>) => {
+        data.subscribe((res: HttpResponse<PermissionsModel.ResponseIndex>) => {
+          this.formBuilderTemplateInputs.map(item => {
+            if (item.name === 'groups') {
+              item.items = res.body.data;
+            }
+          });
+        });
+      });
+  }
 }

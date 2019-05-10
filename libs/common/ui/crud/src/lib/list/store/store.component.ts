@@ -47,6 +47,7 @@ export class StoreComponent implements OnInit {
   isLoading = false;
   validator = {};
   routePath: string;
+  shownGroup = [];
 
   constructor(
     private crudService: CrudService,
@@ -87,6 +88,8 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
+
+
   onSubmit() {
     this.submitted = true;
 
@@ -99,7 +102,7 @@ export class StoreComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets') {
       this.postStore();
     } else if (this.routePath == '/halls') {
       this.postStoreHall();
@@ -174,7 +177,24 @@ export class StoreComponent implements OnInit {
       .dismiss()
       .then(() => console.log('dismissed'));
   }
+
+  toggleGroup(group) {
+    if (this.isGroupShown(group)) {
+      this.shownGroup[group] = true;
+    } else {
+      this.shownGroup[group] = group;
+    }
+  };
+
+  isGroupShown(group) {
+    return this.shownGroup[group] === group;
+  };
+
+  addValueArray(name, child){
+    this.f[name].value.push(child.id);
+  }
 }
+
 
 // custom validator to check that two fields match
 function MustMatch(controlName: string, matchingControlName: string) {
