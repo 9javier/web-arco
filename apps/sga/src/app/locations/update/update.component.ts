@@ -46,120 +46,7 @@ export class UpdateComponent implements OnInit {
   listRows: number[] = [1, 2, 3, 4, 5];
   listColumns: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
   listEnable: string[] = ['Activar', 'Desactivar'];
-  listHistory: any[] = [
-    {
-      reference: '00126456',
-      name: 'MARCA Modelo Modelo',
-      date_add: '01/10/2020',
-      date_upd: '05/02/2021',
-      date_access: '03/11/2021',
-      errors: '1'
-    },
-    {
-      reference: '00124540',
-      name: 'MARCA Modelo Modelo',
-      date_add: '2/21/2020',
-      date_upd: '602/2021',
-      date_access: '03/11/2021',
-      errors: '2'
-    },
-    {
-      reference: '00122626',
-      name: 'MARCA Modelo Modelo',
-      date_add: '3/21/2020',
-      date_upd: '702/2021',
-      date_access: '03/11/2021',
-      errors: '3'
-    },
-    {
-      reference: '00127457',
-      name: 'MARCA Modelo Modelo',
-      date_add: '4/21/2020',
-      date_upd: '802/2021',
-      date_access: '03/11/2021',
-      errors: 'Ninguno'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '5/21/2020',
-      date_upd: '902/2021',
-      date_access: '03/11/2021',
-      errors: '5'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '6/21/2020',
-      date_upd: '1002/2021',
-      date_access: '03/11/2021',
-      errors: '6'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '7/21/2020',
-      date_upd: '1102/2021',
-      date_access: '03/11/2021',
-      errors: '7'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '8/21/2020',
-      date_upd: '1202/2021',
-      date_access: '03/11/2021',
-      errors: 'Ninguno'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '9/21/2020',
-      date_upd: '1302/2021',
-      date_access: '03/11/2021',
-      errors: '9'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '10/10/2020',
-      date_upd: '14/02/2021',
-      date_access: '03/11/2021',
-      errors: '10'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '11/10/2020',
-      date_upd: '15/02/2021',
-      date_access: '03/11/2021',
-      errors: 'Ninguno'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '12/10/2020',
-      date_upd: '16/02/2021',
-      date_access: '03/11/2021',
-      errors: '12'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '13/10/2020',
-      date_upd: '17/02/2021',
-      date_access: '03/11/2021',
-      errors: '13'
-    },
-    {
-      reference: '00121123',
-      name: 'MARCA Modelo Modelo',
-      date_add: '14/10/2020',
-      date_upd: '18/02/2021',
-      date_access: '03/11/2021',
-      errors: 'Ninguno'
-    }
-  ];
+  listHistory: any[] = [];
 
   loading = null;
 
@@ -182,6 +69,7 @@ export class UpdateComponent implements OnInit {
       {}
     );
     this.loadProducts();
+    this.loadProductsHistory()
   }
 
   goToList() {
@@ -200,6 +88,30 @@ export class UpdateComponent implements OnInit {
                 reference: product.productShoeUnit.reference,
                 status: product.status,
                 name: 'Producto - ' + product.productShoeUnit.reference
+              }
+            });
+        });
+      });
+  }
+
+  loadProductsHistory() {
+    this.inventoryService
+      .productsHistoryByContainer(this.container.id)
+      .then((data: Observable<HttpResponse<InventoryModel.ResponseProductsContainer>>) => {
+        data.subscribe((res: HttpResponse<InventoryModel.ResponseProductsContainer>) => {
+          this.listHistory = res.body.data
+            .map(productHistory => {
+              return {
+                id: productHistory.productShoeUnit.id,
+                reference: productHistory.productShoeUnit.reference,
+                name: 'Producto - ' + productHistory.productShoeUnit.reference,
+                status: productHistory.status,
+                date_add: productHistory.createdAt,
+                date_upd: productHistory.updatedAt,
+                origin_warehouse: productHistory.originWarehouse,
+                destination_warehouse: productHistory.destinationWarehouse,
+                user: productHistory.logUser,
+                errors: 'Ninguno'
               }
             });
         });
@@ -255,6 +167,7 @@ export class UpdateComponent implements OnInit {
                         if (res.body.code == 200 || res.body.code == 201) {
                           this.presentToast('Producto ' + productReference + ' añadido a la ubicación ' + this.title, 'success');
                           this.loadProducts();
+                          this.loadProductsHistory()
                         } else {
                           let errorMessage = '';
                           if (res.body.errors.productReference && res.body.errors.productReference.message) {

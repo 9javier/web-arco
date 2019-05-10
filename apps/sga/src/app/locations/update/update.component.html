@@ -119,9 +119,19 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
+        <p>Almacén de origen:
+          <span class="value-history">
+            {{productHistory.origin_warehouse ? (productHistory.origin_warehouse.reference + ' - ' + productHistory.origin_warehouse.name) : 'No registrado'}}
+          </span>
+        </p>
+        <p>Almacén de destino:
+          <span class="value-history">
+            {{productHistory.destination_warehouse ? (productHistory.destination_warehouse.reference + ' - ' + productHistory.destination_warehouse.name) : 'No registrado'}}
+          </span>
+        </p>
+        <p>Empleado: <span class="value-history">{{productHistory.user.name}} (<span class="email-address">{{productHistory.user.email}}</span>)</span></p>
         <p>Añadido: <span class="value-history">{{productHistory.date_add}}</span></p>
         <p>Modificado: <span class="value-history">{{productHistory.date_upd}}</span></p>
-        <p>Último Acceso: <span class="value-history">{{productHistory.date_access}}</span></p>
         <p>Errores: <span class="value-history">{{productHistory.errors}}</span></p>
       </mat-expansion-panel>
     </mat-accordion>

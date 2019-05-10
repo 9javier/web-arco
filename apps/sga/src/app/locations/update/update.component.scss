@@ -68,9 +68,12 @@ mat-tab-header {
     -webkit-text-stroke: 0 #000000;
     font-size: 16px;
     line-height: 1.25;
-    color: #979797;
+    color: var(--ion-color-secondary);
     span.value-history {
-      color: #212121;
+      color: var(--ion-color-tertiary);
+      span.email-address {
+        color: var(--ion-color-secondary);
+      }
     }
   }
 }
