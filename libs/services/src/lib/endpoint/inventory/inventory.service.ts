@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 import {InventoryModel} from "../../../models/endpoints/Inventory";
 
 const PATH_POST_STORE: string = PATH('Inventory Process', 'Store');
-const PATH_GET_PRODUCTS_CONTAINER: string = PATH('Inventory Process', 'List by container').slice(0, -1);
+const PATH_GET_PRODUCTS_CONTAINER: string = PATH('Inventory', 'List by Container').slice(0, -1);
 
 @Injectable({
   providedIn: 'root'
