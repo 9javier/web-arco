@@ -47,6 +47,13 @@ export namespace InventoryModel {
     };
     message: string;
     code: number;
+    errors?: {
+      productReference?: {
+        field?: string,
+        message?: string,
+        type?: string
+      }
+    }
   }
 
   export interface ResponseProductsContainer {

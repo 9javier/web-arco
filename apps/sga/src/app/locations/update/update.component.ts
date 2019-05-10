@@ -4,7 +4,7 @@ import {AlertController, LoadingController, ModalController, NavParams, ToastCon
 import {InventoryService} from "../../../../../../libs/services/src/lib/endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../../../../../libs/services/src/models/endpoints/Inventory";
 import {Observable} from "rxjs";
-import {HttpResponse} from "@angular/common/http";
+import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: 'suite-update',
@@ -236,27 +236,43 @@ export class UpdateComponent implements OnInit {
           text: 'Vale',
           handler: (result) => {
             let productReference = result.productReference;
-            if (productReference) {
+            if (UpdateComponent.validateProductReference(productReference)) {
               if (!this.loading) {
-                this.showLoading('Ubicando producto...');
-              }
-
-              let inventoryProcess: InventoryModel.Inventory = {
-                productReference: productReference,
-                containerReference: this.container.reference,
-                warehouseId: this.warehouseId
-              };
-              this.inventoryService
-                .postStore(inventoryProcess)
-                .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-                  data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-                    if (this.loading) {
-                      this.loading.dismiss();
-                      this.loading = null;
-                    }
-                    this.presentToast('Producto ' + productReference + ' añadido a la ubicación ' + this.title, 'success');
-                  });
+                this.showLoading('Ubicando producto...').then(() => {
+                  let inventoryProcess: InventoryModel.Inventory = {
+                    productReference: productReference,
+                    containerReference: this.container.reference,
+                    warehouseId: this.warehouseId
+                  };
+                  this.inventoryService
+                    .postStore(inventoryProcess)
+                    .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
+                      data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+                        if (this.loading) {
+                          this.loading.dismiss();
+                          this.loading = null;
+                        }
+                        if (res.body.code == 200 || res.body.code == 201) {
+                          this.presentToast('Producto ' + productReference + ' añadido a la ubicación ' + this.title, 'success');
+                          this.loadProducts();
+                        } else {
+                          let errorMessage = '';
+                          if (res.body.errors.productReference && res.body.errors.productReference.message) {
+                            errorMessage = res.body.errors.productReference.message;
+                          } else {
+                            errorMessage = res.body.message;
+                          }
+                          this.presentToast(errorMessage, 'danger');
+                        }
+                      });
+                    }, (error: HttpErrorResponse) => {
+                      this.presentToast(error.message, 'danger');
+                    });
                 });
+              }
+            } else {
+              document.getElementsByClassName('alert-input sc-ion-alert-md')[0].className += " alert-add-product wrong-reference";
+              return false;
             }
           }
         }
@@ -282,6 +298,10 @@ export class UpdateComponent implements OnInit {
       color: color || "primary"
     });
     toast.present();
+  }
+
+  static validateProductReference(reference: string) : boolean {
+    return !(typeof reference == 'undefined' || !reference || reference == '' || reference.length != 18);
   }
 
 }

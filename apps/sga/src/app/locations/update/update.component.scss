@@ -100,3 +100,7 @@ mat-tab-header {
 ion-footer:before {
   height: 0;
 }
+
+.alert-add-product.wrong-reference {
+  border-bottom-color: var(--ion-color-danger);
+}
