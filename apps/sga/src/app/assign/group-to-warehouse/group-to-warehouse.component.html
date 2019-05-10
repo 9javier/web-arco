@@ -2,6 +2,8 @@
   <ion-text color="primary"> <h1>Asignar grupo a tienda</h1> </ion-text>
   <mat-expansion-panel
     *ngFor="let group of groups"
+    (opened)="showGroupWarehouses()"
+    (closed)="panelOpenState = false"
   >
     <mat-expansion-panel-header>
       <mat-panel-title> {{ group.id }} </mat-panel-title>
@@ -9,23 +11,32 @@
     </mat-expansion-panel-header>
 
     <h2 class="example-h2"> Tiendas </h2>
-    <div *ngIf="true">
-      <mat-selection-list
+    <mat-selection-list
         #warehousesSelection
         *ngFor="
             let warehouse of warehouses;
-            let i = index;
           "
-       >
+      >
+
+      <mat-list-option
+        *ngIf="!warehouse.group || warehouse.group.id != group.id; else checked"
+        [selected]="false"
+        [value]="warehouse.name"
+        (click)="changeAssignment(warehouse.id, group.id, true)"
+      >
+        <p>{{ warehouse.name }}</p>
+      </mat-list-option>
+
+      <ng-template #checked>
         <mat-list-option
-          #matListOption
-          [selected]="warehouse.groupId == group.id"
+          [selected]="true"
           [value]="warehouse.name"
-          (click)="assignGroupToWarehouse(warehouse, group)"
+          (click)="changeAssignment(warehouse.id, group.id, false)"
         >
           <p>{{ warehouse.name }}</p>
         </mat-list-option>
+      </ng-template>
+
       </mat-selection-list>
-    </div>
   </mat-expansion-panel>
 </ion-content>

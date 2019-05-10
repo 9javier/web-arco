@@ -1,3 +1,5 @@
+import { GroupModel } from './Group';
+import {WarehouseModel} from "@suite/services";
 export namespace WarehouseModel {
   export interface Warehouse {
     id?: number;
@@ -6,7 +8,7 @@ export namespace WarehouseModel {
     reference?: string;
     is_store?: boolean;
     is_main?: boolean;
-    groupId?: number;
+    group?: Array<GroupModel.Group>;
   }
 
   export interface ResponseIndex {
@@ -19,6 +21,18 @@ export namespace WarehouseModel {
     data: Warehouse;
   }
 
+  export interface ResponseUpdate {
+    data?: any;
+    message: string;
+    name: string;
+  }
+
+  export interface ResponseDelete {
+    data?: any;
+    message: string;
+    name: string;
+  }
+
   export interface ErrorResponseShow {
     statusCode: number;
     status: number;
@@ -26,4 +40,6 @@ export namespace WarehouseModel {
     message: string;
     name: string;
   }
+
+
 }

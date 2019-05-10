@@ -6,6 +6,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 
 import { WarehouseModel } from '../../../models/endpoints/Warehouse';
 import { PATH, URL } from '../../../../../../config/base';
+import {ACLModel} from "@suite/services";
 
 
 const PATH_BASE: string = URL + '/api/';
@@ -27,11 +28,11 @@ export class WarehousesService {
   async postAssignGroupToCategory(
     warehouseId: number,
     groupId: number
-  ): Promise<Observable<HttpResponse<WarehouseModel.Warehouse>>> {
+  ): Promise<Observable<any>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.post<WarehouseModel.Warehouse>(
-      `${PATH_BASE}/warehouses/${warehouseId}/categories/${groupId}`,
+    return this.http.post<Observable<WarehouseModel.ResponseUpdate>>(
+      `${PATH_BASE}warehouses/${warehouseId}/categories/${groupId}`,
       {},
       {
         headers: headers,
@@ -39,4 +40,20 @@ export class WarehousesService {
       }
     );
   }
+
+  async deleteGroupToWarehouse(
+    warehousesId: number,
+    groupId: number
+  ): Promise<Observable<HttpResponse<WarehouseModel.ResponseDelete>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.delete<WarehouseModel.ResponseDelete>(
+      `${PATH_BASE}warehouses/${warehousesId}/categories/${groupId}`,
+      {
+        headers: headers,
+        observe: 'response'
+      }
+    );
+  }
+
 }

@@ -193,7 +193,7 @@ export class ListComponent implements OnInit {
       storeComponent = storeJail;
     } else if (this.routePath == '/groups') {
       storeComponent = storeGroup;
-    }  else if (this.routePath == '/pallet') {
+    }  else if (this.routePath == '/pallets') {
       storeComponent = storePallet;
     }
 
@@ -307,6 +307,11 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/warehouses/locations/${row.id}`]);
   }
 
+  print(){
+    event.stopPropagation();
+    console.log('print');
+  }
+
   async presentUsertDeleteAlert(
     selectedUsers: SelectionModel<UserModel.User | RolModel.Rol>
   ) {
@@ -329,6 +334,8 @@ export class ListComponent implements OnInit {
         value => value.name
       )} eliminado`;
     }
+
+
 
     const alert = await this.alertController.create({
       header: header,

@@ -3,7 +3,7 @@ import {
   GroupsService,
   GroupModel,
   WarehousesService,
-  WarehouseModel, ACLModel, RolModel
+  WarehouseModel, ACLModel, RolModel, PermissionsModel
 } from '@suite/services';
 import { Observable } from 'rxjs';
 import {HttpResponse, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
@@ -20,11 +20,14 @@ import {WarehousesModule} from "../../warehouses/warehouses.module";
 })
 
 export class GroupToWarehouseComponent implements OnInit {
+  selected = false;
+  panelOpenState = false;
   groups: GroupModel.Group[] = [];
   warehouses: WarehouseModel.Warehouse[] = [];
   constructor(
     private groupsService: GroupsService,
-    private warehousesService: WarehousesService
+    private warehousesService: WarehousesService,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -49,10 +52,76 @@ export class GroupToWarehouseComponent implements OnInit {
       }
     );
   }
-  assignGroupToWarehouse(
-    warehouse: any,
-    group: any
+
+
+  setGroup(
+    warehouseId: number,
+    groupId: number
   ){
-    this.warehousesService.postAssignGroupToCategory(warehouse.id, group.id);
+    this.warehousesService
+      .deleteGroupToWarehouse(warehouseId, groupId)
+      .then((data: Observable<HttpResponse<WarehouseModel.ResponseUpdate>>) => {
+        data.subscribe(
+          (res: HttpResponse<WarehouseModel.ResponseUpdate>) => {
+            this.presentToast(
+              `El grupo ha sido actualizado`
+            );
+          },
+          (errorResponse: HttpErrorResponse) => {
+            this.presentToast(
+              `${errorResponse.status} - ${errorResponse.message}`
+            );
+          }
+        );
+      });
+    }
+
+  unsetGroup(
+    warehouseId: number,
+    groupId: number
+  ){
+    this.warehousesService
+      .deleteGroupToWarehouse(warehouseId, groupId)
+      .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
+        data.subscribe(
+          (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
+            this.presentToast(
+              `El grupo ha sido actualizado`
+            );
+          },
+          (errorResponse: HttpErrorResponse) => {
+            this.presentToast(
+              `${errorResponse.status} - ${errorResponse.message}`
+            );
+          }
+        );
+      });
+    }
+
+  changeAssignment(
+    warehouseId: number,
+    groupId: number,
+    status: boolean
+  ){
+    if (status){
+      console.log(this);
+      this.setGroup(warehouseId, groupId);
+      alert('esto es cierto');
+    } else {
+      console.log(this);
+      alert('esto es falso');
+      this.unsetGroup(warehouseId, groupId);
+    }
+  }
+
+  async presentToast(msg) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 4550
+    });
+    toast.present();
   }
 }
+
+
