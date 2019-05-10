@@ -23,4 +23,20 @@ export class WarehousesService {
       observe: 'response'
     });
   }
+
+  async postAssignGroupToCategory(
+    warehouseId: number,
+    groupId: number
+  ): Promise<Observable<HttpResponse<WarehouseModel.Warehouse>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.post<WarehouseModel.Warehouse>(
+      `${PATH_BASE}/warehouses/${warehouseId}/categories/${groupId}`,
+      {},
+      {
+        headers: headers,
+        observe: 'response'
+      }
+    );
+  }
 }

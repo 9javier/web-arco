@@ -6,9 +6,9 @@ import { AuthenticationService } from '../authentication/authentication.service'
 
 import { GroupModel } from '../../../models/endpoints/Group';
 import { PATH, URL } from '../../../../../../config/base';
-
-
+import {ACLModel} from "@suite/services";
 const PATH_BASE: string = URL + '/api/';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,6 +23,4 @@ export class GroupsService {
       observe: 'response'
     });
   }
-
-
 }
