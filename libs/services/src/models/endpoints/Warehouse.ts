@@ -1,12 +1,12 @@
 export namespace WarehouseModel {
   export interface Warehouse {
     id?: number;
-    name: string;
-    description: string;
-    reference: string;
-    is_store: boolean;
-    is_main: boolean;
-    groupId: number;
+    name?: string;
+    description?: string;
+    reference?: string;
+    is_store?: boolean;
+    is_main?: boolean;
+    groupId?: number;
   }
 
   export interface ResponseIndex {
