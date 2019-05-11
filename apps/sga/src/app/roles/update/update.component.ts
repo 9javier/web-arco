@@ -21,7 +21,7 @@ export class UpdateComponent implements OnInit {
       name: 'description',
       label: 'Descripción',
       type: 'text',
-      icon: {type: 'ionic', name: 'list-box'},
+      icon: { type: 'ionic', name: 'list-box' },
     },
     {
       name: 'sga_enabled',
@@ -34,21 +34,14 @@ export class UpdateComponent implements OnInit {
       label: 'Habilitar APP',
       type: 'checkbox',
       value: false
-    },
-    // {
-    //   name: 'groups',
-    //   label: 'Permisos',
-    //   type: 'checkbox-multiple',
-    //   icon: {type: 'ionic', name: 'list'},
-    //   items: []
-    // }
+    }
   ];
+
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(3)]],
     description: ['', [Validators.required, Validators.minLength(4)]],
-    sga_enabled: [this.formBuilderTemplateInputs[1].value, []],
-    // groups: [[]],
-    app_enabled: [this.formBuilderTemplateInputs[2].value, []]
+    sga_enabled: [this.formBuilderTemplateInputs[2].value, []],
+    app_enabled: [this.formBuilderTemplateInputs[3].value, []]
   };
   title = 'Actualizar Rol';
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Roles')
