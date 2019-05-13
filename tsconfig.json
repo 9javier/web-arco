@@ -9,15 +9,30 @@
     "importHelpers": true,
     "target": "es5",
     "module": "es2015",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2017", "dom"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@suite/services": ["libs/services/src/index.ts"],
-      "@suite/common/ui/crud": ["libs/common/ui/crud/src/index.ts"]
+      "@suite/services": [
+        "libs/services/src/index.ts"
+      ],
+      "@suite/common/ui/crud": [
+        "libs/common/ui/crud/src/index.ts"
+      ],
+      "@suite/common-modules": [
+        "libs/modules/src/index.ts"
+      ]
     }
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
 }

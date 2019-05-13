@@ -1,23 +1,23 @@
 .wrapper-form {
-  display: flex;
-  flex-direction: column;
+    display: flex;   
+    flex-direction: column;
 
   ion-row.input-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 0 1 18rem;
-    ion-col {
-      padding-left: 0px;
-      padding-right: 0px;   
-    }
+     display: flex;
+     flex-direction: column;
+     flex: 0 1 18rem;
+     ion-col {
+       padding-left: 0px;
+       padding-right: 0px;   
+     }
   }
-}
+ }
 ion-grid {
   --ion-grid-column-padding: 32px;
 }
-ion-footer:before {
-  height: 0;
-}
+// ion-footer:before {
+//   height: 0;
+// }
 ion-item {
   --border-style: none;
   ion-input, ion-select {
