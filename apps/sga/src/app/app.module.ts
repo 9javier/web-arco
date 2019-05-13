@@ -17,6 +17,7 @@ import { ServicesModule } from '@suite/services';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
+import { JailModule } from '@suite/common-modules';
 
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -29,7 +30,8 @@ import { ErrordialogComponent } from './interceptor/errordialog-component/errord
     AppRoutingModule,
     ServicesModule,
     BrowserAnimationsModule,
-    MatDialogModule
+    MatDialogModule,
+    JailModule
   ],
   providers: [
     StatusBar,
@@ -43,4 +45,4 @@ import { ErrordialogComponent } from './interceptor/errordialog-component/errord
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
