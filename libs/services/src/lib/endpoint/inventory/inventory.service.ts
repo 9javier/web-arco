@@ -31,7 +31,6 @@ export class InventoryService {
   async productsByContainer(
     containerId: number
   ): Promise<Observable<HttpResponse<InventoryModel.ResponseProductsContainer>>> {
-    console.debug('Test::Inventory Process -> ', containerId);
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.get<InventoryModel.ResponseProductsContainer>(`${PATH_GET_PRODUCTS_CONTAINER}${containerId}`, {

@@ -22,7 +22,6 @@ export class WarehouseService {
       headers: headers,
       observe: 'response'
     }).subscribe((res: HttpResponse<any>) => {
-      console.debug('Test::Response -> ', res);
       this.idWarehouseMain = res.body.data.id;
     });
   }
