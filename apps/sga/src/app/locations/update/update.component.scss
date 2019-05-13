@@ -1,3 +1,7 @@
+ion-header:after, ion-header.header-md:after {
+  background-image: none;
+}
+
 mat-tab-header {
   background-color: #222428;
 
@@ -14,34 +18,12 @@ mat-tab-header {
   }
 }
 
-@media (max-width: 767px) {
-  div.mat-tab-body-wrapper {
-    height: 86vh;
-  }
-  .fab-row-actions {
-    position: fixed;
-    bottom: 70px;
-    width: 100%;
-  }
-}
-
-@media (min-width: 768px) {
-  div.mat-tab-body-wrapper {
-    height: 52vh;
-  }
-  .fab-row-actions {
-    position: fixed;
-    bottom: 70px;
-    width: 100%;
-  }
-}
-
-.footer-save {
+.footer-save, .footer-products {
   position: fixed;
   width: 100%;
   bottom: 0;
 }
-.footer-save:before {
+.footer-save:before, .footer-products:before {
   background: none;
 }
 

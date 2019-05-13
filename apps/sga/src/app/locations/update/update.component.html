@@ -7,6 +7,8 @@
     </ion-buttons>
     <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
+</ion-header>
+<ion-content>
   <mat-tab-group mat-stretch-tabs>
     <mat-tab label="Listado">
       <ng-container [ngTemplateOutlet]="listProductsContainer"></ng-container>
@@ -18,8 +20,7 @@
       <ng-container [ngTemplateOutlet]="historyContainer"></ng-container>
     </mat-tab>
   </mat-tab-group>
-</ion-header>
-<ion-content padding>
+
   <ng-template #listProductsContainer let-lessonsCounter="estimate">
     <mat-accordion class="accordion-products">
       <mat-expansion-panel *ngFor="let product of listProducts">
@@ -36,11 +37,13 @@
       </mat-expansion-panel>
     </mat-accordion>
 
-    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-      <ion-fab-button color="light" (click)="scanProduct()"><ion-icon name="barcode"></ion-icon></ion-fab-button>
-      <ion-fab-button color="light"><i class="material-icons">print</i></ion-fab-button>
-      <ion-fab-button (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
-    </ion-fab>
+    <ion-footer class="footer-products">
+      <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button color="light" (click)="scanProduct()"><ion-icon name="barcode"></ion-icon></ion-fab-button>
+        <ion-fab-button color="light"><i class="material-icons">print</i></ion-fab-button>
+        <ion-fab-button (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
+      </ion-fab>
+    </ion-footer>
 
   </ng-template>
 
