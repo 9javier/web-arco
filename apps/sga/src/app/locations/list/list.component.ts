@@ -70,6 +70,8 @@ export class ListComponent implements OnInit {
   countLocationsSelected: number = 0;
   listRowsExpanded: any = {};
 
+  private intervalReload = null;
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
       this.paramsReceived = params;
@@ -82,6 +84,10 @@ export class ListComponent implements OnInit {
     if (this.origin == 'manage') {
       this.warehouseSelected = this.warehouseService.idWarehouseMain;
       this.parentPage = null;
+
+      this.intervalReload = setInterval(() => {
+        this.reloadData();
+      }, 10 * 1000);
     }
     this.hallsService
       .getIndex(this.warehouseSelected)
@@ -279,7 +285,13 @@ export class ListComponent implements OnInit {
     modal.onDidDismiss()
       .then(() => {
         this.reloadData();
+
+        this.intervalReload = setInterval(() => {
+          this.reloadData();
+        }, 10 * 1000);
       });
+
+    clearInterval(this.intervalReload);
 
     return await modal.present();
   }
