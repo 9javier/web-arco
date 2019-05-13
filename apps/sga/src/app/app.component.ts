@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
     {
       title: 'Gestión Almacén',
       url: '/warehouse/manage',
-      icon: 'people'
+      icon: 'apps'
     },
     {
       title: 'Usuarios',
