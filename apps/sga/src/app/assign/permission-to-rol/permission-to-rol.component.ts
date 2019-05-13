@@ -139,7 +139,7 @@ export class PermissionToRolComponent implements OnInit {
               this.isLoadingAssignPermissionToRole = false;
               ev.selected = true;
               this.presentToast(
-                `Permiso ${rol.name} ha sido asignado Rol ${permission.name}`
+                `Permiso ${rol.name} ha sido asignado el rol ${permission.name}`
               );
             },
             (errorResponse: HttpErrorResponse) => {

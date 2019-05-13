@@ -20,10 +20,10 @@ import {WarehousesModule} from "../../warehouses/warehouses.module";
 })
 
 export class GroupToWarehouseComponent implements OnInit {
-  selected = false;
-  panelOpenState = false;
   groups: GroupModel.Group[] = [];
   warehouses: WarehouseModel.Warehouse[] = [];
+  trackByIndex = index => index;
+
   constructor(
     private groupsService: GroupsService,
     private warehousesService: WarehousesService,
@@ -31,6 +31,10 @@ export class GroupToWarehouseComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.initGroups();
+  }
+
+  initGroups(){
     Promise.all([
       this.groupsService.getIndex(),
       this.warehousesService.getIndex(),
@@ -53,66 +57,54 @@ export class GroupToWarehouseComponent implements OnInit {
     );
   }
 
-
-  setGroup(
-    warehouseId: number,
-    groupId: number
+  assignGroupToWarehouse(
+    warehouse: WarehouseModel.Warehouse,
+    group: GroupModel.Group
   ){
+    alert(warehouse.id);
     this.warehousesService
-      .deleteGroupToWarehouse(warehouseId, groupId)
+      .postAssignGroupToCategory(warehouse.id, group.id)
       .then((data: Observable<HttpResponse<WarehouseModel.ResponseUpdate>>) => {
         data.subscribe(
           (res: HttpResponse<WarehouseModel.ResponseUpdate>) => {
             this.presentToast(
-              `El grupo ha sido actualizado`
+              `El grupo ${group.name} ha sido asignado a la tienda ${warehouse.name} `
             );
+            this.initGroups();
           },
           (errorResponse: HttpErrorResponse) => {
             this.presentToast(
               `${errorResponse.status} - ${errorResponse.message}`
             );
+            this.initGroups();
           }
         );
       });
     }
 
-  unsetGroup(
-    warehouseId: number,
-    groupId: number
+  deleteGroupFromWarehouse(
+    warehouse: WarehouseModel.Warehouse,
+    group: GroupModel.Group
   ){
     this.warehousesService
-      .deleteGroupToWarehouse(warehouseId, groupId)
+      .deleteGroupToWarehouse(warehouse.id, group.id)
       .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
         data.subscribe(
           (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
             this.presentToast(
-              `El grupo ha sido actualizado`
+              `El grupo ${group.name} ha sido desvinculado de la tienda ${warehouse.name} `
             );
+            this.initGroups();
           },
           (errorResponse: HttpErrorResponse) => {
             this.presentToast(
               `${errorResponse.status} - ${errorResponse.message}`
             );
+            this.initGroups();
           }
         );
       });
     }
-
-  changeAssignment(
-    warehouseId: number,
-    groupId: number,
-    status: boolean
-  ){
-    if (status){
-      console.log(this);
-      this.setGroup(warehouseId, groupId);
-      alert('esto es cierto');
-    } else {
-      console.log(this);
-      alert('esto es falso');
-      this.unsetGroup(warehouseId, groupId);
-    }
-  }
 
   async presentToast(msg) {
     const toast = await this.toastController.create({

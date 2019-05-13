@@ -8,7 +8,7 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material';
-import { UserModel, RolModel } from '@suite/services';
+import { UserModel, RolModel, JailModel } from '@suite/services';
 import { CrudService } from '../service/crud.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
@@ -286,8 +286,10 @@ export class ListComponent implements OnInit {
   }
 
   confirmDelete() {
-    if (this.selection.selected.length > 0) {
+    if (this.selection.selected.length > 0 && this.routePath != '/jails'  && this.routePath !='/pallets') {
       this.presentUsertDeleteAlert(this.selection);
+    } else {
+      this.presentJailsDeleteAlert(this.selection);
     }
     console.log('confirmDelete', this.selection.selected);
   }
@@ -334,6 +336,7 @@ export class ListComponent implements OnInit {
         value => value.name
       )} eliminado`;
     }
+
 
 
 
@@ -396,6 +399,91 @@ export class ListComponent implements OnInit {
     await alert.present();
   }
 
+  async presentJailsDeleteAlert(
+    selectedJails: SelectionModel<JailModel.Jail>
+  ) {
+    let header = '';
+    let msg = '';
+    let successMsg = '';
+
+    if (selectedJails.selected.length > 1) {
+      header = 'Eliminar referencia';
+      msg = `Estas a punto de eliminar <br>
+      <strong>${selectedJails.selected.length} referencias</strong>.<br>
+      ¿Esta seguro?`;
+      successMsg = `${selectedJails.selected.length} referencias eliminadas`;
+    } else {
+      header = 'Eliminar Referencia';
+      msg = `Estas a punto de eliminar <br> 
+      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br> 
+      ¿Esta seguro? `;
+      successMsg = `Referencia ${selectedJails.selected.map(
+        value => value.reference
+      )} eliminada`;
+    }
+
+
+
+
+    const alert = await this.alertController.create({
+      header: header,
+      message: msg,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: blah => {
+            console.log('Confirm Cancel: blah');
+          }
+        },
+        {
+          text: 'Vale',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.presentLoading();
+            this.crudService
+              .deleteDestroy(this.selection.selected, this.apiEndpoint)
+              .then(
+                (
+                  data: Observable<HttpResponse<JailModel.ResponseDestroy>>[]
+                ) => {
+                  data.map(
+                    (
+                      response$: Observable<
+                        HttpResponse<JailModel.ResponseDestroy>
+                        >
+                    ) => {
+                      response$.subscribe(
+                        (response: HttpResponse<JailModel.ResponseDestroy>) => {
+                          console.log(
+                            `${response.body.data} - ${response.body.code} - ${
+                              response.body.message
+                              }`
+                          );
+                          this.presentToast(successMsg);
+                          this.initUsers();
+                          this.dismissLoading();
+                        },
+                        (errorResponse: HttpErrorResponse) => {
+                          this.presentToast(errorResponse.message);
+                          console.log(errorResponse);
+                          this.dismissLoading();
+                          this.initUsers();
+                        }
+                      );
+                    }
+                  );
+                }
+              );
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   async presentToast(msg) {
     const toast = await this.toastController.create({
       message: msg,
@@ -427,4 +515,8 @@ export class ListComponent implements OnInit {
       .dismiss()
       .then(() => console.log('dismissed'));
   }
+
+
 }
+
+

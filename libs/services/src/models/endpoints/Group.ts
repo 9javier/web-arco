@@ -2,6 +2,7 @@ export namespace GroupModel {
   export interface Group {
     id?: number;
     name: string;
+    expanded: false;
   }
 
   export interface ResponseIndex {

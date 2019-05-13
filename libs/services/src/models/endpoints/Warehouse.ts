@@ -24,13 +24,13 @@ export namespace WarehouseModel {
   export interface ResponseUpdate {
     data?: any;
     message: string;
-    name: string;
+    code: number;
   }
 
   export interface ResponseDelete {
     data?: any;
     message: string;
-    name: string;
+    code: number;
   }
 
   export interface ErrorResponseShow {
@@ -40,6 +40,4 @@ export namespace WarehouseModel {
     message: string;
     name: string;
   }
-
-
 }

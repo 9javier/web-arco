@@ -28,11 +28,11 @@ export class WarehousesService {
   async postAssignGroupToCategory(
     warehouseId: number,
     groupId: number
-  ): Promise<Observable<any>> {
+  ): Promise<Observable<HttpResponse<WarehouseModel.ResponseUpdate>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.post<Observable<WarehouseModel.ResponseUpdate>>(
-      `${PATH_BASE}warehouses/${warehouseId}/categories/${groupId}`,
+    return this.http.post<WarehouseModel.ResponseUpdate>(
+      `${PATH_BASE}warehouses/${warehouseId}/groups/${groupId}`,
       {},
       {
         headers: headers,
@@ -48,12 +48,11 @@ export class WarehousesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<WarehouseModel.ResponseDelete>(
-      `${PATH_BASE}warehouses/${warehousesId}/categories/${groupId}`,
+      `${PATH_BASE}warehouses/${warehousesId}/groups/${groupId}`,
       {
         headers: headers,
         observe: 'response'
       }
     );
   }
-
 }
