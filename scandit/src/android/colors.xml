@@ -7,6 +7,7 @@
     <color name="black">#FF000000</color>
     <color name="transparentBlack">#BF000000</color>
     <color name="lessTransparentBlack">#E0000000</color>
+    <color name="transparentScanner">#a6000000</color>
 
     <color name="white">#FFFFFFFF</color>
     <color name="almostWhite">#FFAAAAAA</color>

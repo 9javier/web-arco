@@ -23,22 +23,11 @@ import com.scandit.barcodepicker.internal.ScanditSDKGlobals;
 import com.scandit.base.util.JSONParseException;
 
 import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.PluginResult;
-import org.apache.cordova.PluginResult.Status;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-
-import android.Manifest;
-import android.util.Log;
-import android.content.Intent;
-import android.content.Context;
-import android.util.DisplayMetrics;
-import android.graphics.Point;
-import android.app.Activity;
+import org.w3c.dom.Text;
 
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -46,8 +35,6 @@ import android.widget.TextView;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.HashMap;
@@ -60,15 +47,14 @@ import java.util.Iterator;
 import android.widget.TableLayout;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.graphics.Color;
-import android.widget.LinearLayout.LayoutParams;
 import android.view.Gravity;
 import android.util.TypedValue;
 
 public class ScanditSDK extends CordovaPlugin {
 
   public static CallbackContext mCallbackContextMatrixBubble;
+  public static CallbackContext mCallbackContextMatrixSimple;
   public static Map<String, BaseBubble> bubbles = new ConcurrentSkipListMap<>();
   public static Map<String, Product> products = new ConcurrentSkipListMap<>();
 
@@ -95,6 +81,11 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String ENABLE_TORCH_COMMAND = "torch";
   private static final String FINISH_DID_SCAN_COMMAND = "finishDidScanCallback";
   private static final String FINISH_DID_RECOGNIZE_NEW_CODES_COMMAND = "finishDidRecognizeNewCodesCallback";
+  private static final String MATRIX_SIMPLE = "matrixSimple";
+  private static final String SET_MATRIX_SIMPLE_TEXT = "setMatrixSimpleText";
+  private static final String SHOW_MATRIX_SIMPLE_TEXT = "matrixSimpleShowText";
+  private static final String SHOW_MATRIX_SIMPLE_TEXT_LOADER = "matrixSimpleShowLoader";
+  private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private CallbackContext mCallbackContext;
@@ -104,6 +95,10 @@ public class ScanditSDK extends CordovaPlugin {
   private IPickerController mPickerController;
 
   public static View viewProductData = null;
+  public static View viewDataMatrixSimple = null;
+
+  private String lastColorTextMatrixSimple;
+  private String lastBackgroundMatrixSimple;
 
   static class Command {
     Command(String action, JSONArray args, CallbackContext callbackContext) {
@@ -134,7 +129,7 @@ public class ScanditSDK extends CordovaPlugin {
     }
 
     // check if we have to request camera permission before executing commands.
-    if (!mRequestingCameraPermission && !isQueuedCommand && (action.equals(SHOW_COMMAND) || action.equals("matrixWithData") || action.equals("matrix_bubble"))) {
+    if (!mRequestingCameraPermission && !isQueuedCommand && (action.equals(SHOW_COMMAND) || action.equals("matrixWithData") || action.equals("matrix_bubble") || action.equals(MATRIX_SIMPLE))) {
       mRequestingCameraPermission =
         !PermissionHelper.hasPermission(this, Manifest.permission.CAMERA);
       if (mRequestingCameraPermission) {
@@ -529,6 +524,177 @@ public class ScanditSDK extends CordovaPlugin {
       }
       Intent intent = new Intent(this.cordova.getActivity(), MatrixWithDataActivity.class);
       this.cordova.startActivityForResult(this, intent, 5);
+    } else if(action.equals(MATRIX_SIMPLE)) {
+      mCallbackContextMatrixSimple = callbackContext;
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixSimpleActivity.class);
+      intent.putExtras(b);
+      this.cordova.startActivityForResult(this, intent, 6);
+    } else if(action.equals(SET_MATRIX_SIMPLE_TEXT)){
+
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      String text = "";
+      String background = "#2F9E5A";
+      String color = "#FFFFFF";
+      double size = 20;
+      try {
+        text = args.getString(0);
+        background = args.getString(1);
+        color = args.getString(2);
+        size = args.getDouble(3);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      this.lastColorTextMatrixSimple = color;
+      this.lastBackgroundMatrixSimple = background;
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final String fText = text;
+      final String fBackground = background;
+      final String fColor = color;
+      final float fSize = (float) size;
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          LinearLayout llScanInfo;
+          TextView tvScanInfo;
+          RelativeLayout rlLoader;
+          if (viewDataMatrixSimpleFinal != null) {
+            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", package_name));
+            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", package_name));
+            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlLoader", "id", package_name));
+            if (llScanInfo != null) {
+              llScanInfo.setBackgroundColor(Color.parseColor(fBackground));
+              llScanInfo.setVisibility(View.VISIBLE);
+            }
+            if (tvScanInfo != null) {
+              tvScanInfo.setTextColor(Color.parseColor(fColor));
+              tvScanInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, fSize);
+              tvScanInfo.setText(fText);
+            }
+            if (rlLoader != null) {
+              rlLoader.setVisibility(View.GONE);
+            }
+          }
+        }
+      });
+    } else if(action.equals(MATRIX_SIMPLE_FINISH)){
+      MatrixSimpleActivity.matrixSimple.finish();
+    } else if(action.equals(SHOW_MATRIX_SIMPLE_TEXT)){
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+      boolean show = false;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final boolean fShow = show;
+      final String color = this.lastColorTextMatrixSimple;
+      final String background = this.lastBackgroundMatrixSimple;
+      final int colorTrasparent = resources.getIdentifier("transparentScanner", "color", package_name);
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          LinearLayout llScanInfo;
+          TextView tvScanInfo;
+          RelativeLayout rlLoader;
+          if (viewDataMatrixSimpleFinal != null) {
+            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", package_name));
+            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", package_name));
+            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlLoader", "id", package_name));
+            if (llScanInfo != null) {
+              llScanInfo.setVisibility(View.VISIBLE);
+              if(fShow){
+                if(background != null && !background.isEmpty()){
+                  llScanInfo.setBackgroundColor(Color.parseColor(background));
+                }
+              } else {
+                llScanInfo.setBackgroundColor(colorTrasparent);
+              }
+            }
+            if (tvScanInfo != null) {
+              if(fShow){
+                tvScanInfo.setVisibility(View.VISIBLE);
+                if(color != null && !color.isEmpty()){
+                  tvScanInfo.setTextColor(Color.parseColor(color));
+                }
+              } else {
+                tvScanInfo.setVisibility(View.GONE);
+              }
+            }
+            if (rlLoader != null) {
+              if(fShow) {
+                rlLoader.setVisibility(View.GONE);
+              }
+            }
+          }
+        }
+      });
+    } else if(action.equals(SHOW_MATRIX_SIMPLE_TEXT_LOADER)){
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+      boolean show = false;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final boolean fShow = show;
+      final String color = this.lastColorTextMatrixSimple;
+      final String background = this.lastBackgroundMatrixSimple;
+      final int colorTrasparent = resources.getIdentifier("transparentScanner", "color", package_name);
+      cordova.getActivity().runOnUiThread(new Runnable() {
+        public void run() {
+          LinearLayout llScanInfo;
+          TextView tvScanInfo;
+          RelativeLayout rlLoader;
+          if (viewDataMatrixSimpleFinal != null) {
+            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", package_name));
+            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", package_name));
+            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlScanInfoLoader", "id", package_name));
+            if (llScanInfo != null) {
+              if (fShow && background != null) {
+                llScanInfo.setBackgroundColor(colorTrasparent);
+              } else {
+                if(background != null && !background.isEmpty()){
+                  llScanInfo.setBackgroundColor(Color.parseColor(background));
+                } else {
+                  llScanInfo.setBackgroundColor(colorTrasparent);
+                }
+              }
+              llScanInfo.setVisibility(View.VISIBLE);
+            }
+            if (tvScanInfo != null) {
+              if (fShow) {
+                tvScanInfo.setVisibility(View.GONE);
+              }
+            }
+            if (rlLoader != null) {
+              if (fShow) {
+                rlLoader.setVisibility(View.VISIBLE);
+              } else {
+                rlLoader.setVisibility(View.GONE);
+              }
+            }
+          }
+        }
+      });
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;
@@ -814,5 +980,9 @@ public class ScanditSDK extends CordovaPlugin {
 
   public static void setViewProductData(View newViewProductData) {
     viewProductData = newViewProductData;
+  }
+
+  public static void setViewDataMatrixSimple(View view) {
+    viewDataMatrixSimple = view;
   }
 }

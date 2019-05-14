@@ -60,6 +60,9 @@
   <js-module src="www/plugin.js" name="GScandit">
     <clobbers target="GScandit" />
   </js-module>
+  <js-module src="www/matrixSimple.js" name="ScanditMatrixSimple">
+    <clobbers target="ScanditMatrixSimple" />
+  </js-module>
   <platform name="ios">
     <plugins-plist key="ScanditSDK" string="ScanditSDK"/>
     <!-- feature tag in config.xml -->
@@ -136,6 +139,7 @@
       <activity android:configChanges="orientation|screenSize" android:name="com.mirasense.scanditsdk.plugin.FullScreenPickerActivity"/>
       <activity android:configChanges="orientation|screenSize" android:name="com.mirasense.scanditsdk.plugin.MatrixBubblesActivity"/>
       <activity android:configChanges="orientation|screenSize" android:name="com.mirasense.scanditsdk.plugin.MatrixWithDataActivity"/>
+      <activity android:configChanges="orientation|screenSize" android:name="com.mirasense.scanditsdk.plugin.MatrixSimpleActivity"/>
     </config-file>
     <!-- The .so/.jar and resources are all contained in the ScanditBarcodeScanner.aar file, which we reference from build.gradle -->
     <framework custom="true" src="src/android/build.gradle" type="gradleReference"/>
@@ -160,6 +164,8 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/UIParamParser.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/PermissionHelper.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixWithDataActivity.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixSimpleActivity.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixSimpleOverlayListener.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixScanWithDataOverlayListener.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/Product.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
 
@@ -191,6 +197,7 @@
     <source-file src="src/android/drawable/bg_triangle.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_launcher_background.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_product.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/arrow_back.xml" target-dir="res/drawable"/>
     <source-file src="src/android/layout/bubble_maximised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised_data.xml" target-dir="res/layout"/>
@@ -200,6 +207,8 @@
     <source-file src="src/android/layout/references_extended_data.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/row_table_details.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/title_bar_serauto.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/references_matrixsimple.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/title_bar_matrixsimple.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
 
   </platform>
