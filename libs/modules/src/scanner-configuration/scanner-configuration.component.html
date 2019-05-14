@@ -11,7 +11,7 @@
 
 <ion-content>
   <ion-list lines="none">
-    <ion-list-header>
+    <ion-list-header *ngIf="usabilityOptions.length > 0">
       <ion-label>Opciones de usabilidad</ion-label>
     </ion-list-header>
     <ion-item *ngFor="let option of usabilityOptions" (click)="enableConfiguration($event, option)">
@@ -19,7 +19,7 @@
       <ion-label>{{option.name}}</ion-label>
       <ion-toggle [checked]="option.value" [disabled]="option.disabled"></ion-toggle>
     </ion-item>
-    <ion-list-header>
+    <ion-list-header *ngIf="scannableCodes.length > 0">
       <ion-label>Códigos escaneables</ion-label>
     </ion-list-header>
     <ion-item *ngFor="let code of scannableCodes" (click)="enableConfiguration($event, code)">

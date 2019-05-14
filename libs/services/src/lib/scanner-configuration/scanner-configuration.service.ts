@@ -49,23 +49,6 @@ export class ScannerConfigurationService {
         disabled: false
       },
     ]
-    this.scannableCodes = [
-      {
-        name: 'Código 128',
-        value: false,
-        disabled: false
-      },
-      {
-        name: 'Matrix Data',
-        value: false,
-        disabled: false
-      },
-      {
-        name: 'GS1 Databar Expanded',
-        value: false,
-        disabled: false
-      }
-    ]
   }
 
   get usabilityOptions(): any[] {
