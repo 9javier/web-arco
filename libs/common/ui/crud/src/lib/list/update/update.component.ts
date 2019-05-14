@@ -185,7 +185,7 @@ export class UpdateComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/groups' || this.routePath == '/jails' || this.routePath == '/pallets') {
       this.postUpdate(dataToUpdate);
     } else if (this.routePath == '/halls') {
       this.postUpdateHall(dataToUpdate);
