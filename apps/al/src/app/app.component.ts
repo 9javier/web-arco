@@ -13,6 +13,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
+import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
 
 interface MenuItem {
   title: string;
@@ -37,6 +38,11 @@ export class AppComponent implements OnInit {
       icon: 'list'
     },
     {
+      title: 'Ubicar/Escanear',
+      icon: 'qr-scanner',
+      url: 'scan'
+    },
+    {
       title: 'Logout',
       url: '/home',
       icon: 'log-out'
@@ -54,7 +60,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private menu: MenuController,
     private loginService: Oauth2Service,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private scanditService: ScanditService
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -70,6 +77,9 @@ export class AppComponent implements OnInit {
         if (state) {
           this.router.navigate(['home']);
           this.menu.enable(true, 'sidebar');
+          if (this.platform.is('android')) {
+            this.scanditService.setApiKey();
+          }
         } else {
           this.router.navigate(['login']);
           this.menu.enable(false, 'sidebar');
@@ -91,6 +101,8 @@ export class AppComponent implements OnInit {
             console.log(data.body.data.msg);
           });
       });
+    } else if(p.url === 'scan'){
+      this.scanditService.scanReferences();
     }
   }
 }
