@@ -8,7 +8,7 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material';
-import { UserModel, RolModel } from '@suite/services';
+import { UserModel, RolModel, JailModel } from '@suite/services';
 import { CrudService } from '../service/crud.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
@@ -194,7 +194,9 @@ export class ListComponent implements OnInit {
       storeComponent = storeWarehouse;
     } else if (this.routePath == '/jails') {
       storeComponent = storeJail;
-    } else if (this.routePath == '/pallets') {
+    } else if (this.routePath == '/groups') {
+      storeComponent = storeGroup;
+    }  else if (this.routePath == '/pallets') {
       storeComponent = storePallet;
     }
 
@@ -226,8 +228,10 @@ export class ListComponent implements OnInit {
       updateComponent = updateWarehouse;
     } else if (this.routePath == '/jails') {
       updateComponent = updateJail;
-    } else if (this.routePath == '/pallets') {
+    } else if (this.routePath == '/pallets'){
       updateComponent = updatePallet;
+    } else if (this.routePath == '/groups') {
+      updateComponent = updateGroup;
     }
 
     if (updateComponent) {
@@ -309,6 +313,11 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/warehouses/locations/${row.id}`]);
   }
 
+  print(){
+    event.stopPropagation();
+    console.log('print');
+  }
+
   async presentUsertDeleteAlert(
     selectedUsers: SelectionModel<UserModel.User | RolModel.Rol>
   ) {
@@ -367,6 +376,91 @@ export class ListComponent implements OnInit {
                             `${response.body.data} - ${response.body.code} - ${
                             response.body.message
                             }`
+                          );
+                          this.presentToast(successMsg);
+                          this.initUsers();
+                          this.dismissLoading();
+                        },
+                        (errorResponse: HttpErrorResponse) => {
+                          this.presentToast(errorResponse.message);
+                          console.log(errorResponse);
+                          this.dismissLoading();
+                          this.initUsers();
+                        }
+                      );
+                    }
+                  );
+                }
+              );
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async presentJailsDeleteAlert(
+    selectedJails: SelectionModel<JailModel.Jail>
+  ) {
+    let header = '';
+    let msg = '';
+    let successMsg = '';
+
+    if (selectedJails.selected.length > 1) {
+      header = 'Eliminar referencia';
+      msg = `Estas a punto de eliminar <br>
+      <strong>${selectedJails.selected.length} referencias</strong>.<br>
+      ¿Esta seguro?`;
+      successMsg = `${selectedJails.selected.length} referencias eliminadas`;
+    } else {
+      header = 'Eliminar Referencia';
+      msg = `Estas a punto de eliminar <br> 
+      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br> 
+      ¿Esta seguro? `;
+      successMsg = `Referencia ${selectedJails.selected.map(
+        value => value.reference
+      )} eliminada`;
+    }
+
+
+
+
+    const alert = await this.alertController.create({
+      header: header,
+      message: msg,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: blah => {
+            console.log('Confirm Cancel: blah');
+          }
+        },
+        {
+          text: 'Vale',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.presentLoading();
+            this.crudService
+              .deleteDestroy(this.selection.selected, this.apiEndpoint)
+              .then(
+                (
+                  data: Observable<HttpResponse<JailModel.ResponseDestroy>>[]
+                ) => {
+                  data.map(
+                    (
+                      response$: Observable<
+                        HttpResponse<JailModel.ResponseDestroy>
+                        >
+                    ) => {
+                      response$.subscribe(
+                        (response: HttpResponse<JailModel.ResponseDestroy>) => {
+                          console.log(
+                            `${response.body.data} - ${response.body.code} - ${
+                              response.body.message
+                              }`
                           );
                           this.presentToast(successMsg);
                           this.initUsers();
