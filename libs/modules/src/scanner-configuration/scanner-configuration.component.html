@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="arrow-back" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Configuraciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="none">
+    <ion-list-header>
+      <ion-label>Opciones de usabilidad</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let option of usabilityOptions" (click)="enableConfiguration($event, option)">
+      <ion-icon [name]="option.icon" slot="start"></ion-icon>
+      <ion-label>{{option.name}}</ion-label>
+      <ion-toggle [checked]="option.value" [disabled]="option.disabled"></ion-toggle>
+    </ion-item>
+    <ion-list-header>
+      <ion-label>Códigos escaneables</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let code of scannableCodes" (click)="enableConfiguration($event, code)">
+      <ion-icon [name]="code.icon || 'barcode'" slot="start"></ion-icon>
+      <ion-label>{{code.name}}</ion-label>
+      <ion-toggle [checked]="code.value" [disabled]="code.disabled"></ion-toggle>
+    </ion-item>
+  </ion-list>
+</ion-content>
