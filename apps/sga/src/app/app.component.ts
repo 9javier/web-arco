@@ -126,6 +126,7 @@ export class AppComponent implements OnInit {
           this.router.navigate(['login']);
         }
         this.warehouseService.init();
+        this.warehouseService.loadWarehousesData();
       });
 
       /* Update to display current route on Access Denied from Server */
