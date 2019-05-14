@@ -28,15 +28,18 @@ import { StoreComponent as storeHall } from "../../../../../../../apps/sga/src/a
 import { StoreComponent as storeWarehouse } from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
 import { StoreComponent as storeJail } from "libs/modules/src/jail/store/store.component";
 import { StoreComponent as storePallet } from "../../../../../../../apps/sga/src/app/pallets/store/store.component";
+import {StoreComponent as storeGroup} from "../../../../../../../apps/sga/src/app/groups/store/store.component";
 import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import { UpdateComponent as updateRol } from "../../../../../../../apps/sga/src/app/roles/update/update.component";
 import { UpdateComponent as updateHall } from "../../../../../../../apps/sga/src/app/halls/update/update.component";
 import { UpdateComponent as updateWarehouse } from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
 import { UpdateComponent as updateJail } from "libs/modules/src/jail/update/update.component";
 import { UpdateComponent as updatePallet } from "../../../../../../../apps/sga/src/app/pallets/update/update.component";
+import {UpdateComponent as updateGroup} from "../../../../../../../apps/sga/src/app/groups/update/update.component";
 import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/halls.service";
 import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
 import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+
 
 @Component({
   selector: 'suite-ui-crud-list',
