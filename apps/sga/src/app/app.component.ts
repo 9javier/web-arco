@@ -38,8 +38,18 @@ export class AppComponent implements OnInit {
       icon: 'people'
     },
     {
+      title: 'Asignar Grupo a Tienda',
+      url: '/assign/group/ware',
+      icon: 'people'
+    },
+    {
       title: 'Roles',
       url: '/roles/menu',
+      icon: 'person'
+    },
+    {
+      title: 'Grupos de tiendas',
+      url: '/groups/menu',
       icon: 'person'
     },
     {

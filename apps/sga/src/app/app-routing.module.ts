@@ -51,6 +51,11 @@ const routes: Routes = [
     loadChildren: './warehouses/warehouses.module#WarehousesModule'
   },
   {
+    path: 'groups',
+    canActivate: [AuthGuard],
+    loadChildren: './groups/groups.module#GroupsModule'
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: './halls/halls.module#HallsModule'

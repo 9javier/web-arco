@@ -51,7 +51,7 @@
   <ng-container matColumnDef="buttons-print">
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let row">
-      <ion-button fill="outline"><i class="material-icons">print</i></ion-button>
+      <ion-button fill="outline" (click)="print()"><i class="material-icons">print</i></ion-button>
     </td>
   </ng-container>
 </table>
