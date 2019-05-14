@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
     {
       title: 'Ubicar/Escanear',
       icon: 'qr-scanner',
-      url: 'scan'
+      url: 'positioning'
     },
     {
       title: 'Logout',
@@ -101,8 +101,8 @@ export class AppComponent implements OnInit {
             console.log(data.body.data.msg);
           });
       });
-    } else if(p.url === 'scan'){
-      this.scanditService.scanReferences();
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
     }
   }
 }
