@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { ServicesModule } from '@suite/services';
+import { ScannerConfigurationModule } from "@suite/common-modules";
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,7 +24,8 @@ import { ServicesModule } from '@suite/services';
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     AppRoutingModule,
-    ServicesModule
+    ServicesModule,
+    ScannerConfigurationModule
   ],
   providers: [
     StatusBar,

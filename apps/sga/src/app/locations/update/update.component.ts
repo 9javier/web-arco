@@ -1,10 +1,10 @@
-import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {AlertController, LoadingController, ModalController, NavParams, ToastController} from "@ionic/angular";
 import {InventoryService} from "../../../../../../libs/services/src/lib/endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../../../../../libs/services/src/models/endpoints/Inventory";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
+import {WarehouseService} from "../../../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 
 @Component({
   selector: 'suite-update',
@@ -13,63 +13,56 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
   encapsulation : ViewEncapsulation.None
 })
 export class UpdateComponent implements OnInit {
-  formBuilderDataInputs = {
-    rows: ['', Validators.required],
-    columns: ['', Validators.required]
-  };
-  formBuilderTemplateInputs = [
-    {
-      name: 'rows',
-      label: 'Número de Filas',
-      type: 'select',
-      value: [1, 2, 3, 4, 5],
-      icon: {type: 'md', name: 'view_stream'}
-    },
-    {
-      name: 'columns',
-      label: 'Número de Columnas',
-      type: 'select',
-      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-      icon: {type: 'md', name: 'view_column'}
-    }
-  ];
   title = 'Ubicación ';
   apiEndpoint = 'Wharehouse Maps';
   redirectTo = '/locations';
-  updateForm: FormGroup;
 
   container = null;
   warehouseId: number;
 
   listProducts: any[] = [];
-  listRacks: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  listRows: number[] = [1, 2, 3, 4, 5];
-  listColumns: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
-  listEnable: string[] = ['Activar', 'Desactivar'];
   listHistory: any[] = [];
 
   loading = null;
 
+  listWarehouses: any[] = [];
+  listHalls: any[] = [];
+  listHallsOriginal: any = {};
+  listRows: any[] = [];
+  listRowsOriginal: any = {};
+  listColumns: any[] = [];
+  listColumnsOriginal: any = {};
+  listReferences: any = {};
+  warehouseSelected: number;
+  hallSelected: number;
+  rowSelected: number;
+  columnSelected: number;
+  referenceContainer: string = '';
+
   constructor(
     private modalController: ModalController,
     private navParams: NavParams,
-    private formBuilder: FormBuilder,
     private alertController: AlertController,
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private warehouseService: WarehouseService
   ) {}
 
   ngOnInit() {
     this.container = this.navParams.data.container;
     this.warehouseId = this.navParams.data.warehouseId;
     this.title += this.container.column + ' . ' + this.container.row;
-    this.updateForm = this.formBuilder.group(
-      this.formBuilderDataInputs,
-      {}
-    );
     this.loadProducts();
-    this.loadProductsHistory()
+    this.loadProductsHistory();
+
+    this.listWarehouses = this.warehouseService.listWarehouses;
+    this.listHallsOriginal = this.warehouseService.listHalls;
+    this.listRowsOriginal = this.warehouseService.listRows;
+    this.listColumnsOriginal = this.warehouseService.listColumns;
+    this.listReferences = this.warehouseService.listReferences;
+
+    this.warehouseSelected = null;
   }
 
   goToList() {
@@ -118,10 +111,6 @@ export class UpdateComponent implements OnInit {
       });
   }
 
-  get f() {
-    return this.updateForm.controls;
-  }
-
   scanProduct() {
 
   }
@@ -149,40 +138,7 @@ export class UpdateComponent implements OnInit {
           handler: (result) => {
             let productReference = result.productReference;
             if (UpdateComponent.validateProductReference(productReference)) {
-              if (!this.loading) {
-                this.showLoading('Ubicando producto...').then(() => {
-                  let inventoryProcess: InventoryModel.Inventory = {
-                    productReference: productReference,
-                    containerReference: this.container.reference,
-                    warehouseId: this.warehouseId
-                  };
-                  this.inventoryService
-                    .postStore(inventoryProcess)
-                    .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-                      data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-                        if (this.loading) {
-                          this.loading.dismiss();
-                          this.loading = null;
-                        }
-                        if (res.body.code == 200 || res.body.code == 201) {
-                          this.presentToast('Producto ' + productReference + ' añadido a la ubicación ' + this.title, 'success');
-                          this.loadProducts();
-                          this.loadProductsHistory()
-                        } else {
-                          let errorMessage = '';
-                          if (res.body.errors.productReference && res.body.errors.productReference.message) {
-                            errorMessage = res.body.errors.productReference.message;
-                          } else {
-                            errorMessage = res.body.message;
-                          }
-                          this.presentToast(errorMessage, 'danger');
-                        }
-                      });
-                    }, (error: HttpErrorResponse) => {
-                      this.presentToast(error.message, 'danger');
-                    });
-                });
-              }
+              this.locateProductFunction(this.container.reference, productReference, this.warehouseId, null, null);
             } else {
               document.getElementsByClassName('alert-input sc-ion-alert-md')[0].className += " alert-add-product wrong-reference";
               return false;
@@ -215,6 +171,115 @@ export class UpdateComponent implements OnInit {
 
   static validateProductReference(reference: string) : boolean {
     return !(typeof reference == 'undefined' || !reference || reference == '' || reference.length != 18);
+  }
+
+  private changeSelect(source) {
+    switch (source) {
+      case 1:
+        this.listHalls = this.listHallsOriginal[this.warehouseSelected];
+        if (this.listHalls && this.listHalls.length > 0) {
+          this.hallSelected = this.listHalls[0].id;
+          this.listRows = this.listRowsOriginal[this.warehouseSelected][this.hallSelected];
+          this.rowSelected = this.listRows[0].row;
+          this.listColumns = this.listColumnsOriginal[this.warehouseSelected][this.hallSelected][this.rowSelected];
+          this.columnSelected = this.listColumns[0].column;
+          this.referenceContainer = this.listReferences[this.warehouseSelected][this.hallSelected][this.rowSelected][this.columnSelected];
+        } else {
+          this.referenceContainer = null;
+        }
+        break;
+      case 2:
+        this.listRows = this.listRowsOriginal[this.warehouseSelected][this.hallSelected];
+        if (this.listRows && this.listRows.length > 0) {
+          this.rowSelected = this.listRows[0].row;
+          this.listColumns = this.listColumnsOriginal[this.warehouseSelected][this.hallSelected][this.rowSelected];
+          this.columnSelected = this.listColumns[0].column;
+          this.referenceContainer = this.listReferences[this.warehouseSelected][this.hallSelected][this.rowSelected][this.columnSelected];
+        } else {
+          this.referenceContainer = null;
+        }
+        break;
+      case 3:
+        this.listColumns = this.listColumnsOriginal[this.warehouseSelected][this.hallSelected][this.rowSelected];
+        if (this.listColumns && this.listColumns.length > 0) {
+          this.columnSelected = this.listColumns[0].column;
+          this.referenceContainer = this.listReferences[this.warehouseSelected][this.hallSelected][this.rowSelected][this.columnSelected];
+        } else {
+          this.referenceContainer = null;
+        }
+        break;
+      case 4:
+        this.referenceContainer = this.listReferences[this.warehouseSelected][this.hallSelected][this.rowSelected][this.columnSelected];
+        break;
+    }
+  }
+
+  private checkFieldIsEnabled(source) {
+    switch (source) {
+      case 2:
+        return this.listHallsOriginal[this.warehouseSelected];
+      case 3:
+        return this.listRowsOriginal[this.warehouseSelected] && this.listRowsOriginal[this.warehouseSelected][this.hallSelected];
+      case 4:
+        return this.listColumnsOriginal[this.warehouseSelected] && this.listColumnsOriginal[this.warehouseSelected][this.hallSelected] && this.listColumnsOriginal[this.warehouseSelected][this.hallSelected][this.rowSelected];
+    }
+  }
+
+  private resetDataMovement() {
+    this.warehouseSelected = null;
+  }
+
+  private saveDataMovement(product) {
+    if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
+      let referenceProduct = product.reference;
+      let textLoading = 'Reubicando producto...';
+      let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
+      if (this.referenceContainer) {
+        let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
+        textToastOk += ' en Ubicación ' + location;
+      } else {
+        textToastOk += ' de tienda.';
+      }
+
+      this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk);
+    }
+  }
+
+  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string) {
+    if (!this.loading) {
+      this.showLoading(textLoading || 'Ubicando producto...').then(() => {
+        let inventoryProcess: InventoryModel.Inventory = {
+          productReference: referenceProduct,
+          containerReference: referenceContainer || '',
+          warehouseId: idWarehouse
+        };
+        this.inventoryService
+          .postStore(inventoryProcess)
+          .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
+            data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+              if (this.loading) {
+                this.loading.dismiss();
+                this.loading = null;
+              }
+              if (res.body.code == 200 || res.body.code == 201) {
+                this.presentToast(textToastOk || ('Producto ' + referenceProduct + ' ubicado en ' + this.title), 'success');
+                this.loadProducts();
+                this.loadProductsHistory()
+              } else {
+                let errorMessage = '';
+                if (res.body.errors.productReference && res.body.errors.productReference.message) {
+                  errorMessage = res.body.errors.productReference.message;
+                } else {
+                  errorMessage = res.body.message;
+                }
+                this.presentToast(errorMessage, 'danger');
+              }
+            });
+          }, (error: HttpErrorResponse) => {
+            this.presentToast(error.message, 'danger');
+          });
+      });
+    }
   }
 
 }

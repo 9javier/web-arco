@@ -60,6 +60,82 @@ mat-tab-header {
   }
 }
 
+.title-section {
+  height: 17px;
+  font-size: 14px;
+  color: var(--ion-color-secondary);
+}
+
+.form-fields {
+  margin-top: 24px;
+  ion-row {
+    margin-top: 16px;
+    ion-col {
+      padding: 0;
+    }
+    ion-item {
+      width: 100%;
+      --border-style: none;
+      --padding-start: none;
+      .icon-field {
+        width: 40px;
+        margin: 0;
+        ion-icon {
+          width: 24px;
+          height: 24px;
+        }
+      }
+      .field {
+        width: 100%;
+        height: 56px;
+        border: solid 2px var(--ion-color-tertiary);
+        background-color: var(--ion-color-white);
+        ion-select {
+          width: 100%;
+          max-width: 100%;
+          height: 100%;
+          font-size: 16px;
+          line-height: 1.25;
+          color: var(--ion-color-text-rgba);
+          margin: 0;
+          padding: 16px;
+        }
+      }
+    }
+  }
+  ion-row:first-child {
+    margin-top: 0;
+  }
+}
+
+.btn-move-product {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  ion-row {
+    ion-col {
+      padding: 0;
+      ion-button {
+        width: 100%;
+        height: 36px;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        color: var(--ion-color-white);
+        --box-shadow: none;
+        --border-radius: 0;
+      }
+    }
+    ion-col.btn-close {
+      padding-right: 8px;
+      ion-button {
+        color: var(--ion-color-white);
+      }
+    }
+    ion-col.btn-save {
+      padding-left: 8px;
+    }
+  }
+}
+
 .horizontal-fab {
   display: flex;
   flex: 1;

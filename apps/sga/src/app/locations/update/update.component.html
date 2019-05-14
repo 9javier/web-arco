@@ -13,9 +13,6 @@
     <mat-tab label="Listado">
       <ng-container [ngTemplateOutlet]="listProductsContainer"></ng-container>
     </mat-tab>
-    <mat-tab label="Editar">
-      <ng-container [ngTemplateOutlet]="editLocationContainer"></ng-container>
-    </mat-tab>
     <mat-tab label="Historial">
       <ng-container [ngTemplateOutlet]="historyContainer"></ng-container>
     </mat-tab>
@@ -26,14 +23,88 @@
       <mat-expansion-panel *ngFor="let product of listProducts">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{product.reference}}
+            {{product.reference.slice(2, -10)}}
           </mat-panel-title>
           <mat-panel-description>
             {{product.name}}
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <p>I'm visible because I am open</p>
+        <div padding>
+          <ion-label class="title-section">Reubicar</ion-label>
+          <div class="form-fields">
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <ion-icon name="home"></ion-icon>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
+                      <ion-select-option *ngFor="let warehouse of listWarehouses" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_module</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelected" *ngIf="checkFieldIsEnabled(2)" (ngModelChange)="changeSelect(2)">
+                      <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_stream</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Fila" interface="popover" [(ngModel)]="rowSelected" *ngIf="checkFieldIsEnabled(3)" (ngModelChange)="changeSelect(3)">
+                      <ion-select-option *ngFor="let row of listRows" [value]="row.row">{{row.row}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_column</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelected" *ngIf="checkFieldIsEnabled(4)" (ngModelChange)="changeSelect(4)">
+                      <ion-select-option *ngFor="let column of listColumns" [value]="column.column">{{column.column}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </div>
+          <div class="btn-move-product">
+            <ion-row>
+              <ion-col size="6" class="btn-close">
+                <ion-button color="secondary" (click)="resetDataMovement()">
+                  Cancelar
+                </ion-button>
+              </ion-col>
+              <ion-col size="6" class="btn-save">
+                <ion-button color="tertiary" (click)="saveDataMovement(product)">
+                  Guardar
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
       </mat-expansion-panel>
     </mat-accordion>
 
@@ -45,69 +116,6 @@
       </ion-fab>
     </ion-footer>
 
-  </ng-template>
-
-  <ng-template #editLocationContainer let-lessonsCounter="estimate">
-    <form [formGroup]="updateForm" (ngSubmit)="scanProduct()">
-      <ion-grid class="wrapper-form">
-        <ion-row class="input-wrapper">
-          <ion-col>
-            <div>
-              <ion-item lines="full">
-                <i class="material-icons">view_module</i>
-                <ion-select placeholder="Pasillo">
-                  <ion-select-option *ngFor="let value of listRacks" [value]="value">{{value}}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
-          </ion-col>
-          <ion-col>
-            <div>
-              <ion-item lines="full">
-                <i class="material-icons">view_column</i>
-                <ion-select placeholder="Columnas">
-                  <ion-select-option *ngFor="let value of listColumns" [value]="value">{{value}}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
-          </ion-col>
-          <ion-col>
-            <div>
-              <ion-item lines="full">
-                <i class="material-icons">view_stream</i>
-                <ion-select placeholder="Filas">
-                  <ion-select-option *ngFor="let value of listRows" [value]="value">{{value}}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
-          </ion-col>
-          <ion-col>
-            <div>
-              <ion-item lines="full">
-                <i class="material-icons">visibility</i>
-                <ion-select placeholder="Activar">
-                  <ion-select-option *ngFor="let value of listEnable" [value]="value">{{value}}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </form>
-    <ion-footer padding class="footer-save">
-      <ion-toolbar>
-        <ion-button slot="end" color="light" (click)="goToList()">
-          Cancelar
-        </ion-button>
-        <ion-button
-          slot="end"
-          color="primary"
-          [disabled]="updateForm.invalid"
-          (click)="scanProduct()">
-          Guardar
-        </ion-button>
-      </ion-toolbar>
-    </ion-footer>
   </ng-template>
 
   <ng-template #historyContainer let-lessonsCounter="estimate">

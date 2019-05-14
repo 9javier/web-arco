@@ -8,6 +8,7 @@ import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 
 interface MenuItem {
   title: string;
@@ -99,7 +100,8 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private scannerConfigurationService: ScannerConfigurationService
   ) {
     this.menu.enable(false, 'sidebar');
   }
@@ -112,6 +114,8 @@ export class AppComponent implements OnInit {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
       this.menu.enable(false, 'sidebar');
+
+      this.scannerConfigurationService.init();
 
       // Display button for small device to toggle sidemenu from main-header
       window.innerWidth < 992
@@ -132,6 +136,7 @@ export class AppComponent implements OnInit {
           this.router.navigate(['login']);
         }
         this.warehouseService.init();
+        this.warehouseService.loadWarehousesData();
       });
 
       /* Update to display current route on Access Denied from Server */
