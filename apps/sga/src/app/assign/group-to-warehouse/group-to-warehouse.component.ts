@@ -61,7 +61,6 @@ export class GroupToWarehouseComponent implements OnInit {
     warehouse: WarehouseModel.Warehouse,
     group: GroupModel.Group
   ){
-    alert(warehouse.id);
     this.warehousesService
       .postAssignGroupToCategory(warehouse.id, group.id)
       .then((data: Observable<HttpResponse<WarehouseModel.ResponseUpdate>>) => {
