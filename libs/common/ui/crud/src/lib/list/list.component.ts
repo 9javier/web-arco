@@ -110,7 +110,7 @@ export class ListComponent implements OnInit {
   }
 
   loadData() {
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets' || this.routePath == '/groups') {
       this.initUsers();
       this.parentPage = null;
     } else if (this.routePath == '/halls' || this.routePath == '/locations') {
@@ -292,8 +292,10 @@ export class ListComponent implements OnInit {
   }
 
   confirmDelete() {
-    if (this.selection.selected.length > 0) {
+    if (this.selection.selected.length > 0 && this.routePath != '/jails'  && this.routePath !='/pallets') {
       this.presentUsertDeleteAlert(this.selection);
+    } else {
+      this.presentJailsDeleteAlert(this.selection);
     }
     console.log('confirmDelete', this.selection.selected);
   }
