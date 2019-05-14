@@ -14,6 +14,7 @@ import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
+import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 
 interface MenuItem {
   title: string;
@@ -61,7 +62,8 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
-    private scanditService: ScanditService
+    private scanditService: ScanditService,
+    private warehouseService: WarehouseService
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -75,6 +77,7 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
+          this.warehouseService.init();
           this.router.navigate(['home']);
           this.menu.enable(true, 'sidebar');
           if (this.platform.is('android')) {
