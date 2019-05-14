@@ -3,14 +3,12 @@ import {
   GroupsService,
   GroupModel,
   WarehousesService,
-  WarehouseModel, ACLModel, RolModel, PermissionsModel
+  WarehouseModel
 } from '@suite/services';
 import { Observable } from 'rxjs';
 import {HttpResponse, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
-import { MatSelectionListChange, MatListOption } from '@angular/material/list';
-import { mergeMap } from 'rxjs/operators';
-import {WarehousesModule} from "../../warehouses/warehouses.module";
+
 
 
 @Component({
