@@ -12,7 +12,7 @@ import { ToastController } from '@ionic/angular';
 
 
 @Component({
-  selector: 'suite-permission-to-rol',
+  selector: 'suite-group-to-warehouses',
   templateUrl: './group-to-warehouse.component.html',
   styleUrls: ['./group-to-warehouse.component.scss']
 })
