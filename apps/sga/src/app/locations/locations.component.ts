@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { COLLECTIONS } from 'config/base';
 import {ModalController} from "@ionic/angular";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'suite-locations',
@@ -14,11 +15,22 @@ export class LocationsComponent implements OnInit {
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Maps')
     .name;
   routePath = '/locations';
+  origin: string = 'list';
 
 
-  constructor(private modalCtrl:ModalController) {}
+  constructor(
+    private modalCtrl: ModalController,
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.paramMap.subscribe((params: any )=> {
+      let paramsReceived = params.params;
+      if (typeof paramsReceived.id == 'string' && paramsReceived.id == 'manage') {
+        this.origin = 'manage';
+      }
+    });
+  }
 
   closeModal()
   {

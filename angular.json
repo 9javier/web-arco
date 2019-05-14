@@ -96,7 +96,9 @@
               "apps/al/tsconfig.app.json",
               "apps/al/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -158,7 +160,9 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "apps/al-e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
@@ -256,7 +260,9 @@
               "apps/sga/tsconfig.app.json",
               "apps/sga/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -294,7 +300,9 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": "apps/sga-e2e/tsconfig.e2e.json",
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         }
       }
@@ -312,7 +320,9 @@
               "libs/services/tsconfig.lib.json",
               "libs/services/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -343,7 +353,9 @@
               "libs/common/ui/crud/tsconfig.lib.json",
               "libs/common/ui/crud/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**"]
+            "exclude": [
+              "**/node_modules/**"
+            ]
           }
         },
         "test": {
@@ -352,6 +364,39 @@
             "main": "libs/common/ui/crud/src/test.ts",
             "tsConfig": "libs/common/ui/crud/tsconfig.spec.json",
             "karmaConfig": "libs/common/ui/crud/karma.conf.js"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/schematics:component": {
+          "styleext": "scss"
+        }
+      }
+    },
+    "common-modules": {
+      "root": "libs/modules",
+      "sourceRoot": "libs/modules/src",
+      "projectType": "library",
+      "prefix": "suite",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/modules/tsconfig.lib.json",
+              "libs/modules/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/modules/src/test.ts",
+            "tsConfig": "libs/modules/tsconfig.spec.json",
+            "karmaConfig": "libs/modules/karma.conf.js"
           }
         }
       },

@@ -12,7 +12,7 @@ import { UserModel, RolModel } from '@suite/services';
 import { CrudService } from '../service/crud.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import {Router, NavigationStart, NavigationEnd, ActivatedRoute} from '@angular/router';
+import { Router, NavigationStart, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { filter, last, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   AlertController,
@@ -22,20 +22,21 @@ import {
 } from '@ionic/angular';
 import { Location } from '@angular/common';
 
-import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app/users/store/store.component";
-import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
-import {StoreComponent as storeHall} from "../../../../../../../apps/sga/src/app/halls/store/store.component";
-import {StoreComponent as storeWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
-import {StoreComponent as storeJail} from "../../../../../../../apps/sga/src/app/jail/store/store.component";
-import {StoreComponent as storePallet} from "../../../../../../../apps/sga/src/app/pallets/store/store.component";
-import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
-import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
-import {UpdateComponent as updateHall} from "../../../../../../../apps/sga/src/app/halls/update/update.component";
-import {UpdateComponent as updateWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
-import {UpdateComponent as updateJail} from "../../../../../../../apps/sga/src/app/jail/update/update.component";
-import {UpdateComponent as updatePallet} from "../../../../../../../apps/sga/src/app/pallets/update/update.component";
-import {HallsService} from "../../../../../../services/src/lib/endpoint/halls/halls.service";
-import {HallModel} from "../../../../../../services/src/models/endpoints/Hall";
+import { StoreComponent as storeUser } from "../../../../../../../apps/sga/src/app/users/store/store.component";
+import { StoreComponent as storeRol } from "../../../../../../../apps/sga/src/app/roles/store/store.component";
+import { StoreComponent as storeHall } from "../../../../../../../apps/sga/src/app/halls/store/store.component";
+import { StoreComponent as storeWarehouse } from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
+import { StoreComponent as storeJail } from "libs/modules/src/jail/store/store.component";
+import { StoreComponent as storePallet } from "../../../../../../../apps/sga/src/app/pallets/store/store.component";
+import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
+import { UpdateComponent as updateRol } from "../../../../../../../apps/sga/src/app/roles/update/update.component";
+import { UpdateComponent as updateHall } from "../../../../../../../apps/sga/src/app/halls/update/update.component";
+import { UpdateComponent as updateWarehouse } from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
+import { UpdateComponent as updateJail } from "libs/modules/src/jail/update/update.component";
+import { UpdateComponent as updatePallet } from "../../../../../../../apps/sga/src/app/pallets/update/update.component";
+import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/halls.service";
+import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
+import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 
 @Component({
   selector: 'suite-ui-crud-list',
@@ -64,7 +65,8 @@ export class ListComponent implements OnInit {
     public loadingController: LoadingController,
     private hallsService: HallsService,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private warehouseService: WarehouseService
 
   ) {
     console.log(this.dataSource);
@@ -97,7 +99,7 @@ export class ListComponent implements OnInit {
   parentPage: string = null;
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: any )=> {
+    this.route.paramMap.subscribe((params: any) => {
       this.paramsReceived = params;
     });
 
@@ -170,13 +172,13 @@ export class ListComponent implements OnInit {
     this.showDeleteButton = false;
   }
 
-  goPreviousPage () {
+  goPreviousPage() {
     this.location.back();
   }
 
   async goToStore() {
     let storeComponent = null;
-    let componentProps: any = {routePath: this.routePath};
+    let componentProps: any = { routePath: this.routePath };
 
     if (this.routePath == '/roles') {
       storeComponent = storeRol;
@@ -219,9 +221,9 @@ export class ListComponent implements OnInit {
       updateComponent = updateHall;
     } else if (this.routePath == '/warehouses') {
       updateComponent = updateWarehouse;
-    } else if (this.routePath == '/jails'){
+    } else if (this.routePath == '/jails') {
       updateComponent = updateJail;
-    } else if (this.routePath == '/pallets'){
+    } else if (this.routePath == '/pallets') {
       updateComponent = updatePallet;
     }
 
@@ -234,6 +236,9 @@ export class ListComponent implements OnInit {
       modal.onDidDismiss()
         .then(() => {
           this.loadData();
+          if (this.routePath == '/warehouses') {
+            this.warehouseService.init();
+          }
         });
 
       return await modal.present();
@@ -252,8 +257,8 @@ export class ListComponent implements OnInit {
     this.isAllSelected()
       ? this.selection.clear()
       : this.dataSource.forEach((row: UserModel.User | RolModel.Rol) =>
-          this.selection.select(row)
-        );
+        this.selection.select(row)
+      );
 
     this.isAllSelected()
       ? (this.showDeleteButton = true)
@@ -267,7 +272,7 @@ export class ListComponent implements OnInit {
     }
     return `${
       this.selection.isSelected(row) ? 'deselect' : 'select'
-    } row ${row.id + 1}`;
+      } row ${row.id + 1}`;
   }
 
   checkSelection(row?: UserModel.User | RolModel.Rol) {
@@ -286,17 +291,17 @@ export class ListComponent implements OnInit {
     console.log('confirmDelete', this.selection.selected);
   }
 
-  changeWarehouse (event) {
+  changeWarehouse(event) {
     this.warehouseSelected = event.detail.value;
     this.loadData();
   }
 
-  showWarehouseMaps (event, row) {
+  showWarehouseMaps(event, row) {
     event.stopPropagation();
     this.router.navigate([`/warehouses/halls/${row.id}`]);
   }
 
-  showWarehousePoints (event, row) {
+  showWarehousePoints(event, row) {
     event.stopPropagation();
     this.router.navigate([`/warehouses/locations/${row.id}`]);
   }
@@ -357,7 +362,7 @@ export class ListComponent implements OnInit {
                         (response: HttpResponse<UserModel.ResponseDestroy>) => {
                           console.log(
                             `${response.body.data} - ${response.body.code} - ${
-                              response.body.message
+                            response.body.message
                             }`
                           );
                           this.presentToast(successMsg);

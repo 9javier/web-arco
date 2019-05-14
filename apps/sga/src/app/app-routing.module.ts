@@ -24,15 +24,17 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: './assign/assign.module#AssignModule'
   },
-  { path: 'login',
+  {
+    path: 'login',
     resolve: {
-     token: RemoteTokenResolver
+      token: RemoteTokenResolver
+    },
+    loadChildren: './login/login.module#LoginPageModule'
   },
-  loadChildren: './login/login.module#LoginPageModule' },
   {
     path: 'jails',
     canActivate: [AuthGuard],
-    loadChildren: './jail/jail.module#JailModule'
+    loadChildren: '@suite/common-modules#JailModule'
   },
   {
     path: 'pallets',
@@ -62,14 +64,19 @@ const routes: Routes = [
      path: '',
      redirectTo: 'login',
      pathMatch: 'full'
+  },
+  {
+    path: 'warehouse',
+    canActivate: [AuthGuard],
+    loadChildren: './locations/locations.module#LocationsModule'
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules  })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule],
   providers: [RemoteTokenResolver]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

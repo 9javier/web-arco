@@ -1,7 +1,142 @@
-<suite-ui-crud-update
-  [title]="title"
-  [formBuilderDataInputs]="formBuilderDataInputs"
-  [formBuilderTemplateInputs]="formBuilderTemplateInputs"
-  [apiEndpoint]="apiEndpoint"
-  [redirectTo]="redirectTo"
-></suite-ui-crud-update>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToList()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <mat-tab-group mat-stretch-tabs>
+    <mat-tab label="Listado">
+      <ng-container [ngTemplateOutlet]="listProductsContainer"></ng-container>
+    </mat-tab>
+    <mat-tab label="Editar">
+      <ng-container [ngTemplateOutlet]="editLocationContainer"></ng-container>
+    </mat-tab>
+    <mat-tab label="Historial">
+      <ng-container [ngTemplateOutlet]="historyContainer"></ng-container>
+    </mat-tab>
+  </mat-tab-group>
+
+  <ng-template #listProductsContainer let-lessonsCounter="estimate">
+    <mat-accordion class="accordion-products">
+      <mat-expansion-panel *ngFor="let product of listProducts">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{product.reference}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{product.name}}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <p>I'm visible because I am open</p>
+      </mat-expansion-panel>
+    </mat-accordion>
+
+    <ion-footer class="footer-products">
+      <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button color="light" (click)="scanProduct()"><ion-icon name="barcode"></ion-icon></ion-fab-button>
+        <ion-fab-button color="light"><i class="material-icons">print</i></ion-fab-button>
+        <ion-fab-button (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
+      </ion-fab>
+    </ion-footer>
+
+  </ng-template>
+
+  <ng-template #editLocationContainer let-lessonsCounter="estimate">
+    <form [formGroup]="updateForm" (ngSubmit)="scanProduct()">
+      <ion-grid class="wrapper-form">
+        <ion-row class="input-wrapper">
+          <ion-col>
+            <div>
+              <ion-item lines="full">
+                <i class="material-icons">view_module</i>
+                <ion-select placeholder="Pasillo">
+                  <ion-select-option *ngFor="let value of listRacks" [value]="value">{{value}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div>
+              <ion-item lines="full">
+                <i class="material-icons">view_column</i>
+                <ion-select placeholder="Columnas">
+                  <ion-select-option *ngFor="let value of listColumns" [value]="value">{{value}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div>
+              <ion-item lines="full">
+                <i class="material-icons">view_stream</i>
+                <ion-select placeholder="Filas">
+                  <ion-select-option *ngFor="let value of listRows" [value]="value">{{value}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </ion-col>
+          <ion-col>
+            <div>
+              <ion-item lines="full">
+                <i class="material-icons">visibility</i>
+                <ion-select placeholder="Activar">
+                  <ion-select-option *ngFor="let value of listEnable" [value]="value">{{value}}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+    <ion-footer padding class="footer-save">
+      <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="goToList()">
+          Cancelar
+        </ion-button>
+        <ion-button
+          slot="end"
+          color="primary"
+          [disabled]="updateForm.invalid"
+          (click)="scanProduct()">
+          Guardar
+        </ion-button>
+      </ion-toolbar>
+    </ion-footer>
+  </ng-template>
+
+  <ng-template #historyContainer let-lessonsCounter="estimate">
+    <mat-accordion class="accordion-history">
+      <mat-expansion-panel *ngFor="let productHistory of listHistory">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{productHistory.reference}}
+          </mat-panel-title>
+          <mat-panel-description>
+            {{productHistory.name}}
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <p>Almacén de origen:
+          <span class="value-history">
+            {{productHistory.origin_warehouse ? (productHistory.origin_warehouse.reference + ' - ' + productHistory.origin_warehouse.name) : 'No registrado'}}
+          </span>
+        </p>
+        <p>Almacén de destino:
+          <span class="value-history">
+            {{productHistory.destination_warehouse ? (productHistory.destination_warehouse.reference + ' - ' + productHistory.destination_warehouse.name) : 'No registrado'}}
+          </span>
+        </p>
+        <p>Empleado: <span class="value-history">{{productHistory.user.name}} (<span class="email-address">{{productHistory.user.email}}</span>)</span></p>
+        <p>Añadido: <span class="value-history">{{productHistory.date_add}}</span></p>
+        <p>Modificado: <span class="value-history">{{productHistory.date_upd}}</span></p>
+        <p>Errores: <span class="value-history">{{productHistory.errors}}</span></p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </ng-template>
+</ion-content>

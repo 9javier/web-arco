@@ -1,6 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import { Validators } from '@angular/forms';
-import { COLLECTIONS } from 'config/base';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -10,7 +8,9 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../../../../libs/services/src/models/endpoints/Hall";
 import {HallsService} from "../../../../../../libs/services/src/lib/endpoint/halls/halls.service";
 import {ActivatedRoute} from "@angular/router";
-import {ToastController} from "@ionic/angular";
+import {ModalController, ToastController} from "@ionic/angular";
+import {WarehouseService} from "../../../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import {UpdateComponent} from "../update/update.component";
 
 @Component({
   selector: 'suite-list-locations',
@@ -41,7 +41,9 @@ export class ListComponent implements OnInit {
     private location: Location,
     private hallsService: HallsService,
     private route: ActivatedRoute,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private warehouseService: WarehouseService,
+    private modalController: ModalController
   ) {
 
   }
@@ -51,6 +53,7 @@ export class ListComponent implements OnInit {
   @Input() dataColumns: string[];
   @Input() displayedColumns: string[];
   @Input() routePath: string;
+  @Input() origin: string;
 
   dataSource: any[] = [];
   selection = new SelectionModel<UserModel.User | RolModel.Rol>(true, []);
@@ -67,6 +70,8 @@ export class ListComponent implements OnInit {
   countLocationsSelected: number = 0;
   listRowsExpanded: any = {};
 
+  private intervalReload = null;
+
   ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
       this.paramsReceived = params;
@@ -76,6 +81,14 @@ export class ListComponent implements OnInit {
 
   initHalls() {
     this.warehouseSelected = this.paramsReceived.params.id;
+    if (this.origin == 'manage') {
+      this.warehouseSelected = this.warehouseService.idWarehouseMain;
+      this.parentPage = null;
+
+      this.intervalReload = setInterval(() => {
+        this.reloadData();
+      }, 10 * 1000);
+    }
     this.hallsService
       .getIndex(this.warehouseSelected)
       .then(
@@ -186,14 +199,18 @@ export class ListComponent implements OnInit {
   }
 
   selectLocation(event, data, row, column, iRow, iColumn) {
-    if (!this.locationsSelected[column.id]) {
-      this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
-      this.expandedElement.container[iRow][iColumn].selected = true;
-      this.countLocationsSelected++;
+    if (this.origin == 'list') {
+      if (!this.locationsSelected[column.id]) {
+        this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
+        this.expandedElement.container[iRow][iColumn].selected = true;
+        this.countLocationsSelected++;
+      } else {
+        this.expandedElement.container[iRow][iColumn].selected = false;
+        delete this.locationsSelected[column.id];
+        this.countLocationsSelected--;
+      }
     } else {
-      this.expandedElement.container[iRow][iColumn].selected = false;
-      delete this.locationsSelected[column.id];
-      this.countLocationsSelected--;
+      this.editLocation(column);
     }
   }
 
@@ -259,8 +276,24 @@ export class ListComponent implements OnInit {
     this.reloadData();
   }
 
-  editLocation() {
+  async editLocation(container) {
+    const modal = await this.modalController.create({
+      component: UpdateComponent,
+      componentProps: { container: container, warehouseId: this.warehouseSelected }
+    });
 
+    modal.onDidDismiss()
+      .then(() => {
+        this.reloadData();
+
+        this.intervalReload = setInterval(() => {
+          this.reloadData();
+        }, 10 * 1000);
+      });
+
+    clearInterval(this.intervalReload);
+
+    return await modal.present();
   }
 
   reloadData() {

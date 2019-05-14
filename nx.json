@@ -25,6 +25,9 @@
     },
     "common-ui-crud": {
       "tags": []
+    },
+    "common-modules": {
+      "tags": []
     }
   }
 }

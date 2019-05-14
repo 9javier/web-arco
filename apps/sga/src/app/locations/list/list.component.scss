@@ -82,7 +82,7 @@ table {
   }
 }
 
-td.row-element-detail {
+td.row-element-detail.mat-cell:last-of-type {
   padding-left: 80px;
 }
 
@@ -126,6 +126,10 @@ td.row-element-detail {
     background: rgba(12, 157, 88, 0.12);
     background-image: url('../../../assets/img/md-check.svg');
     background-position: center;
+  }
+  td:hover, td.location-free:hover, td.location-disabled:hover, td.location-selected:hover {
+    outline: 3px solid #0c9d58;
+    outline-offset: -3px;
   }
 }
 

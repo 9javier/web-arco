@@ -1,5 +1,5 @@
 <ion-content padding>
-  <ion-text color="primary"> <h1>Asignar Permiso a Rol</h1> </ion-text>
+  <!-- <ion-text color="primary"> <h1>Asignar Permiso a Rol</h1> </ion-text> -->
 
   <mat-accordion multi="false">
     <mat-expansion-panel
@@ -8,8 +8,18 @@
       (closed)="panelOpenState = false"
     >
       <mat-expansion-panel-header>
-        <mat-panel-title> {{ rol.id }} </mat-panel-title>
-        <mat-panel-description> {{ rol.name }} </mat-panel-description>
+        <ion-grid>
+        <ion-row>
+          <ion-col size="3"><mat-panel-title> {{ rol.name }} </mat-panel-title></ion-col>
+          <ion-col size="7"><mat-panel-description> {{ rol.description }} </mat-panel-description></ion-col>
+          <ion-col size="1">
+              <ion-button color="primary" fill="outline" size="small" (click)="$event.stopPropagation(); goToUpdate(rol)">
+                  <ion-icon slot="icon-only" color="primary" name="create"></ion-icon>
+                </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+        
       </mat-expansion-panel-header>
 
       <h2 class="example-h2">Permisos</h2>
@@ -46,4 +56,25 @@
       ></mat-list>
     </mat-expansion-panel>
   </mat-accordion>
+  <!-- fab placed to the bottom end -->
+  <ion-row class="fab-row-actions">
+    <ion-col size="2" size-xs offset="8" offset-lg="10">
+      <ion-fab
+        *ngIf="showDeleteButton"
+        [@EnterLeave]="'flyIn'"
+        (click)="confirmDelete()"
+      >
+        <ion-fab-button color="light">
+          <ion-icon name="trash"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-col>
+    <ion-col size="2" size-xs>
+      <ion-fab>
+        <ion-fab-button (click)="goToStore()">
+          <ion-icon name="add"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+    </ion-col>
+  </ion-row>
 </ion-content>
