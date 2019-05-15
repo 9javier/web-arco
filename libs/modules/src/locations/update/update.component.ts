@@ -5,6 +5,7 @@ import {InventoryModel} from "../../../../services/src/models/endpoints/Inventor
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'suite-update',
@@ -46,7 +47,8 @@ export class UpdateComponent implements OnInit {
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
     private toastController: ToastController,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   ngOnInit() {
@@ -280,6 +282,14 @@ export class UpdateComponent implements OnInit {
           });
       });
     }
+  }
+
+  showTimeFromNow(dateToFormat) : string {
+    return this.dateTimeParserService.timeFromNow(dateToFormat);
+  }
+
+  showDateTime(dateToFormat) : string {
+    return this.dateTimeParserService.dateTime(dateToFormat);
   }
 
 }

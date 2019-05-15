@@ -126,7 +126,7 @@
             {{productHistory.reference}}
           </mat-panel-title>
           <mat-panel-description>
-            {{productHistory.name}}
+            {{showTimeFromNow(productHistory.date_upd)}}
           </mat-panel-description>
         </mat-expansion-panel-header>
 
@@ -141,8 +141,8 @@
           </span>
         </p>
         <p>Empleado: <span class="value-history">{{productHistory.user.name}} (<span class="email-address">{{productHistory.user.email}}</span>)</span></p>
-        <p>Añadido: <span class="value-history">{{productHistory.date_add}}</span></p>
-        <p>Modificado: <span class="value-history">{{productHistory.date_upd}}</span></p>
+        <p>Añadido: <span class="value-history">{{showDateTime(productHistory.date_add)}}</span></p>
+        <p>Modificado: <span class="value-history">{{showDateTime(productHistory.date_upd)}}</span></p>
         <p>Errores: <span class="value-history">{{productHistory.errors}}</span></p>
       </mat-expansion-panel>
     </mat-accordion>
