@@ -9,6 +9,7 @@ import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
 
 interface MenuItem {
   title: string;
@@ -33,6 +34,11 @@ export class AppComponent implements OnInit {
       icon: 'apps'
     },
     {
+      title: 'Ubicar/Escanear',
+      icon: 'qr-scanner',
+      url: 'positioning'
+    },
+    {
       title: 'Logout',
       url: '/home',
       icon: 'log-out'
@@ -53,8 +59,9 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
+    private warehouseService: WarehouseService,
     private scannerConfigurationService: ScannerConfigurationService,
-    private warehouseService: WarehouseService
+    private scanditService: ScanditService
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -76,9 +83,13 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
+          this.warehouseService.init();
           this.router.navigate(['home']);
           this.showMainHeader = true;
           this.menu.enable(true, 'sidebar');
+          if (this.platform.is('android')) {
+            this.scanditService.setApiKey();
+          }
         } else {
           this.router.navigate(['login']);
           this.showMainHeader = false;
@@ -104,6 +115,8 @@ export class AppComponent implements OnInit {
             });
           });
       });
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
     }
   }
 

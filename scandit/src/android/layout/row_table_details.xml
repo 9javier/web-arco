@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow  xmlns:android="http://schemas.android.com/apk/res/android"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content">
+
+  <TextView
+    android:id="@+id/row_company_value"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Empresa"
+    android:textColor="@color/transparentWhite"
+    android:textSize="9sp" />
+
+  <TextView
+    android:id="@+id/row_warehouse_value"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="ALMACÉN"
+    android:textColor="@color/transparentWhite"
+    android:textSize="9sp"
+  />
+
+  <TextView
+    android:id="@+id/row_stock_value"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="right"
+    android:text="N/A"
+    android:textColor="@color/transparentWhite"
+    android:textSize="9sp"
+    android:paddingRight="5dp"
+    android:layout_marginRight="5dp"
+  />
+
+</TableRow>

@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <FrameLayout
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+  <LinearLayout
+    android:id="@+id/llProductData"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="80dp"
+    android:background="@drawable/bg_transparent_black"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_margin="10dp">
+      <TextView
+        android:id="@+id/tvReference"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="3"
+        android:gravity="center_vertical"
+        android:text="Shop&amp;Go"
+        android:textSize="25sp"
+        android:textColor="@color/transparentWhite"/>
+      <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="3"
+        android:gravity="right|center_vertical"
+        android:text="40&#032;&#8364;"
+        android:textSize="25sp"
+        android:textColor="@color/transparentWhite"
+        android:textStyle="bold"
+        android:layout_marginRight="10dp"/>
+      <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:gravity="center">
+        <ImageButton
+          android:id="@+id/btnProduct"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_product"
+          android:tint="@color/transparentBlack"
+          android:backgroundTint="@color/transparentWhite"/>
+      </RelativeLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+      android:id="@+id/rlLoader"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center">
+      <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="20dp">
+      </ProgressBar>
+    </RelativeLayout>
+
+    <TextView
+      android:id="@+id/tvNoStocks"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="10dp"
+      android:layout_marginRight="10dp"
+      android:layout_marginBottom="10dp"
+      android:layout_marginTop="5dp"
+      android:gravity="center"
+      android:text="No hay stock de ninguna talla en ninguna tienda"
+      android:textSize="20sp"
+      android:textColor="@color/transparentWhite"
+      android:visibility="gone"/>
+
+    <TableLayout
+      android:id="@+id/tlStocks"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="10dp"
+      android:layout_marginRight="10dp"
+      android:layout_marginBottom="10dp"
+      android:layout_marginTop="5dp"
+      android:background="#fff"
+      android:orientation="horizontal"
+      android:stretchColumns="*"
+      android:padding="5dp"
+      android:showDividers="middle"
+      android:visibility="gone">
+
+    </TableLayout>
+
+  </LinearLayout>
+
+  <RelativeLayout
+    android:id="@+id/detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:background="@color/lessTransparentBlack"
+    android:gravity="center"
+    android:visibility="gone"
+  >
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentStart="true"
+      android:layout_centerVertical="true"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/detail_code_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Code"
+        android:textColor="@color/transparentWhite"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+      />
+
+      <TextView
+        android:id="@+id/detail_code_internal_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Code"
+        android:textColor="@color/transparentWhite"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+      <TextView
+        android:id="@+id/detail_stock_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Stock"
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+        />
+
+      <TextView
+        android:id="@+id/detail_price_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Precio"
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+         />
+
+      <TextView
+        android:id="@+id/detail_supplier_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Sum."
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+      />
+
+      <TextView
+        android:id="@+id/detail_name_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+      />
+
+
+      <TableLayout
+        android:id="@+id/Tabla"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+          android:id="@+id/Cabecera"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:id="@+id/ColumnaEmpresa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5px"
+            android:text="EMPRESA"
+            android:textColor="@color/transparentWhite"
+            android:textSize="12sp" />
+
+          <TextView
+            android:id="@+id/ColumnaAlmacen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:padding="5px"
+            android:text="ALMACÉN"
+            android:textColor="@color/transparentWhite"
+            android:textSize="12sp" />
+
+          <TextView
+            android:id="@+id/ColumnaStock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5px"
+            android:paddingBottom="5px"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp"
+            android:layout_marginRight="5dp"
+            android:text="STOCK"
+            android:textColor="@color/transparentWhite"
+            android:textSize="12sp" />
+
+        </TableRow>
+
+        <TableRow
+          android:id="@+id/SeparadorCabecera"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <FrameLayout
+            android:id="@+id/LineaCabecera"
+            android:layout_width="fill_parent"
+            android:layout_height="2px"
+            android:layout_marginBottom="4dp"
+            android:layout_span="6"
+            android:background="#FFFFFF"></FrameLayout>
+        </TableRow>
+
+
+      </TableLayout>
+
+
+    </LinearLayout>
+
+    <Button
+      android:id="@+id/regularize_button"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_margin="40dp"
+      android:text="Regularizar"
+      android:textAllCaps="true" />
+
+  </RelativeLayout>
+
+  <!--<TextView-->
+  <!--android:id="@+id/detail"-->
+  <!--android:layout_width="match_parent"-->
+  <!--android:layout_height="match_parent"-->
+  <!--android:background="@color/lessTransparentBlack"-->
+  <!--android:padding="@dimen/default_horizontal_margin"-->
+  <!--android:gravity="center"-->
+  <!--android:textColor="@android:color/white"-->
+  <!--android:textSize="20sp"-->
+  <!--android:visibility="gone"/>-->
+</RelativeLayout>

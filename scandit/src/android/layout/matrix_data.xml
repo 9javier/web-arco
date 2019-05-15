@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <FrameLayout
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+  <RelativeLayout
+    android:id="@+id/detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:background="@color/lessTransparentBlack"
+    android:gravity="center"
+    android:visibility="gone"
+  >
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentStart="true"
+      android:layout_centerVertical="true"
+      android:orientation="vertical">
+
+      <TextView
+        android:id="@+id/detail_code_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Code"
+        android:textColor="@color/transparentWhite"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+      <TextView
+        android:id="@+id/detail_stock_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Stock"
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+      <TextView
+        android:id="@+id/detail_price_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Precio"
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+      <TextView
+        android:id="@+id/detail_sold_value"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Uds. Vendidas"
+        android:textColor="@color/transparentWhite"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+
+      <TableLayout
+        android:id="@+id/Tabla"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:stretchColumns="1">
+
+        <TableRow
+          android:id="@+id/Cabecera"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:id="@+id/ColumnaAlmacen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5px"
+            android:text="ALMACÉN"
+            android:textColor="@color/transparentWhite"
+            android:textSize="13sp" />
+
+          <TextView
+            android:id="@+id/ColumnaStock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="5px"
+            android:text="STOCK"
+            android:textColor="@color/transparentWhite"
+            android:textSize="13sp" />
+
+          <TextView
+            android:id="@+id/ColumnaTransito"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="5px"
+            android:paddingBottom="5px"
+            android:paddingLeft="5dp"
+            android:paddingRight="15dp"
+            android:text="EN TRÁNSITO"
+            android:textColor="@color/transparentWhite"
+            android:textSize="13sp" />
+
+          <TextView
+            android:id="@+id/ColumnaPendSalida"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="5px"
+            android:paddingBottom="5px"
+            android:paddingLeft="15dp"
+            android:paddingRight="5dp"
+            android:text="PEND. SALIDA"
+            android:textColor="@color/transparentWhite"
+            android:textSize="13sp" />
+
+        </TableRow>
+
+        <TableRow
+          android:id="@+id/SeparadorCabecera"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <FrameLayout
+            android:id="@+id/LineaCabecera"
+            android:layout_width="fill_parent"
+            android:layout_height="2px"
+            android:layout_marginBottom="4dp"
+            android:layout_span="6"
+            android:background="#FFFFFF"></FrameLayout>
+        </TableRow>
+
+
+        <TableRow
+          android:id="@+id/Fila1"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="ALMACÉN 1"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+        </TableRow>
+
+        <TableRow
+          android:id="@+id/Fila2"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="ALMACÉN 2"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+        </TableRow>
+
+        <TableRow
+          android:id="@+id/Fila3"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="ALMACÉN 3"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+        </TableRow>
+
+        <TableRow
+          android:id="@+id/Fila4"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="ALMACÉN 4"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+        </TableRow>
+
+        <TableRow
+          android:id="@+id/Fila5"
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content">
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="ALMACÉN 5"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="N/A"
+            android:textColor="@color/transparentWhite"
+            android:textSize="11sp" />
+
+        </TableRow>
+
+      </TableLayout>
+
+
+    </LinearLayout>
+
+  </RelativeLayout>
+
+  <!--<TextView-->
+  <!--android:id="@+id/detail"-->
+  <!--android:layout_width="match_parent"-->
+  <!--android:layout_height="match_parent"-->
+  <!--android:background="@color/lessTransparentBlack"-->
+  <!--android:padding="@dimen/default_horizontal_margin"-->
+  <!--android:gravity="center"-->
+  <!--android:textColor="@android:color/white"-->
+  <!--android:textSize="20sp"-->
+  <!--android:visibility="gone"/>-->
+</RelativeLayout>
