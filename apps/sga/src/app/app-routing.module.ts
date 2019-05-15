@@ -34,7 +34,7 @@ const routes: Routes = [
   {
     path: 'jails',
     canActivate: [AuthGuard],
-    loadChildren: '@suite/common-modules#JailModule'
+    loadChildren: './jail/jail.module#JailModule'
   },
   {
     path: 'pallets',
