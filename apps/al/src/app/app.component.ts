@@ -16,7 +16,6 @@ import { AuthenticationService } from '@suite/services';
 import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
-import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 
 interface MenuItem {
   title: string;
