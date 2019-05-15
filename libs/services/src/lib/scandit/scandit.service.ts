@@ -40,13 +40,13 @@ export class ScanditService {
     let warehouseId = this.warehouseService.idWarehouseMain;
 
     ScanditMatrixSimple.init((response) => {
-      console.log("TEST::response", response);
       if (response && response.barcode) {
         //Check Container or product
         let code = response.barcode.data;
         if (code.match(/P([0-9]){3}A([0-9]){2}C([0-9]){3}$/)) {
           //Container
           if(containerReference != code){
+            positionsScanning = [];
             containerReference = code;
             ScanditMatrixSimple.setText(`Inicio de posicionamiento en ${code}`, '#15789e', '#FFFFFF', 18);
             ScanditMatrixSimple.showText(true);
@@ -61,36 +61,40 @@ export class ScanditService {
             this.hideTextMessage(1500);
           } else {
 
-            ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, '#15789e', '#FFFFFF', 16);
-            ScanditMatrixSimple.showText(true);
-            this.hideTextMessage(1500);
-            this.inventoryService.postStore({
-              productReference: productReference,
-              containerReference: containerReference,
-              warehouseId: warehouseId
-            }).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-              data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-                if (res.body.code == 200 || res.body.code == 201) {
-                  ScanditMatrixSimple.setText(`Producto ${productReference} añadido a la ubicación ${containerReference}`, '#2F9E5A', '#FFFFFF', 18);
-                  ScanditMatrixSimple.showText(true);
-                  this.hideTextMessage(2000);
-                } else {
-                  let errorMessage = '';
-                  if (res.body.errors.productReference && res.body.errors.productReference.message) {
-                    errorMessage = res.body.errors.productReference.message;
-                  } else {
-                    errorMessage = res.body.message;
-                  }
-                  ScanditMatrixSimple.setText(errorMessage, '#e8413e', '#FFFFFF', 18);
-                  ScanditMatrixSimple.showText(true);
-                  this.hideTextMessage(1500);
-                }
-              });
-            }, (error: HttpErrorResponse) => {
-              ScanditMatrixSimple.setText(error.message, '#e8413e', '#FFFFFF', 18);
+            let searchProductPosition = positionsScanning.filter(el => el.product == productReference && el.position == containerReference);
+            if(searchProductPosition.length == 0){
+              positionsScanning.push({product: productReference, position: containerReference});
+              ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, '#15789e', '#FFFFFF', 16);
               ScanditMatrixSimple.showText(true);
               this.hideTextMessage(1500);
-            });
+              this.inventoryService.postStore({
+                productReference: productReference,
+                containerReference: containerReference,
+                warehouseId: warehouseId
+              }).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
+                data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+                  if (res.body.code == 200 || res.body.code == 201) {
+                    ScanditMatrixSimple.setText(`Producto ${productReference} añadido a la ubicación ${containerReference}`, '#2F9E5A', '#FFFFFF', 18);
+                    ScanditMatrixSimple.showText(true);
+                    this.hideTextMessage(2000);
+                  } else {
+                    let errorMessage = '';
+                    if (res.body.errors.productReference && res.body.errors.productReference.message) {
+                      errorMessage = res.body.errors.productReference.message;
+                    } else {
+                      errorMessage = res.body.message;
+                    }
+                    ScanditMatrixSimple.setText(errorMessage, '#e8413e', '#FFFFFF', 18);
+                    ScanditMatrixSimple.showText(true);
+                    this.hideTextMessage(1500);
+                  }
+                });
+              }, (error: HttpErrorResponse) => {
+                ScanditMatrixSimple.setText(error.message, '#e8413e', '#FFFFFF', 18);
+                ScanditMatrixSimple.showText(true);
+                this.hideTextMessage(1500);
+              });
+            }
           }
         }
       }
