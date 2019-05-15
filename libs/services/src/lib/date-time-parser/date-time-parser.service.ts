@@ -8,15 +8,17 @@ export class DateTimeParserService {
 
   constructor() {}
 
-  private init() {
-    moment.locale('es');
+  private setLocale(locale) {
+    moment.locale(locale || 'es');
   }
 
   public timeFromNow(dateToFormat) : string {
-    return moment(dateToFormat).startOf('hour').fromNow();
+    this.setLocale(null);
+    return moment(dateToFormat).startOf('second').fromNow();
   }
 
   public dateTime(dateToFormat) : string {
+    this.setLocale(null);
     return moment(dateToFormat).format('DD/MM/YYYY HH:mm')
   }
 
