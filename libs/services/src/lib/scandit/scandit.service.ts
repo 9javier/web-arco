@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {SCANDIT_API_KEY} from "../../../../../config/base";
 import {InventoryService} from "../endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../models/endpoints/Inventory";
 import {WarehouseService} from "../endpoint/warehouse/warehouse.service";
@@ -29,8 +28,8 @@ export class ScanditService {
     private warehouseService: WarehouseService
   ) {}
 
-  setApiKey() {
-    Scandit.License.setAppKey(SCANDIT_API_KEY);
+  setApiKey(api_key) {
+    Scandit.License.setAppKey(api_key);
   }
 
   positioning() {
