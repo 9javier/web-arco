@@ -16,6 +16,7 @@ import { AuthenticationService } from '@suite/services';
 import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
+import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 
 interface MenuItem {
   title: string;
@@ -42,7 +43,7 @@ export class AppComponent implements OnInit {
     {
       title: 'Ubicar/Escanear',
       icon: 'qr-scanner',
-      url: 'scan'
+      url: 'positioning'
     },
     {
       title: 'Logout',
@@ -63,8 +64,8 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
-    private scannerConfigurationService: ScannerConfigurationService,
     private warehouseService: WarehouseService,
+    private scannerConfigurationService: ScannerConfigurationService,
     private scanditService: ScanditService
   ) {
     this.initializeApp();
@@ -81,6 +82,7 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
+          this.warehouseService.init();
           this.router.navigate(['home']);
           this.menu.enable(true, 'sidebar');
           if (this.platform.is('android')) {
@@ -108,8 +110,8 @@ export class AppComponent implements OnInit {
             console.log(data.body.data.msg);
           });
       });
-    } else if(p.url === 'scan'){
-      this.scanditService.scanReferences();
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
     }
   }
 }
