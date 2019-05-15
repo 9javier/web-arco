@@ -587,6 +587,7 @@ public class ScanditSDK extends CordovaPlugin {
               tvScanInfo.setTextColor(Color.parseColor(fColor));
               tvScanInfo.setTextSize(TypedValue.COMPLEX_UNIT_SP, fSize);
               tvScanInfo.setText(fText);
+              tvScanInfo.setVisibility(View.VISIBLE);
             }
             if (rlLoader != null) {
               rlLoader.setVisibility(View.GONE);
