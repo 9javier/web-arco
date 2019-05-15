@@ -49,6 +49,13 @@ export class WarehouseService {
   }
 
   loadWarehousesData() {
+    this.idWarehouseMain = 1;
+    this.listWarehouses = [];
+    this.listHalls = {};
+    this.listRows = {};
+    this.listColumns = {};
+    this.listReferences = {};
+
     this.getIndex()
       .then((data: Observable<HttpResponse<any>>) => {
         data.subscribe((res: HttpResponse<any>) => {
