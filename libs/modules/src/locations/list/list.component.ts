@@ -5,11 +5,11 @@ import {SelectionModel} from "@angular/cdk/collections";
 import {RolModel, UserModel} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {HallModel} from "../../../../../../libs/services/src/models/endpoints/Hall";
-import {HallsService} from "../../../../../../libs/services/src/lib/endpoint/halls/halls.service";
+import {HallModel} from "../../../../services/src/models/endpoints/Hall";
+import {HallsService} from "../../../../services/src/lib/endpoint/halls/halls.service";
 import {ActivatedRoute} from "@angular/router";
 import {ModalController, ToastController} from "@ionic/angular";
-import {WarehouseService} from "../../../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {UpdateComponent} from "../update/update.component";
 
 @Component({

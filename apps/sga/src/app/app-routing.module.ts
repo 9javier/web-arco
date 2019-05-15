@@ -63,7 +63,7 @@ const routes: Routes = [
   {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
-    loadChildren: './locations/locations.module#LocationsModule'
+    loadChildren: '@suite/common-modules#LocationsModule'
   },
   {
      path: '',
@@ -73,7 +73,7 @@ const routes: Routes = [
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: './locations/locations.module#LocationsModule'
+    loadChildren: '@suite/common-modules#LocationsModule'
   }
 ];
 

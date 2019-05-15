@@ -117,14 +117,14 @@ td.row-element-detail.mat-cell:last-of-type {
   }
   td.location-disabled {
     background: #fff;
-    background-image: url('../../../assets/img/md-close.svg');
+    background-image: url('../../../../shared-assets/img/md-close.svg');
     background-position: center;
   }
   td.location-selected {
     outline: 3px solid #0c9d58;
     outline-offset: -3px;
     background: rgba(12, 157, 88, 0.12);
-    background-image: url('../../../assets/img/md-check.svg');
+    background-image: url('../../../../shared-assets/img/md-check.svg');
     background-position: center;
   }
   td:hover, td.location-free:hover, td.location-disabled:hover, td.location-selected:hover {

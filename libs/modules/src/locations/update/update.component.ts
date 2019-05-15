@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {AlertController, LoadingController, ModalController, NavParams, ToastController} from "@ionic/angular";
-import {InventoryService} from "../../../../../../libs/services/src/lib/endpoint/inventory/inventory.service";
-import {InventoryModel} from "../../../../../../libs/services/src/models/endpoints/Inventory";
+import {InventoryService} from "../../../../services/src/lib/endpoint/inventory/inventory.service";
+import {InventoryModel} from "../../../../services/src/models/endpoints/Inventory";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {WarehouseService} from "../../../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 
 @Component({
   selector: 'suite-update',
