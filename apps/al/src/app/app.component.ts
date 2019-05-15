@@ -13,6 +13,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
+import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
+import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
 
 interface MenuItem {
@@ -61,6 +63,8 @@ export class AppComponent implements OnInit {
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
+    private scannerConfigurationService: ScannerConfigurationService,
+    private warehouseService: WarehouseService,
     private scanditService: ScanditService
   ) {
     this.initializeApp();
@@ -71,6 +75,8 @@ export class AppComponent implements OnInit {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
+
+      this.scannerConfigurationService.init();
 
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
@@ -84,6 +90,7 @@ export class AppComponent implements OnInit {
           this.router.navigate(['login']);
           this.menu.enable(false, 'sidebar');
         }
+        this.warehouseService.loadWarehousesData();
       });
     });
   }

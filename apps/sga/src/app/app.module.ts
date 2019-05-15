@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
 import { JailModule } from '@suite/common-modules';
+import { ScannerConfigurationModule } from "@suite/common-modules";
 
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -31,7 +32,8 @@ import { JailModule } from '@suite/common-modules';
     ServicesModule,
     BrowserAnimationsModule,
     MatDialogModule,
-    JailModule
+    JailModule,
+    ScannerConfigurationModule
   ],
   providers: [
     StatusBar,

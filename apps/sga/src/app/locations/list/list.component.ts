@@ -77,6 +77,14 @@ export class ListComponent implements OnInit {
       this.paramsReceived = params;
       this.initHalls();
     });
+    if (this.origin == 'manage') {
+      this.setIntervalForReload(1);
+    }
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.intervalReload);
+    this.intervalReload = null;
   }
 
   initHalls() {
@@ -84,10 +92,6 @@ export class ListComponent implements OnInit {
     if (this.origin == 'manage') {
       this.warehouseSelected = this.warehouseService.idWarehouseMain;
       this.parentPage = null;
-
-      this.intervalReload = setInterval(() => {
-        this.reloadData();
-      }, 10 * 1000);
     }
     this.hallsService
       .getIndex(this.warehouseSelected)
@@ -285,13 +289,11 @@ export class ListComponent implements OnInit {
     modal.onDidDismiss()
       .then(() => {
         this.reloadData();
-
-        this.intervalReload = setInterval(() => {
-          this.reloadData();
-        }, 10 * 1000);
+        this.setIntervalForReload(2);
       });
 
     clearInterval(this.intervalReload);
+    this.intervalReload = null;
 
     return await modal.present();
   }
@@ -313,5 +315,13 @@ export class ListComponent implements OnInit {
       color: color || "primary"
     });
     toast.present();
+  }
+
+  setIntervalForReload(source) {
+    if (!this.intervalReload) {
+      this.intervalReload = setInterval(() => {
+        this.reloadData();
+      }, 10 * 1000);
+    }
   }
 }
