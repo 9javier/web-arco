@@ -49,7 +49,6 @@ export class ScanditService {
             positionsScanning = [];
             containerReference = code;
             ScanditMatrixSimple.setText(`Inicio de posicionamiento en ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-            ScanditMatrixSimple.showText(true);
             this.hideTextMessage(2000);
           }
         } else if (code.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
@@ -57,7 +56,6 @@ export class ScanditService {
           let productReference = code;
           if (!containerReference) {
             ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-            ScanditMatrixSimple.showText(true);
             this.hideTextMessage(1500);
           } else {
 
@@ -65,7 +63,6 @@ export class ScanditService {
             if(searchProductPosition.length == 0){
               positionsScanning.push({product: productReference, position: containerReference});
               ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
-              ScanditMatrixSimple.showText(true);
               this.hideTextMessage(1500);
               this.inventoryService.postStore({
                 productReference: productReference,
@@ -75,7 +72,6 @@ export class ScanditService {
                 data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
                   if (res.body.code == 200 || res.body.code == 201) {
                     ScanditMatrixSimple.setText(`Producto ${productReference} añadido a la ubicación ${containerReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-                    ScanditMatrixSimple.showText(true);
                     this.hideTextMessage(2000);
                   } else {
                     let errorMessage = '';
@@ -85,13 +81,11 @@ export class ScanditService {
                       errorMessage = res.body.message;
                     }
                     ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                    ScanditMatrixSimple.showText(true);
                     this.hideTextMessage(1500);
                   }
                 });
               }, (error: HttpErrorResponse) => {
                 ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                ScanditMatrixSimple.showText(true);
                 this.hideTextMessage(1500);
               });
             }
