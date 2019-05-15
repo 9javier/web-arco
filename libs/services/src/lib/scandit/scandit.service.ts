@@ -10,6 +10,13 @@ declare let Scandit;
 declare let GScandit;
 declare let ScanditMatrixSimple;
 
+const BACKGROUND_COLOR_ERROR: string = '#e8413e';
+const BACKGROUND_COLOR_INFO: string = '#15789e';
+const BACKGROUND_COLOR_SUCCESS: string = '#2F9E5A';
+const TEXT_COLOR: string = '#FFFFFF';
+const HEADER_BACKGROUND: string = '#424242';
+const HEADER_COLOR: string = '#FFFFFF';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,7 +48,7 @@ export class ScanditService {
           if(containerReference != code){
             positionsScanning = [];
             containerReference = code;
-            ScanditMatrixSimple.setText(`Inicio de posicionamiento en ${code}`, '#15789e', '#FFFFFF', 18);
+            ScanditMatrixSimple.setText(`Inicio de posicionamiento en ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
             ScanditMatrixSimple.showText(true);
             this.hideTextMessage(2000);
           }
@@ -49,7 +56,7 @@ export class ScanditService {
           //Product
           let productReference = code;
           if (!containerReference) {
-            ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, '#e8413e', '#FFFFFF', 18);
+            ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             ScanditMatrixSimple.showText(true);
             this.hideTextMessage(1500);
           } else {
@@ -57,7 +64,7 @@ export class ScanditService {
             let searchProductPosition = positionsScanning.filter(el => el.product == productReference && el.position == containerReference);
             if(searchProductPosition.length == 0){
               positionsScanning.push({product: productReference, position: containerReference});
-              ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, '#15789e', '#FFFFFF', 16);
+              ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
               ScanditMatrixSimple.showText(true);
               this.hideTextMessage(1500);
               this.inventoryService.postStore({
@@ -67,7 +74,7 @@ export class ScanditService {
               }).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
                 data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
                   if (res.body.code == 200 || res.body.code == 201) {
-                    ScanditMatrixSimple.setText(`Producto ${productReference} añadido a la ubicación ${containerReference}`, '#2F9E5A', '#FFFFFF', 18);
+                    ScanditMatrixSimple.setText(`Producto ${productReference} añadido a la ubicación ${containerReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
                     ScanditMatrixSimple.showText(true);
                     this.hideTextMessage(2000);
                   } else {
@@ -77,13 +84,13 @@ export class ScanditService {
                     } else {
                       errorMessage = res.body.message;
                     }
-                    ScanditMatrixSimple.setText(errorMessage, '#e8413e', '#FFFFFF', 18);
+                    ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                     ScanditMatrixSimple.showText(true);
                     this.hideTextMessage(1500);
                   }
                 });
               }, (error: HttpErrorResponse) => {
-                ScanditMatrixSimple.setText(error.message, '#e8413e', '#FFFFFF', 18);
+                ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                 ScanditMatrixSimple.showText(true);
                 this.hideTextMessage(1500);
               });
@@ -91,7 +98,7 @@ export class ScanditService {
           }
         }
       }
-    }, 'Ubicar/Escanear', '#FFFFFF', '#424242');
+    }, 'Ubicar/Escanear', HEADER_COLOR, HEADER_BACKGROUND);
   }
 
   private hideTextMessage(delay: number){
