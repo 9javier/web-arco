@@ -14,6 +14,7 @@ import { IonicStorageModule } from '@ionic/storage';
 
 import { ServicesModule } from '@suite/services';
 import { ScannerConfigurationModule } from "@suite/common-modules";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [AppComponent],
@@ -25,6 +26,7 @@ import { ScannerConfigurationModule } from "@suite/common-modules";
     IonicStorageModule.forRoot(),
     AppRoutingModule,
     ServicesModule,
+    BrowserAnimationsModule,
     ScannerConfigurationModule
   ],
   providers: [
