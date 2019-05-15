@@ -88,6 +88,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
+  private static final int COLOR_TRANSPARENT = 0x00000000;
+
   private CallbackContext mCallbackContext;
 
   private ScanditWorker mWorker = null;
@@ -607,7 +609,6 @@ public class ScanditSDK extends CordovaPlugin {
       final boolean fShow = show;
       final String color = this.lastColorTextMatrixSimple;
       final String background = this.lastBackgroundMatrixSimple;
-      final int colorTrasparent = resources.getIdentifier("transparentScanner", "color", package_name);
       cordova.getActivity().runOnUiThread(new Runnable() {
         public void run() {
           LinearLayout llScanInfo;
@@ -624,7 +625,7 @@ public class ScanditSDK extends CordovaPlugin {
                   llScanInfo.setBackgroundColor(Color.parseColor(background));
                 }
               } else {
-                llScanInfo.setBackgroundColor(colorTrasparent);
+                llScanInfo.setBackgroundColor(COLOR_TRANSPARENT);
               }
             }
             if (tvScanInfo != null) {
@@ -658,7 +659,6 @@ public class ScanditSDK extends CordovaPlugin {
       final boolean fShow = show;
       final String color = this.lastColorTextMatrixSimple;
       final String background = this.lastBackgroundMatrixSimple;
-      final int colorTrasparent = resources.getIdentifier("transparentScanner", "color", package_name);
       cordova.getActivity().runOnUiThread(new Runnable() {
         public void run() {
           LinearLayout llScanInfo;
@@ -670,12 +670,12 @@ public class ScanditSDK extends CordovaPlugin {
             rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlScanInfoLoader", "id", package_name));
             if (llScanInfo != null) {
               if (fShow && background != null) {
-                llScanInfo.setBackgroundColor(colorTrasparent);
+                llScanInfo.setBackgroundColor(COLOR_TRANSPARENT);
               } else {
                 if(background != null && !background.isEmpty()){
                   llScanInfo.setBackgroundColor(Color.parseColor(background));
                 } else {
-                  llScanInfo.setBackgroundColor(colorTrasparent);
+                  llScanInfo.setBackgroundColor(COLOR_TRANSPARENT);
                 }
               }
               llScanInfo.setVisibility(View.VISIBLE);
