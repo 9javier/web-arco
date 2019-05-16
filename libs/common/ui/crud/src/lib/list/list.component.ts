@@ -244,7 +244,14 @@ export class ListComponent implements OnInit {
         .then(() => {
           this.loadData();
           if (this.routePath == '/warehouses') {
-            this.warehouseService.init();
+            this.warehouseService
+              .init()
+              .then((data: Observable<HttpResponse<any>>) => {
+                data.subscribe((res: HttpResponse<any>) => {
+                  // Load of main warehouse in memory
+                  this.warehouseService.idWarehouseMain = res.body.data.id;
+                });
+              });
           }
         });
 
