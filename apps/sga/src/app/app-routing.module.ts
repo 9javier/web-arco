@@ -24,11 +24,13 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: './assign/assign.module#AssignModule'
   },
-  { path: 'login',
+  {
+    path: 'login',
     resolve: {
-     token: RemoteTokenResolver
+      token: RemoteTokenResolver
+    },
+    loadChildren: './login/login.module#LoginPageModule'
   },
-  loadChildren: './login/login.module#LoginPageModule' },
   {
     path: 'jails',
     canActivate: [AuthGuard],
@@ -49,6 +51,11 @@ const routes: Routes = [
     loadChildren: './warehouses/warehouses.module#WarehousesModule'
   },
   {
+    path: 'groups',
+    canActivate: [AuthGuard],
+    loadChildren: './groups/groups.module#GroupsModule'
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: './halls/halls.module#HallsModule'
@@ -56,20 +63,25 @@ const routes: Routes = [
   {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
-    loadChildren: './locations/locations.module#LocationsModule'
+    loadChildren: '@suite/common-modules#LocationsModule'
   },
   {
      path: '',
      redirectTo: 'login',
      pathMatch: 'full'
+  },
+  {
+    path: 'warehouse',
+    canActivate: [AuthGuard],
+    loadChildren: '@suite/common-modules#LocationsModule'
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules  })
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule],
   providers: [RemoteTokenResolver]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -8,11 +8,11 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource } from '@angular/material';
-import { UserModel, RolModel } from '@suite/services';
+import { UserModel, RolModel, JailModel } from '@suite/services';
 import { CrudService } from '../service/crud.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import {Router, NavigationStart, NavigationEnd, ActivatedRoute} from '@angular/router';
+import { Router, NavigationStart, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { filter, last, take, distinctUntilChanged } from 'rxjs/operators';
 import {
   AlertController,
@@ -22,20 +22,24 @@ import {
 } from '@ionic/angular';
 import { Location } from '@angular/common';
 
-import {StoreComponent as storeUser} from "../../../../../../../apps/sga/src/app/users/store/store.component";
-import {StoreComponent as storeRol} from "../../../../../../../apps/sga/src/app/roles/store/store.component";
-import {StoreComponent as storeHall} from "../../../../../../../apps/sga/src/app/halls/store/store.component";
-import {StoreComponent as storeWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
-import {StoreComponent as storeJail} from "../../../../../../../apps/sga/src/app/jail/store/store.component";
-import {StoreComponent as storePallet} from "../../../../../../../apps/sga/src/app/pallets/store/store.component";
-import {UpdateComponent as updateUser} from "../../../../../../../apps/sga/src/app/users/update/update.component";
-import {UpdateComponent as updateRol} from "../../../../../../../apps/sga/src/app/roles/update/update.component";
-import {UpdateComponent as updateHall} from "../../../../../../../apps/sga/src/app/halls/update/update.component";
-import {UpdateComponent as updateWarehouse} from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
-import {UpdateComponent as updateJail} from "../../../../../../../apps/sga/src/app/jail/update/update.component";
-import {UpdateComponent as updatePallet} from "../../../../../../../apps/sga/src/app/pallets/update/update.component";
-import {HallsService} from "../../../../../../services/src/lib/endpoint/halls/halls.service";
-import {HallModel} from "../../../../../../services/src/models/endpoints/Hall";
+import { StoreComponent as storeUser } from "../../../../../../../apps/sga/src/app/users/store/store.component";
+import { StoreComponent as storeRol } from "../../../../../../../apps/sga/src/app/roles/store/store.component";
+import { StoreComponent as storeHall } from "../../../../../../../apps/sga/src/app/halls/store/store.component";
+import { StoreComponent as storeWarehouse } from "../../../../../../../apps/sga/src/app/warehouses/store/store.component";
+import { StoreComponent as storeJail } from "../../../../../../../apps/sga/src/app/jail/store/store.component";
+import { StoreComponent as storePallet } from "../../../../../../../apps/sga/src/app/pallets/store/store.component";
+import {StoreComponent as storeGroup} from "../../../../../../../apps/sga/src/app/groups/store/store.component";
+import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
+import { UpdateComponent as updateRol } from "../../../../../../../apps/sga/src/app/roles/update/update.component";
+import { UpdateComponent as updateHall } from "../../../../../../../apps/sga/src/app/halls/update/update.component";
+import { UpdateComponent as updateWarehouse } from "../../../../../../../apps/sga/src/app/warehouses/update/update.component";
+import { UpdateComponent as updateJail } from "../../../../../../../apps/sga/src/app/jail/update/update.component";
+import { UpdateComponent as updatePallet } from "../../../../../../../apps/sga/src/app/pallets/update/update.component";
+import {UpdateComponent as updateGroup} from "../../../../../../../apps/sga/src/app/groups/update/update.component";
+import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/halls.service";
+import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
+import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+
 
 @Component({
   selector: 'suite-ui-crud-list',
@@ -64,7 +68,8 @@ export class ListComponent implements OnInit {
     public loadingController: LoadingController,
     private hallsService: HallsService,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private warehouseService: WarehouseService
 
   ) {
     console.log(this.dataSource);
@@ -97,7 +102,7 @@ export class ListComponent implements OnInit {
   parentPage: string = null;
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: any )=> {
+    this.route.paramMap.subscribe((params: any) => {
       this.paramsReceived = params;
     });
 
@@ -105,7 +110,7 @@ export class ListComponent implements OnInit {
   }
 
   loadData() {
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets' || this.routePath == '/groups') {
       this.initUsers();
       this.parentPage = null;
     } else if (this.routePath == '/halls' || this.routePath == '/locations') {
@@ -170,13 +175,13 @@ export class ListComponent implements OnInit {
     this.showDeleteButton = false;
   }
 
-  goPreviousPage () {
+  goPreviousPage() {
     this.location.back();
   }
 
   async goToStore() {
     let storeComponent = null;
-    let componentProps: any = {routePath: this.routePath};
+    let componentProps: any = { routePath: this.routePath };
 
     if (this.routePath == '/roles') {
       storeComponent = storeRol;
@@ -189,7 +194,9 @@ export class ListComponent implements OnInit {
       storeComponent = storeWarehouse;
     } else if (this.routePath == '/jails') {
       storeComponent = storeJail;
-    } else if (this.routePath == '/pallets') {
+    } else if (this.routePath == '/groups') {
+      storeComponent = storeGroup;
+    }  else if (this.routePath == '/pallets') {
       storeComponent = storePallet;
     }
 
@@ -219,10 +226,12 @@ export class ListComponent implements OnInit {
       updateComponent = updateHall;
     } else if (this.routePath == '/warehouses') {
       updateComponent = updateWarehouse;
-    } else if (this.routePath == '/jails'){
+    } else if (this.routePath == '/jails') {
       updateComponent = updateJail;
     } else if (this.routePath == '/pallets'){
       updateComponent = updatePallet;
+    } else if (this.routePath == '/groups') {
+      updateComponent = updateGroup;
     }
 
     if (updateComponent) {
@@ -234,6 +243,9 @@ export class ListComponent implements OnInit {
       modal.onDidDismiss()
         .then(() => {
           this.loadData();
+          if (this.routePath == '/warehouses') {
+            this.warehouseService.init();
+          }
         });
 
       return await modal.present();
@@ -252,8 +264,8 @@ export class ListComponent implements OnInit {
     this.isAllSelected()
       ? this.selection.clear()
       : this.dataSource.forEach((row: UserModel.User | RolModel.Rol) =>
-          this.selection.select(row)
-        );
+        this.selection.select(row)
+      );
 
     this.isAllSelected()
       ? (this.showDeleteButton = true)
@@ -267,7 +279,7 @@ export class ListComponent implements OnInit {
     }
     return `${
       this.selection.isSelected(row) ? 'deselect' : 'select'
-    } row ${row.id + 1}`;
+      } row ${row.id + 1}`;
   }
 
   checkSelection(row?: UserModel.User | RolModel.Rol) {
@@ -280,25 +292,32 @@ export class ListComponent implements OnInit {
   }
 
   confirmDelete() {
-    if (this.selection.selected.length > 0) {
+    if (this.selection.selected.length > 0 && this.routePath != '/jails'  && this.routePath !='/pallets') {
       this.presentUsertDeleteAlert(this.selection);
+    } else {
+      this.presentJailsDeleteAlert(this.selection);
     }
     console.log('confirmDelete', this.selection.selected);
   }
 
-  changeWarehouse (event) {
+  changeWarehouse(event) {
     this.warehouseSelected = event.detail.value;
     this.loadData();
   }
 
-  showWarehouseMaps (event, row) {
+  showWarehouseMaps(event, row) {
     event.stopPropagation();
     this.router.navigate([`/warehouses/halls/${row.id}`]);
   }
 
-  showWarehousePoints (event, row) {
+  showWarehousePoints(event, row) {
     event.stopPropagation();
     this.router.navigate([`/warehouses/locations/${row.id}`]);
+  }
+
+  print(){
+    event.stopPropagation();
+    console.log('print');
   }
 
   async presentUsertDeleteAlert(
@@ -357,8 +376,93 @@ export class ListComponent implements OnInit {
                         (response: HttpResponse<UserModel.ResponseDestroy>) => {
                           console.log(
                             `${response.body.data} - ${response.body.code} - ${
-                              response.body.message
+                            response.body.message
                             }`
+                          );
+                          this.presentToast(successMsg);
+                          this.initUsers();
+                          this.dismissLoading();
+                        },
+                        (errorResponse: HttpErrorResponse) => {
+                          this.presentToast(errorResponse.message);
+                          console.log(errorResponse);
+                          this.dismissLoading();
+                          this.initUsers();
+                        }
+                      );
+                    }
+                  );
+                }
+              );
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async presentJailsDeleteAlert(
+    selectedJails: SelectionModel<JailModel.Jail>
+  ) {
+    let header = '';
+    let msg = '';
+    let successMsg = '';
+
+    if (selectedJails.selected.length > 1) {
+      header = 'Eliminar referencia';
+      msg = `Estas a punto de eliminar <br>
+      <strong>${selectedJails.selected.length} referencias</strong>.<br>
+      ¿Esta seguro?`;
+      successMsg = `${selectedJails.selected.length} referencias eliminadas`;
+    } else {
+      header = 'Eliminar Referencia';
+      msg = `Estas a punto de eliminar <br> 
+      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br> 
+      ¿Esta seguro? `;
+      successMsg = `Referencia ${selectedJails.selected.map(
+        value => value.reference
+      )} eliminada`;
+    }
+
+
+
+
+    const alert = await this.alertController.create({
+      header: header,
+      message: msg,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: blah => {
+            console.log('Confirm Cancel: blah');
+          }
+        },
+        {
+          text: 'Vale',
+          handler: () => {
+            console.log('Confirm Okay');
+            this.presentLoading();
+            this.crudService
+              .deleteDestroy(this.selection.selected, this.apiEndpoint)
+              .then(
+                (
+                  data: Observable<HttpResponse<JailModel.ResponseDestroy>>[]
+                ) => {
+                  data.map(
+                    (
+                      response$: Observable<
+                        HttpResponse<JailModel.ResponseDestroy>
+                        >
+                    ) => {
+                      response$.subscribe(
+                        (response: HttpResponse<JailModel.ResponseDestroy>) => {
+                          console.log(
+                            `${response.body.data} - ${response.body.code} - ${
+                              response.body.message
+                              }`
                           );
                           this.presentToast(successMsg);
                           this.initUsers();

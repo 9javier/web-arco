@@ -88,7 +88,13 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-
+  isSelected = (o1, o2) => {
+    if(o1 === o2 || (o1[0] && o2.id === o1[0].id) ) {  
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   onSubmit() {
     this.submitted = true;
@@ -102,7 +108,7 @@ export class StoreComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/groups' || this.routePath == '/jails' || this.routePath == '/pallets' ) {
       this.postStore();
     } else if (this.routePath == '/halls') {
       this.postStoreHall();

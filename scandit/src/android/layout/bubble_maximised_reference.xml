@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+  <FrameLayout
+    android:id="@+id/header"
+    android:layout_width="match_parent"
+    android:layout_height="8dp"
+    android:background="@drawable/bg_rounded_top" />
+
+  <RelativeLayout
+    android:id="@+id/top"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:padding="7dp">
+
+    <TextView
+      android:id="@+id/stock_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text=""
+      android:textSize="22sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/stock_value"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="@color/transparentWhite"
+      android:textSize="22sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/name_value"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/stock_header"
+      android:gravity="center_horizontal"
+      android:textColor="@color/transparentWhite"
+      android:textSize="14sp" />
+
+    <TextView
+      android:id="@+id/price_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/stock_header"
+      android:textColor="@color/transparentWhite"
+      android:text=""
+      android:textSize="22sp"
+      android:textStyle="bold"  />
+
+    <TextView
+      android:id="@+id/price_value"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:textColor="@color/transparentWhite"
+      android:textSize="22sp"
+      android:textStyle="bold" />
+
+    <TableLayout
+      android:id="@+id/table_stocks"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/price_value"
+      android:layout_marginTop="10dp"
+      android:background="#fff"
+      android:orientation="horizontal"
+      android:stretchColumns="*"
+      android:padding="5dip"
+      android:showDividers="middle">
+
+    </TableLayout>
+
+    <TextView
+      android:id="@+id/tv_no_stocks"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/price_value"
+      android:layout_marginTop="10dp"
+      android:textColor="@color/transparentWhite"
+      android:visibility="gone"
+      android:textSize="14sp"
+      android:textStyle="bold"
+      android:gravity="center"
+      android:text="No hay stock de ninguna talla en ninguna tienda"/>
+
+    <TextView
+      android:id="@+id/supplier_header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/table_stocks"
+      android:textColor="@color/transparentWhite"
+      android:text="Sum."
+      android:textSize="14sp" />
+
+    <TextView
+      android:id="@+id/supplier_value"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignEnd="@id/stock_value"
+      android:layout_alignRight="@id/stock_value"
+      android:layout_below="@id/table_stocks"
+      android:gravity="center_horizontal"
+      android:textColor="@color/transparentWhite"
+      android:textSize="14sp" />
+
+    <!--<TextView-->
+    <!--android:id="@+id/location_header"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@id/price_header"-->
+    <!--android:text="Ubicación"-->
+    <!--android:textColor="@color/transparentWhite"-->
+    <!--android:textSize="14sp" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/location_value"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignEnd="@id/price_value"-->
+    <!--android:layout_alignRight="@id/price_value"-->
+    <!--android:layout_below="@id/price_value"-->
+    <!--android:gravity="center_horizontal"-->
+    <!--android:textColor="@color/transparentWhite"-->
+    <!--android:textSize="14sp" />-->
+
+
+  </RelativeLayout>
+
+  <LinearLayout
+    android:id="@+id/bottom"
+    android:layout_width="match_parent"
+    android:layout_height="22dp"
+    android:background="@drawable/bg_rounded_bottom"
+    android:orientation="horizontal">
+
+    <TextView
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_marginLeft="7dp"
+      android:layout_marginStart="7dp"
+      android:layout_weight="1"
+      android:gravity="center_vertical|start"
+      android:text="Ref"
+      android:textColor="@color/transparentWhite"
+      android:textSize="14sp"
+      android:textStyle="bold" />
+
+    <TextView
+      android:id="@+id/reference_value"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_marginEnd="7dp"
+      android:layout_marginRight="7dp"
+      android:layout_weight="1"
+      android:gravity="center_vertical|end"
+      android:textColor="@color/transparentWhite"
+      android:textSize="14sp"
+      android:textStyle="bold" />
+
+  </LinearLayout>
+
+  <FrameLayout
+    android:id="@+id/triangle"
+    android:layout_width="15dp"
+    android:layout_height="8dp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/bg_triangle" />
+
+</LinearLayout>

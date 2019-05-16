@@ -14,7 +14,7 @@ export class StoreComponent implements OnInit {
 
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
-    role: ['', [Validators.required]],
+    roleId: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     address: ['', [Validators.required, Validators.minLength(4)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -27,9 +27,10 @@ export class StoreComponent implements OnInit {
       type: 'text'
     },
     {
-      name: 'role',
+      name: 'roleId',
       label: 'Rol de usuario',
       type: 'select',
+      multiple: true,
       icon: {type: 'ionic', name: 'list-box'},
       value: []
     },
@@ -78,7 +79,7 @@ export class StoreComponent implements OnInit {
       .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
           this.formBuilderTemplateInputs.map(item => {
-            if (item.name == 'role') {
+            if (item.name === 'roleId') {
               item.value = res.body.data;
             }
           });

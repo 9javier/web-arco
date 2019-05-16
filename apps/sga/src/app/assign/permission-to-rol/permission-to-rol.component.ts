@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import {
   PermissionsService,
   RolesService,
@@ -9,14 +9,16 @@ import {
 } from '@suite/services';
 import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { ToastController } from '@ionic/angular';
+import { ToastController, ModalController } from '@ionic/angular';
 import { MatSelectionListChange, MatListOption } from '@angular/material/list';
 import { mergeMap } from 'rxjs/operators';
+import { StoreComponent } from "../../roles/store/store.component";
+import { UpdateComponent } from "../../roles/update/update.component";
 
 interface ShowRolPermissions extends PermissionsModel.Permission {
   selected?: boolean;
 }
-
+@Injectable()
 @Component({
   selector: 'suite-permission-to-rol',
   templateUrl: './permission-to-rol.component.html',
@@ -39,6 +41,7 @@ export class PermissionToRolComponent implements OnInit {
     private permissionService: PermissionsService,
     private rolesService: RolesService,
     private aclService: AclService,
+    private modalController: ModalController,
     private toastController: ToastController
   ) {}
 
@@ -72,49 +75,39 @@ export class PermissionToRolComponent implements OnInit {
     this.currentRolPermissions = [];
     this.panelOpenState = true;
     this.isLoadingPermissions = true;
-    this.aclService
-      .getRolPermissions(rolId)
-      .then((data: Observable<HttpResponse<ACLModel.ResponseUserRoles>>) => {
-        data.subscribe((res: HttpResponse<ACLModel.ResponseUserRoles>) => {
-          this.currentRolPermissions =
-            res.body.data.length === 0 ? [{ name: '', id: 0 }] : res.body.data;
-          console.log('this.permissions', this.permissions);
-          console.log('this.currentRolPermissions', this.currentRolPermissions);
-          this.isLoadingPermissions = false;
-          this.rolepermissionsSelected = [];
-          // Applying Intersection, to get user roles selected
-          selectedPermissions = this.permissions.filter((rol: RolModel.Rol) =>
-            this.currentRolPermissions.find(rolData => rolData.id === rol.id)
-          );
 
-          // Applying Diference, to get user roles not selected
-          unselectedPermissions = this.permissions.filter(
-            (rol: RolModel.Rol) =>
-              !this.currentRolPermissions.find(rolData => rolData.id === rol.id)
-          );
+    this.currentRolPermissions = this.roles.find(rol => rol.id === rolId)['groups'];
+    // res.body.data.length === 0 ? [{ name: '', id: 0 }] : res.body.data;
+    console.log('this.permissions', this.permissions);
+    console.log('this.currentRolPermissions', this.currentRolPermissions);
+    this.isLoadingPermissions = false;
+    this.rolepermissionsSelected = [];
+    // Applying Intersection, to get user roles selected
+    selectedPermissions = this.permissions.filter((rol: RolModel.Rol) =>
+      this.currentRolPermissions.find(rolData => rolData.id === rol.id)
+    );
 
-          // adding selected property for mat-list-option component
-          selectedPermissions = selectedPermissions.map((rol: RolModel.Rol) => {
-            return { ...rol, selected: true };
-          });
+    // Applying Diference, to get user roles not selected
+    unselectedPermissions = this.permissions.filter(
+      (rol: RolModel.Rol) =>
+        !this.currentRolPermissions.find(rolData => rolData.id === rol.id)
+    );
 
-          unselectedPermissions = unselectedPermissions.map(
-            (rol: RolModel.Rol) => {
-              return { ...rol, selected: false };
-            }
-          );
+    // adding selected property for mat-list-option component
+    selectedPermissions = selectedPermissions.map((rol: RolModel.Rol) => {
+      return { ...rol, selected: true };
+    });
 
-          this.rolepermissionsSelected.push(
-            ...selectedPermissions,
-            ...unselectedPermissions
-          );
+    unselectedPermissions = unselectedPermissions.map(
+      (rol: RolModel.Rol) => {
+        return { ...rol, selected: false };
+      }
+    );
 
-          console.log('selectedRoles', selectedPermissions);
-          console.log('unselectedRoles', unselectedPermissions);
-
-          console.log(this.rolepermissionsSelected);
-        });
-      });
+    this.rolepermissionsSelected.push(
+      ...selectedPermissions,
+      ...unselectedPermissions
+    );
   }
 
   assignPermissionToRol(
@@ -139,7 +132,7 @@ export class PermissionToRolComponent implements OnInit {
               this.isLoadingAssignPermissionToRole = false;
               ev.selected = true;
               this.presentToast(
-                `Permiso ${rol.name} ha sido asignado Rol ${permission.name}`
+                `Permiso ${rol.name} ha sido asignado el rol ${permission.name}`
               );
             },
             (errorResponse: HttpErrorResponse) => {
@@ -204,5 +197,38 @@ export class PermissionToRolComponent implements OnInit {
       duration: 4550
     });
     toast.present();
+  }
+
+
+  async goToStore() {
+    let storeComponent = StoreComponent;
+    let componentProps: any = {routePath: '/roles'};
+
+    const modal = await this.modalController.create({
+      component: storeComponent,
+      componentProps: componentProps
+    });
+
+    modal.onDidDismiss()
+      .then(() => {
+        this.ngOnInit();
+      });
+
+    return await modal.present();
+  }
+
+  async goToUpdate(row) {
+
+    const modal = await this.modalController.create({
+      component: UpdateComponent,
+      componentProps: { id: row.id, row: row, routePath: '/roles' }
+    });
+
+    modal.onDidDismiss()
+      .then(() => {
+        this.ngOnInit();
+      });
+
+    return await modal.present();
   }
 }

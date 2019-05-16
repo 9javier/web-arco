@@ -7,6 +7,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
+import { WarehouseService } from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import { ScannerConfigurationService } from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 
 interface MenuItem {
   title: string;
@@ -22,13 +24,18 @@ interface MenuItem {
 export class AppComponent implements OnInit {
   public appPages: MenuItem[] = [
     {
-      title: 'Home',
-      url: '/home',
-      icon: 'home'
+      title: 'Gestión Almacén',
+      url: '/warehouse/manage',
+      icon: 'apps'
     },
     {
       title: 'Usuarios',
       url: '/users/menu',
+      icon: 'people'
+    },
+    {
+      title: 'Asignar Grupo a Tienda',
+      url: '/assign/group/ware',
       icon: 'people'
     },
     {
@@ -37,13 +44,13 @@ export class AppComponent implements OnInit {
       icon: 'person'
     },
     {
-      title: 'Asignar Rol a Usuario',
-      url: '/assign/rol/user',
+      title: 'Grupos de tiendas',
+      url: '/groups/menu',
       icon: 'person'
     },
     {
-      title: 'Asignar Permiso a Rol',
-      url: '/assign/per/rol',
+      title: 'Asignar Rol a Usuario',
+      url: '/assign/rol/user',
       icon: 'person'
     },
     {
@@ -82,7 +89,9 @@ export class AppComponent implements OnInit {
     private router: Router,
     private menu: MenuController,
     private loginService: Oauth2Service,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private warehouseService: WarehouseService,
+    private scannerConfigurationService: ScannerConfigurationService
   ) {
     this.menu.enable(false, 'sidebar');
   }
@@ -96,6 +105,8 @@ export class AppComponent implements OnInit {
       this.splashScreen.hide();
       this.menu.enable(false, 'sidebar');
 
+      this.scannerConfigurationService.init();
+
       // Display button for small device to toggle sidemenu from main-header
       window.innerWidth < 992
         ? (this.deploySidebarSmallDevices = true)
@@ -106,15 +117,16 @@ export class AppComponent implements OnInit {
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
           this.router.navigate(['home']).then(sucess => {
-          this.showMainHeader = true;
-          this.menu.enable(true, 'sidebar');
+            this.showMainHeader = true;
+            this.menu.enable(true, 'sidebar');
           });
         } else {
           this.menu.enable(false, 'sidebar');
           this.showMainHeader = false;
           this.router.navigate(['login']);
         }
-
+        this.warehouseService.init();
+        this.warehouseService.loadWarehousesData();
       });
 
       /* Update to display current route on Access Denied from Server */

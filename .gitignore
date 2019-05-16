@@ -1,5 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+/config/postman/Server.postman_environment.json
 # compiled output
 /dist
 /tmp
@@ -57,7 +58,7 @@ npm-debug.log*
 .tmp/
 .versions/
 coverage/
-www/
+/www/
 node_modules/
 tmp/
 temp/

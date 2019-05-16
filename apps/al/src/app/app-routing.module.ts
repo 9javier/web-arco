@@ -13,12 +13,12 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: './home/home.module#HomePageModule'
   },
+  { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   {
-    path: 'list',
+    path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: './list/list.module#ListPageModule'
-  },
-  { path: 'login', loadChildren: './login/login.module#LoginPageModule' }
+    loadChildren: '@suite/common-modules#LocationsModule'
+  }
 ];
 
 @NgModule({
