@@ -65,4 +65,8 @@ export namespace AppInfo {
   }
 }
 
+// TODO move printer MAC address to app's local configuration
+/** Krack's - Rafa - test printer */
 export const PRINTER_MAC: string = 'AC:3F:A4:18:25:FB';
+/** Galvintec's test printer */
+//export const PRINTER_MAC: string = 'AC:3F:A4:BD:F1:6F';
