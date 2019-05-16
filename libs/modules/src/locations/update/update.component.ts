@@ -252,9 +252,11 @@ export class UpdateComponent implements OnInit {
       this.showLoading(textLoading || 'Ubicando producto...').then(() => {
         let inventoryProcess: InventoryModel.Inventory = {
           productReference: referenceProduct,
-          containerReference: referenceContainer || '',
           warehouseId: idWarehouse
         };
+
+        if (referenceContainer) inventoryProcess.containerReference = referenceContainer;
+
         this.inventoryService
           .postStore(inventoryProcess)
           .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
