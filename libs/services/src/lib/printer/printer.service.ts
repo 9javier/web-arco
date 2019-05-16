@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {PRINTER_MAC} from "../../../../../config/base";
+import {ToastController} from "@ionic/angular";
 
 declare let cordova: any;
 
@@ -10,7 +11,7 @@ export class PrinterService {
 
   private address: string;
 
-  constructor() {
+  constructor(private toastController: ToastController) {
     //FORCE PRINTER MAC
     this.address = PRINTER_MAC;
   }
@@ -60,6 +61,7 @@ export class PrinterService {
             console.debug("Zbtprinter print success: " + success, {text: text, mac: this.address, textToPrint: textToPrint});
           }, (fail) => {
             console.debug("Zbtprinter print fail:" + fail, {text: text, mac: this.address, textToPrint: textToPrint});
+            this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
           }
         );
       } else {
@@ -96,6 +98,16 @@ export class PrinterService {
       '^BCN,' + size + ',Y,N,N\n' +
       '^FD' + text + '^XZ\n';
     return toPrint;
+  }
+
+  async presentToast(msg, color) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 3750,
+      color: color || "primary"
+    });
+    toast.present();
   }
 
 }
