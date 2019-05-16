@@ -14,8 +14,8 @@ export class UpdateComponent implements OnInit {
   formBuilderTemplateInputs = [
     {
       name: 'reference',
-      label: 'Referencia',
-      type: 'text',
+      label: 'Ej. J0001',
+      type: 'reference',
       icon: { type: 'ionic', name: 'filing'}
     }
   ];
