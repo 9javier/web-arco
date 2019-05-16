@@ -8,6 +8,7 @@ export namespace WarehouseModel {
     reference?: string;
     is_store?: boolean;
     is_main?: boolean;
+    has_racks?: boolean;
     group?: Array<GroupModel.Group>;
   }
 
