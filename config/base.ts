@@ -65,3 +65,4 @@ export namespace AppInfo {
   }
 }
 
+export const PRINTER_MAC: string = 'AC:3F:A4:18:25:FB';
