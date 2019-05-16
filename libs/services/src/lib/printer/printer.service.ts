@@ -73,24 +73,16 @@ export class PrinterService {
   }
 
   private getTextToPrinter(text: string) {
-    // 80 8 letras, 100 6 letras, 120 4, 45 ubicación...
     let size = '';
-    switch (text.length) {
-      case 11:
-        size = '45';
-        break;
-      case 4:
-        size = '120';
-        break;
-      case 6:
-        size = '100';
-        break;
-      case 8:
-        size = '80';
-        break;
-      default:
-        size = '45';
-        break;
+    if (text.length >= 11) {
+      size = '45';
+    } else if (text.length >= 8) {
+      size = '80';
+    } else if (text.length >= 6) {
+      size = '100';
+    } else {
+      // tested for >=4 but will use as default measure
+      size = '120';
     }
     let toPrint = '^XA^FO80,30^BY2\n' +
       '^A0N,60,60\n' +
