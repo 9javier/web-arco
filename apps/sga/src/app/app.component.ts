@@ -9,6 +9,7 @@ import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 import { WarehouseService } from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import { ScannerConfigurationService } from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
+import {Observable} from "rxjs";
 
 interface MenuItem {
   title: string;
@@ -79,7 +80,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = this.appPages[1].title;
+  currentRoute: string = this.appPages[0].title;
   deploySidebarSmallDevices = false;
 
   constructor(
@@ -105,7 +106,11 @@ export class AppComponent implements OnInit {
       this.splashScreen.hide();
       this.menu.enable(false, 'sidebar');
 
+      // Initialization of Scandit settings that app will display
       this.scannerConfigurationService.init();
+
+      // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+      this.warehouseService.loadWarehousesData();
 
       // Display button for small device to toggle sidemenu from main-header
       window.innerWidth < 992
@@ -116,17 +121,24 @@ export class AppComponent implements OnInit {
       await this.authenticationService.checkToken();
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
-          this.router.navigate(['home']).then(sucess => {
-            this.showMainHeader = true;
-            this.menu.enable(true, 'sidebar');
-          });
+          // Load of main warehouse in memory
+          this.warehouseService
+            .init()
+            .then((data: Observable<HttpResponse<any>>) => {
+              data.subscribe((res: HttpResponse<any>) => {
+                // Load of main warehouse in memory
+                this.warehouseService.idWarehouseMain = res.body.data.id;
+                this.router.navigate(['warehouse/manage']).then(sucess => {
+                  this.showMainHeader = true;
+                  this.menu.enable(true, 'sidebar');
+                });
+              });
+            });
         } else {
           this.menu.enable(false, 'sidebar');
           this.showMainHeader = false;
           this.router.navigate(['login']);
         }
-        this.warehouseService.init();
-        this.warehouseService.loadWarehousesData();
       });
 
       /* Update to display current route on Access Denied from Server */

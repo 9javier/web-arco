@@ -13,7 +13,8 @@ export class UpdateComponent implements OnInit {
     description: ['', Validators.required],
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
-    is_main: [false, []]
+    is_main: [false, []],
+    has_racks: [false, []]
   };
   formBuilderTemplateInputs = [
     {
@@ -43,6 +44,12 @@ export class UpdateComponent implements OnInit {
     {
       name: 'is_main',
       label: 'Establecer como almacén principal',
+      type: 'checkbox',
+      value: false
+    },
+    {
+      name: 'has_racks',
+      label: 'Tiene pasillos',
       type: 'checkbox',
       value: false
     }

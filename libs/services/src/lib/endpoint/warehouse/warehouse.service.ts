@@ -31,11 +31,9 @@ export class WarehouseService {
   async init() {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({Authorization: currentToken});
-    this.http.get(PATH_GET_WAREHOUSE_MAIN, {
+    return this.http.get(PATH_GET_WAREHOUSE_MAIN, {
       headers: headers,
       observe: 'response'
-    }).subscribe((res: HttpResponse<any>) => {
-      this.idWarehouseMain = res.body.data.id;
     });
   }
 
@@ -49,7 +47,6 @@ export class WarehouseService {
   }
 
   loadWarehousesData() {
-    this.idWarehouseMain = 1;
     this.listWarehouses = [];
     this.listHalls = {};
     this.listRows = {};

@@ -11,6 +11,7 @@ import {ScannerConfigurationService} from "../../../../libs/services/src/lib/sca
 import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
 import {environment} from "../environments/environment";
+import {Observable} from "rxjs";
 
 interface MenuItem {
   title: string;
@@ -24,11 +25,6 @@ interface MenuItem {
 })
 export class AppComponent implements OnInit {
   public appPages: MenuItem[] = [
-    {
-      title: 'Home',
-      url: '/home',
-      icon: 'home'
-    },
     {
       title: 'Gestión Almacén',
       url: '/warehouse/manage',
@@ -75,7 +71,11 @@ export class AppComponent implements OnInit {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
+      // Initialization of Scandit settings that app will display
       this.scannerConfigurationService.init();
+
+      // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+      this.warehouseService.loadWarehousesData();
 
       window.innerWidth < 992
         ? (this.deploySidebarSmallDevices = true)
@@ -84,20 +84,26 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
-          this.warehouseService.init();
-          this.router.navigate(['home']);
-          this.showMainHeader = true;
-          this.menu.enable(true, 'sidebar');
-          if (this.platform.is('android')) {
-            this.scanditService.setApiKey(environment.scandit_api_key);
-          }
+          this.warehouseService
+            .init()
+            .then((data: Observable<HttpResponse<any>>) => {
+              data.subscribe((res: HttpResponse<any>) => {
+                // Load of main warehouse in memory
+                this.warehouseService.idWarehouseMain = res.body.data.id;
+                this.router.navigate(['warehouse/manage']).then(success => {
+                  this.showMainHeader = true;
+                  this.menu.enable(true, 'sidebar');
+                  if (this.platform.is('android')) {
+                    this.scanditService.setApiKey(environment.scandit_api_key);
+                  }
+                });
+              });
+            });
         } else {
           this.router.navigate(['login']);
           this.showMainHeader = false;
           this.menu.enable(false, 'sidebar');
         }
-        this.warehouseService.init();
-        this.warehouseService.loadWarehousesData();
       });
     });
   }
