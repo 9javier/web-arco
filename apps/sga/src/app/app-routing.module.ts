@@ -20,6 +20,11 @@ const routes: Routes = [
     loadChildren: './roles/roles.module#RolesModule'
   },
   {
+    path: 'group-to-warehouse',
+    canActivate: [AuthGuard],
+    loadChildren: './group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule'
+  },
+  {
     path: 'assign',
     canActivate: [AuthGuard],
     loadChildren: './assign/assign.module#AssignModule'

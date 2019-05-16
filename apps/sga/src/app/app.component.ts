@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Asignar Grupo a Tienda',
-      url: '/assign/group/ware',
+      url: '/group-to-warehouse',
       icon: 'people'
     },
     {

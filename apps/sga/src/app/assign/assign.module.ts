@@ -9,10 +9,10 @@ import { MatListModule } from '@angular/material/list';
 import { AssignRoutingModule } from './assign-routing.module';
 import { RolToUserComponent } from './rol-to-user/rol-to-user.component';
 import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.component';
-import { GroupToWarehouseComponent } from './group-to-warehouse/group-to-warehouse.component';
+
 
 @NgModule({
-  declarations: [RolToUserComponent, PermissionToRolComponent, GroupToWarehouseComponent],
+  declarations: [RolToUserComponent, PermissionToRolComponent],
   imports: [
     CommonModule,
     AssignRoutingModule,
@@ -22,6 +22,6 @@ import { GroupToWarehouseComponent } from './group-to-warehouse/group-to-warehou
     MatSlideToggleModule,
     MatListModule
   ],
-  exports: [RolToUserComponent, PermissionToRolComponent, GroupToWarehouseComponent]
+  exports: [RolToUserComponent, PermissionToRolComponent]
 })
 export class AssignModule {}
