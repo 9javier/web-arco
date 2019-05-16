@@ -84,10 +84,10 @@ export class PrinterService {
       // tested for >=4 but will use as default measure
       size = '120';
     }
-    let toPrint = '^XA^FO80,30^BY2\n' +
+    let toPrint = '^XA^FO' + size + ',30^BY2\n' +
       '^A0N,60,60\n' +
       // ^BC orientation, height, interpretation line, i.l. above code, check digit, mode (N/U/A/D)
-      '^BCN,' + size + ',Y,N,N\n' +
+      '^BCN,100,Y,N,N\n' +
       '^FD' + text + '^XZ\n';
     return toPrint;
   }
