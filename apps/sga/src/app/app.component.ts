@@ -7,8 +7,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ResponseLogout, Oauth2Service } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
-import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
-import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
+import { WarehouseService } from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
+import { ScannerConfigurationService } from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 
 interface MenuItem {
   title: string;
@@ -23,11 +23,6 @@ interface MenuItem {
 })
 export class AppComponent implements OnInit {
   public appPages: MenuItem[] = [
-    {
-      title: 'Home',
-      url: '/home',
-      icon: 'home'
-    },
     {
       title: 'Gestión Almacén',
       url: '/warehouse/manage',
@@ -58,11 +53,6 @@ export class AppComponent implements OnInit {
       url: '/assign/rol/user',
       icon: 'person'
     },
-    // {
-    //   title: 'Asignar Permiso a Rol',
-    //   url: '/assign/per/rol',
-    //   icon: 'person'
-    // },
     {
       title: 'Jaulas',
       url: '/jails/menu',
@@ -127,8 +117,8 @@ export class AppComponent implements OnInit {
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
           this.router.navigate(['home']).then(sucess => {
-          this.showMainHeader = true;
-          this.menu.enable(true, 'sidebar');
+            this.showMainHeader = true;
+            this.menu.enable(true, 'sidebar');
           });
         } else {
           this.menu.enable(false, 'sidebar');

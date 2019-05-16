@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {SCANDIT_API_KEY} from "../../../../../config/base";
 import {InventoryService} from "../endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../models/endpoints/Inventory";
 import {WarehouseService} from "../endpoint/warehouse/warehouse.service";
@@ -14,7 +13,7 @@ const BACKGROUND_COLOR_ERROR: string = '#e8413e';
 const BACKGROUND_COLOR_INFO: string = '#15789e';
 const BACKGROUND_COLOR_SUCCESS: string = '#2F9E5A';
 const TEXT_COLOR: string = '#FFFFFF';
-const HEADER_BACKGROUND: string = '#424242';
+const HEADER_BACKGROUND: string = '#222428';
 const HEADER_COLOR: string = '#FFFFFF';
 
 @Injectable({
@@ -29,8 +28,8 @@ export class ScanditService {
     private warehouseService: WarehouseService
   ) {}
 
-  setApiKey() {
-    Scandit.License.setAppKey(SCANDIT_API_KEY);
+  setApiKey(api_key) {
+    Scandit.License.setAppKey(api_key);
   }
 
   positioning() {
@@ -92,7 +91,7 @@ export class ScanditService {
           }
         }
       }
-    }, 'Ubicar/Escanear', HEADER_COLOR, HEADER_BACKGROUND);
+    }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
   private hideTextMessage(delay: number){

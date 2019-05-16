@@ -10,6 +10,7 @@ import { AuthenticationService } from '@suite/services';
 import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
+import {environment} from "../environments/environment";
 
 interface MenuItem {
   title: string;
@@ -88,7 +89,7 @@ export class AppComponent implements OnInit {
           this.showMainHeader = true;
           this.menu.enable(true, 'sidebar');
           if (this.platform.is('android')) {
-            this.scanditService.setApiKey();
+            this.scanditService.setApiKey(environment.scandit_api_key);
           }
         } else {
           this.router.navigate(['login']);

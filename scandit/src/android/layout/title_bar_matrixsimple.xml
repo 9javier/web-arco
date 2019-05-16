@@ -19,7 +19,7 @@
     android:layout_marginTop="16dp"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="10dp"
-    android:textColor="#424242"
+    android:textColor="#FFFFFF"
     android:background="#00ffffff"
     android:src="@drawable/arrow_back" />
   <TextView
