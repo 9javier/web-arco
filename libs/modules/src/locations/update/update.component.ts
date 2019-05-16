@@ -6,6 +6,7 @@ import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 
 @Component({
   selector: 'suite-update',
@@ -48,7 +49,8 @@ export class UpdateComponent implements OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private warehouseService: WarehouseService,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private printerService: PrinterService
   ) {}
 
   ngOnInit() {
@@ -115,6 +117,14 @@ export class UpdateComponent implements OnInit {
 
   scanProduct() {
 
+  }
+
+  printBarcode() {
+    if(this.container && this.container.reference){
+      this.printerService.print(this.container.reference);
+    } else {
+      console.debug("Not found reference", this.container);
+    }
   }
 
   async addProduct() {
