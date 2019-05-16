@@ -14,8 +14,8 @@ export class StoreComponent implements OnInit {
   formBuilderTemplateInputs = [
     {
       name: 'reference',
-      label: 'Referencia',
-      type: 'text'
+      label: 'Ej. P0001',
+      type: 'reference'
     }
   ];
   title = 'Crear Palet';
