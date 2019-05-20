@@ -17,7 +17,5 @@ export * from './group-to-warehouse/group-to-warehouse.module';
 export * from './groups/groups.component';
 export * from './groups/groups.module';
 
-export * from './assign/assign.module';
-
 export * from './products/products.component';
 export * from './products/products.module';
