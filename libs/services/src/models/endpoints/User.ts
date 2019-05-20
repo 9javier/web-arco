@@ -4,6 +4,7 @@ export namespace UserModel {
     email?: string;
     name: string;
     password?: string;
+    address?: string;
   }
   export interface ResponseIndex {
     data: User[];

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
-import { Platform, MenuController } from '@ionic/angular';
+import {Platform, MenuController, PopoverController} from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ResponseLogout, Oauth2Service } from '@suite/services';
@@ -10,6 +10,8 @@ import { AuthenticationService } from '@suite/services';
 import { WarehouseService } from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import { ScannerConfigurationService } from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {Observable} from "rxjs";
+import {IncidencesService} from "../../../../libs/services/src/lib/endpoint/incidences/incidences.service";
+import {IncidencesPopoverComponent} from "@suite/common-modules";
 
 interface MenuItem {
   title: string;
@@ -92,7 +94,9 @@ export class AppComponent implements OnInit {
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
     private warehouseService: WarehouseService,
-    private scannerConfigurationService: ScannerConfigurationService
+    private scannerConfigurationService: ScannerConfigurationService,
+    private incidencesService: IncidencesService,
+    private popoverController: PopoverController
   ) {
     this.menu.enable(false, 'sidebar');
   }
@@ -108,6 +112,9 @@ export class AppComponent implements OnInit {
 
       // Initialization of Scandit settings that app will display
       this.scannerConfigurationService.init();
+
+      // Get all incidences to app start
+      this.incidencesService.init();
 
       // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
       this.warehouseService.loadWarehousesData();
@@ -197,5 +204,15 @@ export class AppComponent implements OnInit {
 
   toggleSidebarSmallDevices() {
     this.menu.toggle('sidebar');
+  }
+
+  async showIncidences(ev: any) {
+    const popover = await this.popoverController.create({
+      component: IncidencesPopoverComponent,
+      event: ev,
+      cssClass: 'popover-incidences'
+    });
+
+    return await popover.present();
   }
 }

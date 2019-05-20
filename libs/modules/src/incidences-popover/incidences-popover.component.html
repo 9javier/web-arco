@@ -1,0 +1,15 @@
+<ion-content>
+  <ion-list lines="none">
+    <ion-item *ngFor="let index of incidencesService.arrayIncidencesToShow()">
+      <ion-icon name="star" slot="start" [ngClass]="incidencesService.incidencesList[index].attended ? 'attended' : 'not-attended'"></ion-icon>
+      <ion-label>
+        {{incidencesService.incidencesList[index].description}}
+      </ion-label>
+    </ion-item>
+    <ion-item *ngIf="incidencesService.incidencesQuantity > incidencesService.quantityIncidencesToShow" class="see-more" (click)="seeMoreIncidences()">
+      <ion-label>
+        Ver más
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

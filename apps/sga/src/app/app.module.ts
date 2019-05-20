@@ -17,7 +17,7 @@ import { ServicesModule } from '@suite/services';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
-import { ScannerConfigurationModule } from "@suite/common-modules";
+import {IncidencesPopoverModule, ScannerConfigurationModule} from "@suite/common-modules";
 
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -31,7 +31,8 @@ import { ScannerConfigurationModule } from "@suite/common-modules";
     ServicesModule,
     BrowserAnimationsModule,
     MatDialogModule,
-    ScannerConfigurationModule
+    ScannerConfigurationModule,
+    IncidencesPopoverModule
   ],
   providers: [
     StatusBar,

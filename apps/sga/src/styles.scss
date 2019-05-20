@@ -43,6 +43,7 @@ $sga-theme: mat-light-theme($sga-primary, $sga-accent, $sga-warn);
 @import './theme/custom/modal.scss';
 @import './theme/variables.scss';
 @import './theme/custom/crud-component.scss';
+@import './theme/custom/popover.scss';
 
 html,
 body {

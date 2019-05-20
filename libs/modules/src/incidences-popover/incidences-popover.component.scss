@@ -1,0 +1,25 @@
+h2 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+ion-item {
+  cursor: pointer;
+  ion-icon.attended {
+    color: green;
+  }
+  ion-icon.not-attended {
+    color: red;
+  }
+}
+ion-item.see-more {
+  cursor: default;
+  ion-label {
+    text-align: center;
+    margin-bottom: 0;
+    cursor: pointer;
+  }
+  ion-label:hover {
+    color: var(--ion-color-secondary);
+  }
+}
