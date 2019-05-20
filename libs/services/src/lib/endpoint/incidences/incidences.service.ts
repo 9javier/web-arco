@@ -26,7 +26,6 @@ export class IncidencesService {
           if (res.body.code == 200) {
             this.incidencesList = res.body.data;
             this.incidencesQuantity = this.incidencesList.length;
-            console.debug('Test::List Incidences -> ', this.incidencesList);
           }
         });
       });
