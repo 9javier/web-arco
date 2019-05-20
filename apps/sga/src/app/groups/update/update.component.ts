@@ -20,7 +20,7 @@ export class UpdateComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(4)]]
   };
   title = 'Actualizar Grupo';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Categories')
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Groups')
     .name;
   redirectTo = '/groups/list';
 
