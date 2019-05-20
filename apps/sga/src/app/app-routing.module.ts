@@ -27,7 +27,7 @@ const routes: Routes = [
   {
     path: 'assign',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/assign/assign.module#AssignModule'
+    loadChildren: './assign/assign.module#AssignModule'
   },
   {
     path: 'login',
