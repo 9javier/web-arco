@@ -66,6 +66,11 @@ const routes: Routes = [
     loadChildren: './halls/halls.module#HallsModule'
   },
   {
+    path: 'products',
+    canActivate: [AuthGuard],
+    loadChildren: './products/products.module#ProductsModule'
+  },
+  {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule'
