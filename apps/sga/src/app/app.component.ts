@@ -70,6 +70,11 @@ export class AppComponent implements OnInit {
       icon: 'cube'
     },
     {
+      title: 'Productos',
+      url: '/products',
+      icon: 'basket'
+    },
+    {
       title: 'Logout',
       icon: 'log-out'
     }
