@@ -22,12 +22,12 @@ const routes: Routes = [
   {
     path: 'group-to-warehouse',
     canActivate: [AuthGuard],
-    loadChildren: './group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule'
+    loadChildren: '../../../../libs/modules/src/group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule'
   },
   {
     path: 'assign',
     canActivate: [AuthGuard],
-    loadChildren: './assign/assign.module#AssignModule'
+    loadChildren: '../../../../libs/modules/src/assign/assign.module#AssignModule'
   },
   {
     path: 'login',
@@ -39,12 +39,12 @@ const routes: Routes = [
   {
     path: 'jails',
     canActivate: [AuthGuard],
-    loadChildren: './jail/jail.module#JailModule'
+    loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule'
   },
   {
     path: 'pallets',
     canActivate: [AuthGuard],
-    loadChildren: './pallets/pallets.module#PalletsModule'
+    loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule'
   },
   {
     path: 'permissions',
@@ -58,7 +58,7 @@ const routes: Routes = [
   {
     path: 'groups',
     canActivate: [AuthGuard],
-    loadChildren: './groups/groups.module#GroupsModule'
+    loadChildren: '../../../../libs/modules/src/groups/groups.module#GroupsModule'
   },
   {
     path: 'warehouses/halls',
@@ -68,7 +68,7 @@ const routes: Routes = [
   {
     path: 'products',
     canActivate: [AuthGuard],
-    loadChildren: './products/products.module#ProductsModule'
+    loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule'
   },
   {
     path: 'warehouses/locations',
