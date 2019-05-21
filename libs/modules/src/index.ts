@@ -19,3 +19,6 @@ export * from './groups/groups.module';
 
 export * from './products/products.component';
 export * from './products/products.module';
+
+export * from './user-manager/user-manager.component';
+export * from './user-manager/user-manager.module';
