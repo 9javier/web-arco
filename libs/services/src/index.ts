@@ -25,8 +25,18 @@ export * from './lib/endpoint/warehouses/warehouses.service';
 export * from './models/endpoints/Rol';
 export * from './lib/endpoint/roles/roles.service';
 
-/** Roles */
+/** Jail */
 export * from './models/endpoints/Jail';
+
+/** Product */
+export * from './models/endpoints/Product';
+export * from './lib/endpoint/products/products.service';
+
+/** Model */
+export * from './models/endpoints/Model';
+
+/** Size */
+export * from './models/endpoints/Size';
 
 /** ACL */
 export * from './models/endpoints/ACL';

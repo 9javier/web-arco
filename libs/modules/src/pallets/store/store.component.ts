@@ -9,19 +9,19 @@ import { COLLECTIONS } from 'config/base';
 })
 export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.pattern('^J[0-9]{4}')]]
+    reference: ['', [Validators.required, Validators.pattern('^P[0-9]{4}')]]
   };
   formBuilderTemplateInputs = [
     {
       name: 'reference',
-      label: 'Referencia',
-      type: 'text'
+      label: 'Ej. P0001',
+      type: 'reference'
     }
   ];
-  title = 'Crear Jaula';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
+  title = 'Crear Palet';
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Pallets')
     .name;
-  redirectTo = '/jails';
+  redirectTo = '/pallets';
 
   constructor() {}
 

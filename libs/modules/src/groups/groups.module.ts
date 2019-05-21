@@ -9,7 +9,6 @@ import { GroupsComponent } from './groups.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
-import { AssignModule } from '../assign/assign.module';
 
 @NgModule({
   declarations: [GroupsComponent, StoreComponent, UpdateComponent],
@@ -21,8 +20,7 @@ import { AssignModule } from '../assign/assign.module';
     MatCheckboxModule,
     GroupsRoutingModule,
     CdkTableModule,
-    CommonUiCrudModule,
-    AssignModule
+    CommonUiCrudModule
   ],
   entryComponents: [
     StoreComponent

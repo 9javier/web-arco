@@ -10,7 +10,7 @@ export class GroupsComponent implements OnInit {
   title = 'Grupos de tiendas';
   displayedColumns: string[] = ['name', 'select'];
   columns: string[] = ['name'];
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Categories')
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Groups')
     .name;
   routePath = '/groups';
 

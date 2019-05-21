@@ -8,21 +8,20 @@ import { COLLECTIONS } from 'config/base';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
-
   formBuilderDataInputs = {
-    name: ['', [Validators.required, Validators.minLength(4)]],
+    reference: ['', [Validators.required, Validators.pattern('^J[0-9]{4}')]]
   };
   formBuilderTemplateInputs = [
     {
-      name: 'name',
-      label: 'Nombre',
-      type: 'text'
+      name: 'reference',
+      label: 'Ej. J0001',
+      type: 'reference'
     }
   ];
-  title = 'Crear Grupo';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Categories')
+  title = 'Crear Jaula';
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
     .name;
-  redirectTo = '/groups';
+  redirectTo = '/jails';
 
   constructor() {}
 

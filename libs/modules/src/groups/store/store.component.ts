@@ -8,20 +8,21 @@ import { COLLECTIONS } from 'config/base';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
+
   formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.pattern('^P[0-9]{4}')]]
+    name: ['', [Validators.required, Validators.minLength(4)]],
   };
   formBuilderTemplateInputs = [
     {
-      name: 'reference',
-      label: 'Referencia',
+      name: 'name',
+      label: 'Nombre',
       type: 'text'
     }
   ];
-  title = 'Crear Palet';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Pallets')
+  title = 'Crear Grupo';
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Groups')
     .name;
-  redirectTo = '/pallets';
+  redirectTo = '/groups';
 
   constructor() {}
 

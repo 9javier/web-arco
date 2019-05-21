@@ -1399,7 +1399,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/1/categories/1",
+							"raw": "{{url}}/api/warehouses/1/groups/1",
 							"host": [
 								"{{url}}"
 							],
@@ -1407,7 +1407,7 @@
 								"api",
 								"warehouses",
 								"1",
-								"categories",
+								"groups",
 								"1"
 							]
 						},
@@ -1435,7 +1435,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/1/categories/1",
+							"raw": "{{url}}/api/warehouses/1/groups/1",
 							"host": [
 								"{{url}}"
 							],
@@ -1443,7 +1443,7 @@
 								"api",
 								"warehouses",
 								"1",
-								"categories",
+								"groups",
 								"1"
 							]
 						},
@@ -1487,7 +1487,7 @@
 			]
 		},
 		{
-			"name": "Warehouses Categories",
+			"name": "Warehouses Groups",
 			"item": [
 				{
 					"name": "Index",
@@ -1509,14 +1509,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/categories",
+							"raw": "{{url}}/api/warehouses/groups",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"categories"
+								"groups"
 							]
 						}
 					},
@@ -1549,14 +1549,14 @@
 							"raw": "{\n\t\"name\": \"Gama Alta\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/categories",
+							"raw": "{{url}}/api/warehouses/groups",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"categories"
+								"groups"
 							]
 						}
 					},
@@ -1582,14 +1582,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/categories/1",
+							"raw": "{{url}}/api/warehouses/groups/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"categories",
+								"groups",
 								"1"
 							]
 						}
@@ -1623,14 +1623,14 @@
 							"raw": "{\n\t\"name\": \"Gama Media\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/categories/1",
+							"raw": "{{url}}/api/warehouses/groups/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"categories",
+								"groups",
 								"1"
 							]
 						}
@@ -1657,14 +1657,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/categories/1",
+							"raw": "{{url}}/api/warehouses/groups/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"categories",
+								"groups",
 								"1"
 							]
 						}

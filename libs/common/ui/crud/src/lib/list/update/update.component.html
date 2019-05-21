@@ -145,6 +145,21 @@
     
               </ion-item>
           </div>
+          <div *ngIf="input.type === 'reference'">
+            <ion-item>
+              <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name="barcode"></ion-icon>
+              </div>
+              <ion-input
+                placeholder="{{input.label}}"
+                class="ion-margin-horizontal"
+                type="text"
+                [formControl]="f[input.name]"
+                #referencePasswordInput
+              >
+              </ion-input>
+            </ion-item>
+          </div>
           <!-- End Special Cases -->
         </ion-col>
       </ion-row>
