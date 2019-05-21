@@ -53,7 +53,7 @@ const routes: Routes = [
   {
     path: 'warehouses',
     canActivate: [AuthGuard],
-    loadChildren: './warehouses/warehouses.module#WarehousesModule'
+    loadChildren: '../../../../libs/modules/src/warehouses/warehouses.module#WarehousesModule'
   },
   {
     path: 'groups',

@@ -39,3 +39,7 @@ export * from './incidence-complex/incidence-complex.module';
 // Halls (racks)
 export * from './halls/halls.component';
 export * from './halls/halls.module';
+
+// Warehouses
+export * from './warehouses/warehouses.component';
+export * from './warehouses/warehouses.module';
