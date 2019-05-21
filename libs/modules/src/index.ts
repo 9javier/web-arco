@@ -35,3 +35,7 @@ export * from './incidence-simple/incidence-simple.module';
 // Complex Incidence
 export * from './incidence-complex/incidence-complex.component';
 export * from './incidence-complex/incidence-complex.module';
+
+// Halls (racks)
+export * from './halls/halls.component';
+export * from './halls/halls.module';
