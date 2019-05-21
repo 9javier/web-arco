@@ -60,6 +60,11 @@ export class AppComponent implements OnInit {
       icon: 'grid'
     },
     {
+      title: 'Gestión de usuarios',
+      url: '/user-manager',
+      icon: 'grid'
+    },
+    {
       title: 'Almacenes',
       url: '/warehouses',
       icon: 'filing'
