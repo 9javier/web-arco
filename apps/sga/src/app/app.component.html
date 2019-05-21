@@ -68,6 +68,24 @@
       </ion-content>
     </ion-menu>
 
+    <ion-menu class="sidebar-right" menuId="sidebarRight" side="end" disabled="true">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>
+            <ion-label>Notificaciones</ion-label>
+          </ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="hideSidebarRight()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <incidences-list></incidences-list>
+      </ion-content>
+    </ion-menu>
+
     <ion-router-outlet main> </ion-router-outlet>
   </ion-split-pane>
 </ion-app>

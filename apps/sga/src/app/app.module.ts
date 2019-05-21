@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
 import {IncidencesButtonModule, ScannerConfigurationModule} from "@suite/common-modules";
+import {IncidencesListModule} from "../../../../libs/modules/src/incidences-list/incidences-list.module";
 
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -32,7 +33,8 @@ import {IncidencesButtonModule, ScannerConfigurationModule} from "@suite/common-
     BrowserAnimationsModule,
     MatDialogModule,
     ScannerConfigurationModule,
-    IncidencesButtonModule
+    IncidencesButtonModule,
+    IncidencesListModule
   ],
   providers: [
     StatusBar,

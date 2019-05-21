@@ -1,33 +1,31 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/incidences.service";
-import {Observable} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 import {ToastController} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
+import {Observable} from "rxjs";
+import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 
 @Component({
-  selector: 'incidence-simple',
-  templateUrl: './incidence-simple.component.html',
-  styleUrls: ['./incidence-simple.component.scss']
+  selector: 'incidences-list',
+  templateUrl: './incidences-list.component.html',
+  styleUrls: ['./incidences-list.component.scss']
 })
-export class IncidenceSimpleComponent implements OnInit {
-
-  @Input() incidenceIndex: number;
+export class IncidencesListComponent implements OnInit {
 
   constructor(
     private incidencesService: IncidencesService,
-    private toastController: ToastController,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
 
   }
 
-  attendIncidence() {
-    let incidenceAttended: boolean = !this.incidencesService.incidencesList[this.incidenceIndex].attended;
-    let incidenceId: number = this.incidencesService.incidencesList[this.incidenceIndex].id;
+  attendIncidence(incidence: IncidenceModel.Incidence) {
+    let incidenceAttended: boolean = !incidence.attended;
+    let incidenceId: number = incidence.id;
     this.incidencesService
       .putUpdate(incidenceId, incidenceAttended)
       .then((data: Observable<HttpResponse<IncidenceModel.ResponseUpdate>>) => {

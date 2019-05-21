@@ -12,9 +12,9 @@ ion-item {
   span.not-attended:hover, span.attended {
     background-color: var(--ion-color-success);
   }
-  h2 {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+  p.time-text {
+    font-size: 0.8em;
+    margin-top: 0;
+    color: var(--ion-color-secondary-shade);
   }
 }

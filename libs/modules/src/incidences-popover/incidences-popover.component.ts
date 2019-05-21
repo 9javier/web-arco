@@ -19,7 +19,7 @@ export class IncidencesPopoverComponent implements OnInit {
   }
 
   private seeMoreIncidences() {
-    this.popoverCtrl.dismiss();
+    this.popoverCtrl.dismiss({showMore: true});
   }
 
 }

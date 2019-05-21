@@ -33,6 +33,12 @@ export class IncidencesButtonComponent implements OnInit {
       cssClass: 'popover-incidences'
     });
 
+    popover.onDidDismiss().then((data) => {
+      if (data.data.showMore) {
+        this.menuController.enable(true, 'sidebarRight');
+      }
+    });
+
     return await popover.present();
   }
 

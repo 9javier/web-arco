@@ -3,6 +3,7 @@
     <span class="btn-attend" [ngClass]="incidencesService.incidencesList[incidenceIndex].attended ? 'attended' : 'not-attended'"></span>
   </ion-button>
   <ion-label>
-    {{incidencesService.incidencesList[incidenceIndex].description}}
+    <h2>{{incidencesService.incidencesList[incidenceIndex].description}}</h2>
+    <p>{{showDateTime(incidencesService.incidencesList[incidenceIndex].createdAt)}}</p>
   </ion-label>
 </ion-item>

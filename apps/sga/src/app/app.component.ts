@@ -10,7 +10,6 @@ import { AuthenticationService } from '@suite/services';
 import { WarehouseService } from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import { ScannerConfigurationService } from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {Observable} from "rxjs";
-import {IncidencesService} from "../../../../libs/services/src/lib/endpoint/incidences/incidences.service";
 
 interface MenuItem {
   title: string;
@@ -98,8 +97,7 @@ export class AppComponent implements OnInit {
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
     private warehouseService: WarehouseService,
-    private scannerConfigurationService: ScannerConfigurationService,
-    private incidencesService: IncidencesService
+    private scannerConfigurationService: ScannerConfigurationService
   ) {
     this.menu.enable(false, 'sidebar');
   }
@@ -204,5 +202,9 @@ export class AppComponent implements OnInit {
 
   toggleSidebarSmallDevices() {
     this.menu.toggle('sidebar');
+  }
+
+  hideSidebarRight() {
+    this.menu.enable(false, 'sidebarRight');
   }
 }
