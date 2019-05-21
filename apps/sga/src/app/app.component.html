@@ -25,10 +25,9 @@
         <ion-button>
           <ion-icon slot="icon-only" name="contact"></ion-icon>
         </ion-button>
-        <ion-button class="btn-incidences" (click)="showIncidences($event)">
-          <ion-icon name="notifications-outline"></ion-icon>
-          <ion-badge color="secondary">{{incidencesService.incidencesQuantity}}</ion-badge>
-        </ion-button>
+
+        <button-incidences></button-incidences>
+
         <ion-button>
           <ion-icon slot="icon-only" name="more"></ion-icon>
         </ion-button>

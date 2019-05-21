@@ -13,15 +13,6 @@
   }
 }
 
-.btn-incidences {
-  position: relative;
-  ion-badge {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-  }
-}
-
 ion-router-outlet {
   margin-top: 3.5rem !important;
   margin-left: 2rem !important;
@@ -33,6 +24,18 @@ ion-router-outlet {
 
   ion-header {
     transition: all var(--timing) ease-in-out;
+  }
+}
+.sidebar-right {
+  width: auto !important;
+  max-width: 40vh !important;
+
+  ion-header {
+    margin-top: 56px;
+  }
+
+  ion-header:after {
+    background: none;
   }
 }
 
