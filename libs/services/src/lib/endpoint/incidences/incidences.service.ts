@@ -6,6 +6,7 @@ import {Observable} from "rxjs";
 import {PATH} from "../../../../../../config/base";
 
 export const PATH_GET_INDEX: string = PATH('Incidences', 'Index');
+export const PATH_PUT_UPDATE: string = PATH('Incidences', 'Update attended').slice(0, -1);
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +75,21 @@ export class IncidencesService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  public async putUpdate(incidenceId: number, incidenceAttended: boolean):  Promise<Observable<HttpResponse<IncidenceModel.ResponseUpdate>>> {
+    let incidence: any = {
+      attended: incidenceAttended
+    };
+
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<IncidenceModel.ResponseUpdate>(`${PATH_PUT_UPDATE}${incidenceId}`,
+      incidence,
+      {
+        headers: headers,
+        observe: 'response'
+      });
   }
 
 }

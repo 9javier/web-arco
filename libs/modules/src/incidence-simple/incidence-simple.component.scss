@@ -1,0 +1,15 @@
+ion-item {
+  cursor: pointer;
+  ion-button {
+    margin-right: 16px;
+  }
+  span.btn-attend {
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--ion-color-success);
+    border-radius: 50%;
+  }
+  span.not-attended:hover, span.attended {
+    background-color: var(--ion-color-success);
+  }
+}

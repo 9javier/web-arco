@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import {IncidencesButtonComponent} from "@suite/common-modules";
 import {IncidencesPopoverComponent} from "../incidences-popover/incidences-popover.component"
+import {IncidenceSimpleModule} from "../incidence-simple/incidence-simple.module";
 
 @NgModule({
   declarations: [IncidencesButtonComponent, IncidencesPopoverComponent],
@@ -11,7 +12,8 @@ import {IncidencesPopoverComponent} from "../incidences-popover/incidences-popov
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    IonicModule
+    IonicModule,
+    IncidenceSimpleModule
   ], entryComponents: [IncidencesButtonComponent, IncidencesPopoverComponent]
 })
 export class IncidencesButtonModule { }

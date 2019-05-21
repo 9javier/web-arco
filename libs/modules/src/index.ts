@@ -27,3 +27,7 @@ export * from './incidences-button/incidences-button.module';
 // Incidences Popover
 export * from './incidences-popover/incidences-popover.component';
 export * from './incidences-popover/incidences-popover.module';
+
+// Simple Incidence
+export * from './incidence-simple/incidence-simple.component';
+export * from './incidence-simple/incidence-simple.module';

@@ -1,0 +1,8 @@
+<ion-item>
+  <ion-button slot="start" shape="round" fill="clear" (click)="attendIncidence()">
+    <span class="btn-attend" [ngClass]="incidencesService.incidencesList[incidenceIndex].attended ? 'attended' : 'not-attended'"></span>
+  </ion-button>
+  <ion-label>
+    {{incidencesService.incidencesList[incidenceIndex].description}}
+  </ion-label>
+</ion-item>
