@@ -3143,6 +3143,214 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Incidences",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/incidences",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "incidences"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List by type",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/incidences/type/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "incidences",
+                "type",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/incidences/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "incidences",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update attended",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"attended\": true\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/incidences/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "incidences",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Destroy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/incidences/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "incidences",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "1cac32a1-e014-4a3c-9556-36bbb0db043d",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "11099eb2-6307-444f-92b7-76513bc97c4e",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
     }
   ],
 	"auth": {
