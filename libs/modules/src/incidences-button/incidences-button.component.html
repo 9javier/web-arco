@@ -1,4 +1,4 @@
 <ion-button class="btn-incidences" (click)="showIncidences($event)">
   <ion-icon name="notifications-outline"></ion-icon>
-  <ion-badge color="secondary">{{incidencesService.incidencesQuantity}}</ion-badge>
+  <ion-badge *ngIf="incidencesService.incidencesQuantity > 0" color="secondary">{{incidencesService.incidencesQuantity}}</ion-badge>
 </ion-button>

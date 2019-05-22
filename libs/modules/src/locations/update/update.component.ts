@@ -288,8 +288,18 @@ export class UpdateComponent implements OnInit {
                 }
                 this.presentToast(errorMessage, 'danger');
               }
+            }, (error: HttpErrorResponse) => {
+              if (this.loading) {
+                this.loading.dismiss();
+                this.loading = null;
+              }
+              this.presentToast(error.message, 'danger');
             });
           }, (error: HttpErrorResponse) => {
+            if (this.loading) {
+              this.loading.dismiss();
+              this.loading = null;
+            }
             this.presentToast(error.message, 'danger');
           });
       });
