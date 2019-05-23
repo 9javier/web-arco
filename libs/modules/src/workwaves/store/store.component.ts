@@ -9,6 +9,7 @@ import {TypesService} from "../../../../services/src/lib/endpoint/types/types.se
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {WarehouseModel} from "@suite/services";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
 
 @Component({
   selector: 'suite-store',
@@ -28,6 +29,8 @@ export class StoreComponent implements OnInit {
 
   private loading = null;
 
+  private darkTheme: NgxMaterialTimepickerTheme = {};
+
   constructor(
     private modalController: ModalController,
     private loadingController: LoadingController,
@@ -45,6 +48,21 @@ export class StoreComponent implements OnInit {
     this.listTypesPacking = this.typesService.listPacking;
     this.listTypesGeneration= this.typesService.listGeneration;
     this.listTypesShippingOrder = this.typesService.listShippingOrder;
+    this.darkTheme = {
+      container: {
+        bodyBackgroundColor: '#EEEEEE',
+        buttonColor: '#212121',
+        primaryFontFamily: '#212121'
+      },
+      dial: {
+        dialBackgroundColor: '#212121',
+      },
+      clockFace: {
+        clockFaceBackgroundColor: '#fff',
+        clockHandColor: '#212121',
+        clockFaceTimeInactiveColor: '#212121'
+      }
+    }
   }
 
   goToList() {
