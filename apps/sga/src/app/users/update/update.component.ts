@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators,FormArray, FormControl } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
 import { RolesService, RolModel } from '@suite/services';
@@ -6,7 +6,8 @@ import { HttpResponse } from '@angular/common/http';
 import { Observable, observable } from 'rxjs';
 import { UsersService,UserModel } from '@suite/services';
 import { NavParams,ModalController } from '@ionic/angular';
-
+import { UtilsComponent } from '../../components/utils/utils.component';
+import { validators } from '../../utils/validators';
 
 @Component({
   selector: 'suite-update',
@@ -25,56 +26,20 @@ export class UpdateComponent implements OnInit {
 
   /**the allowed roles of the user */
   private roles:Array<any> = [];
+  /**id of the current user */
   private id;
   private updateForm:FormGroup;
-  formBuilderTemplateInputs = [
-    {
-      name: 'name',
-      label: 'Nombre',
-      type: 'text'
-    },
-    {
-      name: 'roleId',
-      label: 'Rol de usuario',
-      type: 'select',
-      icon: {type: 'ionic', name: 'list-box'},
-      value: []
-    },
-    {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email'
-    },
-    {
-      name: 'address',
-      label: 'Dirección',
-      type: 'text',
-      icon: {type: 'ionic', name: 'home'}
-    },
-    {
-      name: 'password',
-      label: 'Nueva Contraseña',
-      type: 'password'
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Repetir nueva Contraseña',
-      type: 'password'
-    }
-  ];
-  
-  title = 'Actualizar Usuario';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users')
-    .name;
-  redirectTo = 'users/list';
-  routePath = '/users';
-  customValidators: {
+
+  private customValidators: {
     name: string;
     params: [];
   } = {
     name: 'MustMach',
     params: []
   };
+
+  /**wrapper for common ionic component methods like loading */
+  @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
 
   constructor(
     private rolesService: RolesService,
@@ -93,7 +58,9 @@ export class UpdateComponent implements OnInit {
   initFormBuilder():void{
     this.updateForm = this.formBuilder.group(
       this.formBuilderDataInputs,
-      this.customValidators
+      {
+        validator: validators.MustMatch('password', 'confirmPassword')
+      }
     );
   }
 
@@ -131,25 +98,18 @@ export class UpdateComponent implements OnInit {
       .getIndex()
       .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
-          this.formBuilderTemplateInputs.map(item => {
-            if (item.name === 'roleId') {
-              item.value = res.body.data;
-              let roles = item.value;
-              this.roles = roles;
-              let userRoles = user.roles.map(rol=>rol.id);
-              console.log("user roles",userRoles);
-              console.log(item.value);
-              /**We need an array form control to manage the roles for the user*/
-              this.updateForm.addControl("roles",new FormArray(
-                roles.map(rol=>{
-                  /**In order to get the actives roles of user, 
-                   * if the user not have the rol the result of indexOf is -1, 
-                   * then -1+1 == 0 and !!0 is false !!anyNumber is true */
-                  return new FormControl(!!(1- -userRoles.indexOf(rol.id)));
-                })
-              ));
-            }
-          });
+          this.roles = res.body.data;
+          let userRoles = user.roles.map(rol=>rol.id);
+          console.log("user roles",userRoles);
+          /**We need an array form control to manage the roles for the user*/
+          this.updateForm.addControl("roles",new FormArray(
+            this.roles.map(rol=>{
+              /**In order to get the actives roles of user, 
+               * if the user not have the rol the result of indexOf is -1, 
+               * then -1+1 == 0 and !!0 is false !!anyNumber is true */
+              return new FormControl(!!(1- -userRoles.indexOf(rol.id)));
+            })
+          ));          
         });
       });    
   }
@@ -175,30 +135,18 @@ export class UpdateComponent implements OnInit {
     /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
     user.roles = user.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
     user.id = this.id;
+    user.roleId = user.roles?user.roles[0]:null;
+    this.utilsComponent.presentLoading();
     this.userService.putUpdate(this.sanitize(user)).then(observable=>{
       observable.subscribe(user=>{
+        this.utilsComponent.dismissLoading();
         console.log(user);
         this.close()
       });
-    })
-    console.log(user);
+    });
   }
-
-  
 
   ngOnInit() {
     this.initFormBuilder();
-    //this.getRoles();
-    /*this.rolesService
-      .getIndex()
-      .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
-        data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
-          this.formBuilderTemplateInputs.map(item => {
-            if (item.name === 'roleId') {
-              item.value = res.body.data;
-            }
-          });
-        });
-      });*/
   }
 }

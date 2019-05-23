@@ -60,3 +60,18 @@ ion-icon {
 ion-content {
     height: calc(100% - 112px);
 }
+
+mat-accordion {
+    width: 100%;
+    border-radius: 0px;
+}
+
+mat-expansion-panel-header {
+    height: 40px !important;
+}
+
+mat-expansion-panel {
+    border: 2px solid black;
+    margin: 2px 16px;
+    border-radius: 0px !important;
+}

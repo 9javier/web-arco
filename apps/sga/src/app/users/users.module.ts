@@ -9,6 +9,10 @@ import { UsersComponent } from './users.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { ComponentsModule } from '../components/components.module';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatListModule } from '@angular/material/list';
 
 
 @NgModule({
@@ -21,7 +25,11 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
     MatCheckboxModule,
     UsersRoutingModule,
     CommonUiCrudModule,
-    CdkTableModule
+    CdkTableModule,
+    ComponentsModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatListModule
   ],
   entryComponents: [
     StoreComponent

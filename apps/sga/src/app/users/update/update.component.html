@@ -9,6 +9,7 @@
     </ion-toolbar>
 </ion-header>
 <ion-content>
+    <suite-utils></suite-utils>
     <!--Form to update the user-->
     <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
         <ion-grid class="wrapper-form">
@@ -22,9 +23,37 @@
                 </ion-item>
                 <!--Roles-->
                 <div *ngIf="updateForm?.controls?.roles?.controls">
-                    <ion-item *ngFor="let control of updateForm.controls.roles.controls;let i = index">
-                        <ion-label>{{roles[i].name}}</ion-label>
-                        <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
+                    <ion-item lines="none">
+                        <div slot="start" class="slot-start-icon">
+                            <ion-icon color="medium" name="list-box"></ion-icon>
+                        </div>
+                        <mat-accordion multi="false">
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <ion-grid>
+                                        <ion-row>
+                                            <ion-col size="3">
+                                                <mat-panel-title> Roles </mat-panel-title>
+                                            </ion-col>
+                                            <ion-col size="7">
+                                                <mat-panel-description></mat-panel-description>
+                                            </ion-col>
+                                            <ion-col size="1">
+                                            </ion-col>
+                                        </ion-row>
+                                    </ion-grid>
+
+                                </mat-expansion-panel-header>
+
+                                <div>
+                                    <ion-item *ngFor="let control of updateForm.controls.roles.controls;let i = index">
+                                        <ion-label>{{roles[i].name}}</ion-label>
+                                        <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
+                                    </ion-item>
+                                </div>
+                                <mat-list style="display: flex; justify-content:center;"></mat-list>
+                            </mat-expansion-panel>
+                        </mat-accordion>
                     </ion-item>
                 </div>
 
@@ -62,7 +91,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input [class.border-red]="updateForm.value.password != updateForm.value.confirmPassword" placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
+                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
                         <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                     repeatPasswordInput.type === 'password'
                         ? (repeatPasswordInput.type = 'text')
@@ -77,7 +106,7 @@
 <ion-footer>
     <ion-toolbar>
         <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-        <ion-button slot="end" color="primary" [disabled]="updateForm.invalid || (updateForm.value.password != updateForm.value.confirmPassword)" (click)="submit()">Guardar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="updateForm.invalid" (click)="submit()">Guardar</ion-button>
     </ion-toolbar>
 </ion-footer>
 <!--
