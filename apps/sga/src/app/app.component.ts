@@ -77,6 +77,11 @@ export class AppComponent implements OnInit {
       icon: 'basket'
     },
     {
+      title: 'Olas de trabajo',
+      url: '/workwaves',
+      icon: 'basket'
+    },
+    {
       title: 'Logout',
       icon: 'log-out'
     }

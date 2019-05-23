@@ -84,6 +84,11 @@ const routes: Routes = [
     path: 'warehouse',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule'
+  },
+  {
+    path: 'workwaves',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwaves/workwaves.module#WorkwavesModule'
   }
 ];
 
