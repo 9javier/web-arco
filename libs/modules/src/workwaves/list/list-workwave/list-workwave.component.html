@@ -1,0 +1,32 @@
+<mat-grid-list cols="12" rowHeight="56px">
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-checkbox [(ngModel)]="checked"></mat-checkbox>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1" class="border-right border-bottom">
+    <div class="text-tile">{{workwave.code}}.&nbsp;{{workwave.name}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border">
+    <div class="text-tile">{{workwave.consolidated}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border border-right">
+    <div class="text-tile">{{workwave.shipping}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border">
+    <mat-checkbox [checked]="workwave.replace"></mat-checkbox>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border border-right">
+    <mat-checkbox [checked]="workwave.allocate"></mat-checkbox>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border">
+    <mat-checkbox [checked]="workwave.route"></mat-checkbox>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border border-right">
+    <mat-checkbox [checked]="workwave.old"></mat-checkbox>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border">
+    <mat-checkbox [checked]="workwave.jail"></mat-checkbox>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1" rowspan="1" class="border border-right">
+    <mat-checkbox [checked]="workwave.pallet"></mat-checkbox>
+  </mat-grid-tile>
+</mat-grid-list>

@@ -10,6 +10,8 @@ import { AuthenticationService } from '@suite/services';
 import { WarehouseService } from "../../../../libs/services/src/lib/endpoint/warehouse/warehouse.service";
 import { ScannerConfigurationService } from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
 import {Observable} from "rxjs";
+import {TypesService} from "../../../../libs/services/src/lib/endpoint/types/types.service";
+import {TypeModel} from "../../../../libs/services/src/models/endpoints/Type";
 
 interface MenuItem {
   title: string;
@@ -75,6 +77,11 @@ export class AppComponent implements OnInit {
       icon: 'basket'
     },
     {
+      title: 'Olas de trabajo',
+      url: '/workwaves',
+      icon: 'basket'
+    },
+    {
       title: 'Logout',
       icon: 'log-out'
     }
@@ -97,7 +104,8 @@ export class AppComponent implements OnInit {
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
     private warehouseService: WarehouseService,
-    private scannerConfigurationService: ScannerConfigurationService
+    private scannerConfigurationService: ScannerConfigurationService,
+    private typesService: TypesService
   ) {
     this.menu.enable(false, 'sidebar');
   }
@@ -116,6 +124,12 @@ export class AppComponent implements OnInit {
 
       // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
       this.warehouseService.loadWarehousesData();
+
+      // Load all types from backend
+      let typesToLoad: TypeModel.TypeLoad = {
+        all: true
+      };
+      this.typesService.init(typesToLoad);
 
       // Display button for small device to toggle sidemenu from main-header
       window.innerWidth < 992

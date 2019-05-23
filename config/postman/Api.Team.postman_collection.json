@@ -2278,165 +2278,439 @@
 				}
 			]
 		},
-		{
-			"name": "Types",
-			"item": [
-				{
-					"name": "Picking",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}/api/types/picking",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"types",
-								"picking"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Product",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}/api/types/product",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"types",
-								"product"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Process",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}/api/types/process",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"types",
-								"process"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Store",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{url}}/api/types/process",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"types",
-								"process"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "716c14a4-d35b-441e-b56e-7858d400f73a",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "2338009e-f4f4-4c94-91a9-107b9b465693",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
+    {
+      "name": "Types",
+      "item": [
+        {
+          "name": "Picking",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/picking",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "picking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/product",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "product"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Process",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/process",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Store",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/process",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Incidences",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/incidences",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "incidences"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actions",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/actions",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "actions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Preparation Lines",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/preparation-lines",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "preparation-lines"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Selection criteria",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/selection-criteria",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "selection-criteria"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generation",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/generation",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "generation"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Status Product",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/status-product",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "status-product"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Execution",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/execution",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "execution"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Shipping order",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/shipping-order",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "shipping-order"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Packing",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/packing",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "packing"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activities",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/types/activities",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "types",
+                "activities"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
     {
       "name": "Inventory",
       "item": [
@@ -3344,6 +3618,785 @@
           "listen": "test",
           "script": {
             "id": "11099eb2-6307-444f-92b7-76513bc97c4e",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workwaves",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/workwaves",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Store",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workwaves\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/api/workwaves/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update single",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 2,\n    \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/16",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "16"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update executed",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"executed\": true,\n    \"executedDate\": \"2019-05-20T12:30:33.577Z\"\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/executed/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "executed",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Destroy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update multiple",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workwaves\": [\n        {\n        \t\"id\": 1,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 1,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        },\n        {\n        \t\"id\": 2,\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 1,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workwaves Tasks",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/workwaves/tasks",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Store",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workwavesTasks\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"time\": \"10:30\",\n            \"date\": \"2019-05-23\",\n            \"everyday\": true,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 2,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"time\": \"13:30\",\n            \"date\": \"2019-05-23\",\n            \"everyday\": false,\n            \"active\": true\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/tasks",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/api/workwaves/tasks/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update single",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 1,\n    \"date\": \"2019-05-30\",\n    \"time\": \"09:00\",\n    \"everyday\": true,\n    \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/tasks/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Destroy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/tasks/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "tasks",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update multiple",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workwavesTasks\": [\n        {\n        \t\"id\": 1,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 3,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-30\",\n            \"time\": \"09:00\",\n            \"everyday\": true,\n            \"active\": true\n        },\n        {\n        \t\"id\": 2,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 3,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-30\",\n            \"time\": \"09:00\",\n            \"everyday\": false,\n            \"active\": true\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/tasks",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Workwaves Templates",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Store",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workwavesTemplates\": [\n        {\n            \"typeExecution\": 2,\n            \"name\": \"Template 1\",\n            \"description\": \"Description template 1\",\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"date\": \"2019-05-23\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        },\n        {\n            \"typeExecution\": 1,\n            \"name\": \"Template 2\",\n            \"description\": \"Description template 2\",\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"date\": \"2019-05-23\",\n            \"time\": \"10:30\"\n            \n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update single",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"typeExecution\": 2,\n\t\"name\": \"Template 1 change\",\n\t\"description\": \"Description template 1\",\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 1,\n    \"date\": \"2019-05-24\",\n    \"time\": \"10:30\",\n    \"everyday\": true\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Destroy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates/1",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update multiple",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "type": "text",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workwavesTemplates\": [\n        {\n            \"id\": 1,\n            \"typeExecution\": 2,\n            \"name\": \"Template 1 change\",\n            \"description\": \"Description template 1\",\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-24\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        },\n        {\n            \"id\": 2,\n            \"typeExecution\": 2,\n            \"name\": \"Template 2 change\",\n            \"description\": \"Description template 2\",\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-24\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+            "type": "text/javascript",
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
             "type": "text/javascript",
             "exec": [
               ""
