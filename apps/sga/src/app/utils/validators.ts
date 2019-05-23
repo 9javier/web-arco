@@ -19,5 +19,17 @@ MustMatch:function (controlName: string, matchingControlName: string) {
         matchingControl.setErrors(null);
       }
     };
+  },
+  /**verify that the control have at least one id */
+  haveRoles:function(controlName){
+    return (formGroup:FormGroup) =>{
+      const control = formGroup.controls[controlName];
+      if(!control || (control && control.errors))
+        return;
+      if(!(control.value.indexOf(true) - -1))
+        control.setErrors({ haveRoles: true });
+      else
+        control.setErrors(null);
+    }
   }
 }

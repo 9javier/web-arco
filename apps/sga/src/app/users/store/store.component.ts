@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import { ModalController } from "@ionic/angular";
+import { Component, OnInit,ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators,FormArray, FormControl } from '@angular/forms';
 import { RolesService, RolModel } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, observable } from 'rxjs';
+import { UsersService,UserModel } from '@suite/services';
+import { ModalController } from '@ionic/angular';
+import { UtilsComponent } from '../../components/utils/utils.component';
+import { validators } from '../../utils/validators';
+
 
 @Component({
   selector: 'suite-store',
@@ -11,83 +15,106 @@ import { Observable } from 'rxjs';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
+    
+  /**wrapper for common ionic component methods like loading */
+  @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
 
+  /**the inputs of form */
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
-    roleId: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
     address: ['', [Validators.required, Validators.minLength(4)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required]
   };
-  formBuilderTemplateInputs = [
-    {
-      name: 'name',
-      label: 'Nombre',
-      type: 'text'
-    },
-    {
-      name: 'roleId',
-      label: 'Rol de usuario',
-      type: 'select',
-      multiple: true,
-      icon: {type: 'ionic', name: 'list-box'},
-      value: []
-    },
-    {
-      name: 'email',
-      label: 'Correo Electrónico',
-      type: 'email'
-    },
-    {
-      name: 'address',
-      label: 'Dirección',
-      type: 'text',
-      icon: {type: 'ionic', name: 'home'}
-    },
-    {
-      name: 'password',
-      label: 'Contraseña',
-      type: 'password'
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirmar Contraseña',
-      type: 'password'
-    }
-  ];
-  title = 'Crear Usuario';
-  apiEndpoint = 'Users';
-  redirectTo = '/users';
 
-  customValidators: {
-    name: string;
-    params: [];
-  } = {
-      name: 'MustMach',
-      params: []
-    };
+  /**the allowed roles of the user */
+  private roles:Array<any> = [];
+
+  private createForm:FormGroup;
+
+
 
   constructor(
-    private modalCtrl: ModalController,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private formBuilder: FormBuilder,
+    private userService:UsersService,
+    private modalController:ModalController
   ) { }
 
-  ngOnInit() {
+    /**
+   * initialize the formbuilder that will be used in the form for create the user
+   */
+  initFormBuilder():void{
+    this.createForm = this.formBuilder.group(
+      this.formBuilderDataInputs,
+      {
+        validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveRoles("roles")]
+      }
+    );
+  }
+  
+  /**
+  * close the current instance of update modal
+  */
+  close():void{
+    this.modalController.dismiss();
+  }
+
+    /**
+   * Get the roles from server and set checked the roles of user
+   */
+  getRoles():void{
     this.rolesService
       .getIndex()
       .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
-          this.formBuilderTemplateInputs.map(item => {
-            if (item.name === 'roleId') {
-              item.value = res.body.data;
-            }
-          });
+          this.roles = res.body.data;
+          /**We need an array form control to manage the roles for the user*/
+          this.createForm.addControl("roles",new FormArray(
+            this.roles.map(rol=>{
+              return new FormControl(false);
+            })
+          ));          
         });
-      });
+      });    
   }
 
-  closeModal() {
-    this.modalCtrl.dismiss();
+    /**
+   * remove false values to the object to prevent unexpected behaviours
+   * @param object - the object to sanitize
+   * @returns sanitized object
+   */
+  sanitize(object:any):any{
+    Object.keys(object).forEach(key=>{
+      if(!object[key])
+        delete object[key];
+    })
+    return object;
   }
+
+  /**
+ * update the user
+ */
+submit():void{
+  let user = this.createForm.value;
+  /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
+  user.roles = user.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
+  user.roleId = user.roles?user.roles[0]:null;
+  this.utilsComponent.presentLoading();
+  this.userService.postStore(this.sanitize(user)).then(observable=>{
+    observable.subscribe(user=>{
+      this.utilsComponent.dismissLoading();
+      console.log(user);
+      this.close()
+    });
+  });
+}
+
+  ngOnInit() {
+    this.initFormBuilder();
+    this.getRoles();
+  }
+
+
 }

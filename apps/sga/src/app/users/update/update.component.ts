@@ -15,12 +15,13 @@ import { validators } from '../../utils/validators';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
+  /**the inputs of form */
   formBuilderDataInputs = {
     name: ['', [Validators.required, Validators.minLength(4)]],
     roleId: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    address: [''/*, [Validators.required, Validators.minLength(4)]*/],
-    password: [''],
+    address: ['', [Validators.required, Validators.minLength(4)]],
+    password: ['',Validators.minLength(4)],
     confirmPassword: ['']
   };
 
@@ -29,14 +30,6 @@ export class UpdateComponent implements OnInit {
   /**id of the current user */
   private id;
   private updateForm:FormGroup;
-
-  private customValidators: {
-    name: string;
-    params: [];
-  } = {
-    name: 'MustMach',
-    params: []
-  };
 
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
@@ -59,7 +52,7 @@ export class UpdateComponent implements OnInit {
     this.updateForm = this.formBuilder.group(
       this.formBuilderDataInputs,
       {
-        validator: validators.MustMatch('password', 'confirmPassword')
+        validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveRoles("roles")]
       }
     );
   }
