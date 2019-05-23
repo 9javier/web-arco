@@ -1,8 +1,85 @@
-<suite-ui-crud-update
-  [title]="title"
-  [formBuilderDataInputs]="formBuilderDataInputs"
-  [formBuilderTemplateInputs]="formBuilderTemplateInputs"
-  [apiEndpoint]="apiEndpoint"
-  [redirectTo]="redirectTo"
-  [customValidators]="customValidators"
-></suite-ui-crud-update>
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Actualizar Usuario</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <!--Form to update the user-->
+    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+        <ion-grid class="wrapper-form">
+            <ion-row class="input-wrapper">
+                <!--Name-->
+                <ion-item lines="none">
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="person"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+                </ion-item>
+                <!--Roles-->
+                <div *ngIf="updateForm?.controls?.roles?.controls">
+                    <ion-item *ngFor="let control of updateForm.controls.roles.controls;let i = index">
+                        <ion-label>{{roles[i].name}}</ion-label>
+                        <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
+                    </ion-item>
+                </div>
+
+                <!--Email-->
+                <ion-item lines="none">
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="mail"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Correo Electrónico" class="ion-margin-horizontal" formControlName="email" type="email" email></ion-input>
+                </ion-item>
+                <!--Direction-->
+                <ion-item lines="none">
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="home"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address" type="text" text></ion-input>
+                </ion-item>
+                <!--Password-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
+
+                        <ion-icon class="icon-show-password" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                      passwordInput.type === 'password'
+                        ? (passwordInput.type = 'text')
+                        : (passwordInput.type = 'password')
+                    "></ion-icon>
+                    </ion-input>
+
+                </ion-item>
+                <!--Repeat password-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-input [class.border-red]="updateForm.value.password != updateForm.value.confirmPassword" placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
+                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                    repeatPasswordInput.type === 'password'
+                        ? (repeatPasswordInput.type = 'text')
+                        : (repeatPasswordInput.type = 'password')
+                    "></ion-icon>
+                    </ion-input>
+                </ion-item>
+            </ion-row>
+        </ion-grid>
+    </form>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="updateForm.invalid || (updateForm.value.password != updateForm.value.confirmPassword)" (click)="submit()">Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>
+<!--
+<suite-ui-crud-update [title]="title" [formBuilderDataInputs]="formBuilderDataInputs" [formBuilderTemplateInputs]="formBuilderTemplateInputs" [apiEndpoint]="apiEndpoint" [redirectTo]="redirectTo" [customValidators]="customValidators"></suite-ui-crud-update>
+-->
