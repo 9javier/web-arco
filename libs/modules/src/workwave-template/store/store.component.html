@@ -1,0 +1,166 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToList()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Guardar</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content color="light">
+
+  <ion-row class="row-templates">
+    <mat-radio-group [(ngModel)]="workwaveType" aria-label="Select an option" (change)="initializeAllFields()">
+      <mat-radio-button value="template">Plantilla</mat-radio-button>
+      <mat-radio-button value="schedule">Programar</mat-radio-button>
+      <mat-radio-button value="run">Ejecutar ahora</mat-radio-button>
+    </mat-radio-group>
+  </ion-row>
+
+  <ion-row class="row-input row-time" color="light">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+          <i class="material-icons">home</i>
+        </div>
+        <div class="field">
+          <ion-select class="ion-margin-horizontal" placeholder="Warehouse" interface="popover" [(ngModel)]="workwave.warehouseId">
+            <ion-select-option *ngFor="let warehouse of listWarehouses" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input" color="light" *ngIf="workwaveType == 'template'">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+          <i class="material-icons">title</i>
+        </div>
+        <div class="field">
+          <ion-input placeholder="Título" class="ion-margin-horizontal" [(ngModel)]="workwave.name"></ion-input>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input" color="light" *ngIf="workwaveType == 'template'">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+          <i class="material-icons">description</i>
+        </div>
+        <div class="field">
+          <ion-input placeholder="Descripción" class="ion-margin-horizontal" [(ngModel)]="workwave.description"></ion-input>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input row-date" color="light" *ngIf="workwaveType == 'schedule'">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+          <ion-icon name="calendar"></ion-icon>
+        </div>
+        <div class="field">
+          <input matInput [matDatepicker]="datePicker" placeholder="Ej. 21/05/2019" class="input-date" [disabled]="workwave.everyday" [(ngModel)]="workwave.date">
+          <mat-datepicker-toggle matSuffix [for]="datePicker" class="toggle-date"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input row-time" color="light" *ngIf="workwaveType == 'schedule'">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+          <ion-icon name="time"></ion-icon>
+        </div>
+        <div class="field">
+          <input [ngxTimepicker]="timePicker" [disableClick]="true" placeholder="Ej. 17:30" class="input-time" [(ngModel)]="workwave.time" [format]="24">
+          <ngx-material-timepicker-toggle [for]="timePicker" class="toggle-time"></ngx-material-timepicker-toggle>
+          <ngx-material-timepicker #timePicker [ngxMaterialTimepickerTheme]="darkTheme"></ngx-material-timepicker>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input row-time" color="light" *ngIf="workwaveType == 'template'">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+
+        </div>
+        <div class="field">
+          <ion-select class="ion-margin-horizontal" placeholder="Execution" interface="popover" [(ngModel)]="workwave.typeExecution">
+            <ion-select-option *ngFor="let typeExecution of listTypesExecution" [value]="typeExecution.id">{{typeExecution.name}}</ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input row-time" color="light">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+
+        </div>
+        <div class="field">
+          <ion-select class="ion-margin-horizontal" placeholder="Packing" interface="popover" [(ngModel)]="workwave.typePacking">
+            <ion-select-option *ngFor="let typePacking of listTypesPacking" [value]="typePacking.id">{{typePacking.name}}</ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input row-time" color="light">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+
+        </div>
+        <div class="field">
+          <ion-select class="ion-margin-horizontal" placeholder="Shipping" interface="popover" [(ngModel)]="workwave.typeShippingOrder">
+            <ion-select-option *ngFor="let typeShipping of listTypesShippingOrder" [value]="typeShipping.id">{{typeShipping.name}}</ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-input row-time" color="light" [ngClass]="workwaveType != 'schedule' ? 'last-child' : ''">
+    <ion-col color="light">
+      <ion-item lines="none" color="light">
+        <div slot="start" class="icon-field">
+
+        </div>
+        <div class="field">
+          <ion-select class="ion-margin-horizontal" placeholder="Generation" interface="popover" [(ngModel)]="workwave.typeGeneration">
+            <ion-select-option *ngFor="let typeGeneration of listTypesGeneration" [value]="typeGeneration.id">{{typeGeneration.name}}</ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-repeat" *ngIf="workwaveType == 'schedule'" [ngClass]="workwaveType == 'schedule' ? 'last-child' : ''">
+    <ion-col color="light">
+      <mat-checkbox [(ngModel)]="workwave.everyday">Repetir todos los días</mat-checkbox>
+    </ion-col>
+  </ion-row>
+
+  <ion-footer class="footer-products">
+    <ion-button slot="end" color="secondary" (click)="goToList()">
+      Cancelar
+    </ion-button>
+    <ion-button slot="end" color="tertiary" (click)="saveWorkwave()" [disabled]="workwaveOk()">
+      Guardar
+    </ion-button>
+  </ion-footer>
+</ion-content>

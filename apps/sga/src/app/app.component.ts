@@ -25,7 +25,7 @@ interface MenuItem {
   styles: []
 })
 export class AppComponent implements OnInit {
-  public appPages: MenuItem[] = [
+  public appPages = [
     {
       title: 'Gestión Almacén',
       url: '/warehouse/manage',
@@ -78,8 +78,19 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Olas de trabajo',
-      url: '/workwaves',
-      icon: 'basket'
+      open: false,
+      children: [
+        {
+          title: 'Programadas',
+          icon: 'logo-ionic',
+          url: '/workwaves-scheduled'
+        },
+        {
+          title: 'Plantillas',
+          icon: 'logo-google',
+          url: '/workwaves-templates'
+        }
+      ]
     },
     {
       title: 'Logout',

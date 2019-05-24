@@ -1,0 +1,14 @@
+mat-grid-list {
+  border-bottom: 1px solid;
+  border-bottom-color: var(--ion-color-lines);
+
+  mat-grid-tile.mat-grid-tile {
+    font-size: 16px;
+    line-height: 20px;
+    div.tile-title {
+      justify-content: start !important;
+      width: 100%;
+      color: var(--ion-color-tertiary);
+    }
+  }
+}

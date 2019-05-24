@@ -47,3 +47,15 @@ export * from './warehouses/warehouses.module';
 // Workwaves
 export * from './workwaves/workwaves.component';
 export * from './workwaves/workwaves.module';
+
+// Workwaves Scheduled
+export * from './workwaves-schedule/workwaves-schedule.component';
+export * from './workwaves-schedule/workwaves-schedule.module';
+
+// Workwaves Templates
+export * from './workwaves-templates/workwaves-templates.component';
+export * from './workwaves-templates/workwaves-templates.module';
+
+// Workwave Template
+export * from './workwave-template/workwave-template.component';
+export * from './workwave-template/workwave-template.module';

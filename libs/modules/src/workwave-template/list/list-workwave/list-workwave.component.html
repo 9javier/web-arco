@@ -1,0 +1,55 @@
+<mat-grid-list cols="12" rowHeight="64px">
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-checkbox [(ngModel)]="checked"></mat-checkbox>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="3" rowspan="1" class="border-bottom border-right">
+    <div class="tile-value">001 KRACK Vigo Gran Vía</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <div>190</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <div>300</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group name="reponer">
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group name="distribuir">
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group name="seleccion">
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group name="seleccion">
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group name="embalaje">
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group name="embalaje">
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+</mat-grid-list>
