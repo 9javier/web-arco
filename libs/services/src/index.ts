@@ -45,3 +45,6 @@ export * from './lib/endpoint/processes/processes.service';
 /** ACL */
 export * from './models/endpoints/ACL';
 export * from './lib/endpoint/acl/acl.service';
+
+/** UserProcesses*/
+export * from './models/endpoints/UserProcesses';

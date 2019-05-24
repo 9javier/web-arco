@@ -4,12 +4,14 @@ import {
   UserModel,
   UsersService,
   ProcessesService,
-  ProcessModel, WarehouseModel
+  ProcessModel, WarehouseModel, UserProcessesModel
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material';
-import {FormGroup} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {forEach} from "@angular/router/src/utils/collection";
+
 
 @Component({
   selector: 'app-user-manager',
@@ -18,28 +20,33 @@ import {FormGroup} from "@angular/forms";
 })
 
 export class UserManagerComponent implements OnInit {
-  users: UserModel.User[] = [];
+  users: UserProcessesModel.UserProcesses[] = [];
   processes: ProcessModel.Process[] = [];
   displayedColumns: string[] = ['name'];
+  dataSourceTable: object[] = [];
   dataColumns: string[];
-  updateForm: FormGroup;
+  formGroup: FormGroup;
+  items: FormArray;
+
   constructor(
+    private formBuilder: FormBuilder,
     private usersService: UsersService,
     private processesService: ProcessesService
   ) {}
 
   ngOnInit() {
     this.initUsers();
+
   }
 
   initUsers(){
     Promise.all([
-      this.usersService.getIndex(),
+      this.processesService.getUsersProcesses(),
       this.processesService.getIndex()
     ]).then(
       (data: any) => {
         data[0].subscribe(
-          (res: HttpResponse<UserModel.ResponseIndex>) => {
+          (res: HttpResponse<UserProcessesModel.ResponseIndex>) => {
             this.users = res.body.data;
             console.log(this.users);
           });
@@ -48,10 +55,32 @@ export class UserManagerComponent implements OnInit {
             this.processes = res.body.data;
             this.dataColumns = this.processes.map(process => process.name );
             this.displayedColumns = this.displayedColumns.concat(this.dataColumns).concat(['productivity']);
-            console.log('dataColumns');
-            console.log(this.dataColumns);
-            console.log('Processes');
-            console.log(this.processes);
+
+            this.formGroup = this.formBuilder.group({
+              items: this.formBuilder.array(() => {
+                for(let user of this.users){
+
+                  let name = user.name;
+                  let productivity = user.performance;
+                  let processes: object[] = [];
+
+                  for (let process of this.processes) {
+                    let value = false;
+                    for (let userp of user.processes) {
+                      if (process.name == userp.name){
+                        value = true;
+                      }
+                    }
+                    processes.push({id: process.id, name: process.name, value: value});
+                  }
+
+                  this.items = this.formGroup.get('items') as FormArray;
+                  this.items.push(this.createItem(name, processes, productivity));
+                }
+              })
+            });
+
+            console.log(this.items);
           });
       },
       err => {
@@ -62,6 +91,23 @@ export class UserManagerComponent implements OnInit {
 
   onSubmit(){
 
+  }
+
+  cleanForm(){
+
+  }
+
+  createItem(name, processes, productivity) {
+    let arrayForm: {};
+    arrayForm['name'] = name;
+
+    for (let process of processes){
+        arrayForm[process.name] = process.value
+    }
+
+    arrayForm['productivity'] = productivity;
+
+    return this.formBuilder.group(arrayForm);
   }
 }
 
