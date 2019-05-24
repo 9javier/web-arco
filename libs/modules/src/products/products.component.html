@@ -1,7 +1,7 @@
 <ion-content>
   <ion-text color="primary"> <h1>Productos</h1> </ion-text>
 
-  <table mat-table [dataSource]="products">
+  <table mat-table [dataSource]="dataSource">
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
@@ -34,6 +34,7 @@
         {{ product.size.name }}
       </td>
     </ng-container>
-
   </table>
+
+  <mat-paginator [pageSizeOptions]="[3, 10, 20]"></mat-paginator>
 </ion-content>
