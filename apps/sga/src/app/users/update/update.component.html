@@ -14,6 +14,13 @@
     <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
+                <!--Employee Id-->
+                <ion-item lines="none">
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-input placeholder="id de empleado" class="ion-margin-horizontal" formControlName="employeId" type="text" text></ion-input>
+                </ion-item>
                 <!--Name-->
                 <ion-item lines="none">
                     <div slot="start" class="slot-start-icon">

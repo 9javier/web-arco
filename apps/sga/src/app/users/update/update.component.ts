@@ -17,6 +17,7 @@ import { validators } from '../../utils/validators';
 export class UpdateComponent implements OnInit {
   /**the inputs of form */
   formBuilderDataInputs = {
+    employeId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
     roleId: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
@@ -41,6 +42,7 @@ export class UpdateComponent implements OnInit {
     private navParams:NavParams,
     private modalController:ModalController
   ) {
+    console.log(this.navParams);
     let id = this.id = this.navParams.data.id;
     this.getUser(id);
   }
@@ -62,6 +64,7 @@ export class UpdateComponent implements OnInit {
    * @param id-the id of the user
    */
   getUser(id:number):void{
+    console.log(id);
     /**Acá no entendí muy bien el propósito de retornar un observable dentro de una promesa */
     this.userService.getShow(id).then(observable=>{
       observable.subscribe((response)=>{
@@ -126,7 +129,7 @@ export class UpdateComponent implements OnInit {
   submit():void{
     let user = this.updateForm.value;
     /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
-    user.roles = user.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
+    user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
     user.id = this.id;
     user.roleId = user.roles?user.roles[0]:null;
     this.utilsComponent.presentLoading();
