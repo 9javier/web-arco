@@ -36,7 +36,6 @@ export class UserManagerComponent implements OnInit {
 
   ngOnInit() {
     this.initUsers();
-
   }
 
   initUsers(){
@@ -55,32 +54,6 @@ export class UserManagerComponent implements OnInit {
             this.processes = res.body.data;
             this.dataColumns = this.processes.map(process => process.name );
             this.displayedColumns = this.displayedColumns.concat(this.dataColumns).concat(['productivity']);
-
-            this.formGroup = this.formBuilder.group({
-              items: this.formBuilder.array(() => {
-                for(let user of this.users){
-
-                  let name = user.name;
-                  let productivity = user.performance;
-                  let processes: object[] = [];
-
-                  for (let process of this.processes) {
-                    let value = false;
-                    for (let userp of user.processes) {
-                      if (process.name == userp.name){
-                        value = true;
-                      }
-                    }
-                    processes.push({id: process.id, name: process.name, value: value});
-                  }
-
-                  this.items = this.formGroup.get('items') as FormArray;
-                  this.items.push(this.createItem(name, processes, productivity));
-                }
-              })
-            });
-
-            console.log(this.items);
           });
       },
       err => {
@@ -94,20 +67,6 @@ export class UserManagerComponent implements OnInit {
   }
 
   cleanForm(){
-
-  }
-
-  createItem(name, processes, productivity) {
-    let arrayForm: {};
-    arrayForm['name'] = name;
-
-    for (let process of processes){
-        arrayForm[process.name] = process.value
-    }
-
-    arrayForm['productivity'] = productivity;
-
-    return this.formBuilder.group(arrayForm);
   }
 }
 

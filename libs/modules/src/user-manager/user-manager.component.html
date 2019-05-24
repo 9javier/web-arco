@@ -1,6 +1,6 @@
 <ion-content>
   <ion-text color="primary"> <h1>Gestión de usuarios</h1> </ion-text>
-  <form [formGroup]="">
+  <form [formGroup]="formGroup">
     <table mat-table [dataSource]="users">
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
