@@ -57,6 +57,7 @@ export class UpdateComponent implements OnInit {
         validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveRoles("roles")]
       }
     );
+    console.log((this.updateForm));
   }
 
   /**
@@ -131,7 +132,7 @@ export class UpdateComponent implements OnInit {
     /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
     user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
     user.id = this.id;
-    user.roleId = user.roles?user.roles[0]:null;
+    user.roleId = user.roles?user.roles[0].id:null;
     this.utilsComponent.presentLoading();
     this.userService.putUpdate(this.sanitize(user)).then(observable=>{
       observable.subscribe(user=>{

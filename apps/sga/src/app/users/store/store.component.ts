@@ -100,8 +100,8 @@ export class StoreComponent implements OnInit {
 submit():void{
   let user = this.createForm.value;
   /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
-  user.roles = user.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
-  user.roleId = user.roles?user.roles[0]:null;
+  user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
+  user.roleId = user.roles?user.roles[0].id:null;
   this.utilsComponent.presentLoading();
   this.userService.postStore(this.sanitize(user)).then(observable=>{
     observable.subscribe(user=>{

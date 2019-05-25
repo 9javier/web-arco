@@ -15,22 +15,22 @@
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
                 <!--Employee Id-->
-                <ion-item lines="none">
+                <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="id de empleado" class="ion-margin-horizontal" formControlName="employeId" type="text" text></ion-input>
+                    <ion-input placeholder="id de empleado" class="ion-margin-horizontal" formControlName="employeId" type="number" number></ion-input>
                 </ion-item>
                 <!--Name-->
-                <ion-item lines="none">
+                <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="person"></ion-icon>
                     </div>
-                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" [class.ion-invalid]="updateForm.get('name').valid" type="text" text></ion-input>
                 </ion-item>
                 <!--Roles-->
-                <div *ngIf="updateForm?.controls?.roles?.controls">
-                    <ion-item lines="none">
+                <div class="container-roles" *ngIf="updateForm?.controls?.roles?.controls">
+                    <ion-item [class.invalid]="!updateForm?.controls?.roles?.valid">
                         <div slot="start" class="slot-start-icon">
                             <ion-icon color="medium" name="list-box"></ion-icon>
                         </div>
@@ -65,7 +65,7 @@
                 </div>
 
                 <!--Email-->
-                <ion-item lines="none">
+                <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="mail"></ion-icon>
                     </div>
