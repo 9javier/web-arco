@@ -68,22 +68,20 @@
           </ion-menu-toggle>
 
           <!-- Item with Children -->
-          <ion-item button *ngIf="p.children?.length > 0" (click)="p.open = !p.open" [class.parent-active]="p.open" detail="false" lines="none">
-            <ion-icon slot="start" name="arrow-forward" *ngIf="!p.open"></ion-icon>
-            <ion-icon slot="start" name="arrow-down" *ngIf="p.open"></ion-icon>
-            <ion-label>{{ p.title }}</ion-label>
+          <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none">
+            <ion-icon [slot]="iconsDirection" name="arrow-forward" *ngIf="!p.open"></ion-icon>
+            <ion-icon [slot]="iconsDirection" name="arrow-down" *ngIf="p.open"></ion-icon>
+            <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
           </ion-item>
           <!-- Children List for clicked Item -->
           <ion-list *ngIf="p.open" lines="none">
-            <ion-menu-toggle>
-              <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root"
-                        routerLinkActive="active">
-                <ion-icon [name]="sub.icon" slot="start"></ion-icon>
-                <ion-label>
-                  {{ sub.title }}
-                </ion-label>
-              </ion-item>
-            </ion-menu-toggle>
+            <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root"
+                      routerLinkActive="active">
+              <ion-icon [slot]="iconsDirection" [name]="sub.icon" slot="start"></ion-icon>
+              <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
+                {{ sub.title }}
+              </ion-label>
+            </ion-item>
           </ion-list>
         </div>
       </ion-content>

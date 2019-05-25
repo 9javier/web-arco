@@ -211,6 +211,12 @@ export class AppComponent implements OnInit {
     this.displaySmallSidebar === true
       ? (this.iconsDirection = 'end')
       : (this.iconsDirection = 'start');
+
+    for (let page of this.appPages) {
+      if (page.children && page.children.length > 0) {
+        page.open = false;
+      }
+    }
   }
 
   onResize(event) {
@@ -231,5 +237,11 @@ export class AppComponent implements OnInit {
 
   hideSidebarRight() {
     this.menu.enable(false, 'sidebarRight');
+  }
+
+  openSubMenuItem(menuItem) {
+    if (this.iconsDirection === 'end') this.toggleSidebar();
+
+    menuItem.open = !menuItem.open;
   }
 }
