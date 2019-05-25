@@ -58,3 +58,6 @@ export * from './warehouses/warehouses.module';
 // Workwaves
 export * from './workwaves/workwaves.component';
 export * from './workwaves/workwaves.module';
+
+export * from './user-manager/user-manager.component';
+export * from './user-manager/user-manager.module';
