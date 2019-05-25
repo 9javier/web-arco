@@ -1,14 +1,22 @@
 table {
-  width: 100%;
+    width: 100%;
 }
 
-.mat-cell, .mat-header-cell {
-  padding: 10px 10px 10px 0;
+.mat-cell,
+.mat-header-cell {
+    padding: 10px 10px 10px 0;
+}
+
+.ion-margin-horizontal {
+    width: 40px;
+    border: 2px solid black;
+    text-align: center;
 }
 
 .fab-row-actions {
-  position: fixed;
-  bottom: 4.5rem;
-  width: 100%;
-  right: 3rem;
+    position: fixed;
+    bottom: 4.5rem;
+    width: 100%;
+    right: 3rem;
+    z-index: 20;
 }

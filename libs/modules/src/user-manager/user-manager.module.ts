@@ -9,6 +9,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ComponentsModule } from '@suite/common-modules';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
     MatListModule,
     MatTableModule,
     MatCheckboxModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ComponentsModule
   ],
   declarations: [UserManagerComponent]
 })

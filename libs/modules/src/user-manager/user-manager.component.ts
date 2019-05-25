@@ -1,16 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 
 import {
   UserModel,
   UsersService,
   ProcessesService,
-  ProcessModel, WarehouseModel, UserProcessesModel
+  ProcessModel, WarehouseModel,
+  TypeModel,TypesService, TypeUsersProcesses
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
 import { MatTableDataSource } from '@angular/material';
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {forEach} from "@angular/router/src/utils/collection";
+import {FormArray, FormBuilder, FormGroup, Validators, FormControl} from "@angular/forms";
+import { forEach } from "@angular/router/src/utils/collection";
+import { UserProcessesService,UserProcessesModel } from '@suite/services';
+import { from, Observable } from 'rxjs';
+import { map,flatMap } from 'rxjs/operators';
+import { UtilsComponent } from "@suite/common-modules";
 
 
 @Component({
@@ -22,48 +27,128 @@ import {forEach} from "@angular/router/src/utils/collection";
 export class UserManagerComponent implements OnInit {
   users: UserProcessesModel.UserProcesses[] = [];
   processes: ProcessModel.Process[] = [];
-  displayedColumns: string[] = ['name'];
+  displayedColumns: string[];
   dataSourceTable: object[] = [];
   dataColumns: string[];
   formGroup: FormGroup;
   items: FormArray;
-
+  /**previous value of form to delete */
+  toDelete;
+  @ViewChild(UtilsComponent) utils:UtilsComponent;
+  typeProcesses:Array<TypeModel.TypeProcess> = [];
   constructor(
+    private typeService:TypesService,
     private formBuilder: FormBuilder,
     private usersService: UsersService,
-    private processesService: ProcessesService
+    private processesService: ProcessesService,
+    private userProcessService:UserProcessesService
   ) {}
 
   ngOnInit() {
-    this.initUsers();
+    this.buildFormWithData();
   }
 
-  initUsers(){
-    Promise.all([
-      this.processesService.getUsersProcesses(),
-      this.processesService.getIndex()
-    ]).then(
-      (data: any) => {
-        data[0].subscribe(
-          (res: HttpResponse<UserProcessesModel.ResponseIndex>) => {
-            this.users = res.body.data;
-            console.log(this.users);
-          });
-        data[1].subscribe(
-          (res: HttpResponse<ProcessModel.ResponseIndex>) => {
-            this.processes = res.body.data;
-            this.dataColumns = this.processes.map(process => process.name );
-            this.displayedColumns = this.displayedColumns.concat(this.dataColumns).concat(['productivity']);
-          });
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  /**
+   * Get all processes types for build the table header
+   */
+  getTypes():Observable<Array<TypeModel.TypeProcess>>{
+    return Observable.create(observer =>{
+        this.typeService.getIndexProcesses().subscribe(types=>{
+        observer.next(types);
+      })
+   });
   }
 
-  onSubmit(){
+  /**
+   * Get all user process to show
+   */
+  getUserProcess():Observable<Array<TypeUsersProcesses.UsersProcesses>>{
+    return Observable.create(observer=>{
+      this.userProcessService.getIndex().subscribe(userProcess=>{
+        observer.next(userProcess)
+      });
+    });
+  }
 
+  /**
+   * handle de async of the get data methods
+   */
+  buildFormWithData(){
+    this.formGroup =null; 
+    this.displayedColumns = [];
+    if(this.utils)
+      this.utils.presentLoading();
+    /**get the types of processes */
+    this.getTypes().pipe(flatMap(types=>{
+      this.typeProcesses = types;
+      this.displayedColumns = ["name"].concat(this.displayedColumns.concat(types.map(type=>type.name)).concat("performance"));
+      /**therefore call user processes and build the form */
+      return this.getUserProcess();
+    })).subscribe(userProccess=>{
+      this.formGroup = this.buildForm(userProccess);
+      this.toDelete = this.formGroup.value;
+      console.log(this.formGroup.value);
+      if(this.utils)
+        this.utils.dismissLoading();
+    });
+  }
+
+  /**
+   * build form from user process data
+   * @param usersProcesss array of user process data
+   */
+  buildForm(usersProcesss:Array<TypeUsersProcesses.UsersProcesses>):FormGroup{
+    let userProcessForm:FormGroup = this.formBuilder.group({
+      users:this.formBuilder.array([])
+    });
+    usersProcesss.forEach(userProcess=>{
+      (<FormArray>userProcessForm.get("users")).push(this.formBuilder.group({
+        id:userProcess.id,
+        name:userProcess.name,
+        processes:this.formBuilder.array(this.typeProcesses.map(typeProcess=>{
+          return new FormControl(!!(userProcess.processes.map(userProcess=>userProcess.processType).indexOf(typeProcess.id)+1));
+        })),
+        performance:userProcess.performance
+      }));
+    });
+    console.log(userProcessForm)
+    return userProcessForm;
+  }
+
+  /**
+   * sanitize the object to the format needed by the endpoint
+   * @param toSanitize object to sanitize
+   */
+  sanitize(toSanitize){
+    /**transform the true values into ids */
+    toSanitize.users.forEach(user=>{
+      user.processes = user.processes.map((process,i)=>process?this.typeProcesses[i].id:false).filter(process=>process);
+      user.performance = user.performance || 0;
+    });
+    return toSanitize;
+  }
+
+  /**
+   * Update the values for the user processes
+   */
+  submit():void{
+    this.utils.presentLoading();
+    let formValues = this.sanitize(JSON.parse(JSON.stringify(this.formGroup.value)));
+    let toDeleteValues = this.sanitize(JSON.parse(JSON.stringify(this.toDelete)));
+    this.userProcessService.postUnAssign(toDeleteValues).subscribe(response=>{
+      this.userProcessService.postAssign(formValues).subscribe(response=>{
+        console.log("value",this.formGroup.value);
+        this.toDelete = this.formGroup.value;
+        this.utils.dismissLoading();
+      })
+    });
+  }
+
+  /**
+   * recover the form to a previous value
+   */
+  undo():void{
+    this.formGroup.patchValue(this.toDelete);
   }
 
   cleanForm(){

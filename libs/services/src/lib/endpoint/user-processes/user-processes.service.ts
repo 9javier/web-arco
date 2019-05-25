@@ -6,6 +6,8 @@ import { map } from 'rxjs/operators';
 import { AuthenticationService } from '../authentication/authentication.service';
 import {PATH} from "../../../../../../config/base";
 import { TypeUsersProcesses } from '../../../models/endpoints/UsersProcesses';
+import { from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const PATH_GET_INDEX: string = PATH('Users Processes', 'Index');
 const PATH_ASSIGN: string = PATH('Users Processes', 'Asignar procesos');
@@ -26,11 +28,15 @@ export class UserProcessesService {
    * @return an observable with array of user of data
    * */
   getIndex():Observable<Array<TypeUsersProcesses.UsersProcesses>>{
-    return this.http.get<TypeUsersProcesses.ResponseIndex>(PATH_GET_INDEX).pipe(
-      map((response:TypeUsersProcesses.ResponseIndex)=>{
-        return response.data;
-      })
-      );
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<TypeUsersProcesses.ResponseIndex>(PATH_GET_INDEX,{headers}).pipe(
+        map((response:TypeUsersProcesses.ResponseIndex)=>{
+          return response.data;
+        })
+        );
+    }));
+
   };
 
   /**
@@ -38,7 +44,11 @@ export class UserProcessesService {
    * @param usersProcesses the users with their process to be assigned
    */
   postAssign(usersProcesses:Array<TypeUsersProcesses.UsersProcessesToSend>):Observable<TypeUsersProcesses.ResponseAssign>{
-    return this.http.post<TypeUsersProcesses.ResponseAssign>(PATH_ASSIGN,{users:usersProcesses})
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post<TypeUsersProcesses.ResponseAssign>(PATH_ASSIGN,usersProcesses,{headers})
+    }));
+    
   }
 
     /**
@@ -46,7 +56,10 @@ export class UserProcessesService {
    * @param usersProcesses the users with their process to be assigned
    */
   postUnAssign(usersProcesses:Array<TypeUsersProcesses.UsersProcessesToSend>):Observable<TypeUsersProcesses.ResponseUnassign>{
-    return this.http.post<TypeUsersProcesses.ResponseUnassign>(PATH_UNASSIGN,{users:usersProcesses})
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post<TypeUsersProcesses.ResponseUnassign>(PATH_UNASSIGN,usersProcesses,{headers})
+    }));
   }
 
 }

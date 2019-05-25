@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
 import {PATH} from "../../../../../../config/base";
 import {TypeModel} from "../../../models/endpoints/Type";
+import { map,switchMap} from 'rxjs/operators';
+import { from } from 'rxjs';
 
 export const PATH_GET_INDEX_ACTIONS: string = PATH('Types', 'Actions');
 //export const PATH_GET_INDEX_ACTIVITIES: string = PATH('Types', 'Activities');
@@ -20,6 +22,7 @@ export const PATH_GET_INDEX_PROCESS: string = PATH('Types', 'Process');
 export const PATH_GET_INDEX_SHIPPING_ORDER: string = PATH('Types', 'Shipping order');
 export const PATH_GET_INDEX_STATUS_PRODUCT: string = PATH('Types', 'Status Product');
 export const PATH_GET_INDEX_STORE: string = PATH('Types', 'Store');
+
 
 @Injectable({
   providedIn: 'root'
@@ -108,6 +111,20 @@ export class TypesService {
         headers: headers,
         observe: 'response'
       });
+  }
+
+  /**
+   * @comment lo creé acá ya que los servicios son precisamente para abstraer la lógica del networking de los componentes, no tiene sentido tener que pasar rutas al api
+   * @return an observable with the user processes types
+   */
+   getIndexProcesses():Observable<Array<TypeModel.TypeProcess>>{
+    /**Esta es la manera correcta no tiene mucho sentido una promesa dentro de un observable, sin embargo, hay que hacerlo en un interceptor, no tiene sentido hacer esto en cada petición, no lo hice porque hay que coordinar con todo el equipo */
+    return from(this.auth.getCurrentToken()).pipe(switchMap((access_token)=>{
+      const headers = new HttpHeaders({ Authorization: access_token });
+      return this.http.get<TypeModel.ResponseTypeProcess>(PATH_GET_INDEX_PROCESS,{headers}).pipe(map((response)=>{
+        return response.data;
+      }))
+    }));   
   }
 
   get listActions(): TypeModel.Type[] {
