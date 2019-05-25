@@ -145,6 +145,18 @@ export class UserManagerComponent implements OnInit {
   }
 
   /**
+   * clear all fields of the form
+   */
+  clear(){
+    let clearValues = JSON.parse(JSON.stringify(this.formGroup.value));
+    clearValues.users.forEach(user => {
+      user.processes = user.processes.map(process=>false);
+      user.performance = 0;
+    });
+    this.formGroup.patchValue(clearValues);
+  }
+
+  /**
    * recover the form to a previous value
    */
   undo():void{
