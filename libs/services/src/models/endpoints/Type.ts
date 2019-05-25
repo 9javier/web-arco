@@ -1,9 +1,20 @@
+import { Request } from './request';
 export namespace TypeModel {
   export interface Type {
     id: number;
     name: string;
     priority?: number;
   }
+
+  export interface TypeProcess{
+    id:number;
+    name:string;
+  }
+
+  export interface ResponseTypeProcess extends Request.Success{
+    data:Array<TypeProcess>;
+  }
+
 
   export interface TypeLoad {
     picking?: boolean;

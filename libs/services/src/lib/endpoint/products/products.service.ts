@@ -12,6 +12,7 @@ const PATH_BASE: string = URL + '/api/';
 @Injectable({
   providedIn: 'root'
 })
+
 export class ProductsService {
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
