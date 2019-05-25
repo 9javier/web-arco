@@ -43,3 +43,7 @@ export * from './halls/halls.module';
 // Warehouses
 export * from './warehouses/warehouses.component';
 export * from './warehouses/warehouses.module';
+
+// Workwaves
+export * from './workwaves/workwaves.component';
+export * from './workwaves/workwaves.module';

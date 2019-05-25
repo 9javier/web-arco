@@ -27,19 +27,21 @@ export class IncidencesButtonComponent implements OnInit {
   }
 
   async showIncidences(ev: any) {
-    const popover = await this.popoverController.create({
-      component: IncidencesPopoverComponent,
-      event: ev,
-      cssClass: 'popover-incidences'
-    });
+    if (this.incidencesService.incidencesQuantity > 0) {
+      const popover = await this.popoverController.create({
+        component: IncidencesPopoverComponent,
+        event: ev,
+        cssClass: 'popover-incidences'
+      });
 
-    popover.onDidDismiss().then((data) => {
-      if (data.data.showMore) {
-        this.menuController.enable(true, 'sidebarRight');
-      }
-    });
+      popover.onDidDismiss().then((data) => {
+        if (data && data.data && data.data.showMore) {
+          this.menuController.enable(true, 'sidebarRight');
+        }
+      });
 
-    return await popover.present();
+      return await popover.present();
+    }
   }
 
 }
