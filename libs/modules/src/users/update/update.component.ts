@@ -54,7 +54,7 @@ export class UpdateComponent implements OnInit {
     this.updateForm = this.formBuilder.group(
       this.formBuilderDataInputs,
       {
-        validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveRoles("roles")]
+        validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveItems("roles")]
       }
     );
     console.log((this.updateForm));

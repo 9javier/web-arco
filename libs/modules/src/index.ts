@@ -2,6 +2,17 @@
 export * from './scanner-configuration/scanner-configuration.component';
 export * from './scanner-configuration/scanner-configuration.module';
 
+/**util component */
+export * from './components/components.module';
+export * from './components/utils/utils.component';
+
+/**util clasess */
+export * from './utils/validators';
+
+/**user component and subcomponents */
+export * from './users/users.component';
+export * from './users/users.module';
+
 export * from './locations/locations.component';
 export * from './locations/locations.module';
 
