@@ -7,7 +7,7 @@ import {PATH} from "../../../../../../config/base";
 import {TypeModel} from "../../../models/endpoints/Type";
 
 export const PATH_GET_INDEX_ACTIONS: string = PATH('Types', 'Actions');
-export const PATH_GET_INDEX_ACTIVITIES: string = PATH('Types', 'Activities');
+//export const PATH_GET_INDEX_ACTIVITIES: string = PATH('Types', 'Activities');
 export const PATH_GET_INDEX_EXECUTION: string = PATH('Types', 'Execution');
 export const PATH_GET_INDEX_GENERATION: string = PATH('Types', 'Generation');
 export const PATH_GET_INDEX_INCIDENCES: string = PATH('Types', 'Incidences');
@@ -51,7 +51,7 @@ export class TypesService {
   init = (listTypes: TypeModel.TypeLoad) => {
     if (listTypes.all) {
       this.loadType(PATH_GET_INDEX_ACTIONS, 'actions');
-      this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
+      //this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
       this.loadType(PATH_GET_INDEX_EXECUTION, 'execution');
       this.loadType(PATH_GET_INDEX_GENERATION, 'generation');
       this.loadType(PATH_GET_INDEX_INCIDENCES, 'incidences');
@@ -66,7 +66,7 @@ export class TypesService {
       this.loadType(PATH_GET_INDEX_STORE, 'store');
     } else {
       if (listTypes.actions) this.loadType(PATH_GET_INDEX_ACTIONS, 'actions');
-      if (listTypes.activities) this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
+      //if (listTypes.activities) this.loadType(PATH_GET_INDEX_ACTIVITIES, 'activities');
       if (listTypes.execution) this.loadType(PATH_GET_INDEX_EXECUTION, 'execution');
       if (listTypes.generation) this.loadType(PATH_GET_INDEX_GENERATION, 'generation');
       if (listTypes.incidences) this.loadType(PATH_GET_INDEX_INCIDENCES, 'incidences');
