@@ -9,6 +9,10 @@ export * from './lib/endpoint/oauth2/oauth2.service';
 export * from './models/endpoints/Permissions';
 export * from './lib/endpoint/permissions/permissions.service';
 
+/**User processes */
+export * from './models/endpoints/UsersProcesses';
+export * from './lib/endpoint/user-processes/user-processes.service';
+
 /** Users */
 export * from './models/endpoints/User';
 export * from './lib/endpoint/users/users.service';
