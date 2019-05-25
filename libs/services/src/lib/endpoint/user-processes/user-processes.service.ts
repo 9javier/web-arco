@@ -8,8 +8,8 @@ import {PATH} from "../../../../../../config/base";
 import { TypeUsersProcesses } from '../../../models/endpoints/UsersProcesses';
 
 const PATH_GET_INDEX: string = PATH('Users Processes', 'Index');
-const PATH_ASSIGN: string = PATH('Users Processes', 'Asignar Procesos');
-const PATH_UNASSIGN: string = PATH('Users Processes', 'Desasignar Procesos');
+const PATH_ASSIGN: string = PATH('Users Processes', 'Asignar procesos');
+const PATH_UNASSIGN: string = PATH('Users Processes', 'Desasignar procesos');
 
 @Injectable({
   providedIn: 'root'
