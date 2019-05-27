@@ -1,6 +1,6 @@
 <div class="scroll-list">
   <title-list-workwaves-template></title-list-workwaves-template>
-  <workwave-list-workwaves-template *ngFor="let workwaveTemplate of workwavesTemplates" [workwaveTemplate]="workwaveTemplate"></workwave-list-workwaves-template>
+  <workwave-list-workwaves-template *ngFor="let workwaveTemplate of workwavesTemplates" [workwaveTemplate]="workwaveTemplate" (click)="editWorkwave(workwaveTemplate)"></workwave-list-workwaves-template>
 </div>
 
 <ion-footer class="footer-products">

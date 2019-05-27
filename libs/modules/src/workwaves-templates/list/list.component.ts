@@ -58,4 +58,15 @@ export class ListWorkwavesTemplatesComponent implements OnInit {
     this.router.navigate(['workwave-template'], navigationExtras);
   }
 
+  editWorkwave(workwave) {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        type: 3,
+        workwave: JSON.stringify(workwave)
+      }
+    };
+
+    this.router.navigate(['workwave-template'], navigationExtras);
+  }
+
 }

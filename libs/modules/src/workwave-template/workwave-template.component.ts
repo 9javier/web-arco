@@ -15,6 +15,7 @@ export class WorkwaveTemplateComponent implements OnInit {
    * 4 _ Programada todos los días
    */
   private typeWorkwave: number;
+  private workwaveToEdit = null;
 
   constructor(
     private router: ActivatedRoute
@@ -23,6 +24,8 @@ export class WorkwaveTemplateComponent implements OnInit {
   ngOnInit() {
     this.router.queryParams.subscribe(params => {
       this.typeWorkwave = params.type;
+      console.debug('Test::Workwave -> ', params);
+      this.workwaveToEdit = JSON.parse(params.workwave);
     });
   }
 

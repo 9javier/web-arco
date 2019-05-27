@@ -40,10 +40,12 @@ export class StoreComponent implements OnInit {
     } else if (this.typeWorkwave == 3) {
       this.workwaveType = 'template'
     }
-    this.workwave = this.navParams.data.workwate || {};
-    this.listStores = this.navParams.data.listStores;
 
     this.initializeAllFields();
+    this.workwave = this.navParams.data.workwave || {};
+    console.debug('Test::Workwave -> ', this.workwave);
+    this.listStores = this.navParams.data.listStores;
+
     this.darkTheme = {
       container: {
         bodyBackgroundColor: '#EEEEEE',
@@ -143,11 +145,27 @@ export class StoreComponent implements OnInit {
   }
 
   initializeAllFields() {
-    this.workwave.name = null;
-    this.workwave.description = null;
-    this.workwave.date = null;
-    this.workwave.time = null;
-    this.workwave.everyday = false;
+    if (this.workwave && this.workwave.id && this.typeWorkwave != 1) {
+      if (this.typeWorkwave == 2) {
+        this.workwave.name = null;
+        this.workwave.description = null;
+      } else if (this.typeWorkwave == 3) {
+        this.workwave.date = null;
+        this.workwave.time = null;
+        this.workwave.everyday = false;
+      } else if (this.typeWorkwave == 4) {
+        this.workwave.name = null;
+        this.workwave.description = null;
+        this.workwave.everyday = true;
+        this.workwave.date = null;
+      }
+    } else {
+      this.workwave.name = null;
+      this.workwave.description = null;
+      this.workwave.date = null;
+      this.workwave.time = null;
+      this.workwave.everyday = false;
+    }
   }
 
   async showLoading(message: string) {
