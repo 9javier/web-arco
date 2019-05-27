@@ -138,6 +138,7 @@ export class UserManagerComponent implements OnInit {
     this.userProcessService.postUnAssign(toDeleteValues).subscribe(response=>{
       this.userProcessService.postAssign(formValues).subscribe(response=>{
         console.log("value",this.formGroup.value);
+        this.utils.presentAlert("Éxito", "Nueva configuración asignada");
         this.toDelete = this.formGroup.value;
         this.utils.dismissLoading();
       })

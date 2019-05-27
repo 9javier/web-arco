@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController } from "@ionic/angular";
 import { WarehousesService,WarehouseGroupService,WarehouseGroupModel } from '@suite/services';
+import { UtilsComponent } from '../../components/utils/utils.component';
 
 @Component({
   selector: 'suite-store',
@@ -9,6 +10,7 @@ import { WarehousesService,WarehouseGroupService,WarehouseGroupModel } from '@su
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
+  @ViewChild(UtilsComponent) utils:UtilsComponent;
   createForm:FormGroup = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(4)]],
     description: ['', Validators.required],
@@ -28,7 +30,8 @@ export class StoreComponent implements OnInit {
               private formBuilder:FormBuilder,
               private warehousesService:WarehousesService,
               private warehouseGroupService:WarehouseGroupService,
-              private cd: ChangeDetectorRef) {}
+              private cd: ChangeDetectorRef
+              ) {}
 
   /**
    * Assign and unassign validators depends of value of another validators
@@ -83,8 +86,12 @@ export class StoreComponent implements OnInit {
     });
   }
 
+  /**
+   * Save the new warehouse
+   */
   submit(){
     this.warehousesService.postStore(this.sanitize(this.createForm.value)).subscribe(data=>{
+      this.utils.presentAlert("Éxito","Nuevo almacén creado con éxito");
       this.close();
     })
   }

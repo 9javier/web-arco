@@ -20,6 +20,8 @@ export class WarehousesService {
 
   private apiBase = environment.apiBase;
   private postStoreUrl = this.apiBase+"/warehouses";
+  private getShowUrl = this.apiBase+"/warehouses/{id}"
+  private updateUrl = this.getShowUrl;
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -58,6 +60,30 @@ export class WarehousesService {
       return this.http.post<WarehouseModel.ResponseSingle>(this.postStoreUrl,warehouse,{headers}).pipe(map(response=>{
         return response.data;
       }))
+    }));
+  }
+
+
+  put(warehouse:WarehouseModel.Warehouse):Observable<WarehouseModel.Warehouse>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers = new HttpHeaders({Authorization:token});
+      return this.http.put<WarehouseModel.ResponseSingle>(this.updateUrl.replace("{id}",warehouse.id.toString()),warehouse,{headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  /**
+   * Get a certain warehouse
+   * @param id of warehouse to be shown
+   * @return observable of the requested warehouse
+   */
+  getShow(id:number):Observable<WarehouseModel.Warehouse>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers = new HttpHeaders({Authorization:token});
+      return this.http.get<WarehouseModel.ResponseSingle>(this.getShowUrl.replace("{id}",id.toString()),{headers}).pipe(map(response=>{
+        return response.data;
+      }));
     }));
   }
 
