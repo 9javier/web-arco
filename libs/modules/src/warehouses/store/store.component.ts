@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
-import {ModalController} from "@ionic/angular";
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { FormGroup, Validators,FormBuilder } from '@angular/forms';
+import { ModalController } from "@ionic/angular";
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel } from '@suite/services';
 
 @Component({
   selector: 'suite-store',
@@ -8,62 +9,93 @@ import {ModalController} from "@ionic/angular";
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
-  formBuilderDataInputs = {
+  createForm:FormGroup = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(4)]],
     description: ['', Validators.required],
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
+    store:'',
     is_main: [false, []],
-    has_racks: [false, []]
-  };
-  formBuilderTemplateInputs = [
-    {
-      name: 'name',
-      label: 'Nombre',
-      type: 'text',
-      icon: { type: 'md', name: 'title'}
-    },
-    {
-      name: 'description',
-      label: 'Descripción',
-      type: 'text',
-      icon: { type: 'md', name: 'description'}
-    },
-    {
-      name: 'reference',
-      label: 'Referencia',
-      type: 'text',
-      icon: { type: 'ionic', name: 'barcode'}
-    },
-    {
-      name: 'is_store',
-      label: 'Es tienda',
-      type: 'checkbox',
-      value: false
-    },
-    {
-      name: 'is_main',
-      label: 'Establecer como almacén principal',
-      type: 'checkbox',
-      value: false
-    },
-    {
-      name: 'has_racks',
-      label: 'Tiene pasillos',
-      type: 'checkbox',
-      value: false
-    }
-  ];
-  title = 'Añadir Almacén';
-  apiEndpoint = 'Warehouses';
-  redirectTo = '/warehouses';
+    has_racks: [false, []],
+    hallways:'',
+    height:'',
+    columns:''
+  });
 
-  constructor(private modalCtrl:ModalController) {}
+  groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
 
-  ngOnInit() {}
+  constructor(private modalCtrl:ModalController,
+              private formBuilder:FormBuilder,
+              private warehousesService:WarehousesService,
+              private warehouseGroupService:WarehouseGroupService,
+              private cd: ChangeDetectorRef) {}
 
-  closeModal()
-  {
+  /**
+   * Assign and unassign validators depends of value of another validators
+   */
+  changeValidatorsAndValues():void{
+    let values = this.createForm.value;
+    /**Listen for changes on is_store control */
+    this.createForm.get("is_store").valueChanges.subscribe((isStore)=>{
+      let store = this.createForm.get("store")
+      store.clearValidators();
+      store.setValue("");
+      store.setValidators(isStore?[Validators.required]:[]);
+      this.cd.detectChanges();
+    });
+
+    /**
+     * Listen for changes in has_racks control 
+    */
+    this.createForm.get("has_racks").valueChanges.subscribe((hasRacks)=>{
+      let hallways = this.createForm.get("hallways");
+      let height = this.createForm.get("height")
+      let columns = this.createForm.get("columns")
+      let aux = [hallways,height,columns].forEach(control=>{
+        control.clearValidators();
+        control.setValue("");
+        control.setValidators(control?[Validators.required]:[]);
+      });
+      this.cd.detectChanges();
+    });    
+  }
+
+  /**
+   * delete empty values 
+   */
+  sanitize(object:Object):Object{
+    object = JSON.parse(JSON.stringify(object));
+    Object.keys(object).forEach(key=>{
+      let value = object[key];
+      if(value === "" || value === null)
+        delete object[key];
+    });
+    return object;
+  }
+
+  /**
+   * get wharehousesgroups to show in the select
+   */
+  getWharehousesGroup():void{
+    this.warehouseGroupService.getIndex().subscribe(warehousesGroups=>{
+      this.groups = warehousesGroups;
+      console.log(this.groups);
+    });
+  }
+
+  submit(){
+    this.warehousesService.postStore(this.sanitize(this.createForm.value)).subscribe(data=>{
+      this.close();
+    })
+  }
+
+  ngOnInit() {
+    this.getWharehousesGroup();
+    this.changeValidatorsAndValues();
+  }
+
+  /**close the current instance of the modal */
+  close():void{
     this.modalCtrl.dismiss();
   }
 }

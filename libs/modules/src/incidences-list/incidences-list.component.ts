@@ -14,7 +14,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 export class IncidencesListComponent implements OnInit {
 
   constructor(
-    private incidencesService: IncidencesService,
+    public incidencesService: IncidencesService,
     private dateTimeParserService: DateTimeParserService,
     private toastController: ToastController
   ) {}

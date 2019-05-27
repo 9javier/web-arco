@@ -7,6 +7,9 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { WarehouseModel } from '../../../models/endpoints/Warehouse';
 import { PATH, URL } from '../../../../../../config/base';
 import {ACLModel} from "@suite/services";
+import { from } from 'rxjs';
+import { switchMap,map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 
 const PATH_BASE: string = URL + '/api/';
@@ -14,6 +17,10 @@ const PATH_BASE: string = URL + '/api/';
   providedIn: 'root'
 })
 export class WarehousesService {
+
+  private apiBase = environment.apiBase;
+  private postStoreUrl = this.apiBase+"/warehouses";
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<WarehouseModel.ResponseIndex>>> {
@@ -39,6 +46,19 @@ export class WarehousesService {
         observe: 'response'
       }
     );
+  }
+  
+  /**
+   * Create new warehouse in server side
+   * @param warehouse to be storage
+   */
+  postStore(warehouse:WarehouseModel.Warehouse):Observable<WarehouseModel.Warehouse>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers = new HttpHeaders({Authorization:token});
+      return this.http.post<WarehouseModel.ResponseSingle>(this.postStoreUrl,warehouse,{headers}).pipe(map(response=>{
+        return response.data;
+      }))
+    }));
   }
 
   async deleteGroupToWarehouse(

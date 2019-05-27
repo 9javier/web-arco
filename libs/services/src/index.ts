@@ -13,6 +13,10 @@ export * from './lib/endpoint/permissions/permissions.service';
 export * from './models/endpoints/UsersProcesses';
 export * from './lib/endpoint/user-processes/user-processes.service';
 
+/**Warehouse group */
+export * from './models/endpoints/warehouse-group';
+export * from './lib/endpoint/warehouse-group/warehouse-group.service';
+
 /**Types service */
 export * from './models/endpoints/Type';
 export * from './lib/endpoint/types/types.service';

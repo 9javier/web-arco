@@ -17,7 +17,7 @@ import { validators } from '../../utils/validators';
 export class UpdateComponent implements OnInit {
   /**the inputs of form */
   formBuilderDataInputs = {
-    employeId:[''],
+    employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
     roleId: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
@@ -30,7 +30,7 @@ export class UpdateComponent implements OnInit {
   private roles:Array<any> = [];
   /**id of the current user */
   private id;
-  private updateForm:FormGroup;
+  public updateForm:FormGroup;
 
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
