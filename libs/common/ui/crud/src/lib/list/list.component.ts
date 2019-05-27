@@ -241,7 +241,7 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
-
+      console.log("test",{ id: row.id, row: row, routePath: this.routePath });
       modal.onDidDismiss()
         .then(() => {
           this.loadData();
