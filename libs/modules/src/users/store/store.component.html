@@ -12,7 +12,7 @@
 <ion-content>
     <suite-utils></suite-utils>
     <!--Form to update the user-->
-    <form [formGroup]="createForm">
+    <form *ngIf="createForm" [formGroup]="createForm">
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
                 <!--Employee Id-->
@@ -20,7 +20,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="id de empleado" class="ion-margin-horizontal" formControlName="employeId" type="number" number></ion-input>
+                    <ion-input placeholder="id de empleado" class="ion-margin-horizontal" formControlName="employedId" type="number" number></ion-input>
                 </ion-item>
                 <!--Name-->
                 <ion-item>
@@ -31,7 +31,7 @@
                 </ion-item>
                 <!--Roles-->
                 <div class="container-roles" *ngIf="createForm['controls']?.roles['controls']" (click)="createForm['controls'].roles.touched = true">
-                    <ion-item [class.invalid]="!updateForm['controls']?.roles?.valid && createForm['controls'].roles.touched">
+                    <ion-item [class.invalid]="!createForm['controls']?.roles?.valid && createForm['controls'].roles.touched">
                         <div slot="start" class="slot-start-icon">
                             <ion-icon color="medium" name="list-box"></ion-icon>
                         </div>
