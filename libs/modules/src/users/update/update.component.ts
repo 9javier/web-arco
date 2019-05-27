@@ -17,7 +17,7 @@ import { validators } from '../../utils/validators';
 export class UpdateComponent implements OnInit {
   /**the inputs of form */
   formBuilderDataInputs = {
-    employeId:[''],
+    employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
     roleId: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
