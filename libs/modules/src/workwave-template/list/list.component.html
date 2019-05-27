@@ -2,8 +2,10 @@
   <span (click)="goPreviousPage()" class="return-workwaves">Plantillas ></span> {{template.name}}
 </h2>
 
-<title-list-workwave-template></title-list-workwave-template>
-<workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplates" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)"></workwave-list-workwave-template>
+<div class="scroll-list">
+  <title-list-workwave-template></title-list-workwave-template>
+  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplates" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)"></workwave-list-workwave-template>
+</div>
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
