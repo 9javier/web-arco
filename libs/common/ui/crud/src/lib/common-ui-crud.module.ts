@@ -22,6 +22,7 @@ import { MatListModule } from '@angular/material/list';
     RouterModule.forChild([{ path: '', component: ListComponent }])
   ],
   exports: [ListComponent, StoreComponent, UpdateComponent],
-  declarations: [ListComponent, StoreComponent, UpdateComponent]
+  declarations: [ListComponent, StoreComponent, UpdateComponent],
+  entryComponents:[UpdateComponent]
 })
 export class CommonUiCrudModule {}

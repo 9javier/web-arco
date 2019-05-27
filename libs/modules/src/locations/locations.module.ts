@@ -9,6 +9,8 @@ import { LocationsComponent } from "./locations.component";
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import {ListComponent} from "./list/list.component";
+import {HallsModule} from '../halls/halls.module';
+
 
 
 @NgModule({
@@ -24,7 +26,9 @@ import {ListComponent} from "./list/list.component";
     LocationsRoutingModule,
     CommonUiCrudModule,
     CdkTableModule,
-    FormsModule
+    FormsModule,
+    HallsModule
+
   ],
   entryComponents: [
     ListComponent
