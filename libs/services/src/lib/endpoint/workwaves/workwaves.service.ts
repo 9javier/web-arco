@@ -9,6 +9,7 @@ import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_POST_STORE_WORKWAVE_TASK: string = PATH('Workwaves Tasks', 'Store');
 export const PATH_POST_STORE_WORKWAVE_TEMPLATE: string = PATH('Workwaves Templates', 'Store');
+export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,17 @@ export class WorkwavesService {
     private http: HttpClient,
     private auth: AuthenticationService
   ) {}
+
+  async getListTemplates() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListTemplates>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    return this.http.get<WorkwaveModel.ResponseListTemplates>(PATH_GET_LIST_TEMPLATES,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
 
   async postStore(
     type: string,

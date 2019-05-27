@@ -3658,6 +3658,64 @@
           "response": []
         },
         {
+          "name": "List Executed",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/workwaves/executed",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "executed"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Templates",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/workwaves/templates",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "workwaves",
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Store",
           "request": {
             "auth": {
@@ -3681,7 +3739,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"workwaves\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        }\n    ]\n}"
+              "raw": "{\n\t\"type\": 1,\n    \"warehouses\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        }\n    ]\n}"
             },
             "url": {
               "raw": "{{url}}/api/workwaves",
@@ -3733,7 +3791,7 @@
           "response": []
         },
         {
-          "name": "Update single",
+          "name": "Update",
           "request": {
             "auth": {
               "type": "bearer",
@@ -3750,23 +3808,23 @@
               {
                 "key": "Content-Type",
                 "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
+                "type": "text",
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 2,\n    \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n}"
+              "raw": "{\n\t\"previousType\": 1,\n\t\"type\": 1,\n    \"warehouses\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        }\n    ]\n}"
             },
             "url": {
-              "raw": "{{url}}/api/workwaves/16",
+              "raw": "{{url}}/api/workwaves/1",
               "host": [
                 "{{url}}"
               ],
               "path": [
                 "api",
                 "workwaves",
-                "16"
+                "1"
               ]
             }
           },
@@ -3841,45 +3899,6 @@
                 "api",
                 "workwaves",
                 "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update multiple",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"workwaves\": [\n        {\n        \t\"id\": 1,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 1,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        },\n        {\n        \t\"id\": 2,\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 1,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves"
               ]
             }
           },

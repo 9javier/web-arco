@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import * as moment from 'moment';
 
 @Component({
   selector: 'workwave-list-workwaves-template',
@@ -7,10 +8,23 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class WorkwaveListWorkwavesTemplateComponent implements OnInit {
 
+  @Input() workwaveTemplate: any;
   checked: boolean = false;
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
+
+  dateCreatedParsed() : string {
+    moment.locale('es');
+    return moment(this.workwaveTemplate.createdAt).format('ddd, DD/MM/YYYY');
+  }
+
+  timeCreatedParsed() : string {
+    moment.locale('es');
+    return moment(this.workwaveTemplate.createdAt).format('LT');
+  }
 
 }

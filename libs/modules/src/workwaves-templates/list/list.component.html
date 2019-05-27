@@ -1,5 +1,5 @@
 <title-list-workwaves-template></title-list-workwaves-template>
-<workwave-list-workwaves-template></workwave-list-workwaves-template>
+<workwave-list-workwaves-template *ngFor="let workwaveTemplate of workwavesTemplates" [workwaveTemplate]="workwaveTemplate"></workwave-list-workwaves-template>
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">

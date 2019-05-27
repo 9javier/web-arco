@@ -21,6 +21,13 @@ export namespace WorkwaveModel {
     description?: string;
   }
 
+  export interface ResponseListTemplates {
+    data: any[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface ResponseStore {
     data: Workwave[];
     message: string;
