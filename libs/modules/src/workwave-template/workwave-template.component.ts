@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { COLLECTIONS } from 'config/base';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'suite-workwave-template',
@@ -8,8 +8,22 @@ import { COLLECTIONS } from 'config/base';
 })
 export class WorkwaveTemplateComponent implements OnInit {
 
-  constructor() {}
+  /*
+   * 1 _ Ejecución al momento
+   * 2 _ Programada
+   * 3 _ Plantilla
+   * 4 _ Programada todos los días
+   */
+  private typeWorkwave: number;
 
-  ngOnInit() {}
+  constructor(
+    private router: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+    this.router.queryParams.subscribe(params => {
+      this.typeWorkwave = params.type;
+    });
+  }
 
 }

@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {LoadingController, ModalController, ToastController} from "@ionic/angular";
+import {LoadingController, ModalController, NavParams, ToastController} from "@ionic/angular";
 import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
-import {TypeModel} from "../../../../services/src/models/endpoints/Type";
-import {TypesService} from "../../../../services/src/lib/endpoint/types/types.service";
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {WarehouseModel} from "@suite/services";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
 
@@ -19,13 +15,10 @@ import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
 export class StoreComponent implements OnInit {
 
   private workwaveType: string = 'schedule';
-  private listWarehouses: WarehouseModel.Warehouse[];
-  private listTypesExecution: TypeModel.Type[];
-  private listTypesPacking: TypeModel.Type[];
-  private listTypesShippingOrder: TypeModel.Type[];
-  private listTypesGeneration: TypeModel.Type[];
 
-  private workwave: WorkwaveModel.Workwave = {};
+  private workwave: WorkwaveModel.Workwave;
+  private typeWorkwave: number;
+  private listStores: any[];
 
   private loading = null;
 
@@ -36,18 +29,21 @@ export class StoreComponent implements OnInit {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private workwavesService: WorkwavesService,
-    private warehouseService: WarehouseService,
-    private typesService: TypesService,
-    private dateTimeParserService: DateTimeParserService
+    private dateTimeParserService: DateTimeParserService,
+    private navParams: NavParams
   ) {}
 
   ngOnInit() {
+    this.typeWorkwave = this.navParams.data.type;
+    if (this.typeWorkwave == '1') {
+      this.workwaveType = 'run'
+    } else if (this.typeWorkwave == '3') {
+      this.workwaveType = 'template'
+    }
+    this.workwave = this.navParams.data.workwate || {};
+    this.listStores = this.navParams.data.listStores;
+
     this.initializeAllFields();
-    this.listWarehouses = this.warehouseService.listWarehouses;
-    this.listTypesExecution = this.typesService.listExecution;
-    this.listTypesPacking = this.typesService.listPacking;
-    this.listTypesGeneration= this.typesService.listGeneration;
-    this.listTypesShippingOrder = this.typesService.listShippingOrder;
     this.darkTheme = {
       container: {
         bodyBackgroundColor: '#EEEEEE',
@@ -72,22 +68,32 @@ export class StoreComponent implements OnInit {
   saveWorkwave() {
     if (!this.loading) {
       this.showLoading('Creando ola de trabajo...').then(() => {
-        this.workwave.thresholdConsolidated = 200;
-        this.workwave.thresholdShippingStore = 300;
         this.workwave.active = true;
 
-        if (this.workwave.everyday) {
-          this.workwave.date = this.dateTimeParserService.nowGlobalFormat();
-        } else if (this.workwave.date) {
-          this.workwave.date = this.dateTimeParserService.globalFormat(this.workwave.date);
-        }
+        let workwaveStore = {
+          warehouses: this.listStores
+        };
 
-        if (this.workwaveType == 'run') {
-          this.workwave.executionDate = this.dateTimeParserService.dateTimeNoFormat();
+        if (this.workwaveType == 'schedule') {
+          workwaveStore.type = 2;
+          this.workwave.date = this.dateTimeParserService.globalFormat(this.workwave.date);
+          if (this.workwave.everyday) {
+            this.workwave.date = this.dateTimeParserService.nowGlobalFormat();
+          }
+          workwaveStore.date = this.workwave.date;
+          workwaveStore.time = this.workwave.time;
+          workwaveStore.everyday = this.workwave.everyday;
+        } else if (this.workwaveType == 'template') {
+          workwaveStore.name = this.workwave.name;
+          workwaveStore.description = this.workwave.description;
+          workwaveStore.type = 3;
+        } else {
+          workwaveStore.type = 1;
+          workwaveStore.executionDate = this.dateTimeParserService.dateTimeNoFormat();
         }
 
         this.workwavesService
-          .postStore(this.workwaveType, [this.workwave])
+          .postStore(workwaveStore)
           .then((data: Observable<HttpResponse<WorkwaveModel.ResponseStore>>) => {
             data.subscribe((res: HttpResponse<WorkwaveModel.ResponseStore>) => {
               if (res.body.code == 200 || res.body.code == 201) {
@@ -124,17 +130,15 @@ export class StoreComponent implements OnInit {
 
   workwaveOk() {
     if (this.workwaveType == 'schedule') {
-      if (this.workwave.warehouseId && this.workwave.time && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking && (this.workwave.date || this.workwave.everyday)) {
+      if (this.workwave.time && (this.workwave.date || this.workwave.everyday)) {
         return false;
       }
     } else if (this.workwaveType == 'template') {
-      if (this.workwave.warehouseId && this.workwave.name && this.workwave.description && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking && this.workwave.typeExecution) {
+      if (this.workwave.name && this.workwave.description) {
         return false;
       }
     } else {
-      if (this.workwave.warehouseId && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking) {
-        return false;
-      }
+      return false;
     }
     return true;
   }
@@ -145,11 +149,6 @@ export class StoreComponent implements OnInit {
     this.workwave.date = null;
     this.workwave.time = null;
     this.workwave.everyday = false;
-    this.workwave.warehouseId = null;
-    this.workwave.typeGeneration = null;
-    this.workwave.typeExecution = null;
-    this.workwave.typePacking = null;
-    this.workwave.typeShippingOrder = null;
   }
 
   async showLoading(message: string) {

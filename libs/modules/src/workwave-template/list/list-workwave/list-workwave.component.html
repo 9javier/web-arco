@@ -9,50 +9,50 @@
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
     <div>
-      <input class="input-quantities" placeholder="Consolidated" [(ngModel)]="storeTemplate.consolidated" type="number" (change)="changeTemplateValues('consolidated')">
+      <input class="input-quantities" placeholder="Consolidated" [(ngModel)]="storeTemplate.thresholdConsolidated" type="number" (change)="changeTemplateValues('consolidated')">
     </div>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
     <div>
-      <input class="input-quantities" placeholder="Shipping" [(ngModel)]="storeTemplate.shipping" type="number" (change)="changeTemplateValues('shipping')">
+      <input class="input-quantities" placeholder="Shipping" [(ngModel)]="storeTemplate.thresholdShippingStore" type="number" (change)="changeTemplateValues('shipping')">
     </div>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-radio-group [name]="'replace'+storeTemplate.id" [(ngModel)]="storeTemplate.replace" (change)="changeTemplateValues('replace')">
+    <mat-radio-group [name]="'replace'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.replace" (change)="changeTemplateValues('replace')">
       <mat-radio-button value="1"></mat-radio-button>
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <mat-radio-group [name]="'allocate'+storeTemplate.id" [(ngModel)]="storeTemplate.allocate" (change)="changeTemplateValues('allocate')">
+    <mat-radio-group [name]="'allocate'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.allocate" (change)="changeTemplateValues('allocate')">
       <mat-radio-button value="1"></mat-radio-button>
-      <mat-radio-button value="2"></mat-radio-button>
-    </mat-radio-group>
-  </mat-grid-tile>
-
-  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-radio-group [name]="'selection'+storeTemplate.id" [(ngModel)]="storeTemplate.selection" (change)="changeTemplateValues('selection')">
-      <mat-radio-button value="1"></mat-radio-button>
-    </mat-radio-group>
-  </mat-grid-tile>
-
-  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <mat-radio-group [name]="'selection'+storeTemplate.id" [(ngModel)]="storeTemplate.selection" (change)="changeTemplateValues('selection')">
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-radio-group [name]="'packing'+storeTemplate.id" [(ngModel)]="storeTemplate.packing" (change)="changeTemplateValues('packing')">
+    <mat-radio-group [name]="'selection'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typeGeneration" (change)="changeTemplateValues('selection')">
       <mat-radio-button value="1"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <mat-radio-group [name]="'packing'+storeTemplate.id" [(ngModel)]="storeTemplate.packing" (change)="changeTemplateValues('packing')">
+    <mat-radio-group [name]="'selection'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typeGeneration" (change)="changeTemplateValues('selection')">
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'packing'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typePacking" (change)="changeTemplateValues('packing')">
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'packing'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typePacking" (change)="changeTemplateValues('packing')">
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>

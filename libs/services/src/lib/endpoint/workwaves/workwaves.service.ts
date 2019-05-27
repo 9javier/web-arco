@@ -7,8 +7,6 @@ import {PATH} from "../../../../../../config/base";
 import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
-export const PATH_POST_STORE_WORKWAVE_TASK: string = PATH('Workwaves Tasks', 'Store');
-export const PATH_POST_STORE_WORKWAVE_TEMPLATE: string = PATH('Workwaves Templates', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
 export const PATH_GET_LIST_SCHEDULED: string = PATH('Workwaves', 'Index');
 
@@ -44,48 +42,35 @@ export class WorkwavesService {
   }
 
   async postStore(
-    type: string,
-    workwaves: WorkwaveModel.Workwave[]
+    workwave: any
   ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseStore>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    for (let workwave of workwaves) {
-      this.filterObject(workwave);
-    }
+    workwave = JSON.parse(JSON.stringify(workwave));
 
-    console.debug('Test::Workwaves -> ', workwaves);
+    this.filterWorkwave(workwave);
 
-    let pathEndpoint = PATH_POST_STORE_WORKWAVE;
-    let workwavesPost = {};
-
-    if (type == 'template') {
-      pathEndpoint = PATH_POST_STORE_WORKWAVE_TEMPLATE;
-      workwavesPost = {
-        workwavesTemplates: workwaves
-      };
-    } else if (type == 'schedule') {
-      pathEndpoint = PATH_POST_STORE_WORKWAVE_TASK;
-      workwavesPost = {
-        workwavesTasks: workwaves
-      };
-    } else {
-      workwavesPost = {
-        workwaves: workwaves
-      };
-    }
-
-    return this.http.post<WorkwaveModel.ResponseStore>(pathEndpoint,
-      workwavesPost,
+    return this.http.post<WorkwaveModel.ResponseStore>(PATH_POST_STORE_WORKWAVE,
+      workwave,
       {
         headers: headers,
         observe: 'response'
       });
   }
 
-  private filterObject(object: any) {
-    for (let iWorkwave in object) {
-      if (object[iWorkwave] == '' || object[iWorkwave] == null) delete object[iWorkwave];
+  private filterWorkwave(object: any) {
+    object.type = parseInt(object.type);
+    for (let warehouse of object.warehouses) {
+      delete warehouse.name;
+      delete warehouse.checked;
+      delete warehouse.replace;
+      delete warehouse.allocate;
+      warehouse.thresholdConsolidated = parseInt(warehouse.thresholdConsolidated);
+      warehouse.thresholdShippingStore = parseInt(warehouse.thresholdShippingStore);
+      warehouse.typeGeneration = parseInt(warehouse.typeGeneration);
+      warehouse.typePacking = parseInt(warehouse.typePacking);
+      warehouse.typeShippingOrder = parseInt(warehouse.typeShippingOrder);
     }
   }
 

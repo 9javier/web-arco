@@ -3,6 +3,7 @@ import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/
 import {Observable} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import {NavigationExtras, Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwaves-templates',
@@ -14,7 +15,8 @@ export class ListWorkwavesTemplatesComponent implements OnInit {
   private workwavesTemplates: any[];
 
   constructor(
-    private workwavesService: WorkwavesService
+    private workwavesService: WorkwavesService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -25,6 +27,16 @@ export class ListWorkwavesTemplatesComponent implements OnInit {
           this.workwavesTemplates = res.body.data;
         });
       });
+  }
+
+  addWorkwave() {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        type: 3
+      }
+    };
+
+    this.router.navigate(['workwave-template'], navigationExtras);
   }
 
 }
