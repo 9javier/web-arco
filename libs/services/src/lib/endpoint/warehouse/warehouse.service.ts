@@ -6,6 +6,7 @@ import {PATH} from "../../../../../../config/base";
 import {Observable} from "rxjs";
 import {HallModel} from "../../../models/endpoints/Hall";
 import {HallsService} from "../halls/halls.service";
+import {WarehouseModel} from "@suite/services";
 
 const PATH_GET_WAREHOUSE_MAIN: string = PATH('Warehouses', 'Main');
 const PATH_GET_WAREHOUSE_INDEX: string = PATH('Warehouses', 'Index');
@@ -21,6 +22,7 @@ export class WarehouseService {
   private _listRows: any = {};
   private _listColumns: any = {};
   private _listReferences: any = {};
+  private _warehousesWithRacks: WarehouseModel.Warehouse[];
 
   constructor(
     private http: HttpClient,
@@ -44,6 +46,17 @@ export class WarehouseService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  loadWarehousesWithRacks() {
+    this.getIndex()
+      .then((data: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
+        data.subscribe((res: HttpResponse<WarehouseModel.ResponseIndex>) => {
+          this.warehousesWithRacks = res.body.data.filter((warehouse) => {
+            return warehouse.has_racks;
+          });
+        });
+      });
   }
 
   loadWarehousesData() {
@@ -169,4 +182,13 @@ export class WarehouseService {
   set listReferences(value: any) {
     this._listReferences = value;
   }
+
+  get warehousesWithRacks(): WarehouseModel.Warehouse[] {
+    return this._warehousesWithRacks;
+  }
+
+  set warehousesWithRacks(value: WarehouseModel.Warehouse[]) {
+    this._warehousesWithRacks = value;
+  }
+
 }

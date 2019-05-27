@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {StoreComponent} from "../store/store.component";
 import {ModalController} from "@ionic/angular";
+import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 
 @Component({
   selector: 'list-workwave-template',
@@ -17,63 +18,17 @@ export class ListWorkwaveTemplateComponent implements OnInit {
 
   constructor(
     private location: Location,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private warehouseService: WarehouseService
   ) {}
 
   ngOnInit() {
-    this.listStoresTemplates = [
-      {
-        warehouseId: 1,
-        name: '001 KRACK Vigo Gran Vía',
+    console.debug('Test::WarehouseRacks -> ', this.warehouseService.warehousesWithRacks);
+    this.listStoresTemplates = this.warehouseService.warehousesWithRacks.map((warehouse) => {
+      return {
         checked: false,
-        thresholdConsolidated: 0,
-        thresholdShippingStore: 0,
-        replace: '',
-        allocate: '',
-        typeGeneration: '',
-        typePacking: '',
-        typeShippingOrder: 1
-      },
-      {
-        warehouseId: 2,
-        name: '002 KRACK Pontevedra',
-        checked: false,
-        thresholdConsolidated: 0,
-        thresholdShippingStore: 0,
-        replace: '',
-        allocate: '',
-        typeGeneration: '',
-        typePacking: '',
-        typeShippingOrder: 1
-      },
-      {
-        warehouseId: 3,
-        name: '003 KRACK Coruña',
-        checked: false,
-        thresholdConsolidated: 0,
-        thresholdShippingStore: 0,
-        replace: '',
-        allocate: '',
-        typeGeneration: '',
-        typePacking: '',
-        typeShippingOrder: 1
-      },
-      {
-        warehouseId: 4,
-        name: '004 KRACK Santiago As Cancelas',
-        checked: false,
-        thresholdConsolidated: 0,
-        thresholdShippingStore: 0,
-        replace: '',
-        allocate: '',
-        typeGeneration: '',
-        typePacking: '',
-        typeShippingOrder: 1
-      },
-      {
-        warehouseId: 5,
-        name: '005 KRACK Lugo',
-        checked: false,
+        warehouseId: warehouse.id,
+        name: warehouse.reference+' '+warehouse.name,
         thresholdConsolidated: 0,
         thresholdShippingStore: 0,
         replace: '',
@@ -82,7 +37,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         typePacking: '',
         typeShippingOrder: 1
       }
-    ];
+    });
 
     if (this.templateToEdit) {
       this.template = this.templateToEdit;

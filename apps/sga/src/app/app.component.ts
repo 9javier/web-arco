@@ -135,6 +135,8 @@ export class AppComponent implements OnInit {
 
       // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
       this.warehouseService.loadWarehousesData();
+      // Load in array only warehouses with racks
+      this.warehouseService.loadWarehousesWithRacks();
 
       // Load all types from backend
       let typesToLoad: TypeModel.TypeLoad = {
