@@ -35,9 +35,9 @@ export class StoreComponent implements OnInit {
 
   ngOnInit() {
     this.typeWorkwave = this.navParams.data.type;
-    if (this.typeWorkwave == '1') {
+    if (this.typeWorkwave == 1) {
       this.workwaveType = 'run'
-    } else if (this.typeWorkwave == '3') {
+    } else if (this.typeWorkwave == 3) {
       this.workwaveType = 'template'
     }
     this.workwave = this.navParams.data.workwate || {};
@@ -70,9 +70,8 @@ export class StoreComponent implements OnInit {
       this.showLoading('Creando ola de trabajo...').then(() => {
         this.workwave.active = true;
 
-        let workwaveStore = {
-          warehouses: this.listStores
-        };
+        let workwaveStore: any = {};
+        workwaveStore.warehouses = this.listStores;
 
         if (this.workwaveType == 'schedule') {
           workwaveStore.type = 2;
