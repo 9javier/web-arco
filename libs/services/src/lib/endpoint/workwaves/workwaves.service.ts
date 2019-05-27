@@ -10,6 +10,7 @@ export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_POST_STORE_WORKWAVE_TASK: string = PATH('Workwaves Tasks', 'Store');
 export const PATH_POST_STORE_WORKWAVE_TEMPLATE: string = PATH('Workwaves Templates', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
+export const PATH_GET_LIST_SCHEDULED: string = PATH('Workwaves', 'Index');
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,17 @@ export class WorkwavesService {
     const headers = new HttpHeaders({ Authorization: currentToken });
 
     return this.http.get<WorkwaveModel.ResponseListTemplates>(PATH_GET_LIST_TEMPLATES,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  async getListScheduled() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    return this.http.get<WorkwaveModel.ResponseListScheduled>(PATH_GET_LIST_SCHEDULED,
       {
         headers: headers,
         observe: 'response'

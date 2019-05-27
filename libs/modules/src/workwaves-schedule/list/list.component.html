@@ -1,5 +1,5 @@
 <title-list-workwaves-schedule></title-list-workwaves-schedule>
-<workwave-list-workwaves-schedule></workwave-list-workwaves-schedule>
+<workwave-list-workwaves-schedule *ngFor="let workwaveScheduled of workwavesScheduled" [workwaveScheduled]="workwaveScheduled"></workwave-list-workwaves-schedule>
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">

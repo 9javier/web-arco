@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import {Observable} from "rxjs";
+import {HttpResponse} from "@angular/common/http";
+import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
 
 @Component({
   selector: 'list-workwaves-schedule',
@@ -7,14 +11,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ListWorkwavesScheduleComponent implements OnInit {
 
-  constructor() {}
+  private workwavesScheduled: any[];
+
+  constructor(
+    private workwavesService: WorkwavesService
+  ) {}
 
   ngOnInit() {
-
-  }
-
-  addWorkwave() {
-
+    this.workwavesService
+      .getListScheduled()
+      .then((data: Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>) => {
+        data.subscribe((res: HttpResponse<WorkwaveModel.ResponseListScheduled>) => {
+          this.workwavesScheduled = res.body.data;
+        });
+      });
   }
 
 }

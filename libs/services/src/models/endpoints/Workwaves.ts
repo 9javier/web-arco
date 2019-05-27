@@ -28,6 +28,13 @@ export namespace WorkwaveModel {
     errors: any;
   }
 
+  export interface ResponseListScheduled {
+    data: any[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface ResponseStore {
     data: Workwave[];
     message: string;
