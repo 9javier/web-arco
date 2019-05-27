@@ -3,7 +3,8 @@ import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/
 import {Observable} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
-import {NavigationExtras, Router} from "@angular/router";
+import {Event as NavigationEvent, NavigationExtras, NavigationStart, Router} from "@angular/router";
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'list-workwaves-schedule',
@@ -17,9 +18,26 @@ export class ListWorkwavesScheduleComponent implements OnInit {
   constructor(
     private workwavesService: WorkwavesService,
     private router: Router
-  ) {}
+  ) {
+    this.router.events
+      .pipe(
+        filter((event: NavigationEvent) => {
+          return (event instanceof NavigationStart);
+        })
+      )
+      .subscribe((event: NavigationStart) => {
+          if (event.url == '/workwaves-schedule') {
+            this.loadWorkwavesScheduled();
+          }
+        }
+      );
+  }
 
   ngOnInit() {
+    this.loadWorkwavesScheduled();
+  }
+
+  loadWorkwavesScheduled() {
     this.workwavesService
       .getListScheduled()
       .then((data: Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>) => {
