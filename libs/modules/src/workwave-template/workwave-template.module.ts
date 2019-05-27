@@ -10,9 +10,10 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import {ListWorkwaveTemplateComponent} from "./list/list.component";
 import {TitleListWorkwaveTemplateComponent} from "./list/list-title/list-title.component";
 import {WorkwaveListWorkwaveTemplateComponent} from "./list/list-workwave/list-workwave.component";
+import {StoreComponent} from "./store/store.component";
 
 @NgModule({
-  declarations: [WorkwaveTemplateComponent, ListWorkwaveTemplateComponent, TitleListWorkwaveTemplateComponent, WorkwaveListWorkwaveTemplateComponent],
+  declarations: [WorkwaveTemplateComponent, ListWorkwaveTemplateComponent, TitleListWorkwaveTemplateComponent, WorkwaveListWorkwaveTemplateComponent, StoreComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -26,6 +27,6 @@ import {WorkwaveListWorkwaveTemplateComponent} from "./list/list-workwave/list-w
     MatGridListModule,
     MatRadioModule
   ],
-  entryComponents: [ListWorkwaveTemplateComponent, TitleListWorkwaveTemplateComponent, WorkwaveListWorkwaveTemplateComponent]
+  entryComponents: [ListWorkwaveTemplateComponent, TitleListWorkwaveTemplateComponent, WorkwaveListWorkwaveTemplateComponent, StoreComponent]
 })
 export class WorkwaveTemplateModule {}

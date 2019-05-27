@@ -11,6 +11,20 @@ mat-grid-list {
       color: var(--ion-color-tertiary);
       padding: 5px;
     }
+    .input-quantities {
+      width: 100%;
+      height: 64px;
+      border: none;
+      padding: 5px;
+    }
+    input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
   }
   mat-grid-tile.border-right {
     border-width: 0 1px 0 0;

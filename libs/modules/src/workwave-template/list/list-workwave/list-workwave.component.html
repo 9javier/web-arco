@@ -1,54 +1,58 @@
 <mat-grid-list cols="12" rowHeight="64px">
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-checkbox [(ngModel)]="checked"></mat-checkbox>
+    <mat-checkbox [(ngModel)]="storeTemplate.checked" (change)="changeTemplateValues('check')"></mat-checkbox>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="3" rowspan="1" class="border-bottom border-right">
-    <div class="tile-value">001 KRACK Vigo Gran Vía</div>
+    <div class="tile-value">{{storeTemplate.name}}</div>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <div>190</div>
+    <div>
+      <input class="input-quantities" placeholder="Consolidated" [(ngModel)]="storeTemplate.consolidated" type="number" (change)="changeTemplateValues('consolidated')">
+    </div>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <div>300</div>
+    <div>
+      <input class="input-quantities" placeholder="Shipping" [(ngModel)]="storeTemplate.shipping" type="number" (change)="changeTemplateValues('shipping')">
+    </div>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-radio-group name="reponer">
+    <mat-radio-group [name]="'replace'+storeTemplate.id" [(ngModel)]="storeTemplate.replace" (change)="changeTemplateValues('replace')">
       <mat-radio-button value="1"></mat-radio-button>
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <mat-radio-group name="distribuir">
+    <mat-radio-group [name]="'allocate'+storeTemplate.id" [(ngModel)]="storeTemplate.allocate" (change)="changeTemplateValues('allocate')">
       <mat-radio-button value="1"></mat-radio-button>
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-radio-group name="seleccion">
+    <mat-radio-group [name]="'selection'+storeTemplate.id" [(ngModel)]="storeTemplate.selection" (change)="changeTemplateValues('selection')">
       <mat-radio-button value="1"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <mat-radio-group name="seleccion">
+    <mat-radio-group [name]="'selection'+storeTemplate.id" [(ngModel)]="storeTemplate.selection" (change)="changeTemplateValues('selection')">
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
-    <mat-radio-group name="embalaje">
+    <mat-radio-group [name]="'packing'+storeTemplate.id" [(ngModel)]="storeTemplate.packing" (change)="changeTemplateValues('packing')">
       <mat-radio-button value="1"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
-    <mat-radio-group name="embalaje">
+    <mat-radio-group [name]="'packing'+storeTemplate.id" [(ngModel)]="storeTemplate.packing" (change)="changeTemplateValues('packing')">
       <mat-radio-button value="2"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>

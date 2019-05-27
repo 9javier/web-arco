@@ -1,3 +1,12 @@
+h2.workwave-title {
+  font-size: 20px;
+  span.return-workwaves {
+    padding: 0 0 20px 20px;
+    cursor: pointer;
+    color: var(--ion-color-secondary);
+  }
+}
+
 mat-grid-tile {
   font-size: 0.8em;
   border: 1px solid #c3c3c3;
