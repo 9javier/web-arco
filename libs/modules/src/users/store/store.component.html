@@ -12,7 +12,7 @@
 <ion-content>
     <suite-utils></suite-utils>
     <!--Form to update the user-->
-    <form [formGroup]="createForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="createForm">
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
                 <!--Employee Id-->
@@ -30,8 +30,8 @@
                     <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
                 </ion-item>
                 <!--Roles-->
-                <div class="container-roles" *ngIf="createForm?.controls?.roles?.controls" (click)="createForm.controls.roles.touched = true">
-                    <ion-item [class.invalid]="!updateForm?.controls?.roles?.valid && createForm.controls.roles.touched">
+                <div class="container-roles" *ngIf="createForm['controls']?.roles['controls']" (click)="createForm['controls'].roles.touched = true">
+                    <ion-item [class.invalid]="!updateForm['controls']?.roles?.valid && createForm['controls'].roles.touched">
                         <div slot="start" class="slot-start-icon">
                             <ion-icon color="medium" name="list-box"></ion-icon>
                         </div>
@@ -54,7 +54,7 @@
                                 </mat-expansion-panel-header>
 
                                 <div>
-                                    <ion-item *ngFor="let control of createForm.controls.roles.controls;let i = index">
+                                    <ion-item *ngFor="let control of createForm['controls'].roles['controls'];let i = index">
                                         <ion-label>{{roles[i].name}}</ion-label>
                                         <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
                                     </ion-item>

@@ -10,7 +10,7 @@ import {StoreComponent} from "../store/store.component";
 })
 export class ListWorkwavesComponent implements OnInit {
 
-  private listWorkwaves: any[] = [];
+  public listWorkwaves: any[] = [];
 
   constructor(
     private modalController: ModalController

@@ -30,7 +30,7 @@ export class UpdateComponent implements OnInit {
   private roles:Array<any> = [];
   /**id of the current user */
   private id;
-  private updateForm:FormGroup;
+  public updateForm:FormGroup;
 
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;

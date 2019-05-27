@@ -11,7 +11,7 @@
 <ion-content>
     <suite-utils></suite-utils>
     <!--Form to update the user-->
-    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="updateForm">
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
                 <!--Employee Id-->
@@ -29,8 +29,8 @@
                     <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" [class.ion-invalid]="updateForm.get('name').valid" type="text" text></ion-input>
                 </ion-item>
                 <!--Roles-->
-                <div class="container-roles" *ngIf="updateForm?.controls?.roles?.controls">
-                    <ion-item [class.invalid]="!updateForm?.controls?.roles?.valid">
+                <div class="container-roles" *ngIf="updateForm['controls']?.roles['controls']">
+                    <ion-item [class.invalid]="!updateForm['controls']?.roles?.valid">
                         <div slot="start" class="slot-start-icon">
                             <ion-icon color="medium" name="list-box"></ion-icon>
                         </div>
@@ -53,7 +53,7 @@
                                 </mat-expansion-panel-header>
 
                                 <div>
-                                    <ion-item *ngFor="let control of updateForm.controls.roles.controls;let i = index">
+                                    <ion-item *ngFor="let control of updateForm['controls'].roles['controls'];let i = index">
                                         <ion-label>{{roles[i].name}}</ion-label>
                                         <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
                                     </ion-item>

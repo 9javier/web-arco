@@ -9,6 +9,7 @@ import { WarehousesComponent } from "./warehouses.component";
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { ComponentsModule } from '@suite/common-modules';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
     MatCheckboxModule,
     WarehousesRoutingModule,
     CommonUiCrudModule,
-    CdkTableModule
+    CdkTableModule,
+    ComponentsModule
   ],
   entryComponents: [
     StoreComponent

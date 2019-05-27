@@ -13,7 +13,7 @@ export class IncidencesButtonComponent implements OnInit {
   constructor(
     private popoverController: PopoverController,
     private menuController: MenuController,
-    private incidencesService: IncidencesService
+    public incidencesService: IncidencesService
   ) {}
 
   ngOnInit() {

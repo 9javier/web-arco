@@ -32,7 +32,7 @@ export class StoreComponent implements OnInit {
   /**the allowed roles of the user */
   private roles:Array<any> = [];
 
-  private createForm:FormGroup;
+  public createForm:FormGroup;
 
 
 

@@ -1,5 +1,6 @@
 import { GroupModel } from './Group';
 import {WarehouseModel} from "@suite/services";
+import { Request } from './request';
 export namespace WarehouseModel {
   export interface Warehouse {
     id?: number;
@@ -10,6 +11,10 @@ export namespace WarehouseModel {
     is_main?: boolean;
     has_racks?: boolean;
     group?: Array<GroupModel.Group>;
+  }
+
+  export interface ResponseSingle extends Request.Success{
+    data:Warehouse;
   }
 
   export interface ResponseIndex {
