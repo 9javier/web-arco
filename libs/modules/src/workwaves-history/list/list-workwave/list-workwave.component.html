@@ -4,7 +4,7 @@
   </mat-grid-tile>
   <mat-grid-tile colspan="3" rowspan="1">
     <div class="tile-title tile-description">
-      {{workwaveHistory.name}}
+      {{workwaveHistory.name || ('Tarea Programada' +workwaveHistory.id)}}
     </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="2" rowspan="1">
@@ -15,7 +15,7 @@
   </mat-grid-tile>
   <mat-grid-tile colspan="6" rowspan="1">
     <div class="tile-title tile-description">
-      {{workwaveHistory.description}}
+      {{workwaveHistory.description || ('Descripción Tarea Programada' +workwaveHistory.id)}}
     </div>
   </mat-grid-tile>
 </mat-grid-list>
