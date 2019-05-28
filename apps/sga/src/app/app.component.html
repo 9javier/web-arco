@@ -76,7 +76,8 @@
           <!-- Children List for clicked Item -->
           <ion-list *ngIf="p.open" lines="none">
             <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root"
-                      routerLinkActive="active">
+                      routerLinkActive="active"
+                      (click)="currentRoute = sub.title">
               <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
                 {{ sub.title }}
               </ion-label>
