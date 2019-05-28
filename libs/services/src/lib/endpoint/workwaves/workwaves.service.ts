@@ -9,6 +9,7 @@ import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
 export const PATH_GET_LIST_SCHEDULED: string = PATH('Workwaves', 'Index');
+export const PATH_POST_UPDATE_WORKWAVE: string = PATH('Workwaves', 'Update').slice(0, -1);
 
 @Injectable({
   providedIn: 'root'
@@ -59,8 +60,30 @@ export class WorkwavesService {
       });
   }
 
+  async putUpdate(
+    workwave: any,
+    workwaveId: number
+  ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseStore>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    workwave = JSON.parse(JSON.stringify(workwave));
+
+    this.filterWorkwave(workwave);
+
+    return this.http.put<WorkwaveModel.ResponseStore>(`${PATH_POST_UPDATE_WORKWAVE}${workwaveId}`,
+      workwave,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
   private filterWorkwave(object: any) {
     object.type = parseInt(object.type);
+    if (object.previousType) {
+      object.previousType = parseInt(object.previousType);
+    }
     for (let warehouse of object.warehouses) {
       delete warehouse.name;
       delete warehouse.checked;

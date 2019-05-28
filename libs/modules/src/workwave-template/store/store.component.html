@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-button (click)="goToList()">
+      <ion-button (click)="goToList(false)">
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -81,7 +81,7 @@
   </ion-row>
 
   <ion-footer class="footer-products">
-    <ion-button slot="end" color="secondary" (click)="goToList()">
+    <ion-button slot="end" color="secondary" (click)="goToList(false)">
       Cancelar
     </ion-button>
     <ion-button slot="end" color="tertiary" (click)="saveWorkwave()" [disabled]="workwaveOk()">

@@ -21,6 +21,7 @@ export class StoreComponent implements OnInit {
   private listStores: any[];
 
   private loading = null;
+  private editing: boolean = false;
 
   private darkTheme: NgxMaterialTimepickerTheme = {};
 
@@ -39,6 +40,10 @@ export class StoreComponent implements OnInit {
       this.workwaveType = 'run'
     } else if (this.typeWorkwave == 3) {
       this.workwaveType = 'template'
+    }
+
+    if (this.navParams.data.workwave) {
+      this.editing = true;
     }
 
     this.workwave = this.navParams.data.workwave || {};
@@ -62,13 +67,13 @@ export class StoreComponent implements OnInit {
     }
   }
 
-  goToList() {
-    this.modalController.dismiss();
+  goToList(save) {
+    this.modalController.dismiss({save: save});
   }
 
   saveWorkwave() {
     if (!this.loading) {
-      this.showLoading('Creando ola de trabajo...').then(() => {
+      this.showLoading((this.editing ? 'Creando' : 'Editando') +' ola de trabajo...').then(() => {
         this.workwave.active = true;
 
         let workwaveStore: any = {};
@@ -92,24 +97,34 @@ export class StoreComponent implements OnInit {
           workwaveStore.executionDate = this.dateTimeParserService.dateTimeNoFormat();
         }
 
-        this.workwavesService
-          .postStore(workwaveStore)
-          .then((data: Observable<HttpResponse<WorkwaveModel.ResponseStore>>) => {
-            data.subscribe((res: HttpResponse<WorkwaveModel.ResponseStore>) => {
-              if (res.body.code == 200 || res.body.code == 201) {
+        if (this.editing) {
+          workwaveStore.previousType = this.typeWorkwave;
+
+          this.workwavesService
+            .putUpdate(workwaveStore, this.workwave.id)
+            .then((data: Observable<HttpResponse<WorkwaveModel.ResponseUpdate>>) => {
+              data.subscribe((res: HttpResponse<WorkwaveModel.ResponseUpdate>) => {
+                if (res.body.code == 200 || res.body.code == 201) {
+                  if (this.loading) {
+                    this.loading.dismiss();
+                    this.loading = null;
+                    this.goToList(true);
+                  }
+                  this.presentToast('Ola de trabajo actualizada', 'success');
+                } else {
+                  if (this.loading) {
+                    this.loading.dismiss();
+                    this.loading = null;
+                  }
+                  this.presentToast(res.body.message, 'danger');
+                }
+              }, (error: HttpErrorResponse) => {
                 if (this.loading) {
                   this.loading.dismiss();
                   this.loading = null;
-                  this.goToList();
                 }
-                this.presentToast('Ola de trabajo creada', 'success');
-              } else {
-                if (this.loading) {
-                  this.loading.dismiss();
-                  this.loading = null;
-                }
-                this.presentToast(res.body.message, 'danger');
-              }
+                this.presentToast(error.message, 'danger');
+              });
             }, (error: HttpErrorResponse) => {
               if (this.loading) {
                 this.loading.dismiss();
@@ -117,13 +132,40 @@ export class StoreComponent implements OnInit {
               }
               this.presentToast(error.message, 'danger');
             });
-          }, (error: HttpErrorResponse) => {
-            if (this.loading) {
-              this.loading.dismiss();
-              this.loading = null;
-            }
-            this.presentToast(error.message, 'danger');
-          });
+        } else {
+          this.workwavesService
+            .postStore(workwaveStore)
+            .then((data: Observable<HttpResponse<WorkwaveModel.ResponseStore>>) => {
+              data.subscribe((res: HttpResponse<WorkwaveModel.ResponseStore>) => {
+                if (res.body.code == 200 || res.body.code == 201) {
+                  if (this.loading) {
+                    this.loading.dismiss();
+                    this.loading = null;
+                    this.goToList(true);
+                  }
+                  this.presentToast('Ola de trabajo creada', 'success');
+                } else {
+                  if (this.loading) {
+                    this.loading.dismiss();
+                    this.loading = null;
+                  }
+                  this.presentToast(res.body.message, 'danger');
+                }
+              }, (error: HttpErrorResponse) => {
+                if (this.loading) {
+                  this.loading.dismiss();
+                  this.loading = null;
+                }
+                this.presentToast(error.message, 'danger');
+              });
+            }, (error: HttpErrorResponse) => {
+              if (this.loading) {
+                this.loading.dismiss();
+                this.loading = null;
+              }
+              this.presentToast(error.message, 'danger');
+            });
+        }
       });
     }
   }

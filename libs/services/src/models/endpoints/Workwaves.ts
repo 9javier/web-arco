@@ -42,6 +42,13 @@ export namespace WorkwaveModel {
     errors: any;
   }
 
+  export interface ResponseUpdate {
+    data: Workwave[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface ErrorResponse {
     errors: string;
     message: string;

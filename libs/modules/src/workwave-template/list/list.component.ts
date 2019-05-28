@@ -38,7 +38,6 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       }
     });
 
-    console.debug('Test::Template To Edit -> ', this.templateToEdit);
     if (this.templateToEdit) {
       this.template = {
         name: this.templateToEdit.name || 'Tarea programada // '+this.templateToEdit.id,
@@ -93,11 +92,9 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       })
     };
 
-    console.debug('Test::TemplateToEdit::Save -> ', this.templateToEdit);
     if (this.template && this.template.id) {
       paramsModal.workwave = this.templateToEdit;
     }
-    console.debug('Test::ParamsModal -> ', paramsModal.workwave);
 
     const modalSave = await this.modalController.create({
       component: StoreComponent,
@@ -105,7 +102,9 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     });
 
     modalSave.onDidDismiss().then((data) => {
-      console.debug('Test::Data -> ', data);
+      if (data && data.data && data.data.save) {
+        this.goPreviousPage();
+      }
     });
 
     return await modalSave.present();
@@ -116,7 +115,6 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   }
 
   changeStoreTemplate(data) {
-    console.debug('Test::ChangeStoreTemplate -> ', data);
     if (data.field == 'replace' && data.store.replace == '1' && data.store.allocate == '1') {
       data.store.allocate = '2';
     }
