@@ -70,56 +70,7 @@ export class StoreComponent implements OnInit {
   }
 
   saveWorkwave() {
-    if (!this.loading) {
-      this.showLoading('Creando ola de trabajo...').then(() => {
-        this.workwave.thresholdConsolidated = 200;
-        this.workwave.thresholdShippingStore = 300;
-        this.workwave.active = true;
 
-        if (this.workwave.everyday) {
-          this.workwave.date = this.dateTimeParserService.nowGlobalFormat();
-        } else if (this.workwave.date) {
-          this.workwave.date = this.dateTimeParserService.globalFormat(this.workwave.date);
-        }
-
-        if (this.workwaveType == 'run') {
-          this.workwave.executionDate = this.dateTimeParserService.dateTimeNoFormat();
-        }
-
-        this.workwavesService
-          .postStore(this.workwaveType, [this.workwave])
-          .then((data: Observable<HttpResponse<WorkwaveModel.ResponseStore>>) => {
-            data.subscribe((res: HttpResponse<WorkwaveModel.ResponseStore>) => {
-              if (res.body.code == 200 || res.body.code == 201) {
-                if (this.loading) {
-                  this.loading.dismiss();
-                  this.loading = null;
-                  this.goToList();
-                }
-                this.presentToast('Ola de trabajo creada', 'success');
-              } else {
-                if (this.loading) {
-                  this.loading.dismiss();
-                  this.loading = null;
-                }
-                this.presentToast(res.body.message, 'danger');
-              }
-            }, (error: HttpErrorResponse) => {
-              if (this.loading) {
-                this.loading.dismiss();
-                this.loading = null;
-              }
-              this.presentToast(error.message, 'danger');
-            });
-          }, (error: HttpErrorResponse) => {
-            if (this.loading) {
-              this.loading.dismiss();
-              this.loading = null;
-            }
-            this.presentToast(error.message, 'danger');
-          });
-      });
-    }
   }
 
   workwaveOk() {

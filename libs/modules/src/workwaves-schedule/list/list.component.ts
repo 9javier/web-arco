@@ -13,7 +13,7 @@ import {filter} from "rxjs/operators";
 })
 export class ListWorkwavesScheduleComponent implements OnInit {
 
-  private workwavesScheduled: any[];
+  public workwavesScheduled: any[];
 
   constructor(
     private workwavesService: WorkwavesService,

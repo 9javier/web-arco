@@ -14,7 +14,7 @@ import { Event as NavigationEvent } from "@angular/router";
 })
 export class ListWorkwavesTemplatesComponent implements OnInit {
 
-  private workwavesTemplates: any[];
+  public workwavesTemplates: any[];
 
   constructor(
     private workwavesService: WorkwavesService,

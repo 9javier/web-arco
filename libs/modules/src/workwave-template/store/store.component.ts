@@ -16,14 +16,15 @@ export class StoreComponent implements OnInit {
 
   private workwaveType: string = 'schedule';
 
-  private workwave: WorkwaveModel.Workwave;
-  private typeWorkwave: number;
-  private listStores: any[];
+  public workwave: WorkwaveModel.Workwave;
+  public typeWorkwave: number;
+  public listStores: any[];
+  public dateStart;
 
-  private loading = null;
-  private editing: boolean = false;
+  public loading = null;
+  public editing: boolean = false;
 
-  private darkTheme: NgxMaterialTimepickerTheme = {};
+  public darkTheme: NgxMaterialTimepickerTheme = {};
 
   constructor(
     private modalController: ModalController,
