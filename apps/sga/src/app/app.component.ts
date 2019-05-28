@@ -89,6 +89,11 @@ export class AppComponent implements OnInit {
           title: 'Plantillas',
           icon: 'logo-google',
           url: '/workwaves-templates'
+        },
+        {
+          title: 'Historial',
+          icon: 'logo-google',
+          url: '/workwaves-history'
         }
       ]
     },

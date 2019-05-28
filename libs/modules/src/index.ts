@@ -59,3 +59,7 @@ export * from './workwaves-templates/workwaves-templates.module';
 // Workwave Template
 export * from './workwave-template/workwave-template.component';
 export * from './workwave-template/workwave-template.module';
+
+// Workwaves History
+export * from './workwaves-history/workwaves-history.component';
+export * from './workwaves-history/workwaves-history.module';

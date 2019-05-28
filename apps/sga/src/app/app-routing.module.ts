@@ -104,6 +104,11 @@ const routes: Routes = [
     path: 'workwave-template',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwave-template/workwave-template.module#WorkwaveTemplateModule'
+  },
+  {
+    path: 'workwaves-history',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwaves-history/workwaves-history.module#WorkwavesHistoryModule'
   }
 ];
 
