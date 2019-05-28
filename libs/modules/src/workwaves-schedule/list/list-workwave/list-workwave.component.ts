@@ -16,6 +16,12 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
 
   ngOnInit() {}
 
+  processTitleWorkwave() : string {
+    return this.workwaveScheduled.warehouses.map((warehouse) => {
+      return warehouse.warehouse.reference+' '+warehouse.warehouse.name;
+    }).join(', ');
+  }
+
   dateCreatedParsed() : string {
     moment.locale('es');
     return moment(this.workwaveScheduled.releaseDate).format('ddd, DD/MM/YYYY');

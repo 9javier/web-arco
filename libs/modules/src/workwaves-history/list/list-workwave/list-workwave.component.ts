@@ -17,6 +17,12 @@ export class WorkwaveListWorkwavesHistoryComponent implements OnInit {
 
   }
 
+  processTitleWorkwave() : string {
+    return this.workwaveHistory.warehouses.map((warehouse) => {
+      return warehouse.warehouse.reference+' '+warehouse.warehouse.name;
+    }).join(', ');
+  }
+
   dateCreatedParsed() : string {
     moment.locale('es');
     return moment(this.workwaveHistory.createdAt).format('ddd, DD/MM/YYYY');
