@@ -12,6 +12,7 @@ import {ModalController, ToastController} from "@ionic/angular";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
+import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
 
 
 @Component({
@@ -122,6 +123,16 @@ export class ListComponent implements OnInit {
     if (this.origin == 'manage') {
       this.setIntervalForReload(1);
     }
+  }
+
+  /**
+   * Open enable lock container modal
+   */
+  async openEnableLockContainer():Promise<any>{
+    let modal = await this.modalController.create({
+      component:EnableLockContainerComponent
+    });
+    return modal.present();
   }
 
   ngOnDestroy() {

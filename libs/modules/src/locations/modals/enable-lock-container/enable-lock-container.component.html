@@ -1,0 +1,37 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Bloquear Container</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <form [formGroup]="form">
+        <ion-item>
+            <ion-label>Activar</ion-label>
+            <ion-checkbox formControlName="activate"></ion-checkbox>
+        </ion-item>
+        <ion-item>
+            <ion-label>Bloquear</ion-label>
+            <ion-checkbox formControlName="block"></ion-checkbox>
+        </ion-item>
+        <ion-item>
+            <ion-select placeholder="Pasillo" formControlName="hall"></ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-select formControlName="Altura"></ion-select>
+        </ion-item>
+        <ion-item>
+            <ion-select formControlName="Columna"></ion-select>
+        </ion-item>
+    </form>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="createForm.invalid" (click)="submit()">Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>
