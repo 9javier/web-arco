@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
 import {StoreComponent} from "../store/store.component";
-import {ModalController} from "@ionic/angular";
+import {AlertController, ModalController} from "@ionic/angular";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 
 @Component({
@@ -19,6 +19,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   constructor(
     private location: Location,
     private modalController: ModalController,
+    private alertController: AlertController,
     private warehouseService: WarehouseService
   ) {}
 
@@ -85,11 +86,22 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   }
 
   async saveTemplate() {
+    let storesToSetInWorkwave = this.listStoresTemplates.filter(store => {
+      return store.checked;
+    });
+
+    if (!storesToSetInWorkwave || storesToSetInWorkwave.length < 1) {
+      const alert = await this.alertController.create({
+        subHeader: 'Atención',
+        message: 'Debe seleccionar alguna tienda para poder crear la Ola de Trabajo',
+        buttons: ['Cerrar']
+      });
+      return await alert.present();
+    }
+
     let paramsModal: any = {
       type: this.typeWorkwave,
-      listStores: this.listStoresTemplates.filter(store => {
-        return store.checked;
-      })
+      listStores: storesToSetInWorkwave
     };
 
     if (this.template && this.template.id) {

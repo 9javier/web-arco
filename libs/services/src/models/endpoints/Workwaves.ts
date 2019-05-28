@@ -35,6 +35,13 @@ export namespace WorkwaveModel {
     errors: any;
   }
 
+  export interface ResponseListExecuted {
+    data: any[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface ResponseStore {
     data: Workwave[];
     message: string;
