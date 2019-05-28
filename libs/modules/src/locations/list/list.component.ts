@@ -13,6 +13,7 @@ import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/
 import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
+import {LocationsComponent} from "@suite/common-modules";
 
 
 @Component({
@@ -106,7 +107,10 @@ export class ListComponent implements OnInit {
       return await modal.present();
     }
   }
-  isMainWarehouseManagementSection = (): boolean => this.origin == 'manage';
+  isMainWarehouseManagementSection = (): boolean =>
+    this.origin == LocationsComponent.MAIN_WAREHOUSE_MANAGEMENT_SECTION_PATH;
+  isWarehouseListSection = (): boolean =>
+    this.origin == LocationsComponent.WAREHOUSE_LIST_SECTION_PATH;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any = null;
 
@@ -121,7 +125,7 @@ export class ListComponent implements OnInit {
       this.paramsReceived = params;
       this.initHalls();
     });
-    if (this.origin == 'manage') {
+    if (this.isMainWarehouseManagementSection()) {
       this.setIntervalForReload(1);
     }
   }
@@ -143,7 +147,7 @@ export class ListComponent implements OnInit {
 
   initHalls() {
     this.warehouseSelected = this.paramsReceived.params.id;
-    if (this.origin == 'manage') {
+    if (this.isMainWarehouseManagementSection()) {
       this.warehouseSelected = this.warehouseService.idWarehouseMain;
       this.parentPage = null;
     }
@@ -257,7 +261,7 @@ export class ListComponent implements OnInit {
   }
 
   selectLocation(event, data, row, column, iRow, iColumn) {
-    if (this.origin == 'list') {
+    if (this.isWarehouseListSection()) {
       if (!this.locationsSelected[column.id]) {
         this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
         this.expandedElement.container[iRow][iColumn].selected = true;
