@@ -44,10 +44,6 @@ export * from './halls/halls.module';
 export * from './warehouses/warehouses.component';
 export * from './warehouses/warehouses.module';
 
-// Workwaves
-export * from './workwaves/workwaves.component';
-export * from './workwaves/workwaves.module';
-
 // Workwaves Scheduled
 export * from './workwaves-schedule/workwaves-schedule.component';
 export * from './workwaves-schedule/workwaves-schedule.module';
