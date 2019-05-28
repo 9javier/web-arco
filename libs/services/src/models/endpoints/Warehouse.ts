@@ -10,7 +10,7 @@ export namespace WarehouseModel {
     is_store?: boolean;
     is_main?: boolean;
     has_racks?: boolean;
-    group?: Array<GroupModel.Group>;
+    group?: Array<GroupModel.Group> | GroupModel.Group;
   }
 
   export interface ResponseSingle extends Request.Success{

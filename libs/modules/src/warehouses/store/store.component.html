@@ -49,7 +49,7 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name=""></ion-icon>
             </div>
-            <ion-select placeholder="Tiendas" formControlName="store" okText="Ok" cancelText="Cancelar">
+            <ion-select placeholder="Tiendas" formControlName="groupId" okText="Ok" cancelText="Cancelar">
                 <ion-select-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -81,14 +81,14 @@
                 <div slot="start" class="slot-start-icon">
                     <ion-icon color="medium" name=""></ion-icon>
                 </div>
-                <ion-input placeholder="Pasillos" class="ion-margin-horizontal" formControlName="hallways" type="number" number></ion-input>
+                <ion-input placeholder="Pasillos" class="ion-margin-horizontal" formControlName="halls" type="number" number></ion-input>
             </ion-item>
             <!--Altura-->
             <ion-item>
                 <div slot="start" class="slot-start-icon">
                     <ion-icon color="medium" name=""></ion-icon>
                 </div>
-                <ion-input placeholder="Altura" class="ion-margin-horizontal" formControlName="height" type="number" number></ion-input>
+                <ion-input placeholder="Altura" class="ion-margin-horizontal" formControlName="rows" type="number" number></ion-input>
             </ion-item>
             <!--Columna-->
             <ion-item>

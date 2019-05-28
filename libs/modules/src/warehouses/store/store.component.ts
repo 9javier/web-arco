@@ -16,11 +16,11 @@ export class StoreComponent implements OnInit {
     description: ['', Validators.required],
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
-    store:'',
+    groupId:'',
     is_main: [false, []],
     has_racks: [false, []],
-    hallways:'',
-    height:'',
+    halls:'',
+    rows:'',
     columns:''
   });
 
@@ -40,7 +40,7 @@ export class StoreComponent implements OnInit {
     let values = this.createForm.value;
     /**Listen for changes on is_store control */
     this.createForm.get("is_store").valueChanges.subscribe((isStore)=>{
-      let store = this.createForm.get("store")
+      let store = this.createForm.get("groupId")
       store.clearValidators();
       store.setValue("");
       store.setValidators(isStore?[Validators.required]:[]);
@@ -51,10 +51,10 @@ export class StoreComponent implements OnInit {
      * Listen for changes in has_racks control 
     */
     this.createForm.get("has_racks").valueChanges.subscribe((hasRacks)=>{
-      let hallways = this.createForm.get("hallways");
-      let height = this.createForm.get("height")
+      let halls = this.createForm.get("halls");
+      let rows = this.createForm.get("rows")
       let columns = this.createForm.get("columns")
-      let aux = [hallways,height,columns].forEach(control=>{
+      let aux = [halls,rows,columns].forEach(control=>{
         control.clearValidators();
         control.setValue("");
         control.setValidators(control?[Validators.required]:[]);
