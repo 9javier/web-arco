@@ -14,8 +14,8 @@ export class WorkwaveTemplateComponent implements OnInit {
    * 3 _ Plantilla
    * 4 _ Programada todos los días
    */
-  private typeWorkwave: number;
-  private workwaveToEdit = null;
+  public typeWorkwave: number;
+  public workwaveToEdit = null;
 
   constructor(
     private router: ActivatedRoute

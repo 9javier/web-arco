@@ -11,7 +11,7 @@ import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves
 })
 export class ListWorkwavesHistoryComponent implements OnInit {
 
-  private workwavesHistory: any[] = [];
+  public workwavesHistory: any[] = [];
 
   constructor(
     private workwavesService: WorkwavesService
