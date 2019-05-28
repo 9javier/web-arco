@@ -27,4 +27,8 @@ export class WorkwaveListWorkwavesHistoryComponent implements OnInit {
     return moment(this.workwaveHistory.createdAt).format('LT');
   }
 
+  checkboxClick(event) {
+    event.stopPropagation();
+  }
+
 }

@@ -27,4 +27,8 @@ export class WorkwaveListWorkwavesTemplateComponent implements OnInit {
     return moment(this.workwaveTemplate.createdAt).format('LT');
   }
 
+  checkboxClick(event) {
+    event.stopPropagation();
+  }
+
 }

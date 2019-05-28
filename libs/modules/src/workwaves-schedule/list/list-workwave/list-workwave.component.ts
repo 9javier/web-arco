@@ -26,4 +26,8 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
     return moment(this.workwaveScheduled.createdAt).format('LT');
   }
 
+  checkboxClick(event) {
+    event.stopPropagation();
+  }
+
 }
