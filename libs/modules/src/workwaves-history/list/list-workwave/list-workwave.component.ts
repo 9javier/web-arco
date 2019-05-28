@@ -19,12 +19,12 @@ export class WorkwaveListWorkwavesHistoryComponent implements OnInit {
 
   dateCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveTemplate.createdAt).format('ddd, DD/MM/YYYY');
+    return moment(this.workwaveHistory.createdAt).format('ddd, DD/MM/YYYY');
   }
 
   timeCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveTemplate.createdAt).format('LT');
+    return moment(this.workwaveHistory.createdAt).format('LT');
   }
 
 }
