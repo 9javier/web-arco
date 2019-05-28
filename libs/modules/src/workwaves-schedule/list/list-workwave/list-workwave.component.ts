@@ -18,12 +18,12 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
 
   dateCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveScheduled.createdAt).format('ddd, DD/MM/YYYY');
+    return moment(this.workwaveScheduled.releaseDate).format('ddd, DD/MM/YYYY');
   }
 
   timeCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveScheduled.createdAt).format('LT');
+    return moment(this.workwaveScheduled.releaseDate).format('LT');
   }
 
   checkboxClick(event) {
