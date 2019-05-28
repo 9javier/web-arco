@@ -1,0 +1,33 @@
+div.scroll-list {
+  overflow-y: scroll;
+  height: 85vh;
+}
+h2.workwave-title {
+  font-size: 20px;
+  span.return-workwaves {
+    padding: 0 0 20px 20px;
+    cursor: pointer;
+    color: var(--ion-color-secondary);
+  }
+}
+
+mat-grid-tile {
+  font-size: 0.8em;
+  border: 1px solid #c3c3c3;
+}
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.footer-products:before {
+  background: none;
+}
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}

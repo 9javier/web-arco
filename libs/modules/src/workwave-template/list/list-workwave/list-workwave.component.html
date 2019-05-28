@@ -1,0 +1,59 @@
+<mat-grid-list cols="12" rowHeight="64px">
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-checkbox [(ngModel)]="storeTemplate.checked" (change)="changeTemplateValues('check')"></mat-checkbox>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="3" rowspan="1" class="border-bottom border-right">
+    <div class="tile-value">{{storeTemplate.name}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <div>
+      <input class="input-quantities" placeholder="Consolidated" [(ngModel)]="storeTemplate.thresholdConsolidated" type="number" (change)="changeTemplateValues('consolidated')">
+    </div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <div>
+      <input class="input-quantities" placeholder="Shipping" [(ngModel)]="storeTemplate.thresholdShippingStore" type="number" (change)="changeTemplateValues('shipping')">
+    </div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'replace'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.replace" (change)="changeTemplateValues('replace')">
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'allocate'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.allocate" (change)="changeTemplateValues('allocate')">
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'selection'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typeGeneration" (change)="changeTemplateValues('selection')">
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'selection'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typeGeneration" (change)="changeTemplateValues('selection')">
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'packing'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typePacking" (change)="changeTemplateValues('packing')">
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'packing'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typePacking" (change)="changeTemplateValues('packing')">
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+</mat-grid-list>

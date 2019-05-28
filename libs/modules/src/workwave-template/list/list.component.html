@@ -1,0 +1,14 @@
+<h2 class="workwave-title">
+  <span (click)="goPreviousPage()" class="return-workwaves">{{typeWorkwave == 3 ? 'Plantillas' : 'Programadas'}} ></span> {{template.name}}
+</h2>
+
+<div class="scroll-list">
+  <title-list-workwave-template></title-list-workwave-template>
+  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplates" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)"></workwave-list-workwave-template>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="saveTemplate()"><i class="material-icons">save</i></ion-fab-button>
+  </ion-fab>
+</ion-footer>

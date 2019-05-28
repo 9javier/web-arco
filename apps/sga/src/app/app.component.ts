@@ -25,7 +25,7 @@ interface MenuItem {
   styles: []
 })
 export class AppComponent implements OnInit {
-  public appPages: MenuItem[] = [
+  public appPages = [
     {
       title: 'Gestión Almacén',
       url: '/warehouse/manage',
@@ -83,8 +83,24 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Olas de trabajo',
-      url: '/workwaves',
-      icon: 'basket'
+      open: false,
+      children: [
+        {
+          title: 'Programadas',
+          icon: 'logo-ionic',
+          url: '/workwaves-scheduled'
+        },
+        {
+          title: 'Plantillas',
+          icon: 'logo-google',
+          url: '/workwaves-templates'
+        },
+        {
+          title: 'Historial',
+          icon: 'logo-google',
+          url: '/workwaves-history'
+        }
+      ]
     },
     {
       title: 'Logout',
@@ -129,6 +145,8 @@ export class AppComponent implements OnInit {
 
       // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
       this.warehouseService.loadWarehousesData();
+      // Load in array only warehouses with racks
+      this.warehouseService.loadWarehousesWithRacks();
 
       // Load all types from backend
       let typesToLoad: TypeModel.TypeLoad = {
@@ -152,6 +170,8 @@ export class AppComponent implements OnInit {
               data.subscribe((res: HttpResponse<any>) => {
                 // Load of main warehouse in memory
                 this.warehouseService.idWarehouseMain = res.body.data.id;
+                // Load in array only warehouses with racks
+                this.warehouseService.loadWarehousesWithRacks();
                 this.router.navigate(['warehouse/manage']).then(sucess => {
                   this.showMainHeader = true;
                   this.menu.enable(true, 'sidebar');
@@ -205,6 +225,12 @@ export class AppComponent implements OnInit {
     this.displaySmallSidebar === true
       ? (this.iconsDirection = 'end')
       : (this.iconsDirection = 'start');
+
+    for (let page of this.appPages) {
+      if (page.children && page.children.length > 0) {
+        page.open = false;
+      }
+    }
   }
 
   onResize(event) {
@@ -225,5 +251,11 @@ export class AppComponent implements OnInit {
 
   hideSidebarRight() {
     this.menu.enable(false, 'sidebarRight');
+  }
+
+  openSubMenuItem(menuItem) {
+    if (this.iconsDirection === 'end') this.toggleSidebar();
+
+    menuItem.open = !menuItem.open;
   }
 }

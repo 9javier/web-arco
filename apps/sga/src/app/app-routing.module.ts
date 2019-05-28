@@ -92,9 +92,24 @@ const routes: Routes = [
     loadChildren: '@suite/common-modules#LocationsModule'
   },
   {
-    path: 'workwaves',
+    path: 'workwaves-scheduled',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwaves/workwaves.module#WorkwavesModule'
+    loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule'
+  },
+  {
+    path: 'workwaves-templates',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwaves-templates/workwaves-templates.module#WorkwavesTemplatesModule'
+  },
+  {
+    path: 'workwave-template',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwave-template/workwave-template.module#WorkwaveTemplateModule'
+  },
+  {
+    path: 'workwaves-history',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwaves-history/workwaves-history.module#WorkwavesHistoryModule'
   }
 ];
 

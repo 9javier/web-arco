@@ -55,9 +55,21 @@ export * from './halls/halls.module';
 export * from './warehouses/warehouses.component';
 export * from './warehouses/warehouses.module';
 
-// Workwaves
-export * from './workwaves/workwaves.component';
-export * from './workwaves/workwaves.module';
+// Workwaves Scheduled
+export * from './workwaves-schedule/workwaves-schedule.component';
+export * from './workwaves-schedule/workwaves-schedule.module';
+
+// Workwaves Templates
+export * from './workwaves-templates/workwaves-templates.component';
+export * from './workwaves-templates/workwaves-templates.module';
+
+// Workwave Template
+export * from './workwave-template/workwave-template.component';
+export * from './workwave-template/workwave-template.module';
+
+// Workwaves History
+export * from './workwaves-history/workwaves-history.component';
+export * from './workwaves-history/workwaves-history.module';
 
 export * from './user-manager/user-manager.component';
 export * from './user-manager/user-manager.module';

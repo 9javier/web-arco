@@ -7,8 +7,10 @@ import {PATH} from "../../../../../../config/base";
 import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
-export const PATH_POST_STORE_WORKWAVE_TASK: string = PATH('Workwaves Tasks', 'Store');
-export const PATH_POST_STORE_WORKWAVE_TEMPLATE: string = PATH('Workwaves Templates', 'Store');
+export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
+export const PATH_GET_LIST_SCHEDULED: string = PATH('Workwaves', 'Index');
+export const PATH_POST_UPDATE_WORKWAVE: string = PATH('Workwaves', 'Update').slice(0, -1);
+export const PATH_GET_LIST_EXECUTED: string = PATH('Workwaves', 'List Executed');
 
 @Injectable({
   providedIn: 'root'
@@ -19,49 +21,91 @@ export class WorkwavesService {
     private auth: AuthenticationService
   ) {}
 
-  async postStore(
-    type: string,
-    workwaves: WorkwaveModel.Workwave[]
-  ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseStore>>> {
+  async getListTemplates() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListTemplates>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    for (let workwave of workwaves) {
-      this.filterObject(workwave);
-    }
-
-    console.debug('Test::Workwaves -> ', workwaves);
-
-    let pathEndpoint = PATH_POST_STORE_WORKWAVE;
-    let workwavesPost = {};
-
-    if (type == 'template') {
-      pathEndpoint = PATH_POST_STORE_WORKWAVE_TEMPLATE;
-      workwavesPost = {
-        workwavesTemplates: workwaves
-      };
-    } else if (type == 'schedule') {
-      pathEndpoint = PATH_POST_STORE_WORKWAVE_TASK;
-      workwavesPost = {
-        workwavesTasks: workwaves
-      };
-    } else {
-      workwavesPost = {
-        workwaves: workwaves
-      };
-    }
-
-    return this.http.post<WorkwaveModel.ResponseStore>(pathEndpoint,
-      workwavesPost,
+    return this.http.get<WorkwaveModel.ResponseListTemplates>(PATH_GET_LIST_TEMPLATES,
       {
         headers: headers,
         observe: 'response'
       });
   }
 
-  private filterObject(object: any) {
-    for (let iWorkwave in object) {
-      if (object[iWorkwave] == '' || object[iWorkwave] == null) delete object[iWorkwave];
+  async getListScheduled() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    return this.http.get<WorkwaveModel.ResponseListScheduled>(PATH_GET_LIST_SCHEDULED,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  async getListExecuted() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListExecuted>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    return this.http.get<WorkwaveModel.ResponseListScheduled>(PATH_GET_LIST_EXECUTED,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  async postStore(
+    workwave: any
+  ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseStore>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    workwave = JSON.parse(JSON.stringify(workwave));
+
+    this.filterWorkwave(workwave);
+
+    return this.http.post<WorkwaveModel.ResponseStore>(PATH_POST_STORE_WORKWAVE,
+      workwave,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  async putUpdate(
+    workwave: any,
+    workwaveId: number
+  ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseStore>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    workwave = JSON.parse(JSON.stringify(workwave));
+
+    this.filterWorkwave(workwave);
+
+    return this.http.put<WorkwaveModel.ResponseStore>(`${PATH_POST_UPDATE_WORKWAVE}${workwaveId}`,
+      workwave,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  private filterWorkwave(object: any) {
+    object.type = parseInt(object.type);
+    if (object.previousType) {
+      object.previousType = parseInt(object.previousType);
+    }
+    for (let warehouse of object.warehouses) {
+      delete warehouse.name;
+      delete warehouse.checked;
+      delete warehouse.replace;
+      delete warehouse.allocate;
+      warehouse.thresholdConsolidated = parseInt(warehouse.thresholdConsolidated);
+      warehouse.thresholdShippingStore = parseInt(warehouse.thresholdShippingStore);
+      warehouse.typeGeneration = parseInt(warehouse.typeGeneration);
+      warehouse.typePacking = parseInt(warehouse.typePacking);
+      warehouse.typeShippingOrder = parseInt(warehouse.typeShippingOrder);
     }
   }
 
