@@ -18,11 +18,11 @@ export class UpdateComponent implements OnInit {
     description: ['', Validators.required],
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
-    store:'',
+    groupId:'',
     is_main: [false, []],
     has_racks: [false, []],
-    hallways:'',
-    height:'',
+    halls:'',
+    rows:'',
     columns:''
   });
   private warehouseId;
@@ -47,7 +47,7 @@ export class UpdateComponent implements OnInit {
     let values = this.updateForm.value;
     /**Listen for changes on is_store control */
     this.updateForm.get("is_store").valueChanges.subscribe((isStore)=>{
-      let store = this.updateForm.get("store")
+      let store = this.updateForm.get("groupId")
       store.clearValidators();
       store.setValue("");
       store.setValidators(isStore?[Validators.required]:[]);
@@ -55,10 +55,10 @@ export class UpdateComponent implements OnInit {
     });
     /**Listen for changes in has_racks control */
     this.updateForm.get("has_racks").valueChanges.subscribe((hasRacks)=>{
-      let hallways = this.updateForm.get("hallways");
-      let height = this.updateForm.get("height")
+      let hallways = this.updateForm.get("halls");
+      let rows = this.updateForm.get("rows")
       let columns = this.updateForm.get("columns")
-      let aux = [hallways,height,columns].forEach(control=>{
+      let aux = [hallways,rows,columns].forEach(control=>{
         control.clearValidators();
         control.setValue("");
         control.setValidators(control?[Validators.required]:[]);
@@ -73,8 +73,10 @@ export class UpdateComponent implements OnInit {
    */
   getWarehouse(id:number):void{
     this.warehousesService.getShow(id).subscribe(warehouse=>{
-      console.log(warehouse);
-      this.updateForm.patchValue(warehouse);
+      /**the models in backend differs then the model is useless */
+      let warehouseToPatch:any = warehouse;
+      warehouseToPatch.groupId = warehouseToPatch.group.id;
+      this.updateForm.patchValue(warehouseToPatch);
     })
   }
 
