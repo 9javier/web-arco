@@ -106,6 +106,7 @@ export class ListComponent implements OnInit {
       return await modal.present();
     }
   }
+  isMainWarehouseManagementSection = (): boolean => this.origin == 'manage';
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any = null;
 

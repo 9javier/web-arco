@@ -1,7 +1,7 @@
 <ion-text color="primary">
     <h1><span *ngIf="parentPage" (click)="goPreviousPage()" class="previous-page-link">{{parentPage}} > </span>{{ title }}</h1>
 </ion-text>
-<div class="enable-lock-container">
+<div class="enable-lock-container" *ngIf="!isMainWarehouseManagementSection()">
     <div>
         <ion-button slot="end" color="primary" (click)="openEnableLockContainer()">Enable Lock Container</ion-button>
     </div>
