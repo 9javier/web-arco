@@ -9,6 +9,18 @@ export * from './lib/endpoint/oauth2/oauth2.service';
 export * from './models/endpoints/Permissions';
 export * from './lib/endpoint/permissions/permissions.service';
 
+/**User processes */
+export * from './models/endpoints/UsersProcesses';
+export * from './lib/endpoint/user-processes/user-processes.service';
+
+/**Warehouse group */
+export * from './models/endpoints/warehouse-group';
+export * from './lib/endpoint/warehouse-group/warehouse-group.service';
+
+/**Types service */
+export * from './models/endpoints/Type';
+export * from './lib/endpoint/types/types.service';
+
 /** Users */
 export * from './models/endpoints/User';
 export * from './lib/endpoint/users/users.service';
@@ -38,6 +50,13 @@ export * from './models/endpoints/Model';
 /** Size */
 export * from './models/endpoints/Size';
 
+/** Process */
+export * from './models/endpoints/Process';
+export * from './lib/endpoint/processes/processes.service';
+
 /** ACL */
 export * from './models/endpoints/ACL';
 export * from './lib/endpoint/acl/acl.service';
+
+/** UserProcesses*/
+export * from './models/endpoints/UserProcesses';

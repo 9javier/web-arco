@@ -20,7 +20,7 @@ export class StoreComponent implements OnInit {
     }
   ];
   title = 'Crear Grupo';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Groups')
+  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Group')
     .name;
   redirectTo = '/groups';
 

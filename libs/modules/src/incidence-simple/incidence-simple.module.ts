@@ -6,11 +6,12 @@ import { IncidenceSimpleComponent } from "./incidence-simple.component";
 
 @NgModule({
   declarations: [IncidenceSimpleComponent],
-  exports: [IncidenceSimpleComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     IonicModule
-  ], entryComponents: [IncidenceSimpleComponent]
+  ],
+  entryComponents: [IncidenceSimpleComponent],
+  exports: [IncidenceSimpleComponent],
 })
 export class IncidenceSimpleModule { }

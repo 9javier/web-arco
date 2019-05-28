@@ -16,9 +16,9 @@ export class IncidenceSimpleComponent implements OnInit {
   @Input() incidenceIndex: number;
 
   constructor(
-    private incidencesService: IncidencesService,
+    public incidencesService: IncidencesService,
     private toastController: ToastController,
-    private dateTimeParserService: DateTimeParserService
+    public dateTimeParserService: DateTimeParserService
   ) {}
 
   ngOnInit() {

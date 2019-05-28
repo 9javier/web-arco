@@ -10,8 +10,8 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class LocationsComponent implements OnInit {
   title = 'Ubicaciones';
-  displayedColumns: any[] = ['icon', 'hall', 'use', 'locations', 'dropdown'];
-  columns: any[] = [{name: 'Pasillos', value: 'hall'}, {name: 'Utilización', value: 'use'}, {name: 'Ubicaciones', value: 'locations'}];
+  displayedColumns: any[] = ['icon', 'hall','rows','columns', 'use', 'locations',"update", 'dropdown'];
+  columns: any[] = [{name: 'Pasillos', value: 'hall'}, {name:"Filas",value:"rows"},{name:"Columnas",value:"columns"},{name: 'Utilización', value: 'use'}, {name: 'Ubicaciones', value: 'locations'}];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Maps')
     .name;
   routePath = '/locations';

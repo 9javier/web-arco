@@ -10,7 +10,7 @@ import {PopoverController} from "@ionic/angular";
 export class IncidencesPopoverComponent implements OnInit {
 
   constructor(
-    private incidencesService: IncidencesService,
+    public incidencesService: IncidencesService,
     private popoverCtrl: PopoverController
   ) {}
 

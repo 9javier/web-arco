@@ -18,18 +18,18 @@ import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
 })
 export class StoreComponent implements OnInit {
 
-  private workwaveType: string = 'schedule';
-  private listWarehouses: WarehouseModel.Warehouse[];
-  private listTypesExecution: TypeModel.Type[];
-  private listTypesPacking: TypeModel.Type[];
-  private listTypesShippingOrder: TypeModel.Type[];
-  private listTypesGeneration: TypeModel.Type[];
+  workwaveType: string = 'schedule';
+  listWarehouses: WarehouseModel.Warehouse[];
+  listTypesExecution: TypeModel.Type[];
+  listTypesPacking: TypeModel.Type[];
+  listTypesShippingOrder: TypeModel.Type[];
+  listTypesGeneration: TypeModel.Type[];
 
-  private workwave: WorkwaveModel.Workwave = {};
+  workwave: WorkwaveModel.Workwave = {};
 
-  private loading = null;
+  loading = null;
 
-  private darkTheme: NgxMaterialTimepickerTheme = {};
+  darkTheme: NgxMaterialTimepickerTheme = {};
 
   constructor(
     private modalController: ModalController,

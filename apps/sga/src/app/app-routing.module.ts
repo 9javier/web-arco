@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { RemoteTokenResolver } from './guards/auth.remove-token-resolver';
+//import { UsersModule } from '../../../../libs/modules/src/users/users.module'
 
 const routes: Routes = [
   {
@@ -12,7 +13,7 @@ const routes: Routes = [
   {
     path: 'users',
     canActivate: [AuthGuard],
-    loadChildren: './users/users.module#UsersModule'
+    loadChildren: '../../../../libs/modules/src/users/users.module#UsersModule'
   },
   {
     path: 'roles',
@@ -59,6 +60,11 @@ const routes: Routes = [
     path: 'groups',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/groups/groups.module#GroupsModule'
+  },
+  {
+    path: 'user-manager',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-manager/user-manager.module#UserManagerModule'
   },
   {
     path: 'warehouses/halls',

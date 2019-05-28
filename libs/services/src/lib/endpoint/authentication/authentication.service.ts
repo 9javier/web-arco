@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 const TOKEN_KEY = 'access_token';
 
@@ -10,7 +11,8 @@ const TOKEN_KEY = 'access_token';
 export class AuthenticationService {
   authenticationState = new BehaviorSubject(null);
 
-  constructor(private storage: Storage) {}
+  constructor(private storage: Storage) {
+  }
 
   async checkToken() {
     return await this.storage.get(TOKEN_KEY).then(res => {

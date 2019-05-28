@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator, MatTableDataSource} from '@angular/material';
+
 import {
   ProductModel,
   ProductsService
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
+
 
 @Component({
   selector: 'app-products',
@@ -15,6 +18,9 @@ import {HttpResponse} from '@angular/common/http';
 export class ProductsComponent implements OnInit {
   products: ProductModel.Product[] = [];
   displayedColumns: string[] = ['reference', 'initialWarehouse', 'model', 'size'];
+  dataSource: any;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  //@ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private productsService: ProductsService,
@@ -32,6 +38,8 @@ export class ProductsComponent implements OnInit {
         data[0].subscribe(
           (res: HttpResponse<ProductModel.ResponseIndex>) => {
             this.products = res.body.data;
+            this.dataSource = new MatTableDataSource<ProductModel.Product>(res.body.data);
+            this.dataSource.paginator = this.paginator;
             console.log(this.products);
           });
       },

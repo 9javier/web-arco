@@ -36,6 +36,7 @@ export class PermissionToRolComponent implements OnInit {
   isLoadingPermissions = false;
   isLoadingAssignPermissionToRole = false;
   indexSelected = 0;
+  showDeleteButton = false;
 
   constructor(
     private permissionService: PermissionsService,
@@ -43,7 +44,7 @@ export class PermissionToRolComponent implements OnInit {
     private aclService: AclService,
     private modalController: ModalController,
     private toastController: ToastController
-  ) {}
+  ) { }
 
   ngOnInit() {
     Promise.all([
@@ -202,7 +203,7 @@ export class PermissionToRolComponent implements OnInit {
 
   async goToStore() {
     let storeComponent = StoreComponent;
-    let componentProps: any = {routePath: '/roles'};
+    let componentProps: any = { routePath: '/roles' };
 
     const modal = await this.modalController.create({
       component: storeComponent,

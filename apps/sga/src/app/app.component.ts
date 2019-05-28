@@ -62,6 +62,11 @@ export class AppComponent implements OnInit {
       icon: 'grid'
     },
     {
+      title: 'Control de operarios',
+      url: '/user-manager',
+      icon: 'people'
+    },
+    {
       title: 'Almacenes',
       url: '/warehouses',
       icon: 'filing'

@@ -1,11 +1,11 @@
 <ion-content>
-  <ion-list lines="none">
-    <incidence-simple *ngFor="let indexIncidence of incidencesService.arrayIncidencesToShow()" [incidenceIndex]="indexIncidence"></incidence-simple>
+    <ion-list lines="none">
+        <incidence-simple *ngFor="let indexIncidence of incidencesService.arrayIncidencesToShow()" [incidenceIndex]="indexIncidence"></incidence-simple>
 
-    <ion-item *ngIf="incidencesService.incidencesQuantity > incidencesService.quantityIncidencesToShow" class="see-more" (click)="seeMoreIncidences()">
-      <ion-label>
-        Ver más
-      </ion-label>
-    </ion-item>
-  </ion-list>
+        <ion-item *ngIf="incidencesService.incidencesQuantity > incidencesService.quantityIncidencesToShow" class="see-more" (click)="seeMoreIncidences()">
+            <ion-label>
+                Ver más
+            </ion-label>
+        </ion-item>
+    </ion-list>
 </ion-content>

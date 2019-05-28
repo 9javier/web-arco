@@ -11,6 +11,9 @@ import {ActivatedRoute} from "@angular/router";
 import {ModalController, ToastController} from "@ionic/angular";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {UpdateComponent} from "../update/update.component";
+import { UpdateComponent as updateHall } from '../../halls/update/update.component';
+import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
+
 
 @Component({
   selector: 'suite-list-locations',
@@ -63,6 +66,46 @@ export class ListComponent implements OnInit {
   paramsReceived;
   warehouseSelected: number = 1;
 
+
+  dd(event,row){
+    event.preventDefault();
+    event.stopPropagation();  
+    this.selectRowToExpand(row);  
+  }
+  async toUpdate(event,row){
+    event.preventDefault();
+    event.stopPropagation();
+    let updateComponent = updateHall;
+    if (updateComponent) {
+      const modal = await this.modalController.create({
+        component: updateComponent,
+        componentProps: { id: row.id, row: row, routePath: this.routePath }
+      });
+      console.log("test",{ id: row.id, row: {
+        hall:row.hall,
+        id:row.id,
+        columns:row.columns,
+        rows:row.rows,
+        enabled:true
+      }, routePath: this.routePath });
+      modal.onDidDismiss()
+        .then(() => {
+          this.initHalls();
+          if (this.routePath == '/warehouses') {
+            this.warehouseService
+              .init()
+              .then((data: Observable<HttpResponse<any>>) => {
+                data.subscribe((res: HttpResponse<any>) => {
+                  // Load of main warehouse in memory
+                  this.warehouseService.idWarehouseMain = res.body.data.id;
+                });
+              });
+          }
+        });
+
+      return await modal.present();
+    }
+  }
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any = null;
 
@@ -80,6 +123,16 @@ export class ListComponent implements OnInit {
     if (this.origin == 'manage') {
       this.setIntervalForReload(1);
     }
+  }
+
+  /**
+   * Open enable lock container modal
+   */
+  async openEnableLockContainer():Promise<any>{
+    let modal = await this.modalController.create({
+      component:EnableLockContainerComponent
+    });
+    return modal.present();
   }
 
   ngOnDestroy() {
@@ -117,7 +170,7 @@ export class ListComponent implements OnInit {
                   }
                   return {
                     id: hall.id,
-                    hall: hall.hall+' . '+hall.columns+' . '+hall.rows,
+                    hall: hall.hall,
                     columns: hall.columns,
                     rows: hall.rows,
                     use: '',

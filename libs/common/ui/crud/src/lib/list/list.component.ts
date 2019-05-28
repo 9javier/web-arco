@@ -21,15 +21,17 @@ import {
   LoadingController
 } from '@ionic/angular';
 import { Location } from '@angular/common';
+import { UpdateComponent as updateUser } from '../../../../../../modules/src/users/update/update.component';
+import { StoreComponent as storeUser } from '../../../../../../modules/src/users/store/store.component';
 
-import { StoreComponent as storeUser } from "../../../../../../../apps/sga/src/app/users/store/store.component";
+//import { StoreComponent as storeUser } from "../../../../../../../apps/sga/src/app/users/store/store.component";
 import { StoreComponent as storeRol } from "../../../../../../../apps/sga/src/app/roles/store/store.component";
 import { StoreComponent as storeHall } from "../../../../../../modules/src/halls/store/store.component";
 import { StoreComponent as storeWarehouse } from "../../../../../../modules/src/warehouses/store/store.component";
 import { StoreComponent as storeJail } from "../../../../../../modules/src/jail/store/store.component";
 import { StoreComponent as storePallet } from "../../../../../../modules/src/pallets/store/store.component";
 import {StoreComponent as storeGroup} from "../../../../../../modules/src/groups/store/store.component";
-import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
+//import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import { UpdateComponent as updateRol } from "../../../../../../../apps/sga/src/app/roles/update/update.component";
 import { UpdateComponent as updateHall } from "../../../../../../modules/src/halls/update/update.component";
 import { UpdateComponent as updateWarehouse } from "../../../../../../modules/src/warehouses/update/update.component";
@@ -239,7 +241,7 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
-
+      console.log("test",{ id: row.id, row: row, routePath: this.routePath });
       modal.onDidDismiss()
         .then(() => {
           this.loadData();

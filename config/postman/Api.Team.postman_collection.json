@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "46526df8-e3dd-4412-9417-2b96a21551e8",
+		"_postman_id": "e68817e5-6b92-44da-b5e8-c71201ad7ebe",
 		"name": "Api Team",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -23,10 +23,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/users",
 							"host": [
@@ -64,7 +60,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"test@testers.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testest\"\n}"
+							"raw": "{\n\t\"email\": \"tesssssssssst14@t.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testest\",\n\t\"address\": \"mazatlán\",\n\t\"phone\": \"669117862\",\n\t\"roles\" : [{\"id\": 1}, {\"id\": 2}],\n\t\"employedId\":2\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/users",
@@ -139,17 +135,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Valentini\",\n    \"email\": \"valentini@valentini.com\",\n    \"password\": \"password\"\n}"
+							"raw": "{\n\t\"email\": \"test5@t.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testeeeest\",\n\t\"address\": \"mazddatlán\",\n\t\"phone\": \"67862\",\n\t\"roleId\" : 5,\n\t\"roles\" : [{\"id\": 3}, {\"id\": 4}]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/1",
+							"raw": "{{url}}/api/users/6",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"users",
-								"1"
+								"6"
 							]
 						}
 					},
@@ -219,7 +215,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"ivan@ivan.com\"\n}"
+							"raw": "{\n\t\"email\": \"ivan@ivanh.com\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/users/password/email",
@@ -282,6 +278,186 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Asignar permisos por tipo de proceso",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/users/1/processType/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"1",
+								"processType",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users Processes",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/users/processes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"processes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar procesos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"users\": [\n        {\n            \"id\": 1,\n            \"processes\": [\n                1,\n                2,\n                3\n            ],\n            \"performance\": 1\n        },\n        {\n            \"id\": 2,\n            \"processes\": [\n                1,\n                2,\n                3,\n                4,\n                5\n            ],\n            \"performance\": 2\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/users/processes/assign",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"processes",
+								"assign"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desasignar procesos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"users\": [\n        {\n            \"id\": 1,\n            \"processes\": [\n                1,\n                2\n            ],\n            \"performance\": 2\n        },\n        {\n            \"id\": 2,\n            \"processes\": [\n                1\n            ],\n            \"performance\": 3\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/users/processes/unassign",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"processes",
+								"unassign"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2750f072-497e-4049-8501-b91f2ba29d43",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e4f6a386-7fc3-4efe-bcb8-40e2949b74cb",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -303,10 +479,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/roles",
 							"host": [
@@ -344,7 +516,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Supesssr Administrador triple y doble\",\n    \"sga_allowed\": true,\n    \"app_allowed\": true\n}"
+							"raw": "{\n    \"name\": \"uiht\",\n    \"description\": \"role test\",\n    \"app_enabled\": true,\n    \"sga_enabled\": true,\n    \"groups\": [2,3],\n    \"status\": true\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/roles",
@@ -426,17 +598,17 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"Pro Moderator\",\n    \"sga_allowed\": true,\n    \"app_allowed\": true\n}"
+							"raw": "{\n    \"name\": \"Dev team\",\n    \"description\": \"role dev team\",\n    \"sga_enabled\": true,\n    \"app_enabled\": true,\n    \"status\": true,\n    \"groups\": [1]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/7",
+							"raw": "{{url}}/api/roles/6",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"roles",
-								"7"
+								"6"
 							]
 						}
 					},
@@ -551,6 +723,158 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Asignar grupo(Permisos) a rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/roles/2/group/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"roles",
+								"2",
+								"group",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar grupo a rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/roles/2/group/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"roles",
+								"2",
+								"group",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Status of Role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"status\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/roles/1/status",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"roles",
+								"1",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asignar Varios Grupos de Permisos a un Rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"groups\": [1,2]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/roles/4/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"roles",
+								"4",
+								"groups"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -572,10 +896,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/permissions",
 							"host": [
@@ -643,10 +963,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/permissions/1",
 							"host": [
@@ -824,10 +1140,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/carriers",
 							"host": [
@@ -895,10 +1207,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/carriers/1",
 							"host": [
@@ -1006,10 +1314,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/pallets",
 							"host": [
@@ -1077,10 +1381,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/pallets/2",
 							"host": [
@@ -1210,10 +1510,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/warehouses",
 							"host": [
@@ -1251,7 +1547,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Warehouse Test\",\n\t\"description\": \"Probando la información del sistema\",\n\t\"reference\": \"455\",\n    \"is_store\": true,\n    \"is_main\": true\n}"
+							"raw": "{\n\t\"name\": \"Warehouse Test\",\n\t\"description\": \"Probando la información del sistema\",\n\t\"reference\": \"455\",\n    \"is_store\": true,\n    \"is_main\": false,\n    \"has_racks\": false\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/warehouses",
@@ -1281,10 +1577,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/1",
 							"host": [
@@ -1323,7 +1615,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Testing Warehouse\",\n\t\"description\": \"Probando la información del sistema\",\n\t\"reference\": \"W1000\",\n    \"is_store\": true,\n    \"is_main\": false,\n    \"category_id\": 1\n}"
+							"raw": "{\n\t\"name\": \"Testing Warehouse\",\n\t\"description\": \"Probando la información del sistema\",\n\t\"reference\": \"459\",\n    \"is_store\": true,\n    \"is_main\": false,\n    \"category_id\": 1,\n    \"has_racks\": false\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/3",
@@ -1373,7 +1665,7 @@
 					"response": []
 				},
 				{
-					"name": "Assign Category to Warehouse",
+					"name": "Assign Groups to Warehouse",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1399,16 +1691,16 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/1/groups/1",
+							"raw": "{{url}}/api/warehouses/10/groups/2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"1",
+								"10",
 								"groups",
-								"1"
+								"2"
 							]
 						},
 						"description": "Solo se puede agregar una categoría si es un Warehouse de tipo Tienda (Store)"
@@ -1416,7 +1708,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete Warehouse from Category",
+					"name": "Delete Warehouse from Groups",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1435,14 +1727,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/1/groups/1",
+							"raw": "{{url}}/api/warehouses/6/groups/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"1",
+								"6",
 								"groups",
 								"1"
 							]
@@ -1466,10 +1758,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/main",
 							"host": [
@@ -1487,7 +1775,7 @@
 			]
 		},
 		{
-			"name": "Warehouses Groups",
+			"name": "Warehouses Group",
 			"item": [
 				{
 					"name": "Index",
@@ -1504,12 +1792,8 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups",
+							"raw": "{{url}}/api/warehouses/groups?include=warehouses",
 							"host": [
 								"{{url}}"
 							],
@@ -1517,6 +1801,12 @@
 								"api",
 								"warehouses",
 								"groups"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "warehouses"
+								}
 							]
 						}
 					},
@@ -1546,7 +1836,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Gama Alta\"\n}"
+							"raw": "{\n\t\"name\": \"Gama Alta1\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/groups",
@@ -1577,12 +1867,8 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups/1",
+							"raw": "{{url}}/api/warehouses/groups/1?include=warehouses",
 							"host": [
 								"{{url}}"
 							],
@@ -1591,6 +1877,46 @@
 								"warehouses",
 								"groups",
 								"1"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "warehouses"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/warehouses/groups/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"warehouses",
+								"groups",
+								"2"
 							]
 						}
 					},
@@ -1621,40 +1947,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"Gama Media\"\n}"
-						},
-						"url": {
-							"raw": "{{url}}/api/warehouses/groups/1",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"api",
-								"warehouses",
-								"groups",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Destroy",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{access_token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
 						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/groups/1",
@@ -1713,10 +2005,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/{{warehouseId}}/racks",
 							"host": [
@@ -1737,10 +2025,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/{{warehouseId}}/containers",
 							"host": [
@@ -1761,10 +2045,6 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/racks/{{rackId}}/containers",
 							"host": [
@@ -1989,6 +2269,65 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Ubicación por referencia",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/containers/warehouse/2/reference/P000A01C001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"containers",
+								"warehouse",
+								"2",
+								"reference",
+								"P000A01C001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change status of many containers",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"enabled\": false,\n\t\"ids\": [30,31]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/containers/status",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"containers",
+								"status"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"auth": {
@@ -2121,10 +2460,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/oauth2/logout",
 							"host": [
@@ -2154,10 +2489,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/profile",
 							"host": [
@@ -2191,10 +2522,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/users/1/roles",
 							"host": [
@@ -2225,10 +2552,6 @@
 						},
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/api/roles/4/permissions",
 							"host": [
@@ -2239,6 +2562,67 @@
 								"roles",
 								"4",
 								"permissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Permisos del grupo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/permissions/groups/2/details",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"permissions",
+								"groups",
+								"2",
+								"details"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Grupos del Rol",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/roles/2/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"roles",
+								"2",
+								"groups"
 							]
 						}
 					},
@@ -2278,2153 +2662,3293 @@
 				}
 			]
 		},
-    {
-      "name": "Types",
-      "item": [
-        {
-          "name": "Picking",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/picking",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "picking"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Product",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/product",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "product"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Process",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/process",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "process"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Store",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/process",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "process"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Incidences",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/incidences",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "incidences"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Actions",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/actions",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "actions"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Preparation Lines",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/preparation-lines",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "preparation-lines"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Selection criteria",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/selection-criteria",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "selection-criteria"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Generation",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/generation",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "generation"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Status Product",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/status-product",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "status-product"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Execution",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/execution",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "execution"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Shipping order",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/shipping-order",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "shipping-order"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Packing",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/packing",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "packing"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Activities",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/types/activities",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "types",
-                "activities"
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Inventory",
-      "item": [
-        {
-          "name": "Index",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show by Product",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/product/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "product",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by Warehouse",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/warehouse/2",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "warehouse",
-                "2"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by Rack",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/rack/2",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "rack",
-                "2"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by Container",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/container/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "container",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by Container Reference",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/warehouse/2/container/P001A01C001",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "warehouse",
-                "2",
-                "container",
-                "P001A01C001"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by Containers",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"ids\":[1,2,3,4]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/container",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "container"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by Containers References",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/container/reference",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "container",
-                "reference"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Inventory Process",
-      "item": [
-        {
-          "name": "Index",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Store",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"productReference\": \"000000030100100001\",\n    \"containerReference\": \"P000A05C001\",\n    \"warehouseId\": 2\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by product",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process/product/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process",
-                "product",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Rollback",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process/rollback/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process",
-                "rollback",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by container",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process/container/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process",
-                "container",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by containers",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"ids\":[1,2,3]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process/container",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process",
-                "container"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by containers references",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/inventory/process/container/reference",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "inventory",
-                "process",
-                "container",
-                "reference"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "Incidences",
-      "item": [
-        {
-          "name": "Index",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/incidences",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "incidences"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List by type",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/incidences/type/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "incidences",
-                "type",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/incidences/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "incidences",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update attended",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"attended\": true\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/incidences/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "incidences",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Destroy",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/incidences/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "incidences",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "1cac32a1-e014-4a3c-9556-36bbb0db043d",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "11099eb2-6307-444f-92b7-76513bc97c4e",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Workwaves",
-      "item": [
-        {
-          "name": "Index",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/workwaves",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List Executed",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/workwaves/executed",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "executed"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "List Templates",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Store",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"type\": 1,\n    \"warehouses\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{url}}/api/workwaves/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"previousType\": 1,\n\t\"type\": 1,\n    \"warehouses\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1\n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update executed",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"executed\": true,\n    \"executedDate\": \"2019-05-20T12:30:33.577Z\"\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/executed/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "executed",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Destroy",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "DELETE",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Workwaves Tasks",
-      "item": [
-        {
-          "name": "Index",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/workwaves/tasks",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "tasks"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Store",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"workwavesTasks\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"time\": \"10:30\",\n            \"date\": \"2019-05-23\",\n            \"everyday\": true,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 2,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"time\": \"13:30\",\n            \"date\": \"2019-05-23\",\n            \"everyday\": false,\n            \"active\": true\n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/tasks",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "tasks"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{url}}/api/workwaves/tasks/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "tasks",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update single",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 1,\n    \"date\": \"2019-05-30\",\n    \"time\": \"09:00\",\n    \"everyday\": true,\n    \"active\": true\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/tasks/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "tasks",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Destroy",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "DELETE",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/tasks/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "tasks",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update multiple",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"workwavesTasks\": [\n        {\n        \t\"id\": 1,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 3,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-30\",\n            \"time\": \"09:00\",\n            \"everyday\": true,\n            \"active\": true\n        },\n        {\n        \t\"id\": 2,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 3,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-30\",\n            \"time\": \"09:00\",\n            \"everyday\": false,\n            \"active\": true\n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/tasks",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "tasks"
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Workwaves Templates",
-      "item": [
-        {
-          "name": "Index",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Store",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"workwavesTemplates\": [\n        {\n            \"typeExecution\": 2,\n            \"name\": \"Template 1\",\n            \"description\": \"Description template 1\",\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"date\": \"2019-05-23\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        },\n        {\n            \"typeExecution\": 1,\n            \"name\": \"Template 2\",\n            \"description\": \"Description template 2\",\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"date\": \"2019-05-23\",\n            \"time\": \"10:30\"\n            \n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Show",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update single",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "value": "application/json",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n\t\"typeExecution\": 2,\n\t\"name\": \"Template 1 change\",\n\t\"description\": \"Description template 1\",\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 1,\n    \"date\": \"2019-05-24\",\n    \"time\": \"10:30\",\n    \"everyday\": true\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Destroy",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "DELETE",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": ""
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates/1",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates",
-                "1"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Update multiple",
-          "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{access_token}}",
-                  "type": "string"
-                }
-              ]
-            },
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "name": "Content-Type",
-                "type": "text",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"workwavesTemplates\": [\n        {\n            \"id\": 1,\n            \"typeExecution\": 2,\n            \"name\": \"Template 1 change\",\n            \"description\": \"Description template 1\",\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-24\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        },\n        {\n            \"id\": 2,\n            \"typeExecution\": 2,\n            \"name\": \"Template 2 change\",\n            \"description\": \"Description template 2\",\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-24\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        }\n    ]\n}"
-            },
-            "url": {
-              "raw": "{{url}}/api/workwaves/templates",
-              "host": [
-                "{{url}}"
-              ],
-              "path": [
-                "api",
-                "workwaves",
-                "templates"
-              ]
-            }
-          },
-          "response": []
-        }
-      ],
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "id": "716c14a4-d35b-441e-b56e-7858d400f73a",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "id": "2338009e-f4f4-4c94-91a9-107b9b465693",
-            "type": "text/javascript",
-            "exec": [
-              ""
-            ]
-          }
-        }
-      ]
-    }
-  ],
+		{
+			"name": "Types",
+			"item": [
+				{
+					"name": "Picking",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/picking",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"picking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/product",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/process",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/process",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Incidences",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/incidences",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"incidences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/actions",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"actions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Preparation Lines",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/preparation-lines",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"preparation-lines"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Selection criteria",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/selection-criteria",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"selection-criteria"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/generation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"generation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Status Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/status-product",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"status-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Execution",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/execution",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"execution"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Shipping order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/shipping-order",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"shipping-order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Packing",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/types/packing",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"types",
+								"packing"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/products",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"000000010200100006\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/products/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reference\": \"000000010100100007\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "DomainSizes",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/products/models/domainsizes/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"domainsizes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"11\",\n\t\"name\" : \"none\",\n\t\"unexistedField\" : \"Should trow error\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/domainsizes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"domainsizes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/domainsizes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"domainsizes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"11\",\n\t\"name\" : \"none\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/domainsizes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"domainsizes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/domainsizes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"domainsizes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1cac32a1-e014-4a3c-9556-36bbb0db043d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "11099eb2-6307-444f-92b7-76513bc97c4e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Sizes",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/products/models/sizes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"sizes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"11\",\n    \"number\": 1,\n    \"name\" : \"no body\",\n    \"description\": \"useless\",\n    \"domainSize\" : { \"id\" : 1 }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/sizes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"sizes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/sizes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"sizes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"11\",\n    \"number\": 1,\n    \"name\" : \"no body\",\n    \"description\": \"useless\",\n    \"domainSize\" : { \"id\" : 1 }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/sizes/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"sizes",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/sizes/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"sizes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1cac32a1-e014-4a3c-9556-36bbb0db043d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "11099eb2-6307-444f-92b7-76513bc97c4e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Models",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/products/models",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"111114\",\n    \"color\" : 1,\n    \"domainSize\" : { \"id\" : 1 }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"reference\": \"111111\",\n    \"color\" : 1,\n    \"domainSize\" : { \"id\" : 1 }\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/products/models/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"models",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1cac32a1-e014-4a3c-9556-36bbb0db043d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "11099eb2-6307-444f-92b7-76513bc97c4e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show by Product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/product/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"product",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by Warehouse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/warehouse/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"warehouse",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by Rack",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/rack/2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"rack",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by Container",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/container/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"container",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by Container Reference",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/warehouse/2/container/P001A01C001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"warehouse",
+								"2",
+								"container",
+								"P001A01C001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by Containers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"ids\":[1,2,3,4]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/inventory/container",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"container"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by Containers References",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/inventory/container/reference",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"container",
+								"reference"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search in Containers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"warehouseId\": 2,\n\t\"containers\":[1,25],\n\t\"models\":[5,4,1],\n\t\"colors\": [1],\n\t\"sizes\": []\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/inventory/container/search",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"container",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inventory Process",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/process",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/process/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productReference\": \"000000030100100001\",\n    \"containerReference\": \"P000A05C001\",\n    \"warehouseId\": 2\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/inventory/process",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/process/product/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process",
+								"product",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rollback",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/process/rollback/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process",
+								"rollback",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by container",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/inventory/process/container/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process",
+								"container",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by containers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"ids\":[1,2,3]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/inventory/process/container",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process",
+								"container"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by containers references",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/inventory/process/container/reference",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"inventory",
+								"process",
+								"container",
+								"reference"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Permissions Groups",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/permissions/groups/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"permissions",
+								"groups",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Agregar permiso a grupo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/permissions/groups/2/permission/76",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"permissions",
+								"groups",
+								"2",
+								"permission",
+								"76"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar permiso de grupo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/permissions/groups/2/permission/74",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"permissions",
+								"groups",
+								"2",
+								"permission",
+								"74"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Incidences",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/incidences",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"incidences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/incidences/type/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"incidences",
+								"type",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/incidences/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"incidences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update attended",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"attended\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/incidences/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"incidences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/incidences/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"incidences",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1cac32a1-e014-4a3c-9556-36bbb0db043d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "11099eb2-6307-444f-92b7-76513bc97c4e",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Color",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/colors",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"colors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/colors/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"colors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Color",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Yellow\",\n\t\"colorHex\": \"#ffff00\",\n\t\"description\": \"Yellow\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/colors/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"colors",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update color",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Yellow\",\n\t\"colorHex\": \"#ffff00\",\n\t\"description\": \"Yellow\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/colors/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"colors",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy color",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/colors/45",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"colors",
+								"45"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Shops",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/warehouses/stores",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"warehouses",
+								"stores"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workwaves",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/workwaves",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"workwaves\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typePacking\": 1,\n            \"typeShippingOrder\": 1,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/workwaves/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update single",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 2,\n    \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/16",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"16"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update executed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"executed\": true,\n    \"executedDate\": \"2019-05-20T12:30:33.577Z\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/executed/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"executed",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update multiple",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"workwaves\": [\n        {\n        \t\"id\": 1,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 1,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        },\n        {\n        \t\"id\": 2,\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 1,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"executionDate\": \"2019-05-20T12:30:33.577Z\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Workwaves Tasks",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/workwaves/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"workwavesTasks\": [\n        {\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"time\": \"10:30\",\n            \"date\": \"2019-05-23\",\n            \"everyday\": true,\n            \"active\": true\n        },\n        {\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 2,\n            \"thresholdShippingStore\": 2,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"time\": \"13:30\",\n            \"date\": \"2019-05-23\",\n            \"everyday\": false,\n            \"active\": true\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/workwaves/tasks/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update single",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 1,\n    \"date\": \"2019-05-30\",\n    \"time\": \"09:00\",\n    \"everyday\": true,\n    \"active\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/tasks/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/tasks/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update multiple",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"workwavesTasks\": [\n        {\n        \t\"id\": 1,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 3,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-30\",\n            \"time\": \"09:00\",\n            \"everyday\": true,\n            \"active\": true\n        },\n        {\n        \t\"id\": 2,\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 3,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-30\",\n            \"time\": \"09:00\",\n            \"everyday\": false,\n            \"active\": true\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Workwaves Templates",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/workwaves/templates",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"templates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"workwavesTemplates\": [\n        {\n            \"typeExecution\": 2,\n            \"name\": \"Template 1\",\n            \"description\": \"Description template 1\",\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"date\": \"2019-05-23\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        },\n        {\n            \"typeExecution\": 1,\n            \"name\": \"Template 2\",\n            \"description\": \"Description template 2\",\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 2,\n            \"date\": \"2019-05-23\",\n            \"time\": \"10:30\"\n            \n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/templates",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"templates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/workwaves/templates/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"templates",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update single",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"typeExecution\": 2,\n\t\"name\": \"Template 1 change\",\n\t\"description\": \"Description template 1\",\n\t\"warehouseId\": 2,\n    \"thresholdConsolidated\": 4,\n    \"thresholdShippingStore\": 3,\n    \"typeGeneration\": 1,\n    \"typeShippingOrder\": 1,\n    \"typePacking\": 1,\n    \"date\": \"2019-05-24\",\n    \"time\": \"10:30\",\n    \"everyday\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/templates/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"templates",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/templates/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"templates",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update multiple",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"workwavesTemplates\": [\n        {\n            \"id\": 1,\n            \"typeExecution\": 2,\n            \"name\": \"Template 1 change\",\n            \"description\": \"Description template 1\",\n            \"warehouseId\": 2,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-24\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        },\n        {\n            \"id\": 2,\n            \"typeExecution\": 2,\n            \"name\": \"Template 2 change\",\n            \"description\": \"Description template 2\",\n            \"warehouseId\": 1,\n            \"thresholdConsolidated\": 4,\n            \"thresholdShippingStore\": 3,\n            \"typeGeneration\": 1,\n            \"typeShippingOrder\": 1,\n            \"typePacking\": 1,\n            \"date\": \"2019-05-24\",\n            \"time\": \"10:30\",\n            \"everyday\": true\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/workwaves/templates",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"workwaves",
+								"templates"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "716c14a4-d35b-441e-b56e-7858d400f73a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2338009e-f4f4-4c94-91a9-107b9b465693",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
 	"auth": {
 		"type": "oauth2",
 		"oauth2": [
