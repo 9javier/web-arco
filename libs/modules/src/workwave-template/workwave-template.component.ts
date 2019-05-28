@@ -24,8 +24,9 @@ export class WorkwaveTemplateComponent implements OnInit {
   ngOnInit() {
     this.router.queryParams.subscribe(params => {
       this.typeWorkwave = params.type;
-      console.debug('Test::Workwave -> ', params);
-      this.workwaveToEdit = JSON.parse(params.workwave);
+      if (params.workwave) {
+        this.workwaveToEdit = JSON.parse(params.workwave);
+      }
     });
   }
 

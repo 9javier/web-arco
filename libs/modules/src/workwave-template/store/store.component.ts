@@ -41,9 +41,8 @@ export class StoreComponent implements OnInit {
       this.workwaveType = 'template'
     }
 
-    this.initializeAllFields();
     this.workwave = this.navParams.data.workwave || {};
-    console.debug('Test::Workwave -> ', this.workwave);
+    this.initializeAllFields();
     this.listStores = this.navParams.data.listStores;
 
     this.darkTheme = {
