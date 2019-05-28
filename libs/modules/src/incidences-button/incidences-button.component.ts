@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {IncidencesPopoverComponent} from "@suite/common-modules";
-import {MenuController, PopoverController} from "@ionic/angular";
-import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/incidences.service";
+import { IncidencesPopoverComponent } from "../incidences-popover/incidences-popover.component";
+import { MenuController, PopoverController } from "@ionic/angular";
+import { IncidencesService } from "../../../services/src/lib/endpoint/incidences/incidences.service";
 
 @Component({
   selector: 'button-incidences',
@@ -14,7 +14,7 @@ export class IncidencesButtonComponent implements OnInit {
     private popoverController: PopoverController,
     private menuController: MenuController,
     public incidencesService: IncidencesService
-  ) {}
+  ) { }
 
   ngOnInit() {
     // Get all incidences to app start

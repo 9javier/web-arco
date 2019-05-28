@@ -14,7 +14,7 @@ import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
 })
 export class StoreComponent implements OnInit {
 
-  private workwaveType: string = 'schedule';
+  public workwaveType: string = 'schedule';
 
   public workwave: WorkwaveModel.Workwave;
   public typeWorkwave: number;
