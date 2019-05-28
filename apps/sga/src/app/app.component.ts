@@ -170,6 +170,8 @@ export class AppComponent implements OnInit {
               data.subscribe((res: HttpResponse<any>) => {
                 // Load of main warehouse in memory
                 this.warehouseService.idWarehouseMain = res.body.data.id;
+                // Load in array only warehouses with racks
+                this.warehouseService.loadWarehousesWithRacks();
                 this.router.navigate(['warehouse/manage']).then(sucess => {
                   this.showMainHeader = true;
                   this.menu.enable(true, 'sidebar');
