@@ -31,15 +31,15 @@ export class AppComponent implements OnInit {
       open: true,
       children: [
         {
-          title: 'Gestión de almacén',
-          url: '/warehouse/manage',
-          icon: 'apps'
-        },
-        {
           title: 'Productos',
           url: '/products',
           icon: 'basket'
         },
+        {
+          title: 'Gestión de almacén',
+          url: '/warehouse/manage',
+          icon: 'apps'
+        }
       ]
     },
     {
@@ -131,7 +131,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = this.appPages[0].title;
+  currentRoute: string = this.appPages[0].children[0].title;
   deploySidebarSmallDevices = false;
 
   constructor(
@@ -190,7 +190,7 @@ export class AppComponent implements OnInit {
                 this.warehouseService.idWarehouseMain = res.body.data.id;
                 // Load in array only warehouses with racks
                 this.warehouseService.loadWarehousesWithRacks();
-                this.router.navigate(['warehouse/manage']).then(sucess => {
+                this.router.navigate(['products']).then(sucess => {
                   this.showMainHeader = true;
                   this.menu.enable(true, 'sidebar');
                 });
