@@ -1,3 +1,5 @@
+import {FormControl} from "@angular/forms";
+
 export namespace WorkwaveModel {
   export interface Workwave {
     id?: number;
@@ -19,6 +21,9 @@ export namespace WorkwaveModel {
     typeExecution?: number;
     name?: string;
     description?: string;
+    releaseDate?: string;
+    type?: number;
+    dateForm?: FormControl;
   }
 
   export interface ResponseListTemplates {

@@ -57,4 +57,15 @@ export class ListWorkwavesScheduleComponent implements OnInit {
     this.router.navigate(['workwave-template'], navigationExtras);
   }
 
+  editWorkwave(workwave) {
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        type: 2,
+        workwave: JSON.stringify(workwave)
+      }
+    };
+
+    this.router.navigate(['workwave-template'], navigationExtras);
+  }
+
 }
