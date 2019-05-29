@@ -27,79 +27,97 @@ interface MenuItem {
 export class AppComponent implements OnInit {
   public appPages = [
     {
-      title: 'Gestión Almacén',
-      url: '/warehouse/manage',
-      icon: 'apps'
-    },
-    {
-      title: 'Usuarios',
-      url: '/users/menu',
-      icon: 'people'
-    },
-    {
-      title: 'Asignar Grupo a Tienda',
-      url: '/group-to-warehouse',
-      icon: 'people'
-    },
-    {
-      title: 'Roles',
-      url: '/roles/menu',
-      icon: 'person'
-    },
-    {
-      title: 'Grupos de tiendas',
-      url: '/groups/menu',
-      icon: 'person'
-    },
-    {
-      title: 'Asignar Rol a Usuario',
-      url: '/assign/rol/user',
-      icon: 'person'
-    },
-    {
-      title: 'Jaulas',
-      url: '/jails/menu',
-      icon: 'grid'
-    },
-    {
-      title: 'Control de operarios',
-      url: '/user-manager',
-      icon: 'people'
-    },
-    {
-      title: 'Almacenes',
-      url: '/warehouses',
-      icon: 'filing'
-    },
-    {
-      title: 'Palets',
-      url: '/pallets/menu',
-      icon: 'cube'
-    },
-    {
-      title: 'Productos',
-      url: '/products',
-      icon: 'basket'
+      title: 'Logística',
+      open: true,
+      children: [
+        {
+          title: 'Gestión Almacén',
+          url: '/warehouse/manage',
+          icon: 'apps'
+        },
+        {
+          title: 'Productos',
+          url: '/products',
+          icon: 'basket'
+        },
+      ]
     },
     {
       title: 'Olas de trabajo',
-      open: false,
+      open: true,
       children: [
         {
           title: 'Programadas',
-          icon: 'logo-ionic',
-          url: '/workwaves-scheduled'
+          url: '/workwaves-scheduled',
+          icon: 'code'
         },
         {
           title: 'Plantillas',
-          icon: 'logo-google',
-          url: '/workwaves-templates'
+          url: '/workwaves-templates',
+          icon: 'code-working'
         },
         {
           title: 'Historial',
-          icon: 'logo-google',
-          url: '/workwaves-history'
+          url: '/workwaves-history',
+          icon: 'code-download'
         }
+      ]
+    },
+    {
+      title: 'Usuarios',
+      open: true,
+      children: [
+        {
+          title: 'Usuarios',
+          url: '/users/menu',
+          icon: 'people'
+        },
+        {
+          title: 'Control de operarios',
+          url: '/user-manager',
+          icon: 'people'
+        },
+        {
+          title: 'Roles',
+          url: '/roles/menu',
+          icon: 'person'
+        },
+        {
+          title: 'Asignar Rol a Usuario',
+          url: '/assign/rol/user',
+          icon: 'person'
+        },
+      ]
+    },
+    {
+      title: 'Configuración',
+      open: true,
+      children: [
+        {
+          title: 'Almacenes',
+          url: '/warehouses',
+          icon: 'filing'
+        },
+        {
+          title: 'Grupos de tiendas',
+          url: '/groups/menu',
+          icon: 'person'
+        },
+        {
+          title: 'Asignar Grupo a Tienda',
+          url: '/group-to-warehouse',
+          icon: 'people'
+        },
+        {
+          title: 'Jaulas',
+          url: '/jails/menu',
+          icon: 'grid'
+        },
+        {
+          title: 'Palets',
+          url: '/pallets/menu',
+          icon: 'cube'
+        },
       ]
     },
     {
