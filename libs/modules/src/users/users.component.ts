@@ -11,7 +11,7 @@ import {ModalController} from "@ionic/angular";
 export class UsersComponent implements OnInit {
   title = 'Usuarios';
   displayedColumns: string[] = ['name', 'email', 'address', 'select'];
-  columns: string[] = ['name', 'email', 'address'];
+  columns: any[] = [{name: 'Nombre', value: 'name'}, {name: 'Email', value: 'email'}, {name: 'Dirección', value: 'address'}];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users')
     .name;
   routePath = '/users';

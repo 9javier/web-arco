@@ -15,7 +15,7 @@ export class LocationsComponent implements OnInit {
 
   title = 'Ubicaciones';
   displayedColumns: any[] = ['icon', 'hall','rows','columns', 'use', 'locations',"update", 'dropdown'];
-  columns: any[] = [{name: 'Pasillos', value: 'hall'}, {name:"Filas",value:"rows"},{name:"Columnas",value:"columns"},{name: 'Utilización', value: 'use'}, {name: 'Ubicaciones', value: 'locations'}];
+  columns: any[] = [{name: 'Pasillo', value: 'hall'}, {name:"Nº filas",value:"rows"},{name:"nº columnas",value:"columns"},{name: 'Utilización', value: 'use'}, {name: 'Ubicaciones', value: 'locations'}];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Maps')
     .name;
   routePath = '/locations';
