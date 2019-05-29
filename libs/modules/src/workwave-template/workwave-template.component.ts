@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
+import {WorkwavesService} from "../../../services/src/lib/endpoint/workwaves/workwaves.service";
 
 @Component({
   selector: 'suite-workwave-template',
@@ -18,16 +19,15 @@ export class WorkwaveTemplateComponent implements OnInit {
   public workwaveToEdit = null;
 
   constructor(
-    private router: ActivatedRoute
+    private router: ActivatedRoute,
+    private workwaveService: WorkwavesService
   ) {}
 
   ngOnInit() {
     this.router.queryParams.subscribe(params => {
       this.typeWorkwave = params.type;
-      if (params.workwave) {
-        this.workwaveToEdit = JSON.parse(params.workwave);
-      }
     });
+    this.workwaveToEdit = this.workwaveService.lastWorkwaveEdited;
   }
 
 }

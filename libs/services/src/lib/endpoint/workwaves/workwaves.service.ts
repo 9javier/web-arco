@@ -18,6 +18,9 @@ export const PATH_DELETE_DESTROY_TEMPLATE: string = PATH('Workwaves', 'Destroy T
   providedIn: 'root'
 })
 export class WorkwavesService {
+
+  private _lastWorkwaveEdited: any = null;
+
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService
@@ -117,6 +120,14 @@ export class WorkwavesService {
         headers: headers,
         observe: 'response'
       });
+  }
+
+  get lastWorkwaveEdited(): any {
+    return this._lastWorkwaveEdited;
+  }
+
+  set lastWorkwaveEdited(value: any) {
+    this._lastWorkwaveEdited = value;
   }
 
   private filterWorkwave(object: any) {
