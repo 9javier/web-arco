@@ -11,6 +11,7 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import {ListComponent} from "./list/list.component";
 import {HallsModule} from '../halls/halls.module';
 import { EnableLockContainerModule } from './modals/enable-lock-container/enable-lock-container.module';
+import { PipesModule } from "../../../pipes/src";
 
 
 
@@ -29,7 +30,8 @@ import { EnableLockContainerModule } from './modals/enable-lock-container/enable
     CdkTableModule,
     FormsModule,
     HallsModule,
-    EnableLockContainerModule
+    EnableLockContainerModule,
+    PipesModule
   ],
   entryComponents: [
     ListComponent
