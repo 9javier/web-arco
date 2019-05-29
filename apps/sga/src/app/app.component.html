@@ -78,6 +78,7 @@
             <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root"
                       routerLinkActive="active"
                       (click)="currentRoute = sub.title">
+              <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
               <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
                 {{ sub.title }}
               </ion-label>
