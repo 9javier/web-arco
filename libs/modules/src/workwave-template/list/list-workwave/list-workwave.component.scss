@@ -35,4 +35,10 @@ mat-grid-list {
   mat-grid-tile.border-bottom {
     border-bottom-width: 1px;
   }
+  mat-grid-tile.required-field {
+    background-color: var(--ion-color-required-field);
+    input {
+      background-color: var(--ion-color-required-field-input);
+    }
+  }
 }

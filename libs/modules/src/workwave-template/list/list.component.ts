@@ -35,7 +35,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         allocate: '',
         typeGeneration: '',
         typePacking: '',
-        typeShippingOrder: 1
+        typeShippingOrder: 0
       }
     });
 
@@ -99,6 +99,55 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       return await alert.present();
     }
 
+    let someError: boolean = false;
+
+    for (let store of storesToSetInWorkwave) {
+      if (!store.thresholdConsolidated || store.thresholdConsolidated == 0) {
+        store.errorThresholdConsolidated = true;
+        someError = true;
+      } else {
+        store.errorThresholdConsolidated = false;
+        delete store.errorThresholdConsolidated;
+      }
+      if (!store.thresholdShippingStore || store.thresholdShippingStore == 0) {
+        store.errorThresholdShippingStore = true;
+        someError = true;
+      } else {
+        store.errorThresholdShippingStore = false;
+        delete store.errorThresholdShippingStore;
+      }
+      if (!store.typeShippingOrder || store.typeShippingOrder == 0) {
+        store.errorTypeShippingOrder = true;
+        someError = true;
+      } else {
+        store.errorTypeShippingOrder = false;
+        delete store.errorTypeShippingOrder;
+      }
+      if (!store.typeGeneration || store.typeGeneration == '') {
+        store.errorTypeGeneration = true;
+        someError = true;
+      } else {
+        store.errorTypeGeneration = false;
+        delete store.errorTypeGeneration;
+      }
+      if (!store.typePacking || store.typePacking == '') {
+        store.errorTypePacking = true;
+        someError = true;
+      } else {
+        store.errorTypePacking = false;
+        delete store.errorTypePacking;
+      }
+    }
+
+    if (someError) {
+      const alert = await this.alertController.create({
+        subHeader: 'Atención',
+        message: 'Necesita completar todos los campos para cada tienda',
+        buttons: ['Cerrar']
+      });
+      return await alert.present();
+    }
+
     let paramsModal: any = {
       type: this.typeWorkwave,
       listStores: storesToSetInWorkwave
@@ -146,6 +195,29 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       } else if (data.store.replace == '2' && data.store.allocate == '1') {
         data.store.typeShippingOrder = 5;
       }
+    }
+
+    if (data.field == 'replace' || data.field == 'allocate') {
+      delete data.store.errorTypeShippingOrder;
+    }
+    if (data.field == 'consolidated' && data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) {
+      delete data.store.errorThresholdConsolidated;
+    }
+    if (data.field == 'shipping' && data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) {
+      delete data.store.errorThresholdShippingStore;
+    }
+    if (data.field == 'selection') {
+      delete data.store.errorTypeGeneration;
+    }
+    if (data.field == 'packing') {
+      delete data.store.errorTypePacking;
+    }
+    if (data.field == 'check' && !data.store.checked) {
+      delete data.store.errorTypeShippingOrder;
+      delete data.store.errorThresholdConsolidated;
+      delete data.store.errorThresholdShippingStore;
+      delete data.store.errorTypeGeneration;
+      delete data.store.errorTypePacking;
     }
   }
 
