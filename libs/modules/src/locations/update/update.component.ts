@@ -123,7 +123,11 @@ export class UpdateComponent implements OnInit {
                 date_add: productHistory.createdAt,
                 date_upd: productHistory.updatedAt,
                 origin_warehouse: productHistory.originWarehouse,
+                origin_rack: productHistory.originRack,
+                origin_container: productHistory.originContainer,
                 destination_warehouse: productHistory.destinationWarehouse,
+                destination_rack: productHistory.destinationRack,
+                destination_container: productHistory.destinationContainer,
                 user: productHistory.logUser,
                 errors: 'Ninguno'
               }

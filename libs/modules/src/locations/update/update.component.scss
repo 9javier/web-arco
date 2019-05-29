@@ -17,7 +17,6 @@ mat-tab-header {
     background-color: rgba(255, 255, 255, 0.24);
   }
 }
-
 .footer-save, .footer-products {
   position: fixed;
   width: 100%;
@@ -46,6 +45,10 @@ mat-tab-header {
 }
 
 .mat-accordion.accordion-history {
+  mat-expansion-panel-header.header-history {
+    height: auto !important;
+    padding: 10px 24px;
+  }
   p {
     -webkit-text-stroke: 0 #000000;
     font-size: 16px;
