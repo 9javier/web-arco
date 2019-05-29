@@ -31,7 +31,7 @@ export class AppComponent implements OnInit {
       open: true,
       children: [
         {
-          title: 'Gestión Almacén',
+          title: 'Gestión de almacén',
           url: '/warehouse/manage',
           icon: 'apps'
         },
@@ -64,16 +64,16 @@ export class AppComponent implements OnInit {
       ]
     },
     {
-      title: 'Usuarios',
+      title: 'Gestión de usuarios',
       open: true,
       children: [
         {
-          title: 'Usuarios',
+          title: 'Gestión de usuarios',
           url: '/users/menu',
           icon: 'people'
         },
         {
-          title: 'Control de operarios',
+          title: 'Parametrización de operarios',
           url: '/user-manager',
           icon: 'people'
         },
@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
           icon: 'person'
         },
         {
-          title: 'Asignar Rol a Usuario',
+          title: 'Asignar rol a usuario',
           url: '/assign/rol/user',
           icon: 'person'
         },
@@ -104,7 +104,7 @@ export class AppComponent implements OnInit {
           icon: 'person'
         },
         {
-          title: 'Asignar Grupo a Tienda',
+          title: 'Asignar grupos de tiendas',
           url: '/group-to-warehouse',
           icon: 'people'
         },

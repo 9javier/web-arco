@@ -26,7 +26,7 @@ interface MenuItem {
 export class AppComponent implements OnInit {
   public appPages: MenuItem[] = [
     {
-      title: 'Gestión Almacén',
+      title: 'Gestión de almacén',
       url: '/warehouse/manage',
       icon: 'apps'
     },
