@@ -74,7 +74,7 @@ export class StoreComponent implements OnInit {
 
   saveWorkwave() {
     if (!this.loading) {
-      this.showLoading((this.editing ? 'Creando' : 'Editando') +' ola de trabajo...').then(() => {
+      this.showLoading((this.editing ? 'Editando' : 'Creando') +' ola de trabajo...').then(() => {
         let workwaveStore: any = {};
         workwaveStore.warehouses = this.listStores;
 
