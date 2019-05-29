@@ -26,7 +26,7 @@ export class ListWorkwavesScheduleComponent implements OnInit {
         })
       )
       .subscribe((event: NavigationStart) => {
-          if (event.url == '/workwaves-schedule') {
+          if (event.url == '/workwaves-scheduled') {
             this.loadWorkwavesScheduled();
           }
         }
