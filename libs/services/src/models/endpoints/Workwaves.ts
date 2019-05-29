@@ -61,6 +61,13 @@ export namespace WorkwaveModel {
     errors: any;
   }
 
+  export interface ResponseDestroyTask {
+    data: any;
+    message: string;
+    code: number;
+    errors: any;
+  }
+
   export interface ErrorResponse {
     errors: string;
     message: string;
