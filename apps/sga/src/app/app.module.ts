@@ -14,6 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { ServicesModule } from '@suite/services';
+import { PipesModule } from "../../../../libs/pipes/src";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
@@ -30,6 +31,7 @@ import {IncidencesListModule} from "../../../../libs/modules/src/incidences-list
     IonicStorageModule.forRoot(),
     AppRoutingModule,
     ServicesModule,
+    PipesModule,
     BrowserAnimationsModule,
     MatDialogModule,
     ScannerConfigurationModule,
