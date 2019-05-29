@@ -19,7 +19,10 @@ export namespace InventoryModel {
     "originContainer": any,
     "destinationWarehouse": any,
     "destinationRack": any,
-    "destinationContainer": any
+    "destinationContainer": any,
+    "warehouse": any,
+    "rack": any,
+    "container": any
   }
 
   export interface ResponseIndex {

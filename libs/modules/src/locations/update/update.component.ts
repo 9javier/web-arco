@@ -57,8 +57,6 @@ export class UpdateComponent implements OnInit {
     this.container = this.navParams.data.container;
     this.warehouseId = this.navParams.data.warehouseId;
     this.title += this.container.column + ' . ' + this.container.row;
-    this.loadProducts();
-    this.loadProductsHistory();
 
     this.listWarehouses = this.warehouseService.listWarehouses;
     this.listHallsOriginal = this.warehouseService.listHalls;
@@ -67,6 +65,9 @@ export class UpdateComponent implements OnInit {
     this.listReferences = this.warehouseService.listReferences;
 
     this.warehouseSelected = null;
+
+    this.loadProducts();
+    this.loadProductsHistory();
   }
 
   goToList() {
@@ -84,9 +85,25 @@ export class UpdateComponent implements OnInit {
                 id: product.productShoeUnit.id,
                 reference: product.productShoeUnit.reference,
                 status: product.status,
-                name: 'Producto - ' + product.productShoeUnit.reference
+                name: 'Producto - ' + product.productShoeUnit.reference,
+                warehouseId: product.warehouse.id,
+                rackId: product.rack.id,
+                containerId: product.container.id,
+                hall: product.rack.hall,
+                row: product.container.row,
+                column: product.container.column,
               }
             });
+          if (this.listProducts && this.listProducts.length) {
+            this.warehouseSelected = this.listProducts[0].warehouseId;
+            this.changeSelect(1);
+            this.hallSelected = this.listProducts[0].rackId;
+            this.changeSelect(2);
+            this.rowSelected = this.listProducts[0].row;
+            this.changeSelect(3);
+            this.columnSelected = this.listProducts[0].column;
+            this.changeSelect(4);
+          }
         });
       });
   }
