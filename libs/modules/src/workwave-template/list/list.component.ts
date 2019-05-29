@@ -44,44 +44,53 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         name: this.templateToEdit.name || 'Tarea programada // '+this.templateToEdit.id,
         id: this.templateToEdit.id
       };
-      for (let warehouse of this.templateToEdit.warehouses) {
-        for (let store of this.listStoresTemplates) {
-          if (warehouse.warehouse.id == store.warehouseId) {
-            store.thresholdConsolidated = warehouse.thresholdConsolidated;
-            store.thresholdShippingStore = warehouse.thresholdShippingStore;
-            store.typePacking = ''+warehouse.typePacking;
-            store.typeGeneration = ''+warehouse.typeGeneration;
-            store.typeShippingOrder = warehouse.typeShippingOrder;
-            store.thresholdConsolidated = warehouse.thresholdConsolidated;
-            store.checked = true;
-            switch (store.typeShippingOrder) {
-              case 1:
-                store.replace = '1';
-                break;
-              case 2:
-                store.allocate = '1';
-                break;
-              case 3:
-                store.replace = '2';
-                store.allocate = '2';
-                break;
-              case 4:
-                store.replace = '1';
-                store.allocate = '2';
-                break;
-              case 5:
-                store.replace = '2';
-                store.allocate = '1';
-                break;
-            }
-          }
-        }
-      }
+      this.initializeStoresListWithEditTemplate();
     } else {
       this.template = {
         name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Tarea Programada'),
         id: null
       };
+    }
+  }
+
+  initializeStoresListWithEditTemplate() {
+    for (let warehouse of this.templateToEdit.warehouses) {
+      for (let store of this.listStoresTemplates) {
+        if (warehouse.warehouse.id == store.warehouseId) {
+          store.thresholdConsolidated = warehouse.thresholdConsolidated;
+          store.thresholdShippingStore = warehouse.thresholdShippingStore;
+          store.typePacking = ''+warehouse.typePacking;
+          store.typeGeneration = ''+warehouse.typeGeneration;
+          store.typeShippingOrder = warehouse.typeShippingOrder;
+          store.thresholdConsolidated = warehouse.thresholdConsolidated;
+          store.checked = true;
+          store.errorTypeShippingOrder = false;
+          store.errorThresholdConsolidated = false;
+          store.errorThresholdShippingStore = false;
+          store.errorTypeGeneration = false;
+          store.errorTypePacking = false;
+          switch (store.typeShippingOrder) {
+            case 1:
+              store.replace = '1';
+              break;
+            case 2:
+              store.allocate = '1';
+              break;
+            case 3:
+              store.replace = '2';
+              store.allocate = '2';
+              break;
+            case 4:
+              store.replace = '1';
+              store.allocate = '2';
+              break;
+            case 5:
+              store.replace = '2';
+              store.allocate = '1';
+              break;
+          }
+        }
+      }
     }
   }
 
@@ -218,6 +227,24 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       delete data.store.errorThresholdShippingStore;
       delete data.store.errorTypeGeneration;
       delete data.store.errorTypePacking;
+    }
+  }
+
+  clearAllFields() {
+    for (let store of this.listStoresTemplates) {
+      store.checked = false;
+      store.thresholdConsolidated = 0;
+      store.thresholdShippingStore = 0;
+      store.replace = '';
+      store.allocate = '';
+      store.typeGeneration = '';
+      store.typePacking = '';
+      store.typeShippingOrder = 0;
+      delete store.errorTypeShippingOrder;
+      delete store.errorThresholdConsolidated;
+      delete store.errorThresholdShippingStore;
+      delete store.errorTypeGeneration;
+      delete store.errorTypePacking;
     }
   }
 
