@@ -10,8 +10,6 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
 
   @Input() workwaveScheduled: any;
 
-  checked: boolean = false;
-
   constructor() {}
 
   ngOnInit() {}

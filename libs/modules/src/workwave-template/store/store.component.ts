@@ -6,6 +6,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
+import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'suite-store',
@@ -19,7 +20,6 @@ export class StoreComponent implements OnInit {
   public workwave: WorkwaveModel.Workwave;
   public typeWorkwave: number;
   public listStores: any[];
-  public dateStart;
 
   public loading = null;
   public editing: boolean = false;
@@ -74,21 +74,20 @@ export class StoreComponent implements OnInit {
 
   saveWorkwave() {
     if (!this.loading) {
-      this.showLoading((this.editing ? 'Creando' : 'Editando') +' ola de trabajo...').then(() => {
-        this.workwave.active = true;
-
+      this.showLoading((this.editing ? 'Editando' : 'Creando') +' ola de trabajo...').then(() => {
         let workwaveStore: any = {};
         workwaveStore.warehouses = this.listStores;
 
         if (this.workwaveType == 'schedule') {
           workwaveStore.type = 2;
-          this.workwave.date = this.dateTimeParserService.globalFormat(this.workwave.date);
+          this.workwave.date = this.dateTimeParserService.globalFormat(this.workwave.dateForm.value);
           if (this.workwave.everyday) {
             this.workwave.date = this.dateTimeParserService.nowGlobalFormat();
           }
           workwaveStore.date = this.workwave.date;
           workwaveStore.time = this.workwave.time;
           workwaveStore.everyday = this.workwave.everyday;
+          workwaveStore.active = true;
         } else if (this.workwaveType == 'template') {
           workwaveStore.name = this.workwave.name;
           workwaveStore.description = this.workwave.description;
@@ -173,7 +172,7 @@ export class StoreComponent implements OnInit {
 
   workwaveOk() {
     if (this.workwaveType == 'schedule') {
-      if (this.workwave.time && (this.workwave.date || this.workwave.everyday)) {
+      if (this.workwave.time && (this.workwave.dateForm.value || this.workwave.everyday)) {
         return false;
       }
     } else if (this.workwaveType == 'template') {
@@ -191,7 +190,14 @@ export class StoreComponent implements OnInit {
       if (this.typeWorkwave == 2) {
         this.workwave.name = null;
         this.workwave.description = null;
+        if (this.editing) {
+          this.workwave.date = this.dateTimeParserService.dateMonthYear(this.workwave.releaseDate);
+          this.workwave.dateForm = new FormControl(new Date(this.dateTimeParserService.dateMonthYear(this.workwave.releaseDate)));
+          this.workwave.time = this.dateTimeParserService.hourMinute(this.workwave.releaseDate);
+          this.workwave.everyday = this.workwave.type == 4;
+        }
       } else if (this.typeWorkwave == 3) {
+        this.workwave.dateForm = new FormControl();
         this.workwave.date = null;
         this.workwave.time = null;
         this.workwave.everyday = false;
@@ -200,10 +206,12 @@ export class StoreComponent implements OnInit {
         this.workwave.description = null;
         this.workwave.everyday = true;
         this.workwave.date = null;
+        this.workwave.dateForm = new FormControl();
       }
     } else {
       this.workwave.name = null;
       this.workwave.description = null;
+      this.workwave.dateForm = new FormControl();
       this.workwave.date = null;
       this.workwave.time = null;
       this.workwave.everyday = false;

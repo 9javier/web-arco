@@ -51,9 +51,9 @@
           <ion-icon name="calendar"></ion-icon>
         </div>
         <div class="field">
-          <input matInput [matDatepicker]="datePicker" placeholder="Ej. 21/05/2019" class="input-date" [disabled]="workwave.everyday" [(ngModel)]="workwave.date">
+          <input matInput [matDatepicker]="datePicker" placeholder="Ej. 21/05/2019" class="input-date" [disabled]="workwave.everyday" [formControl]="workwave.dateForm">
           <mat-datepicker-toggle matSuffix [for]="datePicker" class="toggle-date"></mat-datepicker-toggle>
-          <mat-datepicker #datePicker></mat-datepicker>
+          <mat-datepicker #datePicker [startAt]="workwave.dateForm"></mat-datepicker>
         </div>
       </ion-item>
     </ion-col>
