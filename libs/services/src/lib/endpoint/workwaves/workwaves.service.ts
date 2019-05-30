@@ -20,6 +20,7 @@ export const PATH_DELETE_DESTROY_TEMPLATE: string = PATH('Workwaves', 'Destroy T
 export class WorkwavesService {
 
   private _lastWorkwaveEdited: any = null;
+  private _lastWorkwaveHistoryQueried: any = null;
 
   constructor(
     private http: HttpClient,
@@ -128,6 +129,14 @@ export class WorkwavesService {
 
   set lastWorkwaveEdited(value: any) {
     this._lastWorkwaveEdited = value;
+  }
+
+  get lastWorkwaveHistoryQueried(): any {
+    return this._lastWorkwaveHistoryQueried;
+  }
+
+  set lastWorkwaveHistoryQueried(value: any) {
+    this._lastWorkwaveHistoryQueried = value;
   }
 
   private filterWorkwave(object: any) {

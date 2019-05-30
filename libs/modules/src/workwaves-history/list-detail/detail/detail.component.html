@@ -1,0 +1,55 @@
+<mat-grid-list cols="12" rowHeight="64px">
+  <mat-grid-tile colspan="4" rowspan="1" class="border-bottom border-right">
+    <div class="tile-value">{{warehouseWorkwaveHistory.name}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <div>
+      <input class="input-quantities" placeholder="Consolidated" [value]="warehouseWorkwaveHistory.thresholdConsolidated" type="number" disabled>
+    </div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <div>
+      <input class="input-quantities" placeholder="Shipping" [value]="warehouseWorkwaveHistory.thresholdShippingStore" type="number" disabled>
+    </div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'replace'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.replace" disabled>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'allocate'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.allocate" disabled>
+      <mat-radio-button value="1"></mat-radio-button>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'selection'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.typeGeneration" disabled>
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'selection'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.typeGeneration" disabled>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
+    <mat-radio-group [name]="'packing'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.typePacking" disabled>
+      <mat-radio-button value="1"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
+    <mat-radio-group [name]="'packing'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.typePacking" disabled>
+      <mat-radio-button value="2"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+</mat-grid-list>

@@ -3,6 +3,7 @@ import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/
 import {Observable} from "rxjs";
 import {HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwaves-history',
@@ -14,7 +15,8 @@ export class ListWorkwavesHistoryComponent implements OnInit {
   public workwavesHistory: any[] = [];
 
   constructor(
-    private workwavesService: WorkwavesService
+    private workwavesService: WorkwavesService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -29,6 +31,12 @@ export class ListWorkwavesHistoryComponent implements OnInit {
           this.workwavesHistory = res.body.data;
         });
       });
+  }
+
+  showWorkwaveDetail(workwave) {
+    this.workwavesService.lastWorkwaveHistoryQueried = workwave;
+
+    this.router.navigate(['workwaves-history/detail']);
   }
 
 }
