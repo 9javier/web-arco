@@ -26,6 +26,11 @@ interface MenuItem {
 export class AppComponent implements OnInit {
   public appPages: MenuItem[] = [
     {
+      title: 'Productos',
+      url: '/products',
+      icon: 'basket'
+    },
+    {
       title: 'Gestión de almacén',
       url: '/warehouse/manage',
       icon: 'apps'
@@ -36,10 +41,20 @@ export class AppComponent implements OnInit {
       url: 'positioning'
     },
     {
+      title: 'Jaulas',
+      url: '/jails/menu',
+      icon: 'grid'
+    },
+    {
+      title: 'Palets',
+      url: '/pallets/menu',
+      icon: 'cube'
+    },
+    {
       title: 'Logout',
       url: '/home',
       icon: 'log-out'
-    }
+    },
   ];
 
   displaySmallSidebar = false;
