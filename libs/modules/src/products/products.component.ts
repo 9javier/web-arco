@@ -38,7 +38,6 @@ export class ProductsComponent implements OnInit {
    */
   getColors():void{
     this.filterServices.getColors().subscribe(colors=>{
-      alert(colors.length);
     });
   }
 
