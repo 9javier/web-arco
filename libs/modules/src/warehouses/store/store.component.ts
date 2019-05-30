@@ -43,7 +43,6 @@ export class StoreComponent implements OnInit {
       let store = this.createForm.get("groupId")
       store.clearValidators();
       store.setValue("");
-      store.setValidators(isStore?[Validators.required]:[]);
       this.cd.detectChanges();
     });
 
