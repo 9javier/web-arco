@@ -21,7 +21,9 @@ export class UpdateComponent implements OnInit {
     groupId:'',
     is_main: [false, []],
     has_racks: [false, []],
-    halls:''
+    halls:'',
+    rows:'',
+    columns:''
   });
   private warehouseId;
 
@@ -48,6 +50,7 @@ export class UpdateComponent implements OnInit {
       let store = this.updateForm.get("groupId")
       store.clearValidators();
       store.setValue("");
+      store.setValidators(isStore?[Validators.required]:[]);
       this.cd.detectChanges();
     });
     /**Listen for changes in has_racks control */
