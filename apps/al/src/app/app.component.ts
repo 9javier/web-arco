@@ -105,15 +105,18 @@ export class AppComponent implements OnInit {
               data.subscribe((res: HttpResponse<any>) => {
                 // Load of main warehouse in memory
                 this.warehouseService.idWarehouseMain = res.body.data.id;
-                this.router.navigate(['warehouse/manage']).then(success => {
-                  this.showMainHeader = true;
-                  this.menu.enable(true, 'sidebar');
-                  if (this.platform.is('android')) {
-                    this.scanditService.setApiKey(environment.scandit_api_key);
-                  }
-                });
               });
-            });
+            })
+            .catch((possibleMainWarehouse404Error) => {})
+            .then(() => this.router.navigate(['warehouse/manage'])
+              .then(success => {
+                this.showMainHeader = true;
+                this.menu.enable(true, 'sidebar');
+                if (this.platform.is('android')) {
+                  this.scanditService.setApiKey(environment.scandit_api_key);
+                }
+              })
+          );
         } else {
           this.router.navigate(['login']);
           this.showMainHeader = false;

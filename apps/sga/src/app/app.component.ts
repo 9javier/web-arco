@@ -190,12 +190,14 @@ export class AppComponent implements OnInit {
                 this.warehouseService.idWarehouseMain = res.body.data.id;
                 // Load in array only warehouses with racks
                 this.warehouseService.loadWarehousesWithRacks();
-                this.router.navigate(['products']).then(sucess => {
-                  this.showMainHeader = true;
-                  this.menu.enable(true, 'sidebar');
-                });
               });
-            });
+            })
+            .catch((possibleMainWarehouse404Error) => {})
+            .then(() => this.router.navigate(['products']).then(sucess => {
+                this.showMainHeader = true;
+                this.menu.enable(true, 'sidebar');
+              })
+            );
         } else {
           this.menu.enable(false, 'sidebar');
           this.showMainHeader = false;
