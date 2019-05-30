@@ -41,13 +41,13 @@ export class ListWorkwaveTemplateComponent implements OnInit {
 
     if (this.templateToEdit) {
       this.template = {
-        name: this.templateToEdit.name || 'Tarea programada // '+this.templateToEdit.id,
+        name: this.templateToEdit.name || 'Ola de trabajo // '+this.templateToEdit.id,
         id: this.templateToEdit.id
       };
       this.initializeStoresListWithEditTemplate();
     } else {
       this.template = {
-        name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Tarea Programada'),
+        name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Ola de trabajo'),
         id: null
       };
     }
