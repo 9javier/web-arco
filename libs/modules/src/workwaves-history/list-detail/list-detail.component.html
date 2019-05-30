@@ -1,0 +1,8 @@
+<h2 class="workwave-title">
+  <span (click)="goPreviousPage()" class="return-workwaves">← Historial</span><span class="date-workwave">Ejecutada {{dateExecutedParsedLong()}}</span>
+</h2>
+
+<div class="scroll-list">
+  <title-detail-history></title-detail-history>
+  <detail-history *ngFor="let warehouse of workwaveHistory.warehouses" [warehouseWorkwaveHistory]="warehouse"></detail-history>
+</div>
