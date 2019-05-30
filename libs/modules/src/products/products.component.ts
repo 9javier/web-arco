@@ -3,7 +3,8 @@ import {MatPaginator, MatTableDataSource} from '@angular/material';
 
 import {
   ProductModel,
-  ProductsService
+  ProductsService,
+  FiltersService
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
@@ -23,11 +24,22 @@ export class ProductsComponent implements OnInit {
   //@ViewChild(MatSort) sort: MatSort;
 
   constructor(
+    private filterServices:FiltersService,
     private productsService: ProductsService,
   ) {}
 
   ngOnInit() {
     this.initProducts();
+    this.getColors();
+  }
+
+  /**
+   * get colors to using in filters
+   */
+  getColors():void{
+    this.filterServices.getColors().subscribe(colors=>{
+      alert(colors.length);
+    });
   }
 
   initProducts(){

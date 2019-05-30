@@ -20,6 +20,7 @@ import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
 import {IncidencesButtonModule, ScannerConfigurationModule} from "@suite/common-modules";
 import {IncidencesListModule} from "../../../../libs/modules/src/incidences-list/incidences-list.module";
+import { AddTokenToRequestInterceptor } from '@suite/services';
 
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -42,6 +43,11 @@ import {IncidencesListModule} from "../../../../libs/modules/src/incidences-list
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AddTokenToRequestInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpInterceptorService,

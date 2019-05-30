@@ -13,6 +13,9 @@ export * from './lib/endpoint/permissions/permissions.service';
 export * from './models/endpoints/UsersProcesses';
 export * from './lib/endpoint/user-processes/user-processes.service';
 
+/**Interceptor token */
+export * from './lib/interceptors/addTokenToRequestInterceptor';
+
 /**Warehouse maps */
 export * from './models/endpoints/warehouse-maps';
 export * from './lib/endpoint/warehouse-maps/warehouse-maps.service';
@@ -64,3 +67,7 @@ export * from './lib/endpoint/acl/acl.service';
 
 /** UserProcesses*/
 export * from './models/endpoints/UserProcesses';
+
+/** Filters */
+export * from './models/endpoints/filters';
+export * from './lib/endpoint/filters/filters.service';
