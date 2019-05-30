@@ -21,9 +21,7 @@ export class UpdateComponent implements OnInit {
     groupId:'',
     is_main: [false, []],
     has_racks: [false, []],
-    halls:'',
-    rows:'',
-    columns:''
+    halls:''
   });
   private warehouseId;
 
@@ -76,6 +74,7 @@ export class UpdateComponent implements OnInit {
       /**the models in backend differs then the model is useless */
       let warehouseToPatch:any = warehouse;
       warehouseToPatch.groupId = warehouseToPatch.group.id;
+      warehouseToPatch.halls = 5;
       this.updateForm.patchValue(warehouseToPatch);
     })
   }
