@@ -121,13 +121,13 @@
   <ng-template #historyContainer let-lessonsCounter="estimate">
     <mat-accordion class="accordion-history">
       <mat-expansion-panel *ngFor="let productHistory of listHistory">
-        <mat-expansion-panel-header>
+        <mat-expansion-panel-header class="header-history">
           <mat-panel-title>
-            {{productHistory.reference}}
+            {{productHistory.reference ? ('Referencia: '+productHistory.reference) : ''}}<br *ngIf="productHistory.reference"/>
+            {{productHistory.date_upd ? ('Fecha: '+showDateTime(productHistory.date_upd)) : ''}}<br *ngIf="productHistory.date_upd"/>
+            {{productHistory.origin_rack ? ('Posición origen: '+productHistory.origin_rack.hall+'.'+productHistory.origin_container.column+'.'+productHistory.origin_container.row) : ''}}<br *ngIf="productHistory.origin_rack"/>
+            {{productHistory.destination_rack ? ('Posición destino: '+productHistory.destination_rack.hall+'.'+productHistory.destination_container.column+'.'+productHistory.destination_container.row) : ''}}
           </mat-panel-title>
-          <mat-panel-description>
-            {{showTimeFromNow(productHistory.date_upd)}}
-          </mat-panel-description>
         </mat-expansion-panel-header>
 
         <p>Almacén de origen:

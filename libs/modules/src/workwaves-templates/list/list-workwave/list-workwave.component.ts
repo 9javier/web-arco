@@ -9,7 +9,6 @@ import * as moment from 'moment';
 export class WorkwaveListWorkwavesTemplateComponent implements OnInit {
 
   @Input() workwaveTemplate: any;
-  checked: boolean = false;
 
   constructor() {}
 

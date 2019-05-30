@@ -35,7 +35,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         allocate: '',
         typeGeneration: '',
         typePacking: '',
-        typeShippingOrder: 1
+        typeShippingOrder: 0
       }
     });
 
@@ -44,44 +44,53 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         name: this.templateToEdit.name || 'Tarea programada // '+this.templateToEdit.id,
         id: this.templateToEdit.id
       };
-      for (let warehouse of this.templateToEdit.warehouses) {
-        for (let store of this.listStoresTemplates) {
-          if (warehouse.warehouse.id == store.warehouseId) {
-            store.thresholdConsolidated = warehouse.thresholdConsolidated;
-            store.thresholdShippingStore = warehouse.thresholdShippingStore;
-            store.typePacking = ''+warehouse.typePacking;
-            store.typeGeneration = ''+warehouse.typeGeneration;
-            store.typeShippingOrder = warehouse.typeShippingOrder;
-            store.thresholdConsolidated = warehouse.thresholdConsolidated;
-            store.checked = true;
-            switch (store.typeShippingOrder) {
-              case 1:
-                store.replace = '1';
-                break;
-              case 2:
-                store.allocate = '1';
-                break;
-              case 3:
-                store.replace = '2';
-                store.allocate = '2';
-                break;
-              case 4:
-                store.replace = '1';
-                store.allocate = '2';
-                break;
-              case 5:
-                store.replace = '2';
-                store.allocate = '1';
-                break;
-            }
-          }
-        }
-      }
+      this.initializeStoresListWithEditTemplate();
     } else {
       this.template = {
         name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Tarea Programada'),
         id: null
       };
+    }
+  }
+
+  initializeStoresListWithEditTemplate() {
+    for (let warehouse of this.templateToEdit.warehouses) {
+      for (let store of this.listStoresTemplates) {
+        if (warehouse.warehouse.id == store.warehouseId) {
+          store.thresholdConsolidated = warehouse.thresholdConsolidated;
+          store.thresholdShippingStore = warehouse.thresholdShippingStore;
+          store.typePacking = ''+warehouse.typePacking;
+          store.typeGeneration = ''+warehouse.typeGeneration;
+          store.typeShippingOrder = warehouse.typeShippingOrder;
+          store.thresholdConsolidated = warehouse.thresholdConsolidated;
+          store.checked = true;
+          store.errorTypeShippingOrder = false;
+          store.errorThresholdConsolidated = false;
+          store.errorThresholdShippingStore = false;
+          store.errorTypeGeneration = false;
+          store.errorTypePacking = false;
+          switch (store.typeShippingOrder) {
+            case 1:
+              store.replace = '1';
+              break;
+            case 2:
+              store.allocate = '1';
+              break;
+            case 3:
+              store.replace = '2';
+              store.allocate = '2';
+              break;
+            case 4:
+              store.replace = '1';
+              store.allocate = '2';
+              break;
+            case 5:
+              store.replace = '2';
+              store.allocate = '1';
+              break;
+          }
+        }
+      }
     }
   }
 
@@ -94,6 +103,55 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       const alert = await this.alertController.create({
         subHeader: 'Atención',
         message: 'Debe seleccionar alguna tienda para poder crear la Ola de Trabajo',
+        buttons: ['Cerrar']
+      });
+      return await alert.present();
+    }
+
+    let someError: boolean = false;
+
+    for (let store of storesToSetInWorkwave) {
+      if (!store.thresholdConsolidated || store.thresholdConsolidated == 0) {
+        store.errorThresholdConsolidated = true;
+        someError = true;
+      } else {
+        store.errorThresholdConsolidated = false;
+        delete store.errorThresholdConsolidated;
+      }
+      if (!store.thresholdShippingStore || store.thresholdShippingStore == 0) {
+        store.errorThresholdShippingStore = true;
+        someError = true;
+      } else {
+        store.errorThresholdShippingStore = false;
+        delete store.errorThresholdShippingStore;
+      }
+      if (!store.typeShippingOrder || store.typeShippingOrder == 0) {
+        store.errorTypeShippingOrder = true;
+        someError = true;
+      } else {
+        store.errorTypeShippingOrder = false;
+        delete store.errorTypeShippingOrder;
+      }
+      if (!store.typeGeneration || store.typeGeneration == '') {
+        store.errorTypeGeneration = true;
+        someError = true;
+      } else {
+        store.errorTypeGeneration = false;
+        delete store.errorTypeGeneration;
+      }
+      if (!store.typePacking || store.typePacking == '') {
+        store.errorTypePacking = true;
+        someError = true;
+      } else {
+        store.errorTypePacking = false;
+        delete store.errorTypePacking;
+      }
+    }
+
+    if (someError) {
+      const alert = await this.alertController.create({
+        subHeader: 'Atención',
+        message: 'Necesita completar todos los campos para cada tienda',
         buttons: ['Cerrar']
       });
       return await alert.present();
@@ -146,6 +204,47 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       } else if (data.store.replace == '2' && data.store.allocate == '1') {
         data.store.typeShippingOrder = 5;
       }
+    }
+
+    if (data.field == 'replace' || data.field == 'allocate') {
+      delete data.store.errorTypeShippingOrder;
+    }
+    if (data.field == 'consolidated' && data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) {
+      delete data.store.errorThresholdConsolidated;
+    }
+    if (data.field == 'shipping' && data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) {
+      delete data.store.errorThresholdShippingStore;
+    }
+    if (data.field == 'selection') {
+      delete data.store.errorTypeGeneration;
+    }
+    if (data.field == 'packing') {
+      delete data.store.errorTypePacking;
+    }
+    if (data.field == 'check' && !data.store.checked) {
+      delete data.store.errorTypeShippingOrder;
+      delete data.store.errorThresholdConsolidated;
+      delete data.store.errorThresholdShippingStore;
+      delete data.store.errorTypeGeneration;
+      delete data.store.errorTypePacking;
+    }
+  }
+
+  clearAllFields() {
+    for (let store of this.listStoresTemplates) {
+      store.checked = false;
+      store.thresholdConsolidated = 0;
+      store.thresholdShippingStore = 0;
+      store.replace = '';
+      store.allocate = '';
+      store.typeGeneration = '';
+      store.typePacking = '';
+      store.typeShippingOrder = 0;
+      delete store.errorTypeShippingOrder;
+      delete store.errorThresholdConsolidated;
+      delete store.errorThresholdShippingStore;
+      delete store.errorTypeGeneration;
+      delete store.errorTypePacking;
     }
   }
 

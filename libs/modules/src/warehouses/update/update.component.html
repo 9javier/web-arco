@@ -45,11 +45,11 @@
             </ion-label>
         </ion-item>
         <!--Tiendas-->
-        <ion-item *ngIf="updateForm.value.is_store">
+        <ion-item *ngIf="updateForm.value.is_store && groups && groups.length">
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name=""></ion-icon>
             </div>
-            <ion-select placeholder="Tiendas" formControlName="groupId" okText="Ok" cancelText="Cancelar">
+            <ion-select placeholder="Grupo" formControlName="groupId" okText="Ok" cancelText="Cancelar">
                 <ion-select-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</ion-select-option>
             </ion-select>
         </ion-item>

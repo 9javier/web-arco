@@ -56,7 +56,7 @@ export class UpdateComponent implements OnInit {
   ngOnInit() {
     this.container = this.navParams.data.container;
     this.warehouseId = this.navParams.data.warehouseId;
-    this.title += this.container.column + ' . ' + this.container.row;
+    this.title += this.container.reference;
 
     this.listWarehouses = this.warehouseService.listWarehouses;
     this.listHallsOriginal = this.warehouseService.listHalls;
@@ -123,7 +123,11 @@ export class UpdateComponent implements OnInit {
                 date_add: productHistory.createdAt,
                 date_upd: productHistory.updatedAt,
                 origin_warehouse: productHistory.originWarehouse,
+                origin_rack: productHistory.originRack,
+                origin_container: productHistory.originContainer,
                 destination_warehouse: productHistory.destinationWarehouse,
+                destination_rack: productHistory.destinationRack,
+                destination_container: productHistory.destinationContainer,
                 user: productHistory.logUser,
                 errors: 'Ninguno'
               }

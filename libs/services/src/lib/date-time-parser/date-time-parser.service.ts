@@ -37,4 +37,14 @@ export class DateTimeParserService {
     return moment().format();
   }
 
+  public dateMonthYear(dateToFormat) : string {
+    this.setLocale('en');
+    return moment(dateToFormat).format('l');
+  }
+
+  public hourMinute(timeToFormat) : string {
+    this.setLocale(null);
+    return moment(timeToFormat).format('LT');
+  }
+
 }

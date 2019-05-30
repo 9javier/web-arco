@@ -11,11 +11,16 @@ export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates
 export const PATH_GET_LIST_SCHEDULED: string = PATH('Workwaves', 'Index');
 export const PATH_POST_UPDATE_WORKWAVE: string = PATH('Workwaves', 'Update').slice(0, -1);
 export const PATH_GET_LIST_EXECUTED: string = PATH('Workwaves', 'List Executed');
+export const PATH_DELETE_DESTROY_TASK: string = PATH('Workwaves', 'Destroy Task').slice(0, -1);
+export const PATH_DELETE_DESTROY_TEMPLATE: string = PATH('Workwaves', 'Destroy Template').slice(0, -1);
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkwavesService {
+
+  private _lastWorkwaveEdited: any = null;
+
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService
@@ -89,6 +94,40 @@ export class WorkwavesService {
         headers: headers,
         observe: 'response'
       });
+  }
+
+  async deleteDestroyTask(
+    workwaveId: number
+  ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseDestroyTask>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    return this.http.delete<WorkwaveModel.ResponseDestroyTask>(`${PATH_DELETE_DESTROY_TASK}${workwaveId}`,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  async deleteDestroyTemplate(
+    workwaveId: number
+  ): Promise<Observable<HttpResponse<WorkwaveModel.ResponseDestroyTemplate>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+
+    return this.http.delete<WorkwaveModel.ResponseDestroyTemplate>(`${PATH_DELETE_DESTROY_TEMPLATE}${workwaveId}`,
+      {
+        headers: headers,
+        observe: 'response'
+      });
+  }
+
+  get lastWorkwaveEdited(): any {
+    return this._lastWorkwaveEdited;
+  }
+
+  set lastWorkwaveEdited(value: any) {
+    this._lastWorkwaveEdited = value;
   }
 
   private filterWorkwave(object: any) {
