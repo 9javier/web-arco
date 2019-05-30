@@ -8,7 +8,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../../services/src/models/endpoints/Hall";
 import {HallsService} from "../../../../services/src/lib/endpoint/halls/halls.service";
 import {ActivatedRoute} from "@angular/router";
-import {ModalController, ToastController} from "@ionic/angular";
+import {ModalController, ToastController, NavParams} from "@ionic/angular";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
@@ -49,7 +49,6 @@ export class ListComponent implements OnInit {
     private warehouseService: WarehouseService,
     private modalController: ModalController
   ) {
-
   }
 
   @Input() title: string;
@@ -135,7 +134,8 @@ export class ListComponent implements OnInit {
    */
   async openEnableLockContainer():Promise<any>{
     let modal = await this.modalController.create({
-      component:EnableLockContainerComponent
+      component:EnableLockContainerComponent,
+      componentProps:{warehouseId:this.paramsReceived.params.id}
     });
     return modal.present();
   }

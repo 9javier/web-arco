@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { EnableLockContainerComponent } from '../enable-lock-container/enable-lock-container.component';
+import { ComponentsModule} from '../../../components/components.module';
 
 @NgModule({
   declarations: [EnableLockContainerComponent],
@@ -10,7 +11,8 @@ import { EnableLockContainerComponent } from '../enable-lock-container/enable-lo
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    FormsModule
+    FormsModule,
+    ComponentsModule
   ],
   entryComponents: [
     EnableLockContainerComponent
