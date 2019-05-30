@@ -66,10 +66,6 @@ public class MatrixSimpleActivity extends Activity {
     ScanSettings settings = ScanSettings.create();
     settings.setSymbologyEnabled(Barcode.SYMBOLOGY_CODE128, true);
     SymbologySettings symSettings128 = settings.getSymbologySettings(Barcode.SYMBOLOGY_CODE128);
-    short[] activeSymbolCounts = new short[]{
-      12, 14
-    };
-    symSettings128.setActiveSymbolCounts(activeSymbolCounts);
 
     settings.setMatrixScanEnabled(true);
     settings.setMaxNumberOfCodesPerFrame(1);
