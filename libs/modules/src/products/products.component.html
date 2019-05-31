@@ -82,7 +82,7 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        <tr mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns"></tr>
 
         <ng-container matColumnDef="reference">
             <th mat-header-cell *matHeaderCellDef>Referencia</th>

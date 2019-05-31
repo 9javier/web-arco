@@ -16,6 +16,9 @@ export namespace ProductModel {
     data: Product[];
   }
 
+  export interface ProductHistory{
+  }
+
   export interface ErrorResponseIndex {
     statusCode: number;
     status: number;
