@@ -5,6 +5,12 @@ export namespace Request{
         code: number;
         errors: any;
     }
+
+    export interface Paginator{
+        page: number,
+        limit: number,
+        totalResults: number
+    }
     
       export interface Error {
         errors: string;

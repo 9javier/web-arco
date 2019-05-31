@@ -7,6 +7,7 @@ import {PATH} from "../../../../../../config/base";
 import {TypeModel} from "../../../models/endpoints/Type";
 import { map,switchMap} from 'rxjs/operators';
 import { from } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export const PATH_GET_INDEX_ACTIONS: string = PATH('Types', 'Actions');
 //export const PATH_GET_INDEX_ACTIVITIES: string = PATH('Types', 'Activities');
@@ -29,6 +30,8 @@ export const PATH_GET_INDEX_STORE: string = PATH('Types', 'Store');
 })
 export class TypesService {
 
+  private getOrderProductTypesUrl = environment.apiBase+'/types/type-order-product';
+
   private types = {
     actions: [],
     activities: [],
@@ -45,6 +48,16 @@ export class TypesService {
     statusProduct: [],
     store: []
   };
+
+  /**
+   * Get types of order products to make an orderby
+   * @return types to make an orderby
+   */
+  getOrderProductTypes():Observable<Array<TypeModel.OrderProductType>>{
+    return this.http.get<TypeModel.ResponseOrderProductType>(this.getOrderProductTypesUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
 
   constructor(
     private http: HttpClient,
