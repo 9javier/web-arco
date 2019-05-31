@@ -1,0 +1,24 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Detalles del producto</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-segment [(ngModel)]="section">
+        <ion-segment-button value="information">
+            <ion-label>Información</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="historical">
+            <ion-label>Historia</ion-label>
+        </ion-segment-button>
+    </ion-segment>
+    <div *ngIf="section == 'information'"> {{product | json}}</div>
+    <div *ngIf="section == 'historical'"> {{productHistorical | json}}</div>
+</ion-content>
+<ion-footer>
+</ion-footer>

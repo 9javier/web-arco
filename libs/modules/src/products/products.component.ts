@@ -15,7 +15,11 @@ import {
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
+
 import { FormBuilder,FormGroup, FormControl } from '@angular/forms';
+
+import { ProductDetailsComponent } from './modals/product-details/product-details.component';
+import { ModalController } from '@ionic/angular';
 
 
 @Component({
@@ -69,6 +73,7 @@ export class ProductsComponent implements OnInit {
     private inventoryServices:InventoryService,
     private filterServices:FiltersService,
     private productsService: ProductsService,
+    private modalController:ModalController
   ) {}
 
     /**
@@ -150,6 +155,21 @@ export class ProductsComponent implements OnInit {
   }
 
   /**
+   * go to details modal
+   * @param id - the id of the product
+   */
+    async goDetails(product:InventoryModel.SearchInContainer){
+      console.log(product);
+      return (await this.modalController.create({
+        component:ProductDetailsComponent,
+        componentProps:{
+          product:product
+        }
+      })).present();
+    }
+
+
+  /**
    * get all filters to fill the selects
    */
   getFilters():void{
@@ -177,25 +197,6 @@ export class ProductsComponent implements OnInit {
     this.typeService.getOrderProductTypes().subscribe(ordertypes=>{
       this.groups = ordertypes;
     });
-  }
-
-  initProducts(){
-    Promise.all([
-      this.productsService.getIndex()
-    ]).then(
-      (data: any) => {
-        data[0].subscribe(
-          (res: HttpResponse<ProductModel.ResponseIndex>) => {
-            this.products = res.body.data;
-            this.dataSource = new MatTableDataSource<ProductModel.Product>(res.body.data);
-            this.dataSource.paginator = this.paginator;
-            console.log(this.products);
-          });
-      },
-      err => {
-        console.log(err);
-      }
-    );
   }
 }
 
