@@ -42,4 +42,17 @@ export class WarehouseMapsService {
     }));
   }
 
+  /**
+   * Get locations of warehouse
+   * @param id - the id of warehouse
+   */
+  getLocations(id):Observable<WarehouseMapsModel.LocationWarehouse[]> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers = new HttpHeaders({Authorization:token});
+      return this.http.get<WarehouseMapsModel.ResponseGetLocationsWarehouse>(this.configureLocationUrl.replace("{{id}}",id.toString()),{headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
 }

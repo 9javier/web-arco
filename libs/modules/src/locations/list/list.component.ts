@@ -14,6 +14,7 @@ import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
 import {LocationsComponent} from "@suite/common-modules";
+import {MoveProductsComponent} from "../modals/move-products/move-products.component";
 
 
 @Component({
@@ -381,5 +382,22 @@ export class ListComponent implements OnInit {
         this.reloadData();
       }, 10 * 1000);
     }
+  }
+
+  async openModalMoveProducts() {
+    const modal = await this.modalController.create({
+      component: MoveProductsComponent
+    });
+
+    modal.onDidDismiss()
+      .then(() => {
+        this.reloadData();
+        this.setIntervalForReload(2);
+      });
+
+    clearInterval(this.intervalReload);
+    this.intervalReload = null;
+
+    return await modal.present();
   }
 }

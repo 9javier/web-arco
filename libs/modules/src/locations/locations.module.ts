@@ -12,11 +12,12 @@ import {ListComponent} from "./list/list.component";
 import {HallsModule} from '../halls/halls.module';
 import { EnableLockContainerModule } from './modals/enable-lock-container/enable-lock-container.module';
 import { PipesModule } from "../../../pipes/src";
+import {MoveProductsComponent} from "./modals/move-products/move-products.component";
 
 
 
 @NgModule({
-  declarations: [LocationsComponent, UpdateComponent, ListComponent],
+  declarations: [LocationsComponent, UpdateComponent, ListComponent, MoveProductsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -34,7 +35,8 @@ import { PipesModule } from "../../../pipes/src";
     PipesModule
   ],
   entryComponents: [
-    ListComponent
+    ListComponent,
+    MoveProductsComponent
   ]
 })
 export class LocationsModule {}
