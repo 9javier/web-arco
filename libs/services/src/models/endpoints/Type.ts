@@ -15,6 +15,14 @@ export namespace TypeModel {
     data:Array<TypeProcess>;
   }
 
+  export interface OrderProductType{
+    id:number;
+    name:string;
+  }
+
+  export interface ResponseOrderProductType extends Request.Success{
+    data:Array<OrderProductType>;
+  }
 
   export interface TypeLoad {
     picking?: boolean;
