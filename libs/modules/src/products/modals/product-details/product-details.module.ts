@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { ProductDetailsComponent } from './product-details.component';
 
 
+
 @NgModule({
   declarations: [ProductDetailsComponent],
   imports: [
