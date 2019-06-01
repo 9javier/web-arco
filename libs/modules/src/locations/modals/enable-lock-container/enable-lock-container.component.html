@@ -32,13 +32,13 @@
             </ion-item>
         </ion-radio-group>
         <ion-item>
-            <ion-select placeholder="Pasillo" formControlName="hall">
+            <ion-select placeholder="Pasillo" formControlName="rackId">
                 <ion-select-option value="{{rack.id}}" *ngFor="let rack of racks">
                     {{rack.hall}}
                 </ion-select-option>
             </ion-select>
         </ion-item>
-        <ion-item *ngIf="form.value.hall">
+        <ion-item *ngIf="form.value.rackId">
             <ion-select placeholder="Altura" formControlName="row">
                 <ion-select-option value="{{row}}" *ngFor="let row of rows">{{row}}</ion-select-option>
             </ion-select>

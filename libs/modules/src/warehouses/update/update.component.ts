@@ -74,9 +74,10 @@ export class UpdateComponent implements OnInit {
   getWarehouse(id:number):void{
     this.warehousesService.getShow(id).subscribe(warehouse=>{
       /**the models in backend differs then the model is useless */
+
       let warehouseToPatch:any = warehouse;
-      warehouseToPatch.groupId = warehouseToPatch.group.id;
-      warehouseToPatch.halls = 5;
+      if(warehouse.group)
+        warehouseToPatch.groupId = warehouseToPatch.group.id;
       this.updateForm.patchValue(warehouseToPatch);
     })
   }

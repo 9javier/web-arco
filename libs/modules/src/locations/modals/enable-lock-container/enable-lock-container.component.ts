@@ -24,7 +24,7 @@ export class EnableLockContainerComponent implements OnInit {
   /**The form group to register the data */
   form:FormGroup = this.formBuilder.group({
     radio:['',[Validators.required]],
-    hall:'',
+    rackId:'',
     row:'',
     column:''
   });
@@ -43,7 +43,7 @@ export class EnableLockContainerComponent implements OnInit {
    * Change select options depends of rack value, and reset the values
    */
   changeSelectOptions():void{
-    this.form.get("hall").valueChanges.subscribe(value=>{
+    this.form.get("rackId").valueChanges.subscribe(value=>{
       this.form.get("row").setValue('');
       this.form.get('column').setValue('');
       this.columns = [];
