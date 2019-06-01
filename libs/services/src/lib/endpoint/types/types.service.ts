@@ -30,7 +30,9 @@ export const PATH_GET_INDEX_STORE: string = PATH('Types', 'Store');
 })
 export class TypesService {
 
+  /**Types url */
   private getOrderProductTypesUrl = environment.apiBase+'/types/type-order-product';
+  private getTypeActionsUrl = environment.apiBase+'/types/actions';
 
   private types = {
     actions: [],
@@ -55,6 +57,16 @@ export class TypesService {
    */
   getOrderProductTypes():Observable<Array<TypeModel.OrderProductType>>{
     return this.http.get<TypeModel.ResponseOrderProductType>(this.getOrderProductTypesUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  /**
+   * Get the type actions enum
+   * @return Observable with typeactions
+   */
+  getTypeActions():Observable<Array<TypeModel.TypeActions>>{
+    return this.http.get<TypeModel.ResponseTypeActions>(this.getTypeActionsUrl).pipe(map(response=>{
       return response.data;
     }));
   }
