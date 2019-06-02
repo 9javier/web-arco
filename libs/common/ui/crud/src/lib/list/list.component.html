@@ -1,90 +1,66 @@
-<ion-text color="primary">
-  <h1><span *ngIf="parentPage"><span (click)="goPreviousPage()" class="previous-page-link" style="cursor: pointer">{{parentPage}}</span> > </span>{{ title }}</h1>
-</ion-text>
+<suite-breadcrumb post="1"></suite-breadcrumb>
 
 <div class="example-container">
-<table mat-table [dataSource]="dataSource" class="">
-  <!-- Position Column -->
-  <ng-container *ngFor="let column of dataColumns" matColumnDef="{{column.value}}">
-    <th mat-header-cell *matHeaderCellDef>{{ column.name }}</th>
-    <td mat-cell *matCellDef="let element; let i = index">
-      {{ element[column.value] }}
-    </td>
-  </ng-container>
+    <table mat-table [dataSource]="dataSource" class="">
+        <!-- Position Column -->
+        <ng-container *ngFor="let column of dataColumns" matColumnDef="{{column.value}}">
+            <th mat-header-cell *matHeaderCellDef>{{ column.name }}</th>
+            <td mat-cell *matCellDef="let element; let i = index">
+                {{ element[column.value] }}
+            </td>
+        </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: displayedColumns"
-    (click)="goToUpdate(row)"
-    style="cursor: pointer"
-  ></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goToUpdate(row)" style="cursor: pointer"></tr>
 
-  <!-- Checkbox Column -->
-  <ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox
-        (change)="$event ? masterToggle() : null"
-        [checked]="selection.hasValue() && isAllSelected()"
-        [indeterminate]="selection.hasValue() && !isAllSelected()"
-        [aria-label]="checkboxLabel()"
-      >
-      </mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let row">
-      <mat-checkbox
-        (click)="$event.stopPropagation()"
-        (change)="$event ? checkSelection(row) : null"
-        [checked]="selection.isSelected(row)"
-        [aria-label]="checkboxLabel(row)"
-      >
-      </mat-checkbox>
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="buttons-warehouse">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let row">
-      <ion-button fill="outline" (click)="showWarehouseMaps($event, row)"><i class="material-icons">view_module</i></ion-button>
-      <ion-button fill="outline" (click)="showWarehousePoints($event, row)"><i class="material-icons">grid_on</i></ion-button>
-    </td>
-  </ng-container>
-  <ng-container matColumnDef="buttons-print">
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let row">
-      <ion-button fill="outline" (click)="print()"><i class="material-icons">print</i></ion-button>
-    </td>
-  </ng-container>
-</table>
+        <!-- Checkbox Column -->
+        <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()" [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+                </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row">
+                <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? checkSelection(row) : null" [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+                </mat-checkbox>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="buttons-warehouse">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+                <ion-button fill="outline" (click)="showWarehouseMaps($event, row)"><i class="material-icons">view_module</i></ion-button>
+                <ion-button fill="outline" (click)="showWarehousePoints($event, row)"><i class="material-icons">grid_on</i></ion-button>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="buttons-print">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let row">
+                <ion-button fill="outline" (click)="print()"><i class="material-icons">print</i></ion-button>
+            </td>
+        </ng-container>
+    </table>
 </div>
 
 <!-- fab placed to the bottom end -->
 <ion-row class="fab-row-actions">
-  <ion-col size="2" size-xs offset="8" offset-lg="10">
-    <ion-fab
-      *ngIf="showDeleteButton"
-      [@EnterLeave]="'flyIn'"
-      (click)="confirmDelete()"
-    >
-      <ion-fab-button color="light">
-        <ion-icon name="trash"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
-  <ion-col size="2" size-xs>
-    <ion-fab
-      *ngIf="showDeleteButton && printable"
-      [@EnterLeave]="'flyIn'"
-    >
-      <ion-fab-button color="light">
-        <ion-icon name="print"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
-  <ion-col size="2" size-xs>
-    <ion-fab>
-      <ion-fab-button (click)="goToStore()">
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-col>
+    <ion-col size="2" size-xs offset="8" offset-lg="10">
+        <ion-fab *ngIf="showDeleteButton" [@EnterLeave]="'flyIn'" (click)="confirmDelete()">
+            <ion-fab-button color="light">
+                <ion-icon name="trash"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+    </ion-col>
+    <ion-col size="2" size-xs>
+        <ion-fab *ngIf="showDeleteButton && printable" [@EnterLeave]="'flyIn'">
+            <ion-fab-button color="light">
+                <ion-icon name="print"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+    </ion-col>
+    <ion-col size="2" size-xs>
+        <ion-fab>
+            <ion-fab-button (click)="goToStore()">
+                <ion-icon name="add"></ion-icon>
+            </ion-fab-button>
+        </ion-fab>
+    </ion-col>
 </ion-row>
