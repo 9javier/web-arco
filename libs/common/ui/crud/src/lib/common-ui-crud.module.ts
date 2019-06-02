@@ -9,6 +9,7 @@ import { ListComponent } from './list/list.component';
 import { StoreComponent } from './list/store/store.component';
 import { UpdateComponent } from './list/update/update.component';
 import { MatListModule } from '@angular/material/list';
+import { BreadcrumbModule } from '../../../../../modules/src/components/breadcrumb/breadcrumb.module';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import { MatListModule } from '@angular/material/list';
     MatListModule,
     MatCheckboxModule,
     CdkTableModule,
+    BreadcrumbModule,
     RouterModule.forChild([{ path: '', component: ListComponent }])
   ],
   exports: [ListComponent, StoreComponent, UpdateComponent],
