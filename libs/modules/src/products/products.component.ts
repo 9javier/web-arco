@@ -111,8 +111,8 @@ export class ProductsComponent implements OnInit {
     this.warehouseService.getMain().subscribe(warehouse=>{
       this.form.get("warehouseId").patchValue(warehouse.id);
       this.searchInContainer(this.sanitize(this.form.value));
-      this.listenChanges();
-    })
+    });
+    this.listenChanges();
   }
 
   /**
