@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AuthenticationService } from '@suite/services';
+import { AuthenticationService } from '../../../../services/src/lib/endpoint/authentication/authentication.service';
 
 
 import { Router, ActivatedRoute, Route } from '@angular/router';
