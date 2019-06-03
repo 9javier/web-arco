@@ -188,6 +188,8 @@ export class AppComponent implements OnInit {
               data.subscribe((res: HttpResponse<any>) => {
                 // Load of main warehouse in memory
                 this.warehouseService.idWarehouseMain = res.body.data.id;
+                // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+                this.warehouseService.loadWarehousesData();
                 // Load in array only warehouses with racks
                 this.warehouseService.loadWarehousesWithRacks();
               });
