@@ -5,7 +5,7 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>Bloquear Container</ion-title>
+        <ion-title>Desactivar/bloquear ubicaciones</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -13,21 +13,21 @@
     <form [formGroup]="form">
         <ion-radio-group formControlName="radio">
             <ion-item>
-                <ion-label>Habilitar</ion-label>
+                <ion-label>Activar</ion-label>
                 <ion-radio slot="end" value="1"></ion-radio>
             </ion-item>
 
             <ion-item>
-                <ion-label>Deshabilitar</ion-label>
+                <ion-label>Desactivar</ion-label>
                 <ion-radio slot="end" value="2"></ion-radio>
             </ion-item>
 
             <ion-item>
-                <ion-label>Activar</ion-label>
+                <ion-label>Desbloquear</ion-label>
                 <ion-radio slot="end" value="3"></ion-radio>
             </ion-item>
             <ion-item>
-                <ion-label>bloquear</ion-label>
+                <ion-label>Bloquear</ion-label>
                 <ion-radio slot="end" value="4"></ion-radio>
             </ion-item>
         </ion-radio-group>
