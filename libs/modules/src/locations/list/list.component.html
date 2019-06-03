@@ -28,7 +28,9 @@
                     <table class="element-detail">
                         <tr *ngIf="detail.element.container && detail.element.container.length">
                             <td class="location-resume" (click)="selectAllLocations()">
-                                <div class="incidence-element-resume">*</div>
+                                <div class="incidence-element-resume">
+                                  <i class="material-icons">select_all</i>
+                                </div>
                             </td>
                             <td *ngFor="let column of detail.element.container[0]; let iColumn = index" class="location-resume" (click)="selectColumn($event, detail, detail.element.container, iColumn)">
                                 <div class="incidence-element-resume">{{column.column}}</div>
