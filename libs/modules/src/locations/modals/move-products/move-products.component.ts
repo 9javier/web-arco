@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {ModalController} from "@ionic/angular";
+import {LoadingController, ModalController, ToastController} from "@ionic/angular";
 import {WarehouseService} from "../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {WarehouseMapsModel, WarehouseMapsService} from "@suite/services";
 import {interval} from "rxjs";
+import {InventoryService} from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
+import {InventoryModel} from "../../../../../services/src/models/endpoints/Inventory";
 
 @Component({
   selector: 'suite-move-products',
@@ -41,16 +43,21 @@ export class MoveProductsComponent implements OnInit {
   listColumnsDestiny: any[] = [];
   listRowsDestiny: any[] = [];
   listLocationsWarehouseDestiny: WarehouseMapsModel.LocationWarehouse[] = [];
-  warehouseSelectedDestiny: any = {};
+  warehouseSelectedDestiny: any = null;
   positionSelectedDestiny: any;
   hallSelectedDestiny: number;
   columnSelectedDestiny: number;
   rowSelectedDestiny: number;
 
+  public loading = null;
+
   constructor(
     private modalController: ModalController,
+    private loadingController: LoadingController,
+    private toastController: ToastController,
     private warehouseService: WarehouseService,
-    private warehouseMapsService: WarehouseMapsService
+    private warehouseMapsService: WarehouseMapsService,
+    private inventoryService: InventoryService
   ) {}
 
   ngOnInit() {
@@ -99,18 +106,18 @@ export class MoveProductsComponent implements OnInit {
     switch (source) {
       case 1:
         this.listHalls = this.listHallsOriginal[this.warehouseSelectedOrigin];
-        this.hallSelected = this.listHalls[this.listHalls.length-1].id;
-        this.listRows = this.listRowsOriginal[this.warehouseSelectedOrigin][this.hallSelected];
-        this.rowSelected = this.listRows[0].row;
-        this.listColumns = this.listColumnsOriginal[this.warehouseSelectedOrigin][this.hallSelected][this.rowSelected];
-        this.columnSelected = this.listColumns[0].column;
+        this.hallSelectedOrigin = this.listHalls[this.listHalls.length-1].id;
+        this.listRows = this.listRowsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin];
+        this.rowSelectedOrigin = this.listRows[0].row;
+        this.listColumns = this.listColumnsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin][this.rowSelectedOrigin];
+        this.columnSelectedOrigin = this.listColumns[0].column;
         break;
       case 2:
-        this.listRows = this.listRowsOriginal[this.warehouseSelectedOrigin][this.hallSelected];
+        this.listRows = this.listRowsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin];
         let rowSelectedForColumn = this.listRows[0].row;
-        this.rowSelected = this.listRows[0].id;
-        this.listColumns = this.listColumnsOriginal[this.warehouseSelectedOrigin][this.hallSelected][rowSelectedForColumn];
-        this.columnSelected = this.listColumns[0].id;
+        this.rowSelectedOrigin = this.listRows[0].id;
+        this.listColumns = this.listColumnsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin][rowSelectedForColumn];
+        this.columnSelectedOrigin = this.listColumns[0].id;
         break;
     }
   }
@@ -172,6 +179,7 @@ export class MoveProductsComponent implements OnInit {
           this.rowSelectedDestiny = 0;
           this.columnSelectedDestiny = 0;
         }
+        this.positionSelectedDestiny = null;
         break;
       case 2:
         this.listHallsDestiny = this.listHallsOriginal[this.warehouseSelectedDestiny.id];
@@ -191,7 +199,7 @@ export class MoveProductsComponent implements OnInit {
         this.listColumnsDestiny = this.listColumnsOriginal[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny];
         this.columnSelectedDestiny = this.listColumnsDestiny[0].column;
         referenceContainer = this.listReferences[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny][this.columnSelectedDestiny];
-        for (let container of this.listLocationsWarehouseOrigin) {
+        for (let container of this.listLocationsWarehouseDestiny) {
           if (container.reference == referenceContainer) this.positionSelectedDestiny = container;
         }
         break;
@@ -199,31 +207,114 @@ export class MoveProductsComponent implements OnInit {
         this.listRowsDestiny = this.listRowsOriginal[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny];
         this.rowSelectedDestiny = this.listRowsDestiny[0].row;
         referenceContainer = this.listReferences[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny][this.columnSelectedDestiny];
-        for (let container of this.listLocationsWarehouseOrigin) {
+        for (let container of this.listLocationsWarehouseDestiny) {
           if (container.reference == referenceContainer) {
             this.positionSelectedDestiny = container;
-            return;
           }
         }
         break;
       case 5:
-        let loop = 0;
-        let interval = setInterval(() => {
-          loop++;
-          console.debug('Test::PositionSelectedDestiny -> ', this.positionSelectedDestiny);
-          if (loop == 10) {
-            clearInterval(interval);
-          }
-        }, 2 * 1000);
         referenceContainer = this.listReferences[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny][this.columnSelectedDestiny || 1];
-        for (let container of this.listLocationsWarehouseOrigin) {
+        for (let container of this.listLocationsWarehouseDestiny) {
           if (container.reference == referenceContainer) {
             this.positionSelectedDestiny = container;
-            return;
           }
         }
         break;
     }
+  }
+
+  moveProducts() {
+    let containersToMoveProducts: InventoryModel.InventoryProcessGlobal = {
+      origin: {
+        warehouseId: this.warehouseSelectedOrigin
+      },
+      destination: {
+        warehouseId: this.warehouseSelectedDestiny.id
+      }
+    };
+
+    switch (this.possibleMovementSelectedOrigin) {
+      case 2:
+        containersToMoveProducts.origin.containerReference = this.positionSelectedOrigin.reference;
+        break;
+      case 3:
+        containersToMoveProducts.origin.rackId = this.hallSelectedOrigin;
+        break;
+      case 4:
+        containersToMoveProducts.origin.rackId = this.hallSelectedOrigin;
+        containersToMoveProducts.origin.column = this.columnSelectedOrigin;
+        break;
+      case 5:
+        containersToMoveProducts.origin.rackId = this.hallSelectedOrigin;
+        containersToMoveProducts.origin.row = this.rowSelectedOrigin;
+        break;
+    }
+
+    if (this.warehouseSelectedDestiny.has_racks) {
+      containersToMoveProducts.destination.containerReference = this.positionSelectedDestiny.reference;
+    }
+
+    this.showLoading('Reubicando productos...').then(() => {
+      this.inventoryService
+        .postGlobal(containersToMoveProducts)
+        .subscribe((res: InventoryModel.ResponseGlobal) => {
+          if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
+            this.goToList();
+          }
+          if (res.code == 200 || res.code == 201) {
+            this.presentToast('Productos reubicados', 'success');
+          } else {
+            this.presentToast(res.message, 'danger');
+          }
+        }, (error: InventoryModel.ErrorResponse) => {
+          if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
+            this.goToList();
+          }
+          this.presentToast(error.message, 'danger');
+        });
+    });
+  }
+
+  workwaveOk() {
+    if (
+      (
+        (this.possibleMovementSelectedOrigin == 1 && this.warehouseSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin == 2 && this.positionSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin == 3 && this.hallSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin == 4 && this.hallSelectedOrigin && this.columnSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin == 5 && this.hallSelectedOrigin && this.rowSelectedOrigin)
+      )
+      && (
+        (this.warehouseSelectedDestiny && this.warehouseSelectedDestiny.has_racks && this.positionSelectedDestiny)
+        || (this.warehouseSelectedDestiny && !this.warehouseSelectedDestiny.has_racks)
+      )
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  async showLoading(message: string) {
+    this.loading = await this.loadingController.create({
+      message: message,
+      translucent: true,
+    });
+    return await this.loading.present();
+  }
+
+  async presentToast(msg, color) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 3750,
+      color: color || "primary"
+    });
+    toast.present();
   }
 
 }

@@ -89,4 +89,40 @@ export namespace InventoryModel {
     message: string;
     name: string;
   }
+
+  export interface ErrorResponse {
+    statusCode: number;
+    status: number;
+    code: number;
+    message: string;
+    name: string;
+  }
+
+  // To global process that move products between containers/warehouses
+  export interface Origin {
+    warehouseId: number,
+    rackId?: number,
+    row?: number,
+    column?: number,
+    containerId?: number,
+    containerReference?: string
+  }
+  export interface Destination {
+    warehouseId: number,
+    rackId?: number,
+    row?: number,
+    column?: number,
+    containerId?: number,
+    containerReference?: string
+  }
+  export interface InventoryProcessGlobal {
+    origin: Origin,
+    destination: Destination
+  }
+  export interface ResponseGlobal {
+    data?: any;
+    errors?: string;
+    message: string;
+    code: number;
+  }
 }

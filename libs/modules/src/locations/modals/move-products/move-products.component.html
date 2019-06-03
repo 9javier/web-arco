@@ -141,7 +141,7 @@
                 </div>
                 <div class="field">
                   <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelectedOrigin">
-                    <ion-select-option *ngFor="let column of listColumns" [value]="column.id">{{column.value}}</ion-select-option>
+                    <ion-select-option *ngFor="let column of listColumns" [value]="column.value">{{column.value}}</ion-select-option>
                   </ion-select>
                 </div>
               </ion-item>
@@ -156,7 +156,7 @@
                 </div>
                 <div class="field">
                   <ion-select class="ion-margin-horizontal" placeholder="Altura" interface="popover" [(ngModel)]="rowSelectedOrigin">
-                    <ion-select-option *ngFor="let row of listRows" [value]="row.id">{{row.value}}</ion-select-option>
+                    <ion-select-option *ngFor="let row of listRows" [value]="row.value">{{row.value}}</ion-select-option>
                   </ion-select>
                 </div>
               </ion-item>
@@ -183,8 +183,8 @@
                 </ion-item>
               </ion-col>
             </ion-row>
-            <hr *ngIf="warehouseSelectedDestiny.has_racks"/>
-            <ion-row *ngIf="warehouseSelectedDestiny.has_racks">
+            <hr *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks"/>
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
               <ion-col>
                 <ion-item lines="none">
                   <div slot="start" class="icon-field">
@@ -198,8 +198,8 @@
                 </ion-item>
               </ion-col>
             </ion-row>
-            <hr *ngIf="warehouseSelectedDestiny.has_racks"/>
-            <ion-row *ngIf="warehouseSelectedDestiny.has_racks">
+            <hr *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks"/>
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
               <ion-col>
                 <ion-item lines="none">
                   <div slot="start" class="icon-field">
@@ -213,7 +213,7 @@
                 </ion-item>
               </ion-col>
             </ion-row>
-            <ion-row *ngIf="warehouseSelectedDestiny.has_racks">
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
               <ion-col>
                 <ion-item lines="none">
                   <div slot="start" class="icon-field">
@@ -227,7 +227,7 @@
                 </ion-item>
               </ion-col>
             </ion-row>
-            <ion-row *ngIf="warehouseSelectedDestiny.has_racks">
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
               <ion-col>
                 <ion-item lines="none">
                   <div slot="start" class="icon-field">
@@ -247,3 +247,10 @@
     </ion-row>
   </ion-grid>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="goToList()">Cerrar</ion-button>
+    <ion-button slot="end" color="primary" [disabled]="workwaveOk()" (click)="moveProducts()">Reubicar</ion-button>
+  </ion-toolbar>
+</ion-footer>
