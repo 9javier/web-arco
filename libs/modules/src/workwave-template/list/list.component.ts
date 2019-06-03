@@ -94,7 +94,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     }
   }
 
-  async saveTemplate() {
+  async saveTemplate(typeWorkwave) {
     let storesToSetInWorkwave = this.listStoresTemplates.filter(store => {
       return store.checked;
     });
@@ -158,12 +158,13 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     }
 
     let paramsModal: any = {
-      type: this.typeWorkwave,
+      type: typeWorkwave,
       listStores: storesToSetInWorkwave
     };
 
     if (this.template && this.template.id) {
       paramsModal.workwave = this.templateToEdit;
+      paramsModal.previousType = this.typeWorkwave;
     }
 
     const modalSave = await this.modalController.create({

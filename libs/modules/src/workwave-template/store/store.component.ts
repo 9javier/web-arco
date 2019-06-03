@@ -19,6 +19,7 @@ export class StoreComponent implements OnInit {
 
   public workwave: WorkwaveModel.Workwave;
   public typeWorkwave: number;
+  public previousTypeWorkwave: number;
   public listStores: any[];
 
   public loading = null;
@@ -37,6 +38,7 @@ export class StoreComponent implements OnInit {
 
   ngOnInit() {
     this.typeWorkwave = this.navParams.data.type;
+    this.previousTypeWorkwave = this.navParams.data.previousType;
     if (this.typeWorkwave == 1) {
       this.workwaveType = 'run'
     } else if (this.typeWorkwave == 3) {
@@ -98,7 +100,7 @@ export class StoreComponent implements OnInit {
         }
 
         if (this.editing) {
-          workwaveStore.previousType = this.typeWorkwave;
+          workwaveStore.previousType = this.previousTypeWorkwave;
 
           this.workwavesService
             .putUpdate(workwaveStore, this.workwave.id)
@@ -186,8 +188,8 @@ export class StoreComponent implements OnInit {
   }
 
   initializeAllFields() {
-    if (this.workwave && this.workwave.id && this.typeWorkwave != 1) {
-      if (this.typeWorkwave == 2) {
+    if (this.workwave && this.workwave.id && this.previousTypeWorkwave != 1) {
+      if (this.previousTypeWorkwave == 2) {
         this.workwave.name = null;
         this.workwave.description = null;
         if (this.editing) {
@@ -196,12 +198,12 @@ export class StoreComponent implements OnInit {
           this.workwave.time = this.dateTimeParserService.hourMinute(this.workwave.releaseDate);
           this.workwave.everyday = this.workwave.type == 4;
         }
-      } else if (this.typeWorkwave == 3) {
+      } else if (this.previousTypeWorkwave == 3) {
         this.workwave.dateForm = new FormControl();
         this.workwave.date = null;
         this.workwave.time = null;
         this.workwave.everyday = false;
-      } else if (this.typeWorkwave == 4) {
+      } else if (this.previousTypeWorkwave == 4) {
         this.workwave.name = null;
         this.workwave.description = null;
         this.workwave.everyday = true;
