@@ -130,6 +130,12 @@ td.row-element-detail.mat-cell:last-of-type {
             background: red;
         }
     }
+    td.location-resume {
+        outline: 3px solid #fff;
+        outline-offset: -3px;
+        background: #fff;
+        text-align: center;
+    }
     td.location-free {
         outline: 3px solid #000;
         outline-offset: -3px;
@@ -147,7 +153,7 @@ td.row-element-detail.mat-cell:last-of-type {
         background-image: url('../../../../shared-assets/img/md-check.svg');
         background-position: center;
     }
-    td:hover,
+    //td:hover,
     td.location-free:hover,
     td.location-disabled:hover,
     td.location-selected:hover {

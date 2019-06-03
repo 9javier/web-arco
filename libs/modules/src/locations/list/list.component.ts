@@ -277,6 +277,20 @@ export class ListComponent implements OnInit {
     }
   }
 
+  selectColumn(event, data, rows, iColumn) {
+    if (this.isWarehouseListSection()) {
+      rows.forEach((row, iRow) => {
+        this.selectLocation(event, data, row, row[iColumn], iRow, iColumn);
+      });
+    }
+  }
+
+  selectRow(event, data, row, iRow) {
+    row.forEach((column, iColumn) => {
+      this.selectLocation(event, data, row, column, iRow, iColumn);
+    });
+  }
+
   rangeFromValue(value) {
     let items = [];
     for(var i = 1; i <= value; i++){
