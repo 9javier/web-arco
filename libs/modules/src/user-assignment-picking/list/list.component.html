@@ -1,0 +1,29 @@
+<div class="scroll-list">
+  <mat-grid-list cols="12" rowHeight="54px">
+    <mat-grid-tile colspan="3" rowspan="1">
+      <div class="tile-title">Tienda</div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2" rowspan="1">
+      <div class="tile-title">Tipo picking</div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2" rowspan="1">
+      <div class="tile-title">Cantidad zapatos</div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="2" rowspan="1">
+      <div class="tile-title">Umbral tienda</div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="3" rowspan="1">
+      <div class="tile-title">Operador</div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <user-assignment-template *ngFor="let pickingAssignment of pickingAssignments" [pickingAssignment]="pickingAssignment" [listOperators]="usersPicking"></user-assignment-template>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="savePicking()">
+      <i class="material-icons">save</i>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

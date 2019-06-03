@@ -3,6 +3,7 @@ import {Location} from "@angular/common";
 import {StoreComponent} from "../store/store.component";
 import {AlertController, ModalController} from "@ionic/angular";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwave-template',
@@ -20,6 +21,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
 
   constructor(
     private location: Location,
+    private router: Router,
     private modalController: ModalController,
     private alertController: AlertController,
     private warehouseService: WarehouseService
@@ -175,8 +177,12 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     });
 
     modalSave.onDidDismiss().then((data) => {
-      if (data && data.data && data.data.save) {
-        this.goPreviousPage();
+      if (data && data.data) {
+        if (data.data.save == 'save') {
+          this.goPreviousPage();
+        } else if (data.data.save == 'save_run') {
+          this.router.navigate(['assign/user/picking']);
+        }
       }
     });
 

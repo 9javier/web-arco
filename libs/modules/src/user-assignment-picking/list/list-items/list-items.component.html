@@ -1,0 +1,23 @@
+<mat-grid-list cols="12" rowHeight="64px">
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="tile-value">{{pickingAssignment.store}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div class="tile-value-center">{{pickingAssignment.type || pickingAssignment.typeId}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div class="tile-value-center">{{pickingAssignment.quantity}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div class="tile-value-center">{{pickingAssignment.threshold}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="3" rowspan="1">
+    <ion-select placeholder="Operador" interface="popover" [(ngModel)]="pickingAssignment.operator">
+      <ion-select-option *ngFor="let operator of listOperators" [value]="operator">{{operator.name}}</ion-select-option>
+    </ion-select>
+  </mat-grid-tile>
+</mat-grid-list>

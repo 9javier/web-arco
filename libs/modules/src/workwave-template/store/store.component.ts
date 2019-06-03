@@ -110,7 +110,11 @@ export class StoreComponent implements OnInit {
                   if (this.loading) {
                     this.loading.dismiss();
                     this.loading = null;
-                    this.goToList(true);
+                    if (this.workwaveType == 'run') {
+                      this.goToList('save_run');
+                    } else {
+                      this.goToList('save');
+                    }
                   }
                   this.presentToast('Ola de trabajo actualizada', 'success');
                 } else {
@@ -143,7 +147,11 @@ export class StoreComponent implements OnInit {
                   if (this.loading) {
                     this.loading.dismiss();
                     this.loading = null;
-                    this.goToList(true);
+                    if (this.workwaveType == 'run') {
+                      this.goToList('save_run');
+                    } else {
+                      this.goToList('save');
+                    }
                   }
                   this.presentToast('Ola de trabajo creada', 'success');
                 } else {

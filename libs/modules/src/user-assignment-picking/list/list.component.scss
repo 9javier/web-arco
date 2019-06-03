@@ -1,0 +1,31 @@
+div.scroll-list {
+  overflow-y: scroll;
+  height: 92vh;
+}
+mat-grid-list {
+  border-bottom: 1px solid #c3c3c3;
+  mat-grid-tile.mat-grid-tile {
+    font-size: 16px;
+    line-height: 20px;
+    border-right: 1px solid #c3c3c3;
+    div.tile-title {
+      color: var(--ion-color-tertiary);
+    }
+  }
+}
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.footer-products:before {
+  background: none;
+}
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}

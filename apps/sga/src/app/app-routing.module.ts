@@ -170,6 +170,14 @@ const routes: Routes = [
     data:{
       name:''
     }
+  },
+  {
+    path: 'assign/user/picking',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-assignment-picking/user-assignment-picking.module#UserAssignmentPickingModule',
+    data:{
+      name:''
+    }
   }
 ];
 

@@ -77,3 +77,7 @@ export * from './user-manager/user-manager.module';
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/breadcrumb/breadcrumb.module';
+
+// Picking User Assignment
+export * from './user-assignment-picking/user-assignment-picking.component';
+export * from './user-assignment-picking/user-assignment-picking.module';
