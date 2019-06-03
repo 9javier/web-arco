@@ -23,11 +23,6 @@ export class MoveProductsComponent implements OnInit {
   listColumnsOriginal: any = {};
   listReferences: any = {};
 
-  hallSelected: number;
-  rowSelected: number;
-  columnSelected: number;
-  referenceContainer: string = '';
-
   listWarehousesOrigin: any[] = [];
   listPossibleMovements: any[] = [];
   listLocationsWarehouseOrigin: WarehouseMapsModel.LocationWarehouse[] = [];
@@ -106,18 +101,16 @@ export class MoveProductsComponent implements OnInit {
     switch (source) {
       case 1:
         this.listHalls = this.listHallsOriginal[this.warehouseSelectedOrigin];
-        this.hallSelectedOrigin = this.listHalls[this.listHalls.length-1].id;
-        this.listRows = this.listRowsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin];
-        this.rowSelectedOrigin = this.listRows[0].row;
-        this.listColumns = this.listColumnsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin][this.rowSelectedOrigin];
-        this.columnSelectedOrigin = this.listColumns[0].column;
+        this.hallSelectedOrigin = -1;
+        this.rowSelectedOrigin = 0;
+        this.columnSelectedOrigin = 0;
         break;
       case 2:
         this.listRows = this.listRowsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin];
         let rowSelectedForColumn = this.listRows[0].row;
-        this.rowSelectedOrigin = this.listRows[0].id;
+        this.rowSelectedOrigin = this.listRows[0].row;
         this.listColumns = this.listColumnsOriginal[this.warehouseSelectedOrigin][this.hallSelectedOrigin][rowSelectedForColumn];
-        this.columnSelectedOrigin = this.listColumns[0].id;
+        this.columnSelectedOrigin = this.listColumns[0].column;
         break;
     }
   }
