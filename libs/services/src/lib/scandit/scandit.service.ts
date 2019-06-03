@@ -82,7 +82,11 @@ export class ScanditService {
                     ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                     this.hideTextMessage(1500);
                   }
-                });
+                }, (error) => {
+                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                    this.hideTextMessage(1500);
+                }
+                );
               }, (error: HttpErrorResponse) => {
                 ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                 this.hideTextMessage(1500);

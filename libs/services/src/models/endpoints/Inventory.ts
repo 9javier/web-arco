@@ -1,3 +1,4 @@
+import {Request} from './request';
 export namespace InventoryModel {
 
   export interface Inventory {
@@ -23,6 +24,34 @@ export namespace InventoryModel {
     "warehouse": any,
     "rack": any,
     "container": any
+  }
+
+  export interface SearchInContainer{
+      createdAt: string;
+      updatedAt: string;
+      id: number;
+      status: number;
+      productShoeUnit: {
+          id: number,
+          reference: string
+      },
+      container: {
+          id: number,
+          row: number,
+          column: number,
+          enabled: boolean,
+          reference: string,
+          lock: boolean,
+          on_right_side: boolean,
+          items: number
+      }
+  }
+
+  export interface ResponseSearchInContainer extends Request.Success{
+    data:{
+      results:Array<SearchInContainer>;
+      pagination:Request.Paginator;
+    }
   }
 
   export interface ResponseIndex {

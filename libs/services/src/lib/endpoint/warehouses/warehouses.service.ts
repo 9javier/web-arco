@@ -20,7 +20,8 @@ export class WarehousesService {
 
   private apiBase = environment.apiBase;
   private postStoreUrl = this.apiBase+"/warehouses";
-  private getShowUrl = this.apiBase+"/warehouses/{id}"
+  private getShowUrl = this.apiBase+"/warehouses/{id}";
+  private getMainUrl = this.apiBase+"/warehouses/main";
   private updateUrl = this.getShowUrl;
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
@@ -48,6 +49,15 @@ export class WarehousesService {
         observe: 'response'
       }
     );
+  }
+
+  /**
+   * Get the main warehouse
+   */
+  getMain():Observable<WarehouseModel.Warehouse>{
+    return this.http.get<WarehouseModel.ResponseShow>(this.getMainUrl).pipe(map(response=>{
+      return response.data;
+    }));
   }
   
   /**

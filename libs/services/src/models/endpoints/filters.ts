@@ -17,6 +17,11 @@ export namespace FiltersModel{
         reference:string;
     }
 
+    export interface Container{
+        id:number;
+        reference:string;
+    }
+
     export interface Model{
         id:number;
         reference:string;
@@ -37,6 +42,10 @@ export namespace FiltersModel{
 
     export interface ResponseGroup extends Request.Success{
         data:Array<Group>
+    }
+
+    export interface ResponseContainer extends Request.Success{
+        data:Array<Container>;
     }
 
     export interface ResponseModel extends Request.Success{

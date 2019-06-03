@@ -73,3 +73,7 @@ export * from './workwaves-history/workwaves-history.module';
 
 export * from './user-manager/user-manager.component';
 export * from './user-manager/user-manager.module';
+
+/**breadcrumb */
+export * from './components/breadcrumb/breadcrumb.component';
+export * from './components/breadcrumb/breadcrumb.module';

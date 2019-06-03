@@ -13,7 +13,7 @@ import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/
 import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
-import {LocationsComponent} from "@suite/common-modules";
+import {LocationsComponent} from "../locations.component";
 import {MoveProductsComponent} from "../modals/move-products/move-products.component";
 
 

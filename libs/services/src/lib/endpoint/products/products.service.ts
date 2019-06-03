@@ -9,11 +9,16 @@ import { PATH, URL } from '../../../../../../config/base';
 
 
 const PATH_BASE: string = URL + '/api/';
+import { environment } from '../../../environments/environment';
+import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
 
 export class ProductsService {
+  /**routes for services */
+  private getHistoricalUrl = environment.apiBase+'/products/history/{{id}}';
+  
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<ProductModel.ResponseIndex>>> {
@@ -23,5 +28,15 @@ export class ProductsService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  /**
+   * Get the historical of a product
+   * @param id the id of the product
+   */
+  getHistorical(id:number):Observable<any>{
+    return this.http.get(this.getHistoricalUrl.replace("{{id}}",id.toString())).pipe(map((response:any)=>{
+      return response.data;
+    }));
   }
 }

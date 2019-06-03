@@ -70,4 +70,8 @@ export * from './models/endpoints/UserProcesses';
 
 /** Filters */
 export * from './models/endpoints/filters';
-export * from './lib/endpoint/filters/filters.service';
+export * from './lib/endpoint/inventory/filters/filters.service';
+
+/** Inventory */
+export * from './models/endpoints/Inventory';
+export * from './lib/endpoint/inventory/inventory.service';

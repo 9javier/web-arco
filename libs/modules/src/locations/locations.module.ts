@@ -7,7 +7,7 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { LocationsRoutingModule } from "./locations-routing.module";
 import { LocationsComponent } from "./locations.component";
 import { UpdateComponent } from './update/update.component';
-import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { CommonUiCrudModule } from '../../../common/ui/crud/src/lib/common-ui-crud.module';
 import {ListComponent} from "./list/list.component";
 import {HallsModule} from '../halls/halls.module';
 import { EnableLockContainerModule } from './modals/enable-lock-container/enable-lock-container.module';
