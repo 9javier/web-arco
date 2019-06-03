@@ -16,6 +16,8 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   listStoresTemplates: any[];
   template: any;
 
+  public RUN_NOW_TASK_ID = 1;
+
   constructor(
     private location: Location,
     private modalController: ModalController,
