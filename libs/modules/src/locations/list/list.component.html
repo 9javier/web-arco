@@ -24,7 +24,7 @@
 
         <ng-container matColumnDef="expandedDetail">
             <td mat-cell *matCellDef="let detail" [attr.colspan]="displayedColumns.length" [class.collapsed-detail]="!detail.element.expanded" class="row-element-detail">
-                <div [@detailExpand]="detail.element.expanded ? 'expanded' : 'collapsed'" [style.height]="detail.element.expanded ? 'unset' : '0 !important'">
+                <div [@detailExpand]="detail.element.expanded ? 'expanded' : 'collapsed'" class="detail-wrapper" [style.height]="detail.element.expanded ? 'unset' : '0 !important'">
                     <table class="element-detail">
                         <tr *ngIf="detail.element.container && detail.element.container.length">
                             <td class="location-resume" (click)="selectAllLocations()">
