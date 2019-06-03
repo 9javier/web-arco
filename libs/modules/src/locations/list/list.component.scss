@@ -33,6 +33,13 @@ table {
     cursor: pointer;
     color: #979797;
 }
+h1 {
+  height: 36px;
+  .btn-move-products {
+    float: right;
+    margin: 0;
+  }
+}
 
 // Test expanded rows
 .example-container {

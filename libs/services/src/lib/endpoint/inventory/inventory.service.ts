@@ -5,8 +5,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import {PATH} from "../../../../../../config/base";
 import {Observable} from "rxjs";
 import {InventoryModel} from "../../../models/endpoints/Inventory";
-
-import { environment } from '../../../environments/environment'; 
+import {environment} from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 
 const PATH_POST_STORE: string = PATH('Inventory Process', 'Store');
@@ -17,6 +16,8 @@ const PATH_GET_PRODUCTS_HISTORY_CONTAINER: string = PATH('Inventory Process', 'L
   providedIn: 'root'
 })
 export class InventoryService {
+
+  private postGlobalUrl = environment.apiBase+"/inventory/process/global";
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
 
@@ -57,5 +58,9 @@ export class InventoryService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  postGlobal(containersToMoveProducts) : Observable<InventoryModel.ResponseGlobal> {
+    return this.http.post<InventoryModel.ResponseGlobal>(this.postGlobalUrl, containersToMoveProducts);
   }
 }

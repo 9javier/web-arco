@@ -70,7 +70,7 @@ export class WarehouseService {
       .then((data: Observable<HttpResponse<any>>) => {
         data.subscribe((res: HttpResponse<any>) => {
           res.body.data.forEach(warehouse => {
-            this.listWarehouses.push({id: warehouse.id, value: warehouse.name});
+            this.listWarehouses.push({id: warehouse.id, value: warehouse.name, has_racks: warehouse.has_racks });
 
             this.hallsService
               .getIndex(warehouse.id)
@@ -119,10 +119,10 @@ export class WarehouseService {
                               this.listReferences[warehouse.id][hall.id][container.row][container.column] = [];
                             }
                             if (container.row != lastRow) {
-                              this.listRows[warehouse.id][hall.id].push({id: container.id, row: container.row});
+                              this.listRows[warehouse.id][hall.id].push({id: container.id, value: container.row, row: container.row});
                               lastRow = container.row;
                             }
-                            this.listColumns[warehouse.id][hall.id][container.row].push({id: container.id, column: container.column});
+                            this.listColumns[warehouse.id][hall.id][container.row].push({id: container.id, value: container.column, column: container.column});
                             this.listReferences[warehouse.id][hall.id][container.row][container.column] = container.reference;
                           });
                         });

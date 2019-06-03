@@ -35,4 +35,19 @@ export namespace WarehouseMapsModel{
     export interface ResponseRacksIndex extends Request.Success{
         data:Array<Rack>;
     }
+
+    export interface LocationWarehouse{
+      id: number,
+      row: number,
+      column: number,
+      enabled: boolean,
+      reference: string,
+      lock: boolean,
+      on_right_side: boolean,
+      items: number
+    }
+
+    export interface ResponseGetLocationsWarehouse extends Request.Success{
+        data: Array<LocationWarehouse>;
+    }
 }

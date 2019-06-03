@@ -1,0 +1,256 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToList()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="grid-main">
+    <ion-row class="row-main">
+      <ion-col size="6" class="col-main">
+        <ion-row class="title-section">Origen</ion-row>
+        <div class="form-fields">
+          <!--Select to origin of movement-->
+          <ion-row>
+            <ion-col>
+              <ion-item lines="none">
+                <div class="field">
+                  <ion-select class="ion-margin-horizontal" placeholder="Mover de" interface="popover" [(ngModel)]="possibleMovementSelectedOrigin" (ngModelChange)="possibleMovementChange()">
+                    <ion-select-option *ngFor="let possibleMovement of listPossibleMovements" [value]="possibleMovement.value">{{possibleMovement.name}}</ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <!--Select of warehouse (1)-->
+          <ion-row *ngIf="possibleMovementSelectedOrigin == 1">
+            <ion-col>
+              <ion-item lines="none">
+                <div slot="start" class="icon-field">
+                  <ion-icon name="home"></ion-icon>
+                </div>
+                <div class="field">
+                  <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelectedOrigin">
+                    <ion-select-option *ngFor="let warehouse of listWarehousesOrigin" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <!--Select of location (2)-->
+          <div *ngIf="possibleMovementSelectedOrigin == 2" class="location-selection">
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">grid_on</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Ubicación" interface="popover" [(ngModel)]="positionSelectedOrigin" (ngModelChange)="changeLocation(1)">
+                      <ion-select-option *ngFor="let locations of listLocationsWarehouseOrigin" [value]="locations">{{locations.reference}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <hr/>
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_module</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin" (ngModelChange)="changeLocation(2)">
+                      <ion-select-option *ngFor="let hall of listHalls | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_column</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelectedOrigin" (ngModelChange)="changeLocation(3)">
+                      <ion-select-option *ngFor="let column of listColumns" [value]="column.value">{{column.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_stream</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Altura" interface="popover" [(ngModel)]="rowSelectedOrigin" (ngModelChange)="changeLocation(4)">
+                      <ion-select-option *ngFor="let row of listRows" [value]="row.value">{{row.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </div>
+          <!--Select of rack (3)-->
+          <ion-row *ngIf="possibleMovementSelectedOrigin == 3">
+            <ion-col>
+              <ion-item lines="none">
+                <div slot="start" class="icon-field">
+                  <i class="material-icons">view_module</i>
+                </div>
+                <div class="field">
+                  <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin">
+                    <ion-select-option *ngFor="let hall of listHalls | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <!--Select of rack for column or row (4/5)-->
+          <ion-row *ngIf="possibleMovementSelectedOrigin == 4 || possibleMovementSelectedOrigin == 5">
+            <ion-col>
+              <ion-item lines="none">
+                <div slot="start" class="icon-field">
+                  <i class="material-icons">view_module</i>
+                </div>
+                <div class="field">
+                  <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin" (ngModelChange)="changeSelect(2)">
+                    <ion-select-option *ngFor="let hall of listHalls | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <!--Select of column(4)-->
+          <ion-row *ngIf="possibleMovementSelectedOrigin == 4">
+            <ion-col>
+              <ion-item lines="none">
+                <div slot="start" class="icon-field">
+                  <i class="material-icons">view_column</i>
+                </div>
+                <div class="field">
+                  <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelectedOrigin">
+                    <ion-select-option *ngFor="let column of listColumns" [value]="column.value">{{column.value}}</ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+          <!--Select of row(5)-->
+          <ion-row *ngIf="possibleMovementSelectedOrigin == 5">
+            <ion-col>
+              <ion-item lines="none">
+                <div slot="start" class="icon-field">
+                  <i class="material-icons">view_stream</i>
+                </div>
+                <div class="field">
+                  <ion-select class="ion-margin-horizontal" placeholder="Altura" interface="popover" [(ngModel)]="rowSelectedOrigin">
+                    <ion-select-option *ngFor="let row of listRows" [value]="row.value">{{row.value}}</ion-select-option>
+                  </ion-select>
+                </div>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-col>
+
+      <ion-col size="6" class="col-main">
+        <ion-row class="title-section">Destino</ion-row>
+        <div class="form-fields">
+          <div class="location-selection">
+            <ion-row>
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <ion-icon name="home"></ion-icon>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelectedDestiny" (ngModelChange)="changeDestiny(1)">
+                      <ion-select-option *ngFor="let warehouse of listWarehousesDestiny" [value]="warehouse">{{warehouse.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <hr *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks"/>
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">grid_on</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Ubicación" interface="popover" [(ngModel)]="positionSelectedDestiny" (ngModelChange)="changeDestiny(2)">
+                      <ion-select-option *ngFor="let locationDestiny of listLocationsWarehouseDestiny" [value]="locationDestiny">{{locationDestiny.reference}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <hr *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks"/>
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_module</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedDestiny" (ngModelChange)="changeDestiny(3)">
+                      <ion-select-option *ngFor="let hall of listHallsDestiny | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_column</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelectedDestiny" (ngModelChange)="changeDestiny(4)">
+                      <ion-select-option *ngFor="let column of listColumnsDestiny" [value]="column.value">{{column.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="warehouseSelectedDestiny && warehouseSelectedDestiny.has_racks">
+              <ion-col>
+                <ion-item lines="none">
+                  <div slot="start" class="icon-field">
+                    <i class="material-icons">view_stream</i>
+                  </div>
+                  <div class="field">
+                    <ion-select class="ion-margin-horizontal" placeholder="Altura" interface="popover" [(ngModel)]="rowSelectedDestiny" (ngModelChange)="changeDestiny(5)">
+                      <ion-select-option *ngFor="let row of listRowsDestiny" [value]="row.value">{{row.value}}</ion-select-option>
+                    </ion-select>
+                  </div>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="goToList()">Cerrar</ion-button>
+    <ion-button slot="end" color="primary" [disabled]="workwaveOk()" (click)="moveProducts()">Reubicar</ion-button>
+  </ion-toolbar>
+</ion-footer>
