@@ -15,7 +15,7 @@ export class UpdateComponent implements OnInit {
   formBuilderTemplateInputs = [
     {
       name: 'rows',
-      label: 'Número de Filas',
+      label: 'Número de Alturas',
       type: 'select',
       value: [1, 2, 3, 4, 5],
       icon: {type: 'md', name: 'view_stream'}
