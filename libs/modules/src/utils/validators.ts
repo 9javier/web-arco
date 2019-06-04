@@ -31,5 +31,18 @@ MustMatch:function (controlName: string, matchingControlName: string) {
       else
         control.setErrors(null);
     }
+  },
+  /**verify that the control have at least one item */
+  locationsPattern:function(controlName){
+    return (formGroup: FormGroup) => {
+      const control = formGroup.controls[controlName];
+
+      // set error on matchingControl if validation fails
+      if (!control.value || /^\s*(\d+(\s*-\s*\d+)?)(\s*,\s*\d+(\s*-\s*\d+)?)*\s*$/.test(control.value)) {
+        control.setErrors(null);
+      } else {
+        control.setErrors({ haveItems: true });
+      }
+    };
   }
 }

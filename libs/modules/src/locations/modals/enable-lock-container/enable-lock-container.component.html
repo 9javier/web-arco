@@ -32,21 +32,28 @@
             </ion-item>
         </ion-radio-group>
         <ion-item>
-            <ion-select placeholder="Pasillo" formControlName="rackId">
-                <ion-select-option value="{{rack.id}}" *ngFor="let rack of racks">
-                    {{rack.hall}}
-                </ion-select-option>
-            </ion-select>
+          <ion-input
+            placeholder="Pasillo, pasillos o rangos (5, 30-39, 50...)"
+            class="ion-margin-horizontal"
+            type="text"
+            formControlName="rack_pattern"
+          ></ion-input>
         </ion-item>
-        <ion-item *ngIf="form.value.rackId">
-            <ion-select placeholder="Altura" formControlName="row">
-                <ion-select-option value="{{row}}" *ngFor="let row of rows">{{row}}</ion-select-option>
-            </ion-select>
+        <ion-item>
+          <ion-input
+            placeholder="Altura, alturas o rangos (5, 30-39, 50...)"
+            class="ion-margin-horizontal"
+            type="text"
+            formControlName="row_pattern"
+          ></ion-input>
         </ion-item>
-        <ion-item *ngIf="form.value.row">
-            <ion-select placeholder="Columna" formControlName="column">
-                <ion-select-option value="{{column}}" *ngFor="let column of columns">{{column}}</ion-select-option>
-            </ion-select>
+        <ion-item>
+          <ion-input
+            placeholder="Columna, columnas o rangos (5, 30-39, 50...)"
+            class="ion-margin-horizontal"
+            type="text"
+            formControlName="column_pattern"
+          ></ion-input>
         </ion-item>
     </form>
 </ion-content>

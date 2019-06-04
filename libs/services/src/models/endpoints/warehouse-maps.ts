@@ -27,9 +27,9 @@ export namespace WarehouseMapsModel{
     export interface ConfigurationParam{
         processTypeId: number,
         status: boolean,
-        rackId: number,
-        row: number,
-        column: number
+        rack_pattern: string,
+        row_pattern: string,
+        column_pattern: string
     }
 
     export interface ResponseRacksIndex extends Request.Success{
