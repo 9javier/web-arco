@@ -2210,6 +2210,66 @@
 					"response": []
 				},
 				{
+					"name": "Bloquear ubicación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"lock\": true\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/containers/{{containerId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"containers",
+								"{{containerId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desbloquear ubicación",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"lock\": false\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/containers/{{containerId}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"containers",
+								"{{containerId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Redimensionar un estante",
 					"request": {
 						"method": "PUT",

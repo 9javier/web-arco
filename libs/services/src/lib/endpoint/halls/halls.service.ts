@@ -20,6 +20,8 @@ export const PATH_PUT_UPDATE: string = PATH('Warehouses Maps', 'Redimensionar un
 export const PATH_DEL_DESTROY: string = PATH('Warehouses Maps', 'Eliminar un estante').replace('{{rackId}}', '');
 export const PATH_PUT_ENABLE: string = PATH('Warehouses Maps', 'Habilitar ubicación').replace('{{containerId}}', '');
 export const PATH_PUT_DISABLE: string = PATH('Warehouses Maps', 'Deshabilitar ubicación').replace('{{containerId}}', '');
+export const PATH_PUT_LOCK: string = PATH('Warehouses Maps', 'Bloquear ubicación').replace('{{containerId}}', '');
+export const PATH_PUT_UNLOCK: string = PATH('Warehouses Maps', 'Desbloquear ubicación').replace('{{containerId}}', '');
 
 @Injectable({
   providedIn: 'root'
@@ -116,6 +118,34 @@ export class HallsService {
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.put<HallModel.ResponseUpdateEnable>(`${PATH_PUT_ENABLE}${containerId}`,
       {enabled: true},
+      {
+        headers: headers,
+        observe: 'response'
+      }
+      );
+  }
+
+  async updateLock(
+    containerId: string | number
+  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateDisable>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<HallModel.ResponseUpdateDisable>(`${PATH_PUT_LOCK}${containerId}`,
+      {lock: true},
+      {
+        headers: headers,
+        observe: 'response'
+      }
+      );
+  }
+
+  async updateUnlock(
+    containerId: string | number
+  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateEnable>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<HallModel.ResponseUpdateEnable>(`${PATH_PUT_UNLOCK}${containerId}`,
+      {lock: false},
       {
         headers: headers,
         observe: 'response'
