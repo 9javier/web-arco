@@ -358,20 +358,20 @@ export class ListComponent implements OnInit {
       let container = this.locationsSelected[idLocation].column;
       if (container.lock) {
         this.hallsService
-          .updateLock(container.id)
-          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
-            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
-              this.presentToast('Posición bloqueada', null);
+          .updateUnlock(container.id)
+          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
+            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
+              this.presentToast('Posición desbloqueada', null);
             }));
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
       } else {
         this.hallsService
-          .updateUnlock(container.id)
-          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
-            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
-              this.presentToast('Posición desbloqueada', null);
+          .updateLock(container.id)
+          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
+            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
+              this.presentToast('Posición bloqueada', null);
             }));
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
