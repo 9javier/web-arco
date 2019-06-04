@@ -1,8 +1,8 @@
 <ion-text color="primary">
     <h1>
       <span *ngIf="parentPage" (click)="goPreviousPage()" class="previous-page-link">{{parentPage}} > </span>{{ title }}
-      <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection" (click)="openModalMoveProducts()">
-        Mover productos
+      <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection" (click)="openModalMoveProducts">
+        Mover contenido
       </ion-button>
     </h1>
 </ion-text>
