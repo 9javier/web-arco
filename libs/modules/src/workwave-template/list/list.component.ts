@@ -213,11 +213,9 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       } else if (data.store.replace == '2' && data.store.allocate == '1') {
         data.store.typeShippingOrder = 5;
       }
-    }
-
-    if (data.field == 'replace' || data.field == 'allocate') {
       delete data.store.errorTypeShippingOrder;
     }
+
     if (data.field == 'consolidated' && data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) {
       delete data.store.errorThresholdConsolidated;
     }
@@ -231,11 +229,21 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       delete data.store.errorTypePacking;
     }
     if (data.field == 'check' && !data.store.checked) {
+      data.store.thresholdConsolidated = 0;
+      data.store.thresholdShippingStore = 0;
+      data.store.replace = '';
+      data.store.allocate = '';
+      data.store.typeGeneration = '';
+      data.store.typePacking = '';
+      data.store.typeShippingOrder = 0;
       delete data.store.errorTypeShippingOrder;
       delete data.store.errorThresholdConsolidated;
       delete data.store.errorThresholdShippingStore;
       delete data.store.errorTypeGeneration;
       delete data.store.errorTypePacking;
+    } else if (data.field != 'check'
+      && (data.store.replace || data.store.allocate || (data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) || (data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) || data.store.typeGeneration || data.store.typePacking)) {
+      data.store.checked = true;
     }
   }
 

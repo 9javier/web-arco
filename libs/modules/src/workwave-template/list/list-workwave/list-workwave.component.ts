@@ -24,4 +24,18 @@ export class WorkwaveListWorkwaveTemplateComponent implements OnInit {
     this.changeStoreTemplate.next({store: this.storeTemplate, field: fieldChanged});
   }
 
+  checkRadioToRemove(source: string, value: string) {
+    if (source == 'replace' && this.storeTemplate.replace && this.storeTemplate.replace == value) {
+      setTimeout(() => {
+        this.storeTemplate.replace = '';
+        this.changeTemplateValues('replace');
+      }, 100);
+    } else if (source == 'allocate' && this.storeTemplate.allocate && this.storeTemplate.allocate == value) {
+      setTimeout(() => {
+        this.storeTemplate.allocate = '';
+        this.changeTemplateValues('allocate');
+      }, 100);
+    }
+  }
+
 }
