@@ -10,11 +10,13 @@ import { ServerPostmanEnvironment } from './postman/Server.postman_environment';
 import API_COLLECTION from './postman/Api.Team.postman_collection.json';
 // @ts-ignore
 import ENV_COLLECTION from './postman/Server.postman_environment.json';
+import {environment} from "../libs/services/src/environments/environment";
 
 const ENV: ServerPostmanEnvironment = ENV_COLLECTION;
 const API_BASE: API = API_COLLECTION;
 
-export const URL: string = ENV.values.find(value => value.key === 'url').value;
+// NOTE take URL from environment.ts in favour from the deprecated postman method
+export const URL: string = environment.apiBase.replace(/\/api?$/, '');
 
 export const ACCESS_TOKEN: string = ENV.values.find(
   value => value.key === 'access_token'
