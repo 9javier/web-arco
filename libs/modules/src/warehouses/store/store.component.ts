@@ -3,6 +3,7 @@ import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController } from "@ionic/angular";
 import { WarehousesService,WarehouseGroupService,WarehouseGroupModel } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-store',
@@ -26,7 +27,9 @@ export class StoreComponent implements OnInit {
 
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
 
-  constructor(private modalCtrl:ModalController,
+  constructor(
+              private intermediaryService:IntermediaryService,
+              private modalCtrl:ModalController,
               private formBuilder:FormBuilder,
               private warehousesService:WarehousesService,
               private warehouseGroupService:WarehouseGroupService,
@@ -92,7 +95,15 @@ export class StoreComponent implements OnInit {
     this.warehousesService.postStore(this.sanitize(this.createForm.value)).subscribe(data=>{
       this.utils.presentAlert("Éxito","Nuevo almacén creado con éxito");
       this.close();
-    })
+    },(error)=>{
+      /**We obtain the error message */
+      let errorMessage:string = error.error.errors;
+      /**Check if it is an reference error */
+      if(errorMessage.includes("Duplicate entry"))
+        this.intermediaryService.presentToastError("La referencia ya está siendo usada");
+      else if(errorMessage.includes("Already exist a main"))
+      this.intermediaryService.presentToastError("Ya existe un almacén principal");
+    });
   }
 
   ngOnInit() {

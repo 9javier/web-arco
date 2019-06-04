@@ -1,150 +1,152 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-button (click)="goToList()">
-        <ion-icon name="close" class="toogleArrow"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>{{ title }}</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="goToList()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>{{ title }}</ion-title>
+    </ion-toolbar>
 </ion-header>
 <ion-content>
-  <mat-tab-group mat-stretch-tabs>
-    <mat-tab label="Listado">
-      <ng-container [ngTemplateOutlet]="listProductsContainer"></ng-container>
-    </mat-tab>
-    <mat-tab label="Historial">
-      <ng-container [ngTemplateOutlet]="historyContainer"></ng-container>
-    </mat-tab>
-  </mat-tab-group>
+    <mat-tab-group mat-stretch-tabs>
+        <mat-tab label="Listado">
+            <ng-container [ngTemplateOutlet]="listProductsContainer"></ng-container>
+        </mat-tab>
+        <mat-tab label="Historial">
+            <ng-container [ngTemplateOutlet]="historyContainer"></ng-container>
+        </mat-tab>
+    </mat-tab-group>
 
-  <ng-template #listProductsContainer let-lessonsCounter="estimate">
-    <mat-accordion class="accordion-products">
-      <mat-expansion-panel *ngFor="let product of listProducts">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{product.reference.slice(2, -10)}}
-          </mat-panel-title>
-          <mat-panel-description>
-            {{product.name}}
-          </mat-panel-description>
-        </mat-expansion-panel-header>
+    <ng-template #listProductsContainer let-lessonsCounter="estimate">
+        <mat-accordion class="accordion-products">
+            <mat-expansion-panel *ngFor="let product of listProducts">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{product.reference.slice(2, -10)}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        {{product.name}}
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
 
-        <div padding>
-          <ion-label class="title-section">Reubicar</ion-label>
-          <div class="form-fields">
-            <ion-row>
-              <ion-col>
-                <ion-item lines="none">
-                  <div slot="start" class="icon-field">
-                    <ion-icon name="home"></ion-icon>
-                  </div>
-                  <div class="field">
-                    <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
-                      <ion-select-option *ngFor="let warehouse of listWarehouses" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
-                    </ion-select>
-                  </div>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <ion-item lines="none">
-                  <div slot="start" class="icon-field">
-                    <i class="material-icons">view_module</i>
-                  </div>
-                  <div class="field">
-                    <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelected" *ngIf="checkFieldIsEnabled(2)" (ngModelChange)="changeSelect(2)">
-                      <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
-                    </ion-select>
-                  </div>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <ion-item lines="none">
-                  <div slot="start" class="icon-field">
-                    <i class="material-icons">view_stream</i>
-                  </div>
-                  <div class="field">
-                    <ion-select class="ion-margin-horizontal" placeholder="Fila" interface="popover" [(ngModel)]="rowSelected" *ngIf="checkFieldIsEnabled(3)" (ngModelChange)="changeSelect(3)">
-                      <ion-select-option *ngFor="let row of listRows" [value]="row.row">{{row.row}}</ion-select-option>
-                    </ion-select>
-                  </div>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col>
-                <ion-item lines="none">
-                  <div slot="start" class="icon-field">
-                    <i class="material-icons">view_column</i>
-                  </div>
-                  <div class="field">
-                    <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelected" *ngIf="checkFieldIsEnabled(4)" (ngModelChange)="changeSelect(4)">
-                      <ion-select-option *ngFor="let column of listColumns" [value]="column.column">{{column.column}}</ion-select-option>
-                    </ion-select>
-                  </div>
-                </ion-item>
-              </ion-col>
-            </ion-row>
-          </div>
-          <div class="btn-move-product">
-            <ion-row>
-              <ion-col size="6" class="btn-close">
-                <ion-button color="secondary" (click)="resetDataMovement()">
-                  Cancelar
-                </ion-button>
-              </ion-col>
-              <ion-col size="6" class="btn-save">
-                <ion-button color="tertiary" (click)="saveDataMovement(product)">
-                  Guardar
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </div>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
+                <div padding>
+                    <ion-label class="title-section">Reubicar</ion-label>
+                    <div class="form-fields">
+                        <ion-row>
+                            <ion-col>
+                                <ion-item lines="none">
+                                    <div slot="start" class="icon-field">
+                                        <ion-icon name="home"></ion-icon>
+                                    </div>
+                                    <div class="field">
+                                        <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
+                                            <ion-select-option *ngFor="let warehouse of listWarehouses" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
+                                        </ion-select>
+                                    </div>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col>
+                                <ion-item lines="none">
+                                    <div slot="start" class="icon-field">
+                                        <i class="material-icons">view_module</i>
+                                    </div>
+                                    <div class="field">
+                                        <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelected" *ngIf="checkFieldIsEnabled(2)" (ngModelChange)="changeSelect(2)">
+                                            <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
+                                        </ion-select>
+                                    </div>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col>
+                                <ion-item lines="none">
+                                    <div slot="start" class="icon-field">
+                                        <i class="material-icons">view_stream</i>
+                                    </div>
+                                    <div class="field">
+                                        <ion-select class="ion-margin-horizontal" placeholder="Fila" interface="popover" [(ngModel)]="rowSelected" *ngIf="checkFieldIsEnabled(3)" (ngModelChange)="changeSelect(3)">
+                                            <ion-select-option *ngFor="let row of listRows" [value]="row.row">{{row.row}}</ion-select-option>
+                                        </ion-select>
+                                    </div>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col>
+                                <ion-item lines="none">
+                                    <div slot="start" class="icon-field">
+                                        <i class="material-icons">view_column</i>
+                                    </div>
+                                    <div class="field">
+                                        <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelected" *ngIf="checkFieldIsEnabled(4)" (ngModelChange)="changeSelect(4)">
+                                            <ion-select-option *ngFor="let column of listColumns" [value]="column.column">{{column.column}}</ion-select-option>
+                                        </ion-select>
+                                    </div>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                    </div>
+                    <div class="btn-move-product">
+                        <ion-row>
+                            <ion-col size="6" class="btn-close">
+                                <ion-button color="secondary" (click)="resetDataMovement()">
+                                    Cancelar
+                                </ion-button>
+                            </ion-col>
+                            <ion-col size="6" class="btn-save">
+                                <ion-button color="tertiary" (click)="saveDataMovement(product)">
+                                    Guardar
+                                </ion-button>
+                            </ion-col>
+                        </ion-row>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
 
-    <ion-footer class="footer-products">
-      <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-        <ion-fab-button color="light" (click)="scanProduct()"><ion-icon name="barcode"></ion-icon></ion-fab-button>
-        <ion-fab-button color="light" (click)="printBarcode()"><i class="material-icons">print</i></ion-fab-button>
-        <ion-fab-button (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
-      </ion-fab>
-    </ion-footer>
+        <ion-footer class="footer-products">
+            <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+                <ion-fab-button color="light" (click)="scanProduct()">
+                    <ion-icon name="barcode"></ion-icon>
+                </ion-fab-button>
+                <ion-fab-button color="light" (click)="printBarcode()"><i class="material-icons">print</i></ion-fab-button>
+                <ion-fab-button (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
+            </ion-fab>
+        </ion-footer>
 
-  </ng-template>
+    </ng-template>
 
-  <ng-template #historyContainer let-lessonsCounter="estimate">
-    <mat-accordion class="accordion-history">
-      <mat-expansion-panel *ngFor="let productHistory of listHistory">
-        <mat-expansion-panel-header class="header-history">
-          <mat-panel-title>
-            {{productHistory.reference ? ('Referencia: '+productHistory.reference) : ''}}<br *ngIf="productHistory.reference"/>
-            {{productHistory.date_upd ? ('Fecha: '+showDateTime(productHistory.date_upd)) : ''}}<br *ngIf="productHistory.date_upd"/>
-            {{productHistory.origin_rack ? ('Posición origen: '+productHistory.origin_rack.hall+'.'+productHistory.origin_container.column+'.'+productHistory.origin_container.row) : ''}}<br *ngIf="productHistory.origin_rack"/>
-            {{productHistory.destination_rack ? ('Posición destino: '+productHistory.destination_rack.hall+'.'+productHistory.destination_container.column+'.'+productHistory.destination_container.row) : ''}}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
+    <ng-template #historyContainer let-lessonsCounter="estimate">
+        <mat-accordion class="accordion-history">
+            <mat-expansion-panel *ngFor="let productHistory of listHistory">
+                <mat-expansion-panel-header class="header-history">
+                    <mat-panel-title>
+                        {{productHistory.reference ? ('Referencia: '+productHistory.reference) : ''}}<br *ngIf="productHistory.reference" /> {{productHistory.date_upd ? ('Fecha: '+showDateTime(productHistory.date_upd)) : ''}}<br *ngIf="productHistory.date_upd"
+                        /> {{productHistory.origin_rack ? ('Posición origen: '+productHistory.origin_rack.hall+'.'+productHistory.origin_container.column+'.'+productHistory.origin_container.row) : ''}}<br *ngIf="productHistory.origin_rack" /> {{productHistory.destination_rack
+                        ? ('Posición destino: '+productHistory.destination_rack.hall+'.'+productHistory.destination_container.column+'.'+productHistory.destination_container.row) : ''}}
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
 
-        <p>Almacén de origen:
-          <span class="value-history">
+                <p>Almacén de origen:
+                    <span class="value-history">
             {{productHistory.origin_warehouse ? (productHistory.origin_warehouse.reference + ' - ' + productHistory.origin_warehouse.name) : 'No registrado'}}
           </span>
-        </p>
-        <p>Almacén de destino:
-          <span class="value-history">
+                </p>
+                <p>Almacén de destino:
+                    <span class="value-history">
             {{productHistory.destination_warehouse ? (productHistory.destination_warehouse.reference + ' - ' + productHistory.destination_warehouse.name) : 'No registrado'}}
           </span>
-        </p>
-        <p>Empleado: <span class="value-history">{{productHistory.user.name}} (<span class="email-address">{{productHistory.user.email}}</span>)</span></p>
-        <p>Añadido: <span class="value-history">{{showDateTime(productHistory.date_add)}}</span></p>
-        <p>Modificado: <span class="value-history">{{showDateTime(productHistory.date_upd)}}</span></p>
-        <p>Errores: <span class="value-history">{{productHistory.errors}}</span></p>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </ng-template>
+                </p>
+                <p>Empleado: <span class="value-history">{{productHistory.user.name}} (<span class="email-address">{{productHistory.user.email}}</span>)</span>
+                </p>
+                <p>Añadido: <span class="value-history">{{showDateTime(productHistory.date_add)}}</span></p>
+                <p>Modificado: <span class="value-history">{{showDateTime(productHistory.date_upd)}}</span></p>
+                <p>Errores: <span class="value-history">{{productHistory.errors}}</span></p>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </ng-template>
 </ion-content>

@@ -133,6 +133,8 @@ export class AppComponent implements OnInit {
   iconsDirection = 'start';
   currentRoute: string = this.appPages[0].children[0].title;
   deploySidebarSmallDevices = false;
+  /**timeout to prevent avoid login page */
+  private loginTimeout;
 
   constructor(
     private platform: Platform,
@@ -180,31 +182,36 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       await this.authenticationService.checkToken();
       this.authenticationService.authenticationState.subscribe(state => {
-        if (state) {
-          // Load of main warehouse in memory
-          this.warehouseService
-            .init()
-            .then((data: Observable<HttpResponse<any>>) => {
-              data.subscribe((res: HttpResponse<any>) => {
-                // Load of main warehouse in memory
-                this.warehouseService.idWarehouseMain = res.body.data.id;
-                // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
-                this.warehouseService.loadWarehousesData();
-                // Load in array only warehouses with racks
-                this.warehouseService.loadWarehousesWithRacks();
-              });
-            })
-            .catch((possibleMainWarehouse404Error) => {})
-            .then(() => this.router.navigate(['products']).then(sucess => {
-                this.showMainHeader = true;
-                this.menu.enable(true, 'sidebar');
+        console.log("cambio",state);
+        clearTimeout(this.loginTimeout);
+        this.loginTimeout = setTimeout(()=>{
+          if (state) {
+            // Load of main warehouse in memory
+            this.warehouseService
+              .init()
+              .then((data: Observable<HttpResponse<any>>) => {
+                data.subscribe((res: HttpResponse<any>) => {
+                  // Load of main warehouse in memory
+                  this.warehouseService.idWarehouseMain = res.body.data.id;
+                  // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+                  this.warehouseService.loadWarehousesData();
+                  // Load in array only warehouses with racks
+                  this.warehouseService.loadWarehousesWithRacks();
+                });
               })
-            );
-        } else {
-          this.menu.enable(false, 'sidebar');
-          this.showMainHeader = false;
-          this.router.navigate(['login']);
-        }
+              .catch((possibleMainWarehouse404Error) => {})
+              .then(() => this.router.navigate(['products']).then(sucess => {
+                  this.showMainHeader = true;
+                  this.menu.enable(true, 'sidebar');
+                })
+              );
+          } else {
+            this.menu.enable(false, 'sidebar');
+            this.showMainHeader = false;
+            this.router.navigate(['login']);
+          }
+        },10);
+
       });
 
       /* Update to display current route on Access Denied from Server */
