@@ -1,111 +1,85 @@
 <ion-app [ngClass]="{ 'sm-custom': displaySmallSidebar }">
-  <ion-header
-    *ngIf="showMainHeader"
-    [ngClass]="{ 'mainheader mainheader-fullheight': showMainHeader }"
-  >
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-button
-          (window:resize)="onResize($event)"
-          *ngIf="deploySidebarSmallDevices"
-          (click)="toggleSidebarSmallDevices()"
-        >
-          <ion-icon name="menu" class="menu"></ion-icon>
-        </ion-button>
-        <ion-button
-          (window:resize)="onResize($event)"
-          *ngIf="!deploySidebarSmallDevices"
-          (click)="toggleSidebar()"
-        >
-          <ion-icon name="arrow-round-back" class="toogleArrow"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-      <ion-title>{{ currentRoute }}</ion-title>
-      <ion-buttons slot="secondary">
-        <ion-button>
-          <ion-icon slot="icon-only" name="contact"></ion-icon>
-        </ion-button>
-
-        <button-incidences></button-incidences>
-
-        <ion-button>
-          <ion-icon slot="icon-only" name="more"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
-  <ion-split-pane>
-    <ion-menu menuId="sidebar" class="sidebar">
-      <ion-header>
+    <ion-header *ngIf="showMainHeader" [ngClass]="{ 'mainheader mainheader-fullheight': showMainHeader }">
         <ion-toolbar color="primary">
-          <ion-title>
-            <ion-icon name="menu" padding-right></ion-icon>
-            <img
-              *ngIf="!displaySmallSidebar"
-              class="ion-padding-start"
-              src="assets/img/Krack-Logo.svg"
-              width="125vw"
-              alt="krack logo sidebar"
-            />
-          </ion-title>
+            <ion-buttons slot="start">
+                <ion-button (window:resize)="onResize($event)" *ngIf="deploySidebarSmallDevices" (click)="toggleSidebarSmallDevices()">
+                    <ion-icon name="menu" class="menu"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+            <ion-title>{{ currentRoute }}</ion-title>
+            <ion-buttons slot="secondary">
+                <ion-button>
+                    <ion-icon slot="icon-only" name="contact"></ion-icon>
+                </ion-button>
+
+                <button-incidences></button-incidences>
+
+                <ion-button>
+                    <ion-icon slot="icon-only" name="more"></ion-icon>
+                </ion-button>
+            </ion-buttons>
         </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <div *ngFor="let p of appPages">
-          <ion-menu-toggle *ngIf="p.url" auto-hide="false">
-            <ion-list no-padding lines="none">
-              <ion-item
-                [routerDirection]="'root'"
-                [routerLink]="[p.url]"
-                (click)="tapOption(p)"
-              >
-                <ion-icon [slot]="iconsDirection" [name]="p.icon"></ion-icon>
-                <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
-                  {{ p.title }}
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-menu-toggle>
+    </ion-header>
+    <ion-split-pane>
+        <ion-menu menuId="sidebar" class="sidebar">
+            <ion-header>
+                <ion-toolbar color="primary">
+                    <ion-title>
+                        <ion-icon name="menu" padding-right (click)="toggleSidebar()"></ion-icon>
+                        <img *ngIf="!displaySmallSidebar" class="ion-padding-start" src="assets/img/Krack-Logo.svg" width="125vw" alt="krack logo sidebar" />
+                    </ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content>
+                <div *ngFor="let p of appPages">
+                    <ion-menu-toggle *ngIf="p.url" auto-hide="false">
+                        <ion-list no-padding lines="none">
+                            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="tapOption(p)">
+                                <ion-icon [slot]="iconsDirection" [name]="p.icon"></ion-icon>
+                                <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
+                                    {{ p.title }}
+                                </ion-label>
+                            </ion-item>
+                        </ion-list>
+                    </ion-menu-toggle>
 
-          <!-- Item with Children -->
-          <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none">
-            <ion-icon [slot]="iconsDirection" name="arrow-forward" *ngIf="!p.open"></ion-icon>
-            <ion-icon [slot]="iconsDirection" name="arrow-down" *ngIf="p.open"></ion-icon>
-            <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
-          </ion-item>
-          <!-- Children List for clicked Item -->
-          <ion-list *ngIf="p.open" lines="none">
-            <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root"
-                      routerLinkActive="active"
-                      (click)="currentRoute = sub.title">
-              <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
-              <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
-                {{ sub.title }}
-              </ion-label>
-            </ion-item>
-          </ion-list>
-        </div>
-      </ion-content>
-    </ion-menu>
+                    <!-- Item with Children -->
+                    <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none">
+                        <ion-icon [slot]="iconsDirection" name="arrow-forward" *ngIf="!p.open"></ion-icon>
+                        <ion-icon [slot]="iconsDirection" name="arrow-down" *ngIf="p.open"></ion-icon>
+                        <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
+                    </ion-item>
+                    <!-- Children List for clicked Item -->
+                    <ion-list *ngIf="p.open" lines="none">
+                        <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="currentRoute = sub.title">
+                            <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
+                            <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
+                                {{ sub.title }}
+                            </ion-label>
+                        </ion-item>
+                    </ion-list>
+                </div>
+            </ion-content>
+        </ion-menu>
 
-    <ion-menu class="sidebar-right" menuId="sidebarRight" side="end" disabled="true">
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>
-            <ion-label>Notificaciones</ion-label>
-          </ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="hideSidebarRight()">
-              <ion-icon name="close"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-      <ion-content>
-        <incidences-list></incidences-list>
-      </ion-content>
-    </ion-menu>
+        <ion-menu class="sidebar-right" menuId="sidebarRight" side="end" disabled="true">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-title>
+                        <ion-label>Notificaciones</ion-label>
+                    </ion-title>
+                    <ion-buttons slot="end">
+                        <ion-button (click)="hideSidebarRight()">
+                            <ion-icon name="close"></ion-icon>
+                        </ion-button>
+                    </ion-buttons>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content>
+                <incidences-list></incidences-list>
+            </ion-content>
+        </ion-menu>
 
-    <ion-router-outlet main> </ion-router-outlet>
-  </ion-split-pane>
+        <ion-router-outlet main> </ion-router-outlet>
+    </ion-split-pane>
 </ion-app>
