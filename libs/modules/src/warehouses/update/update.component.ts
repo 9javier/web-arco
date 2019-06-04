@@ -26,6 +26,7 @@ export class UpdateComponent implements OnInit {
     columns:''
   });
   private warehouseId;
+  private currentHasRacks;
 
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
   constructor(private modalCtrl:ModalController,
@@ -75,6 +76,7 @@ export class UpdateComponent implements OnInit {
     this.warehousesService.getShow(id).subscribe(warehouse=>{
       /**the models in backend differs then the model is useless */
 
+      this.currentHasRacks = warehouse.has_racks;
       let warehouseToPatch:any = warehouse;
       if(warehouse.group)
         warehouseToPatch.groupId = warehouseToPatch.group.id;
