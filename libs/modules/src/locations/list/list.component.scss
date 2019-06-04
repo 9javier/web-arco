@@ -151,6 +151,10 @@ h1 {
           background-image: url('../../../../shared-assets/img/md-close.svg');
           background-position: center;
       }
+      td.location-locked {
+        background: #fff url('../../../../shared-assets/img/md-lock.png') no-repeat center;
+        background-size: 16px;
+      }
       td.location-selected {
           outline: 3px solid #0c9d58;
           outline-offset: -3px;
