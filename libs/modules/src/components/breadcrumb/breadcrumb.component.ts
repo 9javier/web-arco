@@ -32,28 +32,31 @@ export class BreadcrumbComponent implements OnInit {
       let levelRoute = this.getRouteByPath(activePath);
       let activePathArray = activePath.split("/");
       activePath = activePathArray.slice(0,activePathArray.length-1).join("/");
-      if(levelRoute)
+      if(levelRoute) {
         this.breadCrumbs.push(levelRoute);
+      }
     }
-    if(this.patch)
+    if(this.patch) {
       this.breadCrumbs[0] = {
         path: '',
         data:{
           name:this.patch
         }
-      }
-    else
+      };
+    } else {
       this.breadCrumbs[0].path = '';
+    }
     this.breadCrumbs = this.breadCrumbs.reverse();
-    if(this.post && !this.patch)
+    if(this.post && !this.patch) {
       this.breadCrumbs.push(
         {
           path: '',
           data:{
             name:this.post
           }
-        }  
-      );    
+        }
+      );
+    }
   }
 
   /**

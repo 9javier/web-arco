@@ -21,15 +21,15 @@
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom" [ngClass]="storeTemplate.errorTypeShippingOrder ? 'required-field' : ''">
     <mat-radio-group [name]="'replace'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.replace" (change)="changeTemplateValues('replace')">
-      <mat-radio-button value="1"></mat-radio-button>
-      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="1" (click)="checkRadioToRemove('replace', '1')"></mat-radio-button>
+      <mat-radio-button value="2" (click)="checkRadioToRemove('replace', '2')"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right" [ngClass]="storeTemplate.errorTypeShippingOrder ? 'required-field' : ''">
     <mat-radio-group [name]="'allocate'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.allocate" (change)="changeTemplateValues('allocate')">
-      <mat-radio-button value="1"></mat-radio-button>
-      <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="1" (click)="checkRadioToRemove('allocate', '1')"></mat-radio-button>
+      <mat-radio-button value="2" (click)="checkRadioToRemove('allocate', '2')"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 

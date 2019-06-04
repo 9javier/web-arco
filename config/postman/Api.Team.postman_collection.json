@@ -2403,7 +2403,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"processTypeId\": 1,\n\t\"status\": true,\n\t\"rackId\": 1,\n\t\"row\": 3,\n\t\"column\": 4\n}"
+							"raw": "{\n\t\"processTypeId\": 1,\n\t\"status\": true,\n\t\"rack_pattern\": \"10-14\",\n\t\"row_pattern\": \"2\",\n\t\"column_pattern\": \"23-26, 29\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/api/warehouses/1/containers",

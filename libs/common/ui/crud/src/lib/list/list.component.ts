@@ -41,6 +41,7 @@ import {UpdateComponent as updateGroup} from "../../../../../../modules/src/grou
 import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/halls.service";
 import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
 import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import {PrinterService} from "../../../../../../services/src/lib/printer/printer.service";
 
 
 @Component({
@@ -71,7 +72,8 @@ export class ListComponent implements OnInit {
     private hallsService: HallsService,
     private route: ActivatedRoute,
     private location: Location,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private printerService: PrinterService
 
   ) {
     console.log(this.dataSource);
@@ -332,9 +334,13 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/warehouses/locations/${row.id}`]);
   }
 
-  print(){
+  print(event, row){
     event.stopPropagation();
-    console.log('print');
+    if(row.reference){
+      this.printerService.print(row.reference);
+    } else {
+      console.debug("Not found reference", row);
+    }
   }
 
   async presentUsertDeleteAlert(

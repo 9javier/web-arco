@@ -11,28 +11,49 @@ const routes: Routes = [
   {
     path: 'home',
     canActivate: [AuthGuard],
-    loadChildren: './home/home.module#HomePageModule'
+    loadChildren: './home/home.module#HomePageModule',
+    data:{
+      name:'Principal'
+    }
   },
-  { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
+  {
+    path: 'login',
+    loadChildren: './login/login.module#LoginPageModule',
+    data:{
+      name:'Login'
+    }
+  },
   {
     path: 'products',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule'
+    loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule',
+    data:{
+      name:'Productos'
+    }
   },
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: '@suite/common-modules#LocationsModule'
+    loadChildren: '@suite/common-modules#LocationsModule',
+    data:{
+      name:'Almacenes'
+    }
   },
   {
     path: 'jails',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule'
+    loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',
+    data:{
+      name:'Jails'
+    }
   },
   {
     path: 'pallets',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule'
+    loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
+    data:{
+      name:'Pallets'
+    }
   },
 ];
 
