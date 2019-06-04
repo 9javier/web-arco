@@ -83,7 +83,11 @@ export class AppComponent implements OnInit {
     this.showMainHeader = false;
     this.displaySmallSidebar = false;
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
+      if (this.platform.is('android')) {
+        this.statusBar.styleLightContent();
+      } else {
+        this.statusBar.styleDefault();
+      }
       this.splashScreen.hide();
 
       // Initialization of Scandit settings that app will display
@@ -99,6 +103,9 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
         if (state) {
+          // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+          this.warehouseService.loadWarehousesData();
+
           this.warehouseService
             .init()
             .then((data: Observable<HttpResponse<any>>) => {
