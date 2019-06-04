@@ -69,8 +69,8 @@ export class EnableLockContainerComponent implements OnInit {
   }
 
   /**Close the current instance of the modal */
-  close():void{
-    this.modalController.dismiss();
+  close(data?: any):void{
+    this.modalController.dismiss(data);
   }
 
   /**send the form to the endpoint */
@@ -79,7 +79,9 @@ export class EnableLockContainerComponent implements OnInit {
     let values = this.sanitize(this.form.value);
     values = {...values,...this.assignStatus(values.radio)}
     this.warehouseMapsService.configureLocation(this.warehouseId,values).subscribe(response=>{
-      this.close();
+      this.close({
+        reload: true
+      });
       this.utils.dismissLoading();
       this.utils.presentAlert("Éxito","Configuración actualizada con éxito");
       console.log(response);

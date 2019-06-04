@@ -138,6 +138,12 @@ export class ListComponent implements OnInit {
       component:EnableLockContainerComponent,
       componentProps:{warehouseId:this.paramsReceived.params.id}
     });
+    modal.onDidDismiss()
+      .then(data => {
+        if (data && data.data && data.data.reload) {
+          this.initHalls();
+        }
+      });
     return modal.present();
   }
 
