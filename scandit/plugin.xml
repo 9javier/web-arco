@@ -209,6 +209,7 @@
     <source-file src="src/android/layout/title_bar_serauto.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrixsimple.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/title_bar_matrixsimple.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/nex_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
 
   </platform>

@@ -3,8 +3,9 @@ import {UserProcessesModel} from "@suite/services";
 export namespace PickingModel {
   export interface Picking {
     store?: string;
+    storeRef?: string;
     storeId?: number;
-    type?: number;
+    type?: string;
     typeId?: number;
     quantity?: number;
     threshold?: number;

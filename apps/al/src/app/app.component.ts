@@ -41,6 +41,11 @@ export class AppComponent implements OnInit {
       url: 'positioning'
     },
     {
+      title: 'Tareas de Picking',
+      icon: 'qr-scanner',
+      url: '/picking-tasks'
+    },
+    {
       title: 'Jaulas',
       url: '/jails/menu',
       icon: 'grid'

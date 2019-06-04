@@ -1,0 +1,13 @@
+<mat-grid-list cols="12" rowHeight="64px">
+  <mat-grid-tile colspan="6" rowspan="1">
+    <div class="tile-value"><span class="store-ref">{{pickingAssignment.storeRef}}&nbsp;</span>{{pickingAssignment.store}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="tile-value">{{pickingAssignment.type || pickingAssignment.typeId}}</div>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="tile-value-right">{{pickingAssignment.quantity}}</div>
+  </mat-grid-tile>
+</mat-grid-list>

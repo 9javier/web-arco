@@ -98,6 +98,115 @@ export class ScanditService {
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
   }
 
+  picking() {
+    let processInitiated: boolean = false;
+    let jailReference: string = null;
+    let productsToScan: any[] = [
+      {
+        rack: 1,
+        column: 1,
+        row: 1,
+        reference: '003456789000156789',
+        manufacturer: 'Adidas',
+        model: 'Zapatillas',
+        size: '43.5'
+      },
+      {
+        rack: 1,
+        column: 2,
+        row: 4,
+        reference: '003456789100156789',
+        manufacturer: 'Nike',
+        model: 'Botas',
+        size: '44'
+      },
+      {
+        rack: 2,
+        column: 1,
+        row: 4,
+        reference: '003456789200156789',
+        manufacturer: 'Puma',
+        model: 'Chanclas',
+        size: '36.5'
+      },
+      {
+        rack: 3,
+        column: 3,
+        row: 4,
+        reference: '003456789300156789',
+        manufacturer: 'Adidas',
+        model: 'Botines',
+        size: '40'
+      },
+      {
+        rack: 3,
+        column: 2,
+        row: 5,
+        reference: '003456789400156789',
+        manufacturer: 'Reebok',
+        model: 'Zapatos',
+        size: '38'
+      }
+    ];
+    let productsScanned: string[] = [];
+
+    ScanditMatrixSimple.init((response) => {
+      //Check Jail/Pallet or product
+      let code = response.barcode.data;
+      if (code.match(/J([0-9]){4}/)) {
+        if (!processInitiated) {
+          processInitiated = true;
+          jailReference = code;
+          ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+          ScanditMatrixSimple.setText(`Proceso iniciado con la Jaula ${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else if (productsToScan.length != 0) {
+          ScanditMatrixSimple.setText('Continúe escaneando los productos que se le indican antes de finalizar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else if (jailReference != code) {
+          ScanditMatrixSimple.setText('La Jaula escaneada es diferente a la Jaula con la que inició el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else {
+          ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
+          setTimeout(() => {
+            ScanditMatrixSimple.finish();
+          }, 1.5 * 1000);
+        }
+      } else {
+        if (!processInitiated) {
+          ScanditMatrixSimple.setText('Escanea la Jaula a utilizar antes de comenzar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else {
+          if (productsToScan.length > 0) {
+            if (code != productsToScan[0].reference) {
+              ScanditMatrixSimple.setText(`El producto ${code} no es el que se le ha solicitado. Escaneé el producto correcto.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+              this.hideTextMessage(2000);
+            } else {
+              productsToScan.shift();
+              productsScanned.push(code);
+              ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido a la Jaula.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+              this.hideTextMessage(2000);
+              if (productsToScan.length > 0) {
+                ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+              } else {
+                ScanditMatrixSimple.showNexProductToScan(false);
+                setTimeout(() => {
+                  ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                  this.hideTextMessage(1500);
+                }, 2 * 1000);
+              }
+            }
+          } else {
+            ScanditMatrixSimple.showNexProductToScan(false);
+            ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+            this.hideTextMessage(1500);
+          }
+        }
+      }
+    }, 'Escanear', HEADER_BACKGROUND, HEADER_COLOR);
+  }
+
   private hideTextMessage(delay: number){
     if(this.timeoutHideText){
       clearTimeout(this.timeoutHideText);

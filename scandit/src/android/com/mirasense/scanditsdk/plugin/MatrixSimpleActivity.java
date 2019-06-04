@@ -48,6 +48,7 @@ public class MatrixSimpleActivity extends Activity {
     actionBar.setDisplayShowCustomEnabled(true);
     actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(backgroundTitle)));
     actionBar.setCustomView(resources.getIdentifier("title_bar_matrixsimple", "layout", package_name));
+    ScanditSDK.setActionBar(actionBar);
 
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
       WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -68,7 +69,7 @@ public class MatrixSimpleActivity extends Activity {
     settings.setSymbologyEnabled(Barcode.SYMBOLOGY_CODE39, true);
     SymbologySettings symSettings128 = settings.getSymbologySettings(Barcode.SYMBOLOGY_CODE128);
     short[] activeSymbolCounts128 = new short[]{
-      9, 12, 14
+      7, 9, 12, 14
     };
     symSettings128.setActiveSymbolCounts(activeSymbolCounts128);
 
