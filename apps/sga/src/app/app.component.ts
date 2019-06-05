@@ -140,7 +140,7 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private router: Router,
+    public router: Router,
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
@@ -208,7 +208,7 @@ export class AppComponent implements OnInit {
           } else {
             this.menu.enable(false, 'sidebar');
             this.showMainHeader = false;
-            this.router.navigate(['login']);
+            this.router.navigateByUrl('/login');
           }
         },10);
 
@@ -241,7 +241,7 @@ export class AppComponent implements OnInit {
           .get_logout(accessToken)
           .subscribe((data: HttpResponse<ResponseLogout>) => {
             this.authenticationService.logout().then(success => {
-              this.router.navigate(['login']);
+              this.router.navigateByUrl('/login')
             });
             console.log(data);
           });
