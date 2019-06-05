@@ -55,8 +55,11 @@ export class WarehousesService {
    * Get the main warehouse
    */
   getMain():Observable<WarehouseModel.Warehouse>{
-    return this.http.get<WarehouseModel.ResponseShow>(this.getMainUrl).pipe(map(response=>{
-      return response.data;
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<WarehouseModel.ResponseShow>(this.getMainUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
     }));
   }
   
