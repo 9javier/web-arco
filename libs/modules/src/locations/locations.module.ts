@@ -13,6 +13,7 @@ import {HallsModule} from '../halls/halls.module';
 import { EnableLockContainerModule } from './modals/enable-lock-container/enable-lock-container.module';
 import { PipesModule } from "../../../pipes/src";
 import {MoveProductsComponent} from "./modals/move-products/move-products.component";
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
 
 
@@ -32,7 +33,8 @@ import {MoveProductsComponent} from "./modals/move-products/move-products.compon
     FormsModule,
     HallsModule,
     EnableLockContainerModule,
-    PipesModule
+    PipesModule,
+    BreadcrumbModule
   ],
   entryComponents: [
     ListComponent,

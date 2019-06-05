@@ -59,6 +59,8 @@ export class ListComponent implements OnInit {
   @Input() routePath: string;
   @Input() origin: string;
 
+  flagRequestList = false;
+
   dataSource: any[] = [];
   selection = new SelectionModel<UserModel.User | RolModel.Rol>(true, []);
   showDeleteButton = false;
@@ -172,6 +174,7 @@ export class ListComponent implements OnInit {
                 HallModel.ResponseIndex
                 >
             ) => {
+              this.flagRequestList = true;
               this.dataSource = res.body.data
                 .map(hall => {
                   let expanded = false;

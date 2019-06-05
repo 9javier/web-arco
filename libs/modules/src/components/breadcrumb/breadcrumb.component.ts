@@ -11,13 +11,22 @@ export class BreadcrumbComponent implements OnInit {
 
   @Input() patch;
   @Input() post;
-  public breadCrumbs:Array<Route> = []; 
+  public breadCrumbs:Array<Route> = [];
+
+  @Input() set override(override){
+    if(override){
+      this.breadCrumbs = override.map(override=>{
+        return {path:override.url,data:{name:override.name}}
+      })
+    }
+  }
   private listOfRoutes:Array<Route> = this.router.config;
 
   constructor(private activatedRoute:ActivatedRoute, private router:Router) { }
 
   ngOnInit() {
-    this.getBreadcrumbs();
+    if(!this.breadCrumbs.length)
+      this.getBreadcrumbs();
   }
 
   /**
@@ -26,7 +35,6 @@ export class BreadcrumbComponent implements OnInit {
   getBreadcrumbs():void{
     
     let activePath = this.router.url.substr(1);
-    console.log(activePath);
 
     while(activePath){
       let levelRoute = this.getRouteByPath(activePath);
@@ -65,7 +73,6 @@ export class BreadcrumbComponent implements OnInit {
   getRouteByPath(path:string):Route{
     let route;
     this.listOfRoutes.forEach(_route=>{
-      console.log(_route.path,path);
       if(_route.path == path)
         route = Object.assign({},(_route));
     });
