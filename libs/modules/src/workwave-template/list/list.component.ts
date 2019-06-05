@@ -271,6 +271,14 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     data.store.typeShippingOrder = this.lastStoreTemplateEdited.typeShippingOrder;
   }
 
+  resetForm() {
+    if (this.templateToEdit) {
+      this.initializeStoresListWithEditTemplate();
+    } else {
+      this.clearAllFields();
+    }
+  }
+
   clearAllFields() {
     for (let store of this.listStoresTemplates) {
       store.checked = false;

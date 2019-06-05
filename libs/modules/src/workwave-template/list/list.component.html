@@ -17,11 +17,8 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button color="light" *ngIf="templateToEdit" (click)="initializeStoresListWithEditTemplate()">
+    <ion-fab-button color="light" (click)="resetForm()">
       <i class="material-icons">settings_backup_restore</i>
-    </ion-fab-button>
-    <ion-fab-button color="light" (click)="clearAllFields()">
-      <i class="material-icons">select_all</i>
     </ion-fab-button>
     <ion-fab-button color="light" (click)="saveTemplate(RUN_NOW_TASK_ID)">
       <i class="material-icons">play_arrow</i>
