@@ -14,8 +14,8 @@ export class LocationsComponent implements OnInit {
   static readonly WAREHOUSE_LIST_SECTION_PATH = 'list';
 
   title = 'Ubicaciones';
-  displayedColumns: any[] = ['icon', 'hall','rows','columns', 'use', 'locations',"update", 'dropdown'];
-  columns: any[] = [{name: 'Pasillo', value: 'hall'}, {name:"Nº alturas",value:"rows"},{name:"nº columnas",value:"columns"},{name: 'Utilización', value: 'use'}, {name: 'Ubicaciones', value: 'locations'}];
+  displayedColumns: any[] = ['icon', 'hall','rows','columns', 'use', 'locations', 'dropdown'];
+  columns: any[] = [{name: 'Pasillo', value: 'hall'}, {name:"Nº alturas",value:"rows"},{name:"Nº columnas",value:"columns"},{name: 'Utilización', value: 'use'}, {name: 'Ubicaciones', value: 'locations'}];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Maps')
     .name;
   routePath = '/locations';
@@ -34,6 +34,8 @@ export class LocationsComponent implements OnInit {
         paramsReceived.id == LocationsComponent.MAIN_WAREHOUSE_MANAGEMENT_SECTION_PATH
       ) {
         this.origin = LocationsComponent.MAIN_WAREHOUSE_MANAGEMENT_SECTION_PATH;
+      } else {
+        this.displayedColumns.splice(this.displayedColumns.length - 1, 0, "update")
       }
     });
   }
