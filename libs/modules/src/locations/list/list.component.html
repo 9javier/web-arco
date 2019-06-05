@@ -3,7 +3,7 @@
         <suite-breadcrumb *ngIf="warehouseSelected && !isMainWarehouseManagementSection()" [post]="warehouse?.name"></suite-breadcrumb>
         <suite-breadcrumb *ngIf="warehouseSelected && isMainWarehouseManagementSection()" [post]="warehouse?.name"></suite-breadcrumb>
 
-        <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection()" (click)="openModalMoveProducts">
+        <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection()" (click)="openModalMoveProducts()">
             Mover contenido
         </ion-button>
     </h1>
