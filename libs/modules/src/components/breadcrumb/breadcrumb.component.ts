@@ -9,8 +9,23 @@ import { ActivatedRoute, Router,Route } from '@angular/router';
 })
 export class BreadcrumbComponent implements OnInit {
 
-  @Input() patch;
-  @Input() post;
+  _patch;
+  _post;
+  @Input() set patch(patch){
+    if(patch){
+      this.breadCrumbs = [];
+      this._patch = patch;
+      this.getBreadcrumbs();
+    }
+  }
+  @Input() set post(post){
+    if(post){
+      this.breadCrumbs = [];
+      this._post = post;
+      this.getBreadcrumbs();
+    }
+  }
+
   public breadCrumbs:Array<Route> = [];
 
   @Input() set override(override){
@@ -44,23 +59,23 @@ export class BreadcrumbComponent implements OnInit {
         this.breadCrumbs.push(levelRoute);
       }
     }
-    if(this.patch) {
+    if(this._patch) {
       this.breadCrumbs[0] = {
         path: '',
         data:{
-          name:this.patch
+          name:this._patch
         }
       };
     } else {
       this.breadCrumbs[0].path = '';
     }
     this.breadCrumbs = this.breadCrumbs.reverse();
-    if(this.post && !this.patch) {
+    if(this._post && !this._patch) {
       this.breadCrumbs.push(
         {
           path: '',
           data:{
-            name:this.post
+            name:this._post
           }
         }
       );

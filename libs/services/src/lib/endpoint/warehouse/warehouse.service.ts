@@ -7,14 +7,19 @@ import {Observable} from "rxjs";
 import {HallModel} from "../../../models/endpoints/Hall";
 import {HallsService} from "../halls/halls.service";
 import {WarehouseModel} from "@suite/services";
+import { map } from 'rxjs/operators';
 
 const PATH_GET_WAREHOUSE_MAIN: string = PATH('Warehouses', 'Main');
 const PATH_GET_WAREHOUSE_INDEX: string = PATH('Warehouses', 'Index');
+
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WarehouseService {
+
+  private getShowUrl = environment.apiBase+"/warehouses/{{id}}";
 
   private _idWarehouseMain: number = 1;
   private _listWarehouses: any[] = [];
@@ -37,6 +42,14 @@ export class WarehouseService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  /**
+   * Get warehouse by id number
+   * @param id - the warehouse id
+   */
+  getShow(id:number):Observable<WarehouseModel.Warehouse>{
+    return this.http.get(this.getShowUrl.replace("{{id}}",id.toString())).pipe(map((response:any)=>response.data));
   }
 
   async getIndex() {
