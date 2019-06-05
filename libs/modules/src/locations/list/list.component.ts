@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel} from "@angular/cdk/collections";
-import {RolModel, UserModel} from "@suite/services";
+import {RolModel, UserModel, WarehouseModel} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../../services/src/models/endpoints/Hall";
@@ -48,7 +48,8 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private toastController: ToastController,
     private warehouseService: WarehouseService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private changeDetector:ChangeDetectorRef
   ) {
   }
 
@@ -58,6 +59,8 @@ export class ListComponent implements OnInit {
   @Input() displayedColumns: string[];
   @Input() routePath: string;
   @Input() origin: string;
+
+  warehouse:WarehouseModel.Warehouse;
 
   flagRequestList = false;
 
@@ -160,6 +163,12 @@ export class ListComponent implements OnInit {
       this.warehouseSelected = this.warehouseService.idWarehouseMain;
       this.parentPage = null;
     }
+
+    this.warehouseService.getShow(this.warehouseSelected).subscribe(warehouse=>{
+      this.warehouse = warehouse
+      console.log(warehouse);
+    });
+
     this.hallsService
       .getIndex(this.warehouseSelected)
       .then(
