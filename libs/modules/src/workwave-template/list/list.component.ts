@@ -35,6 +35,8 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         name: warehouse.reference+' '+warehouse.name,
         thresholdConsolidated: 0,
         thresholdShippingStore: 0,
+        replace: '',
+        allocate: '',
         typeGeneration: '',
         typePacking: '',
         typeShippingOrder: 0
@@ -71,6 +73,26 @@ export class ListWorkwaveTemplateComponent implements OnInit {
           store.errorThresholdShippingStore = false;
           store.errorTypeGeneration = false;
           store.errorTypePacking = false;
+          switch (store.typeShippingOrder) {
+            case 1:
+              store.replace = '1';
+              break;
+            case 2:
+              store.allocate = '1';
+              break;
+            case 3:
+              store.replace = '2';
+              store.allocate = '2';
+              break;
+            case 4:
+              store.replace = '1';
+              store.allocate = '2';
+              break;
+            case 5:
+              store.replace = '2';
+              store.allocate = '1';
+              break;
+          }
         }
       }
     }
@@ -172,14 +194,33 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   }
 
   changeStoreTemplate(data) {
+    if (data.field == 'replace' && data.store.replace == '1' && data.store.allocate == '1') {
+      data.store.allocate = '2';
+    }
+    if (data.field == 'allocate' && data.store.allocate == '1' && data.store.replace == '1') {
+      data.store.replace = '2';
+    }
+
+    if (data.field == 'replace' || data.field == 'allocate') {
+      if (data.store.replace && !data.store.allocate) {
+        data.store.typeShippingOrder = 1;
+      } else if (data.store.allocate && !data.store.replace) {
+        data.store.typeShippingOrder = 2;
+      } else if (data.store.replace == '2' && data.store.allocate == '2') {
+        data.store.typeShippingOrder = 3;
+      } else if (data.store.replace == '1' && data.store.allocate == '2') {
+        data.store.typeShippingOrder = 4;
+      } else if (data.store.replace == '2' && data.store.allocate == '1') {
+        data.store.typeShippingOrder = 5;
+      }
+      delete data.store.errorTypeShippingOrder;
+    }
+
     if (data.field == 'consolidated' && data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) {
       delete data.store.errorThresholdConsolidated;
     }
     if (data.field == 'shipping' && data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) {
       delete data.store.errorThresholdShippingStore;
-    }
-    if (data.field == 'shipping_order') {
-      delete data.store.errorTypeShippingOrder;
     }
     if (data.field == 'selection') {
       delete data.store.errorTypeGeneration;
@@ -190,6 +231,8 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     if (data.field == 'check' && !data.store.checked) {
       data.store.thresholdConsolidated = 0;
       data.store.thresholdShippingStore = 0;
+      data.store.replace = '';
+      data.store.allocate = '';
       data.store.typeGeneration = '';
       data.store.typePacking = '';
       data.store.typeShippingOrder = 0;
@@ -199,7 +242,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       delete data.store.errorTypeGeneration;
       delete data.store.errorTypePacking;
     } else if (data.field != 'check'
-      && (data.store.typeShippingOrder || (data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) || (data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) || data.store.typeGeneration || data.store.typePacking)) {
+      && (data.store.replace || data.store.allocate || (data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) || (data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) || data.store.typeGeneration || data.store.typePacking)) {
       data.store.checked = true;
     }
   }
@@ -209,6 +252,8 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       store.checked = false;
       store.thresholdConsolidated = 0;
       store.thresholdShippingStore = 0;
+      store.replace = '';
+      store.allocate = '';
       store.typeGeneration = '';
       store.typePacking = '';
       store.typeShippingOrder = 0;
