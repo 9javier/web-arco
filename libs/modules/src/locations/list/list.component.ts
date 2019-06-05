@@ -440,7 +440,7 @@ export class ListComponent implements OnInit {
     if (!this.intervalReload) {
       this.intervalReload = setInterval(() => {
         this.reloadData();
-      }, 10 * 1000);
+      }, 60 * 1000);
     }
   }
 
