@@ -10,6 +10,7 @@ import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import {AssignModule} from "../assign/assign.module";
+import { BreadcrumbModule} from '@suite/common-modules';
 
 @NgModule({
   declarations: [RolesComponent, StoreComponent, UpdateComponent],
@@ -22,7 +23,8 @@ import {AssignModule} from "../assign/assign.module";
     RolesRoutingModule,
     CdkTableModule,
     CommonUiCrudModule,
-    AssignModule
+    AssignModule,
+    BreadcrumbModule
   ],
   entryComponents: [
     StoreComponent

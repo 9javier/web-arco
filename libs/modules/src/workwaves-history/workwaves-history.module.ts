@@ -13,6 +13,7 @@ import {WorkwaveListWorkwavesHistoryComponent} from "./list/list-workwave/list-w
 import {ListDetailHistoryComponent} from "./list-detail/list-detail.component";
 import {TitleDetailHistoryComponent} from "./list-detail/title/title.component";
 import {DetailHistoryComponent} from "./list-detail/detail/detail.component";
+import {BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
 
 @NgModule({
   declarations: [WorkwavesHistoryComponent, ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent],
@@ -27,7 +28,8 @@ import {DetailHistoryComponent} from "./list-detail/detail/detail.component";
     CdkTableModule,
     MatGridListModule,
     FormsModule,
-    MatRadioModule
+    MatRadioModule,
+    BreadcrumbModule
   ],
   entryComponents: [ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent]
 })
