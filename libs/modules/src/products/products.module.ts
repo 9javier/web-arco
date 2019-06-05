@@ -8,6 +8,7 @@ import { ProductsComponent } from './products.component';
 import { RouterModule, Routes } from "@angular/router";
 import {MatPaginatorModule} from '@angular/material';
 import { ProductDetailsModule } from './modals/product-details/product-details.module';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
 
 const routes: Routes = [
@@ -25,6 +26,7 @@ const routes: Routes = [
     MatListModule,
     MatTableModule,
     MatPaginatorModule,
+    BreadcrumbModule,
     RouterModule.forChild(routes),
     ProductDetailsModule
   ],
