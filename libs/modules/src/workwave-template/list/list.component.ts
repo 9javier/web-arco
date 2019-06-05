@@ -15,6 +15,8 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
   listStoresTemplates: any[];
+  listStoresTemplatesHighlighted: any[];
+  listStoresTemplatesHidden: any[];
   lastStoreTemplateEdited: any;
   template: any;
 
@@ -50,11 +52,15 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         id: this.templateToEdit.id
       };
       this.initializeStoresListWithEditTemplate();
+      this.listStoresTemplatesHighlighted = this.listStoresTemplates.filter(store => store.checked);
+      this.listStoresTemplatesHidden = this.listStoresTemplates.filter(store => !store.checked);
     } else {
       this.template = {
         name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Ola de trabajo'),
         id: null
       };
+      this.listStoresTemplatesHighlighted = this.listStoresTemplates;
+      this.listStoresTemplatesHidden = [];
     }
   }
 

@@ -4,7 +4,15 @@
 
 <div class="scroll-list">
   <title-list-workwave-template></title-list-workwave-template>
-  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplates" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
+  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplatesHighlighted" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
+  <mat-grid-list cols="12" rowHeight="54px" *ngIf="listStoresTemplatesHidden.length">
+    <mat-grid-tile colspan="12" rowspan="1">
+      Tiendas desactivadas...
+    </mat-grid-tile>
+  </mat-grid-list>
+  <title-list-workwave-template *ngIf="listStoresTemplatesHidden.length"></title-list-workwave-template>
+  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplatesHidden" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
+
 </div>
 
 <ion-footer class="footer-products">
