@@ -48,14 +48,14 @@ export namespace WorkwaveModel {
   }
 
   export interface ResponseStore {
-    data: Workwave[];
+    data: any;
     message: string;
     code: number;
     errors: any;
   }
 
   export interface ResponseUpdate {
-    data: Workwave[];
+    data: any;
     message: string;
     code: number;
     errors: any;

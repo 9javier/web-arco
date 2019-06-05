@@ -108,7 +108,7 @@ export class UserManagerComponent implements OnInit {
         processes: this.formBuilder.array(this.typeProcesses.map(typeProcess => {
           return new FormControl(!!(userProcess.processes.map(userProcess => userProcess.processType).indexOf(typeProcess.id) + 1));
         })),
-        performance: userProcess.performance
+        performance: userProcess.performance || 0
       }));
     });
     console.log(userProcessForm)

@@ -1,12 +1,13 @@
+<suite-breadcrumb></suite-breadcrumb>
 <div class="scroll-list">
-  <title-list-workwaves-template></title-list-workwaves-template>
-  <workwave-list-workwaves-template *ngFor="let workwaveTemplate of workwavesTemplates" [workwaveTemplate]="workwaveTemplate" (click)="editWorkwave(workwaveTemplate)"></workwave-list-workwaves-template>
+    <title-list-workwaves-template></title-list-workwaves-template>
+    <workwave-list-workwaves-template *ngFor="let workwaveTemplate of workwavesTemplates" [workwaveTemplate]="workwaveTemplate" (click)="editWorkwave(workwaveTemplate)"></workwave-list-workwaves-template>
 </div>
 
 <ion-footer class="footer-products">
-  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button color="light" (click)="selectAll()"><i class="material-icons">select_all</i></ion-fab-button>
-    <ion-fab-button color="light" (click)="removeWorkwave()"><i class="material-icons">delete</i></ion-fab-button>
-    <ion-fab-button (click)="addWorkwave()"><i class="material-icons">add</i></ion-fab-button>
-  </ion-fab>
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button color="light" (click)="selectAll()"><i class="material-icons">select_all</i></ion-fab-button>
+        <ion-fab-button color="light" (click)="removeWorkwave()"><i class="material-icons">delete</i></ion-fab-button>
+        <ion-fab-button (click)="addWorkwave()"><i class="material-icons">add</i></ion-fab-button>
+    </ion-fab>
 </ion-footer>

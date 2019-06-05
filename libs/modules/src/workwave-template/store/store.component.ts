@@ -70,8 +70,10 @@ export class StoreComponent implements OnInit {
     }
   }
 
-  goToList(save) {
-    this.modalController.dismiss({save: save});
+  goToList(save, id) {
+    let params: any = {save: save};
+    if (id) params.id = id;
+    this.modalController.dismiss(params);
   }
 
   saveWorkwave() {
@@ -111,9 +113,9 @@ export class StoreComponent implements OnInit {
                     this.loading.dismiss();
                     this.loading = null;
                     if (this.workwaveType == 'run') {
-                      this.goToList('save_run');
+                      this.goToList('save_run', res.body.data.id);
                     } else {
-                      this.goToList('save');
+                      this.goToList('save', null);
                     }
                   }
                   this.presentToast('Ola de trabajo actualizada', 'success');
@@ -148,9 +150,9 @@ export class StoreComponent implements OnInit {
                     this.loading.dismiss();
                     this.loading = null;
                     if (this.workwaveType == 'run') {
-                      this.goToList('save_run');
+                      this.goToList('save_run', res.body.data.id);
                     } else {
-                      this.goToList('save');
+                      this.goToList('save', null);
                     }
                   }
                   this.presentToast('Ola de trabajo creada', 'success');

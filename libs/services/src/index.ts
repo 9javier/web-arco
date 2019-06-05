@@ -75,3 +75,6 @@ export * from './lib/endpoint/inventory/filters/filters.service';
 /** Inventory */
 export * from './models/endpoints/Inventory';
 export * from './lib/endpoint/inventory/inventory.service';
+
+/**Intermediary */
+export * from './lib/endpoint/intermediary/intermediary.service';

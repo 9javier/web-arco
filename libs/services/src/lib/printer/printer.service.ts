@@ -54,7 +54,7 @@ export class PrinterService {
 
   private toPrint(text: string) {
     if (this.address) {
-      if (cordova.plugins.zbtprinter) {
+      if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
         let textToPrint = this.getTextToPrinter(text);
         cordova.plugins.zbtprinter.print(this.address, textToPrint,
           (success) => {
@@ -65,10 +65,10 @@ export class PrinterService {
           }
         );
       } else {
-        console.debug("Zbtprinter not cordova");
+        console.debug("Zbtprinter not cordova, failed to print " + text);
       }
     } else {
-      console.debug('Zbtprinter: Not connected');
+      console.debug('Zbtprinter: Not connected, failed to print ' + text);
     }
   }
 

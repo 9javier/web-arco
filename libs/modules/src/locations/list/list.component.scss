@@ -19,7 +19,7 @@ table {
 }
 
 .example-container {
-    height: 80vh;
+    max-height: 80vh;
     overflow: auto;
     width: 100%;
     position: relative;
@@ -30,16 +30,26 @@ table {
     padding: 10px 10px 10px 0;
 }
 
+.empty-msg {
+    padding: 40px 0px;
+    color: #222428;
+    width: 100%;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .previous-page-link {
     cursor: pointer;
     color: #979797;
 }
+
 h1 {
-  height: 36px;
-  .btn-move-products {
-    float: right;
-    margin: 0;
-  }
+    height: 36px;
+    .btn-move-products {
+        float: right;
+        margin: 0;
+    }
 }
 
 // Test expanded rows
@@ -106,70 +116,68 @@ h1 {
 }
 
 .detail-wrapper {
-  overflow-y: scroll;
-
-  .element-detail {
-    table-layout: fixed;
-    //
-    width: 0;
-
-    tr {
-          height: 24px;
-      }
-      td {
-          height: 24px;
-          width: 24px;
-          outline: none;
-          outline-offset: 0;
-          background: rgba(33, 33, 33, 0.12);
-          div.incidence-element-detail {
-              width: 8px;
-              height: 8px;
-              margin-left: 8px;
-              background: green;
-          }
-          div.incidence-element-detail.slight-incidence {
-              background: orange;
-          }
-          div.incidence-element-detail.serious-incidence {
-              background: red;
-          }
-      }
-      td.location-resume {
-          outline: 3px solid #fff;
-          outline-offset: -3px;
-          background: #fff;
-          text-align: center;
-      }
-      td.location-free {
-          outline: 3px solid #000;
-          outline-offset: -3px;
-          background: #fff;
-      }
-      td.location-disabled {
-          background: #fff;
-          background-image: url('../../../../shared-assets/img/md-close.svg');
-          background-position: center;
-      }
-      td.location-locked {
-        background: #fff url('../../../../shared-assets/img/md-lock.png') no-repeat center;
-        background-size: 16px;
-      }
-      td.location-selected {
-          outline: 3px solid #0c9d58;
-          outline-offset: -3px;
-          background: rgba(12, 157, 88, 0.12);
-          background-image: url('../../../../shared-assets/img/md-check.svg');
-          background-position: center;
-      }
-      //td:hover,
-      td.location-free:hover,
-      td.location-disabled:hover,
-      td.location-selected:hover {
-          outline: 3px solid #0c9d58;
-          outline-offset: -3px;
-      }
-  }
+    overflow-y: scroll;
+    .element-detail {
+        table-layout: fixed;
+        //
+        width: 0;
+        tr {
+            height: 24px;
+        }
+        td {
+            height: 24px;
+            width: 24px;
+            outline: none;
+            outline-offset: 0;
+            background: rgba(33, 33, 33, 0.12);
+            div.incidence-element-detail {
+                width: 8px;
+                height: 8px;
+                margin-left: 8px;
+                background: green;
+            }
+            div.incidence-element-detail.slight-incidence {
+                background: orange;
+            }
+            div.incidence-element-detail.serious-incidence {
+                background: red;
+            }
+        }
+        td.location-resume {
+            outline: 3px solid #fff;
+            outline-offset: -3px;
+            background: #fff;
+            text-align: center;
+        }
+        td.location-free {
+            outline: 3px solid #000;
+            outline-offset: -3px;
+            background: #fff;
+        }
+        td.location-disabled {
+            background: #fff;
+            background-image: url('../../../../shared-assets/img/md-close.svg');
+            background-position: center;
+        }
+        td.location-locked {
+            background: #fff url('../../../../shared-assets/img/md-lock.png') no-repeat center;
+            background-size: 16px;
+        }
+        td.location-selected {
+            outline: 3px solid #0c9d58;
+            outline-offset: -3px;
+            background: rgba(12, 157, 88, 0.12);
+            background-image: url('../../../../shared-assets/img/md-check.svg');
+            background-position: center;
+        }
+        //td:hover,
+        td.location-free:hover,
+        td.location-disabled:hover,
+        td.location-selected:hover {
+            outline: 3px solid #0c9d58;
+            outline-offset: -3px;
+        }
+    }
 }
 
 .collapsed-detail {

@@ -34,7 +34,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule',
     data:{
-      name:' Grupos a almacenes'
+      name:'Asignnar grupos de tiendas'
     }
   },
   {
@@ -91,7 +91,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/groups/groups.module#GroupsModule',
     data:{
-      name:'Grupos'
+      name:'Grupo de tiendas'
     }
   },
   {
@@ -99,7 +99,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-manager/user-manager.module#UserManagerModule',
     data:{
-      name:'Grupo de usuarios'
+      name:'Parametrización de operarios'
     }
   },
   {
@@ -130,6 +130,10 @@ const routes: Routes = [
      path: '',
      redirectTo: 'login',
      pathMatch: 'full'
+  },{
+    path: '',
+    redirectTo: 'logout',
+    pathMatch: 'full'    
   },
   {
     path: 'warehouse',
@@ -144,7 +148,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
     data:{
-      name:''
+      name:'Programadas'
     }
   },
   {
@@ -152,7 +156,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-templates/workwaves-templates.module#WorkwavesTemplatesModule',
     data:{
-      name:''
+      name:'Plantillas'
     }
   },
   {
@@ -160,7 +164,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwave-template/workwave-template.module#WorkwaveTemplateModule',
     data:{
-      name:''
+      name:'Plantilla'
     }
   },
   {
@@ -168,7 +172,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-history/workwaves-history.module#WorkwavesHistoryModule',
     data:{
-      name:''
+      name:'Historial'
     }
   },
   {

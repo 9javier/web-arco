@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'suite-user-assignment-picking',
@@ -7,10 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserAssignmentPickingComponent implements OnInit {
 
-  constructor() {}
+  public idWorkwave: number = null;
+
+  constructor(
+    private activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-
+    this.idWorkwave = parseInt(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
 }

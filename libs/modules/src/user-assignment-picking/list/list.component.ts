@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {TypeUsersProcesses, UserProcessesService} from "@suite/services";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
@@ -11,7 +11,7 @@ import {AlertController} from "@ionic/angular";
 })
 export class ListUserAssignmentTemplateComponent implements OnInit {
 
-  private pickingId: number = 1;
+  @Input() workwaveId: number = 1;
   public pickingAssignments: PickingModel.Picking[] = [];
   public usersPicking: TypeUsersProcesses.UsersProcesses[] = [];
 
@@ -22,10 +22,9 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    /*
-    * TODO enable this to use endpoint data
+    // TODO enable this to use endpoint data
     this.pickingService
-      .getShow(this.pickingId)
+      .getShow(this.workwaveId)
       .subscribe((res: PickingModel.ResponseShow) => {
         if (res.code == 200 || res.code == 201) {
           this.pickingAssignments = res.data;
@@ -35,10 +34,9 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
       }, (error: PickingModel.ErrorResponse) => {
 
       });
-    */
 
     // TODO remove this when enable endpoint data
-    this.pickingAssignments = [
+    /*this.pickingAssignments = [
       {
         store: 'KRACK Vigo',
         typeId: 1,
@@ -57,7 +55,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
         quantity: 250,
         threshold: 500
       }
-    ];
+    ];*/
 
     this.userProcessesService
       .getIndex()
@@ -87,7 +85,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
     }
 
     this.pickingService
-      .putUpdate(this.pickingId, this.pickingAssignments)
+      .putUpdate(this.workwaveId, this.pickingAssignments)
       .subscribe((res: PickingModel.ResponseUpdate) => {
         if (res.code == 200 || res.code == 201) {
 

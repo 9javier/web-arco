@@ -1,7 +1,5 @@
 <ion-content>
-    <ion-text color="primary">
-        <h1>Parametrización de operarios</h1>
-    </ion-text>
+    <suite-breadcrumb></suite-breadcrumb>
     <form *ngIf="formGroup && displayedColumns" [formGroup]="formGroup">
         <table mat-table [dataSource]="formGroup.controls.users.controls">
 
@@ -24,7 +22,7 @@
             <ng-container matColumnDef="performance">
                 <th mat-header-cell *matHeaderCellDef>% productividad</th>
                 <td mat-cell *matCellDef="let user; let i = index">
-                    <ion-input placeholder="" class="ion-margin-horizontal" type="number" [formControl]="user.controls.performance"></ion-input>
+                    <ion-input placeholder="" class="ion-margin-horizontal" type="number" [formControl]="user.controls.performance" min="0"></ion-input>
                 </td>
             </ng-container>
         </table>

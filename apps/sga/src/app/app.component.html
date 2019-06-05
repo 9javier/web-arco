@@ -1,5 +1,5 @@
 <ion-app [ngClass]="{ 'sm-custom': displaySmallSidebar }">
-    <ion-header *ngIf="showMainHeader" [ngClass]="{ 'mainheader mainheader-fullheight': showMainHeader }">
+    <ion-header *ngIf="showMainHeader && router.url != '/login'" [ngClass]="{ 'mainheader mainheader-fullheight': showMainHeader }">
         <ion-toolbar color="primary">
             <ion-buttons slot="start">
                 <ion-button (window:resize)="onResize($event)" *ngIf="deploySidebarSmallDevices" (click)="toggleSidebarSmallDevices()">
@@ -21,7 +21,7 @@
         </ion-toolbar>
     </ion-header>
     <ion-split-pane>
-        <ion-menu menuId="sidebar" class="sidebar">
+        <ion-menu menuId="sidebar" class="sidebar" [class.display-none]="router.url=='/login'">
             <ion-header>
                 <ion-toolbar color="primary">
                     <ion-title>
@@ -59,6 +59,12 @@
                         </ion-item>
                     </ion-list>
                 </div>
+                <ion-item routerLink="/login">
+                    <ion-icon [slot]="iconsDirection" name="exit"></ion-icon>
+                    <ion-label>
+                        logout
+                    </ion-label>
+                </ion-item>
             </ion-content>
         </ion-menu>
 

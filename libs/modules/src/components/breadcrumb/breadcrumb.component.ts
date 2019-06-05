@@ -9,15 +9,39 @@ import { ActivatedRoute, Router,Route } from '@angular/router';
 })
 export class BreadcrumbComponent implements OnInit {
 
-  @Input() patch;
-  @Input() post;
-  public breadCrumbs:Array<Route> = []; 
+  _patch;
+  _post;
+  @Input() set patch(patch){
+    if(patch){
+      this.breadCrumbs = [];
+      this._patch = patch;
+      this.getBreadcrumbs();
+    }
+  }
+  @Input() set post(post){
+    if(post){
+      this.breadCrumbs = [];
+      this._post = post;
+      this.getBreadcrumbs();
+    }
+  }
+
+  public breadCrumbs:Array<Route> = [];
+
+  @Input() set override(override){
+    if(override){
+      this.breadCrumbs = override.map(override=>{
+        return {path:override.url,data:{name:override.name}}
+      })
+    }
+  }
   private listOfRoutes:Array<Route> = this.router.config;
 
   constructor(private activatedRoute:ActivatedRoute, private router:Router) { }
 
   ngOnInit() {
-    this.getBreadcrumbs();
+    if(!this.breadCrumbs.length)
+      this.getBreadcrumbs();
   }
 
   /**
@@ -26,34 +50,36 @@ export class BreadcrumbComponent implements OnInit {
   getBreadcrumbs():void{
     
     let activePath = this.router.url.substr(1);
-    console.log(activePath);
 
     while(activePath){
       let levelRoute = this.getRouteByPath(activePath);
       let activePathArray = activePath.split("/");
       activePath = activePathArray.slice(0,activePathArray.length-1).join("/");
-      if(levelRoute)
+      if(levelRoute) {
         this.breadCrumbs.push(levelRoute);
+      }
     }
-    if(this.patch)
+    if(this._patch) {
       this.breadCrumbs[0] = {
         path: '',
         data:{
-          name:this.patch
+          name:this._patch
         }
-      }
-    else
+      };
+    } else {
       this.breadCrumbs[0].path = '';
+    }
     this.breadCrumbs = this.breadCrumbs.reverse();
-    if(this.post && !this.patch)
+    if(this._post && !this._patch) {
       this.breadCrumbs.push(
         {
           path: '',
           data:{
-            name:this.post
+            name:this._post
           }
-        }  
-      );    
+        }
+      );
+    }
   }
 
   /**
@@ -62,7 +88,6 @@ export class BreadcrumbComponent implements OnInit {
   getRouteByPath(path:string):Route{
     let route;
     this.listOfRoutes.forEach(_route=>{
-      console.log(_route.path,path);
       if(_route.path == path)
         route = Object.assign({},(_route));
     });

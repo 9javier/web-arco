@@ -8,6 +8,7 @@ import { UserManagerComponent } from './user-manager.component';
 import { RouterModule, Routes } from "@angular/router";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ComponentsModule } from '../components//components.module';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
     MatTableModule,
     MatCheckboxModule,
     RouterModule.forChild(routes),
-    ComponentsModule
+    ComponentsModule,
+    BreadcrumbModule
   ],
   declarations: [UserManagerComponent]
 })

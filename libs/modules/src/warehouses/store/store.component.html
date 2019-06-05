@@ -32,7 +32,7 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
-            <ion-input placeholder="Referencia" class="ion-margin-horizontal" formControlName="reference" type="text" text></ion-input>
+            <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="number" number></ion-input>
         </ion-item>
         <!--Es tienda-->
         <ion-item>
@@ -70,7 +70,7 @@
             <ion-label lines="none" no-padding>
                 <div inset lines="none">
                     <ion-item no-padding>
-                        <mat-checkbox formControlName="has_racks">Tiene pasillos</mat-checkbox>
+                        <mat-checkbox formControlName="has_racks">Tiene almacén con mapa</mat-checkbox>
                     </ion-item>
                 </div>
             </ion-label>

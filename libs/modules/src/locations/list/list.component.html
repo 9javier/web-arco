@@ -1,9 +1,11 @@
 <ion-text color="primary">
     <h1>
-      <span *ngIf="parentPage" (click)="goPreviousPage()" class="previous-page-link">{{parentPage}} > </span>{{ title }}
-      <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection()" (click)="openModalMoveProducts">
-        Mover contenido
-      </ion-button>
+        <suite-breadcrumb *ngIf="warehouseSelected && !isMainWarehouseManagementSection()" [post]="warehouse?.name"></suite-breadcrumb>
+        <suite-breadcrumb *ngIf="warehouseSelected && isMainWarehouseManagementSection()" [post]="warehouse?.name"></suite-breadcrumb>
+
+        <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection()" (click)="openModalMoveProducts()">
+            Mover contenido
+        </ion-button>
     </h1>
 </ion-text>
 <div class="enable-lock-container" *ngIf="!isMainWarehouseManagementSection()">
@@ -29,7 +31,7 @@
                         <tr *ngIf="detail.element.container && detail.element.container.length">
                             <td class="location-resume" (click)="selectAllLocations()">
                                 <div class="incidence-element-resume">
-                                  <i class="material-icons">select_all</i>
+                                    <i class="material-icons">select_all</i>
                                 </div>
                             </td>
                             <td *ngFor="let column of detail.element.container[0]; let iColumn = index" class="location-resume" (click)="selectColumn($event, detail, detail.element.container, iColumn)">
@@ -41,7 +43,8 @@
                             <td class="location-resume" (click)="selectRow($event, detail, row, iRow)">
                                 <div class="incidence-element-resume">{{row[0].row}}</div>
                             </td>
-                            <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.items == 0 && column.enabled && !column.lock" [class.location-disabled]="!column.enabled" [class.location-locked]="column.enabled && column.lock" (click)="selectLocation($event, detail, row, column, iRow, iColumn)" [class.location-selected]="locationsSelected[column.id]">
+                            <td *ngFor="let column of row; let iColumn = index" [class.location-free]="column.items == 0 && column.enabled && !column.lock" [class.location-disabled]="!column.enabled" [class.location-locked]="column.enabled && column.lock" (click)="selectLocation($event, detail, row, column, iRow, iColumn)"
+                                [class.location-selected]="locationsSelected[column.id]">
                                 <div *ngIf="column.enabled && column.items > 0 && column.incidence" class="incidence-element-detail" [class.slight-incidence]="column.incidence == 'slight'" [class.serious-incidence]="column.incidence == 'serious'"></div>
                             </td>
                             <td class="location-resume" (click)="selectRow($event, detail, row, iRow)">
@@ -95,7 +98,9 @@
         </ng-container>
     </table>
 </div>
-
+<div class="empty-msg" *ngIf="flagRequestList && !dataSource.length">
+    No hay {{warehouseSelected?'ubicaciones':'nada'}} para mostrar
+</div>
 <ion-row class="fab-row-actions ">
     <ion-col size="1 " size-xs="1 " [offset]="9 " [offsetXs]="9 " *ngIf="origin=='list' && countLocationsSelected> 0">
         <ion-fab [@EnterLeave]="'flyIn'" (click)="selectAllLocations()">

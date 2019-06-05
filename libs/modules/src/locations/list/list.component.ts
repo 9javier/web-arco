@@ -1,8 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel} from "@angular/cdk/collections";
-import {RolModel, UserModel} from "@suite/services";
+import {RolModel, UserModel, WarehouseModel} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../../services/src/models/endpoints/Hall";
@@ -48,7 +48,8 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private toastController: ToastController,
     private warehouseService: WarehouseService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private changeDetector:ChangeDetectorRef
   ) {
   }
 
@@ -58,6 +59,10 @@ export class ListComponent implements OnInit {
   @Input() displayedColumns: string[];
   @Input() routePath: string;
   @Input() origin: string;
+
+  warehouse:WarehouseModel.Warehouse;
+
+  flagRequestList = false;
 
   dataSource: any[] = [];
   selection = new SelectionModel<UserModel.User | RolModel.Rol>(true, []);
@@ -138,6 +143,12 @@ export class ListComponent implements OnInit {
       component:EnableLockContainerComponent,
       componentProps:{warehouseId:this.paramsReceived.params.id}
     });
+    modal.onDidDismiss()
+      .then(data => {
+        if (data && data.data && data.data.reload) {
+          this.initHalls();
+        }
+      });
     return modal.present();
   }
 
@@ -152,6 +163,12 @@ export class ListComponent implements OnInit {
       this.warehouseSelected = this.warehouseService.idWarehouseMain;
       this.parentPage = null;
     }
+
+    this.warehouseService.getShow(this.warehouseSelected).subscribe(warehouse=>{
+      this.warehouse = warehouse
+      console.log(warehouse);
+    });
+
     this.hallsService
       .getIndex(this.warehouseSelected)
       .then(
@@ -166,6 +183,7 @@ export class ListComponent implements OnInit {
                 HallModel.ResponseIndex
                 >
             ) => {
+              this.flagRequestList = true;
               this.dataSource = res.body.data
                 .map(hall => {
                   let expanded = false;
@@ -358,20 +376,20 @@ export class ListComponent implements OnInit {
       let container = this.locationsSelected[idLocation].column;
       if (container.lock) {
         this.hallsService
-          .updateLock(container.id)
-          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
-            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
-              this.presentToast('Posición bloqueada', null);
+          .updateUnlock(container.id)
+          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
+            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
+              this.presentToast('Posición desbloqueada', null);
             }));
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
       } else {
         this.hallsService
-          .updateUnlock(container.id)
-          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
-            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
-              this.presentToast('Posición desbloqueada', null);
+          .updateLock(container.id)
+          .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
+            data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
+              this.presentToast('Posición bloqueada', null);
             }));
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');

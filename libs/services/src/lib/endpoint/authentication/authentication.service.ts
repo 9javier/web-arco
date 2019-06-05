@@ -12,6 +12,7 @@ export class AuthenticationService {
   authenticationState = new BehaviorSubject(null);
 
   constructor(private storage: Storage) {
+    console.log(storage);
   }
 
   async checkToken() {

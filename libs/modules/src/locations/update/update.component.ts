@@ -288,43 +288,82 @@ export class UpdateComponent implements OnInit {
 
         if (referenceContainer) inventoryProcess.containerReference = referenceContainer;
 
-        this.inventoryService
-          .postStore(inventoryProcess)
-          .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-            data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-              if (this.loading) {
-                this.loading.dismiss();
-                this.loading = null;
-              }
-              if (res.body.code == 200 || res.body.code == 201) {
-                this.presentToast(textToastOk || ('Producto ' + referenceProduct + ' ubicado en ' + this.title), 'success');
-                this.loadProducts();
-                this.loadProductsHistory()
-              } else {
-                let errorMessage = '';
-                if (res.body.errors.productReference && res.body.errors.productReference.message) {
-                  errorMessage = res.body.errors.productReference.message;
-                } else {
-                  errorMessage = res.body.message;
-                }
-                this.presentToast(errorMessage, 'danger');
-              }
-            }, (error: HttpErrorResponse) => {
-              if (this.loading) {
-                this.loading.dismiss();
-                this.loading = null;
-              }
-              this.presentToast(error.message, 'danger');
-            });
-          }, (error: HttpErrorResponse) => {
-            if (this.loading) {
-              this.loading.dismiss();
-              this.loading = null;
-            }
-            this.presentToast(error.message, 'danger');
-          });
+        this.storeProductInContainer(inventoryProcess, textToastOk);
       });
     }
+  }
+
+  async showWarningToForce(inventoryProcess, textToastOk) {
+    const alert = await this.alertController.create({
+      header: 'Atención',
+      subHeader: 'No se esperaba la entrada del producto que acaba de escanear. ¿Desea forzar la entrada del producto igualmente?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.presentToast(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`, 'danger');
+          }
+        }, {
+          text: 'Forzar',
+          handler: () => {
+            inventoryProcess.force = true;
+            this.storeProductInContainer(inventoryProcess, textToastOk);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private storeProductInContainer(params, textToastOk) {
+    this.inventoryService
+      .postStore(params)
+      .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
+        data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+          if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
+          }
+          if (res.body.code == 200 || res.body.code == 201) {
+            this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
+            this.loadProducts();
+            this.loadProductsHistory();
+          } else if (res.body.code == 428) {
+            this.showWarningToForce(params, textToastOk);
+          } else {
+            let errorMessage = '';
+            if (res.body.errors.productReference && res.body.errors.productReference.message) {
+              errorMessage = res.body.errors.productReference.message;
+            } else {
+              errorMessage = res.body.message;
+            }
+            this.presentToast(errorMessage, 'danger');
+          }
+        }, (error: HttpErrorResponse) => {
+          if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
+          }
+          if (error.error.code == 428) {
+            this.showWarningToForce(params, textToastOk);
+          } else {
+            this.presentToast(error.message, 'danger');
+          }
+        });
+      }, (error: HttpErrorResponse) => {
+        if (this.loading) {
+          this.loading.dismiss();
+          this.loading = null;
+        }
+        if (error.error.code == 428) {
+          this.showWarningToForce(params, textToastOk);
+        } else {
+          this.presentToast(error.message, 'danger');
+        }
+      });
   }
 
   showTimeFromNow(dateToFormat) : string {
