@@ -9,8 +9,8 @@ import { COLLECTIONS } from 'config/base';
 })
 export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
-    rows: ['', Validators.required],
-    columns: ['', Validators.required]
+    rows: ['', [Validators.required,Validators.min(1)]],
+    columns: ['', [Validators.required,Validators.min(1)]]
   };
   formBuilderTemplateInputs = [
     {
