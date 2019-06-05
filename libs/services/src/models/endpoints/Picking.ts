@@ -10,6 +10,8 @@ export namespace PickingModel {
     quantity?: number;
     threshold?: number;
     operator?: UserProcessesModel.UserProcesses;
+    userId?: number;
+    pickingId?: number;
   }
 
   export interface ResponseIndex {
