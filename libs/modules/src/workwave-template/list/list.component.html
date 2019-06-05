@@ -4,7 +4,7 @@
 
 <div class="scroll-list">
   <title-list-workwave-template></title-list-workwave-template>
-  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplates" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)"></workwave-list-workwave-template>
+  <workwave-list-workwave-template *ngFor="let storeTemplate of listStoresTemplates" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
 </div>
 
 <ion-footer class="footer-products">

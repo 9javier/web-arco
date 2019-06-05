@@ -3,7 +3,7 @@
     <mat-checkbox [(ngModel)]="storeTemplate.checked" (change)="changeTemplateValues('check')"></mat-checkbox>
   </mat-grid-tile>
 
-  <mat-grid-tile colspan="3" rowspan="1" class="border-bottom border-right">
+  <mat-grid-tile colspan="2" rowspan="1" class="border-bottom border-right">
     <div class="tile-value">{{storeTemplate.name}}</div>
   </mat-grid-tile>
 
@@ -57,5 +57,9 @@
     <mat-radio-group [name]="'packing'+storeTemplate.warehouseId" [(ngModel)]="storeTemplate.typePacking" (change)="changeTemplateValues('packing')">
       <mat-radio-button value="2" [disabled]="!storeTemplate.checked"></mat-radio-button>
     </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right" [ngClass]="storeTemplate.errorTypePacking ? 'required-field' : ''">
+    <ion-button (click)="copyTemplateFromLatestEdited()"><ion-icon name="copy"></ion-icon></ion-button>
   </mat-grid-tile>
 </mat-grid-list>

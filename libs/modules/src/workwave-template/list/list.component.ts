@@ -15,6 +15,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
   listStoresTemplates: any[];
+  lastStoreTemplateEdited: any;
   template: any;
 
   public RUN_NOW_TASK_ID = 1;
@@ -245,6 +246,23 @@ export class ListWorkwaveTemplateComponent implements OnInit {
       && (data.store.replace || data.store.allocate || (data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) || (data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) || data.store.typeGeneration || data.store.typePacking)) {
       data.store.checked = true;
     }
+    if (data.field != 'check') {
+      this.lastStoreTemplateEdited = data.store;
+    }
+  }
+
+  copyTemplateFromLatestEdited(data) {
+    if (!this.lastStoreTemplateEdited) {
+      return;
+    }
+    data.store.checked = true;
+    data.store.thresholdConsolidated = this.lastStoreTemplateEdited.thresholdConsolidated;
+    data.store.thresholdShippingStore = this.lastStoreTemplateEdited.thresholdShippingStore;
+    data.store.replace = this.lastStoreTemplateEdited.replace;
+    data.store.allocate = this.lastStoreTemplateEdited.allocate;
+    data.store.typeGeneration = this.lastStoreTemplateEdited.typeGeneration;
+    data.store.typePacking = this.lastStoreTemplateEdited.typePacking;
+    data.store.typeShippingOrder = this.lastStoreTemplateEdited.typeShippingOrder;
   }
 
   clearAllFields() {
