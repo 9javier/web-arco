@@ -181,7 +181,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         if (data.data.save == 'save') {
           this.goPreviousPage();
         } else if (data.data.save == 'save_run') {
-          this.router.navigate(['assign/user/picking']);
+          this.router.navigate([`assign/user/picking/${data.data.id}`]);
         }
       }
     });

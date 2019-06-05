@@ -8,6 +8,10 @@ const routes: Routes = [
     component: UserAssignmentPickingComponent
   },
   {
+    path: ':id',
+    component: UserAssignmentPickingComponent
+  },
+  {
     path: 'list',
     component: UserAssignmentPickingComponent
   },
