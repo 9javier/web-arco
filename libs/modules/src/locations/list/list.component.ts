@@ -304,9 +304,11 @@ export class ListComponent implements OnInit {
   }
 
   selectRow(event, data, row, iRow) {
-    row.forEach((column, iColumn) => {
-      this.selectLocation(event, data, row, column, iRow, iColumn);
-    });
+    if (this.isWarehouseListSection()) {
+      row.forEach((column, iColumn) => {
+        this.selectLocation(event, data, row, column, iRow, iColumn);
+      });
+    }
   }
 
   rangeFromValue(value) {
@@ -318,22 +320,24 @@ export class ListComponent implements OnInit {
   }
 
   selectAllLocations() {
-    if (this.expandedElement.totalContainers != this.countLocationsSelected) {
-      for (let row of this.expandedElement.container) {
-        for (let container of row) {
-          if (!container.selected) {
-            container.selected = true;
-            this.locationsSelected[container.id] = {row: row, column: container};
-            this.countLocationsSelected++;
+    if (this.isWarehouseListSection()) {
+      if (this.expandedElement.totalContainers != this.countLocationsSelected) {
+        for (let row of this.expandedElement.container) {
+          for (let container of row) {
+            if (!container.selected) {
+              container.selected = true;
+              this.locationsSelected[container.id] = {row: row, column: container};
+              this.countLocationsSelected++;
+            }
           }
         }
-      }
-    } else {
-      this.locationsSelected = {};
-      this.countLocationsSelected = 0;
-      for (let row of this.expandedElement.container) {
-        for (let container of row) {
-          container.selected = false;
+      } else {
+        this.locationsSelected = {};
+        this.countLocationsSelected = 0;
+        for (let row of this.expandedElement.container) {
+          for (let container of row) {
+            container.selected = false;
+          }
         }
       }
     }
