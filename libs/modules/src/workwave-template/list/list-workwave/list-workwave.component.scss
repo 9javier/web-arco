@@ -25,6 +25,9 @@ mat-grid-list {
     input[type="number"] {
       -moz-appearance: textfield;
     }
+    .icon-attach-radio {
+      margin-left: -12px;
+    }
   }
   mat-grid-tile.border-right {
     border-width: 0 1px 0 0;

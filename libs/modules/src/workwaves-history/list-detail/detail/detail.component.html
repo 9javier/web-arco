@@ -17,15 +17,17 @@
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom">
     <mat-radio-group [name]="'replace'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.replace" disabled>
-      <mat-radio-button value="1"></mat-radio-button>
       <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <i class="material-icons icon-attach-radio">arrow_drop_up</i>
     </mat-radio-group>
   </mat-grid-tile>
 
   <mat-grid-tile colspan="1" rowspan="1" class="border-bottom border-right">
     <mat-radio-group [name]="'allocate'+warehouseWorkwaveHistory.warehouseId" [value]="warehouseWorkwaveHistory.allocate" disabled>
-      <mat-radio-button value="1"></mat-radio-button>
       <mat-radio-button value="2"></mat-radio-button>
+      <mat-radio-button value="1"></mat-radio-button>
+      <i class="material-icons icon-attach-radio">arrow_drop_up</i>
     </mat-radio-group>
   </mat-grid-tile>
 
