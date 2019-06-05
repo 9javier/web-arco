@@ -10,6 +10,7 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import {ListWorkwavesTemplatesComponent} from "./list/list.component";
 import {TitleListWorkwavesTemplateComponent} from "./list/list-title/list-title.component";
 import {WorkwaveListWorkwavesTemplateComponent} from "./list/list-workwave/list-workwave.component";
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
 @NgModule({
   declarations: [WorkwavesTemplatesComponent, ListWorkwavesTemplatesComponent, TitleListWorkwavesTemplateComponent, WorkwaveListWorkwavesTemplateComponent],
@@ -23,7 +24,8 @@ import {WorkwaveListWorkwavesTemplateComponent} from "./list/list-workwave/list-
     CommonUiCrudModule,
     CdkTableModule,
     FormsModule,
-    MatGridListModule
+    MatGridListModule,
+    BreadcrumbModule
   ],
   entryComponents: [ListWorkwavesTemplatesComponent, TitleListWorkwavesTemplateComponent, WorkwaveListWorkwavesTemplateComponent]
 })

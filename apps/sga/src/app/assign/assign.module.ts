@@ -9,6 +9,7 @@ import { MatListModule } from '@angular/material/list';
 import { AssignRoutingModule } from './assign-routing.module';
 import { RolToUserComponent } from './rol-to-user/rol-to-user.component';
 import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.component';
+import { BreadcrumbModule } from '@suite/common-modules';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.
     IonicModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    MatListModule
+    MatListModule,
+    BreadcrumbModule
   ],
   exports: [RolToUserComponent, PermissionToRolComponent]
 })

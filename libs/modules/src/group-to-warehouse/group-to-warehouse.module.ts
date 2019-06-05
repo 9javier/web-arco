@@ -8,6 +8,7 @@ import { MatListModule } from '@angular/material/list';
 
 import { GroupToWarehouseComponent } from './group-to-warehouse.component';
 import {RouterModule, Routes} from "@angular/router";
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
 
 const routes: Routes = [
@@ -25,7 +26,8 @@ const routes: Routes = [
     MatExpansionModule,
     MatSlideToggleModule,
     MatListModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    BreadcrumbModule
   ],
   declarations: [GroupToWarehouseComponent]
 })

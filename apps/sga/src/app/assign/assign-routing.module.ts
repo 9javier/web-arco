@@ -6,7 +6,14 @@ import { AuthGuard } from '../guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/assign/rol/user', pathMatch: 'full' },
-  { path: 'rol/user', component: RolToUserComponent, canActivate: [AuthGuard] },
+  { 
+    path: 'rol/user',
+    component: RolToUserComponent, 
+    canActivate: [AuthGuard],
+    data:{
+      name:'Rol > Usuario'
+    }
+   },
   {
     path: 'per/rol',
     component: PermissionToRolComponent,

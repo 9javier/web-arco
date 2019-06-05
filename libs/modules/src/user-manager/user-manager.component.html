@@ -1,7 +1,5 @@
 <ion-content>
-    <ion-text color="primary">
-        <h1>Parametrización de operarios</h1>
-    </ion-text>
+    <suite-breadcrumb></suite-breadcrumb>
     <form *ngIf="formGroup && displayedColumns" [formGroup]="formGroup">
         <table mat-table [dataSource]="formGroup.controls.users.controls">
 
