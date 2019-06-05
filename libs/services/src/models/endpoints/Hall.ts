@@ -91,4 +91,18 @@ export namespace HallModel {
     message: string;
     name: string;
   }
+
+  export interface ResponseUpdateLock {
+    data?: any;
+    message: string;
+    code: number;
+    name: string;
+  }
+
+  export interface ResponseUpdateUnlock {
+    data?: any;
+    message: string;
+    code: number;
+    name: string;
+  }
 }

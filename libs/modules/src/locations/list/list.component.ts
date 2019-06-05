@@ -352,7 +352,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
               this.presentToast('Posición desactivada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -362,7 +364,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
               this.presentToast('Posición activada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -380,7 +384,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
               this.presentToast('Posición desbloqueada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -390,7 +396,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
               this.presentToast('Posición bloqueada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });

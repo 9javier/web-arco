@@ -127,10 +127,10 @@ export class HallsService {
 
   async updateLock(
     containerId: string | number
-  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateDisable>>> {
+  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateLock>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<HallModel.ResponseUpdateDisable>(`${PATH_PUT_LOCK}${containerId}`,
+    return this.http.put<HallModel.ResponseUpdateLock>(`${PATH_PUT_LOCK}${containerId}`,
       {lock: true},
       {
         headers: headers,
@@ -141,10 +141,10 @@ export class HallsService {
 
   async updateUnlock(
     containerId: string | number
-  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateEnable>>> {
+  ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateUnlock>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<HallModel.ResponseUpdateEnable>(`${PATH_PUT_UNLOCK}${containerId}`,
+    return this.http.put<HallModel.ResponseUpdateUnlock>(`${PATH_PUT_UNLOCK}${containerId}`,
       {lock: false},
       {
         headers: headers,
