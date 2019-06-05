@@ -37,6 +37,14 @@ var ScanditMatrixSimple = {
   showTextLoader: function (show) {
     exec(null, null, PLUGIN_NAME, "matrixSimpleShowLoader", [show]);
   },
+  /**
+   *
+   * @param show
+   * @param barcode
+   */
+  showWarningToForce: function (show, barcode) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleShowWarningToForce", [show, barcode]);
+  },
   finish: function () {
     exec(null, null, PLUGIN_NAME, "matrixSimpleFinish");
   },

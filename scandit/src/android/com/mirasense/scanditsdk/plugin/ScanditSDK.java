@@ -13,6 +13,8 @@
 package com.mirasense.scanditsdk.plugin;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,10 +26,10 @@ import com.scandit.base.util.JSONParseException;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.w3c.dom.Text;
 
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -85,6 +87,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String SET_MATRIX_SIMPLE_TEXT = "setMatrixSimpleText";
   private static final String SHOW_MATRIX_SIMPLE_TEXT = "matrixSimpleShowText";
   private static final String SHOW_MATRIX_SIMPLE_TEXT_LOADER = "matrixSimpleShowLoader";
+  private static final String SHOW_MATRIX_SIMPLE_WARNING_TO_FORCE= "matrixSimpleShowWarningToForce";
   private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
@@ -696,6 +699,56 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
+    } else if (action.equals(SHOW_MATRIX_SIMPLE_WARNING_TO_FORCE)) {
+      boolean show = false;
+      JSONObject barcode = null;
+
+      try {
+        show = args.getBoolean(0);
+        barcode = args.getJSONObject(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      if (show) {
+        JSONObject fBarcode = barcode;
+
+        AlertDialog.Builder builderWarningProductUnexpected = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
+        builderWarningProductUnexpected
+          .setTitle("Atención")
+          .setMessage("No se esperaba la entrada del producto que acaba de escanear. ¿Desea forzar la entrada del producto igualmente?")
+          .setCancelable(false)
+          .setPositiveButton("Forzar", (dialog, id) -> {
+            JSONObject jsonObject = new JSONObject();
+            try {
+              jsonObject.put("result", true);
+              jsonObject.put("barcode", fBarcode);
+              jsonObject.put("force", true);
+              jsonObject.put("action", "force_scanning");
+            } catch (JSONException e) {
+
+            }
+            PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pResult.setKeepCallback(true);
+            mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          })
+          .setNegativeButton("Cancelar", (dialog, id) -> {
+            JSONObject jsonObject = new JSONObject();
+            try {
+              jsonObject.put("result", true);
+              jsonObject.put("barcode", fBarcode);
+              jsonObject.put("avoid", true);
+              jsonObject.put("action", "force_scanning");
+            } catch (JSONException e) {
+
+            }
+            PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pResult.setKeepCallback(true);
+            mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          });
+        builderWarningProductUnexpected.create();
+        builderWarningProductUnexpected.show();
+      }
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

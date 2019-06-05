@@ -22,6 +22,7 @@ const HEADER_COLOR: string = '#FFFFFF';
 export class ScanditService {
 
   private timeoutHideText;
+  private scannerPausedByWarning: boolean = false;
 
   constructor(
     private inventoryService: InventoryService,
@@ -39,7 +40,7 @@ export class ScanditService {
     let warehouseId = this.warehouseService.idWarehouseMain;
 
     ScanditMatrixSimple.init((response) => {
-      if (response && response.barcode) {
+      if (response && response.barcode && (!this.scannerPausedByWarning || response.action == 'force_scanning')) {
         //Check Container or product
         let code = response.barcode.data;
         if (code.match(/P([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
@@ -57,45 +58,76 @@ export class ScanditService {
             ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
           } else {
-
-            let searchProductPosition = positionsScanning.filter(el => el.product == productReference && el.position == containerReference);
-            if(searchProductPosition.length == 0){
-              positionsScanning.push({product: productReference, position: containerReference});
-              ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
-              this.hideTextMessage(1500);
-              this.inventoryService.postStore({
-                productReference: productReference,
-                containerReference: containerReference,
-                warehouseId: warehouseId
-              }).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-                data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-                  if (res.body.code == 200 || res.body.code == 201) {
-                    ScanditMatrixSimple.setText(`Producto ${productReference} añadido a la ubicación ${containerReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-                    this.hideTextMessage(2000);
-                  } else {
-                    let errorMessage = '';
-                    if (res.body.errors.productReference && res.body.errors.productReference.message) {
-                      errorMessage = res.body.errors.productReference.message;
-                    } else {
-                      errorMessage = res.body.message;
-                    }
-                    ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                    this.hideTextMessage(1500);
-                  }
-                }, (error) => {
-                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                    this.hideTextMessage(1500);
-                }
-                );
-              }, (error: HttpErrorResponse) => {
-                ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            if (response.action == 'force_scanning') {
+              this.scannerPausedByWarning = false;
+              if (response.force) {
+                this.storeProductInContainer({
+                  productReference: productReference,
+                  containerReference: containerReference,
+                  warehouseId: warehouseId,
+                  force: true
+                }, response);
+              } else {
+                ScanditMatrixSimple.setText(`No se ha registrado la ubicación del producto ${productReference} en el contenedor.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
                 this.hideTextMessage(1500);
-              });
+              }
+            } else {
+              let searchProductPosition = positionsScanning.filter(el => el.product == productReference && el.position == containerReference);
+              if(searchProductPosition.length == 0){
+                positionsScanning.push({product: productReference, position: containerReference});
+                ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
+                this.hideTextMessage(1500);
+                this.storeProductInContainer({
+                  productReference: productReference,
+                  containerReference: containerReference,
+                  warehouseId: warehouseId
+                }, response);
+              }
             }
           }
         }
       }
     }, 'Ubicar/Escanear', HEADER_BACKGROUND, HEADER_COLOR);
+  }
+
+  private storeProductInContainer(params, responseScanning) {
+    this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
+      data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+          if (res.body.code == 200 || res.body.code == 201) {
+            ScanditMatrixSimple.setText(`Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+            this.hideTextMessage(2000);
+          } else if (res.body.code == 428) {
+            this.scannerPausedByWarning = true;
+            ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+          } else {
+            let errorMessage = '';
+            if (res.body.errors.productReference && res.body.errors.productReference.message) {
+              errorMessage = res.body.errors.productReference.message;
+            } else {
+              errorMessage = res.body.message;
+            }
+            ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            this.hideTextMessage(1500);
+          }
+        }, (error) => {
+          if (error.error.code == 428) {
+            this.scannerPausedByWarning = true;
+            ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+          } else {
+            ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            this.hideTextMessage(1500);
+          }
+        }
+      );
+    }, (error: HttpErrorResponse) => {
+      if (error.error.code == 428) {
+        this.scannerPausedByWarning = true;
+        ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+      } else {
+        ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+        this.hideTextMessage(1500);
+      }
+    });
   }
 
   private hideTextMessage(delay: number){
