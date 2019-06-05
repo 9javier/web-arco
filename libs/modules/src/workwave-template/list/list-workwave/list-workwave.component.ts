@@ -9,10 +9,34 @@ export class WorkwaveListWorkwaveTemplateComponent implements OnInit {
 
   @Input() storeTemplate: any;
   @Output() changeStoreTemplate = new EventEmitter<any>();
+  public listTypeShippingOrderOptions: any[] = [];
 
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.listTypeShippingOrderOptions = [
+      {
+        id: 1,
+        value: 'Reponer'
+      },
+      {
+        id: 2,
+        value: 'Distribuir'
+      },
+      {
+        id: 3,
+        value: 'Ambas - Reponer con prioridad'
+      },
+      {
+        id: 4,
+        value: 'Ambas - Distribuir con prioridad'
+      },
+      {
+        id: 5,
+        value: 'Ambas - Sin ninguna prioridad'
+      }
+    ];
+  }
 
   changeTemplateValues(fieldChanged) {
     if (this.storeTemplate.thresholdConsolidated == null) {
@@ -22,20 +46,6 @@ export class WorkwaveListWorkwaveTemplateComponent implements OnInit {
       this.storeTemplate.thresholdShippingStore = 0;
     }
     this.changeStoreTemplate.next({store: this.storeTemplate, field: fieldChanged});
-  }
-
-  checkRadioToRemove(source: string, value: string) {
-    if (source == 'replace' && this.storeTemplate.replace && this.storeTemplate.replace == value) {
-      setTimeout(() => {
-        this.storeTemplate.replace = '';
-        this.changeTemplateValues('replace');
-      }, 100);
-    } else if (source == 'allocate' && this.storeTemplate.allocate && this.storeTemplate.allocate == value) {
-      setTimeout(() => {
-        this.storeTemplate.allocate = '';
-        this.changeTemplateValues('allocate');
-      }, 100);
-    }
   }
 
 }
