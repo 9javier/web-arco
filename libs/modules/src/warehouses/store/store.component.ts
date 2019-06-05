@@ -68,8 +68,10 @@ export class StoreComponent implements OnInit {
   /**
    * delete empty values 
    */
-  sanitize(object:Object):Object{
+  sanitize(object:any):Object{
     object = JSON.parse(JSON.stringify(object));
+    object.reference = object.reference.toString();
+    object.reference = (object.reference.length==1)?("00"+object.reference):(object.reference.length==2)?("0"+object.reference):(object.reference);
     Object.keys(object).forEach(key=>{
       let value = object[key];
       if(value === "" || value === null)
