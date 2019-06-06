@@ -1,18 +1,42 @@
-import {UserProcessesModel} from "@suite/services";
+import {TypeModel, UserProcessesModel, WarehouseModel} from "@suite/services";
+import {WorkwaveModel} from "./Workwaves";
 
 export namespace PickingModel {
+  export interface WorkwaveOrderWarehouse {
+    createdAt: string;
+    updatedAt: string;
+    id: number;
+    warehouse: WarehouseModel.Warehouse;
+  }
+
   export interface Picking {
     id?: number;
     store?: string;
-    storeRef?: string;
     storeId?: number;
-    type?: string;
+    type?: number;
     typeId?: number;
-    quantity?: number;
     threshold?: number;
-    operator?: UserProcessesModel.UserProcesses;
+    user?: UserProcessesModel.UserProcesses;
+    users?: UserProcessesModel.UserProcesses[];
     userId?: number;
     pickingId?: number;
+    createdAt?: string;
+    updatedAt?: string;
+    typeGeneration?: number;
+    status?: number;
+    packingId?: number;
+    packingType?: string;
+    workwave?: WorkwaveModel.Workwave;
+    workWavesOrderWarehouses?: WorkwaveOrderWarehouse[];
+    typePicking?: TypeModel.Type;
+    quantity?: number;
+    typeString?: string;
+    storeRef?: string;
+  }
+
+  export interface PickingUpdate {
+    userId: number;
+    pikingId: number;
   }
 
   export interface ResponseIndex {
@@ -31,6 +55,13 @@ export namespace PickingModel {
 
   export interface ResponseUpdate {
     data: Picking[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
+  export interface ResponseVerifyPacking {
+    data: any[];
     message: string;
     code: number;
     errors: any;

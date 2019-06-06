@@ -18,6 +18,7 @@ const PATH_GET_PRODUCTS_HISTORY_CONTAINER: string = PATH('Inventory Process', 'L
 export class InventoryService {
 
   private postGlobalUrl = environment.apiBase+"/inventory/process/global";
+  private postPickingUrl = environment.apiBase+"/inventory/process/piking";
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
 
@@ -65,5 +66,12 @@ export class InventoryService {
 
   postGlobal(containersToMoveProducts) : Observable<InventoryModel.ResponseGlobal> {
     return this.http.post<InventoryModel.ResponseGlobal>(this.postGlobalUrl, containersToMoveProducts);
+  }
+
+  postPicking(picking: InventoryModel.Picking) : Observable<InventoryModel.ResponsePicking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<InventoryModel.ResponsePicking>(this.postPickingUrl, picking, { headers });
+    }));
   }
 }

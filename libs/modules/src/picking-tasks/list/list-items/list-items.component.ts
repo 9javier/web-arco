@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {TypeUsersProcesses} from "@suite/services";
+import {PickingModel} from "../../../../../services/src/models/endpoints/Picking";
 
 @Component({
   selector: 'picking-task-template',
@@ -8,7 +8,7 @@ import {TypeUsersProcesses} from "@suite/services";
 })
 export class PickingTaskTemplateComponent implements OnInit {
 
-  @Input() pickingAssignment: any;
+  @Input() pickingAssignment: PickingModel.Picking;
 
   constructor() {}
 

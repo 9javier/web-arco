@@ -55,7 +55,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textSize="16sp"
-      android:text="Marca:"/>
+      android:text="Color:"/>
     <TextView
       android:id="@+id/tvManufacturer"
       android:layout_width="wrap_content"

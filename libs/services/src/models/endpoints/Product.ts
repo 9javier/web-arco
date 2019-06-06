@@ -12,6 +12,40 @@ export namespace ProductModel {
     size: Array<SizeModel.Size>;
   }
 
+  export interface ProductPicking {
+    id: number;
+    reference: string;
+    initialWarehouseReference: string;
+    model: {
+      createdAt: string;
+      updatedAt: string;
+      id: number;
+      reference: string;
+      datasetHash: string;
+      hash: string;
+      color: {
+        createdAt: string;
+        updatedAt: string;
+        id: number;
+        avelonId: string;
+        datasetHash: string;
+        name: string;
+        colorHex: string;
+        description: string;
+      };
+    };
+    size: {
+      createdAt: string;
+      updatedAt: string;
+      id: number;
+      reference: string;
+      number: string;
+      name: string;
+      description: string;
+      datasetHash: string;
+    };
+  }
+
   export interface ResponseIndex {
     data: Product[];
   }

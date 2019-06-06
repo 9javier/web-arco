@@ -804,13 +804,19 @@ public class ScanditSDK extends CordovaPlugin {
           tvModel.setTextColor(Color.parseColor(fColor));
           tvSizeText.setTextColor(Color.parseColor(fColor));
           tvSize.setTextColor(Color.parseColor(fColor));
+
           try {
-            String location = "P"+fProduct.getString("rack")+" . C"+fProduct.getString("column")+" . A"+fProduct.getString("row");
+            String location = "";
+            if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
+              location = "P" +fProduct.getJSONObject("inventory").getJSONObject("rack").getInt("hall")
+                +" . C"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column")
+                +" . A"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row");
+            }
             tvLocation.setText(location);
-            tvReference.setText(fProduct.getString("reference"));
-            tvManufacturer.setText(fProduct.getString("manufacturer"));
-            tvModel.setText(fProduct.getString("model"));
-            tvSize.setText(fProduct.getString("size"));
+            tvReference.setText(fProduct.getJSONObject("product").getString("reference"));
+            tvManufacturer.setText(fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name"));
+            tvModel.setText(fProduct.getJSONObject("product").getJSONObject("model").getString("reference"));
+            tvSize.setText(fProduct.getJSONObject("product").getJSONObject("size").getString("name"));
           } catch (JSONException e) {
             e.printStackTrace();
           }

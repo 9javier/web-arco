@@ -24,6 +24,8 @@ export namespace WorkwaveModel {
     releaseDate?: string;
     type?: number;
     dateForm?: FormControl;
+    createdAt: string;
+    updatedAt: string;
   }
 
   export interface ResponseListTemplates {
