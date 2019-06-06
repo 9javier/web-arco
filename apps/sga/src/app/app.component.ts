@@ -82,11 +82,6 @@ export class AppComponent implements OnInit {
           url: '/roles/menu',
           icon: 'person'
         },
-        {
-          title: 'Asignar rol a usuario',
-          url: '/assign/rol/user',
-          icon: 'person'
-        },
       ]
     },
     {

@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RolToUserComponent } from './permission-to-rol.component';
+import { PermissionToRolComponent } from './permission-to-rol.component';
 
-describe('RolToUserComponent', () => {
-  let component: RolToUserComponent;
-  let fixture: ComponentFixture<RolToUserComponent>;
+describe('PermissionToRolComponent', () => {
+  let component: PermissionToRolComponent;
+  let fixture: ComponentFixture<PermissionToRolComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [RolToUserComponent]
+      declarations: [PermissionToRolComponent]
     }).compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RolToUserComponent);
+    fixture = TestBed.createComponent(PermissionToRolComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

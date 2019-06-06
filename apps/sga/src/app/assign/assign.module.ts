@@ -7,13 +7,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatListModule } from '@angular/material/list';
 
 import { AssignRoutingModule } from './assign-routing.module';
-import { RolToUserComponent } from './rol-to-user/rol-to-user.component';
 import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.component';
 import { BreadcrumbModule } from '@suite/common-modules';
 
 
 @NgModule({
-  declarations: [RolToUserComponent, PermissionToRolComponent],
+  declarations: [PermissionToRolComponent],
   imports: [
     CommonModule,
     AssignRoutingModule,
@@ -24,6 +23,6 @@ import { BreadcrumbModule } from '@suite/common-modules';
     MatListModule,
     BreadcrumbModule
   ],
-  exports: [RolToUserComponent, PermissionToRolComponent]
+  exports: [PermissionToRolComponent]
 })
 export class AssignModule {}
