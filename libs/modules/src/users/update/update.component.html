@@ -14,19 +14,47 @@
     <form [formGroup]="updateForm">
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
-                <!--Employee Id-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="lock"></ion-icon>
-                    </div>
-                    <ion-input placeholder="id de empleado" class="ion-margin-horizontal" formControlName="employedId" type="number" number></ion-input>
-                </ion-item>
                 <!--Name-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="person"></ion-icon>
                     </div>
                     <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" [class.ion-invalid]="updateForm.get('name').valid" type="text" text></ion-input>
+                </ion-item>
+                <!--Email-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="mail"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Correo Electrónico" class="ion-margin-horizontal" formControlName="email" type="email" email></ion-input>
+                </ion-item>
+                <!--Password-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
+
+                        <ion-icon class="icon-show-password" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                      passwordInput.type === 'password'
+                        ? (passwordInput.type = 'text')
+                        : (passwordInput.type = 'password')
+                    "></ion-icon>
+                    </ion-input>
+
+                </ion-item>
+                <!--Repeat password-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
+                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                    repeatPasswordInput.type === 'password'
+                        ? (repeatPasswordInput.type = 'text')
+                        : (repeatPasswordInput.type = 'password')
+                    "></ion-icon>
+                    </ion-input>
                 </ion-item>
                 <!--Roles-->
                 <div class="container-roles" *ngIf="updateForm['controls']?.roles['controls']">
@@ -63,14 +91,6 @@
                         </mat-accordion>
                     </ion-item>
                 </div>
-
-                <!--Email-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="mail"></ion-icon>
-                    </div>
-                    <ion-input placeholder="Correo Electrónico" class="ion-margin-horizontal" formControlName="email" type="email" email></ion-input>
-                </ion-item>
                 <!--Direction-->
                 <ion-item lines="none">
                     <div slot="start" class="slot-start-icon">
@@ -78,33 +98,12 @@
                     </div>
                     <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address" type="text" text></ion-input>
                 </ion-item>
-                <!--Password-->
+                <!--Employee Id-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
-
-                        <ion-icon class="icon-show-password" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
-                      passwordInput.type === 'password'
-                        ? (passwordInput.type = 'text')
-                        : (passwordInput.type = 'password')
-                    "></ion-icon>
-                    </ion-input>
-
-                </ion-item>
-                <!--Repeat password-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="lock"></ion-icon>
-                    </div>
-                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
-                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
-                    repeatPasswordInput.type === 'password'
-                        ? (repeatPasswordInput.type = 'text')
-                        : (repeatPasswordInput.type = 'password')
-                    "></ion-icon>
-                    </ion-input>
+                    <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal" formControlName="employedId" type="number" number></ion-input>
                 </ion-item>
             </ion-row>
         </ion-grid>
