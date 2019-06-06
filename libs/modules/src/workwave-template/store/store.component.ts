@@ -70,7 +70,7 @@ export class StoreComponent implements OnInit {
     }
   }
 
-  goToList(save, id) {
+  goToList(save, id?) {
     let params: any = {save: save};
     if (id) params.id = id;
     this.modalController.dismiss(params);
