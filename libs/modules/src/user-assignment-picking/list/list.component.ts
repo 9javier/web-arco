@@ -23,7 +23,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
 
   ngOnInit() {
     // TODO enable this to use endpoint data
-    this.pickingService
+    /*this.pickingService
       .getShow(this.workwaveId)
       .subscribe((res: PickingModel.ResponseShow) => {
         if (res.code == 200 || res.code == 201) {
@@ -33,10 +33,10 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
         }
       }, (error: PickingModel.ErrorResponse) => {
 
-      });
+      });*/
 
     // TODO remove this when enable endpoint data
-    /*this.pickingAssignments = [
+    this.pickingAssignments = [
       {
         store: 'KRACK Vigo',
         typeId: 1,
@@ -55,7 +55,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
         quantity: 250,
         threshold: 500
       }
-    ];*/
+    ];
 
     this.userProcessesService
       .getIndex()

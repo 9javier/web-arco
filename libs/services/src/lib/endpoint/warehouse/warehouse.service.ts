@@ -3,11 +3,11 @@ import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 
 import { AuthenticationService } from '../authentication/authentication.service';
 import {PATH} from "../../../../../../config/base";
-import {Observable} from "rxjs";
+import {from, Observable} from "rxjs";
 import {HallModel} from "../../../models/endpoints/Hall";
 import {HallsService} from "../halls/halls.service";
 import {WarehouseModel} from "@suite/services";
-import { map } from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 const PATH_GET_WAREHOUSE_MAIN: string = PATH('Warehouses', 'Main');
 const PATH_GET_WAREHOUSE_INDEX: string = PATH('Warehouses', 'Index');
@@ -49,7 +49,10 @@ export class WarehouseService {
    * @param id - the warehouse id
    */
   getShow(id:number):Observable<WarehouseModel.Warehouse>{
-    return this.http.get(this.getShowUrl.replace("{{id}}",id.toString())).pipe(map((response:any)=>response.data));
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get(this.getShowUrl.replace("{{id}}",id.toString()), {headers}).pipe(map((response:any)=>response.data));
+    }));
   }
 
   async getIndex() {

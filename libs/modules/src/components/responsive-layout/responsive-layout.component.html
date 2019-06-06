@@ -1,0 +1,3 @@
+<ng-content *ngIf="landscape" select="[landscape]"></ng-content>
+<!--Portrait is not landscape-->
+<ng-content *ngIf="!landscape" select="[portrait]"></ng-content>

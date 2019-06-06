@@ -4,6 +4,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 import { UtilsComponent } from '../../../components/utils/utils.component';
 import { WarehouseMapsService } from '@suite/services';
 import {validators} from "@suite/common-modules";
+import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({
   selector: 'suite-enable-lock-container',
@@ -85,6 +86,12 @@ export class EnableLockContainerComponent implements OnInit {
       this.utils.dismissLoading();
       this.utils.presentAlert("Éxito","Configuración actualizada con éxito");
       console.log(response);
+    }, (errorResponse: HttpErrorResponse) => {
+      this.close({
+        reload: true
+      });
+      this.utils.dismissLoading();
+      this.utils.presentAlert("Error",errorResponse.error.errors);
     });
     console.log(values);
   }

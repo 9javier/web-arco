@@ -350,7 +350,7 @@ export class UpdateComponent implements OnInit {
           if (error.error.code == 428) {
             this.showWarningToForce(params, textToastOk);
           } else {
-            this.presentToast(error.message, 'danger');
+            this.presentToast(error.error.message, 'danger');
           }
         });
       }, (error: HttpErrorResponse) => {

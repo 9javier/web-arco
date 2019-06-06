@@ -304,9 +304,11 @@ export class ListComponent implements OnInit {
   }
 
   selectRow(event, data, row, iRow) {
-    row.forEach((column, iColumn) => {
-      this.selectLocation(event, data, row, column, iRow, iColumn);
-    });
+    if (this.isWarehouseListSection()) {
+      row.forEach((column, iColumn) => {
+        this.selectLocation(event, data, row, column, iRow, iColumn);
+      });
+    }
   }
 
   rangeFromValue(value) {
@@ -318,22 +320,24 @@ export class ListComponent implements OnInit {
   }
 
   selectAllLocations() {
-    if (this.expandedElement.totalContainers != this.countLocationsSelected) {
-      for (let row of this.expandedElement.container) {
-        for (let container of row) {
-          if (!container.selected) {
-            container.selected = true;
-            this.locationsSelected[container.id] = {row: row, column: container};
-            this.countLocationsSelected++;
+    if (this.isWarehouseListSection()) {
+      if (this.expandedElement.totalContainers != this.countLocationsSelected) {
+        for (let row of this.expandedElement.container) {
+          for (let container of row) {
+            if (!container.selected) {
+              container.selected = true;
+              this.locationsSelected[container.id] = {row: row, column: container};
+              this.countLocationsSelected++;
+            }
           }
         }
-      }
-    } else {
-      this.locationsSelected = {};
-      this.countLocationsSelected = 0;
-      for (let row of this.expandedElement.container) {
-        for (let container of row) {
-          container.selected = false;
+      } else {
+        this.locationsSelected = {};
+        this.countLocationsSelected = 0;
+        for (let row of this.expandedElement.container) {
+          for (let container of row) {
+            container.selected = false;
+          }
         }
       }
     }
@@ -352,7 +356,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
               this.presentToast('Posición desactivada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -362,7 +368,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
               this.presentToast('Posición activada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -380,7 +388,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
               this.presentToast('Posición desbloqueada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -390,7 +400,9 @@ export class ListComponent implements OnInit {
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
               this.presentToast('Posición bloqueada', null);
-            }));
+            }), (errorResponse: HttpErrorResponse) => {
+              this.presentToast(errorResponse.error.errors, 'danger');
+            });
           }, (errorResponse: HttpErrorResponse) => {
             this.presentToast('Error - Errores no estandarizados', 'danger');
           });
@@ -440,7 +452,7 @@ export class ListComponent implements OnInit {
     if (!this.intervalReload) {
       this.intervalReload = setInterval(() => {
         this.reloadData();
-      }, 10 * 1000);
+      }, 60 * 1000);
     }
   }
 

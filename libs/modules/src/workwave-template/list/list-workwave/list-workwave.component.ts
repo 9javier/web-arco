@@ -9,6 +9,7 @@ export class WorkwaveListWorkwaveTemplateComponent implements OnInit {
 
   @Input() storeTemplate: any;
   @Output() changeStoreTemplate = new EventEmitter<any>();
+  @Output() copyTemplateEmitter = new EventEmitter<any>();
 
   constructor() {}
 
@@ -22,6 +23,10 @@ export class WorkwaveListWorkwaveTemplateComponent implements OnInit {
       this.storeTemplate.thresholdShippingStore = 0;
     }
     this.changeStoreTemplate.next({store: this.storeTemplate, field: fieldChanged});
+  }
+
+  copyTemplateFromLatestEdited() {
+    this.copyTemplateEmitter.next({store: this.storeTemplate})
   }
 
   checkRadioToRemove(source: string, value: string) {

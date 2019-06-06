@@ -84,8 +84,8 @@
             </td>
         </ng-container>
 
-        <ng-container matColumnDef="update">
-            <th mat-header-cell *matHeaderCellDef>update</th>
+        <ng-container matColumnDef="update" *ngIf="isWarehouseListSection()">
+            <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let row">
                 <ion-icon name="create" (click)="toUpdate($event,row)"></ion-icon>
             </td>

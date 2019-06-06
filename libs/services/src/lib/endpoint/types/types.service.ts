@@ -56,8 +56,11 @@ export class TypesService {
    * @return types to make an orderby
    */
   getOrderProductTypes():Observable<Array<TypeModel.OrderProductType>>{
-    return this.http.get<TypeModel.ResponseOrderProductType>(this.getOrderProductTypesUrl).pipe(map(response=>{
-      return response.data;
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<TypeModel.ResponseOrderProductType>(this.getOrderProductTypesUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
     }));
   }
 
@@ -66,8 +69,11 @@ export class TypesService {
    * @return Observable with typeactions
    */
   getTypeActions():Observable<Array<TypeModel.TypeActions>>{
-    return this.http.get<TypeModel.ResponseTypeActions>(this.getTypeActionsUrl).pipe(map(response=>{
-      return response.data;
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<TypeModel.ResponseTypeActions>(this.getTypeActionsUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
     }));
   }
 

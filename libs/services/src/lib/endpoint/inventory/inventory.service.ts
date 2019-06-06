@@ -3,10 +3,10 @@ import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 
 import { AuthenticationService } from '../authentication/authentication.service';
 import {PATH} from "../../../../../../config/base";
-import {Observable} from "rxjs";
+import {from, Observable} from "rxjs";
 import {InventoryModel} from "../../../models/endpoints/Inventory";
 import {environment} from '../../../environments/environment';
-import { map } from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 
 const PATH_POST_STORE: string = PATH('Inventory Process', 'Store');
 const PATH_GET_PRODUCTS_CONTAINER: string = PATH('Inventory', 'List by Container').slice(0, -1);
@@ -24,7 +24,10 @@ export class InventoryService {
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   searchInContainer(parameters):Observable<InventoryModel.ResponseSearchInContainer>{
-    return this.http.post<InventoryModel.ResponseSearchInContainer>(this.searchInContainerUrl,parameters);
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post<InventoryModel.ResponseSearchInContainer>(this.searchInContainerUrl,parameters, {headers});
+    }));
   }
 
   async postStore(

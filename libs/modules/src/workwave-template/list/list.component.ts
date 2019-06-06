@@ -15,6 +15,9 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
   listStoresTemplates: any[];
+  listStoresTemplatesHighlighted: any[];
+  listStoresTemplatesHidden: any[];
+  lastStoreTemplateEdited: any;
   template: any;
 
   public RUN_NOW_TASK_ID = 1;
@@ -49,11 +52,15 @@ export class ListWorkwaveTemplateComponent implements OnInit {
         id: this.templateToEdit.id
       };
       this.initializeStoresListWithEditTemplate();
+      this.listStoresTemplatesHighlighted = this.listStoresTemplates.filter(store => store.checked);
+      this.listStoresTemplatesHidden = this.listStoresTemplates.filter(store => !store.checked);
     } else {
       this.template = {
         name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Ola de trabajo'),
         id: null
       };
+      this.listStoresTemplatesHighlighted = this.listStoresTemplates;
+      this.listStoresTemplatesHidden = [];
     }
   }
 
@@ -244,6 +251,31 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     } else if (data.field != 'check'
       && (data.store.replace || data.store.allocate || (data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) || (data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) || data.store.typeGeneration || data.store.typePacking)) {
       data.store.checked = true;
+    }
+    if (data.field != 'check') {
+      this.lastStoreTemplateEdited = data.store;
+    }
+  }
+
+  copyTemplateFromLatestEdited(data) {
+    if (!this.lastStoreTemplateEdited) {
+      return;
+    }
+    data.store.checked = true;
+    data.store.thresholdConsolidated = this.lastStoreTemplateEdited.thresholdConsolidated;
+    data.store.thresholdShippingStore = this.lastStoreTemplateEdited.thresholdShippingStore;
+    data.store.replace = this.lastStoreTemplateEdited.replace;
+    data.store.allocate = this.lastStoreTemplateEdited.allocate;
+    data.store.typeGeneration = this.lastStoreTemplateEdited.typeGeneration;
+    data.store.typePacking = this.lastStoreTemplateEdited.typePacking;
+    data.store.typeShippingOrder = this.lastStoreTemplateEdited.typeShippingOrder;
+  }
+
+  resetForm() {
+    if (this.templateToEdit) {
+      this.initializeStoresListWithEditTemplate();
+    } else {
+      this.clearAllFields();
     }
   }
 
