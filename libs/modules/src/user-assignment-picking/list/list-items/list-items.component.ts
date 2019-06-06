@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TypeUsersProcesses} from "@suite/services";
+import {PickingModel} from "../../../../../services/src/models/endpoints/Picking";
 
 @Component({
   selector: 'user-assignment-template',
@@ -8,7 +9,7 @@ import {TypeUsersProcesses} from "@suite/services";
 })
 export class UserAssignmentTemplateComponent implements OnInit {
 
-  @Input() pickingAssignment: any;
+  @Input() pickingAssignment: PickingModel.Picking;
   @Input() listOperators: TypeUsersProcesses.UsersProcesses[] = [];
 
   constructor() {}

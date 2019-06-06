@@ -10,6 +10,9 @@ mat-grid-list {
       width: 100%;
       color: var(--ion-color-tertiary);
       padding: 16px;
+      .store-ref {
+        font-weight: 500;
+      }
     }
     div.tile-value-center {
       justify-content: center !important;
