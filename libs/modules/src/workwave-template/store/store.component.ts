@@ -112,7 +112,7 @@ export class StoreComponent implements OnInit {
                   if (this.loading) {
                     this.loading.dismiss();
                     this.loading = null;
-                    if (this.workwaveType == 'run') {
+                    if (this.workwaveType == 'run' && res.body.data.pickings && res.body.data.pickings.length > 0) {
                       this.goToList('save_run', res.body.data.id);
                     } else {
                       this.goToList('save', null);
@@ -149,7 +149,7 @@ export class StoreComponent implements OnInit {
                   if (this.loading) {
                     this.loading.dismiss();
                     this.loading = null;
-                    if (this.workwaveType == 'run') {
+                    if (this.workwaveType == 'run' && res.body.data.pickings && res.body.data.pickings.length > 0) {
                       this.goToList('save_run', res.body.data.id);
                     } else {
                       this.goToList('save', null);
