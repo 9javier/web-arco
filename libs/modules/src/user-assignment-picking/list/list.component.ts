@@ -42,7 +42,11 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
     this.userProcessesService
       .getIndex()
       .subscribe((res: Array<TypeUsersProcesses.UsersProcesses>) => {
-        this.usersPicking = res.filter((user: TypeUsersProcesses.UsersProcesses) => {
+        // TODO remove line when enable below filter
+        this.usersPicking = res;
+
+        // TODO remove comment to enable users filter to show only users with picking permission
+        /*this.usersPicking = res.filter((user: TypeUsersProcesses.UsersProcesses) => {
           let userHasPicking = false;
           for (let process of user.processes) {
             if (process.processType == 5) {
@@ -50,7 +54,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
             }
           }
           return userHasPicking;
-        });
+        });*/
       })
   }
 
