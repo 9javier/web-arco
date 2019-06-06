@@ -10,7 +10,7 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import { ToastController, AlertController } from '@ionic/angular';
+import {ToastController, AlertController, LoadingController} from '@ionic/angular';
 import { AppInfo } from 'config/base';
 @Component({
   selector: 'suite-login',
@@ -24,30 +24,43 @@ export class LoginComponent implements OnInit {
     grant_type: 'password'
   };
 
+  private loading = null;
+
   constructor(
     private loginService: Oauth2Service,
     private router: Router,
     private authenticationService: AuthenticationService,
     public toastController: ToastController,
-    public alertController: AlertController
+    public alertController: AlertController,
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {}
 
   login(user: RequestLogin) {
     console.log(user);
-    this.loginService.post_login(user, AppInfo.Name.Al).subscribe(
-      (data: HttpResponse<ResponseLogin>) => {
-        const response: ResponseLogin = data.body;
-        console.log(response);
-        this.authenticationService.login(data.body.data.access_token, data.body.data.user.id);
-        this.router.navigate(['/home']);
-      },
-      (errorResponse: HttpErrorResponse | any) => {
-        this.presentToast(errorResponse.message);
-        console.log(errorResponse);
-      }
-    );
+    this.showLoading('Iniciando sesión...').then(() => {
+      this.loginService.post_login(user, AppInfo.Name.Al).subscribe(
+        (data: HttpResponse<ResponseLogin>) => {
+          if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
+          }
+          const response: ResponseLogin = data.body;
+          console.log(response);
+          this.authenticationService.login(data.body.data.access_token, data.body.data.user.id);
+          this.router.navigate(['/home']);
+        },
+        (errorResponse: HttpErrorResponse | any) => {
+          if (this.loading) {
+            this.loading.dismiss();
+            this.loading = null;
+          }
+          this.presentToast(errorResponse.message);
+          console.log(errorResponse);
+        }
+      );
+    });
   }
 
   async presentToast(msg) {
@@ -57,6 +70,14 @@ export class LoginComponent implements OnInit {
       duration: 2750
     });
     toast.present();
+  }
+
+  async showLoading(message: string) {
+    this.loading = await this.loadingController.create({
+      message: message,
+      translucent: true,
+    });
+    return await this.loading.present();
   }
 
   async presentPasswordAlert() {
