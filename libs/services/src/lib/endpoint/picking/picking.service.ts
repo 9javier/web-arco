@@ -24,7 +24,7 @@ export class PickingService {
   putUpdate(workwaveId: number, pickings: Array<PickingModel.Picking>) : Observable<PickingModel.ResponseUpdate> {
     pickings = pickings.map((picking: PickingModel.Picking) => {
       return {
-        userId: picking.operator.id,
+        userId: picking.user.id,
         pikingId: picking.id
       }
     });

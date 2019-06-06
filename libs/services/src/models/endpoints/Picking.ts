@@ -1,4 +1,4 @@
-import {UserProcessesModel} from "@suite/services";
+import {TypeModel, UserProcessesModel} from "@suite/services";
 
 export namespace PickingModel {
   export interface Picking {
@@ -9,9 +9,11 @@ export namespace PickingModel {
     typeId?: number;
     quantity?: number;
     threshold?: number;
-    operator?: UserProcessesModel.UserProcesses;
+    user?: UserProcessesModel.UserProcesses;
+    users?: UserProcessesModel.UserProcesses[];
     userId?: number;
     pickingId?: number;
+    piking?: TypeModel.Type[]
   }
 
   export interface ResponseIndex {

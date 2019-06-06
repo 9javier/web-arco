@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {TypeUsersProcesses, UserProcessesService} from "@suite/services";
+import {TypeUsersProcesses, UserProcessesModel, UserProcessesService} from "@suite/services";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
 import {AlertController} from "@ionic/angular";
@@ -41,19 +41,22 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
         store: 'KRACK Vigo',
         typeId: 1,
         quantity: 300,
-        threshold: 450
+        threshold: 450,
+        user: <UserProcessesModel.UserProcesses>{}
       },
       {
         store: 'KRACK Pontevedra',
         typeId: 1,
         quantity: 350,
-        threshold: 500
+        threshold: 500,
+        user: <UserProcessesModel.UserProcesses>{}
       },
       {
         store: 'KRACK Lugo',
         typeId: 2,
         quantity: 250,
-        threshold: 500
+        threshold: 500,
+        user: <UserProcessesModel.UserProcesses>{}
       }
     ];
 
@@ -74,10 +77,10 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
 
   async savePicking() {
     for (let assignment of this.pickingAssignments) {
-      if (!assignment.operator) {
+      if (!assignment.user || !assignment.user.id) {
         const alert = await this.alertController.create({
           subHeader: 'Atención',
-          message: 'Hay algunas tiendas para el picking en proceso para las que no se ha seleccionado ningún operario. Seleccione alguno antes de continuar.',
+          message: 'Hay algunos picking para los que no se ha seleccionado ningún operario. Seleccione alguno antes de continuar.',
           buttons: ['Cerrar']
         });
         return await alert.present();
