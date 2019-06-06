@@ -1524,6 +1524,35 @@
 					"response": []
 				},
 				{
+					"name": "Full",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/warehouses/full",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"warehouses",
+								"full"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Store",
 					"request": {
 						"auth": {
