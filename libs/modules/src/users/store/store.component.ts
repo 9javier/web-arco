@@ -24,7 +24,7 @@ export class StoreComponent implements OnInit {
     employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
     email: ['', [Validators.required, Validators.email]],
-    address: ['', [Validators.required, Validators.minLength(4)]],
+    address: [''],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required]
   };
