@@ -48,6 +48,22 @@ var ScanditMatrixSimple = {
   finish: function () {
     exec(null, null, PLUGIN_NAME, "matrixSimpleFinish");
   },
+  /**
+   *
+   * @param productInfo
+   * @param background
+   * @param text
+   */
+  setNexProductToScan: function (productInfo, background, text) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleSetNextProductToScan", [productInfo, background, text]);
+  },
+  /**
+   *
+   * @param show
+   */
+  showNexProductToScan: function (show) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleShowNextProductToScan", [show]);
+  }
 }
 
 module.exports = ScanditMatrixSimple;

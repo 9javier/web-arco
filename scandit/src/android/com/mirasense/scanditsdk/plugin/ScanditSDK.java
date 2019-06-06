@@ -13,9 +13,12 @@
 package com.mirasense.scanditsdk.plugin;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -89,6 +92,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String SHOW_MATRIX_SIMPLE_TEXT_LOADER = "matrixSimpleShowLoader";
   private static final String SHOW_MATRIX_SIMPLE_WARNING_TO_FORCE= "matrixSimpleShowWarningToForce";
   private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
+  private static final String SET_MATRIX_SIMPLE_NET_PRODUCT_TO_SCAN = "matrixSimpleSetNextProductToScan";
+  private static final String SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN = "matrixSimpleShowNextProductToScan";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -101,6 +106,7 @@ public class ScanditSDK extends CordovaPlugin {
 
   public static View viewProductData = null;
   public static View viewDataMatrixSimple = null;
+  public static ActionBar actionBarMatrixSimple = null;
 
   private String lastColorTextMatrixSimple;
   private String lastBackgroundMatrixSimple;
@@ -749,6 +755,97 @@ public class ScanditSDK extends CordovaPlugin {
         builderWarningProductUnexpected.create();
         builderWarningProductUnexpected.show();
       }
+    } else if (action.equals(SET_MATRIX_SIMPLE_NET_PRODUCT_TO_SCAN)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      JSONObject product = null;
+      String background = "#2F9E5A";
+      String color = "#FFFFFF";
+      try {
+        product = args.getJSONObject(0);
+        background = args.getString(1);
+        color = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final JSONObject fProduct = product;
+      final String fBackground = background;
+      final String fColor = color;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+          TextView tvLocationText = rlInfoProduct.findViewById(resources.getIdentifier("tvLocationText", "id", package_name));
+          TextView tvLocation = rlInfoProduct.findViewById(resources.getIdentifier("tvLocation", "id", package_name));
+          TextView tvReferenceText = rlInfoProduct.findViewById(resources.getIdentifier("tvReferenceText", "id", package_name));
+          TextView tvReference = rlInfoProduct.findViewById(resources.getIdentifier("tvReference", "id", package_name));
+          TextView tvManufacturerText = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturerText", "id", package_name));
+          TextView tvManufacturer = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturer", "id", package_name));
+          TextView tvModelText = rlInfoProduct.findViewById(resources.getIdentifier("tvModelText", "id", package_name));
+          TextView tvModel = rlInfoProduct.findViewById(resources.getIdentifier("tvModel", "id", package_name));
+          TextView tvSizeText = rlInfoProduct.findViewById(resources.getIdentifier("tvSizeText", "id", package_name));
+          TextView tvSize = rlInfoProduct.findViewById(resources.getIdentifier("tvSize", "id", package_name));
+
+          if (actionBarMatrixSimple != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            actionBarMatrixSimple.setElevation(0);
+          }
+          rlInfoProduct.setVisibility(View.VISIBLE);
+          rlInfoProduct.setBackgroundDrawable(new ColorDrawable(Color.parseColor(fBackground)));
+          tvLocationText.setTextColor(Color.parseColor(fColor));
+          tvLocation.setTextColor(Color.parseColor(fColor));
+          tvReferenceText.setTextColor(Color.parseColor(fColor));
+          tvReference.setTextColor(Color.parseColor(fColor));
+          tvManufacturerText.setTextColor(Color.parseColor(fColor));
+          tvManufacturer.setTextColor(Color.parseColor(fColor));
+          tvModelText.setTextColor(Color.parseColor(fColor));
+          tvModel.setTextColor(Color.parseColor(fColor));
+          tvSizeText.setTextColor(Color.parseColor(fColor));
+          tvSize.setTextColor(Color.parseColor(fColor));
+
+          try {
+            String location = "";
+            if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
+              location = "P" +fProduct.getJSONObject("inventory").getJSONObject("rack").getInt("hall")
+                +" . C"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column")
+                +" . A"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row");
+            }
+            tvLocation.setText(location);
+            tvReference.setText(fProduct.getJSONObject("product").getString("reference"));
+            tvManufacturer.setText(fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name"));
+            tvModel.setText(fProduct.getJSONObject("product").getJSONObject("model").getString("reference"));
+            tvSize.setText(fProduct.getJSONObject("product").getJSONObject("size").getString("name"));
+          } catch (JSONException e) {
+            e.printStackTrace();
+          }
+        }
+      });
+    } else if (action.equals(SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final boolean fShow = show;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+          if (fShow) {
+            rlInfoProduct.setVisibility(View.VISIBLE);
+          } else {
+            rlInfoProduct.setVisibility(View.GONE);
+          }
+        }
+      });
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;
@@ -1038,5 +1135,9 @@ public class ScanditSDK extends CordovaPlugin {
 
   public static void setViewDataMatrixSimple(View view) {
     viewDataMatrixSimple = view;
+  }
+
+  public static void setActionBar(ActionBar actionBar) {
+    actionBarMatrixSimple = actionBar;
   }
 }

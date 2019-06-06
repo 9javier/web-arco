@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 const TOKEN_KEY = 'access_token';
+const USER_ID_KEY = 'user_id';
 
 @Injectable({
   providedIn: 'root'
@@ -29,13 +30,19 @@ export class AuthenticationService {
     });
   }
 
-  login(accessToken: string) {
+  login(accessToken: string, userId?: number) {
+    if (userId) {
+      this.storage.set(USER_ID_KEY, userId);
+    }
+
     return this.storage.set(TOKEN_KEY, `Bearer ${accessToken}`).then(() => {
       this.authenticationState.next(true);
     });
   }
 
   logout() {
+    this.storage.remove(USER_ID_KEY);
+
     return this.storage.remove(TOKEN_KEY).then((data) => {
       if(this.authenticationState.value) {
         this.authenticationState.next(false);
@@ -49,6 +56,14 @@ export class AuthenticationService {
 
   getCurrentToken(): Promise<string> {
     return this.storage.get(TOKEN_KEY).then(res => {
+      if (res) {
+        return res;
+      }
+    });
+  }
+
+  getCurrentUserId(): Promise<number> {
+    return this.storage.get(USER_ID_KEY).then(res => {
       if (res) {
         return res;
       }

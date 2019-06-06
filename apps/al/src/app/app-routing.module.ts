@@ -55,6 +55,11 @@ const routes: Routes = [
       name:'Pallets'
     }
   },
+  {
+    path: 'picking-tasks',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
+  },
 ];
 
 @NgModule({

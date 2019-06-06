@@ -1,6 +1,13 @@
 import {Request} from './request';
 export namespace InventoryModel {
 
+  export interface Picking {
+    pikingId: number;
+    productReference: string;
+    packingReference: string;
+    packingType: number;
+  }
+
   export interface Inventory {
     productReference?: string,
     containerReference?: string,
@@ -106,6 +113,12 @@ export namespace InventoryModel {
   }
 
   export interface ResponseDestroy {
+    data: number;
+    message: string;
+    code: number;
+  }
+
+  export interface ResponsePicking {
     data: number;
     message: string;
     code: number;

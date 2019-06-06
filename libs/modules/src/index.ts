@@ -81,3 +81,7 @@ export * from './components/breadcrumb/breadcrumb.module';
 // Picking User Assignment
 export * from './user-assignment-picking/user-assignment-picking.component';
 export * from './user-assignment-picking/user-assignment-picking.module';
+
+// Picking Tasks
+export * from './picking-tasks/picking-tasks.component';
+export * from './picking-tasks/picking-tasks.module';
