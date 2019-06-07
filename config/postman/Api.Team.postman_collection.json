@@ -2070,6 +2070,27 @@
 					"response": []
 				},
 				{
+					"name": "Listar estantes y ubicaciones de un almacén",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/warehouses/{{warehouseId}}/racks/full",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"warehouses",
+								"{{warehouseId}}",
+								"racks",
+								"full"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Listar ubicaciones de un estante",
 					"request": {
 						"method": "GET",
