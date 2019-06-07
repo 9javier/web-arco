@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule } from '@angular/material';
-import { MatListModule } from '@angular/material/list';
+import { MatListModule } from '@angular/material';
 import { ProductsComponent } from './products.component';
 import { RouterModule, Routes } from "@angular/router";
-import {MatPaginatorModule} from '@angular/material';
+import { MatPaginatorModule } from '@angular/material';
 import { ProductDetailsModule } from './modals/product-details/product-details.module';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
