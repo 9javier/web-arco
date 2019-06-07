@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
       icon: 'cube'
     },
     {
-      title: 'Logout',
+      title: 'Cerrar sesión',
       url: '/home',
       icon: 'log-out'
     },
