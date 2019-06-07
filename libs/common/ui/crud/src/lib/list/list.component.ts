@@ -309,9 +309,6 @@ export class ListComponent implements OnInit {
         case '/pallets':
           this.presentJailsDeleteAlert(this.selection);
           break;
-        case '/halls':
-          this.presentHallsDeleteAlert(this.selection);
-          break;
         default:
           this.presentUsertDeleteAlert(this.selection);
       }
@@ -496,91 +493,6 @@ export class ListComponent implements OnInit {
                           console.log(errorResponse);
                           this.dismissLoading();
                           this.initUsers();
-                        }
-                      );
-                    }
-                  );
-                }
-              );
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-  }
-
-  async presentHallsDeleteAlert(
-    selectedHalls: SelectionModel<HallModel.Hall>
-  ) {
-    let header = '';
-    let msg = '';
-    let successMsg = '';
-
-    if (selectedHalls.selected.length > 1) {
-      header = 'Eliminar Pasillo';
-      msg = `Estas a punto de eliminar <br>
-      <strong>${selectedHalls.selected.length} pasillos</strong>.<br>
-      ¿Esta seguro?`;
-      successMsg = `${selectedHalls.selected.length} pasillos eliminados`;
-    } else {
-      header = 'Eliminar Pasillo';
-      msg = `Estas a punto de eliminar <br> 
-      el pasillo ${selectedHalls.selected.map(value => (''+value.hall).bold())}.<br> 
-      ¿Esta seguro? `;
-      successMsg = `Pasillo ${selectedHalls.selected.map(
-        value => value.hall
-      )} eliminado`;
-    }
-
-
-
-
-    const alert = await this.alertController.create({
-      header: header,
-      message: msg,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: blah => {
-            console.log('Confirm Cancel: blah');
-          }
-        },
-        {
-          text: 'Vale',
-          handler: () => {
-            console.log('Confirm Okay');
-            this.presentLoading();
-            this.hallsService
-              .deleteDestroy(this.selection.selected)
-              .then(
-                (
-                  data: Observable<HttpResponse<HallModel.ResponseDestroy>>[]
-                ) => {
-                  data.map(
-                    (
-                      response$: Observable<
-                        HttpResponse<HallModel.ResponseDestroy>
-                        >
-                    ) => {
-                      response$.subscribe(
-                        (response: HttpResponse<HallModel.ResponseDestroy>) => {
-                          console.log(
-                            `${response.body.data} - ${response.body.code} - ${
-                              response.body.message
-                              }`
-                          );
-                          this.presentToast(successMsg);
-                          this.initHalls();
-                          this.dismissLoading();
-                        },
-                        (errorResponse: HttpErrorResponse) => {
-                          this.presentToast(errorResponse.error.errors);
-                          console.log(errorResponse);
-                          this.dismissLoading();
-                          this.initHalls();
                         }
                       );
                     }

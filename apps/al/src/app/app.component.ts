@@ -113,12 +113,15 @@ export class AppComponent implements OnInit {
 
           this.warehouseService
             .init()
-            .then((data: Observable<HttpResponse<any>>) => {
-              data.subscribe((res: HttpResponse<any>) => {
-                // Load of main warehouse in memory
-                this.warehouseService.idWarehouseMain = res.body.data.id;
-              });
-            })
+            .then((data: Observable<HttpResponse<any>>) =>
+              new Promise((resolve, reject) => {
+                data.subscribe((res: HttpResponse<any>) => {
+                  // Load of main warehouse in memory
+                  this.warehouseService.idWarehouseMain = res.body.data.id;
+                  resolve();
+                }, reject);
+              })
+            )
             .catch((possibleMainWarehouse404Error) => {})
             .then(() => this.router.navigate(['warehouse/manage'])
               .then(success => {

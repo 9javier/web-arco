@@ -809,8 +809,8 @@ public class ScanditSDK extends CordovaPlugin {
             String location = "";
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
               location = "P" +fProduct.getJSONObject("inventory").getJSONObject("rack").getInt("hall")
-                +" . C"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column")
-                +" . A"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row");
+                +" . A"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row")
+                +" . C"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column");
             }
             tvLocation.setText(location);
             tvReference.setText(fProduct.getJSONObject("product").getString("reference"));
