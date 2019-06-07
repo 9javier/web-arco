@@ -123,7 +123,7 @@ export class AppComponent implements OnInit {
               })
             )
             .catch((possibleMainWarehouse404Error) => {})
-            .then(() => this.router.navigate(['warehouse/manage'])
+            .then(() => this.router.navigate(['products'])
               .then(success => {
                 this.showMainHeader = true;
                 this.menu.enable(true, 'sidebar');
