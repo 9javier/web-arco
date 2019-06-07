@@ -112,13 +112,19 @@ export class StoreComponent implements OnInit {
                   if (this.loading) {
                     this.loading.dismiss();
                     this.loading = null;
-                    if (this.workwaveType == 'run' && res.body.data.pickings && res.body.data.pickings.length > 0) {
+                  }
+                  if (this.workwaveType == 'run') {
+                    if (res.body.data.pickings && res.body.data.pickings.length > 0) {
                       this.goToList('save_run', res.body.data.id);
+                      this.presentToast('Ola de trabajo actualizada', 'success');
                     } else {
                       this.goToList('save', null);
+                      this.presentToast('Ola de trabajo actualizada. No se le han generado Tareas de Picking', 'success');
                     }
+                  } else {
+                    this.goToList('save', null);
+                    this.presentToast('Ola de trabajo actualizada', 'success');
                   }
-                  this.presentToast('Ola de trabajo actualizada', 'success');
                 } else {
                   if (this.loading) {
                     this.loading.dismiss();
@@ -149,13 +155,19 @@ export class StoreComponent implements OnInit {
                   if (this.loading) {
                     this.loading.dismiss();
                     this.loading = null;
-                    if (this.workwaveType == 'run' && res.body.data.pickings && res.body.data.pickings.length > 0) {
+                  }
+                  if (this.workwaveType == 'run') {
+                    if (res.body.data.pickings && res.body.data.pickings.length > 0) {
                       this.goToList('save_run', res.body.data.id);
+                      this.presentToast('Ola de trabajo creada', 'success');
                     } else {
                       this.goToList('save', null);
+                      this.presentToast('Ola de trabajo creada. No se le han generado Tareas de Picking', 'success');
                     }
+                  } else {
+                    this.goToList('save', null);
+                    this.presentToast('Ola de trabajo creada', 'success');
                   }
-                  this.presentToast('Ola de trabajo creada', 'success');
                 } else {
                   if (this.loading) {
                     this.loading.dismiss();
