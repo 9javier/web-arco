@@ -184,16 +184,19 @@ export class AppComponent implements OnInit {
             // Load of main warehouse in memory
             this.warehouseService
               .init()
-              .then((data: Observable<HttpResponse<any>>) => {
-                data.subscribe((res: HttpResponse<any>) => {
-                  // Load of main warehouse in memory
-                  this.warehouseService.idWarehouseMain = res.body.data.id;
-                  // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
-                  this.warehouseService.loadWarehousesData();
-                  // Load in array only warehouses with racks
-                  this.warehouseService.loadWarehousesWithRacks();
-                });
-              })
+              .then((data: Observable<HttpResponse<any>>) =>
+                new Promise((resolve, reject) => {
+                  data.subscribe((res: HttpResponse<any>) => {
+                    // Load of main warehouse in memory
+                    this.warehouseService.idWarehouseMain = res.body.data.id;
+                    // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
+                    this.warehouseService.loadWarehousesData();
+                    // Load in array only warehouses with racks
+                    this.warehouseService.loadWarehousesWithRacks();
+                    resolve();
+                  }, reject);
+                })
+              )
               .catch((possibleMainWarehouse404Error) => {})
               .then(() => this.router.navigate(['products']).then(sucess => {
                   this.showMainHeader = true;

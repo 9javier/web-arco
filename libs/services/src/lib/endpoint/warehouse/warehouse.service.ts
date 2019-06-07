@@ -22,7 +22,7 @@ export class WarehouseService {
 
   private getShowUrl = environment.apiBase+"/warehouses/{{id}}";
 
-  private _idWarehouseMain: number = 1;
+  private _idWarehouseMain: number;
   private _listWarehouses: any[] = [];
   private _listHalls: any = {};
   private _listRows: any = {};

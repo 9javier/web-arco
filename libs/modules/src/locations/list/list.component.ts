@@ -70,7 +70,7 @@ export class ListComponent implements OnInit {
 
   parentPage: string = 'Almacenes';
   paramsReceived;
-  warehouseSelected: number = 1;
+  warehouseSelected: number;
 
 
   dd(event,row){
