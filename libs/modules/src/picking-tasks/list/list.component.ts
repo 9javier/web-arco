@@ -21,7 +21,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
 
   constructor(
     private loadingController: LoadingController,
-    private pickingService: PickingService,
+    public pickingService: PickingService,
     private scanditService: ScanditService,
     private authenticationService: AuthenticationService,
     private shoesPickingService: ShoesPickingService,
