@@ -16,6 +16,7 @@ import { forkJoin, concat } from 'rxjs';
 export const PATH_GET_INDEX: string = PATH('Warehouses Maps', 'Listar estantes de un almacén');
 export const PATH_POST_STORE: string = PATH('Warehouses Maps', 'Crear estante');
 export const PATH_GET_SHOW: string = PATH('Warehouses Maps', 'Listar ubicaciones de un estante');
+export const PATH_GET_FULL_INDEX: string = PATH('Warehouses Maps', 'Listar estantes y ubicaciones de un almacén');
 export const PATH_PUT_UPDATE: string = PATH('Warehouses Maps', 'Redimensionar un estante').replace('{{rackId}}', '');
 export const PATH_DEL_DESTROY: string = PATH('Warehouses Maps', 'Eliminar un estante').replace('{{rackId}}', '');
 export const PATH_PUT_ENABLE: string = PATH('Warehouses Maps', 'Habilitar ubicación').replace('{{containerId}}', '');
@@ -35,6 +36,17 @@ export class HallsService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.get<HallModel.ResponseIndex>(PATH_GET_INDEX.replace('{{warehouseId}}', String(warehouseId)), {
+      headers: headers,
+      observe: 'response'
+    });
+  }
+
+  async getFullIndex(
+    warehouseId: string | number
+  ): Promise<Observable<HttpResponse<HallModel.ResponseIndex>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.get<HallModel.ResponseIndex>(PATH_GET_FULL_INDEX.replace('{{warehouseId}}', String(warehouseId)), {
       headers: headers,
       observe: 'response'
     });

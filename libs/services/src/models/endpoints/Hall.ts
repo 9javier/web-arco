@@ -8,6 +8,9 @@ export namespace HallModel {
     warehouse?: {id: number};
     items?: number;
   }
+  export interface HallFull extends Hall {
+    containers?: any[];
+  }
   export function formToMap(formHall) {
     return {
       rows: formHall.rows,
@@ -19,6 +22,9 @@ export namespace HallModel {
   }
   export interface ResponseIndex {
     data: Hall[];
+  }
+  export interface ResponseFullIndex {
+    data: HallFull[];
   }
   export interface ResponseStore {
     data: {

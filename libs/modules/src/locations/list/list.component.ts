@@ -170,17 +170,17 @@ export class ListComponent implements OnInit {
     });
 
     this.hallsService
-      .getIndex(this.warehouseSelected)
+      .getFullIndex(this.warehouseSelected)
       .then(
         (
           data: Observable<
-            HttpResponse<HallModel.ResponseIndex>
+            HttpResponse<HallModel.ResponseFullIndex>
             >
         ) => {
           data.subscribe(
             (
               res: HttpResponse<
-                HallModel.ResponseIndex
+                HallModel.ResponseFullIndex
                 >
             ) => {
               this.flagRequestList = true;
@@ -197,6 +197,7 @@ export class ListComponent implements OnInit {
                     hall: hall.hall,
                     columns: hall.columns,
                     rows: hall.rows,
+                    containers: hall.containers,
                     use: '',
                     expanded: expanded,
                     dropdown_icon: dropdown_icon
@@ -206,37 +207,32 @@ export class ListComponent implements OnInit {
 
               const rows = [];
               this.dataSource.forEach(element => {
-                this.hallsService
-                  .getShow(element.id)
-                  .then((data: Observable<HttpResponse<HallModel.ResponseShow>>) => {
-                    data.subscribe(((res: HttpResponse<HallModel.ResponseShow>) => {
-                      element.container = [];
-                      let totalLocations = res.body.data.length;
-                      let freeLocations = 0;
-                      element.totalContainers = totalLocations;
-                      res.body.data.forEach(containers => {
-                        let rowIndex = containers.row - 1;
-                        containers.selected = false;
-                        if (typeof element.container[rowIndex] == 'undefined') {
-                          element.container[rowIndex] = [];
-                        }
-                        element.container[rowIndex].push(containers);
-                        if (containers.enabled && containers.items <= 0) {
-                          freeLocations++;
-                        }
-                        if (containers.incidence) {
-                          if (!element.incidence || (element.incidence && element.incidence != 'serious')) {
-                            element.incidence = containers.incidence;
-                          }
-                        }
-                      });
-                      element.freeLocations = freeLocations;
-                      element.locations = freeLocations+'/'+totalLocations+' libres';
-                      if (element.expanded) {
-                        this.expandedElement = element;
-                      }
-                    }));
-                  });
+
+                element.container = [];
+                let totalLocations = element.containers.length;
+                let freeLocations = 0;
+                element.totalContainers = totalLocations;
+                element.containers.forEach(containers => {
+                  let rowIndex = containers.row - 1;
+                  containers.selected = false;
+                  if (typeof element.container[rowIndex] == 'undefined') {
+                    element.container[rowIndex] = [];
+                  }
+                  element.container[rowIndex].push(containers);
+                  if (containers.enabled && containers.items <= 0) {
+                    freeLocations++;
+                  }
+                  if (containers.incidence) {
+                    if (!element.incidence || (element.incidence && element.incidence != 'serious')) {
+                      element.incidence = containers.incidence;
+                    }
+                  }
+                });
+                element.freeLocations = freeLocations;
+                element.locations = freeLocations+'/'+totalLocations+' libres';
+                if (element.expanded) {
+                  this.expandedElement = element;
+                }
 
                 return rows.push(element, { detailRow: true, element });
               });
