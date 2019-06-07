@@ -334,7 +334,7 @@ export class ListComponent implements OnInit {
   print(event, row){
     event.stopPropagation();
     if(row.reference){
-      this.printerService.print(row.reference);
+      this.printerService.print({text: row.reference, type: 0});
     } else {
       console.debug("Not found reference", row);
     }

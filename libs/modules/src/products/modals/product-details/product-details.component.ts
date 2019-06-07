@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { TypesService } from '@suite/services';
 import { ProductsService,InventoryModel } from '@suite/services';
+import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
+import {PrintModel} from "../../../../../services/src/models/endpoints/Print";
 
 @Component({
   selector: 'suite-product-details',
@@ -25,7 +27,9 @@ export class ProductDetailsComponent implements OnInit {
     private typeService:TypesService,
     private productService:ProductsService,
     private modalController:ModalController,
-    private navParams:NavParams) { 
+    private navParams:NavParams,
+    private printerService: PrinterService
+    ) {
       this.product = this.navParams.get("product");
   }
 
@@ -60,6 +64,14 @@ export class ProductDetailsComponent implements OnInit {
    */
   close(){
     this.modalController.dismiss();
+  }
+
+  /**
+   * Print a Simple Product Tag
+   */
+  printProductTag(type: number) {
+    console.debug('Test::ProductReference -> ', this.product);
+    this.printerService.print({product: <PrintModel.Product>this.product, type: type});
   }
 
 }
