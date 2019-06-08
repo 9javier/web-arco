@@ -10,6 +10,7 @@ export namespace FiltersModel{
     export interface Warehouse{
         id:number;
         reference:string;
+        name:string;
     }
 
     export interface Group{

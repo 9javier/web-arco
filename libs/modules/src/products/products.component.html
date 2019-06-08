@@ -24,7 +24,9 @@
                         </ion-label>
                         <ion-select [formControl]="form['controls']?.warehouses['controls'][0]">
                             <ion-select-option value="">Todos</ion-select-option>
-                            <ion-select-option value="{{warehouse.id}}" *ngFor="let warehouse of warehouses">{{warehouse.reference}}</ion-select-option>
+                            <ion-select-option value="{{warehouse.id}}" *ngFor="let warehouse of warehouses">
+                              {{warehouse.reference}} - {{warehouse.name}}
+                            </ion-select-option>
                         </ion-select>
                     </ion-item>
                 </ion-col>
