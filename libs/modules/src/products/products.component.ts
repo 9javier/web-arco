@@ -49,7 +49,7 @@ export class ProductsComponent implements OnInit {
   });
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['reference','color','warehouse', 'container', 'model', 'size'];
+  displayedColumns: string[] = ['reference', 'model', 'color', 'size', 'warehouse', 'container'];
   dataSource: any;
 
   /**Filters */
