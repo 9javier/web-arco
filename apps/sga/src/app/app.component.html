@@ -1,8 +1,8 @@
-<ion-app [ngClass]="{ 'sm-custom': displaySmallSidebar }">
+<ion-app [ngClass]="{ 'sm-custom': displaySmallSidebar }" (window:resize)="onResize($event)">
     <ion-header *ngIf="showMainHeader && router.url != '/login'" [ngClass]="{ 'mainheader mainheader-fullheight': showMainHeader }">
         <ion-toolbar color="primary">
             <ion-buttons slot="start">
-                <ion-button (window:resize)="onResize($event)" *ngIf="deploySidebarSmallDevices" (click)="toggleSidebarSmallDevices()">
+                <ion-button *ngIf="deploySidebarSmallDevices" (click)="toggleSidebarSmallDevices()">
                     <ion-icon name="menu" class="menu"></ion-icon>
                 </ion-button>
             </ion-buttons>
