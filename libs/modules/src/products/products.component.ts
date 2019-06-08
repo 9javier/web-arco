@@ -30,6 +30,8 @@ import { ModalController } from '@ionic/angular';
 
 export class ProductsComponent implements OnInit {
 
+  pagerValues = [50, 100, 1000];
+
   form:FormGroup = this.formBuilder.group({
     warehouseId: [],
     containers: this.formBuilder.array([new FormControl()]),
@@ -39,7 +41,7 @@ export class ProductsComponent implements OnInit {
     warehouses:this.formBuilder.array([new FormControl()]),
     pagination: this.formBuilder.group({
         page: 1,
-        limit: 10
+        limit: this.pagerValues[0]
     }),
     orderby:this.formBuilder.group( {
         type: '',
