@@ -111,6 +111,7 @@ export class ProductsComponent implements OnInit {
      */
     this.warehouseService.getMain().subscribe(warehouse=>{
       this.form.get("warehouses").patchValue(["" + warehouse.id]);
+      this.form.get("orderby").get("type").patchValue("" + this.groups[0].id);
       this.searchInContainer(this.sanitize(this.form.value));
     });
     this.listenChanges();

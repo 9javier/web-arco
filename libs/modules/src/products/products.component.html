@@ -71,7 +71,6 @@
                             Ordenar
                         </ion-label>
                         <ion-select formControlName="type">
-                            <ion-select-option value="">Todos</ion-select-option>
                             <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>
