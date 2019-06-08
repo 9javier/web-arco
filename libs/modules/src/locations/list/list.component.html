@@ -102,10 +102,17 @@
     No hay {{warehouseSelected?'ubicaciones':'nada'}} para mostrar
 </div>
 <ion-row class="fab-row-actions ">
-    <ion-col size="1 " size-xs="1 " [offset]="9 " [offsetXs]="9 " *ngIf="origin=='list' && countLocationsSelected> 0">
+    <ion-col size="1 " size-xs="1 " [offset]="8 " [offsetXs]="8 " *ngIf="origin=='list' && countLocationsSelected> 0">
         <ion-fab [@EnterLeave]="'flyIn'" (click)="selectAllLocations()">
             <ion-fab-button color="light">
                 <i class="material-icons">select_all</i>
+            </ion-fab-button>
+        </ion-fab>
+    </ion-col>
+    <ion-col size="1 " size-xs="1 " *ngIf="origin=='list' && countLocationsSelected> 0">
+        <ion-fab [@EnterLeave]="'flyIn'" (click)="printReferencesLocations()">
+            <ion-fab-button color="light">
+                <i class="material-icons">print</i>
             </ion-fab-button>
         </ion-fab>
     </ion-col>
