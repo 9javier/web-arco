@@ -11,8 +11,7 @@
                         <ion-label>
                             Color
                         </ion-label>
-                        <ion-select [formControl]="form['controls']?.colors['controls'][0]">
-                            <ion-select-option value="">Todos</ion-select-option>
+                        <ion-select formControlName="colors" [multiple]="true">
                             <ion-select-option value="{{color.id}}" *ngFor="let color of colors">{{color.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>
@@ -22,8 +21,7 @@
                         <ion-label>
                             Almacén
                         </ion-label>
-                        <ion-select [formControl]="form['controls']?.warehouses['controls'][0]">
-                            <ion-select-option value="">Todos</ion-select-option>
+                        <ion-select formControlName="warehouses" [multiple]="true">
                             <ion-select-option value="{{warehouse.id}}" *ngFor="let warehouse of warehouses">
                               {{warehouse.reference}} - {{warehouse.name}}
                             </ion-select-option>
@@ -35,8 +33,7 @@
                         <ion-label>
                             Container
                         </ion-label>
-                        <ion-select [formControl]="form['controls']?.containers['controls'][0]">
-                            <ion-select-option value="">Todos</ion-select-option>
+                        <ion-select formControlName="containers" [multiple]="true">
                             <ion-select-option value="{{container.id}}" *ngFor="let container of containers">{{container.reference}}</ion-select-option>
                         </ion-select>
                     </ion-item>
@@ -47,8 +44,7 @@
                         <ion-label>
                             Modelo
                         </ion-label>
-                        <ion-select [formControl]="form['controls']?.models['controls'][0]">
-                            <ion-select-option value="">Todos</ion-select-option>
+                        <ion-select formControlName="models" [multiple]="true">
                             <ion-select-option value="{{model.id}}" *ngFor="let model of models">{{model.reference}}</ion-select-option>
                         </ion-select>
                     </ion-item>
@@ -58,8 +54,7 @@
                         <ion-label>
                             Tallas
                         </ion-label>
-                        <ion-select [formControl]="form['controls']?.sizes['controls'][0]">
-                            <ion-select-option value="">Todas</ion-select-option>
+                        <ion-select formControlName="sizes" [multiple]="true">
                             <ion-select-option value="{{size.id}}" *ngFor="let size of sizes">{{size.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>
@@ -70,7 +65,7 @@
                         <ion-label>
                             Ordenar
                         </ion-label>
-                        <ion-select formControlName="type">
+                        <ion-select formControlName="type" interface="popover">
                             <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>

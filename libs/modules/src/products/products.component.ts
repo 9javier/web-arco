@@ -33,11 +33,11 @@ export class ProductsComponent implements OnInit {
   pagerValues = [50, 100, 1000];
 
   form:FormGroup = this.formBuilder.group({
-    containers: this.formBuilder.array([new FormControl()]),
-    models: this.formBuilder.array([new FormControl()]),
-    colors: this.formBuilder.array([new FormControl()]),
-    sizes: this.formBuilder.array([new FormControl()]),
-    warehouses:this.formBuilder.array([new FormControl()]),
+    containers: [],
+    models: [],
+    colors: [],
+    sizes: [],
+    warehouses:[],
     pagination: this.formBuilder.group({
         page: 1,
         limit: this.pagerValues[0]
@@ -110,6 +110,12 @@ export class ProductsComponent implements OnInit {
      * Get the main warehouse to attacth their id to the request
      */
     this.warehouseService.getMain().subscribe(warehouse=>{
+      /* TODO avoid statements? those patchValue([]) lines feel redundant since those default values have already been
+       *      set on the formBuilder statement but form.value is returning null for them */
+      this.form.get("containers").patchValue([]);
+      this.form.get("models").patchValue([]);
+      this.form.get("colors").patchValue([]);
+      this.form.get("sizes").patchValue([]);
       this.form.get("warehouses").patchValue(["" + warehouse.id]);
       this.form.get("orderby").get("type").patchValue("" + this.groups[0].id);
       this.searchInContainer(this.sanitize(this.form.value));
