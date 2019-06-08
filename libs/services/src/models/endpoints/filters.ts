@@ -30,6 +30,7 @@ export namespace FiltersModel{
     export interface Size{
         id:number;
         reference:number;
+        name:string;
     }
 
     export interface ResponseColor extends Request.Success{

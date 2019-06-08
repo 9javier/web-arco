@@ -58,7 +58,7 @@
                         </ion-label>
                         <ion-select [formControl]="form['controls']?.sizes['controls'][0]">
                             <ion-select-option value="">Todas</ion-select-option>
-                            <ion-select-option value="{{size.id}}" *ngFor="let size of sizes">{{size.reference}}</ion-select-option>
+                            <ion-select-option value="{{size.id}}" *ngFor="let size of sizes">{{size.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>
 
