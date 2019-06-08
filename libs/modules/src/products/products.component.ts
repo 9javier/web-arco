@@ -33,7 +33,6 @@ export class ProductsComponent implements OnInit {
   pagerValues = [50, 100, 1000];
 
   form:FormGroup = this.formBuilder.group({
-    warehouseId: [],
     containers: this.formBuilder.array([new FormControl()]),
     models: this.formBuilder.array([new FormControl()]),
     colors: this.formBuilder.array([new FormControl()]),
@@ -111,7 +110,7 @@ export class ProductsComponent implements OnInit {
      * Get the main warehouse to attacth their id to the request
      */
     this.warehouseService.getMain().subscribe(warehouse=>{
-      this.form.get("warehouseId").patchValue(warehouse.id);
+      this.form.get("warehouses").patchValue(["" + warehouse.id]);
       this.searchInContainer(this.sanitize(this.form.value));
     });
     this.listenChanges();
