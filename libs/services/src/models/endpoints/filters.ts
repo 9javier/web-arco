@@ -10,6 +10,7 @@ export namespace FiltersModel{
     export interface Warehouse{
         id:number;
         reference:string;
+        name:string;
     }
 
     export interface Group{
@@ -30,6 +31,7 @@ export namespace FiltersModel{
     export interface Size{
         id:number;
         reference:number;
+        name:string;
     }
 
     export interface ResponseColor extends Request.Success{

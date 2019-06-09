@@ -30,16 +30,17 @@ import { ModalController } from '@ionic/angular';
 
 export class ProductsComponent implements OnInit {
 
+  pagerValues = [50, 100, 1000];
+
   form:FormGroup = this.formBuilder.group({
-    warehouseId: [],
-    containers: this.formBuilder.array([new FormControl()]),
-    models: this.formBuilder.array([new FormControl()]),
-    colors: this.formBuilder.array([new FormControl()]),
-    sizes: this.formBuilder.array([new FormControl()]),
-    warehouses:this.formBuilder.array([new FormControl()]),
+    containers: [],
+    models: [],
+    colors: [],
+    sizes: [],
+    warehouses:[],
     pagination: this.formBuilder.group({
         page: 1,
-        limit: 10
+        limit: this.pagerValues[0]
     }),
     orderby:this.formBuilder.group( {
         type: '',
@@ -48,7 +49,7 @@ export class ProductsComponent implements OnInit {
   });
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['reference','color','warehouse', 'container', 'model', 'size'];
+  displayedColumns: string[] = ['reference', 'model', 'color', 'size', 'warehouse', 'container'];
   dataSource: any;
 
   /**Filters */
@@ -109,7 +110,14 @@ export class ProductsComponent implements OnInit {
      * Get the main warehouse to attacth their id to the request
      */
     this.warehouseService.getMain().subscribe(warehouse=>{
-      this.form.get("warehouseId").patchValue(warehouse.id);
+      /* TODO avoid statements? those patchValue([]) lines feel redundant since those default values have already been
+       *      set on the formBuilder statement but form.value is returning null for them */
+      this.form.get("containers").patchValue([], {emitEvent: false});
+      this.form.get("models").patchValue([], {emitEvent: false});
+      this.form.get("colors").patchValue([], {emitEvent: false});
+      this.form.get("sizes").patchValue([], {emitEvent: false});
+      this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
+      this.form.get("orderby").get("type").patchValue("" + this.groups[0].id, {emitEvent: false});
       this.searchInContainer(this.sanitize(this.form.value));
     });
     this.listenChanges();

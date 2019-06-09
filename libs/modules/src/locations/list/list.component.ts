@@ -15,6 +15,7 @@ import { UpdateComponent as updateHall } from '../../halls/update/update.compone
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
 import {LocationsComponent} from "../locations.component";
 import {MoveProductsComponent} from "../modals/move-products/move-products.component";
+import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 
 
 @Component({
@@ -49,7 +50,8 @@ export class ListComponent implements OnInit {
     private toastController: ToastController,
     private warehouseService: WarehouseService,
     private modalController: ModalController,
-    private changeDetector:ChangeDetectorRef
+    private changeDetector:ChangeDetectorRef,
+    private printerService: PrinterService
   ) {
   }
 
@@ -340,7 +342,10 @@ export class ListComponent implements OnInit {
   }
 
   printReferencesLocations() {
-
+    for (let idLocation in this.locationsSelected) {
+      let container = this.locationsSelected[idLocation].column;
+      this.printerService.print(container.reference);
+    }
   }
 
   disableLocations() {
