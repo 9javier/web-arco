@@ -10,16 +10,18 @@ import {
   InventoryModel,
   TypeModel,
   TypesService,
-  WarehousesService
+  WarehousesService,
+  IntermediaryService
 
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
 
-import { FormBuilder,FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
 import { ModalController } from '@ionic/angular';
+import { validators } from '../utils/validators';
 
 
 @Component({
@@ -32,11 +34,17 @@ export class ProductsComponent implements OnInit {
 
   pagerValues = [50, 100, 1000];
 
+  /**timeout for send request */
+  requestTimeout;
+  /**previous reference to detect changes */
+  previousReference = '';
+
   form:FormGroup = this.formBuilder.group({
     containers: [],
     models: [],
     colors: [],
     sizes: [],
+    reference:'',
     warehouses:[],
     pagination: this.formBuilder.group({
         page: 1,
@@ -48,8 +56,15 @@ export class ProductsComponent implements OnInit {
     })
   });
 
+  /**form to select elements to print or for anything */
+  selectedForm:FormGroup = this.formBuilder.group({},{
+    validators:validators.haveItems("toSelect")
+  });
+
+
+
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['reference', 'model', 'color', 'size', 'warehouse', 'container'];
+  displayedColumns: string[] = ['reference', 'model', 'color', 'size', 'warehouse', 'container','select'];
   dataSource: any;
 
   /**Filters */
@@ -68,6 +83,7 @@ export class ProductsComponent implements OnInit {
   //@ViewChild(MatSort) sort: MatSort;
 
   constructor(
+    private intermediaryService:IntermediaryService,
     private warehouseService:WarehousesService,
     private typeService:TypesService,
     private formBuilder:FormBuilder,
@@ -102,6 +118,28 @@ export class ProductsComponent implements OnInit {
     return object;
   }
 
+  /**
+   * Select or unselect all visible products
+   * @param event to check the status
+   */
+  selectAll(event):void{
+    let value = event.detail.checked;
+    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control=>{
+      control.setValue(value);
+    });
+  }
+
+  /**
+   * Print the selected products
+   */
+  printProducts():void{
+    let products = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].id:false).filter(product=>product);
+    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    setTimeout( ()=>this.intermediaryService.dismissLoading(),1000);
+    console.log(products);
+
+  }
+
   ngOnInit() {
     console.log(this.form);
     //this.initProducts();
@@ -110,14 +148,17 @@ export class ProductsComponent implements OnInit {
      * Get the main warehouse to attacth their id to the request
      */
     this.warehouseService.getMain().subscribe(warehouse=>{
-      /* TODO avoid statements? those patchValue([]) lines feel redundant since those default values have already been
-       *      set on the formBuilder statement but form.value is returning null for them */
+      /**
+       * @todo avoid statements? those patchValue([]) lines feel redundant since those default values have already been
+       * set on the formBuilder statement but form.value is returning null for them 
+       * @see sanitize that method sanitize the null values
+       * */
       this.form.get("containers").patchValue([], {emitEvent: false});
       this.form.get("models").patchValue([], {emitEvent: false});
       this.form.get("colors").patchValue([], {emitEvent: false});
       this.form.get("sizes").patchValue([], {emitEvent: false});
       this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
-      this.form.get("orderby").get("type").patchValue("" + this.groups[0].id, {emitEvent: false});
+      this.form.get("orderby").get("type").patchValue("", {emitEvent: false});
       this.searchInContainer(this.sanitize(this.form.value));
     });
     this.listenChanges();
@@ -142,10 +183,55 @@ export class ProductsComponent implements OnInit {
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
-      /**reset the paginator to the 0 page */
-      this.paginator.pageIndex = 0;
-      this.searchInContainer(this.sanitize(this.form.value));
+      /**format the reference */
+      this.form.controls.reference.patchValue(this.buildReference(this.form.value.reference),{emitEvent:false});
+      /**cant send a request in every keypress of reference, then cancel the previous request */
+      clearTimeout(this.requestTimeout)
+      /**it the change of the form is in reference launch new timeout with request in it */
+      if(this.form.value.reference != this.previousReference){
+        /**Just need check the vality if the change happens in the reference */
+        if(this.form.valid)
+          this.requestTimeout = setTimeout(()=>{
+            this.searchInContainer(this.sanitize(this.form.value));
+        },200);
+      }else{
+        /**reset the paginator to the 0 page */
+        this.paginator.pageIndex = 0;
+        this.searchInContainer(this.sanitize(this.form.value));
+      }
+      /**assign the current reference to the previous reference */
+      this.previousReference = this.form.value.reference;
     });
+  }
+
+  /**
+   * Format the reference to a valid reference
+   * @param reference - the reference to be formated
+   * @returns the formated reference
+   */
+  buildReference(reference:string):string{
+    let mask = '000000000000000000';
+    reference = (mask+reference);
+    reference = reference.substr(reference.length-18);
+    reference = (reference == mask)?"":reference;
+    return reference;
+  }
+
+  /**
+   * Cancel event and stop it propagation
+   * @params e - the event to cancel
+   */
+  prevent(e):void{
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  /**
+   * init selectForm controls
+   */
+  initSelectForm():void{  
+    this.selectedForm.removeControl("toSelect");
+    this.selectedForm.addControl("toSelect",this.formBuilder.array(this.searchsInContainer.map(product=>new FormControl(false))));
   }
 
   /**
@@ -155,6 +241,7 @@ export class ProductsComponent implements OnInit {
   searchInContainer(parameters):void{
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
       this.searchsInContainer = searchsInContainer.data.results;
+      this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
       let paginator = searchsInContainer.data.pagination;
       this.paginator.length = paginator.totalResults;
