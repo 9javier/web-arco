@@ -7,6 +7,7 @@ import { ToastController, LoadingController, AlertController } from '@ionic/angu
 export class IntermediaryService {
 
   loading;
+  created;
   constructor(private toastCtrl:ToastController, private loadingCtrl:LoadingController, private alertController:AlertController) { }
 
   /**
@@ -27,21 +28,28 @@ export class IntermediaryService {
    * @param message - the message to be showed in loading
    */
   async presentLoading(message:string = ""){
-    if(this.loading)
-      await this.loadingCtrl.dismiss();
-    this.loading = (await this.loadingCtrl.create({
+    this.loading = true;
+    this.loadingCtrl.create({
       message:message
-    }));
-    this.loading.present();
+    }).then(loading=>{
+      loading.present().then(()=>{
+        this.created = true;
+        if(!this.loading)
+          this.dismissLoading();
+      });
+    })
   }
 
   /**
    * close the latest modal
    */
   async dismissLoading(){
-    this.loadingCtrl.dismiss().then(message=>{
-      console.log("dismissed")
-    });
+    /**flag what indicate that loading has been close */
+    this.loading = false;
+    if(this.created)
+      await this.loadingCtrl.dismiss().then(message=>{
+        this.created = false;
+      });
   }
 
   async presentConfirm(message:string,callbak) {

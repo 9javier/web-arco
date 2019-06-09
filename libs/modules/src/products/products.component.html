@@ -44,7 +44,7 @@
                         </ion-label>
                         <ion-select formControlName="warehouses" [multiple]="true">
                             <ion-select-option value="{{warehouse.id}}" *ngFor="let warehouse of warehouses">
-                              {{warehouse.reference}} - {{warehouse.name}}
+                                {{warehouse.reference}} - {{warehouse.name}}
                             </ion-select-option>
                         </ion-select>
                     </ion-item>
@@ -80,8 +80,10 @@
 
         <tr mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns"></tr>
 
-        <ng-container matColumnDef="reference">
-            <th mat-header-cell *matHeaderCellDef>Referencia</th>
+        <ng-container matColumnDef="reference" [formGroup]="form">
+            <th mat-header-cell *matHeaderCellDef>
+                <ion-input formControlName="reference" type="number" placeholder="referencia"></ion-input>
+            </th>
             <td mat-cell *matCellDef="let product">
                 {{ product?.productShoeUnit?.reference }}
             </td>
@@ -121,8 +123,24 @@
                 {{ product?.container?.reference }}
             </td>
         </ng-container>
+        <ng-container matColumnDef="select" [formGroup]="selectedForm">
+            <th mat-header-cell *matHeaderCellDef>
+                <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let product;let i = index" (click)="prevent($event)">
+                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                </ng-template>
+            </td>
+        </ng-container>
+
 
     </table>
-
     <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>
+
 </ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="printProducts()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+        <ion-icon name="print"></ion-icon>
+    </ion-fab-button>
+</ion-fab>
