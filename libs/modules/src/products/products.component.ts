@@ -112,12 +112,12 @@ export class ProductsComponent implements OnInit {
     this.warehouseService.getMain().subscribe(warehouse=>{
       /* TODO avoid statements? those patchValue([]) lines feel redundant since those default values have already been
        *      set on the formBuilder statement but form.value is returning null for them */
-      this.form.get("containers").patchValue([]);
-      this.form.get("models").patchValue([]);
-      this.form.get("colors").patchValue([]);
-      this.form.get("sizes").patchValue([]);
-      this.form.get("warehouses").patchValue(["" + warehouse.id]);
-      this.form.get("orderby").get("type").patchValue("" + this.groups[0].id);
+      this.form.get("containers").patchValue([], {emitEvent: false});
+      this.form.get("models").patchValue([], {emitEvent: false});
+      this.form.get("colors").patchValue([], {emitEvent: false});
+      this.form.get("sizes").patchValue([], {emitEvent: false});
+      this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
+      this.form.get("orderby").get("type").patchValue("" + this.groups[0].id, {emitEvent: false});
       this.searchInContainer(this.sanitize(this.form.value));
     });
     this.listenChanges();
