@@ -33,7 +33,7 @@ export class PermissionToRolComponent implements OnInit {
   form:FormGroup = this.formBuilder.group({
     toDelete:this.formBuilder.array([])
   },{
-    validators:validators.haveRoles("toDelete")
+    validators:validators.haveItems("toDelete")
   });
 
   public columnsToDisplay = ["name","description","delete"];

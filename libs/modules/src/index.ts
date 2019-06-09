@@ -85,3 +85,24 @@ export * from './user-assignment-picking/user-assignment-picking.module';
 // Picking Tasks
 export * from './picking-tasks/picking-tasks.component';
 export * from './picking-tasks/picking-tasks.module';
+
+/**Permissions */
+export * from './permissions/permissions.module';
+export * from './permissions/permissions.page';
+
+/**Home */
+export * from './home/home.module';
+export * from './home/home.page';
+
+/**Login */
+export * from './login/login.module';
+export * from './login/login.page';
+
+/**Roles */
+export * from './roles/roles-routing.module';
+export * from './roles/roles.module';
+export * from './roles/roles.component';
+
+/**Assign */
+export * from './assign/assign.module';
+export * from './assign/assign-routing.module';

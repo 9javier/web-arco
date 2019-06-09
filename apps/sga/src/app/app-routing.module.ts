@@ -8,7 +8,7 @@ const routes: Routes = [
   {
     path: 'home',
     canActivate: [AuthGuard],
-    loadChildren: './home/home.module#HomePageModule',
+    loadChildren: '../../../../libs/modules/src/home/home.module#HomePageModule',
     data:{
       name:'Principal'
     }
@@ -24,7 +24,7 @@ const routes: Routes = [
   {
     path: 'roles',
     canActivate: [AuthGuard],
-    loadChildren: './roles/roles.module#RolesModule',
+    loadChildren: '../../../../libs/modules/src/roles/roles.module#RolesModule',
     data:{
       name:'Roles'
     }
@@ -40,7 +40,7 @@ const routes: Routes = [
   {
     path: 'assign',
     canActivate: [AuthGuard],
-    loadChildren: './assign/assign.module#AssignModule',
+    loadChildren: '../../../../libs/modules/src/assign/assign.module#AssignModule',
     data:{
       name:'Asignar'
     }
@@ -50,7 +50,7 @@ const routes: Routes = [
     resolve: {
       token: RemoteTokenResolver
     },
-    loadChildren: './login/login.module#LoginPageModule',
+    loadChildren: '../../../../libs/modules/src/login/login.module#LoginPageModule',
     data:{
       name:'Login'
     }
@@ -73,7 +73,7 @@ const routes: Routes = [
   },
   {
     path: 'permissions',
-    loadChildren: './permissions/permissions.module#PermissionsPageModule',
+    loadChildren: '../../../../libs/modules/src/permissions/permissions.module#PermissionsPageModule',
     data:{
       name:'Permisos'
     }
