@@ -14,6 +14,7 @@ import { MatSelectionListChange, MatListOption } from '@angular/material/list';
 import { mergeMap } from 'rxjs/operators';
 import { StoreComponent } from "../../roles/store/store.component";
 import { UpdateComponent } from "../../roles/update/update.component";
+import { UpdateComponent as UpdateRolComponent} from './modals/update/update.component';
 
 interface ShowRolPermissions extends PermissionsModel.Permission {
   selected?: boolean;
@@ -25,6 +26,9 @@ interface ShowRolPermissions extends PermissionsModel.Permission {
   styleUrls: ['./permission-to-rol.component.scss']
 })
 export class PermissionToRolComponent implements OnInit {
+
+
+  public columnsToDisplay = ["name","description","delete"];
   /* Data Layer */
   permissions: PermissionsModel.Permission[] = [];
   roles: RolModel.Rol[] = [];
@@ -38,6 +42,8 @@ export class PermissionToRolComponent implements OnInit {
   indexSelected = 0;
   showDeleteButton = false;
 
+
+
   constructor(
     private permissionService: PermissionsService,
     private rolesService: RolesService,
@@ -46,7 +52,31 @@ export class PermissionToRolComponent implements OnInit {
     private toastController: ToastController
   ) { }
 
+  /**
+   * Launch a modal to update rol
+   * @param rol - rol to be updated
+   */
+  async updateRol(rol){
+    rol = JSON.parse(JSON.stringify(rol));
+    let modal = (await this.modalController.create({
+      component:UpdateRolComponent,
+      componentProps:{
+        rol:rol
+      }
+      
+    }));
+    modal.present();
+    modal.onDidDismiss().then(data=>{
+      this.getRoles();
+    })
+
+  }
+
   ngOnInit() {
+    this.getRoles();
+  }
+
+  getRoles(){
     Promise.all([
       this.permissionService.getIndex(),
       this.rolesService.getIndex()

@@ -1,51 +1,28 @@
 <ion-content padding>
     <!-- <ion-text color="primary"> <h1>Asignar Permiso a Rol</h1> </ion-text> -->
     <suite-breadcrumb></suite-breadcrumb>
+    <table mat-table [dataSource]="roles">
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay" (click)="updateRol(myRowData)">
+        </tr>
+        <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+            <td mat-cell *matCellDef="let rol"> {{rol.name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef> Descripción </th>
+            <td mat-cell *matCellDef="let rol"> {{rol.description}} </td>
+        </ng-container>
+        <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef>
+                <ion-checkbox></ion-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let rol">
+                <ion-checkbox></ion-checkbox>
+            </td>
+        </ng-container>
+    </table>
 
-    <mat-accordion multi="false">
-        <mat-expansion-panel *ngFor="let rol of roles" (opened)="showRolPermissions(rol.id)" (closed)="panelOpenState = false">
-            <mat-expansion-panel-header>
-                <ion-grid>
-                    <ion-row>
-                        <ion-col size="3">
-                            <mat-panel-title> {{ rol.name }} </mat-panel-title>
-                        </ion-col>
-                        <ion-col size="7">
-                            <mat-panel-description> {{ rol.description }} </mat-panel-description>
-                        </ion-col>
-                        <ion-col size="1">
-                            <ion-button color="primary" fill="outline" size="small" (click)="$event.stopPropagation(); goToUpdate(rol)">
-                                <ion-icon slot="icon-only" color="primary" name="create"></ion-icon>
-                            </ion-button>
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
-
-            </mat-expansion-panel-header>
-
-            <h2 class="example-h2">Permisos</h2>
-            <div *ngIf="!isLoadingPermissions">
-                <mat-selection-list #rolesSelection *ngFor="
-            let permission of rolepermissionsSelected;
-            let i = index;
-            trackBy: trackById
-          " (selectionChange)="
-            indexSelected = i;
-            assignPermissionToRol(permission, i, rol, matListOption)
-          ">
-                    <mat-list-option #matListOption [hidden]="isLoadingAssignPermissionToRole && indexSelected === i" [selected]="permission.selected" [value]="permission.name">
-                        <p>{{ permission.name }}</p>
-                    </mat-list-option>
-                    <mat-list *ngIf="isLoadingAssignPermissionToRole && indexSelected === i" style="display: flex; justify-content:center;">
-                        <ion-spinner></ion-spinner>
-                    </mat-list>
-                </mat-selection-list>
-            </div>
-            <mat-list style="display: flex; justify-content:center;">
-                <ion-spinner *ngIf="isLoadingPermissions"></ion-spinner>
-            </mat-list>
-        </mat-expansion-panel>
-    </mat-accordion>
     <!-- fab placed to the bottom end -->
     <ion-row class="fab-row-actions">
         <ion-col size="2" size-xs offset="8" offset-lg="10">

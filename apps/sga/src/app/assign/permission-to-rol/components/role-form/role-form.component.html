@@ -1,0 +1,63 @@
+<form [formGroup]="form" *ngIf="form">
+    <ion-grid class="wrapper-form">
+        <ion-row class="input-wrapper">
+            <!--Name-->
+            <ion-item>
+                <div slot="start" class="slot-start-icon">
+                    <ion-icon color="medium" name="person"></ion-icon>
+                </div>
+                <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+            </ion-item>
+            <!--Description-->
+            <ion-item>
+                <div slot="start" class="slot-start-icon">
+                    <ion-icon color="medium" name="list-box"></ion-icon>
+                </div>
+                <ion-input placeholder="Descripción" class="ion-margin-horizontal" formControlName="description" type="text" text></ion-input>
+            </ion-item>
+            <!--Enable in sga-->
+            <ion-item checkbox>
+                <ion-label>Habilitar en SGA</ion-label>
+                <ion-checkbox formControlName="sga_enabled"></ion-checkbox>
+            </ion-item>
+            <!--Enable in app-->
+            <ion-item checkbox>
+                <ion-label>Habilitar en APP</ion-label>
+                <ion-checkbox formControlName="app_enabled"></ion-checkbox>
+            </ion-item>
+            <!--Permissions-->
+            <ion-item>
+                <div slot="start" class="slot-start-icon">
+                    <ion-icon color="medium" name="list"></ion-icon>
+                </div>
+                <mat-accordion multi="false">
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <ion-grid>
+                                <ion-row>
+                                    <ion-col size="3">
+                                        <mat-panel-title> Permisos </mat-panel-title>
+                                    </ion-col>
+                                    <ion-col size="7">
+                                        <mat-panel-description></mat-panel-description>
+                                    </ion-col>
+                                    <ion-col size="1">
+                                    </ion-col>
+                                </ion-row>
+                            </ion-grid>
+
+                        </mat-expansion-panel-header>
+
+                        <ng-template [ngIf]="form['controls']?.groups">
+                            <ion-item *ngFor="let permission of form['controls']?.groups['controls'];let i = index">
+                                <ion-label>{{permissions[i].name}}</ion-label>
+                                <ion-checkbox [formControl]="permission"></ion-checkbox>
+                            </ion-item>
+                        </ng-template>
+                        <mat-list style="display: flex; justify-content:center;"></mat-list>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </ion-item>
+        </ion-row>
+    </ion-grid>
+</form>
