@@ -8,6 +8,7 @@ import { RolModel } from '../../../models/endpoints/Rol';
 import { PATH, URL } from '../../../../../../config/base';
 import { concat } from 'rxjs';
 import { ACLModel } from '@suite/services';
+import { environment } from '../../../environments/environment';
 
 const PATH_GET_INDEX: string = PATH('Roles', 'Index');
 const PATH_POST_STORE: string = PATH('Roles', 'Store');
@@ -19,6 +20,9 @@ const PATH_BASE: string = URL + '/api/';
   providedIn: 'root'
 })
 export class RolesService {
+
+  destroyUrl = environment.apiBase+"/roles/{{id}}";
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<RolModel.ResponseIndex>>> {
@@ -65,6 +69,15 @@ export class RolesService {
         observe: 'response'
       }
     );
+  }
+
+  /**
+   * Delete rol given by the id
+   * @param id - the id of rol to be deleted
+   * @returns response of deletion state
+   */
+  destroy(id:number):Observable<any>{
+    return this.http.delete(this.destroyUrl.replace("{{id}}",id.toString()));
   }
 
   async deleteDestroy(

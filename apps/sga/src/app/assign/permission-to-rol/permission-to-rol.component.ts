@@ -15,6 +15,9 @@ import { mergeMap } from 'rxjs/operators';
 import { StoreComponent } from "../../roles/store/store.component";
 import { UpdateComponent } from "../../roles/update/update.component";
 import { UpdateComponent as UpdateRolComponent} from './modals/update/update.component';
+import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
+import { validators } from '../../utils/validators';
+import { IntermediaryService } from '@suite/services';
 
 interface ShowRolPermissions extends PermissionsModel.Permission {
   selected?: boolean;
@@ -27,6 +30,11 @@ interface ShowRolPermissions extends PermissionsModel.Permission {
 })
 export class PermissionToRolComponent implements OnInit {
 
+  form:FormGroup = this.formBuilder.group({
+    toDelete:this.formBuilder.array([])
+  },{
+    validators:validators.haveRoles("toDelete")
+  });
 
   public columnsToDisplay = ["name","description","delete"];
   /* Data Layer */
@@ -45,6 +53,8 @@ export class PermissionToRolComponent implements OnInit {
 
 
   constructor(
+    private intermediaryService:IntermediaryService,
+    private formBuilder:FormBuilder,
     private permissionService: PermissionsService,
     private rolesService: RolesService,
     private aclService: AclService,
@@ -69,11 +79,58 @@ export class PermissionToRolComponent implements OnInit {
     modal.onDidDismiss().then(data=>{
       this.getRoles();
     })
+  }
 
+
+  /**
+   * show modal to confirm the deletion of selecteds roles
+   */
+  confirmDeletion():void{
+    this.intermediaryService.presentConfirm("¿Está seguro de eliminar los roles seleccionados?",()=>{
+      this.deleteRoles();
+    });
+  }
+
+  /**
+   * Delete the selected roles
+   */
+  deleteRoles():void{
+    (<FormArray>this.form.controls.toDelete).controls.forEach((control,i)=>{
+      if(control.value){
+        this.intermediaryService.presentLoading();
+        this.rolesService.destroy(this.roles[i].id).subscribe(()=>{
+          this.intermediaryService.dismissLoading();
+          this.getRoles();
+        },()=>{
+          this.intermediaryService.dismissLoading();
+        });
+      }
+    })
   }
 
   ngOnInit() {
+    console.log(this.form);
     this.getRoles();
+  }
+
+  /**
+   * because the click row fire an update modal, need cancel the event of checkbox column
+   * @param e - event
+   */
+  prevent(e):void{
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  /**
+   * Select or unselect all fields
+   * @param event - the event of the checkbox to determine if select or unselect the fields
+   */
+  selectAllToDelete(event):void{
+    const value = event.detail.checked;
+    (<FormArray>this.form.controls.toDelete).controls.forEach(control=>{
+      control.setValue(value);
+    });
   }
 
   getRoles(){
@@ -90,6 +147,8 @@ export class PermissionToRolComponent implements OnInit {
         );
         data[1].subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
           this.roles = res.body.data;
+          this.form.removeControl("toDelete");
+          this.form.addControl("toDelete",this.formBuilder.array(this.roles.map(toDelete=>new FormControl(false))));
           this.rolepermissionsSelected = this.roles;
           console.log(this.roles);
         });
