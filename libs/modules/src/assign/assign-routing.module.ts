@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.component';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '../../../../apps/sga/src/app/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/per/rol', pathMatch: 'full' },
