@@ -1,6 +1,6 @@
 export namespace PrintModel {
   export interface Product {
-    container: {
+    container?: {
       column: number,
       enabled: boolean,
       id: number,
@@ -17,10 +17,10 @@ export namespace PrintModel {
       reference: string,
       row: number
     },
-    createdAt: string,
-    id: number,
-    packingId: number,
-    packingType: number,
+    createdAt?: string,
+    id?: number,
+    packingId?: number,
+    packingType?: number,
     productShoeUnit: {
       id: number,
       initialWarehouseReference: string,
@@ -65,9 +65,9 @@ export namespace PrintModel {
         updatedAt: string
       }
     },
-    status: number,
-    updatedAt: string,
-    warehouse: {
+    status?: number,
+    updatedAt?: string,
+    warehouse?: {
       description: string,
       has_racks: boolean,
       id: number,
@@ -81,6 +81,6 @@ export namespace PrintModel {
   export interface Print {
     text?: string;
     product?: Product;
-    type: number;
+    type?: number;
   }
 }

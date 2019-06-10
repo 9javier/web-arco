@@ -69,9 +69,8 @@ export class ProductDetailsComponent implements OnInit {
   /**
    * Print a Simple Product Tag
    */
-  printProductTag(type: number) {
-    console.debug('Test::ProductReference -> ', this.product);
-    this.printerService.print({product: <PrintModel.Product>this.product, type: type});
+  printProductTag() {
+    this.printerService.printProductBoxTag({product: <PrintModel.Product>this.product});
   }
 
 }
