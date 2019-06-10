@@ -344,7 +344,7 @@ export class ListComponent implements OnInit {
   printReferencesLocations() {
     for (let idLocation in this.locationsSelected) {
       let container = this.locationsSelected[idLocation].column;
-      this.printerService.print(container.reference);
+      this.printerService.print({text: container.reference, type: 0});
     }
   }
 
