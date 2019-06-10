@@ -60,6 +60,14 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
   },
+  {
+    path: 'settings',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/settings/settings.module#SettingsModule',
+    data:{
+      name:'Ajustes'
+    }
+  },
 ];
 
 @NgModule({
