@@ -159,7 +159,7 @@ export class ProductsComponent implements OnInit {
        * @see sanitize that method sanitize the null values
        * */
       this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
-      this.form.get("orderby").get("type").patchValue("", {emitEvent: false});
+      this.form.get("orderby").get("type").patchValue("" + this.groups[0].id, {emitEvent: false});
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
     this.listenChanges();
