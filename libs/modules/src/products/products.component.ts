@@ -193,7 +193,7 @@ export class ProductsComponent implements OnInit {
         if(this.form.valid)
           this.requestTimeout = setTimeout(()=>{
             this.searchInContainer(this.sanitize(this.form.value));
-        },200);
+        },1000);
       }else{
         /**reset the paginator to the 0 page */
         this.paginator.pageIndex = 0;
