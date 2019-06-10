@@ -101,14 +101,14 @@ export class ProductsComponent implements OnInit {
   sanitize(object){
     /**mejorable */
     object = JSON.parse(JSON.stringify(object));
+    if(!object.orderby.type){
+      delete object.orderby.type;
+    }else{
+      object.orderby.type = parseInt(object.orderby.type);
+    }
+    if(!object.orderby.order)
+      delete object.orderby.order;
     Object.keys(object).forEach(key=>{
-      if(!object.orderby.type){
-        delete object.orderby.type;
-      }else{
-        object.orderby.type = parseInt(object.orderby.type);
-      }
-      if(!object.orderby.order)
-        delete object.orderby.order;
       if(object[key] instanceof Array){
         for(let i = 0;i<object[key].length;i++)
           if(object[key][i] === null || object[key][i] === "")
