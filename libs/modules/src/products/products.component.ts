@@ -102,11 +102,6 @@ export class ProductsComponent implements OnInit {
     /**mejorable */
     object = JSON.parse(JSON.stringify(object));
     Object.keys(object).forEach(key=>{
-      if(object[key] instanceof Array){
-        for(let i = 0;i<object[key].length;i++)
-          if(object[key][i] === null || object[key][i] === "")
-            object[key].splice(i,1);
-      }
       if(!object.orderby.type){
         delete object.orderby.type;
       }else{
@@ -114,6 +109,13 @@ export class ProductsComponent implements OnInit {
       }
       if(!object.orderby.order)
         delete object.orderby.order;
+      if(object[key] instanceof Array){
+        for(let i = 0;i<object[key].length;i++)
+          if(object[key][i] === null || object[key][i] === "")
+            object[key].splice(i,1);
+      } else if (object[key] === null) {
+        delete object[key];
+      }
     });
     return object;
   }
@@ -153,10 +155,6 @@ export class ProductsComponent implements OnInit {
        * set on the formBuilder statement but form.value is returning null for them 
        * @see sanitize that method sanitize the null values
        * */
-      this.form.get("containers").patchValue([], {emitEvent: false});
-      this.form.get("models").patchValue([], {emitEvent: false});
-      this.form.get("colors").patchValue([], {emitEvent: false});
-      this.form.get("sizes").patchValue([], {emitEvent: false});
       this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
       this.form.get("orderby").get("type").patchValue("", {emitEvent: false});
       this.searchInContainer(this.sanitize(this.form.value));
