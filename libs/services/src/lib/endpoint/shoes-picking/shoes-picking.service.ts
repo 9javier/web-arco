@@ -18,10 +18,10 @@ export class ShoesPickingService {
     private auth: AuthenticationService
   ) {}
 
-  getListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListyByPicking> {
+  getListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListByPicking> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<ShoesPickingModel.ResponseListyByPicking>(this.getListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
+      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 

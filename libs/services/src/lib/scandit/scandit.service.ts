@@ -31,6 +31,7 @@ export class ScanditService {
   private scannerPausedByWarning: boolean = false;
 
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
+  private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
 
   constructor(
     private http: HttpClient,
@@ -215,21 +216,18 @@ export class ScanditService {
           this.hideTextMessage(2000);
         } else {
           if (productsToScan.length > 0) {
-            if (code != productsToScan[0].product.reference) {
-              ScanditMatrixSimple.setText(`El producto ${code} no es el que se le ha solicitado. Escaneé el producto correcto.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-              this.hideTextMessage(2000);
-            } else {
-              let picking: InventoryModel.Picking = {
-                packingReference: jailReference,
-                packingType: typePacking,
-                pikingId: pickingId,
-                productReference: code
-              };
-              this.inventoryService
-                .postPicking(picking)
-                .subscribe((res: InventoryModel.ResponsePicking) => {
-                  console.debug('Test::Response Picking -> ', res);
-                  productsToScan.shift();
+            let picking: InventoryModel.Picking = {
+              packingReference: jailReference,
+              packingType: typePacking,
+              pikingId: pickingId,
+              productReference: code
+            };
+            this.inventoryService
+              .postPicking(picking)
+              .subscribe((res: InventoryModel.ResponsePicking) => {
+                console.debug('Test::Response Picking -> ', res);
+                if (res.code == 200 || res.code == 201) {
+                  productsToScan = res.data.shoePickingPending;
                   productsScanned.push(code);
                   ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido a la Jaula.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
@@ -242,8 +240,45 @@ export class ScanditService {
                       this.hideTextMessage(1500);
                     }, 2 * 1000);
                   }
-                });
-            }
+                } else {
+                  ScanditMatrixSimple.setText(res.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                  this.hideTextMessage(2000);
+                  this.getPendingListByPicking(pickingId)
+                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                      if (res.code == 200 || res.code == 201) {
+                        productsToScan = res.data;
+                        if (productsToScan.length > 0) {
+                          ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                        } else {
+                          ScanditMatrixSimple.showNexProductToScan(false);
+                          setTimeout(() => {
+                            ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                            this.hideTextMessage(1500);
+                          }, 2 * 1000);
+                        }
+                      }
+                    });
+                }
+              }, (error) => {
+                ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                this.hideTextMessage(2000);
+                this.getPendingListByPicking(pickingId)
+                  .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                    if (res.code == 200 || res.code == 201) {
+                      productsToScan = res.data;
+                      if (productsToScan.length > 0) {
+                        ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                      } else {
+                        ScanditMatrixSimple.showNexProductToScan(false);
+                        setTimeout(() => {
+                          ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                          this.hideTextMessage(1500);
+                        }, 2 * 1000);
+                      }
+
+                    }
+                  });
+              });
           } else {
             ScanditMatrixSimple.showNexProductToScan(false);
             ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
@@ -267,6 +302,13 @@ export class ScanditService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.post<PickingModel.ResponseUpdate>(this.postVerifyPackingUrl, packing, { headers });
+    }));
+  }
+
+  private getPendingListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListByPicking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 
