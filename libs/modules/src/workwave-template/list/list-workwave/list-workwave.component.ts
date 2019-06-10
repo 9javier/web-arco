@@ -8,6 +8,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 export class WorkwaveListWorkwaveTemplateComponent implements OnInit {
 
   @Input() storeTemplate: any;
+  @Input() disableEdition: boolean = false;
   @Output() changeStoreTemplate = new EventEmitter<any>();
   @Output() copyTemplateEmitter = new EventEmitter<any>();
 

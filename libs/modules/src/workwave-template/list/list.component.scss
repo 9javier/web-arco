@@ -2,6 +2,10 @@ div.scroll-list {
   overflow-y: scroll;
   height: 85vh;
 }
+div.scroll-list-error-edit {
+  overflow-y: scroll;
+  height: 80vh;
+}
 h2.workwave-title {
   font-size: 20px;
   span.return-workwaves {
@@ -9,6 +13,11 @@ h2.workwave-title {
     cursor: pointer;
     color: var(--ion-color-secondary);
   }
+}
+p.error-edit-text {
+  padding: 0 0 5px 20px;
+  font-size: 14px;
+  color: var(--ion-color-secondary);
 }
 
 mat-grid-tile {

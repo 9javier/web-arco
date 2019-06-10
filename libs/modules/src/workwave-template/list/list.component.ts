@@ -19,6 +19,7 @@ export class ListWorkwaveTemplateComponent implements OnInit {
   listStoresTemplatesHidden: any[];
   lastStoreTemplateEdited: any;
   template: any;
+  disableEdition: boolean = false;
 
   public RUN_NOW_TASK_ID = 1;
 
@@ -47,6 +48,9 @@ export class ListWorkwaveTemplateComponent implements OnInit {
     });
 
     if (this.templateToEdit) {
+      if (this.templateToEdit.type == 1) {
+        this.disableEdition = true;
+      }
       this.template = {
         name: this.templateToEdit.name || 'Ola de trabajo // '+this.templateToEdit.id,
         id: this.templateToEdit.id
