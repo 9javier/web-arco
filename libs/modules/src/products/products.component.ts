@@ -64,7 +64,7 @@ export class ProductsComponent implements OnInit {
 
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['reference', 'model', 'color', 'size', 'warehouse', 'container','select'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container'];
   dataSource: any;
 
   /**Filters */
