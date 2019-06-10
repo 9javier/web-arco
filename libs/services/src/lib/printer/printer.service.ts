@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {PRINTER_MAC} from "../../../../../config/base";
 import {ToastController} from "@ionic/angular";
 import {PrintModel} from "../../models/endpoints/Print";
+import {SettingsService} from "../storage/settings/settings.service";
+import {AppSettingsModel} from "../../models/storage/AppSettings";
 
 declare let cordova: any;
 
@@ -12,12 +13,20 @@ export class PrinterService {
 
   private address: string;
 
-  constructor(private toastController: ToastController) {
-    //FORCE PRINTER MAC
-    this.address = PRINTER_MAC;
+  constructor(private toastController: ToastController, private settingsService: SettingsService) {
   }
 
-  public connect(callback?: () => void) {
+  private async getConfiguredAddress(): Promise<string> {
+    return <Promise<string>>(this.settingsService.getDeviceSettings()
+      .then((incomingDataObservable) => new Promise((resolve, reject) => {
+        incomingDataObservable.subscribe((settings: AppSettingsModel.AppSettings) =>
+          resolve(settings.printerBluetoothMacAddress || "")
+        );
+      }))
+    );
+  }
+
+  public async connect(callback?: () => void) {
     if (cordova.plugins.zbtprinter) {
       cordova.plugins.zbtprinter.find(
         (result) => {
@@ -41,10 +50,14 @@ export class PrinterService {
     }
   }
 
-  public print(printOptions: PrintModel.Print, macAddress?: string) {
+  public async print(printOptions: PrintModel.Print, macAddress?: string) {
     printOptions.type = 0;
 
-    if (macAddress) this.address = macAddress;
+    if (macAddress) {
+      this.address = macAddress;
+    } else {
+      this.address = await this.getConfiguredAddress();
+    }
     if (this.address) {
       this.toPrint(printOptions);
     } else {
@@ -55,10 +68,14 @@ export class PrinterService {
     }
   }
 
-  public printProductBoxTag(printOptions: PrintModel.Print, macAddress?: string) {
+  public async printProductBoxTag(printOptions: PrintModel.Print, macAddress?: string) {
     printOptions.type = 1;
 
-    if (macAddress) this.address = macAddress;
+    if (macAddress) {
+      this.address = macAddress;
+    } else {
+      this.address = await this.getConfiguredAddress();
+    }
     if (this.address) {
       this.toPrint(printOptions);
     } else {
@@ -82,10 +99,10 @@ export class PrinterService {
           }
         );
       } else {
-        console.debug("Zbtprinter not cordova, failed to print " + printOptions.text || printOptions.product.productShoeUnit.reference);
+        console.debug("Zbtprinter not cordova, failed to print " + (printOptions.text || printOptions.product.productShoeUnit.reference)+ " to " + this.address);
       }
     } else {
-      console.debug('Zbtprinter: Not connected, failed to print ' + printOptions.text || printOptions.product.productShoeUnit.reference);
+      console.debug('Zbtprinter: Not connected, failed to print ' + (printOptions.text || printOptions.product.productShoeUnit.reference)+ " to " + this.address);
     }
   }
 
