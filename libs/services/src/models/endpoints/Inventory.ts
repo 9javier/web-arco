@@ -1,4 +1,5 @@
 import {Request} from './request';
+import {ShoesPickingModel} from "./ShoesPicking";
 export namespace InventoryModel {
 
   export interface Picking {
@@ -119,7 +120,10 @@ export namespace InventoryModel {
   }
 
   export interface ResponsePicking {
-    data: number;
+    data?: {
+      inventory?: ShoesPickingModel.ShoesPicking,
+      shoePickingPending?: ShoesPickingModel.ShoesPicking[]
+    };
     message: string;
     code: number;
   }
