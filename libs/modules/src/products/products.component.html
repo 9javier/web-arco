@@ -27,7 +27,7 @@
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-item>
                         <ion-label>
-                            Color
+                            Colores
                         </ion-label>
                         <ion-select formControlName="colors" [multiple]="true">
                             <ion-select-option value="{{color.id}}" *ngFor="let color of colors">{{color.name}}</ion-select-option>
@@ -48,7 +48,7 @@
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-item>
                         <ion-label>
-                            Almacén
+                            Almacenes
                         </ion-label>
                         <ion-select formControlName="warehouses" [multiple]="true">
                             <ion-select-option value="{{warehouse.id}}" *ngFor="let warehouse of warehouses">
@@ -60,7 +60,7 @@
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-item>
                         <ion-label>
-                            Container
+                            Ubicaciones
                         </ion-label>
                         <ion-select formControlName="containers" [multiple]="true">
                             <ion-select-option value="{{container.id}}" *ngFor="let container of containers">{{container.reference}}</ion-select-option>
