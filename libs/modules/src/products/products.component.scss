@@ -1,3 +1,9 @@
+ion-item {
+  ion-label+ion-input {
+    text-align: right;
+  }
+}
+
 table {
   width: 100%;
 }

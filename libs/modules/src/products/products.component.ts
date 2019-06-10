@@ -37,14 +37,14 @@ export class ProductsComponent implements OnInit {
   /**timeout for send request */
   requestTimeout;
   /**previous reference to detect changes */
-  previousReference = '';
+  previousProductReferencePattern = '';
 
   form:FormGroup = this.formBuilder.group({
     containers: [],
     models: [],
     colors: [],
     sizes: [],
-    reference:'',
+    productReferencePattern:'',
     warehouses:[],
     pagination: this.formBuilder.group({
         page: 1,
@@ -108,6 +108,9 @@ export class ProductsComponent implements OnInit {
     }
     if(!object.orderby.order)
       delete object.orderby.order;
+    if(object.productReferencePattern) {
+      object.productReferencePattern = "%" + object.productReferencePattern + "%";
+    }
     Object.keys(object).forEach(key=>{
       if(object[key] instanceof Array){
         for(let i = 0;i<object[key].length;i++)
@@ -157,7 +160,7 @@ export class ProductsComponent implements OnInit {
        * */
       this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
       this.form.get("orderby").get("type").patchValue("", {emitEvent: false});
-      this.searchInContainer(this.sanitize(this.form.value));
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
     this.listenChanges();
   }
@@ -181,38 +184,29 @@ export class ProductsComponent implements OnInit {
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
-      /**format the reference */
-      this.form.controls.reference.patchValue(this.buildReference(this.form.value.reference),{emitEvent:false});
+      ///**format the reference */
+      //this.form.controls.productReferencePattern.patchValue(this.buildReference(this.form.value.productReferencePattern),{emitEvent:false});
       /**cant send a request in every keypress of reference, then cancel the previous request */
       clearTimeout(this.requestTimeout)
       /**it the change of the form is in reference launch new timeout with request in it */
-      if(this.form.value.reference != this.previousReference){
+      if(this.form.value.productReferencePattern != this.previousProductReferencePattern){
         /**Just need check the vality if the change happens in the reference */
         if(this.form.valid)
           this.requestTimeout = setTimeout(()=>{
-            this.searchInContainer(this.sanitize(this.form.value));
+            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         },1000);
       }else{
         /**reset the paginator to the 0 page */
         this.paginator.pageIndex = 0;
-        this.searchInContainer(this.sanitize(this.form.value));
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
       }
       /**assign the current reference to the previous reference */
-      this.previousReference = this.form.value.reference;
+      this.previousProductReferencePattern = this.form.value.productReferencePattern;
     });
   }
 
-  /**
-   * Format the reference to a valid reference
-   * @param reference - the reference to be formated
-   * @returns the formated reference
-   */
-  buildReference(reference:string):string{
-    let mask = '000000000000000000';
-    reference = (mask+reference);
-    reference = reference.substr(reference.length-18);
-    reference = (reference == mask)?"":reference;
-    return reference;
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
   }
 
   /**
