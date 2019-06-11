@@ -12,6 +12,7 @@ import {ShoesPickingModel} from "../../../models/endpoints/ShoesPicking";
 export class ShoesPickingService {
 
   private getListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/picking";
+  private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
 
   constructor(
     private http: HttpClient,
@@ -22,6 +23,13 @@ export class ShoesPickingService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
+    }));
+  }
+
+  getPendingListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListByPicking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
     }));
   }
 
