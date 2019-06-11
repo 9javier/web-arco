@@ -133,7 +133,7 @@ export class ProductsComponent implements OnInit {
    * Print the selected products
    */
   printProducts():void{
-    let products = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].id:false).filter(product=>product);
+    let products = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     setTimeout( ()=>this.intermediaryService.dismissLoading(),1000);
     console.log(products);

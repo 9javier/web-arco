@@ -106,3 +106,7 @@ export * from './roles/roles.component';
 /**Assign */
 export * from './assign/assign.module';
 export * from './assign/assign-routing.module';
+
+/**Labels */
+export * from './labels/labels.module';
+export * from './labels/labels.component';

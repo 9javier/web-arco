@@ -34,6 +34,10 @@ export class AppComponent implements OnInit {
           title: 'Productos',
           url: '/products',
           icon: 'basket'
+        },{
+          title:'Etiquetas',
+          url:'/labels',
+          icon:'basket'
         },
         {
           title: 'Gestión de almacén',
