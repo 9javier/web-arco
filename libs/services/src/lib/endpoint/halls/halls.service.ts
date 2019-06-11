@@ -12,6 +12,7 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { HallModel } from '../../../models/endpoints/Hall';
 import { PATH } from '../../../../../../config/base';
 import { forkJoin, concat } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export const PATH_GET_INDEX: string = PATH('Warehouses Maps', 'Listar estantes de un almacén');
 export const PATH_POST_STORE: string = PATH('Warehouses Maps', 'Crear estante');
@@ -28,6 +29,9 @@ export const PATH_PUT_UNLOCK: string = PATH('Warehouses Maps', 'Desbloquear ubic
   providedIn: 'root'
 })
 export class HallsService {
+
+  private getIndexUrl = environment.apiBase+"/warehouses/{{id}}/racks";
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(
@@ -35,7 +39,7 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<HallModel.ResponseIndex>(PATH_GET_INDEX.replace('{{warehouseId}}', String(warehouseId)), {
+    return this.http.get<HallModel.ResponseIndex>(this.getIndexUrl.replace('{{id}}', String(warehouseId)), {
       headers: headers,
       observe: 'response'
     });

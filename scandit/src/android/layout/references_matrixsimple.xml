@@ -23,6 +23,26 @@
       android:orientation="vertical"
       android:background="@color/transparentScanner">
 
+      <TextView
+        android:id="@+id/tvPackingStart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:textColor="@color/transparentWhite"/>
+
+      <TextView
+        android:id="@+id/tvPackingEnd"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="16dp"
+        android:textSize="18sp"
+        android:textColor="@color/transparentWhite"/>
+
       <include
         android:id="@+id/rlInfoProduct"
         layout="@layout/next_product_info"

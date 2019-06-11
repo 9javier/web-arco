@@ -1,0 +1,74 @@
+<ion-content>
+    <ion-text color="primary">
+        <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+    <table mat-table [dataSource]="dataSource">
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <ng-container matColumnDef="reference">
+            <th mat-header-cell *matHeaderCellDef>
+                Referencia
+            </th>
+            <td mat-cell *matCellDef="let label">
+                {{ label?.reference }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="model">
+            <th mat-header-cell *matHeaderCellDef>Modelo</th>
+            <td mat-cell *matCellDef="let label">
+                {{ label?.model?.reference }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="color">
+            <th mat-header-cell *matHeaderCellDef>Color</th>
+            <td mat-cell *matCellDef="let label">
+                {{ label?.model?.color?.name }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="size">
+            <th mat-header-cell *matHeaderCellDef>Talla</th>
+            <td mat-cell *matCellDef="let label">
+                {{ label?.size?.name }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="warehouse">
+            <th mat-header-cell *matHeaderCellDef>Almacén</th>
+            <td mat-cell *matCellDef="let label">
+                {{ label?.reference }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="container">
+            <th mat-header-cell *matHeaderCellDef>Ubicación</th>
+            <td mat-cell *matCellDef="let label">
+                {{ label?.reference }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="select" [formGroup]="selectedForm">
+            <th mat-header-cell *matHeaderCellDef>
+                <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
+                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                </ng-template>
+            </td>
+        </ng-container>
+
+
+    </table>
+    <!-- <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator> -->
+
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="printLabels(labels)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+        <ion-icon name="print"></ion-icon>
+    </ion-fab-button>
+</ion-fab>

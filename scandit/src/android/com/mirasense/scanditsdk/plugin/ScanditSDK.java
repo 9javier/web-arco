@@ -35,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.res.Resources;
@@ -94,6 +95,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
   private static final String SET_MATRIX_SIMPLE_NET_PRODUCT_TO_SCAN = "matrixSimpleSetNextProductToScan";
   private static final String SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN = "matrixSimpleShowNextProductToScan";
+  private static final String MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL = "matrixSimpleShowTextScanJail";
+  private static final String MATRIX_SIMPLE_SHOW_TEXT_SCAN_PALLET = "matrixSimpleShowTextScanPallet";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -788,6 +791,7 @@ public class ScanditSDK extends CordovaPlugin {
           TextView tvModel = rlInfoProduct.findViewById(resources.getIdentifier("tvModel", "id", package_name));
           TextView tvSizeText = rlInfoProduct.findViewById(resources.getIdentifier("tvSizeText", "id", package_name));
           TextView tvSize = rlInfoProduct.findViewById(resources.getIdentifier("tvSize", "id", package_name));
+          Button btnNotFound = rlInfoProduct.findViewById(resources.getIdentifier("btnNotFound", "id", package_name));
 
           if (actionBarMatrixSimple != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionBarMatrixSimple.setElevation(0);
@@ -804,9 +808,11 @@ public class ScanditSDK extends CordovaPlugin {
           tvModel.setTextColor(Color.parseColor(fColor));
           tvSizeText.setTextColor(Color.parseColor(fColor));
           tvSize.setTextColor(Color.parseColor(fColor));
+          btnNotFound.setTextColor(Color.parseColor(fColor));
 
           try {
             String location = "";
+            String reference = fProduct.getJSONObject("product").getString("reference");
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
               location = "P" +fProduct.getJSONObject("inventory").getJSONObject("rack").getInt("hall")
                 +" . A"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row")
@@ -817,6 +823,56 @@ public class ScanditSDK extends CordovaPlugin {
             tvManufacturer.setText(fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name"));
             tvModel.setText(fProduct.getJSONObject("product").getJSONObject("model").getString("reference"));
             tvSize.setText(fProduct.getJSONObject("product").getJSONObject("size").getString("name"));
+
+            final String fLocation = location;
+            btnNotFound.setOnClickListener(view -> {
+              AlertDialog.Builder builderWarningProduct404 = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
+              builderWarningProduct404
+                .setTitle("Atención")
+                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + reference + " en la ubicación " + fLocation + "?")
+                .setCancelable(false)
+                .setPositiveButton("Reportar", (dialog, id) -> {
+                  JSONObject jsonObject = new JSONObject();
+                  try {
+                    jsonObject.put("result", true);
+                    jsonObject.put("product_id", fProduct.getJSONObject("product").getInt("id"));
+                    jsonObject.put("action", "product_not_found");
+                    jsonObject.put("found", true);
+                  } catch (JSONException e) {
+
+                  }
+                  PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+                  pResult.setKeepCallback(true);
+                  mCallbackContextMatrixSimple.sendPluginResult(pResult);
+                })
+                .setNegativeButton("Cancelar", (dialog, id) -> {
+                  JSONObject jsonObject = new JSONObject();
+                  try {
+                    jsonObject.put("result", true);
+                    jsonObject.put("product_id", fProduct.getJSONObject("product").getInt("id"));
+                    jsonObject.put("action", "product_not_found");
+                    jsonObject.put("found", false);
+                  } catch (JSONException e) {
+
+                  }
+                  PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+                  pResult.setKeepCallback(true);
+                  mCallbackContextMatrixSimple.sendPluginResult(pResult);
+                });
+              builderWarningProduct404.create();
+              builderWarningProduct404.show();
+
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("action", "warning_product_not_found");
+              } catch (JSONException e) {
+
+              }
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
           } catch (JSONException e) {
             e.printStackTrace();
           }
@@ -843,6 +899,56 @@ public class ScanditSDK extends CordovaPlugin {
             rlInfoProduct.setVisibility(View.VISIBLE);
           } else {
             rlInfoProduct.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL) || action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_PALLET)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      String packingReference = "";
+      try {
+        show = args.getBoolean(0);
+        packingReference = args.getString(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final boolean fShow = show;
+      final String fPackingReference = packingReference;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
+          TextView tvPackingEnd = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingEnd", "id", package_name));
+
+          if (fShow) {
+            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+            rlInfoProduct.setVisibility(View.GONE);
+            if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+              tvPackingStart.setVisibility(View.VISIBLE);
+              String startScan;
+              if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL)) {
+                startScan = "Escanea una Jaula para dar comienzo al proceso de picking.";
+              } else {
+                startScan = "Escanea un Pallet para dar comienzo al proceso de picking.";
+              }
+              tvPackingStart.setText(startScan);
+            } else {
+              tvPackingEnd.setVisibility(View.VISIBLE);
+              String endScan;
+              if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL)) {
+                endScan = "Escanea de nuevo la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
+              } else {
+                endScan = "Escanea de nuevo el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
+              }
+              tvPackingEnd.setText(endScan);
+            }
+          } else {
+            tvPackingStart.setVisibility(View.GONE);
+            tvPackingEnd.setVisibility(View.GONE);
           }
         }
       });
@@ -1135,6 +1241,17 @@ public class ScanditSDK extends CordovaPlugin {
 
   public static void setViewDataMatrixSimple(View view) {
     viewDataMatrixSimple = view;
+
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      jsonObject.put("action", "matrix_simple");
+    } catch (JSONException e) {
+
+    }
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    mCallbackContextMatrixSimple.sendPluginResult(pResult);
   }
 
   public static void setActionBar(ActionBar actionBar) {

@@ -56,6 +56,11 @@ export class AppComponent implements OnInit {
       icon: 'cube'
     },
     {
+      title: 'Ajustes',
+      url: '/settings',
+      icon: 'cog'
+    },
+    {
       title: 'Cerrar sesión',
       url: '/home',
       icon: 'log-out'
@@ -123,7 +128,7 @@ export class AppComponent implements OnInit {
               })
             )
             .catch((possibleMainWarehouse404Error) => {})
-            .then(() => this.router.navigate(['warehouse/manage'])
+            .then(() => this.router.navigate(['products'])
               .then(success => {
                 this.showMainHeader = true;
                 this.menu.enable(true, 'sidebar');

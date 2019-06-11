@@ -51,11 +51,18 @@ export namespace ShoesPickingModel {
     product: ProductModel.ProductPicking;
   }
 
-  export interface ResponseListyByPicking {
+  export interface ResponseListByPicking {
     data: ShoesPicking[];
     message: string;
     code: number;
     errors: any;
+  }
+
+  export interface ResponseProductNotFound {
+    data: any,
+    message: string,
+    code: number,
+    errors: any
   }
 
   export interface ErrorResponse {
