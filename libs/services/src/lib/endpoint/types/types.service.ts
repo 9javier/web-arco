@@ -30,6 +30,9 @@ export const PATH_GET_INDEX_STORE: string = PATH('Types', 'Store');
 })
 export class TypesService {
 
+  /** @see `mga-api/src/API/Application/Domain/Enums/TypesOrderProducts.ts#TypesOrderProducts.DATE` */
+  public static readonly ID_TYPE_ORDER_PRODUCT_DEFAULT = 5;
+
   /**Types url */
   private getOrderProductTypesUrl = environment.apiBase+'/types/type-order-product';
   private getTypeActionsUrl = environment.apiBase+'/types/actions';
