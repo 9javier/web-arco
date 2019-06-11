@@ -1,10 +1,9 @@
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators,FormArray, FormControl } from '@angular/forms';
-import { COLLECTIONS } from 'config/base';
 import { RolesService, RolModel } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
-import { Observable, observable } from 'rxjs';
-import { UsersService,UserModel } from '@suite/services';
+import { Observable } from 'rxjs';
+import { UsersService,WarehouseModel, WarehousesService } from '@suite/services';
 import { NavParams,ModalController } from '@ionic/angular';
 import { UtilsComponent } from '../../components/utils/utils.component';
 import { validators } from '../../utils/validators';
@@ -23,8 +22,13 @@ export class UpdateComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     address: [''],
     password: ['',Validators.minLength(4)],
-    confirmPassword: ['']
+    confirmPassword: [''],
+    has_warehouse:false,
+    warehouse:['']
   };
+
+  /**list of warehouses */
+  warehouses:Array<WarehouseModel.Warehouse> = [];
 
   /**the allowed roles of the user */
   private roles:Array<any> = [];
@@ -40,11 +44,30 @@ export class UpdateComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService:UsersService,
     private navParams:NavParams,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private warehouseService:WarehousesService
   ) {
     console.log(this.navParams);
     let id = this.id = this.navParams.data.id;
     this.getUser(id);
+  }
+
+    /**
+   * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
+   */
+  listenChanges():void {
+    this.updateForm.get("has_warehouse").valueChanges.subscribe(status=>{
+      let warehouseControl = this.updateForm.get("warehouse");
+      warehouseControl.setValue("");
+      if(status){
+        warehouseControl.setValidators([Validators.required]);
+        warehouseControl.updateValueAndValidity()
+      }
+      else{
+        warehouseControl.clearValidators();
+        warehouseControl.updateValueAndValidity();
+      }
+    });
   }
 
   /**
@@ -143,7 +166,21 @@ export class UpdateComponent implements OnInit {
     });
   }
 
+    /**
+   * Get all warehouses
+   */
+  getWarehouses():void{
+    this.warehouseService.getIndex().then(observable=>{
+      observable.subscribe(response=>{
+        if(response.body && response.body.data)
+          this.warehouses = response.body.data;
+      });
+    });
+  }
+
   ngOnInit() {
     this.initFormBuilder();
+    this.listenChanges();
+    this.getWarehouses();
   }
 }
