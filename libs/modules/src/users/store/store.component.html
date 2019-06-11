@@ -106,6 +106,19 @@
                     </div>
                     <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal" formControlName="employedId" type="number" number></ion-input>
                 </ion-item>
+                <!--Tiene tienda-->
+                <ion-item class="inner-item">
+                    <ion-label>
+                        tiene tienda
+                    </ion-label>
+                    <ion-checkbox formControlName="has_warehouse"></ion-checkbox>
+                </ion-item>
+                <!--Tienda-->
+                <ion-item *ngIf="createForm.value.has_warehouse" class="inner-item">
+                    <ion-select placeholder="tienda" formControlName="warehouse">
+                        <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse.id}}">{{warehouse.name}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
             </ion-row>
         </ion-grid>
     </form>
