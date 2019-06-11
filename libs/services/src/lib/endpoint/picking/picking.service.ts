@@ -11,6 +11,7 @@ import {AuthenticationService} from "@suite/services";
 })
 export class PickingService {
 
+  /**Urls for the picking service */
   private getShowUrl = environment.apiBase+"/workwaves/order/{{id}}";
   private getListByUserUrl = environment.apiBase+"/workwaves/order/{{id}}/user";
   private putUpdateUrl = environment.apiBase+"/workwaves/order";

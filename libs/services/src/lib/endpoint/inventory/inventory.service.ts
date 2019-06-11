@@ -17,13 +17,23 @@ const PATH_GET_PRODUCTS_HISTORY_CONTAINER: string = PATH('Inventory Process', 'L
 })
 export class InventoryService {
 
-  private postGlobalUrl = environment.apiBase+"/inventory/process/global";
-  private postPickingUrl = environment.apiBase+"/inventory/process/piking";
+  /**Urls for the inventory service */
+  private postStoreUrl:string = environment.apiBase+"/inventory/process";
+  private getProductsByContainerUrl:string = environment.apiBase+"/inventory/container/{{id}}";
+  private getProductsHistoryByContainerUrl:string = environment.apiBase+"/inventory/process/container/{{id}}";
+
+
+  private postGlobalUrl:string = environment.apiBase+"/inventory/process/global";
+  private postPickingUrl:string = environment.apiBase+"/inventory/process/piking";
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
+  /**
+   * Seach products in the inventory filtereds by params
+   * @param parameters filters
+   */
   searchInContainer(parameters):Observable<InventoryModel.ResponseSearchInContainer>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
@@ -36,7 +46,7 @@ export class InventoryService {
   ): Promise<Observable<HttpResponse<InventoryModel.ResponseStore>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.post<InventoryModel.ResponseStore>(PATH_POST_STORE, inventoryProcess, {
+    return this.http.post<InventoryModel.ResponseStore>(this.postStoreUrl, inventoryProcess, {
       headers: headers,
       observe: 'response'
     });
@@ -47,7 +57,7 @@ export class InventoryService {
   ): Promise<Observable<HttpResponse<InventoryModel.ResponseProductsContainer>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<InventoryModel.ResponseProductsContainer>(`${PATH_GET_PRODUCTS_CONTAINER}${containerId}`, {
+    return this.http.get<InventoryModel.ResponseProductsContainer>( this.getProductsByContainerUrl.replace("{{id}}",String(containerId)), {
       headers: headers,
       observe: 'response'
     });
@@ -58,7 +68,8 @@ export class InventoryService {
   ): Promise<Observable<HttpResponse<InventoryModel.ResponseProductsContainer>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<InventoryModel.ResponseProductsContainer>(`${PATH_GET_PRODUCTS_HISTORY_CONTAINER}${containerId}`, {
+    return this.http.get<InventoryModel.ResponseProductsContainer>(
+      this.getProductsHistoryByContainerUrl.replace("{{id}}",String(containerId)), {
       headers: headers,
       observe: 'response'
     });

@@ -21,14 +21,21 @@ const PATH_BASE: string = URL + '/api/';
 })
 export class RolesService {
 
-  destroyUrl = environment.apiBase+"/roles/{{id}}";
+  /**Urls for the roles service */
+  private getIndexUrl:string = environment.apiBase+"/roles";
+  private postStoreUrl:string = environment.apiBase+"/roles";
+  private getShowUrl:string = environment.apiBase+"/roles/{{id}}";
+  private putUpdateUrl:string = environment.apiBase+"/roles/{{id}}";
+  private destroyUrl:string = environment.apiBase+"/roles/{{id}}";
+  private postAssignRolToUserUrl:string =environment.apiBase+"/users/{{userId}}/roles/{{rolId}";
+  private deleteRolToUserUrl:string = environment.apiBase+"/users/{{userId}}/roles/{{rolId}";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<RolModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<RolModel.ResponseIndex>(PATH_GET_INDEX, {
+    return this.http.get<RolModel.ResponseIndex>(this.getIndexUrl, {
       headers: headers,
       observe: 'response'
     });
@@ -39,7 +46,7 @@ export class RolesService {
   ): Promise<Observable<HttpResponse<RolModel.ResponseStore>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.post<RolModel.ResponseStore>(PATH_POST_STORE, rol, {
+    return this.http.post<RolModel.ResponseStore>(this.postStoreUrl, rol, {
       headers: headers,
       observe: 'response'
     });
@@ -50,7 +57,7 @@ export class RolesService {
   ): Promise<Observable<HttpResponse<RolModel.ResponseShow>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<RolModel.ResponseShow>(`${PATH_GET_SHOW}${userId}`, {
+    return this.http.get<RolModel.ResponseShow>(this.getShowUrl.replace("{{id}}",String(userId)), {
       headers: headers,
       observe: 'response'
     });
@@ -62,7 +69,7 @@ export class RolesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.put<RolModel.ResponseUpdate>(
-      `${PATH_PUT_UPDATE}${rol.id}`,
+      this.putUpdateUrl.replace("{{id}}",String(rol.id)),
       rol,
       {
         headers: headers,
@@ -89,7 +96,7 @@ export class RolesService {
     return users.map(rol => {
       return concat(
         this.http.delete<RolModel.ResponseDestroy>(
-          `${PATH_DEL_DESTROY}${rol.id}`,
+          this.destroyUrl.replace("{{id}}",String(rol.id)),
           {
             headers: headers,
             observe: 'response'
@@ -106,7 +113,7 @@ export class RolesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<ACLModel.ResponseUserRoles>(
-      `${PATH_BASE}users/${userId}/roles/${rolId}`,
+      this.postAssignRolToUserUrl.replace("{{userId}}",String(userId)).replace("{{rolId}}",String(rolId)),
       {},
       {
         headers: headers,
@@ -122,7 +129,7 @@ export class RolesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<ACLModel.ResponseDeleteUserRol>(
-      `${PATH_BASE}users/${userId}/roles/${rolId}`,
+      this.deleteRolToUserUrl.replace("{{userId}}",String(userId)).replace("{{rolId}}",String(rolId)),
       {
         headers: headers,
         observe: 'response'

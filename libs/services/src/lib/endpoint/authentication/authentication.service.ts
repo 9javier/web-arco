@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from '../../../environments/environment';
 
 const TOKEN_KEY = 'access_token';
 const USER_ID_KEY = 'user_id';
@@ -10,6 +9,8 @@ const USER_ID_KEY = 'user_id';
   providedIn: 'root'
 })
 export class AuthenticationService {
+
+
   authenticationState = new BehaviorSubject(null);
 
   constructor(private storage: Storage) {
