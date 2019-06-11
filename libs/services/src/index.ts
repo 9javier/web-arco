@@ -78,3 +78,6 @@ export * from './lib/endpoint/inventory/inventory.service';
 
 /**Intermediary */
 export * from './lib/endpoint/intermediary/intermediary.service';
+
+/**Labels */
+export * from './lib/endpoint/labels/labels.service';
