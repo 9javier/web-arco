@@ -53,7 +53,16 @@
                 <ion-select-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</ion-select-option>
             </ion-select>
         </ion-item>
-
+        <!--Es outlet-->
+        <ion-item *ngIf="updateForm.value.is_store">
+            <ion-label lines="none" no-padding>
+                <div inset lines="none">
+                    <ion-item no-padding>
+                        <mat-checkbox formControlName="is_outlet">Es outlet</mat-checkbox>
+                    </ion-item>
+                </div>
+            </ion-label>
+        </ion-item>
 
         <!--Establecer como almacén principal-->
         <ion-item>

@@ -22,7 +22,8 @@ export class StoreComponent implements OnInit {
     has_racks: [false, []],
     halls:'',
     rows:'',
-    columns:''
+    columns:'',
+    is_outlet:false
   });
 
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]

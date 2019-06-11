@@ -23,7 +23,8 @@ export class UpdateComponent implements OnInit {
     has_racks: [false, []],
     halls:'',
     rows:'',
-    columns:''
+    columns:'',
+    is_outlet:false
   });
   private warehouseId;
   private currentHasRacks;
