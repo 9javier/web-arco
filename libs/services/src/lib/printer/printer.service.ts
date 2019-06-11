@@ -86,6 +86,14 @@ export class PrinterService {
     }
   }
 
+  printTagBarcode(listReferences: string[]) {
+
+  }
+
+  printTagPrice(product: PrintModel.ProductSizeRange) {
+
+  }
+
   private toPrint(printOptions: PrintModel.Print) {
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {

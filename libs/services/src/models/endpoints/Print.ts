@@ -83,4 +83,9 @@ export namespace PrintModel {
     product?: Product;
     type?: number;
   }
+
+  export interface ProductSizeRange {
+    reference: string,
+    sizeRange: number[]
+  }
 }
