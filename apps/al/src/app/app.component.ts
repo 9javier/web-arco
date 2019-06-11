@@ -56,6 +56,11 @@ export class AppComponent implements OnInit {
       icon: 'cube'
     },
     {
+      title: 'Ajustes',
+      url: '/settings',
+      icon: 'cog'
+    },
+    {
       title: 'Cerrar sesión',
       url: '/home',
       icon: 'log-out'

@@ -131,8 +131,8 @@ const routes: Routes = [
      redirectTo: 'login',
      pathMatch: 'full'
   },{
-    path: '',
-    redirectTo: 'logout',
+    path: 'logout',
+    redirectTo: 'login',
     pathMatch: 'full'    
   },
   {
@@ -181,6 +181,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/user-assignment-picking/user-assignment-picking.module#UserAssignmentPickingModule',
     data:{
       name:''
+    }
+  },
+  {
+    path: 'labels',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/labels/labels.module#LabelsModule',
+    data:{
+      name:'Etiquetas'
     }
   }
 ];
