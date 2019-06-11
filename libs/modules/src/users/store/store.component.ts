@@ -1,6 +1,6 @@
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators,FormArray, FormControl } from '@angular/forms';
-import { RolesService, RolModel } from '@suite/services';
+import { RolesService, RolModel,WarehousesService,WarehouseModel } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { Observable, observable } from 'rxjs';
 import { UsersService,UserModel } from '@suite/services';
@@ -19,6 +19,9 @@ export class StoreComponent implements OnInit {
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
 
+  /**list of warehouses */
+  warehouses:Array<WarehouseModel.Warehouse> = [];
+
   /**the inputs of form */
   formBuilderDataInputs = {
     employedId:[''],
@@ -26,7 +29,9 @@ export class StoreComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     address: [''],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
+    confirmPassword: ['', Validators.required],
+    has_warehouse:false,
+    warehouse:['']
   };
 
   /**the allowed roles of the user */
@@ -40,8 +45,27 @@ export class StoreComponent implements OnInit {
     private rolesService: RolesService,
     private formBuilder: FormBuilder,
     private userService:UsersService,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private warehouseService:WarehousesService
   ) { }
+
+  /**
+   * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
+   */
+  listenChanges():void {
+    this.createForm.get("has_warehouse").valueChanges.subscribe(status=>{
+      let warehouseControl = this.createForm.get("warehouse");
+      warehouseControl.setValue("");
+      if(status){
+        warehouseControl.setValidators([Validators.required]);
+        warehouseControl.updateValueAndValidity()
+      }
+      else{
+        warehouseControl.clearValidators();
+        warehouseControl.updateValueAndValidity();
+      }
+    });
+  }
 
     /**
    * initialize the formbuilder that will be used in the form for create the user
@@ -62,7 +86,7 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-    /**
+  /**
    * Get the roles from server and set checked the roles of user
    */
   getRoles():void{
@@ -79,6 +103,18 @@ export class StoreComponent implements OnInit {
           ));          
         });
       });    
+  }
+
+  /**
+   * Get all warehouses
+   */
+  getWarehouses():void{
+    this.warehouseService.getIndex().then(observable=>{
+      observable.subscribe(response=>{
+        if(response.body && response.body.data)
+          this.warehouses = response.body.data;
+      });
+    });
   }
 
     /**
@@ -115,6 +151,8 @@ submit():void{
   ngOnInit() {
     this.initFormBuilder();
     this.getRoles();
+    this.getWarehouses();
+    this.listenChanges();
   }
 
 
