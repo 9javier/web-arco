@@ -58,6 +58,13 @@ export namespace ShoesPickingModel {
     errors: any;
   }
 
+  export interface ResponseProductNotFound {
+    data: any,
+    message: string,
+    code: number,
+    errors: any
+  }
+
   export interface ErrorResponse {
     errors: string;
     message: string;

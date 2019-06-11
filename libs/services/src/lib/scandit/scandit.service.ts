@@ -32,6 +32,7 @@ export class ScanditService {
 
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
+  private putProductNotFoundUrl = environment.apiBase+"/shoes/picking/{{workWaveOrderId}}/product-not-found/{{productId}}";
 
   constructor(
     private http: HttpClient,
@@ -152,9 +153,12 @@ export class ScanditService {
     let typePacking: number = 0;
 
     ScanditMatrixSimple.init((response) => {
+      let code = '';
+      if (response.barcode) {
+        code = response.barcode.data;
+      }
       //Check Jail/Pallet or product
-      let code = response.barcode.data;
-      if (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/)) {
+      if (!this.scannerPausedByWarning && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
         if (!processInitiated) {
           this.postVerifyPacking({
               status: 2,
@@ -210,7 +214,7 @@ export class ScanditService {
               }
             });
         }
-      } else {
+      } else if (!this.scannerPausedByWarning && code && code != '') {
         if (!processInitiated) {
           ScanditMatrixSimple.setText('Escanea la Jaula a utilizar antes de comenzar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
@@ -225,7 +229,6 @@ export class ScanditService {
             this.inventoryService
               .postPicking(picking)
               .subscribe((res: InventoryModel.ResponsePicking) => {
-                console.debug('Test::Response Picking -> ', res);
                 if (res.code == 200 || res.code == 201) {
                   productsToScan = res.data.shoePickingPending;
                   productsScanned.push(code);
@@ -285,6 +288,44 @@ export class ScanditService {
             this.hideTextMessage(1500);
           }
         }
+      } else {
+        if (response.action == 'product_not_found') {
+          this.scannerPausedByWarning = false;
+          if (response.found) {
+            let productNotFoundId = response.product_id;
+            this.putProductNotFound(pickingId, productNotFoundId)
+              .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+                if (res.code == 200 || res.code == 201) {
+                  ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                  this.hideTextMessage(1500);
+                  this.getPendingListByPicking(pickingId)
+                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                      if (res.code == 200 || res.code == 201) {
+                        productsToScan = res.data;
+                        if (productsToScan.length > 0) {
+                          ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                        } else {
+                          ScanditMatrixSimple.showNexProductToScan(false);
+                          setTimeout(() => {
+                            ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                            this.hideTextMessage(1500);
+                          }, 2 * 1000);
+                        }
+
+                      }
+                    });
+                } else {
+                  ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                  this.hideTextMessage(2000);
+                }
+              }, error => {
+                ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                this.hideTextMessage(2000);
+              });
+          }
+        } else if (response.action == 'warning_product_not_found') {
+          this.scannerPausedByWarning = true;
+        }
       }
     }, 'Escanear', HEADER_BACKGROUND, HEADER_COLOR);
   }
@@ -309,6 +350,15 @@ export class ScanditService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
+    }));
+  }
+
+  private putProductNotFound(pickingId: number, productId: number) : Observable<ShoesPickingModel.ResponseProductNotFound> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
+      putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
+      return this.http.put<ShoesPickingModel.ResponseProductNotFound>(putProductNotFoundUrl, { headers });
     }));
   }
 
