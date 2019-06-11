@@ -153,11 +153,6 @@ export class ProductsComponent implements OnInit {
      * Get the main warehouse to attacth their id to the request
      */
     this.warehouseService.getMain().subscribe(warehouse=>{
-      /**
-       * @todo avoid statements? those patchValue([]) lines feel redundant since those default values have already been
-       * set on the formBuilder statement but form.value is returning null for them 
-       * @see sanitize that method sanitize the null values
-       * */
       this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
       this.form.get("orderby").get("type").patchValue("" + this.groups[0].id, {emitEvent: false});
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
