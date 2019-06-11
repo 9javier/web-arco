@@ -1,5 +1,4 @@
 mat-grid-list {
-  border-bottom: 1px solid #c3c3c3;
   mat-grid-tile.mat-grid-tile {
     font-size: 16px;
     line-height: 20px;
@@ -21,5 +20,26 @@ mat-grid-list {
       width: 100%;
       margin: 0 16px;
     }
+    div.started-picking {
+      width: 100%;
+      justify-content: end !important;
+      height: 32px;
+      position: relative;
+      span {
+        position: absolute;
+        top: 4px;
+        left: 42px;
+        color: var(--ion-color-secondary);
+      }
+      i.material-icons {
+        color: var(--ion-color-success);
+        position: absolute;
+        top: 0;
+        left: 10px;
+      }
+    }
   }
+}
+mat-grid-list.separator-list {
+  border-bottom: 1px solid #c3c3c3;
 }
