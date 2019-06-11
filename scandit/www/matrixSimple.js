@@ -63,6 +63,22 @@ var ScanditMatrixSimple = {
    */
   showNexProductToScan: function (show) {
     exec(null, null, PLUGIN_NAME, "matrixSimpleShowNextProductToScan", [show]);
+  },
+  /**
+   *
+   * @param show
+   * @param packingReference
+   */
+  showTextScanJail: function (show, packingReference) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleShowTextScanJail", [show, packingReference]);
+  },
+  /**
+   *
+   * @param show
+   * @param packingReference
+   */
+  showTextScanPallet: function (show, packingReference) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleShowTextScanPallet", [show, packingReference]);
   }
 }
 

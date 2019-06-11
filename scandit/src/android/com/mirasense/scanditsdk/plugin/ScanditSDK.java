@@ -95,6 +95,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
   private static final String SET_MATRIX_SIMPLE_NET_PRODUCT_TO_SCAN = "matrixSimpleSetNextProductToScan";
   private static final String SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN = "matrixSimpleShowNextProductToScan";
+  private static final String MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL = "matrixSimpleShowTextScanJail";
+  private static final String MATRIX_SIMPLE_SHOW_TEXT_SCAN_PALLET = "matrixSimpleShowTextScanPallet";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -900,6 +902,56 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL) || action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_PALLET)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      String packingReference = "";
+      try {
+        show = args.getBoolean(0);
+        packingReference = args.getString(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final boolean fShow = show;
+      final String fPackingReference = packingReference;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
+          TextView tvPackingEnd = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingEnd", "id", package_name));
+
+          if (fShow) {
+            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+            rlInfoProduct.setVisibility(View.GONE);
+            if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+              tvPackingStart.setVisibility(View.VISIBLE);
+              String startScan;
+              if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL)) {
+                startScan = "Escanea una Jaula para dar comienzo al proceso de picking.";
+              } else {
+                startScan = "Escanea un Pallet para dar comienzo al proceso de picking.";
+              }
+              tvPackingStart.setText(startScan);
+            } else {
+              tvPackingEnd.setVisibility(View.VISIBLE);
+              String endScan;
+              if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL)) {
+                endScan = "Escanea de nuevo la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
+              } else {
+                endScan = "Escanea de nuevo el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
+              }
+              tvPackingEnd.setText(endScan);
+            }
+          } else {
+            tvPackingStart.setVisibility(View.GONE);
+            tvPackingEnd.setVisibility(View.GONE);
+          }
+        }
+      });
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;
@@ -1189,6 +1241,17 @@ public class ScanditSDK extends CordovaPlugin {
 
   public static void setViewDataMatrixSimple(View view) {
     viewDataMatrixSimple = view;
+
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      jsonObject.put("action", "matrix_simple");
+    } catch (JSONException e) {
+
+    }
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    mCallbackContextMatrixSimple.sendPluginResult(pResult);
   }
 
   public static void setActionBar(ActionBar actionBar) {

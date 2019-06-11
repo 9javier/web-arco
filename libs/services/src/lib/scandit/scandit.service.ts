@@ -176,6 +176,7 @@ export class ScanditService {
               ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
               ScanditMatrixSimple.setText(`Proceso iniciado con la Jaula ${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
               this.hideTextMessage(2000);
+              ScanditMatrixSimple.showTextScanJail(false, '');
             }, (error) => {
               if (error.error.code == 404) {
                 ScanditMatrixSimple.setText('La Jaula escaneada no está registrada en el sistema.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
@@ -200,6 +201,7 @@ export class ScanditService {
             .subscribe((res) => {
               ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
               this.hideTextMessage(1500);
+              ScanditMatrixSimple.showTextScanJail(false, jailReference);
               setTimeout(() => {
                 ScanditMatrixSimple.finish();
                 this.events.publish('picking:remove');
@@ -239,6 +241,7 @@ export class ScanditService {
                   } else {
                     ScanditMatrixSimple.showNexProductToScan(false);
                     setTimeout(() => {
+                      ScanditMatrixSimple.showTextScanJail(true, jailReference);
                       ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                       this.hideTextMessage(1500);
                     }, 2 * 1000);
@@ -255,6 +258,7 @@ export class ScanditService {
                         } else {
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
+                            ScanditMatrixSimple.showTextScanJail(true, jailReference);
                             ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
                           }, 2 * 1000);
@@ -274,6 +278,7 @@ export class ScanditService {
                       } else {
                         ScanditMatrixSimple.showNexProductToScan(false);
                         setTimeout(() => {
+                          ScanditMatrixSimple.showTextScanJail(true, jailReference);
                           ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                           this.hideTextMessage(1500);
                         }, 2 * 1000);
@@ -284,6 +289,7 @@ export class ScanditService {
               });
           } else {
             ScanditMatrixSimple.showNexProductToScan(false);
+            ScanditMatrixSimple.showTextScanJail(true, jailReference);
             ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
             this.hideTextMessage(1500);
           }
@@ -307,6 +313,7 @@ export class ScanditService {
                         } else {
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
+                            ScanditMatrixSimple.showTextScanJail(true, jailReference);
                             ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
                           }, 2 * 1000);
@@ -325,6 +332,8 @@ export class ScanditService {
           }
         } else if (response.action == 'warning_product_not_found') {
           this.scannerPausedByWarning = true;
+        } else if (response.action == 'matrix_simple') {
+          ScanditMatrixSimple.showTextScanJail(true, '');
         }
       }
     }, 'Escanear', HEADER_BACKGROUND, HEADER_COLOR);
