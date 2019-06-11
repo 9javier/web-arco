@@ -59,7 +59,7 @@ export class ListDetailHistoryComponent implements OnInit {
 
   dateExecutedParsedLong() : string {
     moment.locale('es');
-    return moment(this.workwaveHistory.executedDate).format('LLLL');
+    return moment(this.workwaveHistory.executedDate || this.workwaveHistory.releaseDate).format('LLLL');
   }
 
 }
