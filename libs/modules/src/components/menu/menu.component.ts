@@ -135,7 +135,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Cerrar sesión',
       id:'logout',
-      url: '/login',
+      url: 'logout',
       icon: 'log-out'
     }
   ];
@@ -186,7 +186,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Cerrar sesión',
       id:'logout',
-      url: '/home',
+      url: 'logout',
       icon: 'log-out'
     },
   ];
@@ -247,7 +247,7 @@ export class MenuComponent implements OnInit {
   tapOption(p) {
     console.log(p);
     this.currentRoute = p.title;
-    if (p.title === 'Logout') {
+    if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
         this.loginService
           .get_logout(accessToken)

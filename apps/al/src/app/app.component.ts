@@ -63,7 +63,7 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Cerrar sesión',
-      url: '/home',
+      url: 'logout',
       icon: 'log-out'
     },
   ];
@@ -153,7 +153,7 @@ export class AppComponent implements OnInit {
 
   tapOption(p: MenuItem) {
     this.currentRoute = p.title;
-    if (p.title === 'Logout') {
+    if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
         this.loginService
           .get_logout(accessToken)

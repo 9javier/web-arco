@@ -121,9 +121,9 @@ export class AppComponent implements OnInit {
       ]
     },
     {
-      title: 'Logout',
-      icon: 'log-out',
-      url:'/login'
+      title: 'Cerrar sesión',
+      url: 'logout',
+      icon: 'log-out'
     }
   ];
 
