@@ -814,9 +814,16 @@ public class ScanditSDK extends CordovaPlugin {
             String location = "";
             String reference = fProduct.getJSONObject("product").getString("reference");
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
-              location = "P" +fProduct.getJSONObject("inventory").getJSONObject("rack").getInt("hall")
-                +" . A"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row")
-                +" . C"+fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column");
+              location = fProduct.getJSONObject("inventory").getJSONObject("container").getString("reference");
+
+              String rack = String.format("%02d", fProduct.getJSONObject("inventory").getJSONObject("rack").getInt("hall"));
+              String row = "A";
+              String column = String.format("%02d", fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column"));
+
+              String alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
+              row = alphabet.charAt((fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row")-1));
+
+              location = location.concat(" (P"+rack+row+column+")");
             }
             tvLocation.setText(location);
             tvReference.setText(fProduct.getJSONObject("product").getString("reference"));
