@@ -5,17 +5,11 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 import { RolModel } from '../../../models/endpoints/Rol';
-import { PATH, URL } from '../../../../../../config/base';
 import { concat } from 'rxjs';
 import { ACLModel } from '@suite/services';
 import { environment } from '../../../environments/environment';
 
-const PATH_GET_INDEX: string = PATH('Roles', 'Index');
-const PATH_POST_STORE: string = PATH('Roles', 'Store');
-const PATH_GET_SHOW: string = PATH('Roles', 'Show').slice(0, -1);
-const PATH_PUT_UPDATE: string = PATH('Roles', 'Update').slice(0, -1);
-const PATH_DEL_DESTROY: string = PATH('Roles', 'Destroy').slice(0, -1);
-const PATH_BASE: string = URL + '/api/';
+
 @Injectable({
   providedIn: 'root'
 })

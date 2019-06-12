@@ -7,14 +7,9 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { PermissionsModel } from '../../../models/endpoints/Permissions';
 import { ACLModel } from '../../../models/endpoints/ACL';
 
-import { PATH, URL } from '../../../../../../config/base';
-
-const PATH_GET_INDEX: string = PATH('Permissions', 'Index');
-const PATH_GET_SHOW: string = PATH('Permissions', 'Show');
 
 import { environment } from '../../../environments/environment';
 
-const PATH_BASE: string = URL + '/api/';
 @Injectable({
   providedIn: 'root'
 })

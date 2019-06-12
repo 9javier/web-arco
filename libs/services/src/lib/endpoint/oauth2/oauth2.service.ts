@@ -28,7 +28,7 @@ import {
   ACCESS_TOKEN,
   AppInfo
 } from '../../../../../../config/base';
-import { environment } from '../../../environments/environment';;
+import { environment,app } from '../../../environments/environment';;
 
 export const HEADERS_LOGIN: any[] = HEADERS('OAuth2', 'Login');
 export const AUTH_LOGIN: Auth1 = AUTH('OAuth2', 'Login');
@@ -45,10 +45,22 @@ export class Oauth2Service {
   
   /**Urls for the oauth2 service */
   private refreshTokenUrl:string = environment.apiBase+"/oauth2/access_token";
+  private accessTokenUrl:string = environment.apiBase+"/oauth2/access_token";
+  private logoutUrl:string = environment.apiBase+"/oauth2/logout";
 
  
   
   constructor(private http: HttpClient) {}
+
+  /**
+   * @returns authorization headers for authenticate the aplication
+   */
+  getAuthorizationHeaders(application:"sga"|"al" = "sga"):HttpHeaders{
+    return (new HttpHeaders({
+      'Content-Type':	'application/x-www-form-urlencoded',
+      'Authorization': 'Basic '+btoa(environment[app.name].client_id+":"+environment[app.name].client_secret) 
+    }));
+  }
 
 
   /**
@@ -56,10 +68,7 @@ export class Oauth2Service {
    * @param token - the refresh token
    */
   refreshToken(refreshToken:string):Observable<any>{
-    let headers:HttpHeaders = new HttpHeaders({
-      'Content-Type':	'application/x-www-form-urlencoded',
-      'Authorization': 'Basic '+btoa(environment.client_id+":"+environment.client_secret) 
-    });
+    const headers:HttpHeaders = this.getAuthorizationHeaders()
     /**properly format the params of the request */
     const body = new HttpParams()
     .set('refresh_token', refreshToken)
@@ -68,46 +77,29 @@ export class Oauth2Service {
     return this.http.post(this.refreshTokenUrl,body,{headers});
   }
 
-  post_login(
-    user: RequestLogin,
-    appName: AppInfo.Name
-  ): Observable<HttpResponse<ResponseLogin>> {
-    let authType = '';
-
-    if (appName === AppInfo.Name.Sga) {
-      authType = `Basic ${this._authBasicString(
-        `${AppInfo.ClientSecretSGA.Username}:${
-          AppInfo.ClientSecretSGA.Password
-        }`
-      )}`;
-    }
-
-    if (appName === AppInfo.Name.Al) {
-      authType = `Basic ${this._authBasicString(
-        `${AppInfo.ClientSecretAL.Username}:${AppInfo.ClientSecretAL.Password}`
-      )}`;
-    }
-
-    const headers = new HttpHeaders(this._headers(authType));
-
+  /**
+   * Authenticate with user and password
+   * @param user  - Object with user and password
+   * @param appName - The application name
+   */
+  post_login(user: RequestLogin, appName: AppInfo.Name): Observable<HttpResponse<ResponseLogin>> {
+    const headers:HttpHeaders = this.getAuthorizationHeaders();
     const body = new HttpParams()
       .set('username', user.username)
       .set('password', user.password)
       .set('grant_type', user.grant_type);
-
     return this.http.post<ResponseLogin>(PATH_POST_LOGIN, body, {
       headers: headers,
       observe: 'response'
     });
   }
 
-  get_logout(currentAccessToken): Observable<HttpResponse<ResponseLogout>> {
-    const authType = `${currentAccessToken}`;
-    const headers = new HttpHeaders(this._headers(authType));
-
+  /**
+   * Get out of the application 
+   */
+  get_logout(accessToken): Observable<HttpResponse<ResponseLogout>> {
     return Observable.create(obs => {
-      this.http.get<ResponseLogout>(PATH_GET_LOGOUT, {
-        headers: headers,
+      this.http.get<ResponseLogout>(this.logoutUrl, {
         observe: 'response'
       }).subscribe(
         (data: HttpResponse<ResponseLogout>) => {
@@ -116,32 +108,5 @@ export class Oauth2Service {
           obs.next(true);
         }
       )});
-
-  }
-
-  private _headers(authValue: string) {
-    const headers = HEADERS_LOGIN.map((header: HeaderEntity) => {
-      return {
-        key: header.key,
-        value: header.value
-      };
-    });
-
-    headers.push({
-      key: 'Authorization',
-      value: authValue
-    });
-
-    const result = headers.reduce(
-      (object, key) => ({ [key.key]: key.value }),
-      {}
-    );
-
-    return result;
-  }
-
-  private _authBasicString(term: string) {
-    console.log(term);
-    return btoa(term);
   }
 }

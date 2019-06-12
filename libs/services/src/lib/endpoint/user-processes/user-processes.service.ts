@@ -8,6 +8,7 @@ import {PATH} from "../../../../../../config/base";
 import { TypeUsersProcesses } from '../../../models/endpoints/UsersProcesses';
 import { from } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 const PATH_GET_INDEX: string = PATH('Users Processes', 'Index');
 const PATH_ASSIGN: string = PATH('Users Processes', 'Asignar procesos');
@@ -17,6 +18,11 @@ const PATH_UNASSIGN: string = PATH('Users Processes', 'Desasignar procesos');
   providedIn: 'root'
 })
 export class UserProcessesService {
+
+  /**Urls for the user-processes service */
+  private getIndexUrl:string = environment.apiBase+'/users/processes';
+  private postAssignUrl:string = environment.apiBase+'/users/processes/assign';
+  private postUnAssignUrl:string = environment.apiBase+'/api/users/processes/unassign';
 
   constructor(
     private http: HttpClient,
@@ -30,7 +36,7 @@ export class UserProcessesService {
   getIndex():Observable<Array<TypeUsersProcesses.UsersProcesses>>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      return this.http.get<TypeUsersProcesses.ResponseIndex>(PATH_GET_INDEX,{headers}).pipe(
+      return this.http.get<TypeUsersProcesses.ResponseIndex>(this.getIndexUrl,{headers}).pipe(
         map((response:TypeUsersProcesses.ResponseIndex)=>{
           return response.data;
         })
@@ -46,7 +52,7 @@ export class UserProcessesService {
   postAssign(usersProcesses:Array<TypeUsersProcesses.UsersProcessesToSend>):Observable<TypeUsersProcesses.ResponseAssign>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      return this.http.post<TypeUsersProcesses.ResponseAssign>(PATH_ASSIGN,usersProcesses,{headers})
+      return this.http.post<TypeUsersProcesses.ResponseAssign>(this.postAssignUrl,usersProcesses,{headers})
     }));
     
   }
@@ -58,7 +64,7 @@ export class UserProcessesService {
   postUnAssign(usersProcesses:Array<TypeUsersProcesses.UsersProcessesToSend>):Observable<TypeUsersProcesses.ResponseUnassign>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      return this.http.post<TypeUsersProcesses.ResponseUnassign>(PATH_UNASSIGN,usersProcesses,{headers})
+      return this.http.post<TypeUsersProcesses.ResponseUnassign>(this.postUnAssignUrl,usersProcesses,{headers})
     }));
   }
 

@@ -2,16 +2,11 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 
 import { AuthenticationService } from '../authentication/authentication.service';
-import {PATH} from "../../../../../../config/base";
 import {from, Observable} from "rxjs";
-import {HallModel} from "../../../models/endpoints/Hall";
+
 import {HallsService} from "../halls/halls.service";
 import {WarehouseModel} from "@suite/services";
 import {map, switchMap} from 'rxjs/operators';
-
-const PATH_GET_WAREHOUSE_MAIN: string = PATH('Warehouses', 'Main');
-const PATH_GET_WAREHOUSE_INDEX: string = PATH('Warehouses', 'Index');
-const PATH_GET_WAREHOUSE_FULL_INDEX: string = PATH('Warehouses', 'Full');
 
 import { environment } from '../../../environments/environment';
 
@@ -20,7 +15,11 @@ import { environment } from '../../../environments/environment';
 })
 export class WarehouseService {
 
-  private getShowUrl = environment.apiBase+"/warehouses/{{id}}";
+  /**urls for warehouse service */
+  private getShowUrl:string = environment.apiBase+"/warehouses/{{id}}";
+  private getIndexUrl:string = environment.apiBase+"/warehouses";
+  private getFullIndexUrl:string = environment.apiBase+"/warehouses/full";
+  private warehouseMainUrl:string = environment.apiBase+"/warehouses/main";
 
   private _idWarehouseMain: number;
   private _listWarehouses: any[] = [];
@@ -39,7 +38,7 @@ export class WarehouseService {
   async init() {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({Authorization: currentToken});
-    return this.http.get(PATH_GET_WAREHOUSE_MAIN, {
+    return this.http.get(this.warehouseMainUrl, {
       headers: headers,
       observe: 'response'
     });
@@ -59,7 +58,7 @@ export class WarehouseService {
   async getIndex() {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({Authorization: currentToken});
-    return this.http.get(PATH_GET_WAREHOUSE_INDEX, {
+    return this.http.get(this.getIndexUrl, {
       headers: headers,
       observe: 'response'
     });
@@ -68,7 +67,7 @@ export class WarehouseService {
   async getFullIndex() {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({Authorization: currentToken});
-    return this.http.get(PATH_GET_WAREHOUSE_FULL_INDEX, {
+    return this.http.get(this.getFullIndexUrl, {
       headers: headers,
       observe: 'response'
     });

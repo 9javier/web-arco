@@ -23,7 +23,8 @@ export class WarehousesService {
   private getShowUrl = this.apiBase+"/warehouses/{id}";
   private getMainUrl = this.apiBase+"/warehouses/main";
   private updateUrl = this.getShowUrl;
-
+  private postAssignGroupToCategoryUrl:string = this.apiBase+"/warehouses/{{warehouseId}}/groups/{{groupId}}";
+  private deleteGroupToWarehouseUrl:string = this.postAssignGroupToCategoryUrl;
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<WarehouseModel.ResponseIndex>>> {
@@ -36,13 +37,13 @@ export class WarehousesService {
   }
 
   async postAssignGroupToCategory(
-    warehouseId: number,
+    warehousesId: number,
     groupId: number
   ): Promise<Observable<HttpResponse<WarehouseModel.ResponseUpdate>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<WarehouseModel.ResponseUpdate>(
-      `${PATH_BASE}warehouses/${warehouseId}/groups/${groupId}`,
+      this.deleteGroupToWarehouseUrl.replace("{{warehousesId}}",String(warehousesId)).replace("{{groupId}}",String(groupId)),
       {},
       {
         headers: headers,
@@ -107,7 +108,7 @@ export class WarehousesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<WarehouseModel.ResponseDelete>(
-      `${PATH_BASE}warehouses/${warehousesId}/groups/${groupId}`,
+      this.deleteGroupToWarehouseUrl.replace("{{warehousesId}}",String(warehousesId)).replace("{{groupId}}",String(groupId)),
       {
         headers: headers,
         observe: 'response'

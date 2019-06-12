@@ -5,10 +5,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 import { ProductModel } from '../../../models/endpoints/Product';
-import { PATH, URL } from '../../../../../../config/base';
 
-
-const PATH_BASE: string = URL + '/api/';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 @Injectable({

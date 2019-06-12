@@ -6,9 +6,6 @@ import { AuthenticationService } from '../authentication/authentication.service'
 
 import { ProcessModel } from '../../../models/endpoints/Process';
 import { UserProcessesModel } from '../../../models/endpoints/UserProcesses';
-import { PATH, URL } from '../../../../../../config/base';
-import {ACLModel} from "@suite/services";
-const PATH_BASE: string = URL + '/api/';
 
 import { environment } from '../../../environments/environment';
 
