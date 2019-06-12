@@ -68,6 +68,15 @@
                                 "maximumWarning": "2mb",
                                 "maximumError": "5mb"
                             }]
+                        },
+                        "staging": {
+                            "fileReplacements": [{
+                                "replace": "apps/al/src/environments/environment.ts",
+                                "with": "apps/al/src/environments/environment.staging.ts"
+                            }, {
+                                "replace": "libs/services/src/environments/environment.ts",
+                                "with": "libs/services/src/environments/environment.staging.ts"
+                            }]
                         }
                     }
                 },
@@ -230,6 +239,15 @@
                                 "type": "initial",
                                 "maximumWarning": "2mb",
                                 "maximumError": "5mb"
+                            }]
+                        },
+                        "staging": {
+                            "fileReplacements": [{
+                                "replace": "apps/al/src/environments/environment.ts",
+                                "with": "apps/al/src/environments/environment.staging.ts"
+                            }, {
+                                "replace": "libs/services/src/environments/environment.ts",
+                                "with": "libs/services/src/environments/environment.staging.ts"
                             }]
                         }
                     }
