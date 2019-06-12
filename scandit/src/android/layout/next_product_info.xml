@@ -33,26 +33,6 @@
     android:layout_weight="1"
     android:gravity="center_vertical">
     <TextView
-      android:id="@+id/tvReferenceText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:textSize="14sp"
-      android:text="Referencia:"/>
-    <TextView
-      android:id="@+id/tvReference"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="10dp"
-      android:textStyle="bold"
-      android:textSize="14sp"/>
-  </LinearLayout>
-
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_weight="1"
-    android:gravity="center_vertical">
-    <TextView
       android:id="@+id/tvManufacturerText"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

@@ -4,9 +4,10 @@ import { UtilsComponent } from './utils/utils.component';
 import { DropdownComponent } from './dropdown/dropdown.component';
 import { ResponsiveLayoutModule } from './responsive-layout/responsive-layout.module';
 import { BreadcrumbModule } from './breadcrumb/breadcrumb.module';
+import { MenuComponent } from './menu/menu.component';
 
 @NgModule({
-  declarations: [UtilsComponent, DropdownComponent],
+  declarations: [UtilsComponent, DropdownComponent, MenuComponent],
   imports: [
     CommonModule,
     BreadcrumbModule,

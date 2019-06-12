@@ -204,6 +204,9 @@ export class ScanditService {
                   }
                   processInitiated = true;
                   jailReference = code;
+                  if (!packingReference) {
+                    packingReference = jailReference;
+                  }
                   ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                   ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
@@ -373,7 +376,13 @@ export class ScanditService {
         } else if (response.action == 'warning_product_not_found') {
           this.scannerPausedByWarning = true;
         } else if (response.action == 'matrix_simple') {
-          ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, packingReference || '');
+          if (productsToScan.length > 0) {
+            ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, packingReference || '');
+          } else {
+            jailReference = packingReference;
+            processInitiated = true;
+            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+          }
         }
       }
     }, 'Escanear', HEADER_BACKGROUND, HEADER_COLOR);
