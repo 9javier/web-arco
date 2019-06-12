@@ -30,7 +30,7 @@
                     <table class="element-detail">
                         <tr *ngIf="detail.element.container && detail.element.container.length">
                             <td class="location-resume" (click)="selectAllLocations()">
-                                <div class="incidence-element-resume">
+                                <div class="incidence-element-resume" *ngIf="isWarehouseListSection()">
                                     <i class="material-icons">select_all</i>
                                 </div>
                             </td>

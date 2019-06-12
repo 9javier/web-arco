@@ -25,12 +25,12 @@ export class WorkwaveListWorkwavesHistoryComponent implements OnInit {
 
   dateCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveHistory.executedDate).format('ddd, DD/MM/YYYY');
+    return moment(this.workwaveHistory.executedDate || this.workwaveHistory.releaseDate).format('ddd, DD/MM/YYYY');
   }
 
   timeCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveHistory.executedDate).format('LT');
+    return moment(this.workwaveHistory.executedDate || this.workwaveHistory.releaseDate).format('LT');
   }
 
   checkboxClick(event) {

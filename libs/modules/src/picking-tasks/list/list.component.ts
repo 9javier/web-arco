@@ -58,7 +58,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
   initPicking() {
     this.showLoading('Cargando productos...').then(() => {
       this.shoesPickingService
-        .getListByPicking(this.pickingService.pickingAssignments[0].id)
+        .getPendingListByPicking(this.pickingService.pickingAssignments[0].id)
         .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
           if (this.loading) {
             this.loading.dismiss();

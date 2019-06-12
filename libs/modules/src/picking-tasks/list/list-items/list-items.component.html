@@ -1,4 +1,4 @@
-<mat-grid-list cols="12" rowHeight="64px">
+<mat-grid-list cols="12" rowHeight="64px" [ngClass]="pickingAssignment.status != 2 ? 'separator-list' : ''">
   <mat-grid-tile colspan="6" rowspan="1">
     <div class="tile-value">
       <span class="store-ref">
@@ -14,5 +14,10 @@
 
   <mat-grid-tile colspan="3" rowspan="1">
     <div class="tile-value-right">{{pickingAssignment.quantity}}</div>
+  </mat-grid-tile>
+</mat-grid-list>
+<mat-grid-list cols="12" rowHeight="32px" *ngIf="pickingAssignment.status == 2" class="separator-list">
+  <mat-grid-tile colspan="12">
+    <div class="started-picking"><i class="material-icons">play_arrow</i><span>Iniciado</span></div>
   </mat-grid-tile>
 </mat-grid-list>

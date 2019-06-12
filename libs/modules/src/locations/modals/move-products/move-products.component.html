@@ -67,7 +67,7 @@
                   </div>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin" (ngModelChange)="changeLocation(2)">
-                      <ion-select-option *ngFor="let hall of listHalls | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                      <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
                     </ion-select>
                   </div>
                 </ion-item>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="field">
                   <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin">
-                    <ion-select-option *ngFor="let hall of listHalls | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                    <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
                   </ion-select>
                 </div>
               </ion-item>
@@ -126,7 +126,7 @@
                 </div>
                 <div class="field">
                   <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin" (ngModelChange)="changeSelect(2)">
-                    <ion-select-option *ngFor="let hall of listHalls | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                    <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
                   </ion-select>
                 </div>
               </ion-item>
@@ -207,7 +207,7 @@
                   </div>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedDestiny" (ngModelChange)="changeDestiny(3)">
-                      <ion-select-option *ngFor="let hall of listHallsDestiny | reverse" [value]="hall.id">{{hall.value}}</ion-select-option>
+                      <ion-select-option *ngFor="let hall of listHallsDestiny" [value]="hall.id">{{hall.value}}</ion-select-option>
                     </ion-select>
                   </div>
                 </ion-item>
