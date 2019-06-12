@@ -20,177 +20,179 @@ export class MenuComponent implements OnInit {
   iconsDirection = 'start';
   displaySmallSidebar = false;
   currentRoute:string = "";
+  sgaPages:Array<any> = [
+    {
+      title: 'Logística',
+      open: true,
+      type:'wrapper',
+      children: [
+        {
+          title: 'Productos',
+          id:'products',
+          url: '/products',
+          icon: 'basket'
+        },{
+          title:'Etiquetas',
+          id:'labels',
+          url:'/labels',
+          icon:'basket'
+        },
+        {
+          title: 'Gestión de almacén',
+          id:'warehouses-management',
+          url: '/warehouse/manage',
+          icon: 'apps'
+        }
+      ]
+    },
+    {
+      title: 'Olas de trabajo',
+      open: true,
+      type:'wrapper',
+      children: [
+        {
+          title: 'Programadas',
+          id:'workwaves-scheduled',
+          url: '/workwaves-scheduled',
+          icon: 'code'
+        },
+        {
+          title: 'Plantillas',
+          id:'workwaves-templates',
+          url: '/workwaves-templates',
+          icon: 'code-working'
+        },
+        {
+          title: 'Historial',
+          id:'workwaves-history',
+          url: '/workwaves-history',
+          icon: 'code-download'
+        }
+      ]
+    },
+    {
+      title: 'Gestión de usuarios',
+      open: true,
+      type:'wrapper',
+      children: [
+        {
+          title: 'Gestión de usuarios',
+          url: '/users/menu',
+          id:'user-management',
+          icon: 'people'
+        },
+        {
+          title: 'Parametrización de operarios',
+          id:'operator-parametrization',
+          url: '/user-manager',
+          icon: 'people'
+        },
+        {
+          title: 'Roles',
+          id:'roles',
+          url: '/roles/menu',
+          icon: 'person'
+        },
+      ]
+    },
+    {
+      title: 'Configuración',
+      open: true,
+      type:'wrapper',
+      children: [
+        {
+          title: 'Almacenes',
+          id:'warehouses',
+          url: '/warehouses',
+          icon: 'filing'
+        },
+        {
+          title: 'Grupos de tiendas',
+          id:'warehouses-group',
+          url: '/groups/menu',
+          icon: 'person'
+        },
+        {
+          title: 'Asignar grupos de tiendas',
+          id:'group-to-warehouse',
+          url: '/group-to-warehouse',
+          icon: 'people'
+        },
+        {
+          title: 'Jaulas',
+          id:'jails',
+          url: '/jails/menu',
+          icon: 'grid'
+        },
+        {
+          title: 'Palets',
+          id:'pallets',
+          url: '/pallets/menu',
+          icon: 'cube'
+        },
+      ]
+    },
+    {
+      title: 'Cerrar sesión',
+      id:'logout',
+      url: '/login',
+      icon: 'log-out'
+    }
+  ];
 
+  alPages:Array<any> = [
+    {
+      title: 'Productos',
+      id:'products',
+      url: '/products',
+      icon: 'basket'
+    },
+    {
+      title: 'Gestión de almacén',
+      id:'warehouses-management',
+      url: '/warehouse/manage',
+      icon: 'apps'
+    },
+    {
+      title: 'Ubicar/Escanear',
+      id:'positioning',
+      icon: 'qr-scanner',
+      url: 'positioning'
+    },
+    {
+      title: 'Tareas de Picking',
+      id:"picking-task",
+      icon: 'qr-scanner',
+      url: '/picking-tasks'
+    },
+    {
+      title: 'Jaulas',
+      id:'jails',
+      url: '/jails/menu',
+      icon: 'grid'
+    },
+    {
+      title: 'Palets',
+      id:'pallets',
+      url: '/pallets/menu',
+      icon: 'cube'
+    },
+    {
+      title: 'Ajustes',
+      id:'settings',
+      url: '/settings',
+      icon: 'cog'
+    },
+    {
+      title: 'Cerrar sesión',
+      id:'logout',
+      url: '/home',
+      icon: 'log-out'
+    },
+  ];
   private menuPages = {
-    sga:[
-      {
-        title: 'Logística',
-        open: true,
-        type:'wrapper',
-        children: [
-          {
-            title: 'Productos',
-            id:'products',
-            url: '/products',
-            icon: 'basket'
-          },{
-            title:'Etiquetas',
-            id:'labels',
-            url:'/labels',
-            icon:'basket'
-          },
-          {
-            title: 'Gestión de almacén',
-            id:'warehouses-management',
-            url: '/warehouse/manage',
-            icon: 'apps'
-          }
-        ]
-      },
-      {
-        title: 'Olas de trabajo',
-        open: true,
-        type:'wrapper',
-        children: [
-          {
-            title: 'Programadas',
-            id:'workwaves-scheduled',
-            url: '/workwaves-scheduled',
-            icon: 'code'
-          },
-          {
-            title: 'Plantillas',
-            id:'workwaves-templates',
-            url: '/workwaves-templates',
-            icon: 'code-working'
-          },
-          {
-            title: 'Historial',
-            id:'workwaves-history',
-            url: '/workwaves-history',
-            icon: 'code-download'
-          }
-        ]
-      },
-      {
-        title: 'Gestión de usuarios',
-        open: true,
-        type:'wrapper',
-        children: [
-          {
-            title: 'Gestión de usuarios',
-            url: '/users/menu',
-            id:'user-management',
-            icon: 'people'
-          },
-          {
-            title: 'Parametrización de operarios',
-            id:'operator-parametrization',
-            url: '/user-manager',
-            icon: 'people'
-          },
-          {
-            title: 'Roles',
-            id:'roles',
-            url: '/roles/menu',
-            icon: 'person'
-          },
-        ]
-      },
-      {
-        title: 'Configuración',
-        open: true,
-        type:'wrapper',
-        children: [
-          {
-            title: 'Almacenes',
-            id:'warehouses',
-            url: '/warehouses',
-            icon: 'filing'
-          },
-          {
-            title: 'Grupos de tiendas',
-            id:'warehouses-group',
-            url: '/groups/menu',
-            icon: 'person'
-          },
-          {
-            title: 'Asignar grupos de tiendas',
-            id:'group-to-warehouse',
-            url: '/group-to-warehouse',
-            icon: 'people'
-          },
-          {
-            title: 'Jaulas',
-            id:'jails',
-            url: '/jails/menu',
-            icon: 'grid'
-          },
-          {
-            title: 'Palets',
-            id:'pallets',
-            url: '/pallets/menu',
-            icon: 'cube'
-          },
-        ]
-      },
-      {
-        title: 'Cerrar sesión',
-        id:'logout',
-        url: '/login',
-        icon: 'log-out'
-      }
-    ],
-    al:[
-      {
-        title: 'Productos',
-        id:'products',
-        url: '/products',
-        icon: 'basket'
-      },
-      {
-        title: 'Gestión de almacén',
-        id:'warehouses-management',
-        url: '/warehouse/manage',
-        icon: 'apps'
-      },
-      {
-        title: 'Ubicar/Escanear',
-        id:'positioning',
-        icon: 'qr-scanner',
-        url: 'positioning'
-      },
-      {
-        title: 'Tareas de Picking',
-        id:"picking-task",
-        icon: 'qr-scanner',
-        url: '/picking-tasks'
-      },
-      {
-        title: 'Jaulas',
-        id:'jails',
-        url: '/jails/menu',
-        icon: 'grid'
-      },
-      {
-        title: 'Palets',
-        id:'pallets',
-        url: '/pallets/menu',
-        icon: 'cube'
-      },
-      {
-        title: 'Ajustes',
-        id:'settings',
-        url: '/settings',
-        icon: 'cog'
-      },
-      {
-        title: 'Cerrar sesión',
-        id:'logout',
-        url: '/home',
-        icon: 'log-out'
-      },
-    ]
+    sga:this.sgaPages,
+    al:this.alPages
   }
 
   menuPagesFiltered:Array<any> = [];
