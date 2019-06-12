@@ -121,7 +121,8 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Logout',
-      icon: 'log-out'
+      icon: 'log-out',
+      url:'/login'
     }
   ];
 
@@ -132,6 +133,31 @@ export class AppComponent implements OnInit {
   iconsDirection = 'start';
   currentRoute: string = this.appPages[0].children[0].title;
   deploySidebarSmallDevices = false;
+
+
+
+  dictionary = {
+    'products':true,
+    'labels':true,
+    'warehouses-management':true,
+    'workwaves-scheduled':true,
+    'workwaves-templates':true,
+    'workwaves-history':true,
+    'user-management':true,
+    'operator-parametrization':true,
+    'roles':true,
+    'warehouses':true,
+    'warehouses-group':true,
+    'group-to-warehouse':true,
+    'jails':true,
+    'pallets':true,
+    'logout':true,
+    'positionning':true,
+    'picking-task':true,
+    'settings':true,
+  }
+
+
   /**timeout to prevent avoid login page */
   private loginTimeout;
 
