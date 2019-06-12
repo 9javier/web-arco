@@ -95,8 +95,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_FINISH = "matrixSimpleFinish";
   private static final String SET_MATRIX_SIMPLE_NET_PRODUCT_TO_SCAN = "matrixSimpleSetNextProductToScan";
   private static final String SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN = "matrixSimpleShowNextProductToScan";
-  private static final String MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL = "matrixSimpleShowTextScanJail";
-  private static final String MATRIX_SIMPLE_SHOW_TEXT_SCAN_PALLET = "matrixSimpleShowTextScanPallet";
+  private static final String MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING = "matrixSimpleShowTextStartScanPacking";
+  private static final String MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING = "matrixSimpleShowTextEndScanPacking";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -902,15 +902,17 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
-    } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL) || action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_PALLET)) {
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING)) {
       String package_name = cordova.getActivity().getApplication().getPackageName();
       Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
+      int packingType = 0;
       String packingReference = "";
       try {
         show = args.getBoolean(0);
-        packingReference = args.getString(1);
+        packingType = args.getInt(1);
+        packingReference = args.getString(2);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -918,36 +920,78 @@ public class ScanditSDK extends CordovaPlugin {
       final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
 
       final boolean fShow = show;
+      final int fPackingType = packingType;
       final String fPackingReference = packingReference;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
           TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
+
+          if (fShow) {
+            String startScan;
+            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+
+            rlInfoProduct.setVisibility(View.GONE);
+            tvPackingStart.setVisibility(View.VISIBLE);
+
+            if (fPackingType == 1) {
+              if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+                startScan = "Escanea una Jaula para dar comienzo al proceso de picking.";
+              } else {
+                startScan = "Escanea la Jaula " + fPackingReference + " para continuar con el proceso de picking ya iniciado.";
+              }
+            } else {
+              if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
+                startScan = "Escanea un Pallet para dar comienzo al proceso de picking.";
+              } else {
+                startScan = "Escanea el Pallet " + fPackingReference + " para continuar con el proceso de picking ya iniciado.";
+              }
+            }
+            tvPackingStart.setText(startScan);
+          } else {
+            tvPackingStart.setText("");
+            tvPackingStart.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      int packingType = 0;
+      String packingReference = "";
+      try {
+        show = args.getBoolean(0);
+        packingType = args.getInt(1);
+        packingReference = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final boolean fShow = show;
+      final int fPackingType = packingType;
+      final String fPackingReference = packingReference;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
           TextView tvPackingEnd = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingEnd", "id", package_name));
 
           if (fShow) {
+            String endScan;
             LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+
             rlInfoProduct.setVisibility(View.GONE);
-            if (fPackingReference.isEmpty() || fPackingReference.equals("")) {
-              tvPackingStart.setVisibility(View.VISIBLE);
-              String startScan;
-              if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL)) {
-                startScan = "Escanea una Jaula para dar comienzo al proceso de picking.";
-              } else {
-                startScan = "Escanea un Pallet para dar comienzo al proceso de picking.";
-              }
-              tvPackingStart.setText(startScan);
+            tvPackingEnd.setVisibility(View.VISIBLE);
+
+            if (fPackingType == 1) {
+              endScan = "Escanea la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
             } else {
-              tvPackingEnd.setVisibility(View.VISIBLE);
-              String endScan;
-              if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_SCAN_JAIL)) {
-                endScan = "Escanea de nuevo la Jaula " + fPackingReference + " para finalizar el proceso de picking.";
-              } else {
-                endScan = "Escanea de nuevo el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
-              }
-              tvPackingEnd.setText(endScan);
+              endScan = "Escanea el Pallet " + fPackingReference + " para finalizar el proceso de picking.";
             }
+            tvPackingEnd.setText(endScan);
           } else {
-            tvPackingStart.setVisibility(View.GONE);
+            tvPackingEnd.setText("");
             tvPackingEnd.setVisibility(View.GONE);
           }
         }
