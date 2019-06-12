@@ -151,6 +151,28 @@ export class ScanditService {
     let productsToScan: ShoesPickingModel.ShoesPicking[] = listProducts;
     let productsScanned: string[] = [];
     let lastCodeScanned: string = "start";
+    let literalsJailPallet: any = {
+      1: {
+        not_registered: 'La Jaula escaneada no está registrada en el sistema.',
+        process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
+        process_started: 'Proceso iniciado con la Jaula ',
+        scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
+        scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
+        toThe: "a la Jaula",
+        wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
+        wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.'
+      },
+      2: {
+        not_registered: 'El Pallet escaneado no está registrado en el sistema.',
+        process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
+        process_started: 'Proceso iniciado con el Pallet ',
+        scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
+        scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
+        toThe: "al Pallet",
+        wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
+        wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.'
+      }
+    };
 
     ScanditMatrixSimple.init((response) => {
       let code = '';
@@ -183,12 +205,12 @@ export class ScanditService {
                   processInitiated = true;
                   jailReference = code;
                   ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                  ScanditMatrixSimple.setText(`Proceso iniciado con la Jaula ${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                  ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                   ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
                 }, (error) => {
                   if (error.error.code == 404) {
-                    ScanditMatrixSimple.setText('La Jaula escaneada no está registrada en el sistema.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                     this.hideTextMessage(2000);
                   } else {
                     ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
@@ -196,26 +218,18 @@ export class ScanditService {
                   }
                 });
             } else {
-              let jailOrPallet = "una Jaula";
-              if (typePacking == 2) {
-                jailOrPallet = "un Pallet";
-              }
-              ScanditMatrixSimple.setText('La herramienta de distribución escaneada no es la que se le solicitó. Escanea '+jailOrPallet+' para comenzar el proceso de picking.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+              ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_packing, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
               this.hideTextMessage(2000);
             }
           } else {
-            let jailOrPallet = "la Jaula ";
-            if (typePacking == 2) {
-              jailOrPallet = "el Pallet ";
-            }
-            ScanditMatrixSimple.setText('Para continuar con el proceso de picking escanea '+jailOrPallet+packingReference+'.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+            ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_resumed}${packingReference}.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           }
         } else if (productsToScan.length != 0) {
           ScanditMatrixSimple.setText('Continúe escaneando los productos que se le indican antes de finalizar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else if (jailReference != code) {
-          ScanditMatrixSimple.setText('La Jaula escaneada es diferente a la Jaula con la que inició el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_process_finished, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else {
           this.postVerifyPacking({
@@ -233,7 +247,7 @@ export class ScanditService {
               }, 1.5 * 1000);
             }, (error) => {
               if (error.error.code == 404) {
-                ScanditMatrixSimple.setText('La Jaula escaneada no está registrada en el sistema.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                 this.hideTextMessage(2000);
               } else {
                 ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
@@ -243,7 +257,7 @@ export class ScanditService {
         }
       } else if (!this.scannerPausedByWarning && code && code != '' && code != lastCodeScanned) {
         if (!processInitiated) {
-          ScanditMatrixSimple.setText('Escanea la Jaula a utilizar antes de comenzar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_before_products, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else {
           lastCodeScanned = code;
@@ -260,7 +274,7 @@ export class ScanditService {
                 if (res.code == 200 || res.code == 201) {
                   productsToScan = res.data.shoePickingPending;
                   productsScanned.push(code);
-                  ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido a la Jaula.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                  ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido ${literalsJailPallet[typePacking].toThe}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                   if (productsToScan.length > 0) {
                     ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -268,7 +282,7 @@ export class ScanditService {
                     ScanditMatrixSimple.showNexProductToScan(false);
                     setTimeout(() => {
                       ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
-                      ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                      ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                       this.hideTextMessage(1500);
                     }, 2 * 1000);
                   }
@@ -285,7 +299,7 @@ export class ScanditService {
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
                             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
-                            ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                            ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
                           }, 2 * 1000);
                         }
@@ -305,7 +319,7 @@ export class ScanditService {
                         ScanditMatrixSimple.showNexProductToScan(false);
                         setTimeout(() => {
                           ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
-                          ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                          ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                           this.hideTextMessage(1500);
                         }, 2 * 1000);
                       }
@@ -316,7 +330,7 @@ export class ScanditService {
           } else {
             ScanditMatrixSimple.showNexProductToScan(false);
             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
-            ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+            ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
             this.hideTextMessage(1500);
           }
         }
@@ -340,7 +354,7 @@ export class ScanditService {
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
                             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
-                            ScanditMatrixSimple.setText('Todos los productos han sido escaneados. Escanea de nuevo la Jaula o Pallet utilizado para finalizar el proceso.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                            ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
                           }, 2 * 1000);
                         }
