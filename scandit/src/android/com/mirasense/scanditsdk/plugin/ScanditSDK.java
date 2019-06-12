@@ -821,7 +821,7 @@ public class ScanditSDK extends CordovaPlugin {
               String column = String.format("%02d", fProduct.getJSONObject("inventory").getJSONObject("container").getInt("column"));
 
               String alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
-              row = alphabet.charAt((fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row")-1));
+              row = String.valueOf(alphabet.charAt((fProduct.getJSONObject("inventory").getJSONObject("container").getInt("row")-1)));
 
               location = location.concat(" (P"+rack+row+column+")");
             }
