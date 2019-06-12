@@ -12,6 +12,7 @@ import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/wareh
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
 import {environment} from "../environments/environment";
 import {Observable} from "rxjs";
+import {app} from "@suite/services";
 
 interface MenuItem {
   title: string;
@@ -146,7 +147,9 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    app.name = "al";
+  }
 
   tapOption(p: MenuItem) {
     this.currentRoute = p.title;

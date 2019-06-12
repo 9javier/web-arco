@@ -12,6 +12,7 @@ import { ScannerConfigurationService } from "../../../../libs/services/src/lib/s
 import {Observable} from "rxjs";
 import {TypesService} from "../../../../libs/services/src/lib/endpoint/types/types.service";
 import {TypeModel} from "../../../../libs/services/src/models/endpoints/Type";
+import {app} from '@suite/services'
 
 interface MenuItem {
   title: string;
@@ -257,6 +258,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    app.name = "sga";
     this.initializeApp();
   }
 

@@ -30,7 +30,17 @@ export const PATH_PUT_UNLOCK: string = PATH('Warehouses Maps', 'Desbloquear ubic
 })
 export class HallsService {
 
-  private getIndexUrl = environment.apiBase+"/warehouses/{{id}}/racks";
+  /**urls for halls service */
+  private getIndexUrl:string = environment.apiBase+"/warehouses/{{id}}/racks";
+  private getFullIndexUrl:string = environment.apiBase+"/warehouses/{{id}}/racks/full";
+  private postStoreUrl:string = environment.apiBase+"/racks/";
+  private getShowUrl:string = environment.apiBase+"/racks/{{id}}/containers";
+  private putUpdateUrl:string = environment.apiBase+"/racks/{{id}}";
+  private deleteDestroyUrl:string = environment.apiBase+"/racks/{{id}}";
+  private updateDisableUrl:string = environment.apiBase+"/containers/{{id}}";
+  private updateEnableUrl:string = environment.apiBase+"/containers/{{id}}";
+  private updateLockUrl:string = environment.apiBase+"/containers/{{id}}";
+  private updateUnlockUrl:string = environment.apiBase+"/containers/{{id}}";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -50,7 +60,7 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<HallModel.ResponseIndex>(PATH_GET_FULL_INDEX.replace('{{warehouseId}}', String(warehouseId)), {
+    return this.http.get<HallModel.ResponseIndex>(this.getFullIndexUrl.replace('{{id}}', String(warehouseId)), {
       headers: headers,
       observe: 'response'
     });
@@ -62,7 +72,7 @@ export class HallsService {
     const warehouseMap: HallModel.Hall = HallModel.formToMap(warehouseMapForm);
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.post<HallModel.ResponseStore>(PATH_POST_STORE, warehouseMap, {
+    return this.http.post<HallModel.ResponseStore>(this.postStoreUrl, warehouseMap, {
       headers: headers,
       observe: 'response'
     });
@@ -73,7 +83,7 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseShow>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<HallModel.ResponseShow>(PATH_GET_SHOW.replace('{{rackId}}', String(hallId)), {
+    return this.http.get<HallModel.ResponseShow>(this.getShowUrl.replace('{{id}}', String(hallId)), {
       headers: headers,
       observe: 'response'
     });
@@ -85,7 +95,7 @@ export class HallsService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.put<HallModel.ResponseUpdate>(
-      `${PATH_PUT_UPDATE}${hall.id}`,
+      this.putUpdateUrl.replace("{{id}}",String(hall.id)),
       hall,
       {
         headers: headers,
@@ -103,7 +113,7 @@ export class HallsService {
     return users.map(user => {
       return concat(
         this.http.delete<HallModel.ResponseDestroy>(
-          `${PATH_DEL_DESTROY}${user.id}`,
+          this.deleteDestroyUrl.replace("{{id}}",String(user.id)),
           {
             headers: headers,
             observe: 'response'
@@ -118,7 +128,8 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateDisable>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<HallModel.ResponseUpdateDisable>(`${PATH_PUT_DISABLE}${containerId}`,
+    return this.http.put<HallModel.ResponseUpdateDisable>(
+      this.updateDisableUrl.replace("{{id}}",String(containerId)),
       {enabled: false},
       {
         headers: headers,
@@ -132,7 +143,8 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateEnable>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<HallModel.ResponseUpdateEnable>(`${PATH_PUT_ENABLE}${containerId}`,
+    return this.http.put<HallModel.ResponseUpdateEnable>(
+      this.updateEnableUrl.replace("{{id}}",String(containerId)),
       {enabled: true},
       {
         headers: headers,
@@ -146,7 +158,8 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateLock>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<HallModel.ResponseUpdateLock>(`${PATH_PUT_LOCK}${containerId}`,
+    return this.http.put<HallModel.ResponseUpdateLock>(
+      this.updateLockUrl.replace("{{id}}",String(containerId)),
       {lock: true},
       {
         headers: headers,
@@ -160,7 +173,8 @@ export class HallsService {
   ): Promise<Observable<HttpResponse<HallModel.ResponseUpdateUnlock>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<HallModel.ResponseUpdateUnlock>(`${PATH_PUT_UNLOCK}${containerId}`,
+    return this.http.put<HallModel.ResponseUpdateUnlock>(
+      this.updateLockUrl.replace("{{id}}",String(containerId)),
       {lock: false},
       {
         headers: headers,

@@ -6,6 +6,8 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import {PATH} from "../../../../../../config/base";
 import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 
+import { environment } from '../../../environments/environment';
+
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
 export const PATH_GET_LIST_SCHEDULED: string = PATH('Workwaves', 'Index');
@@ -19,6 +21,17 @@ export const PATH_DELETE_DESTROY_TEMPLATE: string = PATH('Workwaves', 'Destroy T
 })
 export class WorkwavesService {
 
+
+  /**Urls for the workwaves service */
+  private postStoreUrl:string = environment.apiBase+"/workwaves";
+  private getListTemplatesUrl:string = environment.apiBase+"/workwaves/templates";
+  private getListScheduledUrl:string = environment.apiBase+"/workwaves";
+  private putUpdateWorkwaveUrl:string = environment.apiBase+"/workwaves/{{id}}";
+  private getListExecutedUrl:string = environment.apiBase+"/workwaves/executed";
+  private deleteDestroyTaskUrl:string = environment.apiBase+"/workwaves/tasks/{{id}}";
+  private deleteDestroyTemplateUrl:string = environment.apiBase+"/workwaves/templates/{{id}}";
+
+
   private _lastWorkwaveEdited: any = null;
   private _lastWorkwaveHistoryQueried: any = null;
 
@@ -31,7 +44,7 @@ export class WorkwavesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    return this.http.get<WorkwaveModel.ResponseListTemplates>(PATH_GET_LIST_TEMPLATES,
+    return this.http.get<WorkwaveModel.ResponseListTemplates>(this.getListTemplatesUrl,
       {
         headers: headers,
         observe: 'response'
@@ -42,7 +55,7 @@ export class WorkwavesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    return this.http.get<WorkwaveModel.ResponseListScheduled>(PATH_GET_LIST_SCHEDULED,
+    return this.http.get<WorkwaveModel.ResponseListScheduled>(this.getListScheduledUrl,
       {
         headers: headers,
         observe: 'response'
@@ -53,7 +66,7 @@ export class WorkwavesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    return this.http.get<WorkwaveModel.ResponseListScheduled>(PATH_GET_LIST_EXECUTED,
+    return this.http.get<WorkwaveModel.ResponseListScheduled>(this.getListExecutedUrl,
       {
         headers: headers,
         observe: 'response'
@@ -70,7 +83,7 @@ export class WorkwavesService {
 
     this.filterWorkwave(workwave);
 
-    return this.http.post<WorkwaveModel.ResponseStore>(PATH_POST_STORE_WORKWAVE,
+    return this.http.post<WorkwaveModel.ResponseStore>(this.postStoreUrl,
       workwave,
       {
         headers: headers,
@@ -89,7 +102,8 @@ export class WorkwavesService {
 
     this.filterWorkwave(workwave);
 
-    return this.http.put<WorkwaveModel.ResponseStore>(`${PATH_POST_UPDATE_WORKWAVE}${workwaveId}`,
+    return this.http.put<WorkwaveModel.ResponseStore>(
+      this.putUpdateWorkwaveUrl.replace("{{id}}",String(workwaveId)),
       workwave,
       {
         headers: headers,
@@ -103,7 +117,8 @@ export class WorkwavesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    return this.http.delete<WorkwaveModel.ResponseDestroyTask>(`${PATH_DELETE_DESTROY_TASK}${workwaveId}`,
+    return this.http.delete<WorkwaveModel.ResponseDestroyTask>(
+      this.deleteDestroyTaskUrl.replace("{{id}}",String(workwaveId)),
       {
         headers: headers,
         observe: 'response'
@@ -116,7 +131,8 @@ export class WorkwavesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
-    return this.http.delete<WorkwaveModel.ResponseDestroyTemplate>(`${PATH_DELETE_DESTROY_TEMPLATE}${workwaveId}`,
+    return this.http.delete<WorkwaveModel.ResponseDestroyTemplate>(
+      this.deleteDestroyTemplateUrl.replace("{{id}}",String(workwaveId)),
       {
         headers: headers,
         observe: 'response'

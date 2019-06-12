@@ -7,16 +7,21 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { PermissionsModel } from '../../../models/endpoints/Permissions';
 import { ACLModel } from '../../../models/endpoints/ACL';
 
-import { PATH, URL } from '../../../../../../config/base';
 
-const PATH_GET_INDEX: string = PATH('Permissions', 'Index');
-const PATH_GET_SHOW: string = PATH('Permissions', 'Show');
+import { environment } from '../../../environments/environment';
 
-const PATH_BASE: string = URL + '/api/';
 @Injectable({
   providedIn: 'root'
 })
 export class PermissionsService {
+
+
+  /**Urls of permissions service */
+  private getIndexUrl:string = environment.apiBase+"/permissions";
+  private getShowUrl:string = environment.apiBase+"/permissions/{{id}}";
+  private postAssignPermissionToRolUrl:string = environment.apiBase+"/roles/{{rolId}}/permissions/{{permissionId}}";
+  private deletePermissionToRolUrl:string = environment.apiBase+"/roles/{{rolId}}/permissions/{{permissionId}}"
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<
@@ -24,18 +29,23 @@ export class PermissionsService {
   > {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<PermissionsModel.ResponseIndex>(PATH_GET_INDEX, {
+    return this.http.get<PermissionsModel.ResponseIndex>(this.getIndexUrl, {
       headers: headers,
       observe: 'response'
     });
   }
 
-  async getShow(): Promise<
+  /**
+   * the postman query have an one, but this method dont received any param
+   * then i add one and set default value
+   * @param id id of the permission
+   */
+  async getShow(id:number = 1): Promise<
     Observable<HttpResponse<PermissionsModel.ResponseShow[]>>
   > {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<PermissionsModel.ResponseShow[]>(PATH_GET_SHOW, {
+    return this.http.get<PermissionsModel.ResponseShow[]>(this.getShowUrl.replace("{{id}}",String(id)), {
       headers: headers,
       observe: 'response'
     });
@@ -48,7 +58,7 @@ export class PermissionsService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<ACLModel.ResponseRolPermissions>(
-      `${PATH_BASE}roles/${rolId}/permissions/${permissionId}`,
+      this.postAssignPermissionToRolUrl.replace("{{rolId}}",String(rolId)).replace("{{permissionId}}",String(permissionId)),
       {},
       {
         headers: headers,
@@ -64,7 +74,7 @@ export class PermissionsService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<ACLModel.ResponseDeleteRolPermissions>(
-      `${PATH_BASE}roles/${rolId}/permissions/${permissionId}`,
+      this.deletePermissionToRolUrl.replace("{{rolId}}",String(rolId)).replace("{{permissionId}}",String(permissionId)),
       {
         headers: headers,
         observe: 'response'

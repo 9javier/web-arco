@@ -6,18 +6,24 @@ import {
   HttpResponse
 } from '@angular/common/http';
 
+import { environment } from '../../../environments/environment';
+
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 import { ACLModel } from '../../../models/endpoints/ACL';
-import { URL } from '../../../../../../config/base';
 
-const PATH_BASE: string = URL + '/api/';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AclService {
+  
+  /**urls for acl service */
+  private getUserRolesUrl:string = environment.apiBase+"/users/{{id}}/roles";
+  private getRolPermissionsUrl:string = environment.apiBase+"/roles/{{id}}/permissions";
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getUserRoles(
@@ -26,7 +32,7 @@ export class AclService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.get<ACLModel.ResponseUserRoles>(
-      `${PATH_BASE}users/${userId}/roles`,
+      this.getUserRolesUrl.replace("{{id}}",String(userId)),
       {
         headers: headers,
         observe: 'response'
@@ -40,7 +46,7 @@ export class AclService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.get<ACLModel.ResponseUserRoles>(
-      `${PATH_BASE}roles/${rolId}/permissions`,
+      this.getRolPermissionsUrl.replace("{{id}}",String(rolId)),
       {
         headers: headers,
         observe: 'response'

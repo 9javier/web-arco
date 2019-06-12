@@ -5,20 +5,23 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
 
 import { GroupModel } from '../../../models/endpoints/Group';
-import { PATH, URL } from '../../../../../../config/base';
-import {ACLModel} from "@suite/services";
-const PATH_BASE: string = URL + '/api/';
+
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GroupsService {
+
+  /**Urls for groups service */
+  private getIndexUrl:string = environment.apiBase+"/warehouses/categories";
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<GroupModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<GroupModel.ResponseIndex>(PATH_BASE + 'warehouses/categories', {
+    return this.http.get<GroupModel.ResponseIndex>(this.getIndexUrl, {
       headers: headers,
       observe: 'response'
     });

@@ -8,10 +8,16 @@ import {PATH} from "../../../../../../config/base";
 export const PATH_GET_INDEX: string = PATH('Incidences', 'Index');
 export const PATH_PUT_UPDATE: string = PATH('Incidences', 'Update attended').slice(0, -1);
 
+import { environment } from '../../../environments/environment';
+
 @Injectable({
   providedIn: 'root'
 })
 export class IncidencesService {
+
+  /**urls for the incidences services */
+  private getIndexUrl:string = environment.apiBase+"/incidences";
+  private putUpdateUrl:string = environment.apiBase+"/incidences/{{id}}";
 
   private _incidencesList: IncidenceModel.Incidence[];
   private _incidencesQuantity: number;
@@ -71,7 +77,7 @@ export class IncidencesService {
   private async getIndex(): Promise<Observable<HttpResponse<IncidenceModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.get<IncidenceModel.ResponseIndex>(PATH_GET_INDEX, {
+    return this.http.get<IncidenceModel.ResponseIndex>(this.getIndexUrl, {
       headers: headers,
       observe: 'response'
     });
@@ -84,7 +90,8 @@ export class IncidencesService {
 
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.put<IncidenceModel.ResponseUpdate>(`${PATH_PUT_UPDATE}${incidenceId}`,
+    return this.http.put<IncidenceModel.ResponseUpdate>(
+      this.putUpdateUrl.replace("{{id}}",String(incidenceId)),
       incidence,
       {
         headers: headers,
