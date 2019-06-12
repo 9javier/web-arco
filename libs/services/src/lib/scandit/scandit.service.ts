@@ -150,7 +150,7 @@ export class ScanditService {
     let jailReference: string = null;
     let productsToScan: ShoesPickingModel.ShoesPicking[] = listProducts;
     let productsScanned: string[] = [];
-    let typePacking: number = 0;
+    let lastCodeScanned: string = "start";
 
     ScanditMatrixSimple.init((response) => {
       let code = '';
@@ -241,11 +241,12 @@ export class ScanditService {
               }
             });
         }
-      } else if (!this.scannerPausedByWarning && code && code != '') {
+      } else if (!this.scannerPausedByWarning && code && code != '' && code != lastCodeScanned) {
         if (!processInitiated) {
           ScanditMatrixSimple.setText('Escanea la Jaula a utilizar antes de comenzar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else {
+          lastCodeScanned = code;
           if (productsToScan.length > 0) {
             let picking: InventoryModel.Picking = {
               packingReference: jailReference,
