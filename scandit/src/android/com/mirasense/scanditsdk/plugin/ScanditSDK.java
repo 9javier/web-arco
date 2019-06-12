@@ -783,8 +783,6 @@ public class ScanditSDK extends CordovaPlugin {
           LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
           TextView tvLocationText = rlInfoProduct.findViewById(resources.getIdentifier("tvLocationText", "id", package_name));
           TextView tvLocation = rlInfoProduct.findViewById(resources.getIdentifier("tvLocation", "id", package_name));
-          TextView tvReferenceText = rlInfoProduct.findViewById(resources.getIdentifier("tvReferenceText", "id", package_name));
-          TextView tvReference = rlInfoProduct.findViewById(resources.getIdentifier("tvReference", "id", package_name));
           TextView tvManufacturerText = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturerText", "id", package_name));
           TextView tvManufacturer = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturer", "id", package_name));
           TextView tvModelText = rlInfoProduct.findViewById(resources.getIdentifier("tvModelText", "id", package_name));
@@ -800,8 +798,6 @@ public class ScanditSDK extends CordovaPlugin {
           rlInfoProduct.setBackgroundDrawable(new ColorDrawable(Color.parseColor(fBackground)));
           tvLocationText.setTextColor(Color.parseColor(fColor));
           tvLocation.setTextColor(Color.parseColor(fColor));
-          tvReferenceText.setTextColor(Color.parseColor(fColor));
-          tvReference.setTextColor(Color.parseColor(fColor));
           tvManufacturerText.setTextColor(Color.parseColor(fColor));
           tvManufacturer.setTextColor(Color.parseColor(fColor));
           tvModelText.setTextColor(Color.parseColor(fColor));
@@ -826,7 +822,6 @@ public class ScanditSDK extends CordovaPlugin {
               location = location.concat(" (P"+rack+row+column+")");
             }
             tvLocation.setText(location);
-            tvReference.setText(fProduct.getJSONObject("product").getString("reference"));
             tvManufacturer.setText(fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name"));
             tvModel.setText(fProduct.getJSONObject("product").getJSONObject("model").getString("reference"));
             tvSize.setText(fProduct.getJSONObject("product").getJSONObject("size").getString("name"));
