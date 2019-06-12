@@ -97,6 +97,7 @@ public class MatrixSimpleActivity extends Activity {
     matrixScan.setBeepOnNewCode(true);
 
     mPicker.getOverlayView().setTorchEnabled(false);
+    mPicker.getOverlayView().setBeepEnabled(true);
     mPicker.getOverlayView().setViewfinderDimension(0.9f, 0.75f, 0.95f, 0.9f);
     mPicker.getOverlayView().setGuiStyle(ScanOverlay.GUI_STYLE_MATRIX_SCAN);
 

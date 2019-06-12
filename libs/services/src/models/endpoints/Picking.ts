@@ -25,7 +25,8 @@ export namespace PickingModel {
     typeGeneration?: number;
     status?: number;
     packingId?: number;
-    packingType?: string;
+    packingRef?: string;
+    packingType?: number;
     workwave?: WorkwaveModel.Workwave;
     workWavesOrderWarehouses?: WorkwaveOrderWarehouse[];
     typePicking?: TypeModel.Type;

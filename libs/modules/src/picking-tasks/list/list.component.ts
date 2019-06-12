@@ -66,7 +66,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           }
           let listProducts: ShoesPickingModel.ShoesPicking[] = res.data;
           this.removeFirstPicking = true;
-          this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts);
+          this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);
         }, (error) => {
           if (this.loading) {
             this.loading.dismiss();
