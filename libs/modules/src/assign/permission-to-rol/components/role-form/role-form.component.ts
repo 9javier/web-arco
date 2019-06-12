@@ -1,7 +1,7 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl,Validators } from '@angular/forms';
 import { RolesService, RolModel, PermissionsService, PermissionsModel } from '@suite/services';
-import { validators } from '@suite/common-modules';
+import { validators } from '../../../../utils/validators';
 
 @Component({
   selector: 'suite-role-form',

@@ -3,7 +3,7 @@ import { FormBuilder,FormGroup, Validators } from '@angular/forms';
 import { ModalController, NavParams } from '@ionic/angular';
 import { UtilsComponent } from '../../../components/utils/utils.component';
 import { WarehouseMapsService } from '@suite/services';
-import {validators} from "@suite/common-modules";
+import {validators} from "../../../utils/validators";
 import {HttpErrorResponse} from "@angular/common/http";
 
 @Component({

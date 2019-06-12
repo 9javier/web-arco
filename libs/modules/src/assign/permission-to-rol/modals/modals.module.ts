@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { UpdateComponent } from './update/update.component';
 import { ComponentsModule } from '../components/components.module';
 import { IonicModule } from '@ionic/angular';
-import { ComponentsModule as SuiteComponents } from '@suite/common-modules';
+import { ComponentsModule as SuiteComponents } from '../../../components/components.module';
 
 @NgModule({
   entryComponents:[UpdateComponent],
