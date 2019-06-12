@@ -14,17 +14,23 @@ import {
   HttpEvent,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, throwError, from } from 'rxjs';
-import { catchError,map, switchMap } from 'rxjs/operators';
+import { Observable, throwError, from, BehaviorSubject } from 'rxjs';
+import { catchError,map, switchMap,finalize,filter,take } from 'rxjs/operators';
+import { Oauth2Service } from '../endpoint/oauth2/oauth2.service';
+import { IntermediaryService } from '../endpoint/intermediary/intermediary.service';
 
 @Injectable()
 export class AddTokenToRequestInterceptor implements HttpInterceptor {
   constructor(
     private authenticationService: AuthenticationService,
+    private intermediaryService:IntermediaryService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private oauth2Service:Oauth2Service
   ) {}
 
+  isRefreshingToken: boolean = false;
+  tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   addTokenToRequest(request:HttpRequest<any>,next:HttpHandler):Observable<HttpEvent<any>>{
     return from(this.authenticationService.getCurrentToken()).pipe(switchMap(token=>{
@@ -36,13 +42,88 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
           setHeaders: {
               Authorization: `${token}`
           }
-        }):request);
+        }):request).
+        /**Catch http response error to detect if it is 401 or 403(authentication) */
+        pipe(catchError((err,caught)=>{
+          switch (err.status) {
+            case 403:
+              return this.handle401Error(request, next);
+            case 401:
+              if(!request.url.includes("/api/oauth2/"))
+                return this.handle401Error(request, next);
+              this.authenticationService.logout();
+              return new Observable(observer=>observer.error(err));
+            case 400:
+              if(request.url.includes('token')){
+                return new Observable(observer=>{
+                  observer.error();
+                }).pipe(map((error)=>{
+                  this.authenticationService.logout();
+                  return error;
+                }));
+              }
+          }
+          return new Observable(observer=>observer.error(err));
+        }));
       }else{
         return next.handle(request);
       }
-
     }));
   }
+
+
+
+  /**
+   * Handle the http 401 error(authentication) to request a new refresh token
+   * @param request 
+   * @param next 
+   */
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
+    /**the token is not current refreshing */
+    if(!this.isRefreshingToken) {
+      /**activate the flag: the token is refreshing */
+      this.isRefreshingToken = true;
+ 
+      // Reset here so that the following requests wait until the token
+      // comes back from the refreshToken call.
+      this.tokenSubject.next(null);
+      console.log("intentando refrescar");
+      /**first we obtain the refresh token */
+      return from(this.authenticationService.getCurrentRefreshToken())
+      /**then with that token call the refresh token endpoint */
+      .pipe(switchMap(token=>{
+        return this.oauth2Service.refreshToken(token)
+        /**save the new token  in storage*/
+        .pipe(switchMap(response=>{
+          console.log(response);
+          return from(this.authenticationService.login(response.data.access_token, response.data.user.id,response.data.refresh_token));
+        }))
+      })).pipe(
+          switchMap((user) => {
+            this.tokenSubject.next("ok");
+            return this.addTokenToRequest(request, next);
+          }),
+          catchError(err => {
+            this.isRefreshingToken = false;
+            this.intermediaryService.presentConfirm("Su sesión ha expirado",()=>{});
+            this.authenticationService.logout();
+            return new Observable(observer=>observer.error(err));
+          }),
+          finalize(() => {
+            this.isRefreshingToken = false;
+          })
+        );
+    } else {
+      /**if the token is refreshing add the new request to subject */
+       return this.tokenSubject
+        .pipe(filter(token => token !== null),
+          take(1),
+          switchMap(token => {
+          return this.addTokenToRequest(request, next);
+        }));
+    }
+  }
+
 
   intercept(
     request: HttpRequest<any>,
