@@ -31,11 +31,12 @@ export class AuthenticationService {
     });
   }
 
-  login(accessToken: string, userId?: number) {
+  async login(accessToken: string, userId?: number, refreshToken?:string) {
     if (userId) {
-      this.storage.set(USER_ID_KEY, userId);
+      await this.storage.set(USER_ID_KEY, userId);
     }
-
+    if(refreshToken)
+      await this.storage.set("refreshToken",refreshToken);
     return this.storage.set(TOKEN_KEY, `Bearer ${accessToken}`).then(() => {
       this.authenticationState.next(true);
     });
@@ -60,6 +61,16 @@ export class AuthenticationService {
       if (res) {
         return res;
       }
+    });
+  }
+
+  /**
+   * @returns the stored refresh token
+   */
+  getCurrentRefreshToken():Promise<string>{
+    return this.storage.get("refreshToken").then(res=>{
+      if(res)
+        return res;
     });
   }
 

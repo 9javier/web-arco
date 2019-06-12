@@ -109,13 +109,13 @@
                 <!--Tiene tienda-->
                 <ion-item class="inner-item">
                     <ion-label>
-                        tiene tienda
+                      Empleado de tienda
                     </ion-label>
                     <ion-checkbox formControlName="has_warehouse"></ion-checkbox>
                 </ion-item>
                 <!--Tienda-->
                 <ion-item *ngIf="createForm.value.has_warehouse" class="inner-item">
-                    <ion-select placeholder="tienda" formControlName="warehouse">
+                    <ion-select placeholder="Tienda" formControlName="warehouse">
                         <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse.id}}">{{warehouse.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
