@@ -203,23 +203,26 @@ export class MenuComponent implements OnInit {
    * Select the links that be shown depends of dictionary paramethers
    */
   filterPages(dictionary){
-    console.log(dictionary);
-    console.log(app)
-    setTimeout(()=>console.log(app),5000);
+    dictionary = JSON.parse(JSON.stringify(dictionary));
+    console.log("diccionario",app,dictionary);
     if(!app || !app.name)
       return false;
     /**obtain the routes for the current application */
     let auxPages = this.menuPages[this.app.name];
+    console.log(auxPages)
     this.menuPagesFiltered = [];
+    if(!auxPages)
+      return false;
     /**iterate over all pages of the application */
-    auxPages.forEach(page=>{
+    auxPages.forEach((page:any)=>{
       /**to save the childrens of the actual page */
       let auxChildren = [];
       /**if the page is a wrapper then iterate over his childrens to get the alloweds */
       if(page.type == "wrapper"){
         page.children.forEach(children => {
+          console.log(dictionary[children.id],children.id)
           /**if the childen is allowed then add if */
-          if(dictionary[children.title])
+          if(dictionary[children.id])
             auxChildren.push(children)
         });
         /**if the page is a wrapper and have childrens then add it */
@@ -230,11 +233,13 @@ export class MenuComponent implements OnInit {
           this.menuPagesFiltered.push(auxPage);
       /**if not is a wrapper then is a normal category the check if plus easy */
       }else{
-        if(dictionary[page.title])
+        console.log(dictionary[page.id],page.id)
+        if(dictionary[page.id])
           this.menuPagesFiltered.push(page);
       }
     });
-   this.currentRoute = this.menuPagesFiltered[0].children[0].title;
+  
+   //this.currentRoute = this.menuPagesFiltered[0].children[0].title;
   }
 
   tapOption(p) {

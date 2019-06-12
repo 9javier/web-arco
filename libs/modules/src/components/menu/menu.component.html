@@ -1,4 +1,3 @@
-asdfasdfasfdasdfasfd {{ menuPagesFiltered.length }}
 <div *ngFor="let p of menuPagesFiltered">
     <ion-menu-toggle *ngIf="p.url" auto-hide="false">
         <ion-list no-padding lines="none">
@@ -10,7 +9,6 @@ asdfasdfasfdasdfasfd {{ menuPagesFiltered.length }}
             </ion-item>
         </ion-list>
     </ion-menu-toggle>
-
     <!-- Item with Children -->
     <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none">
         <ion-icon [slot]="iconsDirection" name="arrow-forward" *ngIf="!p.open"></ion-icon>
