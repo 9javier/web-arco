@@ -28,6 +28,7 @@ import {
   ACCESS_TOKEN,
   AppInfo
 } from '../../../../../../config/base';
+import { environment } from '../../../environments/environment';;
 
 export const HEADERS_LOGIN: any[] = HEADERS('OAuth2', 'Login');
 export const AUTH_LOGIN: Auth1 = AUTH('OAuth2', 'Login');
@@ -41,7 +42,31 @@ export const ACCESS_TOKEN_LOGOUT = ACCESS_TOKEN;
   providedIn: 'root'
 })
 export class Oauth2Service {
+  
+  /**Urls for the oauth2 service */
+  private refreshTokenUrl:string = environment.apiBase+"/oauth2/access_token";
+
+ 
+  
   constructor(private http: HttpClient) {}
+
+
+  /**
+   * Refresh the current access token with the refresh token
+   * @param token - the refresh token
+   */
+  refreshToken(refreshToken:string):Observable<any>{
+    let headers:HttpHeaders = new HttpHeaders({
+      'Content-Type':	'application/x-www-form-urlencoded',
+      'Authorization': 'Basic '+btoa(environment.client_id+":"+environment.client_secret) 
+    });
+    /**properly format the params of the request */
+    const body = new HttpParams()
+    .set('refresh_token', refreshToken)
+    .set('grant_type', 'refresh_token');
+
+    return this.http.post(this.refreshTokenUrl,body,{headers});
+  }
 
   post_login(
     user: RequestLogin,

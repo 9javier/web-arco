@@ -49,12 +49,12 @@ import { BreadcrumbModule} from '@suite/common-modules';
       provide: HTTP_INTERCEPTORS,
       useClass: AddTokenToRequestInterceptor,
       multi: true
-    },
-    {
+    }
+   /* {
       provide: HTTP_INTERCEPTORS,
       useClass: HttpInterceptorService,
       multi: true
-    }
+    }*/
   ],
   bootstrap: [AppComponent]
 })
