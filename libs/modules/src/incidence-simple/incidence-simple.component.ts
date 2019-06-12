@@ -13,7 +13,7 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
 })
 export class IncidenceSimpleComponent implements OnInit {
 
-  @Input() incidenceIndex: number;
+  @Input() incidence: IncidenceModel.Incidence;
 
   constructor(
     public incidencesService: IncidencesService,
@@ -26,8 +26,8 @@ export class IncidenceSimpleComponent implements OnInit {
   }
 
   attendIncidence() {
-    let incidenceAttended: boolean = !this.incidencesService.incidencesList[this.incidenceIndex].attended;
-    let incidenceId: number = this.incidencesService.incidencesList[this.incidenceIndex].id;
+    let incidenceAttended: boolean = !this.incidence.attended;
+    let incidenceId: number = this.incidence.id;
     this.incidencesService
       .putUpdate(incidenceId, incidenceAttended)
       .then((data: Observable<HttpResponse<IncidenceModel.ResponseUpdate>>) => {
