@@ -11,6 +11,6 @@ export const environment = {
   }
 };
 /**this is a dirty method need be change for replace or environments in build time */
-export let app:{name:string} = {
+export let app:{name:"sga"|"al"} = {
   name:'sga'
 };
