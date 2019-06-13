@@ -78,7 +78,7 @@ export class WarehouseService {
       .then((data: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<WarehouseModel.ResponseIndex>) => {
           this.warehousesWithRacks = res.body.data.filter((warehouse) => {
-            return warehouse.has_racks;
+            return warehouse.is_store;
           });
         });
       });
