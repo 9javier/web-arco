@@ -81,3 +81,6 @@ export * from './lib/endpoint/intermediary/intermediary.service';
 
 /**Labels */
 export * from './lib/endpoint/labels/labels.service';
+
+/**environments */
+export * from './environments/environment';

@@ -21,7 +21,7 @@ import { ErrordialogComponent } from './interceptor/errordialog-component/errord
 import {IncidencesButtonModule, ScannerConfigurationModule} from "@suite/common-modules";
 import {IncidencesListModule} from "../../../../libs/modules/src/incidences-list/incidences-list.module";
 import { AddTokenToRequestInterceptor } from '@suite/services';
-import { BreadcrumbModule} from '@suite/common-modules';
+import { BreadcrumbModule,MenuModule} from '@suite/common-modules';
 
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
@@ -39,7 +39,8 @@ import { BreadcrumbModule} from '@suite/common-modules';
     ScannerConfigurationModule,
     IncidencesButtonModule,
     IncidencesListModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    MenuModule
   ],
   providers: [
     StatusBar,

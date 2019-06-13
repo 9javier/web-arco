@@ -32,7 +32,7 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
-            <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="number" number></ion-input>
+            <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
         </ion-item>
         <!--Es tienda-->
         <ion-item>

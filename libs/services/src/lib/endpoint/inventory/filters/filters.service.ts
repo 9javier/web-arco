@@ -6,7 +6,7 @@ import {from, Observable} from 'rxjs';
 /**Hay que importar las rutas de esta manera para que no hayan dependencias circulares*/
 import { FiltersModel } from '../../../../models/endpoints/filters';
 import {map, switchMap} from 'rxjs/operators';
-import {AuthenticationService} from "@suite/services";
+import {AuthenticationService} from "../../authentication/authentication.service";
 
 @Injectable({
   providedIn: 'root'

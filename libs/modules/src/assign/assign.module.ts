@@ -9,7 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { AssignRoutingModule } from './assign-routing.module';
 import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.component';
-import { BreadcrumbModule } from '@suite/common-modules';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from './permission-to-rol/modals/modals.module';
 
 

@@ -114,3 +114,7 @@ export * from './labels/labels.component';
 /**Settings */
 export * from './settings/settings.component';
 export * from './settings/settings.module';
+
+/**Menu */
+export * from './components/menu/menu.component';
+export * from './components/menu/menu.module';

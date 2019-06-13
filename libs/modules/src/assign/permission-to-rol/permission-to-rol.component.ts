@@ -1,12 +1,10 @@
 import { Component, OnInit, Injectable } from '@angular/core';
-import {
-  PermissionsService,
-  RolesService,
-  RolModel,
-  PermissionsModel,
-  AclService,
-  ACLModel
-} from '@suite/services';
+import { PermissionsService } from '../../../../services/src/lib/endpoint/permissions/permissions.service';
+import { RolesService } from '../../../../services/src/lib/endpoint/roles/roles.service';
+import { RolModel } from '../../../../services/src/models/endpoints/Rol';
+import { PermissionsModel } from '../../../../services/src/models/endpoints/Permissions';
+import { AclService } from '../../../../services/src/lib/endpoint/acl/acl.service';
+import { ACLModel } from '../../../../services/src/models/endpoints/ACL';
 import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { ToastController, ModalController } from '@ionic/angular';
@@ -17,7 +15,7 @@ import { UpdateComponent } from "../../roles/update/update.component";
 import { UpdateComponent as UpdateRolComponent} from './modals/update/update.component';
 import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
-import { IntermediaryService } from '@suite/services';
+import { IntermediaryService } from '../../../../services/src/lib/endpoint/intermediary/intermediary.service';
 
 interface ShowRolPermissions extends PermissionsModel.Permission {
   selected?: boolean;

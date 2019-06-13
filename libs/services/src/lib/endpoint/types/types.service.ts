@@ -3,26 +3,25 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from '@angular
 
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
-import {PATH} from "../../../../../../config/base";
 import {TypeModel} from "../../../models/endpoints/Type";
 import { map,switchMap} from 'rxjs/operators';
 import { from } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export const PATH_GET_INDEX_ACTIONS: string = PATH('Types', 'Actions');
+export const PATH_GET_INDEX_ACTIONS: string = environment.apiBase+"/types/execution";
 //export const PATH_GET_INDEX_ACTIVITIES: string = PATH('Types', 'Activities');
-export const PATH_GET_INDEX_EXECUTION: string = PATH('Types', 'Execution');
-export const PATH_GET_INDEX_GENERATION: string = PATH('Types', 'Generation');
-export const PATH_GET_INDEX_INCIDENCES: string = PATH('Types', 'Incidences');
-export const PATH_GET_INDEX_PACKING: string = PATH('Types', 'Packing');
-export const PATH_GET_INDEX_PICKING: string = PATH('Types', 'Picking');
-export const PATH_GET_INDEX_PREPARATION_LINES: string = PATH('Types', 'Preparation Lines');
-export const PATH_GET_INDEX_PRODUCT: string = PATH('Types', 'Product');
-export const PATH_GET_INDEX_SELECTION_CRITERIA: string = PATH('Types', 'Selection criteria');
-export const PATH_GET_INDEX_PROCESS: string = PATH('Types', 'Process');
-export const PATH_GET_INDEX_SHIPPING_ORDER: string = PATH('Types', 'Shipping order');
-export const PATH_GET_INDEX_STATUS_PRODUCT: string = PATH('Types', 'Status Product');
-export const PATH_GET_INDEX_STORE: string = PATH('Types', 'Store');
+export const PATH_GET_INDEX_EXECUTION: string = environment.apiBase+"/types/execution";
+export const PATH_GET_INDEX_GENERATION: string = environment.apiBase+"/types/generation";
+export const PATH_GET_INDEX_INCIDENCES: string = environment.apiBase+"/types/incidences";
+export const PATH_GET_INDEX_PACKING: string = environment.apiBase+"/types/packing";
+export const PATH_GET_INDEX_PICKING: string = environment.apiBase+"/types/picking";
+export const PATH_GET_INDEX_PREPARATION_LINES: string = environment.apiBase+"/types/preparation-lines";
+export const PATH_GET_INDEX_PRODUCT: string = environment.apiBase+"/types/product";
+export const PATH_GET_INDEX_SELECTION_CRITERIA: string = environment.apiBase+"/types/selection-criteria";
+export const PATH_GET_INDEX_PROCESS: string = environment.apiBase+"/types/process";
+export const PATH_GET_INDEX_SHIPPING_ORDER: string = environment.apiBase+"/types/shipping-order";
+export const PATH_GET_INDEX_STATUS_PRODUCT: string = environment.apiBase+"/types/status-product";
+export const PATH_GET_INDEX_STORE: string = environment.apiBase+"/types/process";
 
 
 @Injectable({

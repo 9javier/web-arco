@@ -23,7 +23,7 @@ export class IncidencesButtonComponent implements OnInit {
     // Reload incidences each 15 seconds
     setInterval(() => {
       this.incidencesService.init();
-    }, 15 * 1000);
+    }, 30 * 1000);
   }
 
   async showIncidences(ev: any) {

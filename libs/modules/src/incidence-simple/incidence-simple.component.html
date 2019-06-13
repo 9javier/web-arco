@@ -1,9 +1,9 @@
-<ion-item *ngIf="incidencesService.incidencesList[incidenceIndex]">
+<ion-item>
   <ion-button slot="start" shape="round" fill="clear" (click)="attendIncidence()">
-    <span class="btn-attend" [ngClass]="incidencesService.incidencesList[incidenceIndex].attended ? 'attended' : 'not-attended'"></span>
+    <span class="btn-attend" [ngClass]="incidence.attended ? 'attended' : 'not-attended'"></span>
   </ion-button>
   <ion-label>
-    <h2>{{incidencesService.incidencesList[incidenceIndex].description}}</h2>
-    <p>{{showDateTime(incidencesService.incidencesList[incidenceIndex].createdAt)}}</p>
+    <h2>{{incidence.description}}</h2>
+    <p>{{showDateTime(incidence.createdAt)}}</p>
   </ion-label>
 </ion-item>

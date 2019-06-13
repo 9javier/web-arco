@@ -8,9 +8,9 @@ import { RolesRoutingModule } from './roles-routing.module';
 import { RolesComponent } from './roles.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
-import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { CommonUiCrudModule } from '../../../common/ui/crud/src/lib/common-ui-crud.module';
 import {AssignModule} from "../assign/assign.module";
-import { BreadcrumbModule} from '@suite/common-modules';
+import { BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
 
 @NgModule({
   declarations: [RolesComponent, StoreComponent, UpdateComponent],

@@ -12,6 +12,7 @@ import {WarehouseService} from "../../../../libs/services/src/lib/endpoint/wareh
 import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.service";
 import {environment} from "../environments/environment";
 import {Observable} from "rxjs";
+import {app} from "@suite/services";
 
 interface MenuItem {
   title: string;
@@ -62,7 +63,7 @@ export class AppComponent implements OnInit {
     },
     {
       title: 'Cerrar sesión',
-      url: '/home',
+      url: 'logout',
       icon: 'log-out'
     },
   ];
@@ -146,11 +147,13 @@ export class AppComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    app.name = "al";
+  }
 
   tapOption(p: MenuItem) {
     this.currentRoute = p.title;
-    if (p.title === 'Logout') {
+    if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
         this.loginService
           .get_logout(accessToken)

@@ -12,6 +12,7 @@ import { ScannerConfigurationService } from "../../../../libs/services/src/lib/s
 import {Observable} from "rxjs";
 import {TypesService} from "../../../../libs/services/src/lib/endpoint/types/types.service";
 import {TypeModel} from "../../../../libs/services/src/models/endpoints/Type";
+import {app} from '@suite/services'
 
 interface MenuItem {
   title: string;
@@ -120,7 +121,8 @@ export class AppComponent implements OnInit {
       ]
     },
     {
-      title: 'Logout',
+      title: 'Cerrar sesión',
+      url: 'logout',
       icon: 'log-out'
     }
   ];
@@ -132,6 +134,31 @@ export class AppComponent implements OnInit {
   iconsDirection = 'start';
   currentRoute: string = this.appPages[0].children[0].title;
   deploySidebarSmallDevices = false;
+
+
+
+  dictionary = {
+    'products':true,
+    'labels':true,
+    'warehouses-management':true,
+    'workwaves-scheduled':true,
+    'workwaves-templates':true,
+    'workwaves-history':true,
+    'user-management':true,
+    'operator-parametrization':true,
+    'roles':true,
+    'warehouses':true,
+    'warehouses-group':true,
+    'group-to-warehouse':true,
+    'jails':true,
+    'pallets':true,
+    'logout':true,
+    'positionning':true,
+    'picking-task':true,
+    'settings':true,
+  }
+
+
   /**timeout to prevent avoid login page */
   private loginTimeout;
 
@@ -231,6 +258,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    app.name = "sga";
     this.initializeApp();
   }
 

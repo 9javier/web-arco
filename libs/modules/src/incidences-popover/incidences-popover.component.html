@@ -1,10 +1,10 @@
 <ion-content>
     <ion-list lines="none">
-        <incidence-simple *ngFor="let indexIncidence of incidencesService.arrayIncidencesToShow()" [incidenceIndex]="indexIncidence"></incidence-simple>
+        <incidence-simple *ngFor="let incidence of incidencesService.incidencesPreviewList" [incidence]="incidence"></incidence-simple>
 
-        <ion-item *ngIf="incidencesService.incidencesQuantity > incidencesService.quantityIncidencesToShow" class="see-more" (click)="seeMoreIncidences()">
+        <ion-item class="see-more" (click)="seeMoreIncidences()">
             <ion-label>
-                Ver más
+                Ver todas
             </ion-label>
         </ion-item>
     </ion-list>
