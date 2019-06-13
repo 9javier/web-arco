@@ -1,0 +1,31 @@
+/**
+ * Manifest patching method took from cordova-plugin-multidex
+ * @see https://github.com/podtrackers/cordova-multidex/blob/master/updateMultidexManifest.js
+ */
+module.exports = function (ctx) {
+  var fs = require('fs'),
+    path = require('path'),
+    xml = ctx.requireCordovaModule('cordova-common').xmlHelpers;
+
+  //manifest path of cordova-android@7+ projects
+  var manifestPath = path.join(ctx.opts.projectRoot, '/platforms/android/app/src/main/AndroidManifest.xml');
+
+  if (!fs.existsSync(manifestPath)) {
+    //fall back to legacy manifest path
+    manifestPath = path.join(ctx.opts.projectRoot, '/platforms/android/AndroidManifest.xml');
+  }
+
+  var doc = xml.parseElementtreeSync(manifestPath);
+  if (doc.getroot().tag !== 'manifest') {
+    throw new Error(manifestPath + ' has incorrect root node name (expected "manifest")');
+  }
+
+  //adds the tools namespace to the root node
+  // doc.getroot().attrib['xmlns:tools'] = 'http://schemas.android.com/tools';
+  //add tools:replace in the application node
+  // NOTE intentionally set Selligent `Aplication` subclass instead of `android.support.multidex.MultiDexApplication`
+  doc.getroot().find('./application').attrib['android:debuggable'] = 'true';
+
+  //write the manifest file
+  fs.writeFileSync(manifestPath, doc.write({indent: 4}), 'utf-8');
+};
