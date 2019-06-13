@@ -10,6 +10,7 @@ copy /Y resources.dev\android\icon\drawable-xxhdpi-icon.png resources\android\ic
 copy /Y resources.dev\android\icon\drawable-xxxhdpi-icon.png resources\android\icon\drawable-xxxhdpi-icon.png
 copy /Y resources.dev\icon.png resources\icon.png
 copy /Y libs\services\src\environments\environment.staging.ts libs\services\src\environments\environment.ts
+del "platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk"
 call ionic cordova build android --release --project al
 copy /Y config.xml config.staging.xml
 copy /Y resources\android\icon\drawable-hdpi-icon.png resources.dev\android\icon\drawable-hdpi-icon.png

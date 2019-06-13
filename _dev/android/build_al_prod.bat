@@ -3,6 +3,7 @@ call ionic cordova plugin remove com.mirasense.scanditsdk.plugin
 call ionic cordova plugin add scandit\
 copy /Y config.prod.xml config.xml
 copy /Y libs\services\src\environments\environment.prod.ts libs\services\src\environments\environment.ts
+del "platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk"
 call ionic cordova build android --release --project al
 copy /Y config.xml config.prod.xml
 copy /Y libs\services\src\environments\environment.ts libs\services\src\environments\environment.prod.ts
