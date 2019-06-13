@@ -18,7 +18,7 @@ export class IncidencesPopoverComponent implements OnInit {
 
   }
 
-  private seeMoreIncidences() {
+  seeMoreIncidences() {
     this.popoverCtrl.dismiss({showMore: true});
   }
 
