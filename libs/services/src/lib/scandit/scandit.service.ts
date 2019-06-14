@@ -235,28 +235,39 @@ export class ScanditService {
           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_process_finished, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else {
-          this.postVerifyPacking({
-            status: 3,
-            pickingId: pickingId,
-            packingReference: jailReference
-          })
-            .subscribe((res) => {
-              ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-              this.hideTextMessage(1500);
-              ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
-              setTimeout(() => {
-                ScanditMatrixSimple.finish();
-                this.events.publish('picking:remove');
-              }, 1.5 * 1000);
-            }, (error) => {
-              if (error.error.code == 404) {
-                ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                this.hideTextMessage(2000);
-              } else {
-                ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                this.hideTextMessage(2000);
-              }
-            });
+          // lock scanner in order to avoid double jail or pallet reading, requesting the server twice and thus sending two dispatchnote to Avelon
+          this.scannerPaused = true;
+          const scanUnlockTimeout = setTimeout(() => { this.scannerPaused = false; }, 10 * 1000);
+          try {
+            this.postVerifyPacking({
+              status: 3,
+              pickingId: pickingId,
+              packingReference: jailReference
+            })
+              .subscribe((res) => {
+                ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+                this.hideTextMessage(1500);
+                ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
+                setTimeout(() => {
+                  ScanditMatrixSimple.finish();
+                  this.events.publish('picking:remove');
+                }, 1.5 * 1000);
+              }, (error) => {
+                this.scannerPaused = false;
+                clearTimeout(scanUnlockTimeout);
+                if (error.error.code == 404) {
+                  ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                } else {
+                  ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                }
+              });
+          } catch (e) {
+            this.scannerPaused = false;
+            clearTimeout(scanUnlockTimeout);
+            throw e;
+          }
         }
       } else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {
         if (!processInitiated) {
