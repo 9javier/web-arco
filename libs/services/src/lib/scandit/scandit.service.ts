@@ -56,6 +56,21 @@ export class ScanditService {
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
+        let code = response.barcode.data;
+        if (code === "P0001") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPausedByWarning]);
+          this.scannerPausedByWarning = false;
+          return;
+        }
+        if (code === "P0002") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#2", "clearing scanned codes buffer!", [this.scannerPausedByWarning]);
+          positionsScanning = [];
+          return;
+        }
+      }
+      if (response && response.barcode) {
         this.positioningLog(2, "1", "scan!", [response && response.barcode && response.barcode.data]);
         if (this.scannerPausedByWarning) {
           this.positioningLog(3, "1.1", "paused!");
@@ -64,14 +79,6 @@ export class ScanditService {
         }
       } else {
         this.positioningLog(3, "2", "empty scan!");
-      }
-      if (response && response.barcode) {
-        let code = response.barcode.data;
-        if (code.match(/P[0-9]{3}$/)) {
-          // temporary trick to release potential scanner service logic deadlock
-          this.positioningLog(2, "#", "releasing pause flag!", [this.scannerPausedByWarning]);
-          this.scannerPausedByWarning = false;
-        }
       }
       if (response && response.barcode && (!this.scannerPausedByWarning || response.action == 'force_scanning')) {
         //Check Container or product
@@ -213,16 +220,26 @@ export class ScanditService {
     };
 
     ScanditMatrixSimple.init((response) => {
+      if (response && response.barcode) {
+        let code = response.barcode.data;
+        if (code === "P0001") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPausedByWarning]);
+          this.scannerPausedByWarning = false;
+          return;
+        }
+        if (code === "P0002") {
+          // temporary trick to release potential scanner service logic deadlock
+          this.positioningLog(2, "#2", "forgetting last code scanned!", [this.scannerPausedByWarning]);
+          lastCodeScanned = "start";
+          return;
+        }
+      }
       this.pickingLog(2, "1", "ScanditMatrixSimple.init((response) => {");
       let code = '';
       if (response.barcode) {
         this.pickingLog(2, "2", "if (response.barcode) {");
         code = response.barcode.data;
-      }
-      if (code.match(/P[0-9]{3}$/)) {
-        // temporary trick to release potential scanner service logic deadlock
-        this.pickingLog(2, "#", "releasing pause flag!", [this.scannerPausedByWarning]);
-        this.scannerPausedByWarning = false;
       }
       //Check Jail/Pallet or product
       if (!this.scannerPausedByWarning && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
