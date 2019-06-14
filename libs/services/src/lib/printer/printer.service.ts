@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {ToastController} from "@ionic/angular";
-import {PrintModel} from "../../models/endpoints/Print";
-import {SettingsService} from "../storage/settings/settings.service";
-import {AppSettingsModel} from "../../models/storage/AppSettings";
+import { Injectable } from '@angular/core';
+import { ToastController } from "@ionic/angular";
+import { PrintModel } from "../../models/endpoints/Print";
+import { SettingsService } from "../storage/settings/settings.service";
+import { AppSettingsModel } from "../../models/storage/AppSettings";
 
 declare let cordova: any;
 
@@ -90,6 +90,10 @@ export class PrinterService {
 
   }
 
+  printTagPrices(listReferences: string[]) {
+
+  }
+
   printTagPrice(product: PrintModel.ProductSizeRange) {
 
   }
@@ -100,17 +104,17 @@ export class PrinterService {
         let textToPrint = this.getTextToPrinter(printOptions);
         cordova.plugins.zbtprinter.print(this.address, textToPrint,
           (success) => {
-            console.debug("Zbtprinter print success: " + success, {text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint});
+            console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
           }, (fail) => {
-            console.debug("Zbtprinter print fail:" + fail, {text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint});
+            console.debug("Zbtprinter print fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
             this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
           }
         );
       } else {
-        console.debug("Zbtprinter not cordova, failed to print " + (printOptions.text || printOptions.product.productShoeUnit.reference)+ " to " + this.address);
+        console.debug("Zbtprinter not cordova, failed to print " + (printOptions.text || printOptions.product.productShoeUnit.reference) + " to " + this.address);
       }
     } else {
-      console.debug('Zbtprinter: Not connected, failed to print ' + (printOptions.text || printOptions.product.productShoeUnit.reference)+ " to " + this.address);
+      console.debug('Zbtprinter: Not connected, failed to print ' + (printOptions.text || printOptions.product.productShoeUnit.reference) + " to " + this.address);
     }
   }
 
@@ -166,25 +170,25 @@ export class PrinterService {
           + "^FS^XZ";
         break;
       case 2: // Tag with product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'Iniciales'+"^FS^ADN^FO10,95^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AVN^FO0,55^FB320,1,0,C,0^FD"+'saleprice1'+" €^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,130^FD"+'item'+"^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^AAN^FO0,190^FB315,1,0,L,0^FD"+'brand'+"^FS^AAN^FO0,190^FB315,1,0,C,0^FD"+'style'+"^FS^AAN^FO0,190^FB315,1,0,R,0^FD"+'detcol'+"^FS^ADN^FO0,125^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,145^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'Iniciales' + "^FS^ADN^FO10,95^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AVN^FO0,55^FB320,1,0,C,0^FD" + 'saleprice1' + " €^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,130^FD" + 'item' + "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^AAN^FO0,190^FB315,1,0,L,0^FD" + 'brand' + "^FS^AAN^FO0,190^FB315,1,0,C,0^FD" + 'style' + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD" + 'detcol' + "^FS^ADN^FO0,125^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,145^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
       case 3: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'iniciales'+"^FS^ADN^FO10,130^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AEN^FO10,30^FB310,1,0,L,0^FD"+'saleprice1'+"€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD"+'saleprice2'+" €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"+'item'+"^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^ADN^FO0,155^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,175^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice2' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
       case 4: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'iniciales'+"^FS^ADN^FO10,130^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AEN^FO10,30^FB310,1,0,L,0^FD"+'saleprice1'+"€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD"+'saleprice3'+" €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"+'item'+"^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^ADN^FO0,155^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,175^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice3' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
       case 5: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'iniciales'+"^FS^ADN^FO10,130^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AEN^FO10,30^FB310,1,0,L,0^FD"+'saleprice1'+"€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD"+'saleprice4'+" €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"+'item'+"^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^ADN^FO0,155^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,175^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice4' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
       case 6: // Tag with original product pvp and product pvp for outlet
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'iniciales'+"^FS^ADN^FO0,120^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:"+'saleprice1'+"€^FS^AUN^FO0,80^FB335,1,0,R,0^FD"+'saleprice4'+" €^FS^ARN^FO0,80^FB340,1,0,L,0^FDPVP Outlet:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"+'item'+"^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^ADN^FO0,155^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,175^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO0,120^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AUN^FO0,80^FB335,1,0,R,0^FD" + 'saleprice4' + " €^FS^ARN^FO0,80^FB340,1,0,L,0^FDPVP Outlet:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
       case 7: // Tag with original product pvp, product pvp for outlet and last product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'iniciales'+"^FS^ADN^FO10,130^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:"+'saleprice1'+"€^FS^AFN^FO0,60^FB310,1,0,L,0^FDPVP Outlet:"+'saleprice4'+"€^FS^ATN^FO0,100^FB335,1,0,R,0^FD"+'saleprice5'+" €^FS^ARN^FO0,100^FB340,1,0,L,0^FDÚltimo precio:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"+'item'+"^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^ADN^FO0,155^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,175^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AFN^FO0,60^FB310,1,0,L,0^FDPVP Outlet:" + 'saleprice4' + "€^FS^ATN^FO0,100^FB335,1,0,R,0^FD" + 'saleprice5' + " €^FS^ARN^FO0,100^FB340,1,0,L,0^FDÚltimo precio:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
       case 8: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD"+'iniciales'+"^FS^ADN^FO10,130^FB320,1,0,L,0^FD"+'TagSzRng'+"^FS^AEN^FO10,30^FB310,1,0,L,0^FD"+'saleprice1'+"€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD"+'saleprice5'+" €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"+'item'+"^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"+'barcode'+"^FS^ADN^FO0,155^FB330,1,0,R,0^FD"+'siglas'+"^FS^ADN^FO0,175^FB330,1,0,R,0^FD"+'porcent'+"^FS^XZ";
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice5' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
     }
 
