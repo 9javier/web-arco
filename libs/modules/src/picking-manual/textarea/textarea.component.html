@@ -1,0 +1,41 @@
+<div class="content-ta">
+  <p class="next-product-picking" *ngIf="nexProduct">
+    <ion-row>
+      <span class="col-text">
+        Ubicación:
+      </span>
+      <span>
+        <b>{{nexProduct.inventory.container.reference}} ({{oldReference(nexProduct.inventory)}})</b>
+      </span>
+    </ion-row>
+    <ion-row>
+      <span class="col-text">
+        Modelo:
+      </span>
+      <span>
+        <b>{{nexProduct.product.model.reference}}</b>
+      </span>
+    </ion-row>
+    <ion-row>
+      <span class="col-text">
+        Color:
+      </span>
+      <span>
+        <b>{{nexProduct.product.model.color.name}}</b>
+      </span>
+    </ion-row>
+    <ion-row>
+      <span class="col-text">
+        Talla:
+      </span>
+      <span>
+        <b>{{nexProduct.product.size.name}}</b>
+      </span>
+      <span class="col-btn">
+        <ion-button fill="clear" (click)="productNotFound()">¡No lo encuentro!</ion-button>
+      </span>
+    </ion-row>
+  </p>
+  <p class="scan-jail-picking" *ngIf="scanJail">{{scanJail}}</p>
+  <input id="input-ta" class="ta-picking" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)" [(ngModel)]="inputPicking">
+</div>

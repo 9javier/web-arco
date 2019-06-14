@@ -73,6 +73,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/positioning-manual/positioning-manual.module#PositioningManualModule'
   },
+  {
+    path: 'picking/manual',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-manual/picking-manual.module#PickingManualModule'
+  },
 ];
 
 @NgModule({

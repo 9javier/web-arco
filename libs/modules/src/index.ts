@@ -122,3 +122,7 @@ export * from './components/menu/menu.module';
 /**Manual Positioning */
 export * from './positioning-manual/positioning-manual.component';
 export * from './positioning-manual/positioning-manual.module';
+
+/**Manual Picking */
+export * from './picking-manual/picking-manual.component';
+export * from './picking-manual/picking-manual.module';
