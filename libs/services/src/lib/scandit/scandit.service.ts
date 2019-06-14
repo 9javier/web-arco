@@ -28,7 +28,7 @@ const HEADER_COLOR: string = '#FFFFFF';
 export class ScanditService {
 
   private timeoutHideText;
-  private scannerPausedByWarning: boolean = false;
+  private scannerPaused: boolean = false;
 
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
@@ -59,20 +59,20 @@ export class ScanditService {
         let code = response.barcode.data;
         if (code === "P0001") {
           // temporary trick to release potential scanner service logic deadlock
-          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPausedByWarning]);
-          this.scannerPausedByWarning = false;
+          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPaused]);
+          this.scannerPaused = false;
           return;
         }
         if (code === "P0002") {
           // temporary trick to release potential scanner service logic deadlock
-          this.positioningLog(2, "#2", "clearing scanned codes buffer!", [this.scannerPausedByWarning]);
+          this.positioningLog(2, "#2", "clearing scanned codes buffer!", [this.scannerPaused]);
           positionsScanning = [];
           return;
         }
       }
       if (response && response.barcode) {
         this.positioningLog(2, "1", "scan!", [response && response.barcode && response.barcode.data]);
-        if (this.scannerPausedByWarning) {
+        if (this.scannerPaused) {
           this.positioningLog(3, "1.1", "paused!");
         } else if (response.action != 'force_scanning') {
           this.positioningLog(3, "1.2", "action empty");
@@ -80,7 +80,7 @@ export class ScanditService {
       } else {
         this.positioningLog(3, "2", "empty scan!");
       }
-      if (response && response.barcode && (!this.scannerPausedByWarning || response.action == 'force_scanning')) {
+      if (response && response.barcode && (!this.scannerPaused || response.action == 'force_scanning')) {
         //Check Container or product
         let code = response.barcode.data;
         if (code.match(/P([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
@@ -105,7 +105,7 @@ export class ScanditService {
             this.positioningLog(2, "1.4.2", "yes container!");
             if (response.action == 'force_scanning') {
               this.positioningLog(2, "1.4.2.1", "action force, disable pause!");
-              this.scannerPausedByWarning = false;
+              this.scannerPaused = false;
               if (response.force) {
                 this.positioningLog(2, "1.4.2.1.1", "sending save response to server with force!");
                 this.storeProductInContainer({
@@ -152,7 +152,7 @@ export class ScanditService {
             this.hideTextMessage(2000);
           } else if (res.body.code == 428) {
             this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
-            this.scannerPausedByWarning = true;
+            this.scannerPaused = true;
             ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
           } else {
             this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
@@ -168,7 +168,7 @@ export class ScanditService {
         }, (error) => {
           if (error.error.code == 428) {
             this.positioningLog(3, "1.4.2.2.2.4", "error 428, stop pause!");
-            this.scannerPausedByWarning = true;
+            this.scannerPaused = true;
             ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
           } else {
             this.positioningLog(3, "1.4.2.2.2.5", "error unknown!!!");
@@ -180,7 +180,7 @@ export class ScanditService {
     }, (error: HttpErrorResponse) => {
       if (error.error.code == 428) {
         this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
-        this.scannerPausedByWarning = true;
+        this.scannerPaused = true;
         ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
       } else {
         this.positioningLog(3, "1.4.2.2.2.7", "error unknown!!!");
@@ -224,13 +224,13 @@ export class ScanditService {
         let code = response.barcode.data;
         if (code === "P0001") {
           // temporary trick to release potential scanner service logic deadlock
-          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPausedByWarning]);
-          this.scannerPausedByWarning = false;
+          this.positioningLog(2, "#1", "releasing pause flag!", [this.scannerPaused]);
+          this.scannerPaused = false;
           return;
         }
         if (code === "P0002") {
           // temporary trick to release potential scanner service logic deadlock
-          this.positioningLog(2, "#2", "forgetting last code scanned!", [this.scannerPausedByWarning]);
+          this.positioningLog(2, "#2", "forgetting last code scanned!", [this.scannerPaused]);
           lastCodeScanned = "start";
           return;
         }
@@ -242,8 +242,8 @@ export class ScanditService {
         code = response.barcode.data;
       }
       //Check Jail/Pallet or product
-      if (!this.scannerPausedByWarning && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
-        this.pickingLog(2, "3", "if (!this.scannerPausedByWarning && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
+      if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
+        this.pickingLog(2, "3", "if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
         if (!processInitiated) {
           this.pickingLog(2, "4", "if (!processInitiated) {");
           let typePackingScanned = 0;
@@ -315,36 +315,47 @@ export class ScanditService {
           this.hideTextMessage(2000);
         } else {
           this.pickingLog(2, "20", "} else {");
-          this.postVerifyPacking({
-            status: 3,
-            pickingId: pickingId,
-            packingReference: jailReference
-          })
-            .subscribe((res) => {
-              this.pickingLog(2, "21", ".subscribe((res) => {");
-              ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-              this.hideTextMessage(1500);
-              ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
-              setTimeout(() => {
-                this.pickingLog(2, "22", "setTimeout(() => {");
-                ScanditMatrixSimple.finish();
-                this.events.publish('picking:remove');
-              }, 1.5 * 1000);
-            }, (error) => {
-              this.pickingLog(2, "23", "}, (error) => {");
-              if (error.error.code == 404) {
-                this.pickingLog(2, "24", "if (error.error.code == 404) {");
-                ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                this.hideTextMessage(2000);
-              } else {
-                this.pickingLog(2, "25", "} else {");
-                ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
-                this.hideTextMessage(2000);
-              }
-            });
+          // lock scanner in order to avoid double jail or pallet reading, requesting the server twice and thus sending two dispatchnote to Avelon
+          this.scannerPaused = true;
+          const scanUnlockTimeout = setTimeout(() => { this.scannerPaused = false; }, 10 * 1000);
+          try {
+            this.postVerifyPacking({
+              status: 3,
+              pickingId: pickingId,
+              packingReference: jailReference
+            })
+              .subscribe((res) => {
+                this.pickingLog(2, "21", ".subscribe((res) => {");
+                ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+                this.hideTextMessage(1500);
+                ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
+                setTimeout(() => {
+                  this.pickingLog(2, "22", "setTimeout(() => {");
+                  ScanditMatrixSimple.finish();
+                  this.events.publish('picking:remove');
+                }, 1.5 * 1000);
+              }, (error) => {
+                this.pickingLog(2, "23", "}, (error) => {");
+                this.scannerPaused = false;
+                clearTimeout(scanUnlockTimeout);
+                if (error.error.code == 404) {
+                  this.pickingLog(2, "24", "if (error.error.code == 404) {");
+                  ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                } else {
+                  this.pickingLog(2, "25", "} else {");
+                  ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                }
+              });
+          } catch (e) {
+            this.scannerPaused = false;
+            clearTimeout(scanUnlockTimeout);
+            throw e;
+          }
         }
-      } else if (!this.scannerPausedByWarning && code && code != '' && code != lastCodeScanned) {
-        this.pickingLog(2, "26", "} else if (!this.scannerPausedByWarning && code && code != '' && code != lastCodeScanned) {");
+      } else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {
+        this.pickingLog(2, "26", "} else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {");
         if (!processInitiated) {
           this.pickingLog(2, "27", "if (!processInitiated) {");
           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_before_products, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
@@ -448,7 +459,7 @@ export class ScanditService {
         this.pickingLog(2, "49", "} else {");
         if (response.action == 'product_not_found') {
           this.pickingLog(2, "50", "if (response.action == 'product_not_found') {");
-          this.scannerPausedByWarning = false;
+          this.scannerPaused = false;
           if (response.found) {
             this.pickingLog(2, "51", "if (response.found) {");
             let productNotFoundId = response.product_id;
@@ -494,7 +505,7 @@ export class ScanditService {
           }
         } else if (response.action == 'warning_product_not_found') {
           this.pickingLog(2, "61", "} else if (response.action == 'warning_product_not_found') {");
-          this.scannerPausedByWarning = true;
+          this.scannerPaused = true;
         } else if (response.action == 'matrix_simple') {
           this.pickingLog(2, "62", "} else if (response.action == 'matrix_simple') {");
           if (productsToScan.length > 0) {
