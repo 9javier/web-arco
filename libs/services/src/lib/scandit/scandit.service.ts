@@ -460,6 +460,18 @@ export class ScanditService {
 
   positioningLog(type: 1|2|3, index, message, ...params: any[]) {
     params = params || [];
+    params.unshift(type, "positioning", index, message);
+    this.scannerLog.call(this, params);
+  }
+
+  pickingLog(type: 1|2|3, index, message, ...params: any[]) {
+    params = params || [];
+    params.unshift(type, "picking", index, message);
+    this.scannerLog.call(this, params);
+  }
+
+  scannerLog(type: 1|2|3, operation, index, message, ...params: any[]) {
+    params = params || [];
     params.unshift("positioning log", "\t" + index + "\t" + message);
     var logFunction = type === 3 ? console.error : (type === 2 ? console.warn : console.log);
     logFunction.call(console, params);
