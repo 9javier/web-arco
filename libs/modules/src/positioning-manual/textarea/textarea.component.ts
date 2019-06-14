@@ -22,7 +22,11 @@ export class TextareaComponent implements OnInit {
     private toastController: ToastController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService
-  ) {}
+  ) {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    },500);
+  }
 
   ngOnInit() {
 

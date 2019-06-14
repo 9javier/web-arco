@@ -1,23 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PickingTasksComponent } from "./picking-tasks.component";
+import {PickingManualComponent} from "./picking-manual.component";
 
 const routes: Routes = [
   {
     path: '',
-    component: PickingTasksComponent
+    component: PickingManualComponent
   },
   {
     path: 'list',
-    component: PickingTasksComponent
+    component: PickingManualComponent
   },
   {
     path: 'menu',
-    component: PickingTasksComponent
-  },
-  {
-    path: ':method',
-    component: PickingTasksComponent
+    component: PickingManualComponent
   }
 ];
 
@@ -25,4 +21,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class PickingTasksRoutingModule {}
+export class PickingManualRoutingModule {}

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {AuthenticationService} from "@suite/services";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
@@ -6,6 +6,8 @@ import {Events, LoadingController} from "@ionic/angular";
 import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 import {ShoesPickingService} from "../../../../services/src/lib/endpoint/shoes-picking/shoes-picking.service";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
+import {Router} from "@angular/router";
+import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 
 @Component({
   selector: 'list-picking-tasks-template',
@@ -18,6 +20,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
   private loading = null;
   public pickingAssignments: PickingModel.Picking[] = [];
   private removeFirstPicking: boolean = false;
+  @Input() method: string;
 
   constructor(
     private loadingController: LoadingController,
@@ -25,7 +28,9 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     private scanditService: ScanditService,
     private authenticationService: AuthenticationService,
     private shoesPickingService: ShoesPickingService,
-    private events: Events
+    private events: Events,
+    private router: Router,
+    private pickingProvider: PickingProvider
   ) {}
 
   async ngOnInit() {
@@ -66,7 +71,16 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           }
           let listProducts: ShoesPickingModel.ShoesPicking[] = res.data;
           this.removeFirstPicking = true;
-          this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);
+
+          this.pickingProvider.pickingId = this.pickingService.pickingAssignments[0].id;
+          this.pickingProvider.listProducts = listProducts;
+          this.pickingProvider.typePacking = this.pickingService.pickingAssignments[0].packingType;
+          this.pickingProvider.packingReference = this.pickingService.pickingAssignments[0].packingRef;
+          if (this.method == 'manual') {
+            this.router.navigate(['picking/manual']);
+          } else {
+            this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);
+          }
         }, (error) => {
           if (this.loading) {
             this.loading.dismiss();
