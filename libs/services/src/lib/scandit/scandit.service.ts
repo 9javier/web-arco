@@ -213,36 +213,53 @@ export class ScanditService {
     };
 
     ScanditMatrixSimple.init((response) => {
+      this.pickingLog(2, "1", "ScanditMatrixSimple.init((response) => {");
       let code = '';
       if (response.barcode) {
+        this.pickingLog(2, "2", "if (response.barcode) {");
         code = response.barcode.data;
+      }
+      if (code.match(/P[0-9]{3}$/)) {
+        // temporary trick to release potential scanner service logic deadlock
+        this.pickingLog(2, "#", "releasing pause flag!", [this.scannerPausedByWarning]);
+        this.scannerPausedByWarning = false;
       }
       //Check Jail/Pallet or product
       if (!this.scannerPausedByWarning && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
+        this.pickingLog(2, "3", "if (!this.scannerPausedByWarning && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
         if (!processInitiated) {
+          this.pickingLog(2, "4", "if (!processInitiated) {");
           let typePackingScanned = 0;
           if (code.match(/J([0-9]){4}/)) {
+            this.pickingLog(2, "5", "if (code.match(/J([0-9]){4}/)) {");
             typePackingScanned = 1;
           } else {
+            this.pickingLog(2, "6", "} else {");
             typePackingScanned = 2;
           }
 
           if ((packingReference && packingReference == code) || !packingReference) {
+            this.pickingLog(2, "7", "if ((packingReference && packingReference == code) || !packingReference) {");
             if (typePackingScanned == typePacking) {
+              this.pickingLog(2, "8", "if (typePackingScanned == typePacking) {");
               this.postVerifyPacking({
                 status: 2,
                 pickingId: pickingId,
                 packingReference: code
               })
                 .subscribe((res) => {
+                  this.pickingLog(2, "9", ".subscribe((res) => {");
                   if (code.match(/J([0-9]){4}/)) {
+                    this.pickingLog(2, "10", "if (code.match(/J([0-9]){4}/)) {");
                     typePacking = 1;
                   } else {
+                    this.pickingLog(2, "11", "} else {");
                     typePacking = 2;
                   }
                   processInitiated = true;
                   jailReference = code;
                   if (!packingReference) {
+                    this.pickingLog(2, "12", "if (!packingReference) {");
                     packingReference = jailReference;
                   }
                   ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
@@ -250,59 +267,76 @@ export class ScanditService {
                   this.hideTextMessage(2000);
                   ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
                 }, (error) => {
+                  this.pickingLog(2, "13", "}, (error) => {");
                   if (error.error.code == 404) {
+                    this.pickingLog(2, "14", "if (error.error.code == 404) {");
                     ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                     this.hideTextMessage(2000);
                   } else {
+                    this.pickingLog(2, "15", "} else {");
                     ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                     this.hideTextMessage(2000);
                   }
                 });
             } else {
+              this.pickingLog(2, "16", "} else {");
               ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_packing, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
               this.hideTextMessage(2000);
             }
           } else {
+            this.pickingLog(2, "17", "} else {");
             ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_resumed}${packingReference}.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           }
         } else if (productsToScan.length != 0) {
+          this.pickingLog(2, "18", "} else if (productsToScan.length != 0) {");
           ScanditMatrixSimple.setText('Continúe escaneando los productos que se le indican antes de finalizar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else if (jailReference != code) {
+          this.pickingLog(2, "19", "} else if (jailReference != code) {");
           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_process_finished, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else {
+          this.pickingLog(2, "20", "} else {");
           this.postVerifyPacking({
             status: 3,
             pickingId: pickingId,
             packingReference: jailReference
           })
             .subscribe((res) => {
+              this.pickingLog(2, "21", ".subscribe((res) => {");
               ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
               this.hideTextMessage(1500);
               ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
               setTimeout(() => {
+                this.pickingLog(2, "22", "setTimeout(() => {");
                 ScanditMatrixSimple.finish();
                 this.events.publish('picking:remove');
               }, 1.5 * 1000);
             }, (error) => {
+              this.pickingLog(2, "23", "}, (error) => {");
               if (error.error.code == 404) {
+                this.pickingLog(2, "24", "if (error.error.code == 404) {");
                 ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                 this.hideTextMessage(2000);
               } else {
+                this.pickingLog(2, "25", "} else {");
                 ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                 this.hideTextMessage(2000);
               }
             });
         }
       } else if (!this.scannerPausedByWarning && code && code != '' && code != lastCodeScanned) {
+        this.pickingLog(2, "26", "} else if (!this.scannerPausedByWarning && code && code != '' && code != lastCodeScanned) {");
         if (!processInitiated) {
+          this.pickingLog(2, "27", "if (!processInitiated) {");
           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_before_products, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
         } else {
+          this.pickingLog(2, "28", "} else {");
           lastCodeScanned = code;
           if (productsToScan.length > 0) {
+            this.pickingLog(2, "29", "if (productsToScan.length > 0) {");
             let picking: InventoryModel.Picking = {
               packingReference: jailReference,
               packingType: typePacking,
@@ -312,33 +346,44 @@ export class ScanditService {
             this.inventoryService
               .postPicking(picking)
               .subscribe((res: InventoryModel.ResponsePicking) => {
+                this.pickingLog(2, "31", ".subscribe((res: InventoryModel.ResponsePicking) => {");
                 if (res.code == 200 || res.code == 201) {
+                  this.pickingLog(2, "32", "if (res.code == 200 || res.code == 201) {");
                   productsToScan = res.data.shoePickingPending;
                   productsScanned.push(code);
                   ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido ${literalsJailPallet[typePacking].toThe}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                   if (productsToScan.length > 0) {
+                    this.pickingLog(2, "33", "if (productsToScan.length > 0) {");
                     ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                   } else {
+                    this.pickingLog(2, "34", "} else {");
                     ScanditMatrixSimple.showNexProductToScan(false);
                     setTimeout(() => {
+                      this.pickingLog(2, "35", "setTimeout(() => {");
                       ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
                       ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                       this.hideTextMessage(1500);
                     }, 2 * 1000);
                   }
                 } else {
+                  this.pickingLog(2, "36", "} else {");
                   ScanditMatrixSimple.setText(res.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                   this.getPendingListByPicking(pickingId)
                     .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                      this.pickingLog(2, "37", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                       if (res.code == 200 || res.code == 201) {
+                        this.pickingLog(2, "38", "if (res.code == 200 || res.code == 201) {");
                         productsToScan = res.data;
                         if (productsToScan.length > 0) {
+                          this.pickingLog(2, "39", "if (productsToScan.length > 0) {");
                           ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                         } else {
+                          this.pickingLog(2, "40", "} else {");
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
+                            this.pickingLog(2, "41", "setTimeout(() => {");
                             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
                             ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
@@ -348,17 +393,23 @@ export class ScanditService {
                     });
                 }
               }, (error) => {
+                this.pickingLog(2, "42", "}, (error) => {");
                 ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                 this.hideTextMessage(2000);
                 this.getPendingListByPicking(pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                    this.pickingLog(2, "43", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                     if (res.code == 200 || res.code == 201) {
+                      this.pickingLog(2, "44", "if (res.code == 200 || res.code == 201) {");
                       productsToScan = res.data;
                       if (productsToScan.length > 0) {
+                        this.pickingLog(2, "45", "if (productsToScan.length > 0) {");
                         ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                       } else {
+                        this.pickingLog(2, "46", "} else {");
                         ScanditMatrixSimple.showNexProductToScan(false);
                         setTimeout(() => {
+                          this.pickingLog(2, "47", "setTimeout(() => {");
                           ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
                           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                           this.hideTextMessage(1500);
@@ -369,6 +420,7 @@ export class ScanditService {
                   });
               });
           } else {
+            this.pickingLog(2, "48", "} else {");
             ScanditMatrixSimple.showNexProductToScan(false);
             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
             ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
@@ -376,24 +428,34 @@ export class ScanditService {
           }
         }
       } else {
+        this.pickingLog(2, "49", "} else {");
         if (response.action == 'product_not_found') {
+          this.pickingLog(2, "50", "if (response.action == 'product_not_found') {");
           this.scannerPausedByWarning = false;
           if (response.found) {
+            this.pickingLog(2, "51", "if (response.found) {");
             let productNotFoundId = response.product_id;
             this.putProductNotFound(pickingId, productNotFoundId)
               .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+                this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
                 if (res.code == 200 || res.code == 201) {
+                  this.pickingLog(2, "53", "if (res.code == 200 || res.code == 201) {");
                   ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                   this.hideTextMessage(1500);
                   this.getPendingListByPicking(pickingId)
                     .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                      this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                       if (res.code == 200 || res.code == 201) {
+                        this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
                         productsToScan = res.data;
                         if (productsToScan.length > 0) {
+                          this.pickingLog(2, "56", "if (productsToScan.length > 0) {");
                           ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                         } else {
+                          this.pickingLog(2, "57", "} else {");
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
+                            this.pickingLog(2, "58", "setTimeout(() => {");
                             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
                             ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
@@ -403,20 +465,26 @@ export class ScanditService {
                       }
                     });
                 } else {
+                  this.pickingLog(2, "59", "} else {");
                   ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                   this.hideTextMessage(2000);
                 }
               }, error => {
+                this.pickingLog(2, "60", "}, error => {");
                 ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                 this.hideTextMessage(2000);
               });
           }
         } else if (response.action == 'warning_product_not_found') {
+          this.pickingLog(2, "61", "} else if (response.action == 'warning_product_not_found') {");
           this.scannerPausedByWarning = true;
         } else if (response.action == 'matrix_simple') {
+          this.pickingLog(2, "62", "} else if (response.action == 'matrix_simple') {");
           if (productsToScan.length > 0) {
+            this.pickingLog(2, "63", "if (productsToScan.length > 0) {");
             ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, packingReference || '');
           } else {
+            this.pickingLog(2, "64", "} else {");
             jailReference = packingReference;
             processInitiated = true;
             ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
