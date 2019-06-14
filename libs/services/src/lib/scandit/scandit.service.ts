@@ -55,27 +55,53 @@ export class ScanditService {
     let warehouseId = this.warehouseService.idWarehouseMain;
 
     ScanditMatrixSimple.init((response) => {
+      if (response && response.barcode) {
+        console.warn("scanner log\t1\tscan!", response && response.barcode && response.barcode.data);
+        if (this.scannerPausedByWarning) {
+          console.error("scanner log\t1.1\tpaused!");
+        } else if (response.action != 'force_scanning') {
+          console.error("scanner log\t1.2\taction empty");
+        }
+      } else {
+        console.error("scanner log\t2\tempty scan!");
+      }
+      if (response && response.barcode) {
+        //Check Container or product
+        let code = response.barcode.data;
+        if (code.match(/J[0-9]{3}$/)) {
+          // temporary trick to release potential scanner service logic deadlock
+          console.warn("scanner log\t#\treleasing pause flag!", this.scannerPausedByWarning);
+          this.scannerPausedByWarning = false;
+        }
+      }
       if (response && response.barcode && (!this.scannerPausedByWarning || response.action == 'force_scanning')) {
         //Check Container or product
         let code = response.barcode.data;
         if (code.match(/P([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
+          console.warn("scanner log\t1.3\tcontainer matched!", code, containerReference);
           //Container
           if(containerReference != code){
             positionsScanning = [];
             containerReference = code;
+            console.warn("scanner log\t1.3.1\tpositioning start!");
             ScanditMatrixSimple.setText(`Inicio de posicionamiento en ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           }
         } else if (code.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
+          console.warn("scanner log\t1.4\tproduct matched!");
           //Product
           let productReference = code;
           if (!containerReference) {
+            console.error("scanner log\t1.4.1\tno container!");
             ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
           } else {
+            console.warn("scanner log\t1.4.2\tyes container!");
             if (response.action == 'force_scanning') {
+              console.warn("scanner log\t1.4.2.1\taction force, disable pause!");
               this.scannerPausedByWarning = false;
               if (response.force) {
+                console.warn("scanner log\t1.4.2.1.1\tsending save response to server with force!");
                 this.storeProductInContainer({
                   productReference: productReference,
                   containerReference: containerReference,
@@ -83,12 +109,18 @@ export class ScanditService {
                   force: true
                 }, response);
               } else {
+                console.warn("scanner log\t1.4.2.1.2\tresponse NO force!");
                 ScanditMatrixSimple.setText(`No se ha registrado la ubicación del producto ${productReference} en el contenedor.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
                 this.hideTextMessage(1500);
               }
             } else {
+              console.warn("scanner log\t1.4.2.2\taction NO force");
               let searchProductPosition = positionsScanning.filter(el => el.product == productReference && el.position == containerReference);
+              if(searchProductPosition.length > 0){
+                console.error("scanner log\t1.4.2.2.1\tignored, duplicate!");
+              }
               if(searchProductPosition.length == 0){
+                console.error("scanner log\t1.4.2.2.2\tproduct located, saving scan hisotry and storing product (server)");
                 positionsScanning.push({product: productReference, position: containerReference});
                 ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
                 this.hideTextMessage(1500);
@@ -109,12 +141,15 @@ export class ScanditService {
     this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
           if (res.body.code == 200 || res.body.code == 201) {
+            console.warn("scanner log\t1.4.2.2.2.1\tscan saved on server!!!!!");
             ScanditMatrixSimple.setText(`Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           } else if (res.body.code == 428) {
+            console.error("scanner log\t1.4.2.2.2.2\terror 428, stop pause!");
             this.scannerPausedByWarning = true;
             ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
           } else {
+            console.error("scanner log\t1.4.2.2.2.3\terror unknown!!!");
             let errorMessage = '';
             if (res.body.errors.productReference && res.body.errors.productReference.message) {
               errorMessage = res.body.errors.productReference.message;
@@ -126,9 +161,11 @@ export class ScanditService {
           }
         }, (error) => {
           if (error.error.code == 428) {
+            console.error("scanner log\t1.4.2.2.2.4\terror 428, stop pause!");
             this.scannerPausedByWarning = true;
             ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
           } else {
+            console.error("scanner log\t1.4.2.2.2.5\terror unknown!!!");
             ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
           }
@@ -136,9 +173,11 @@ export class ScanditService {
       );
     }, (error: HttpErrorResponse) => {
       if (error.error.code == 428) {
+        console.error("scanner log\t1.4.2.2.2.6\terror 428, stop pause!");
         this.scannerPausedByWarning = true;
         ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
       } else {
+        console.error("scanner log\t1.4.2.2.2.7\terror unknown!!!");
         ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
         this.hideTextMessage(1500);
       }
