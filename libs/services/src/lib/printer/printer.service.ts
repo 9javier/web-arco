@@ -3,6 +3,11 @@ import { ToastController } from "@ionic/angular";
 import { PrintModel } from "../../models/endpoints/Print";
 import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable,from, merge } from 'rxjs';
+import { ProductModel } from '../../models/endpoints/Product';
+import { map,switchMap, mergeMap, flatMap } from 'rxjs/operators';
 
 declare let cordova: any;
 
@@ -11,9 +16,12 @@ declare let cordova: any;
 })
 export class PrinterService {
 
+  /**urls for printer service */
+  private getProductsByReferenceUrl:string = environment.apiBase+"/products/references";
+
   private address: string;
 
-  constructor(private toastController: ToastController, private settingsService: SettingsService) {
+  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService) {
   }
 
   private async getConfiguredAddress(): Promise<string> {
@@ -69,6 +77,7 @@ export class PrinterService {
   }
 
   public async printProductBoxTag(printOptions: PrintModel.Print, macAddress?: string) {
+    console.log("Estoy en la impresora zebra imprimiento este objeto: ",printOptions);
     printOptions.type = 1;
 
     if (macAddress) {
@@ -77,17 +86,72 @@ export class PrinterService {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      this.toPrint(printOptions);
+      return this.toPrint(printOptions);
     } else {
       console.debug('Zbtprinter: Not connected');
       this.connect(() => {
-        this.toPrint(printOptions);
+        return this.toPrint(printOptions);
       });
     }
   }
 
-  printTagBarcode(listReferences: string[]) {
+  /**
+   * Get products by reference in api
+   * @returns an observable with the list of products needed
+   */
+  getProductsByReference(references: string[]):Observable<Array<any>>{
+    return this.http.post(this.getProductsByReferenceUrl,{references}).pipe(map((response:any)=>{
+      return response.data;
+    }))
+  }
 
+  /**
+   * Obtain product by reference and then print each of these products
+   * @param listReferences references to print
+   */
+   printTagBarcode(listReferences: string[]):Observable<Boolean>{
+    /** declare and obsevable to merge all print results */
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
+      let innerObservable:Observable<any> = new Observable(observer=>{
+        observer.next(true);
+      }).pipe(flatMap((r)=>{
+        return new Observable(s=>{
+          return s.next();
+        })
+      }));
+      /**obtain the products */
+      return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
+        /**Iterate and build object to print */
+        products.forEach(product=>{
+          let printOptions:PrintModel.Print = {
+            /**build the needed data for print */
+            product:{
+              productShoeUnit:{
+                reference:product.reference,
+                size:{
+                  name:product.size.name
+                },
+                model:{
+                  reference: product.model.reference,
+                  color:product.model.color,
+                  season:{
+                    name:product.brand.name
+                  }
+                }
+              }
+            }
+          }
+          innerObservable = innerObservable.pipe(flatMap(product=>{
+            /**Transform the promise in observable and merge that with the other prints */
+            return from(this.printProductBoxTag(printOptions))
+          }))
+        });
+        return innerObservable;
+      }));
+    }));
+    
+
+    return observable;
   }
 
   printTagPrices(listReferences: string[]) {
