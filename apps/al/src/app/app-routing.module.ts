@@ -61,6 +61,22 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/picking-tasks/picking-tasks.module#PickingTasksModule'
   },
   {
+    path: 'warehouses',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/warehouses/warehouses.module#WarehousesModule',
+    data:{
+      name:'Almacenes'
+    }
+  },
+  {
+    path: 'warehouses/locations',
+    canActivate: [AuthGuard],
+    loadChildren: '@suite/common-modules#LocationsModule',
+    data:{
+      name:'Ubicaciones'
+    }
+  },
+  {
     path: 'settings',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/settings/settings.module#SettingsModule',

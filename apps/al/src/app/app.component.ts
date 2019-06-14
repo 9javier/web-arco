@@ -62,6 +62,11 @@ export class AppComponent implements OnInit {
       icon: 'cube'
     },
     {
+      title: 'Almacenes',
+      url: '/warehouses',
+      icon: 'filing'
+    },
+    {
       title: 'Ajustes',
       url: '/settings',
       icon: 'cog'
