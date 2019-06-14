@@ -68,6 +68,11 @@ const routes: Routes = [
       name:'Ajustes'
     }
   },
+  {
+    path: 'positioning/manual',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/positioning-manual/positioning-manual.module#PositioningManualModule'
+  },
 ];
 
 @NgModule({

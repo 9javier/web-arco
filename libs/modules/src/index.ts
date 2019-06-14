@@ -118,3 +118,7 @@ export * from './settings/settings.module';
 /**Menu */
 export * from './components/menu/menu.component';
 export * from './components/menu/menu.module';
+
+/**Manual Positioning */
+export * from './positioning-manual/positioning-manual.component';
+export * from './positioning-manual/positioning-manual.module';
