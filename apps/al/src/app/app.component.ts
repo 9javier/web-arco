@@ -42,6 +42,11 @@ export class AppComponent implements OnInit {
       url: 'positioning'
     },
     {
+      title: 'Ubicar/Escanear Manualmente',
+      icon: 'qr-scanner',
+      url: '/positioning/manual'
+    },
+    {
       title: 'Tareas de Picking',
       icon: 'qr-scanner',
       url: '/picking-tasks'
@@ -55,6 +60,11 @@ export class AppComponent implements OnInit {
       title: 'Palets',
       url: '/pallets/menu',
       icon: 'cube'
+    },
+    {
+      title: 'Almacenes',
+      url: '/warehouses',
+      icon: 'filing'
     },
     {
       title: 'Ajustes',
