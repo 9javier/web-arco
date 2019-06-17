@@ -22,6 +22,7 @@ import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
 import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
+import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 
 
 @Component({
@@ -90,7 +91,8 @@ export class ProductsComponent implements OnInit {
     private inventoryServices:InventoryService,
     private filterServices:FiltersService,
     private productsService: ProductsService,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private printerService:PrinterService
   ) {}
 
     /**
@@ -138,10 +140,18 @@ export class ProductsComponent implements OnInit {
    * Print the selected products
    */
   printProducts():void{
-    let products = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
+    let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
-    setTimeout( ()=>this.intermediaryService.dismissLoading(),1000);
-    console.log(products);
+    this.printerService.printTagBarcode(references).subscribe(result=>{
+      console.log("result of impressions",result);
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentConfirm("Proceso terminado",()=>{})
+    },error=>{
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    });
+
+    console.log(references);
 
   }
 
