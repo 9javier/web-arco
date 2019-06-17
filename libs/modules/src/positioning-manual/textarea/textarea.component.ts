@@ -123,6 +123,11 @@ export class TextareaComponent implements OnInit {
       color: color
     });
 
-    toast.present();
+    toast.present()
+      .then(() => {
+        setTimeout(() => {
+          document.getElementById('input-ta').focus();
+        },500);
+      });
   }
 }
