@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { WorkwavesScheduleComponent } from "./workwaves-schedule.component";
+import {ListPickingComponent} from "../list-picking/list-picking.component";
 
 const routes: Routes = [
   {
@@ -14,6 +15,10 @@ const routes: Routes = [
   {
     path: 'menu',
     component: WorkwavesScheduleComponent
+  },
+  {
+    path: 'pickings',
+    component: ListPickingComponent
   }
 ];
 
