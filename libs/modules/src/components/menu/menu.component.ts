@@ -160,10 +160,22 @@ export class MenuComponent implements OnInit {
       url: 'positioning'
     },
     {
+      title: 'Ubicar/Escanear Manualmente',
+      icon: 'qr-scanner',
+      url: '/positioning/manual',
+      id:'positioning-manual'
+    },
+    {
       title: 'Tareas de Picking',
       id:"picking-task",
       icon: 'qr-scanner',
       url: '/picking-tasks'
+    },
+    {
+      title: 'Tareas de Picking Manualmente',
+      icon: 'qr-scanner',
+      url: '/picking-tasks/manual',
+      id:'picking-tasks-manual'
     },
     {
       title: 'Jaulas',
@@ -176,6 +188,12 @@ export class MenuComponent implements OnInit {
       id:'pallets',
       url: '/pallets/menu',
       icon: 'cube'
+    },
+    {
+      title: 'Almacenes',
+      url: '/warehouses',
+      icon: 'filing',
+      id:'warehouses'
     },
     {
       title: 'Ajustes',

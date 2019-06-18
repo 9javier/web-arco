@@ -6,6 +6,7 @@ export interface ResponseLogin {
     access_token_expires_at: string
     refresh_token: string
     refresh_token_expires_at: string
+    accessPermitionsDictionary:any,
     user: UserModel.User
   }
 }
