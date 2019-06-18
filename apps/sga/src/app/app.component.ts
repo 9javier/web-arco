@@ -308,10 +308,6 @@ export class AppComponent implements OnInit {
     this.menu.toggle('sidebar');
   }
 
-  hideSidebarRight() {
-    this.menu.enable(false, 'sidebarRight');
-  }
-
   openSubMenuItem(menuItem) {
     if (this.iconsDirection === 'end') this.toggleSidebar();
 

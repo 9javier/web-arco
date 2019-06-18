@@ -1,17 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/incidences.service";
 import {ToastController} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
+import {MatPaginator, MatTableDataSource} from "@angular/material";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'incidences-list',
   templateUrl: './incidences-list.component.html',
-  styleUrls: ['./incidences-list.component.scss']
+  styleUrls: ['./incidences-list.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class IncidencesListComponent implements OnInit {
+
+  public displayedColumns = ['id', 'title', 'typeIncidence', 'btnAttend'];
+  public dataSource: MatTableDataSource<IncidenceModel.Incidence>;
+  public resultsLength: number = 0;
+  public expandedElement: IncidenceModel.Incidence | null;
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     public incidencesService: IncidencesService,
@@ -20,10 +36,21 @@ export class IncidencesListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-
+    this.dataSource = new MatTableDataSource(this.incidencesService.incidencesList);
+    this.resultsLength = this.incidencesService.incidencesList.length;
+    this.dataSource.paginator = this.paginator;
+    this.listenPaginatorChanges();
   }
 
-  attendIncidence(incidence: IncidenceModel.Incidence) {
+  listenPaginatorChanges() {
+    this.paginator.page.subscribe(page => {
+      console.debug("Test::Page -> ", page);
+    });
+  }
+
+  attendIncidence(event, incidence: IncidenceModel.Incidence) {
+    event.stopPropagation();
+
     let incidenceAttended: boolean = !incidence.attended;
     let incidenceId: number = incidence.id;
     this.incidencesService
@@ -40,6 +67,8 @@ export class IncidencesListComponent implements OnInit {
 
             this.presentToast(okMessage, 'success');
             this.incidencesService.init();
+            this.dataSource = new MatTableDataSource(this.incidencesService.incidencesList);
+            this.resultsLength = this.incidencesService.incidencesList.length;
           } else {
             this.presentToast(res.body.message, 'danger');
           }

@@ -190,6 +190,14 @@ const routes: Routes = [
     data:{
       name:'Etiquetas'
     }
+  },
+  {
+    path: 'incidences',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidences-list/incidences-list.module#IncidencesListModule',
+    data:{
+      name:'Notificaciones'
+    }
   }
 ];
 

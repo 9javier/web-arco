@@ -42,6 +42,12 @@ export class MenuComponent implements OnInit {
           id:'warehouses-management',
           url: '/warehouse/manage',
           icon: 'apps'
+        },
+        {
+          title: 'Incidencias',
+          id: 'incidences',
+          url: '/incidences',
+          icon: 'notifications'
         }
       ]
     },
