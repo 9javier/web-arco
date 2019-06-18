@@ -35,6 +35,10 @@ export * from './products/products.module';
 export * from './incidences-button/incidences-button.component';
 export * from './incidences-button/incidences-button.module';
 
+// Incidences List
+export * from './incidences-list/incidences-list.component';
+export * from './incidences-list/incidences-list.module';
+
 // Incidences Popover
 export * from './incidences-popover/incidences-popover.component';
 export * from './incidences-popover/incidences-popover.module';

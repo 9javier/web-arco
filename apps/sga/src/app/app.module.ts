@@ -19,7 +19,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpInterceptorService } from './interceptor/http-interceptor.service';
 import { ErrordialogComponent } from './interceptor/errordialog-component/errordialog.component';
 import {IncidencesButtonModule, ScannerConfigurationModule} from "@suite/common-modules";
-import {IncidencesListModule} from "../../../../libs/modules/src/incidences-list/incidences-list.module";
 import { AddTokenToRequestInterceptor } from '@suite/services';
 import { BreadcrumbModule,MenuModule} from '@suite/common-modules';
 
@@ -38,7 +37,6 @@ import { BreadcrumbModule,MenuModule} from '@suite/common-modules';
     MatDialogModule,
     ScannerConfigurationModule,
     IncidencesButtonModule,
-    IncidencesListModule,
     BreadcrumbModule,
     MenuModule
   ],
