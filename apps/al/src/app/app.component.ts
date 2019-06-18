@@ -83,6 +83,11 @@ export class AppComponent implements OnInit {
     },
   ];
 
+  dictionary = {
+
+  }
+
+
   displaySmallSidebar = false;
   showMainHeader = false;
   deploySidebarSmallDevices = false;
@@ -164,6 +169,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     app.name = "al";
+    /**Set the dictionary access to menu */
+    this.authenticationService.dictionaryAcessState.subscribe(state=>{
+      this.dictionary = state;
+    });
   }
 
   tapOption(p: MenuItem) {
