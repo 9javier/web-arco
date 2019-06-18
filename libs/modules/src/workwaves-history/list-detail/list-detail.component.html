@@ -1,5 +1,5 @@
 <h2 class="workwave-title">
-  <span (click)="goPreviousPage()" class="return-workwaves">← Historial</span><span class="date-workwave">Ejecutada {{dateExecutedParsedLong()}}</span>
+  <span (click)="goPreviousPage()" class="return-workwaves">← {{hasPickings ? 'Pickings' : 'Historial'}}</span><span class="date-workwave">Ejecutada {{dateExecutedParsedLong()}}</span>
 </h2>
 
 <div class="scroll-list">

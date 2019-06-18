@@ -14,9 +14,13 @@ import {ListDetailHistoryComponent} from "./list-detail/list-detail.component";
 import {TitleDetailHistoryComponent} from "./list-detail/title/title.component";
 import {DetailHistoryComponent} from "./list-detail/detail/detail.component";
 import {BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
+import {TitlePickingHistoryComponent} from "./list-picking/title/title.component";
+import {PickingHistoryComponent} from "./list-picking/picking/picking.component";
+import {ListPickingHistoryComponent} from "./list-picking/list-picking.component";
+import {ListProductsHistoryComponent} from "./list-picking/modal-products/modal-products.component";
 
 @NgModule({
-  declarations: [WorkwavesHistoryComponent, ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent],
+  declarations: [WorkwavesHistoryComponent, ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent, ListPickingHistoryComponent, TitlePickingHistoryComponent, PickingHistoryComponent, ListProductsHistoryComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -31,6 +35,6 @@ import {BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
     MatRadioModule,
     BreadcrumbModule
   ],
-  entryComponents: [ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent]
+  entryComponents: [ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent, ListPickingHistoryComponent, TitlePickingHistoryComponent, PickingHistoryComponent, ListProductsHistoryComponent]
 })
 export class WorkwavesHistoryModule {}

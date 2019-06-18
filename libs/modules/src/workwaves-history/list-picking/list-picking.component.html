@@ -1,0 +1,13 @@
+<h2 class="workwave-title">
+  <span (click)="goPreviousPage()" class="return-workwaves">← Historial</span>
+  <div class="details-workwave">
+    <ion-button (click)="showWorkwaveDetail()">
+      Ver detalles
+    </ion-button>
+  </div>
+</h2>
+
+<div class="scroll-list">
+  <title-picking-history></title-picking-history>
+  <picking-history *ngFor="let picking of pickingsHistory" [pickingHistory]="picking"></picking-history>
+</div>

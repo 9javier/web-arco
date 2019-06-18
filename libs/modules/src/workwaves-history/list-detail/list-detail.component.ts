@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Location} from "@angular/common";
 import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import * as moment from 'moment';
+import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 
 @Component({
   selector: 'list-detail-history',
@@ -11,10 +12,12 @@ import * as moment from 'moment';
 export class ListDetailHistoryComponent implements OnInit {
 
   public workwaveHistory: any = null;
+  public hasPickings: boolean = false;
 
   constructor(
     private location: Location,
-    private workwaveService: WorkwavesService
+    private workwaveService: WorkwavesService,
+    private pickingProvider: PickingProvider
   ) {}
 
   ngOnInit() {
@@ -51,6 +54,9 @@ export class ListDetailHistoryComponent implements OnInit {
         allocate: workwave.allocate
       };
     });
+    if (this.pickingProvider.listPickingsHistory && this.pickingProvider.listPickingsHistory.length > 0) {
+      this.hasPickings = true;
+    }
   }
 
   goPreviousPage() {

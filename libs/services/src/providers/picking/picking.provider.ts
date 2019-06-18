@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
+import {PickingModel} from "../../models/endpoints/Picking";
 
 @Injectable({
   providedIn: 'root'
@@ -103,5 +104,32 @@ export class PickingProvider {
   }
   set packingReference(value: string) {
     this._packingReference = value;
+  }
+
+  private _listPickingsHistory: PickingModel.Picking[] = null;
+  get listPickingsHistory(): PickingModel.Picking[] {
+    return this._listPickingsHistory;
+  }
+  set listPickingsHistory(value: PickingModel.Picking[]) {
+    this._listPickingsHistory = value;
+  }
+
+  private _listProductsFromPickingHistory: ShoesPickingModel.ShoesPicking[];
+  get listProductsFromPickingHistory(): ShoesPickingModel.ShoesPicking[] {
+    return this._listProductsFromPickingHistory;
+  }
+  set listProductsFromPickingHistory(value: ShoesPickingModel.ShoesPicking[]) {
+    this._listProductsFromPickingHistory = value;
+  }
+
+  // Custom method to return status literal using status-id
+  private _listStatus: any = {
+    1: 'Creado',
+    2: 'En curso',
+    3: 'Finalizado',
+    4: 'Pendiente de asignar'
+  };
+  getPickingStatusText(status: number): string {
+    return this._listStatus[status];
   }
 }

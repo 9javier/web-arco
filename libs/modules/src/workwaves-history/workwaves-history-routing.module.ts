@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { WorkwavesHistoryComponent } from "./workwaves-history.component";
 import {ListDetailHistoryComponent} from "./list-detail/list-detail.component";
+import {ListPickingHistoryComponent} from "./list-picking/list-picking.component";
 
 const routes: Routes = [
   {
@@ -19,6 +20,10 @@ const routes: Routes = [
   {
     path: 'detail',
     component: ListDetailHistoryComponent
+  },
+  {
+    path: 'pickings',
+    component: ListPickingHistoryComponent
   }
 ];
 
