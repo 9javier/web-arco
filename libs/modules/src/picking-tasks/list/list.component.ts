@@ -20,7 +20,6 @@ export class ListPickingTasksTemplateComponent implements OnInit {
   private loading = null;
   public pickingAssignments: PickingModel.Picking[] = [];
   private removeFirstPicking: boolean = false;
-  @Input() method: string;
 
   constructor(
     private loadingController: LoadingController,
@@ -76,7 +75,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           this.pickingProvider.listProducts = listProducts;
           this.pickingProvider.typePacking = this.pickingService.pickingAssignments[0].packingType;
           this.pickingProvider.packingReference = this.pickingService.pickingAssignments[0].packingRef;
-          if (this.method == 'manual') {
+          if (this.pickingProvider.method == 'manual') {
             this.router.navigate(['picking/manual']);
           } else {
             this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);

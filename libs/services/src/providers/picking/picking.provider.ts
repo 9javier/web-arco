@@ -6,6 +6,14 @@ import {PickingModel} from "../../models/endpoints/Picking";
   providedIn: 'root'
 })
 export class PickingProvider {
+  private _method: string = "scanner";
+  get method(): string {
+    return this._method;
+  }
+  set method(value: string) {
+    this._method = value;
+  }
+
   private _colorsMessage: any = {
     error: {color: '#e8413e', name: 'danger'},
     info: {color: '#15789e', name: 'info'},
