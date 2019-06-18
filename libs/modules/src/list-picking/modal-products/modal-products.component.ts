@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import {PickingProvider} from "../../../../../services/src/providers/picking/picking.provider";
-import {ShoesPickingModel} from "../../../../../services/src/models/endpoints/ShoesPicking";
+import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
+import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {ModalController} from "@ionic/angular";
 
 @Component({
-  selector: 'list-products-history',
+  selector: 'list-products',
   templateUrl: './modal-products.component.html',
   styleUrls: ['./modal-products.component.scss']
 })
-export class ListProductsHistoryComponent implements OnInit {
+export class ListProductsComponent implements OnInit {
 
   public listProducts: ShoesPickingModel.ShoesPicking[];
   public title = 'Productos';

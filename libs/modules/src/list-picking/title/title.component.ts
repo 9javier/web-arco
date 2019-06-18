@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'title-picking-history',
+  selector: 'title-picking',
   templateUrl: './title.component.html',
   styleUrls: ['./title.component.scss']
 })
-export class TitlePickingHistoryComponent implements OnInit {
+export class TitlePickingComponent implements OnInit {
 
   constructor() {}
 

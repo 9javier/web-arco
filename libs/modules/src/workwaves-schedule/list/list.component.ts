@@ -66,6 +66,7 @@ export class ListWorkwavesScheduleComponent implements OnInit {
 
   editWorkwave(workwave) {
     this.workwavesService.lastWorkwaveEdited = workwave;
+    this.workwavesService.lastWorkwaveHistoryQueried = null;
     let navigationExtras: NavigationExtras = {
       queryParams: {
         type: workwave.type == 4 ? 2 : workwave.type

@@ -39,7 +39,9 @@ export class ListWorkwavesHistoryComponent implements OnInit {
   }
 
   showWorkwave(workwave) {
+    this.workwavesService.lastWorkwaveEdited = null;
     this.workwavesService.lastWorkwaveHistoryQueried = workwave;
+    this.pickingProvider.listPickingsHistory = null;
 
     this.pickingService
       .getShow(this.workwavesService.lastWorkwaveHistoryQueried.id)

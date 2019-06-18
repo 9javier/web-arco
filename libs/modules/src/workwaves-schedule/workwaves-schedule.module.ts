@@ -11,6 +11,7 @@ import {ListWorkwavesScheduleComponent} from "./list/list.component";
 import {TitleListWorkwavesScheduleComponent} from "./list/list-title/list-title.component";
 import {WorkwaveListWorkwavesScheduleComponent} from "./list/list-workwave/list-workwave.component";
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import {ListPickingModule} from "../list-picking/list-picking.module";
 
 @NgModule({
   declarations: [WorkwavesScheduleComponent, ListWorkwavesScheduleComponent, TitleListWorkwavesScheduleComponent, WorkwaveListWorkwavesScheduleComponent],
@@ -25,7 +26,8 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
     CdkTableModule,
     FormsModule,
     BreadcrumbModule,
-    MatGridListModule
+    MatGridListModule,
+    ListPickingModule
   ],
   entryComponents: [ListWorkwavesScheduleComponent, TitleListWorkwavesScheduleComponent, WorkwaveListWorkwavesScheduleComponent]
 })

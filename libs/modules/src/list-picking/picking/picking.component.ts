@@ -1,17 +1,17 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PickingModel} from "../../../../../services/src/models/endpoints/Picking";
-import {PickingProvider} from "../../../../../services/src/providers/picking/picking.provider";
-import {ShoesPickingService} from "../../../../../services/src/lib/endpoint/shoes-picking/shoes-picking.service";
-import {ShoesPickingModel} from "../../../../../services/src/models/endpoints/ShoesPicking";
+import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
+import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
+import {ShoesPickingService} from "../../../../services/src/lib/endpoint/shoes-picking/shoes-picking.service";
+import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {ModalController} from "@ionic/angular";
-import {ListProductsHistoryComponent} from "../modal-products/modal-products.component";
+import {ListProductsComponent} from "../modal-products/modal-products.component";
 
 @Component({
-  selector: 'picking-history',
+  selector: 'picking',
   templateUrl: './picking.component.html',
   styleUrls: ['./picking.component.scss']
 })
-export class PickingHistoryComponent implements OnInit {
+export class PickingComponent implements OnInit {
 
   @Input() pickingHistory: PickingModel.Picking;
 
@@ -36,7 +36,7 @@ export class PickingHistoryComponent implements OnInit {
 
   async createModalProducts() {
     let modalProducts = await this.modalController.create({
-      component: ListProductsHistoryComponent
+      component: ListProductsComponent
     });
 
     return await modalProducts.present();

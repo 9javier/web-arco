@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ListPickingHistoryComponent } from './list-picking.component';
+import { ListPickingComponent } from './list-picking.component';
 
-describe('ListPickingHistoryComponent', () => {
-  let component: ListPickingHistoryComponent;
-  let fixture: ComponentFixture<ListPickingHistoryComponent>;
+describe('ListPickingComponent', () => {
+  let component: ListPickingComponent;
+  let fixture: ComponentFixture<ListPickingComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ListPickingHistoryComponent ]
+      declarations: [ ListPickingComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ListPickingHistoryComponent);
+    fixture = TestBed.createComponent(ListPickingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

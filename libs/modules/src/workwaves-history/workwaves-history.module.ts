@@ -14,13 +14,10 @@ import {ListDetailHistoryComponent} from "./list-detail/list-detail.component";
 import {TitleDetailHistoryComponent} from "./list-detail/title/title.component";
 import {DetailHistoryComponent} from "./list-detail/detail/detail.component";
 import {BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
-import {TitlePickingHistoryComponent} from "./list-picking/title/title.component";
-import {PickingHistoryComponent} from "./list-picking/picking/picking.component";
-import {ListPickingHistoryComponent} from "./list-picking/list-picking.component";
-import {ListProductsHistoryComponent} from "./list-picking/modal-products/modal-products.component";
+import {ListPickingModule} from "../list-picking/list-picking.module";
 
 @NgModule({
-  declarations: [WorkwavesHistoryComponent, ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent, ListPickingHistoryComponent, TitlePickingHistoryComponent, PickingHistoryComponent, ListProductsHistoryComponent],
+  declarations: [WorkwavesHistoryComponent, ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -33,8 +30,9 @@ import {ListProductsHistoryComponent} from "./list-picking/modal-products/modal-
     MatGridListModule,
     FormsModule,
     MatRadioModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    ListPickingModule
   ],
-  entryComponents: [ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent, ListPickingHistoryComponent, TitlePickingHistoryComponent, PickingHistoryComponent, ListProductsHistoryComponent]
+  entryComponents: [ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent]
 })
 export class WorkwavesHistoryModule {}
