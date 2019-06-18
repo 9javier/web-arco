@@ -16,6 +16,7 @@ export class AuthenticationService {
 
   constructor(private storage: Storage) {
     console.log(storage);
+    this.getDictionaryAccess();
   }
 
   async checkToken() {
