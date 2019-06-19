@@ -137,9 +137,9 @@ export class ProductsComponent implements OnInit {
   }
 
   /**
-   * Print the selected products
+   * Print the label for selected products
    */
-  printProducts():void{
+  printLabelProducts():void{
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagBarcode(references).subscribe(result=>{
@@ -150,9 +150,24 @@ export class ProductsComponent implements OnInit {
       this.intermediaryService.dismissLoading();
       console.log(error);
     });
-
     console.log(references);
+  }
 
+    /**
+   * Print the price for selected products
+   */
+  printPriceProducts():void{
+    let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
+    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    this.printerService.printTagPrices(references).subscribe(result=>{
+      console.log("result of impressions",result);
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentConfirm("Proceso terminado",()=>{})
+    },error=>{
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    });
+    console.log(references);
   }
 
   ngOnInit() {

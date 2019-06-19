@@ -84,3 +84,7 @@ export * from './lib/endpoint/labels/labels.service';
 
 /**environments */
 export * from './environments/environment';
+
+/**Tariff */
+export * from './models/endpoints/Tariff';
+export * from './lib/endpoint/tariff/tariff.service';
