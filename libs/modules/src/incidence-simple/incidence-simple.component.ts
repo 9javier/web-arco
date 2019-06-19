@@ -41,7 +41,7 @@ export class IncidenceSimpleComponent implements OnInit {
             }
 
             this.presentToast(okMessage, 'success');
-            this.incidencesService.init();
+            this.incidencesService.initPreview();
           } else {
             this.presentToast(res.body.message, 'danger');
           }

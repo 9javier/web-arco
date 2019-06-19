@@ -37,6 +37,7 @@ export class IncidencesListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.incidencesService.init();
     this.typeSelected = this.incidencesService.listIncidencesTypes[0];
     this.listenPaginatorChanges();
     this.actualPageFilter = this.incidencesService.defaultFilters;

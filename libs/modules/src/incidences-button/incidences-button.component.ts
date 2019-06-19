@@ -19,11 +19,11 @@ export class IncidencesButtonComponent implements OnInit {
 
   ngOnInit() {
     // Get all incidences to app start
-    this.incidencesService.init();
+    this.incidencesService.initPreview();
 
     // Reload incidences each 15 seconds
     setInterval(() => {
-      this.incidencesService.init();
+      this.incidencesService.initPreview();
     }, 30 * 1000);
   }
 
