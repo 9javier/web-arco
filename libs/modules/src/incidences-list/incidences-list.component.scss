@@ -1,9 +1,14 @@
 div.table-container {
   overflow: auto;
+  ion-row.row-filters {
+    ion-col {
+      padding: 16px;
+    }
+  }
   table.table-incidences {
     width: 100%;
     tr.incidence-row:not(.incidence-expanded-row):hover {
-      background: #777;
+      background: #EEEEEE;
     }
     tr.incidence-row:not(.incidence-expanded-row):active {
       background: #efefef;

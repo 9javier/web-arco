@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import {IncidencesListComponent} from "./incidences-list.component";
 import {IncidenceComplexModule} from "../incidence-complex/incidence-complex.module";
@@ -24,7 +24,8 @@ const routes: Routes = [
     MatTableModule,
     MatPaginatorModule,
     MatListModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    FormsModule
   ], entryComponents: [IncidencesListComponent]
 })
 export class IncidencesListModule { }
