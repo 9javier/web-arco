@@ -133,6 +133,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title:'Tarifa',
+      id:'tariff-sga',
+      url:'/tariff',
+      icon:'logo-usd'
+    },
+    {
       title: 'Cerrar sesión',
       id:'logout',
       url: 'logout',
@@ -202,11 +208,17 @@ export class MenuComponent implements OnInit {
       icon: 'cog'
     },
     {
+      title:'Tarifa',
+      id:'tariff-al',
+      url:'/tariff',
+      icon:'logo-usd'
+    },
+    {
       title: 'Cerrar sesión',
       id:'logout',
       url: 'logout',
       icon: 'log-out'
-    },
+    }
   ];
   private menuPages = {
     sga:this.sgaPages,

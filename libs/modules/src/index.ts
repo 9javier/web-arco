@@ -130,3 +130,7 @@ export * from './picking-manual/picking-manual.module';
 /**List Pickings with Products */
 export * from './list-picking/list-picking.component';
 export * from './list-picking/list-picking.module';
+
+/**Tariff */
+export * from './tariff/tariff.component';
+export * from './tariff/tariff.module';
