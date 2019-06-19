@@ -1,6 +1,20 @@
 <div class="table-container mat-elevation-z8">
-  <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
+  <ion-row class="row-filters">
+    <ion-col size="6">
+      <ion-item lines="none">
+        <ion-label>
+          Filtrar por Tipo
+        </ion-label>
+        <ion-select interface="popover" [(ngModel)]="typeSelected" (ngModelChange)="filterByType()">
+          <ion-select-option *ngFor="let type of incidencesService.listIncidencesTypes" [value]="type">
+            {{type.name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-col>
+  </ion-row>
 
+  <table mat-table multiTemplateDataRows [dataSource]="incidencesService.incidencesList" class="table-incidences">
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef> ID </th>
       <td mat-cell *matCellDef="let element"> {{element.id}} </td>
@@ -13,7 +27,7 @@
 
     <ng-container matColumnDef="typeIncidence">
       <th mat-header-cell *matHeaderCellDef> Tipo </th>
-      <td mat-cell *matCellDef="let element"> {{element.typeIncidence}} </td>
+      <td mat-cell *matCellDef="let element"> {{incidencesService.getIncidenceTypeText(element.typeIncidence)}} </td>
     </ng-container>
 
     <ng-container matColumnDef="btnAttend">
@@ -46,5 +60,5 @@
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
   </table>
 
-  <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [length]="incidencesService.incidencesQuantity" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
 </div>

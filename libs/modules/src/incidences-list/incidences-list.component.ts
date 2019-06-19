@@ -5,8 +5,9 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {MatPaginator, MatTableDataSource} from "@angular/material";
+import {MatPaginator, PageEvent} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {TypeModel} from "@suite/services";
 
 @Component({
   selector: 'incidences-list',
@@ -23,9 +24,9 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 export class IncidencesListComponent implements OnInit {
 
   public displayedColumns = ['id', 'title', 'typeIncidence', 'btnAttend'];
-  public dataSource: MatTableDataSource<IncidenceModel.Incidence>;
-  public resultsLength: number = 0;
   public expandedElement: IncidenceModel.Incidence | null;
+  private actualPageFilter: IncidenceModel.SearchParameters;
+  public typeSelected: TypeModel.Type;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -36,15 +37,17 @@ export class IncidencesListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.incidencesService.incidencesList);
-    this.resultsLength = this.incidencesService.incidencesList.length;
-    this.dataSource.paginator = this.paginator;
+    this.typeSelected = this.incidencesService.listIncidencesTypes[0];
     this.listenPaginatorChanges();
+    this.actualPageFilter = this.incidencesService.defaultFilters;
   }
 
   listenPaginatorChanges() {
-    this.paginator.page.subscribe(page => {
-      console.debug("Test::Page -> ", page);
+    this.paginator.page.subscribe((page: PageEvent) => {
+      this.actualPageFilter.page = page.pageIndex;
+      this.actualPageFilter.size = page.pageSize;
+
+      this.searchIncidences(this.actualPageFilter);
     });
   }
 
@@ -66,15 +69,37 @@ export class IncidencesListComponent implements OnInit {
             }
 
             this.presentToast(okMessage, 'success');
-            this.incidencesService.init();
-            this.dataSource = new MatTableDataSource(this.incidencesService.incidencesList);
-            this.resultsLength = this.incidencesService.incidencesList.length;
+            this.incidencesService.init(this.actualPageFilter);
           } else {
             this.presentToast(res.body.message, 'danger');
           }
         });
       }, (error: HttpErrorResponse) => {
         this.presentToast(error.message, 'danger');
+      });
+  }
+
+  filterByType() {
+    if (this.typeSelected.id == 0) {
+      delete this.actualPageFilter.type;
+    } else {
+      this.actualPageFilter.type = this.typeSelected.id;
+    }
+    this.actualPageFilter.page = 0;
+    this.paginator.pageIndex = 0;
+
+    this.searchIncidences(this.actualPageFilter);
+  }
+
+  private searchIncidences(parameters: IncidenceModel.SearchParameters) {
+    this.incidencesService
+      .postSearch(parameters)
+      .subscribe((res: IncidenceModel.ResponseSearch) => {
+        this.incidencesService.incidencesQuantity = res.data.count_search;
+        this.incidencesService.incidencesUnattendedQuantity = res.data.count;
+        this.incidencesService.incidencesList = res.data.incidences;
+      }, error => {
+        console.warn('Error Subscribe::Search Incidences with Filters');
       });
   }
 

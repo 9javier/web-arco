@@ -15,6 +15,13 @@ export namespace IncidenceModel {
     updatedAt?: string;
   }
 
+  export interface SearchParameters {
+    order: 'ASC'|'DESC',
+    page: number,
+    size: number,
+    type?: number
+  }
+
   export interface ResponseIndex {
     data: Incidence[];
     message: string;
@@ -41,6 +48,16 @@ export namespace IncidenceModel {
 
   export interface ResponseDestroy {
     data: any;
+    message: string;
+    code: number;
+  }
+
+  export interface ResponseSearch {
+    data: {
+      count: number,
+      count_search: number,
+      incidences: Incidence[]
+    };
     message: string;
     code: number;
   }
