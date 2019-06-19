@@ -110,11 +110,11 @@
                     <ion-label>
                         Empleado de tienda
                     </ion-label>
-                    <ion-checkbox formControlName="has_warehouse"></ion-checkbox>
+                    <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
                 </ion-item>
                 <!--Tienda-->
-                <ion-item *ngIf="updateForm.value.has_warehouse" class="inner-item">
-                    <ion-select placeholder="Tienda" formControlName="warehouse">
+                <ion-item *ngIf="updateForm.value.hasWarehouse" class="inner-item">
+                    <ion-select placeholder="Tienda" formControlName="warehouseId">
                         <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse.id}}">{{warehouse.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>

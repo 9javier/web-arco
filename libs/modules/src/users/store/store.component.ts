@@ -30,8 +30,8 @@ export class StoreComponent implements OnInit {
     address: [''],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
-    has_warehouse:false,
-    warehouse:['']
+    hasWarehouse:false,
+    warehouseId:['']
   };
 
   /**the allowed roles of the user */
@@ -53,8 +53,8 @@ export class StoreComponent implements OnInit {
    * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
    */
   listenChanges():void {
-    this.createForm.get("has_warehouse").valueChanges.subscribe(status=>{
-      let warehouseControl = this.createForm.get("warehouse");
+    this.createForm.get("hasWarehouse").valueChanges.subscribe(status=>{
+      let warehouseControl = this.createForm.get("warehouseId");
       warehouseControl.setValue("");
       if(status){
         warehouseControl.setValidators([Validators.required]);
