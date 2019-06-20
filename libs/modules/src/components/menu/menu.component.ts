@@ -2,6 +2,7 @@ import { Component, OnInit,Input } from '@angular/core';
 import {  app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
+import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 
 @Component({
   selector: 'suite-menu',
@@ -235,7 +236,8 @@ export class MenuComponent implements OnInit {
 
 
 
-  constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService) { }
+  constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
+              private scanditService: ScanditService) { }
 
   /**
    * Select the links that be shown depends of dictionary paramethers
@@ -294,6 +296,8 @@ export class MenuComponent implements OnInit {
             console.log(data);
           });
       });
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
     }
   }
 
