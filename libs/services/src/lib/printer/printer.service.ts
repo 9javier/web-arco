@@ -123,6 +123,7 @@ export class PrinterService {
       }));
       /**obtain the products */
       return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
+        console.log('busca los productos');
         /**Iterate and build object to print */
         products.forEach(product=>{
           let printOptions:PrintModel.Print = {
@@ -161,17 +162,16 @@ export class PrinterService {
    * @param listReferences references of products
    */
   printTagPrices(listReferences: string[]):Observable<Boolean>{
+    console.log("entra en el servicio");
     /** declare and obsevable to merge all print results */
-    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(switchMap(dummyValue=>{
+      console.log("entra en el primer observable");
       let innerObservable:Observable<any> = new Observable(observer=>{
         observer.next(true);
-      }).pipe(flatMap((r)=>{
-        return new Observable(s=>{
-          return s.next();
-        })
-      }));
+      })
       /**obtain the products */
-      return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
+      return this.getProductsByReference(listReferences).pipe(switchMap((products)=>{
+        console.log("busca los productos en el servicio",products);
         /**Iterate and build object to print */
         products.forEach(product=>{
           let printOptions:PrintModel.Print = {
@@ -186,13 +186,15 @@ export class PrinterService {
                   reference: product.model.reference,
                   color:product.model.color,
                   season:{
-                    name:product.brand.name
+                    name:product.brand?product.brand.name:''
                   }
                 }
               }
             }
           }
-          innerObservable = innerObservable.pipe(flatMap(product=>{
+          console.log(product);
+          console.log("lo que env[ia",printOptions);
+          innerObservable = innerObservable.pipe(switchMap(product=>{
             /**Transform the promise in observable and merge that with the other prints */
             return from(this.printProductBoxTag(printOptions)
             // stop errors and attempt to print next tag
