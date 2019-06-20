@@ -10,6 +10,7 @@ import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
 import {AuthenticationService} from "../endpoint/authentication/authentication.service";
 import {Events} from "@ionic/angular";
+import {WarehouseModel} from "@suite/services";
 
 declare let Scandit;
 declare let GScandit;
@@ -34,25 +35,29 @@ export class ScanditService {
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
   private putProductNotFoundUrl = environment.apiBase+"/shoes/picking/{{workWaveOrderId}}/product-not-found/{{productId}}";
 
+  private userWarehouse: WarehouseModel.Warehouse;
+
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService,
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
+    private authenticationService: AuthenticationService,
     private events: Events
   ) {
 
   }
 
-  setApiKey(api_key) {
+  async setApiKey(api_key) {
     Scandit.License.setAppKey(api_key);
   }
 
-  positioning() {
+  async positioning() {
+    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
 
     let positionsScanning = [];
     let containerReference = '';
-    let warehouseId = this.warehouseService.idWarehouseMain;
+    let warehouseId = this.userWarehouse ? this.userWarehouse.id : this.warehouseService.idWarehouseMain;
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
@@ -97,7 +102,7 @@ export class ScanditService {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
           let productReference = code;
-          if (!containerReference) {
+          if ((!this.userWarehouse && !containerReference) || (this.userWarehouse && this.userWarehouse.has_racks && !containerReference)) {
             this.positioningLog(3, "1.4.1", "no container!");
             ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
@@ -108,12 +113,14 @@ export class ScanditService {
               this.scannerPaused = false;
               if (response.force) {
                 this.positioningLog(2, "1.4.2.1.1", "sending save response to server with force!");
-                this.storeProductInContainer({
+                let params: any = {
                   productReference: productReference,
-                  containerReference: containerReference,
                   warehouseId: warehouseId,
                   force: true
-                }, response);
+                };
+                if (containerReference) params.containerReference = containerReference;
+
+                this.storeProductInContainer(params, response);
               } else {
                 this.positioningLog(2, "1.4.2.1.2", "response NO force!");
                 ScanditMatrixSimple.setText(`No se ha registrado la ubicación del producto ${productReference} en el contenedor.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
@@ -121,20 +128,28 @@ export class ScanditService {
               }
             } else {
               this.positioningLog(2, "1.4.2.2", "action NO force");
-              let searchProductPosition = positionsScanning.filter(el => el.product == productReference && el.position == containerReference);
+              let searchProductPosition = positionsScanning.filter(el => el.product == productReference && ((containerReference && el.position == containerReference) || (!containerReference && el.warehouse == warehouseId)));
+              console.debug('Test::SearchProductPosition -> ', searchProductPosition);
               if(searchProductPosition.length > 0){
                 this.positioningLog(3, "1.4.2.2.1", "ignored, duplicate!");
               }
               if(searchProductPosition.length == 0){
                 this.positioningLog(3, "1.4.2.2.2", "product located, saving scan hisotry and storing product (server)");
-                positionsScanning.push({product: productReference, position: containerReference});
-                ScanditMatrixSimple.setText(`Escaneado ${productReference} para posicionar en ${containerReference}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
+                positionsScanning.push({product: productReference, position: containerReference, warehouse: warehouseId});
+                let msgSetText = '';
+                if (this.userWarehouse && !this.userWarehouse.has_racks) {
+                  msgSetText = `Escaneado ${productReference} para ubicar en el almacén ${this.userWarehouse.name}`;
+                } else {
+                  msgSetText = `Escaneado ${productReference} para posicionar en ${containerReference}`;
+                }
+                ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_INFO, TEXT_COLOR, 16);
                 this.hideTextMessage(1500);
-                this.storeProductInContainer({
+                let params: any = {
                   productReference: productReference,
-                  containerReference: containerReference,
                   warehouseId: warehouseId
-                }, response);
+                };
+                if (containerReference) params.containerReference = containerReference;
+                this.storeProductInContainer(params, response);
               }
             }
           }
@@ -148,7 +163,13 @@ export class ScanditService {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
           if (res.body.code == 200 || res.body.code == 201) {
             this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
-            ScanditMatrixSimple.setText(`Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+            let msgSetText = '';
+            if (this.userWarehouse && !this.userWarehouse.has_racks) {
+              msgSetText = `Producto ${params.productReference} añadido al almacén ${this.userWarehouse.name}`;
+            } else {
+              msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
+            }
+            ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           } else if (res.body.code == 428) {
             this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
