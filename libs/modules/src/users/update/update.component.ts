@@ -19,7 +19,7 @@ export class UpdateComponent implements OnInit {
     employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
     roleId: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required/*, Validators.email*/]],
     address: [''],
     password: ['',Validators.minLength(4)],
     confirmPassword: [''],

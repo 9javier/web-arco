@@ -26,7 +26,7 @@ export class StoreComponent implements OnInit {
   formBuilderDataInputs = {
     employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required/*, Validators.email*/]],
     address: [''],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
