@@ -5,9 +5,8 @@ import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable,from, merge } from 'rxjs';
-import { ProductModel } from '../../models/endpoints/Product';
-import { map,switchMap, mergeMap, flatMap } from 'rxjs/operators';
+import { Observable,from } from 'rxjs';
+import { map,switchMap, flatMap } from 'rxjs/operators';
 
 declare let cordova: any;
 
@@ -123,27 +122,32 @@ export class PrinterService {
       }));
       /**obtain the products */
       return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
-        console.log('busca los productos');
         /**Iterate and build object to print */
         products.forEach(product=>{
           let printOptions:PrintModel.Print = {
             /**build the needed data for print */
-            product:{
-              productShoeUnit:{
-                reference:product.reference,
-                size:{
-                  name:product.size.name
+            product: {
+              productShoeUnit: {
+                reference: product.reference,
+                size: {
+                  name: product.size.name
                 },
-                model:{
+                manufacturer: {
+                  name: product.brand.name
+                },
+                model: {
+                  name: product.model.name,
                   reference: product.model.reference,
-                  color:product.model.color,
-                  season:{
-                    name:product.brand.name
+                  color: {
+                    name: product.color.name
+                  },
+                  season: {
+                    name: product.season ? product.season.name : ''
                   }
                 }
               }
             }
-          }
+          };
           innerObservable = innerObservable.pipe(flatMap(product=>{
             /**Transform the promise in observable and merge that with the other prints */
             return from(this.printProductBoxTag(printOptions)
@@ -178,23 +182,28 @@ export class PrinterService {
 
           let printOptions:PrintModel.Print = {
             /**build the needed data for print */
-            product:{
-              productShoeUnit:{
-                reference:product.reference,
-                size:{
-                  name:product.size.name
+            product: {
+              productShoeUnit: {
+                reference: product.reference,
+                size: {
+                  name: product.size.name
                 },
-
-                model:{
+                manufacturer: {
+                  name: product.brand.name
+                },
+                model: {
+                  name: product.model.name,
                   reference: product.model.reference,
-                  color:product.model.color,
-                  season:{
-                    name:product.brand?product.brand.name:''
+                  color: {
+                    name: product.color.name
+                  },
+                  season: {
+                    name: product.season ? product.season.name : ''
                   }
                 }
               }
             }
-          }
+          };
           console.log(product);
           console.log("lo que env[ia",printOptions);
           innerObservable = innerObservable.pipe(switchMap(product=>{
