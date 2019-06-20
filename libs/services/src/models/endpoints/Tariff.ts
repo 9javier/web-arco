@@ -1,10 +1,11 @@
 import { Request } from './request';
 export namespace TariffModel{
     export interface Tariff{
-        id?:number;
-        name:string;
-        initDate:string;
-        endDate:string;
+        tariffsQuantity:number;
+        tariffId?:number;
+        tariffName:string;
+        activeFrom:string;
+        activeTill:string;
     }
     export interface ResponseTariff extends Request.Success{
         data:Array<Tariff>;

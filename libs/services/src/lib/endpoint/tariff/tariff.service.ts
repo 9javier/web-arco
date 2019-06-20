@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 export class TariffService {
 
   /**urls for tariff service */
-  private getIndexUrl:string = environment.apiBase+"/tariff";
+  private getIndexUrl:string = environment.apiBase+"/filter/prices";
 
   constructor(private http:HttpClient) { }
 
@@ -20,7 +20,9 @@ export class TariffService {
    * @returns observable with the tariff
    */
   getIndex():Observable<Array<TariffModel.Tariff>>{
-    return this.http.get<TariffModel.ResponseTariff>(this.getIndexUrl).pipe(map(response=>{
+    return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl,{
+      warehouseId: 51
+    }).pipe(map(response=>{
       return response.data;
     }));
   }

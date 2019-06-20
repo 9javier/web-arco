@@ -13,7 +13,7 @@
                 nombre
             </th>
             <td mat-cell *matCellDef="let tariff">
-                {{ tariff?.name }}
+                {{ tariff?.tariffName }}
             </td>
         </ng-container>
 
@@ -22,7 +22,7 @@
                 Fecha inicio
             </th>
             <td mat-cell *matCellDef="let tariff">
-                {{ tariff?.initDate }}
+                {{ tariff?.activeFrom }}
             </td>
         </ng-container>
 
@@ -31,7 +31,7 @@
                 Fecha fin
             </th>
             <td mat-cell *matCellDef="let tariff">
-                {{ tariff?.endDate }}
+                {{ tariff?.activeTill }}
             </td>
         </ng-container>
 
