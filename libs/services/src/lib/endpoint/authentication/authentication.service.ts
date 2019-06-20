@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject } from 'rxjs';
+import {WarehouseModel} from "@suite/services";
 
 const TOKEN_KEY = 'access_token';
 const USER_ID_KEY = 'user_id';
+const USER_KEY = 'user';
 
 @Injectable({
   providedIn: 'root'
@@ -41,9 +43,10 @@ export class AuthenticationService {
     });
   }
 
-  async login(accessToken: string, userId?: number, dictionary?, refreshToken?:string) {
-    if (userId) {
-      await this.storage.set(USER_ID_KEY, userId);
+  async login(accessToken: string, user?: any, dictionary?, refreshToken?:string) {
+    if (user) {
+      await this.storage.set(USER_ID_KEY, user.id);
+      await this.storage.set(USER_KEY, JSON.stringify(user));
     }
     if(refreshToken)
       await this.storage.set("refreshToken",refreshToken);
@@ -56,6 +59,7 @@ export class AuthenticationService {
 
   logout() {
     this.storage.remove(USER_ID_KEY);
+    this.storage.remove(USER_KEY);
 
     return this.storage.remove(TOKEN_KEY).then((data) => {
       if(this.authenticationState.value) {
@@ -90,6 +94,22 @@ export class AuthenticationService {
     return this.storage.get(USER_ID_KEY).then(res => {
       if (res) {
         return res;
+      }
+    });
+  }
+
+  getCurrentUser(): Promise<any> {
+    return this.storage.get(USER_KEY).then(res => {
+      if (res) {
+        return JSON.parse(res);
+      }
+    });
+  }
+
+  getWarehouseCurrentUser(): Promise<WarehouseModel.Warehouse> {
+    return this.storage.get(USER_KEY).then(res => {
+      if (res) {
+        return JSON.parse(res).warehouse;
       }
     });
   }
