@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { IncidencesPopoverComponent } from "../incidences-popover/incidences-popover.component";
-import { MenuController, PopoverController } from "@ionic/angular";
+import { PopoverController } from "@ionic/angular";
 import { IncidencesService } from "../../../services/src/lib/endpoint/incidences/incidences.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'button-incidences',
@@ -11,18 +12,18 @@ import { IncidencesService } from "../../../services/src/lib/endpoint/incidences
 export class IncidencesButtonComponent implements OnInit {
 
   constructor(
+    private router: Router,
     private popoverController: PopoverController,
-    private menuController: MenuController,
     public incidencesService: IncidencesService
   ) { }
 
   ngOnInit() {
     // Get all incidences to app start
-    this.incidencesService.init();
+    this.incidencesService.initPreview();
 
     // Reload incidences each 15 seconds
     setInterval(() => {
-      this.incidencesService.init();
+      this.incidencesService.initPreview();
     }, 30 * 1000);
   }
 
@@ -36,7 +37,7 @@ export class IncidencesButtonComponent implements OnInit {
 
       popover.onDidDismiss().then((data) => {
         if (data && data.data && data.data.showMore) {
-          this.menuController.enable(true, 'sidebarRight');
+          this.router.navigate(['incidences']);
         }
       });
 

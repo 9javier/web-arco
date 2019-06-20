@@ -14,6 +14,7 @@ import {ListDetailHistoryComponent} from "./list-detail/list-detail.component";
 import {TitleDetailHistoryComponent} from "./list-detail/title/title.component";
 import {DetailHistoryComponent} from "./list-detail/detail/detail.component";
 import {BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
+import {ListPickingModule} from "../list-picking/list-picking.module";
 
 @NgModule({
   declarations: [WorkwavesHistoryComponent, ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent],
@@ -29,7 +30,8 @@ import {BreadcrumbModule} from '../components/breadcrumb/breadcrumb.module';
     MatGridListModule,
     FormsModule,
     MatRadioModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    ListPickingModule
   ],
   entryComponents: [ListWorkwavesHistoryComponent, TitleListWorkwavesHistoryComponent, WorkwaveListWorkwavesHistoryComponent, ListDetailHistoryComponent, TitleDetailHistoryComponent, DetailHistoryComponent]
 })

@@ -190,6 +190,21 @@ const routes: Routes = [
     data:{
       name:'Etiquetas'
     }
+  },{
+    path: 'tariff',
+    canActivate:[AuthGuard],
+    loadChildren:'../../../../libs/modules//src/tariff/tariff.module#TariffModule',
+    data:{
+      name:'Tarifas'
+    }
+  },
+  {
+    path: 'incidences',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/incidences-list/incidences-list.module#IncidencesListModule',
+    data:{
+      name:'Notificaciones'
+    }
   }
 ];
 

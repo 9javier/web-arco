@@ -35,6 +35,10 @@ export * from './products/products.module';
 export * from './incidences-button/incidences-button.component';
 export * from './incidences-button/incidences-button.module';
 
+// Incidences List
+export * from './incidences-list/incidences-list.component';
+export * from './incidences-list/incidences-list.module';
+
 // Incidences Popover
 export * from './incidences-popover/incidences-popover.component';
 export * from './incidences-popover/incidences-popover.module';
@@ -126,3 +130,11 @@ export * from './positioning-manual/positioning-manual.module';
 /**Manual Picking */
 export * from './picking-manual/picking-manual.component';
 export * from './picking-manual/picking-manual.module';
+
+/**List Pickings with Products */
+export * from './list-picking/list-picking.component';
+export * from './list-picking/list-picking.module';
+
+/**Tariff */
+export * from './tariff/tariff.component';
+export * from './tariff/tariff.module';

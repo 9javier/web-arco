@@ -24,9 +24,9 @@
                 <!--Email-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="mail"></ion-icon>
+                        <ion-icon color="medium" name="finger-print"></ion-icon>
                     </div>
-                    <ion-input placeholder="Correo Electrónico" class="ion-margin-horizontal" formControlName="email" type="email" email></ion-input>
+                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
                 </ion-item>
                 <!--Password-->
                 <ion-item>
@@ -110,11 +110,11 @@
                     <ion-label>
                         Empleado de tienda
                     </ion-label>
-                    <ion-checkbox formControlName="has_warehouse"></ion-checkbox>
+                    <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
                 </ion-item>
                 <!--Tienda-->
-                <ion-item *ngIf="updateForm.value.has_warehouse" class="inner-item">
-                    <ion-select placeholder="Tienda" formControlName="warehouse">
+                <ion-item *ngIf="updateForm.value.hasWarehouse" class="inner-item">
+                    <ion-select placeholder="Tienda" formControlName="warehouseId">
                         <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse.id}}">{{warehouse.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>

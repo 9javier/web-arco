@@ -96,7 +96,7 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
         /**save the new token  in storage*/
         .pipe(switchMap(response=>{
           console.log(response);
-          return from(this.authenticationService.login(response.data.access_token, response.data.user.id,response.data.refresh_token));
+          return from(this.authenticationService.login(response.data.access_token, response.data.user.id,response.data.accessPermitionsDictionary,response.data.refresh_token));
         }))
       })).pipe(
           switchMap((user) => {

@@ -3,6 +3,10 @@ import { ToastController } from "@ionic/angular";
 import { PrintModel } from "../../models/endpoints/Print";
 import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Observable,from } from 'rxjs';
+import { map,switchMap, flatMap } from 'rxjs/operators';
 
 declare let cordova: any;
 
@@ -11,9 +15,14 @@ declare let cordova: any;
 })
 export class PrinterService {
 
+  private static readonly MAX_PRINT_ATTEMPTS = 5;
+
+  /**urls for printer service */
+  private getProductsByReferenceUrl:string = environment.apiBase+"/products/references";
+
   private address: string;
 
-  constructor(private toastController: ToastController, private settingsService: SettingsService) {
+  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService) {
   }
 
   private async getConfiguredAddress(): Promise<string> {
@@ -26,28 +35,30 @@ export class PrinterService {
     );
   }
 
-  public async connect(callback?: () => void) {
-    if (cordova.plugins.zbtprinter) {
-      cordova.plugins.zbtprinter.find(
-        (result) => {
-          let address = '';
-          if (typeof result == 'string') {
-            address = result;
-          } else {
-            address = result.address;
+  public async connect() {
+    return new Promise((resolve, reject) => {
+      if (cordova.plugins.zbtprinter) {
+        cordova.plugins.zbtprinter.find(
+          (result) => {
+            let address = '';
+            if (typeof result == 'string') {
+              address = result;
+            } else {
+              address = result.address;
+            }
+            this.address = address;
+            console.debug('Zbtprinter: connect success: ' + address);
+            resolve();
+          }, (error) => {
+            console.debug('Zbtprinter: connect fail: ' + error);
+            reject();
           }
-          this.address = address;
-          console.debug('Zbtprinter: connect success: ' + address);
-          if (callback) {
-            callback();
-          }
-        }, (error) => {
-          console.debug('Zbtprinter: connect fail: ' + error);
-        }
-      );
-    } else {
-      console.debug('Zbtprinter: not cordova');
-    }
+        );
+      } else {
+        console.debug('Zbtprinter: not cordova');
+        reject();
+      }
+    });
   }
 
   public async print(printOptions: PrintModel.Print, macAddress?: string) {
@@ -59,16 +70,16 @@ export class PrinterService {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      this.toPrint(printOptions);
+      return await this.toPrint(printOptions);
     } else {
       console.debug('Zbtprinter: Not connected');
-      this.connect(() => {
-        this.toPrint(printOptions);
-      });
+      return await this.connect()
+        .then(() => this.toPrint(printOptions));
     }
   }
 
   public async printProductBoxTag(printOptions: PrintModel.Print, macAddress?: string) {
+    console.log("Estoy en la impresora zebra imprimiento este objeto: ",printOptions);
     printOptions.type = 1;
 
     if (macAddress) {
@@ -77,39 +88,165 @@ export class PrinterService {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      this.toPrint(printOptions);
+      return await this.toPrint(printOptions);
     } else {
       console.debug('Zbtprinter: Not connected');
-      this.connect(() => {
-        this.toPrint(printOptions);
-      });
+      return await this.connect()
+        .then(() => this.toPrint(printOptions));
     }
   }
 
-  printTagBarcode(listReferences: string[]) {
-
+  /**
+   * Get products by reference in api
+   * @returns an observable with the list of products needed
+   */
+  getProductsByReference(references: string[]):Observable<Array<any>>{
+    return this.http.post(this.getProductsByReferenceUrl,{references}).pipe(map((response:any)=>{
+      return response.data;
+    }))
   }
 
-  printTagPrices(listReferences: string[]) {
+  /**
+   * Obtain product by reference and then print each of these products
+   * @param listReferences references to print
+   */
+   printTagBarcode(listReferences: string[]):Observable<Boolean>{
+    /** declare and obsevable to merge all print results */
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
+      let innerObservable:Observable<any> = new Observable(observer=>{
+        observer.next(true);
+      }).pipe(flatMap((r)=>{
+        return new Observable(s=>{
+          return s.next();
+        })
+      }));
+      /**obtain the products */
+      return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
+        /**Iterate and build object to print */
+        products.forEach(product=>{
+          let printOptions:PrintModel.Print = {
+            /**build the needed data for print */
+            product: {
+              productShoeUnit: {
+                reference: product.reference,
+                size: {
+                  name: product.size.name
+                },
+                manufacturer: {
+                  name: product.brand.name
+                },
+                model: {
+                  name: product.model.name,
+                  reference: product.model.reference,
+                  color: {
+                    name: product.color.name
+                  },
+                  season: {
+                    name: product.season ? product.season.name : ''
+                  }
+                }
+              }
+            }
+          };
+          innerObservable = innerObservable.pipe(flatMap(product=>{
+            /**Transform the promise in observable and merge that with the other prints */
+            return from(this.printProductBoxTag(printOptions)
+            // stop errors and attempt to print next tag
+              .catch(reason => {}))
+          }))
+        });
+        return innerObservable;
+      }));
+    }));
+    return observable;
+  }
 
+  /**
+   * Print the prices of products
+   * @param listReferences references of products
+   */
+  printTagPrices(listReferences: string[]):Observable<Boolean>{
+    console.log("entra en el servicio");
+    /** declare and obsevable to merge all print results */
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(switchMap(dummyValue=>{
+      console.log("entra en el primer observable");
+      let innerObservable:Observable<any> = new Observable(observer=>{
+        observer.next(true);
+      })
+      /**obtain the products */
+      return this.getProductsByReference(listReferences).pipe(switchMap((products)=>{
+        console.log("busca los productos en el servicio",products);
+        /**Iterate and build object to print */
+        products.forEach(product=>{
+          let printOptions:PrintModel.Print = {
+            /**build the needed data for print */
+            product: {
+              productShoeUnit: {
+                reference: product.reference,
+                size: {
+                  name: product.size.name
+                },
+                manufacturer: {
+                  name: product.brand.name
+                },
+                model: {
+                  name: product.model.name,
+                  reference: product.model.reference,
+                  color: {
+                    name: product.color.name
+                  },
+                  season: {
+                    name: product.season ? product.season.name : ''
+                  }
+                }
+              }
+            }
+          };
+          console.log(product);
+          console.log("lo que env[ia",printOptions);
+          innerObservable = innerObservable.pipe(switchMap(product=>{
+            /**Transform the promise in observable and merge that with the other prints */
+            return from(this.printProductBoxTag(printOptions)
+            // stop errors and attempt to print next tag
+              .catch(reason => {}))
+          }))
+        });
+        return innerObservable;
+      }));
+    }));
+    return observable;
   }
 
   printTagPrice(product: PrintModel.ProductSizeRange) {
 
   }
 
-  private toPrint(printOptions: PrintModel.Print) {
+  private async toPrint(printOptions: PrintModel.Print) {
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
         let textToPrint = this.getTextToPrinter(printOptions);
-        cordova.plugins.zbtprinter.print(this.address, textToPrint,
-          (success) => {
-            console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-          }, (fail) => {
-            console.debug("Zbtprinter print fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-            this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
-          }
-        );
+        return new Promise((resolve, reject) => {
+          let printAttempts = 0;
+          let tryToPrintFn = () => {
+            printAttempts++;
+            cordova.plugins.zbtprinter.print(this.address, textToPrint,
+              (success) => {
+                console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                resolve();
+              }, (fail) => {
+                if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
+                  console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                  this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+                  reject();
+                } else {
+                  console.debug("Zbtprinter print attempt " + printAttempts + " fail:" + fail + ", retrying...", { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                  setTimeout(tryToPrintFn, 1000);
+                }
+              }
+            );
+          };
+          tryToPrintFn();
+        });
       } else {
         console.debug("Zbtprinter not cordova, failed to print " + (printOptions.text || printOptions.product.productShoeUnit.reference) + " to " + this.address);
       }
@@ -175,20 +312,11 @@ export class PrinterService {
       case 3: // Tag with current product price and previous price
         toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice2' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
-      case 4: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice3' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
-        break;
-      case 5: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice4' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
-        break;
-      case 6: // Tag with original product pvp and product pvp for outlet
+      case 4: // Tag with original product pvp and product pvp for outlet
         toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO0,120^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AUN^FO0,80^FB335,1,0,R,0^FD" + 'saleprice4' + " €^FS^ARN^FO0,80^FB340,1,0,L,0^FDPVP Outlet:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
-      case 7: // Tag with original product pvp, product pvp for outlet and last product price
+      case 5: // Tag with original product pvp, product pvp for outlet and last product price
         toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AFN^FO0,60^FB310,1,0,L,0^FDPVP Outlet:" + 'saleprice4' + "€^FS^ATN^FO0,100^FB335,1,0,R,0^FD" + 'saleprice5' + " €^FS^ARN^FO0,100^FB340,1,0,L,0^FDÚltimo precio:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
-        break;
-      case 8: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice5' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
         break;
     }
 

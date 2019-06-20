@@ -19,12 +19,12 @@ export class UpdateComponent implements OnInit {
     employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
     roleId: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required/*, Validators.email*/]],
     address: [''],
     password: ['',Validators.minLength(4)],
     confirmPassword: [''],
-    has_warehouse:false,
-    warehouse:['']
+    hasWarehouse:false,
+    warehouseId:['']
   };
 
   /**list of warehouses */
@@ -56,8 +56,8 @@ export class UpdateComponent implements OnInit {
    * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
    */
   listenChanges():void {
-    this.updateForm.get("has_warehouse").valueChanges.subscribe(status=>{
-      let warehouseControl = this.updateForm.get("warehouse");
+    this.updateForm.get("hasWarehouse").valueChanges.subscribe(status=>{
+      let warehouseControl = this.updateForm.get("warehouseId");
       warehouseControl.setValue("");
       if(status){
         warehouseControl.setValidators([Validators.required]);

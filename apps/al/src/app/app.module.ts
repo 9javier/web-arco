@@ -13,7 +13,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { ServicesModule, AddTokenToRequestInterceptor } from '@suite/services';
-import { ScannerConfigurationModule } from "@suite/common-modules";
+import { ScannerConfigurationModule,MenuModule } from "@suite/common-modules";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
@@ -22,6 +22,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
   imports: [
     BrowserModule,
     HttpClientModule,
+    MenuModule,
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     AppRoutingModule,

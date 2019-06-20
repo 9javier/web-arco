@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
+import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
 
 @Component({
   selector: 'suite-picking-tasks',
@@ -8,17 +9,18 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class PickingTasksComponent implements OnInit {
 
-  method: string = 'scanner';
-
   constructor(
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private pickingProvider: PickingProvider
   ) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
       let paramsReceived = params.params;
       if (typeof paramsReceived.method == 'string' && paramsReceived.method == 'manual') {
-        this.method = 'manual';
+        this.pickingProvider.method = 'manual';
+      } else {
+        this.pickingProvider.method = 'scanner';
       }
     });
   }

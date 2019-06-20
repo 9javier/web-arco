@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
           }
           const response: ResponseLogin = data.body;
           console.log(response);
-          this.authenticationService.login(data.body.data.access_token, data.body.data.user.id,data.body.data.refresh_token);
+          this.authenticationService.login(data.body.data.access_token, data.body.data.user,data.body.data.accessPermitionsDictionary,data.body.data.refresh_token);
           this.router.navigate(['/home']);
         },
         (errorResponse: HttpErrorResponse) => {

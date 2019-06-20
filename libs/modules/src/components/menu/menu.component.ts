@@ -2,6 +2,24 @@ import { Component, OnInit,Input } from '@angular/core';
 import {  app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
+import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
+import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
+
+type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
+
+interface MenuSectionGroupItem {
+  title: string,
+  open: boolean,
+  type: 'wrapper',
+  children: MenuSectionItem[]
+}
+
+interface MenuSectionItem {
+  title: string,
+  id: string,
+  url: string,
+  icon: string,
+}
 
 @Component({
   selector: 'suite-menu',
@@ -20,7 +38,7 @@ export class MenuComponent implements OnInit {
   iconsDirection = 'start';
   displaySmallSidebar = false;
   currentRoute:string = "";
-  sgaPages:Array<any> = [
+  sgaPages: MenuItemList = [
     {
       title: 'Logística',
       open: true,
@@ -42,6 +60,12 @@ export class MenuComponent implements OnInit {
           id:'warehouses-management',
           url: '/warehouse/manage',
           icon: 'apps'
+        },
+        {
+          title: 'Incidencias',
+          id: 'incidences',
+          url: '/incidences',
+          icon: 'notifications'
         }
       ]
     },
@@ -133,6 +157,12 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title:'Tarifa',
+      id:'tariff-sga',
+      url:'/tariff',
+      icon:'logo-usd'
+    },
+    {
       title: 'Cerrar sesión',
       id:'logout',
       url: 'logout',
@@ -140,7 +170,7 @@ export class MenuComponent implements OnInit {
     }
   ];
 
-  alPages:Array<any> = [
+  alPages: MenuItemList = [
     {
       title: 'Productos',
       id:'products',
@@ -154,16 +184,34 @@ export class MenuComponent implements OnInit {
       icon: 'apps'
     },
     {
+      title: 'Recepción',
+      id: 'reception',
+      icon: 'qr-scanner',
+      url: 'reception'
+    },
+    {
       title: 'Ubicar/Escanear',
       id:'positioning',
       icon: 'qr-scanner',
       url: 'positioning'
     },
     {
+      title: 'Ubicar/Escanear Manualmente',
+      icon: 'qr-scanner',
+      url: '/positioning/manual',
+      id:'positioning-manual'
+    },
+    {
       title: 'Tareas de Picking',
       id:"picking-task",
       icon: 'qr-scanner',
       url: '/picking-tasks'
+    },
+    {
+      title: 'Tareas de Picking Manualmente',
+      icon: 'qr-scanner',
+      url: '/picking-tasks/manual',
+      id:'picking-tasks-manual'
     },
     {
       title: 'Jaulas',
@@ -178,28 +226,42 @@ export class MenuComponent implements OnInit {
       icon: 'cube'
     },
     {
+      title: 'Almacenes',
+      url: '/warehouses',
+      icon: 'filing',
+      id:'warehouses'
+    },
+    {
       title: 'Ajustes',
       id:'settings',
       url: '/settings',
       icon: 'cog'
     },
     {
+      title:'Tarifa',
+      id:'tariff-al',
+      url:'/tariff',
+      icon:'logo-usd'
+    },
+    {
       title: 'Cerrar sesión',
       id:'logout',
       url: 'logout',
       icon: 'log-out'
-    },
+    }
   ];
   private menuPages = {
     sga:this.sgaPages,
     al:this.alPages
   }
 
-  menuPagesFiltered:Array<any> = [];
+  menuPagesFiltered: MenuItemList = [];
 
 
 
-  constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService) { }
+  constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
+              private scanditService: ScanditService,
+              private receptionScanditService: ReceptionScanditService) { }
 
   /**
    * Select the links that be shown depends of dictionary paramethers
@@ -258,6 +320,10 @@ export class MenuComponent implements OnInit {
             console.log(data);
           });
       });
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
+    } else if(p.url === 'reception'){
+      this.receptionScanditService.reception();
     }
   }
 
@@ -273,7 +339,7 @@ export class MenuComponent implements OnInit {
       ? (this.iconsDirection = 'end')
       : (this.iconsDirection = 'start');
 
-    for (let page of this.menuPagesFiltered) {
+    for (let page of <MenuSectionGroupItem[]>(this.menuPagesFiltered)) {
       if (page.children && page.children.length > 0) {
         page.open = false;
       }

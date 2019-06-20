@@ -3,7 +3,7 @@ import {ModelModel} from "@suite/services";
 export namespace ModelModel {
   export interface Model{
     id?: number;
-    reference: number;
+    reference: number|string;
     color: number;
   }
 
