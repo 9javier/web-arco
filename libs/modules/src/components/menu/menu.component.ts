@@ -3,6 +3,7 @@ import {  app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
 import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
+import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -183,6 +184,12 @@ export class MenuComponent implements OnInit {
       icon: 'apps'
     },
     {
+      title: 'Recepción',
+      id: 'reception',
+      icon: 'qr-scanner',
+      url: 'reception'
+    },
+    {
       title: 'Ubicar/Escanear',
       id:'positioning',
       icon: 'qr-scanner',
@@ -253,7 +260,8 @@ export class MenuComponent implements OnInit {
 
 
   constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
-              private scanditService: ScanditService) { }
+              private scanditService: ScanditService,
+              private receptionScanditService: ReceptionScanditService) { }
 
   /**
    * Select the links that be shown depends of dictionary paramethers
@@ -314,6 +322,8 @@ export class MenuComponent implements OnInit {
       });
     } else if(p.url === 'positioning'){
       this.scanditService.positioning();
+    } else if(p.url === 'reception'){
+      this.receptionScanditService.reception();
     }
   }
 
