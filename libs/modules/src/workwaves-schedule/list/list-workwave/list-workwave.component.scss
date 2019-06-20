@@ -23,5 +23,11 @@ mat-grid-list {
     div.tile-date {
       color: var(--ion-color-secondary);
     }
+    div.btn-see {
+      width: 100%;
+      color: #008aff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 }

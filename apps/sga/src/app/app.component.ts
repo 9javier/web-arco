@@ -138,24 +138,6 @@ export class AppComponent implements OnInit {
 
 
   dictionary = {
-    'products':true,
-    'labels':true,
-    'warehouses-management':true,
-    'workwaves-scheduled':true,
-    'workwaves-templates':true,
-    'workwaves-history':true,
-    'user-management':true,
-    'operator-parametrization':true,
-    'roles':true,
-    'warehouses':true,
-    'warehouses-group':true,
-    'group-to-warehouse':true,
-    'jails':true,
-    'pallets':true,
-    'logout':true,
-    'positionning':true,
-    'picking-task':true,
-    'settings':true,
   }
 
 
@@ -259,6 +241,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     app.name = "sga";
+    /**Set the dictionary of access to menu */
+    this.authenticationService.dictionaryAcessState.subscribe(state=>{
+      this.dictionary = state;
+    });
     this.initializeApp();
   }
 
@@ -306,10 +292,6 @@ export class AppComponent implements OnInit {
 
   toggleSidebarSmallDevices() {
     this.menu.toggle('sidebar');
-  }
-
-  hideSidebarRight() {
-    this.menu.enable(false, 'sidebarRight');
   }
 
   openSubMenuItem(menuItem) {

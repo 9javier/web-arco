@@ -1,0 +1,43 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToList()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item lines="inset" class="header-list-products">
+      <ion-label>
+        Modelo
+      </ion-label>
+      <ion-label>
+        Talla
+      </ion-label>
+      <ion-label>
+        Color
+      </ion-label>
+      <ion-label>
+        Ubicación
+      </ion-label>
+    </ion-item>
+
+    <ion-item lines="inset" *ngFor="let product of listProducts">
+      <ion-label>
+        {{product.product.model.reference}}
+      </ion-label>
+      <ion-label>
+        {{product.product.size.name}}
+      </ion-label>
+      <ion-label>
+        {{product.product.model.color.name}}
+      </ion-label>
+      <ion-label>
+        {{product.inventory.container.reference}}
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -56,8 +56,10 @@ export class TextareaComponent implements OnInit {
         this.inputPositioning = null;
         this.errorMessage = null;
       } else if (!this.containerReference) {
+        this.inputPositioning = null;
         this.errorMessage = '¡Referencia del contenedor errónea!';
       } else {
+        this.inputPositioning = null;
         this.errorMessage = '¡Referencia del producto/contenedor errónea!';
       }
     }

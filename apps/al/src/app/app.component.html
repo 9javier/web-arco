@@ -34,7 +34,7 @@
                 </ion-toolbar>
             </ion-header>
             <ion-content>
-                <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
+                <!--ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
                     <ion-list no-padding lines="none">
                         <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="tapOption(p)">
                             <ion-icon [slot]="iconsDirection" [name]="p.icon"></ion-icon>
@@ -43,7 +43,8 @@
                             </ion-label>
                         </ion-item>
                     </ion-list>
-                </ion-menu-toggle>
+                </ion-menu-toggle>-->
+                <suite-menu [alloweds]="dictionary"></suite-menu>
             </ion-content>
         </ion-menu>
 

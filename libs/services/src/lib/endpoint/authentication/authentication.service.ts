@@ -12,9 +12,11 @@ export class AuthenticationService {
 
 
   authenticationState = new BehaviorSubject(null);
+  dictionaryAcessState = new BehaviorSubject(null);
 
   constructor(private storage: Storage) {
     console.log(storage);
+    this.getDictionaryAccess();
   }
 
   async checkToken() {
@@ -31,12 +33,22 @@ export class AuthenticationService {
     });
   }
 
-  async login(accessToken: string, userId?: number, refreshToken?:string) {
+  async getDictionaryAccess(){
+    console.log("set dictionary access");
+    return await this.storage.get("dictionaryAcess").then(access=>{
+      console.log("set dictionary access",access);
+      this.dictionaryAcessState.next(access);
+    });
+  }
+
+  async login(accessToken: string, userId?: number, dictionary?, refreshToken?:string) {
     if (userId) {
       await this.storage.set(USER_ID_KEY, userId);
     }
     if(refreshToken)
       await this.storage.set("refreshToken",refreshToken);
+    if(dictionary)
+      await this.storage.set("dictionaryAcess",dictionary).then(()=>this.getDictionaryAccess());
     return this.storage.set(TOKEN_KEY, `Bearer ${accessToken}`).then(() => {
       this.authenticationState.next(true);
     });
