@@ -172,8 +172,10 @@ export class PrinterService {
       /**obtain the products */
       return this.getProductsByReference(listReferences).pipe(switchMap((products)=>{
         console.log("busca los productos en el servicio",products);
+
         /**Iterate and build object to print */
         products.forEach(product=>{
+
           let printOptions:PrintModel.Print = {
             /**build the needed data for print */
             product:{
@@ -182,6 +184,7 @@ export class PrinterService {
                 size:{
                   name:product.size.name
                 },
+
                 model:{
                   reference: product.model.reference,
                   color:product.model.color,

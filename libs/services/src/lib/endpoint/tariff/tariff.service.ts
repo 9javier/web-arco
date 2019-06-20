@@ -17,11 +17,12 @@ export class TariffService {
 
   /**
    * Get all tariff of the system
+   * @param warehouseId - the warehouse of the tariff
    * @returns observable with the tariff
    */
-  getIndex():Observable<Array<TariffModel.Tariff>>{
+  getIndex(warehouseId:number = 51):Observable<Array<TariffModel.Tariff>>{
     return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl,{
-      warehouseId: 51
+      warehouseId: warehouseId
     }).pipe(map(response=>{
       return response.data;
     }));

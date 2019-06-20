@@ -1,0 +1,56 @@
+<ion-content>
+    <ion-text color="primary">
+        <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+    <table mat-table [dataSource]="dataSource">
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>
+                Precio
+            </th>
+            <td mat-cell *matCellDef="let label">
+                {{ price?.totalPrice }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="discount">
+            <th mat-header-cell *matHeaderCellDef>
+                Descuento
+            </th>
+            <td mat-cell *matCellDef="let label">
+                {{ price?.priceDiscount }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="percentage">
+            <th mat-header-cell *matHeaderCellDef>Porcentaje</th>
+            <td mat-cell *matCellDef="let label">
+                {{ price?.percent }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="select" [formGroup]="selectedForm">
+            <th mat-header-cell *matHeaderCellDef>
+                <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
+                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                </ng-template>
+            </td>
+        </ng-container>
+
+
+    </table>
+    <!-- <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator> -->
+
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="printLabels(labels)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+        <ion-icon name="print"></ion-icon>
+    </ion-fab-button>
+</ion-fab>

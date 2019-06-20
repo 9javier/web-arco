@@ -5,7 +5,8 @@ import { MatTableDataSource} from '@angular/material';
 import {
   IntermediaryService,
   LabelsService,
-  TariffService
+  TariffService,
+  TariffModel
 
 } from '@suite/services';
 
@@ -40,9 +41,11 @@ export class TariffComponent implements OnInit {
 
   /**
    * Go to product view
+   * @param id - the id of the selected tariff
    */
-  goToProducts():void{
-    this.router.navigate(['products']);
+  goPrices(id:number):void{
+    let a:TariffModel.Tariff;
+    this.router.navigate(['prices',id]);
   }
 
   /**

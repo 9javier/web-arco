@@ -205,6 +205,13 @@ const routes: Routes = [
     data:{
       name:'Notificaciones'
     }
+  },{
+    path: 'prices',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
+    data:{
+      name:'Prices'
+    }
   }
 ];
 
