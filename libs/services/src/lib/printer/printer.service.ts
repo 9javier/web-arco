@@ -16,6 +16,8 @@ declare let cordova: any;
 })
 export class PrinterService {
 
+  private static readonly MAX_PRINT_ATTEMPTS = 5;
+
   /**urls for printer service */
   private getProductsByReferenceUrl:string = environment.apiBase+"/products/references";
 
@@ -67,11 +69,11 @@ export class PrinterService {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      this.toPrint(printOptions);
+      return this.toPrint(printOptions);
     } else {
       console.debug('Zbtprinter: Not connected');
       this.connect(() => {
-        this.toPrint(printOptions);
+        return this.toPrint(printOptions);
       });
     }
   }
@@ -203,18 +205,32 @@ export class PrinterService {
 
   }
 
-  private toPrint(printOptions: PrintModel.Print) {
+  private async toPrint(printOptions: PrintModel.Print) {
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
         let textToPrint = this.getTextToPrinter(printOptions);
-        cordova.plugins.zbtprinter.print(this.address, textToPrint,
-          (success) => {
-            console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-          }, (fail) => {
-            console.debug("Zbtprinter print fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-            this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
-          }
-        );
+        return new Promise((resolve, reject) => {
+          let printAttempts = 0;
+          let tryToPrintFn = () => {
+            printAttempts++;
+            cordova.plugins.zbtprinter.print(this.address, textToPrint,
+              (success) => {
+                console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                resolve();
+              }, (fail) => {
+                if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
+                  console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                  this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+                  reject();
+                } else {
+                  console.debug("Zbtprinter print attempt " + printAttempts + " fail:" + fail + ", retrying...", { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                  setTimeout(tryToPrintFn, 1000);
+                }
+              }
+            );
+          };
+          tryToPrintFn();
+        });
       } else {
         console.debug("Zbtprinter not cordova, failed to print " + (printOptions.text || printOptions.product.productShoeUnit.reference) + " to " + this.address);
       }
