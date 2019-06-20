@@ -36,28 +36,30 @@ export class PrinterService {
     );
   }
 
-  public async connect(callback?: () => void) {
-    if (cordova.plugins.zbtprinter) {
-      cordova.plugins.zbtprinter.find(
-        (result) => {
-          let address = '';
-          if (typeof result == 'string') {
-            address = result;
-          } else {
-            address = result.address;
+  public async connect() {
+    return new Promise((resolve, reject) => {
+      if (cordova.plugins.zbtprinter) {
+        cordova.plugins.zbtprinter.find(
+          (result) => {
+            let address = '';
+            if (typeof result == 'string') {
+              address = result;
+            } else {
+              address = result.address;
+            }
+            this.address = address;
+            console.debug('Zbtprinter: connect success: ' + address);
+            resolve();
+          }, (error) => {
+            console.debug('Zbtprinter: connect fail: ' + error);
+            reject();
           }
-          this.address = address;
-          console.debug('Zbtprinter: connect success: ' + address);
-          if (callback) {
-            callback();
-          }
-        }, (error) => {
-          console.debug('Zbtprinter: connect fail: ' + error);
-        }
-      );
-    } else {
-      console.debug('Zbtprinter: not cordova');
-    }
+        );
+      } else {
+        console.debug('Zbtprinter: not cordova');
+        reject();
+      }
+    });
   }
 
   public async print(printOptions: PrintModel.Print, macAddress?: string) {
@@ -69,12 +71,11 @@ export class PrinterService {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      return this.toPrint(printOptions);
+      return await this.toPrint(printOptions);
     } else {
       console.debug('Zbtprinter: Not connected');
-      this.connect(() => {
-        return this.toPrint(printOptions);
-      });
+      return await this.connect()
+        .then(() => this.toPrint(printOptions));
     }
   }
 
@@ -88,12 +89,11 @@ export class PrinterService {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      return this.toPrint(printOptions);
+      return await this.toPrint(printOptions);
     } else {
       console.debug('Zbtprinter: Not connected');
-      this.connect(() => {
-        return this.toPrint(printOptions);
-      });
+      return await this.connect()
+        .then(() => this.toPrint(printOptions));
     }
   }
 
@@ -145,7 +145,9 @@ export class PrinterService {
           }
           innerObservable = innerObservable.pipe(flatMap(product=>{
             /**Transform the promise in observable and merge that with the other prints */
-            return from(this.printProductBoxTag(printOptions))
+            return from(this.printProductBoxTag(printOptions)
+            // stop errors and attempt to print next tag
+              .catch(reason => {}))
           }))
         });
         return innerObservable;
@@ -192,7 +194,9 @@ export class PrinterService {
           }
           innerObservable = innerObservable.pipe(flatMap(product=>{
             /**Transform the promise in observable and merge that with the other prints */
-            return from(this.printProductBoxTag(printOptions))
+            return from(this.printProductBoxTag(printOptions)
+            // stop errors and attempt to print next tag
+              .catch(reason => {}))
           }))
         });
         return innerObservable;
