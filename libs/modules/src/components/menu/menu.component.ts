@@ -4,6 +4,22 @@ import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
 import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 
+type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
+
+interface MenuSectionGroupItem {
+  title: string,
+  open: boolean,
+  type: 'wrapper',
+  children: MenuSectionItem[]
+}
+
+interface MenuSectionItem {
+  title: string,
+  id: string,
+  url: string,
+  icon: string,
+}
+
 @Component({
   selector: 'suite-menu',
   templateUrl: './menu.component.html',
@@ -21,7 +37,7 @@ export class MenuComponent implements OnInit {
   iconsDirection = 'start';
   displaySmallSidebar = false;
   currentRoute:string = "";
-  sgaPages:Array<any> = [
+  sgaPages: MenuItemList = [
     {
       title: 'Logística',
       open: true,
@@ -153,7 +169,7 @@ export class MenuComponent implements OnInit {
     }
   ];
 
-  alPages:Array<any> = [
+  alPages: MenuItemList = [
     {
       title: 'Productos',
       id:'products',
@@ -232,7 +248,7 @@ export class MenuComponent implements OnInit {
     al:this.alPages
   }
 
-  menuPagesFiltered:Array<any> = [];
+  menuPagesFiltered: MenuItemList = [];
 
 
 
@@ -313,7 +329,7 @@ export class MenuComponent implements OnInit {
       ? (this.iconsDirection = 'end')
       : (this.iconsDirection = 'start');
 
-    for (let page of this.menuPagesFiltered) {
+    for (let page of <MenuSectionGroupItem[]>(this.menuPagesFiltered)) {
       if (page.children && page.children.length > 0) {
         page.open = false;
       }

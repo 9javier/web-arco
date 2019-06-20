@@ -145,7 +145,6 @@ export class ProductsComponent implements OnInit {
     this.printerService.printTagBarcode(references).subscribe(result=>{
       console.log("result of impressions",result);
       this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentConfirm("Proceso terminado",()=>{})
     },error=>{
       this.intermediaryService.dismissLoading();
       console.log(error);
@@ -162,7 +161,6 @@ export class ProductsComponent implements OnInit {
     this.printerService.printTagPrices(references).subscribe(result=>{
       console.log("result of impressions",result);
       this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentConfirm("Proceso terminado",()=>{})
     },error=>{
       this.intermediaryService.dismissLoading();
       console.log(error);

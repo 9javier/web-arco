@@ -55,14 +55,18 @@ export class IncidencesService {
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
-  public init(filters?: IncidenceModel.SearchParameters) {
+  public initPreview() {
     this.postSearch(this._defaultFiltersPreview)
       .subscribe((res: IncidenceModel.ResponseSearch) => {
         this._incidencesPreviewList = res.data.incidences;
+        this._incidencesUnattendedQuantity = res.data.count;
+        this._incidencesQuantity = res.data.count_search;
       }, error => {
         console.warn('Error Subscribe::Search Incidences with Filters');
       });
+  }
 
+  public init(filters?: IncidenceModel.SearchParameters) {
     let filtersSearch = filters || this._defaultFilters;
 
     this.postSearch(filtersSearch)
