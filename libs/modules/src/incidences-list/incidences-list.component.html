@@ -44,6 +44,17 @@
         <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           <div class="example-element-description">
             <p>{{element.description}}</p>
+            <ul *ngIf="element.typeIncidence == 8">
+              <li *ngIf="element.model">
+                Modelo: <b>{{element.model.reference}}</b>
+              </li>
+              <li *ngIf="element.color">
+                Color: <b>{{element.color.name}}</b>
+              </li>
+              <li *ngIf="element.size">
+                Talla: <b>{{element.size.name}}</b>
+              </li>
+            </ul>
             <p class="time-text">{{showDateTime(element.createdAt)}}</p>
           </div>
         </div>

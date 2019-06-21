@@ -13,6 +13,8 @@ export namespace IncidenceModel {
     container?: any;
     createdAt?: string;
     updatedAt?: string;
+    size?: any;
+    color?: any;
   }
 
   export interface SearchParameters {
