@@ -96,7 +96,7 @@ export class IncidencesListComponent implements OnInit {
     this.incidencesService
       .postSearch(parameters)
       .subscribe((res: IncidenceModel.ResponseSearch) => {
-        this.incidencesService.incidencesQuantity = res.data.count_search;
+        this.incidencesService.incidencesQuantityList = res.data.count_search;
         this.incidencesService.incidencesUnattendedQuantity = res.data.count;
         this.incidencesService.incidencesList = res.data.incidences;
       }, error => {
