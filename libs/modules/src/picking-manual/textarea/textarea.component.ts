@@ -317,7 +317,7 @@ export class TextareaComponent implements OnInit {
   async productNotFound() {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      subHeader: '¿Está seguro de querer reportar como no encontrado el producto '+this.nexProduct.product.reference+' en la ubicación '+this.nexProduct.inventory.container.reference+'?',
+      subHeader: '¿Está seguro de querer reportar como no encontrado el producto '+this.nexProduct.product.model.reference+' en la ubicación '+this.nexProduct.inventory.container.reference+'?',
       backdropDismiss: false,
       buttons: [
         'Cancelar',
