@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PricesComponent } from './prices.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';

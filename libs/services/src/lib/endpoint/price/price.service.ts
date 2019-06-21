@@ -25,6 +25,7 @@ export class PriceService {
       warehouseId:warehouseId,
       tariffId:tariffId
     }).pipe(map(response=>{
+      console.log("respuesta",response)
       return response.data;
     }));
   }
