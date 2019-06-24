@@ -1,18 +1,12 @@
 <div class="table-container mat-elevation-z8">
-  <ion-row class="row-filters">
-    <ion-col size="6">
-      <ion-item lines="none">
-        <ion-label>
-          Filtrar por Tipo
-        </ion-label>
-        <ion-select interface="popover" [(ngModel)]="typeSelected" (ngModelChange)="filterByType()">
-          <ion-select-option *ngFor="let type of incidencesService.listIncidencesTypes" [value]="type">
-            {{type.name}}
-          </ion-select-option>
-        </ion-select>
-      </ion-item>
-    </ion-col>
-  </ion-row>
+  <filters-incidences
+    [listIncidencesTypes]="incidencesService.listIncidencesTypes"
+    [typeSelected]="typeSelected"
+    [listAttendedOptions]="listAttendedOptions"
+    [attendedSelected]="attendedSelected"
+    [textToSearch]="textToSearch"
+    (changeFilters)="changeFilters($event)">
+  </filters-incidences>
 
   <table mat-table multiTemplateDataRows [dataSource]="incidencesService.incidencesList" class="table-incidences">
     <ng-container matColumnDef="id">
@@ -44,6 +38,17 @@
         <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
           <div class="example-element-description">
             <p>{{element.description}}</p>
+            <ul *ngIf="element.typeIncidence == 8">
+              <li *ngIf="element.model">
+                Modelo: <b>{{element.model.reference}}</b>
+              </li>
+              <li *ngIf="element.color">
+                Color: <b>{{element.color.name}}</b>
+              </li>
+              <li *ngIf="element.size">
+                Talla: <b>{{element.size.name}}</b>
+              </li>
+            </ul>
             <p class="time-text">{{showDateTime(element.createdAt)}}</p>
           </div>
         </div>
@@ -60,5 +65,5 @@
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
   </table>
 
-  <mat-paginator [length]="incidencesService.incidencesQuantity" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+  <mat-paginator [length]="incidencesService.incidencesQuantityList" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
 </div>

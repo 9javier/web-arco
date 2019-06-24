@@ -809,6 +809,9 @@ public class ScanditSDK extends CordovaPlugin {
           try {
             String location = "";
             String reference = fProduct.getJSONObject("product").getString("reference");
+            String modelProduct = fProduct.getJSONObject("product").getJSONObject("model").getString("reference");
+            String colorProduct = fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name");
+            String sizeProduct = fProduct.getJSONObject("product").getJSONObject("size").getString("name");
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
               location = fProduct.getJSONObject("inventory").getJSONObject("container").getString("reference");
 
@@ -822,16 +825,16 @@ public class ScanditSDK extends CordovaPlugin {
               location = location.concat(" (P"+rack+row+column+")");
             }
             tvLocation.setText(location);
-            tvManufacturer.setText(fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name"));
-            tvModel.setText(fProduct.getJSONObject("product").getJSONObject("model").getString("reference"));
-            tvSize.setText(fProduct.getJSONObject("product").getJSONObject("size").getString("name"));
+            tvManufacturer.setText(colorProduct);
+            tvModel.setText(modelProduct);
+            tvSize.setText(sizeProduct);
 
             final String fLocation = location;
             btnNotFound.setOnClickListener(view -> {
               AlertDialog.Builder builderWarningProduct404 = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
               builderWarningProduct404
                 .setTitle("Atención")
-                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + reference + " en la ubicación " + fLocation + "?")
+                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + modelProduct + " en la ubicación " + fLocation + "?")
                 .setCancelable(false)
                 .setPositiveButton("Reportar", (dialog, id) -> {
                   JSONObject jsonObject = new JSONObject();

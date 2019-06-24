@@ -18,7 +18,8 @@ export class IncidencesService {
 
   private _incidencesList: IncidenceModel.Incidence[];
   private _incidencesPreviewList: IncidenceModel.Incidence[];
-  private _incidencesQuantity: number;
+  private _incidencesQuantityPopover: number;
+  private _incidencesQuantityList: number;
   private _incidencesUnattendedQuantity: number;
   private _quantityIncidencesToShow: number = 5;
   private _incidenceType: any = {
@@ -60,7 +61,7 @@ export class IncidencesService {
       .subscribe((res: IncidenceModel.ResponseSearch) => {
         this._incidencesPreviewList = res.data.incidences;
         this._incidencesUnattendedQuantity = res.data.count;
-        this._incidencesQuantity = res.data.count_search;
+        this._incidencesQuantityPopover = res.data.count_search;
       }, error => {
         console.warn('Error Subscribe::Search Incidences with Filters');
       });
@@ -73,7 +74,7 @@ export class IncidencesService {
       .subscribe((res: IncidenceModel.ResponseSearch) => {
         this._incidencesList = res.data.incidences;
         this._incidencesUnattendedQuantity = res.data.count;
-        this._incidencesQuantity = res.data.count_search;
+        this._incidencesQuantityList = res.data.count_search;
       }, error => {
         console.warn('Error Subscribe::Search Incidences with Filters');
       });
@@ -92,12 +93,20 @@ export class IncidencesService {
     return this._incidencesPreviewList;
   }
 
-  // IncidencesQuantity: Getter and Setter
-  get incidencesQuantity(): number {
-    return this._incidencesQuantity;
+  // IncidencesQuantityPopover: Getter and Setter
+  get incidencesQuantityPopover(): number {
+    return this._incidencesQuantityPopover;
   }
-  set incidencesQuantity(value: number) {
-    this._incidencesQuantity = value;
+  set incidencesQuantityPopover(value: number) {
+    this._incidencesQuantityPopover = value;
+  }
+
+  // IncidencesQuantityList: Getter and Setter
+  get incidencesQuantityList(): number {
+    return this._incidencesQuantityList;
+  }
+  set incidencesQuantityList(value: number) {
+    this._incidencesQuantityList = value;
   }
 
   // IncidencesUnattendedQuantity: Getter and Setter
@@ -120,7 +129,7 @@ export class IncidencesService {
 
 // DefalutFilters: Getter
   get defaultFilters(): IncidenceModel.SearchParameters {
-    return this._defaultFilters;
+    return JSON.parse(JSON.stringify(this._defaultFilters));
   }
 
   // Index: Request to endpoint to ist all incidences

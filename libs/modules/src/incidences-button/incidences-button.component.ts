@@ -28,7 +28,7 @@ export class IncidencesButtonComponent implements OnInit {
   }
 
   async showIncidences(ev: any) {
-    if (this.incidencesService.incidencesQuantity > 0) {
+    if (this.incidencesService.incidencesQuantityPopover > 0) {
       const popover = await this.popoverController.create({
         component: IncidencesPopoverComponent,
         event: ev,
