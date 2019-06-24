@@ -1,0 +1,56 @@
+div.wrapper {
+    width: 100%;
+    height: 48px;
+    padding: 5px;
+    box-sizing: border-box;
+    border: 1px solid #dedede;
+    display: flex;
+    align-items: center;
+    position: relative;
+    div.options {
+        display: none;
+    }
+    &:focus-within div.options {
+        display: block;
+        width: calc(100% + 2px);
+        left: -1px;
+        top: 100%;
+        position: absolute;
+        background-color: #00BCD4;
+        z-index: 10000000;
+        overflow: auto;
+        max-height: 100px;
+        .option {
+            &:hover {
+                background-color: #00c9e2;
+            }
+            &.selected {
+                background-color: #00c9e2;
+            }
+            cursor: pointer;
+            padding: 10px 5px;
+        }
+    }
+    input {
+        width: 100%;
+        height: 100%;
+        outline: none;
+        border: none;
+    }
+    div.tag {
+        span.close {
+            color: #018697;
+            font-weight: bold;
+            position: absolute;
+            right: 5px;
+            top: 1px;
+            cursor: pointer;
+        }
+        position: relative;
+        background: #00BCD4;
+        color: white;
+        padding: 9px 18px;
+        border-radius: 5px;
+        width: 100%;
+    }
+}
