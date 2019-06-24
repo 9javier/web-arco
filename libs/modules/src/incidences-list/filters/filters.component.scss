@@ -1,0 +1,8 @@
+ion-row.row-filters {
+  ion-col {
+    padding: 16px;
+    ion-label+ion-input {
+      text-align: right;
+    }
+  }
+}

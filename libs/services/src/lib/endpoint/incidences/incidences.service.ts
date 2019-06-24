@@ -129,7 +129,7 @@ export class IncidencesService {
 
 // DefalutFilters: Getter
   get defaultFilters(): IncidenceModel.SearchParameters {
-    return this._defaultFilters;
+    return JSON.parse(JSON.stringify(this._defaultFilters));
   }
 
   // Index: Request to endpoint to ist all incidences

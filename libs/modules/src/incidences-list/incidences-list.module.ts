@@ -6,6 +6,7 @@ import {IncidencesListComponent} from "./incidences-list.component";
 import {IncidenceComplexModule} from "../incidence-complex/incidence-complex.module";
 import {MatListModule, MatPaginatorModule, MatTableModule} from "@angular/material";
 import {RouterModule, Routes} from "@angular/router";
+import {FiltersIncidencesComponent} from "./filters/filters.component";
 
 const routes: Routes = [
   {
@@ -15,7 +16,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [IncidencesListComponent],
+  declarations: [IncidencesListComponent, FiltersIncidencesComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -26,6 +27,6 @@ const routes: Routes = [
     MatListModule,
     RouterModule.forChild(routes),
     FormsModule
-  ], entryComponents: [IncidencesListComponent]
+  ], entryComponents: [IncidencesListComponent, FiltersIncidencesComponent]
 })
 export class IncidencesListModule { }

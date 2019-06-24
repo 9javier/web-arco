@@ -1,4 +1,4 @@
-import {UserModel} from "@suite/services";
+import {TypeModel, UserModel} from "@suite/services";
 
 export namespace IncidenceModel {
   export interface Incidence {
@@ -18,10 +18,23 @@ export namespace IncidenceModel {
   }
 
   export interface SearchParameters {
+    attended?: number,
     order: 'ASC'|'DESC',
     page: number,
     size: number,
+    text?: string,
     type?: number
+  }
+
+  export interface IncidenceFilters {
+    attended: AttendedOption,
+    text?: string,
+    type?: TypeModel.Type
+  }
+
+  export interface AttendedOption {
+    id: 0|1|2,
+    value: string
   }
 
   export interface ResponseIndex {
