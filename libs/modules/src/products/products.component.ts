@@ -23,6 +23,7 @@ import { ProductDetailsComponent } from './modals/product-details/product-detail
 import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
+import { Enum } from '../components/tags-input/models/enum.model';
 
 
 @Component({
@@ -70,7 +71,7 @@ export class ProductsComponent implements OnInit {
 
   /**Filters */
   colors:Array<FiltersModel.Color> = [];
-  containers:Array<FiltersModel.Container> = [];
+  containers:Array<Enum> = [];
   models:Array<FiltersModel.Model> = [];
   sizes:Array<FiltersModel.Size> = [];
   warehouses:Array<FiltersModel.Warehouse> = [];
@@ -94,6 +95,14 @@ export class ProductsComponent implements OnInit {
     private modalController:ModalController,
     private printerService:PrinterService
   ) {}
+
+  enums=[{
+    id:1,
+    name:'HOLA'
+  },{
+    id:2,
+    name:'CHAO'
+  }];
 
     /**
    * clear empty values of objecto to sanitize it
@@ -175,11 +184,6 @@ export class ProductsComponent implements OnInit {
     /**
      * Get the main warehouse to attacth their id to the request
      */
-    this.warehouseService.getMain().subscribe(warehouse=>{
-      this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
-      this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
-      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-    });
     this.listenChanges();
   }
 
@@ -278,13 +282,18 @@ export class ProductsComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters():void{
+
     /**get colors to filter */
     this.filterServices.getColors().subscribe(colors=>{
       this.colors = colors;
     });
     /**get containers to filter */
     this.filterServices.getContainers().subscribe(containers=>{
-      this.containers = containers;
+      this.containers = (<Array<any>>containers).map(container=>{
+        container.name = container.reference
+        return container;
+      });
+      console.log(containers,"containers");
     });
     /**get models to filter */
     this.filterServices.getModels().subscribe(models=>{
@@ -297,10 +306,17 @@ export class ProductsComponent implements OnInit {
     /**get warehouses to filter */
     this.filterServices.getWarehouses().subscribe(warehouses=>{
       this.warehouses = warehouses;
+      this.warehouseService.getMain().subscribe(warehouse=>{
+        this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      });
     });
     /**get types to the orderby */
     this.typeService.getOrderProductTypes().subscribe(ordertypes=>{
       this.groups = ordertypes;
+      console.log(this.groups,TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT);
+      this.form.get("orderby").get("type").patchValue(TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
 }

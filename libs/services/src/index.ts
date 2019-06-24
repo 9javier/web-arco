@@ -92,3 +92,6 @@ export * from './lib/endpoint/tariff/tariff.service';
 /**Prices */
 export * from './models/endpoints/Price';
 export * from './lib/endpoint/price/price.service';
+
+/**Enum */
+export * from './models/enum.model';

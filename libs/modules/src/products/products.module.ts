@@ -9,6 +9,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { MatPaginatorModule } from '@angular/material';
 import { ProductDetailsModule } from './modals/product-details/product-details.module';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import { TagsInputModule } from '../components/tags-input/tags-input.module';
 
 
 const routes: Routes = [
@@ -28,7 +29,9 @@ const routes: Routes = [
     MatPaginatorModule,
     BreadcrumbModule,
     RouterModule.forChild(routes),
-    ProductDetailsModule
+    ProductDetailsModule,
+    TagsInputModule
+    
   ],
   declarations: [ProductsComponent]
 })

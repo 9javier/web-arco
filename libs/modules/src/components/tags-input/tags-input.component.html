@@ -1,0 +1,12 @@
+<div class="wrapper">
+    <div class="tag" *ngIf="selectedOption">
+        {{selectedOption.name}}
+        <span class="close" (click)="emptyOption()">x</span>
+    </div>
+    <input placeholder="{{placeholder}}" *ngIf="!selectedOption" #input type="text" (input)="onInput($event)" (focus)="onTouch()" (keyup)="onKeyUp($event)" />
+    <div class="options" *ngIf="!selectedOption" tabindex="{{-1}}">
+        <div #optionList class="option" [class.selected]="i == optionPointerIndex" *ngFor="let option of filteredOptions;let i = index" (click)="selectOption(option)" tabindex="{{i}}">
+            {{ option.name }}
+        </div>
+    </div>
+</div>

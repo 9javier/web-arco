@@ -5,14 +5,8 @@
     <form [formGroup]="form">
         <ion-grid>
             <ion-row>
-
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-item>
-                        <ion-label>
-                            Referencia
-                        </ion-label>
-                        <ion-input formControlName="productReferencePattern"></ion-input>
-                    </ion-item>
+                    <suite-tags-input placeholder="Referencia" [options]="enums" formControlName="productReferencePattern"></suite-tags-input>
                 </ion-col>
                 <!--<ion-col size="2" size-xs="12" size-md="4">
                     <ion-item>
@@ -25,28 +19,14 @@
                     </ion-item>
                 </ion-col>-->
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-item>
-                        <ion-label>
-                            Colores
-                        </ion-label>
-                        <ion-select formControlName="colors" [multiple]="true">
-                            <ion-select-option value="{{color.id}}" *ngFor="let color of colors">{{color.name}}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
+                    <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-item>
-                        <ion-label>
-                            Tallas
-                        </ion-label>
-                        <ion-select formControlName="sizes" [multiple]="true">
-                            <ion-select-option value="{{size.id}}" *ngFor="let size of sizes">{{size.name}}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-
+                    <suite-tags-input placeholder="Tallas" [options]="sizes" formControlName="sizes" multiple="true"></suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-item>
+                    <!--Warehouse multiple behaviour is not compatible ad all with the suite-tags-input control-->
+                    <!--<ion-item>
                         <ion-label>
                             Almacenes
                         </ion-label>
@@ -55,30 +35,19 @@
                                 {{warehouse.reference}} - {{warehouse.name}}
                             </ion-select-option>
                         </ion-select>
-                    </ion-item>
-                </ion-col>
-                <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-item>
-                        <ion-label>
-                            Ubicaciones
-                        </ion-label>
-                        <ion-select formControlName="containers" [multiple]="true">
-                            <ion-select-option value="{{container.id}}" *ngFor="let container of containers">{{container.reference}}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
+                    </ion-item>-->
+                    <suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehouses" multiple="true"></suite-tags-input>
 
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-item formGroupName="orderby">
-                        <ion-label>
-                            Ordenar
-                        </ion-label>
-                        <ion-select formControlName="type" interface="popover">
-                            <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}</ion-select-option>
-                        </ion-select>
-                    </ion-item>
-                </ion-col>
+                    <suite-tags-input placeholder="Ubicaciones" [options]="containers" formControlName="containers" multiple="true"></suite-tags-input>
 
+                </ion-col>
+                <ion-col size="2" size-xs="12" size-md="4">
+                    <div formGroupName="orderby">
+                        <suite-tags-input placeholder="Ordenar" [options]="groups" formControlName="type"></suite-tags-input>
+                    </div>
+                </ion-col>
             </ion-row>
         </ion-grid>
     </form>
