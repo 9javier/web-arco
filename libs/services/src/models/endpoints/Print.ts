@@ -81,6 +81,16 @@ export namespace PrintModel {
   export interface Print {
     text?: string;
     product?: Product;
+    price?:{
+      percent?: number,
+      percentOutlet?: number,
+      totalPrice?: number,
+      priceOriginal?: number,
+      priceDiscount?: number,
+      priceDiscountOutlet?: number,
+      numRange?: number,
+      typeLabel?:number;
+    };
     type?: number;
   }
 

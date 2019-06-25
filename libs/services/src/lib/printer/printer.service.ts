@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable,from } from 'rxjs';
 import { map,switchMap, flatMap } from 'rxjs/operators';
+import { PriceService } from '../endpoint/price/price.service';
 
 declare let cordova: any;
 
@@ -22,7 +23,7 @@ export class PrinterService {
 
   private address: string;
 
-  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService) {
+  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService,private priceService:PriceService) {
   }
 
   private async getConfiguredAddress(): Promise<string> {
@@ -96,6 +97,50 @@ export class PrinterService {
     }
   }
 
+  
+
+  /**
+   * Esta función es la equivalente a @see printProductBoxTag
+   * pero con la diferencia que será usada para imprimir los precios
+   * el asunto es que no sabía que labeltype correspondía a cada printOption
+   * así que por ahora haré un diccionario y ustedes modifíquenlo a su conveniencia
+   */
+  public async printPricesInZebra(printOptions: PrintModel.Print, macAddress?: string) {
+    /**
+     * este diccionario será utilizado para que a modo de clave valor se pueda obtener fácilmente
+     * cada clave corresponde con un tipo en el enum, y cada valor corresponde a un printOptionType para ser usado en el case
+     * @todo cambiar todos los valores que por ahora están en el caso 4 por su correspondiente(es el valor que lo hace entrar en un case u otro)
+     */
+    let dictionaryOfCaseTypes = {
+      "1":4,
+      "2":4,
+      "3":4,
+      "4":4,
+      "5":4,
+      "6":4,
+      "7":4
+    }
+    
+    /**si se modifica el diccionario no hay necesidad de modificar esto */
+    printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
+
+    console.log("Imprimiendo el precio",printOptions)
+
+    if (macAddress) {
+      this.address = macAddress;
+    } else {
+      this.address = await this.getConfiguredAddress();
+    }
+    if (this.address) {
+      return await this.toPrint(printOptions);
+    } else {
+      console.debug('Zbtprinter: Not connected');
+      return await this.connect()
+        .then(() => this.toPrint(printOptions));
+    }
+  }
+
+
   /**
    * Get products by reference in api
    * @returns an observable with the list of products needed
@@ -104,6 +149,58 @@ export class PrinterService {
     return this.http.post(this.getProductsByReferenceUrl,{references}).pipe(map((response:any)=>{
       return response.data;
     }))
+  }
+
+  /**
+   * Obtain the prices by reference and then print each of these prices
+   * @param referencesObject - object with the array of references to be sended
+   */
+  printPrices(referencesObject){
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
+      let innerObservable:Observable<any> = new Observable(observer=>{
+        observer.next(true);
+      }).pipe(flatMap((r)=>{
+        return new Observable(s=>{
+          return s.next();
+        })
+      }));
+      /**obtain the products */
+      return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices)=>{
+        /**Iterate and build object to print */
+        prices.forEach(pricesArray=>{
+          pricesArray.forEach(price=>{
+            let printOptions:PrintModel.Print = {};
+            if(price.typeLabel){
+              printOptions.product = {
+                productShoeUnit:{
+                  model:{
+                    reference:price.model.reference
+                  }
+                }
+              }
+              printOptions.price = {
+                percent: price.percent,
+                percentOutlet: price.percentOutlet,
+                totalPrice: price.totalPrice,
+                priceOriginal: price.priceOriginal,
+                priceDiscount: price.priceDiscount,
+                priceDiscountOutlet: price.priceDiscountOutlet,
+                typeLabel:price.typeLabel,
+                numRange: price.numRange,
+              };
+            }
+            innerObservable = innerObservable.pipe(flatMap(product=>{
+              /**Transform the promise in observable and merge that with the other prints */
+              return from(this.printPricesInZebra(printOptions)
+              // stop errors and attempt to print next tag
+                .catch(reason => {}))
+            }))            
+          })
+        });
+        return innerObservable;
+      }));
+    }));
+    return observable;    
   }
 
   /**

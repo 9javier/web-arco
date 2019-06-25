@@ -18,6 +18,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     if(options.length){
       this._options =options
       this.writeValue(this.value);
+      this.filteredOptions = this.filterOptions(options,"");
     }
   }
 
@@ -69,11 +70,19 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   }
 
   /**
+   * test purpouses
+   * @param event 
+   */
+  eventClick(event){
+    console.log(event);
+  }
+
+  /**
    * empty the current selected option
    */
   emptyOption():void{
     this.selectedOption = null;
-    this.filteredOptions = [];
+    this.filteredOptions = this.filterOptions(this._options,"");
     if(!this.multiple)
       this.onChange("");
     else
@@ -131,7 +140,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
     let text = this.inputElement.nativeElement.value;
  
-    this.filteredOptions = text?this.filterOptions(this._options,text):[];
+    this.filteredOptions = this.filterOptions(this._options,text);
     /**if not have exactyle coincidence add the current text as option */
     if(text && !this._options.find(option=>option.name.toLowerCase()==text.toLowerCase())){
       this.currentTextOption = {

@@ -39,7 +39,7 @@
             </th>
             <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
                 <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][init*multiplier+i]"></ion-checkbox>
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
                 </ng-template>
             </td>
         </ng-container>

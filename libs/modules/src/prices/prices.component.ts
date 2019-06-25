@@ -16,6 +16,7 @@ import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
+import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 
 @Component({
   selector: 'suite-prices',
@@ -26,13 +27,14 @@ export class PricesComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  pagerValues = [20, 50, 100];
+  pagerValues:Array<number> = [5, 10, 20];
+
+  page:number = 0;
+
+  limit:number = this.pagerValues[0];
 
   selectAllBinding;
 
-  /**for calculate the index of control */
-  init:number = 0;
-  multiplier:number = 20;
 
   /**Arrays to be shown */
   labels:Array<any> = [];
@@ -54,6 +56,7 @@ export class PricesComponent implements OnInit {
   tariffId:number;
 
   constructor(
+    private printerService:PrinterService,
     private priceService:PriceService,
     private intermediaryService:IntermediaryService,
     private formBuilder:FormBuilder,
@@ -61,6 +64,8 @@ export class PricesComponent implements OnInit {
   ) {
 
   }
+
+  
 
     /**
    * clear empty values of objecto to sanitize it
@@ -91,13 +96,16 @@ export class PricesComponent implements OnInit {
     /**
    * Listen changes in form to resend the request for search
    */
-  listenChanges():void{ 
+  listenChanges():void{
+    let previousPageSize = this.limit
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page=>{
-      this.selectedForm.get("selector").setValue("false");
-      /**check the actual page, and actual multiplier to be used in global */
-      this.init = this.paginator.pageIndex;
-      this.multiplier = this.paginator.pageSize;
+      /**true if only change the number of results */
+      let flag = previousPageSize == page.pageSize;
+      previousPageSize = page.pageSize;
+      this.limit = page.pageSize;
+      this.page = flag?page.pageIndex+1:1;
+      this.getPrices(51,this.tariffId,this.page,this.limit);
     });
   }
 
@@ -106,16 +114,10 @@ export class PricesComponent implements OnInit {
    * @param event to check the status
    */
   selectAll(event):void{
-
     let value = event.detail.checked;
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control=>{
-      control.setValue(false);
+      control.setValue(value);
     });
-    console.log(this.init*this.multiplier,this.init*this.multiplier+this.multiplier);
-    for(let i = this.init*this.multiplier;i<(this.init*this.multiplier+this.multiplier);i++)
-      (<FormArray>this.selectedForm.controls.toSelect).controls[i].setValue(value);
-    
-
   }
 
   /**
@@ -123,10 +125,25 @@ export class PricesComponent implements OnInit {
    * @param items - Reference items to extract he ids
    */
   printPrices(items):void{
-    let prices = this.selectedForm.value.toSelect.map((label,i)=>label?items[i].id:false).filter(price=>price);
-    console.log("imprimo los id porque  no hay referencias en este modelo",prices);
-    this.intermediaryService.presentLoading("Imprimiendo los precios seleccionados");
-    setTimeout( ()=>this.intermediaryService.dismissLoading(),1000);
+    let prices = this.selectedForm.value.toSelect.map((price,i)=>{
+      let object = {
+        warehouseId: items[i].warehouseId,
+        tariffId:items[i].tariffId,
+        modelId:items[i].modelId,
+        numRange: items[i].numRange
+      }
+      return price?object:false})
+      .filter(price=>price);
+      this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+      alert(prices.length);
+      this.printerService.printPrices({references:prices}).subscribe(result=>{
+        console.log("result of impressions",result);
+        this.intermediaryService.dismissLoading();
+      },error=>{
+        this.intermediaryService.dismissLoading();
+        console.log(error);
+      });
+
   }
 
   ngOnInit() {
@@ -134,7 +151,7 @@ export class PricesComponent implements OnInit {
       console.log("here");
       this.tariffId = Number(params.get("tariffId"));
       console.log(this.tariffId);
-      this.getPrices(51,this.tariffId);
+      this.getPrices(51,this.tariffId,this.page,this.limit);
     });
     
   }
@@ -169,13 +186,14 @@ export class PricesComponent implements OnInit {
    * Get the tarif associatest to a tariff
    * @param tariffId - the id of the tariff
    */
-  getPrices(warehouseId:number = 51,tariffId:number):void{
-    this.priceService.getIndex(warehouseId,tariffId).subscribe(prices=>{
-      this.prices = prices;
-      console.log(prices);
+  getPrices(warehouseId:number = 51,tariffId:number,page:number,limit:number):void{
+    this.priceService.getIndex(warehouseId, tariffId, page, limit).subscribe(prices=>{
+      this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
-      this.dataSource.paginator = this.paginator;
+      let paginator = prices.pagination;
+      this.paginator.length = paginator.totalResults;
+      this.paginator.pageIndex = paginator.page - 1;
     });
   }
 }

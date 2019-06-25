@@ -1,5 +1,5 @@
 <div class="wrapper">
-    <div class="tag" *ngIf="selectedOption">
+    <div class="tag" *ngIf="selectedOption" (select)="eventClick($event)">
         {{selectedOption.name}}
         <span class="close" (click)="emptyOption()">x</span>
     </div>

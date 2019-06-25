@@ -12,6 +12,7 @@ export class PriceService {
 
   /**urls of for the price service */
   private getIndexUrl:string = environment.apiBase+"/filter/prices/tariff";
+  private getIndexByModelTariffUrl:string = environment.apiBase+"/filter/prices/references";
 
   constructor(private http:HttpClient) { }
 
@@ -20,12 +21,26 @@ export class PriceService {
    * @param warehouseId - the id of the warehouse of the price
    * @param tariffId - the tariff id related to price
    */
-  getIndex(warehouseId:number = 51,tariffId:number):Observable<Array<PriceModel.Price>>{
+  getIndex(warehouseId:number = 51,tariffId:number,page:number,limit:number):Observable<PriceModel.ResponsePricePaginated>{
     return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
       warehouseId:warehouseId,
-      tariffId:tariffId
+      tariffId:tariffId,
+      pagination:{
+        page:page,
+        limit:limit
+      }
     }).pipe(map(response=>{
       console.log("respuesta",response)
+      return response.data;
+    }));
+  }
+
+  /**
+   * Search prices by model tariff for print
+   * @param object object for search
+   */
+  getIndexByModelTariff(object):Observable<Array<Array<PriceModel.PriceByModelTariff>>>{
+    return this.http.post<PriceModel.ResponsePriceByModelTariff>(this.getIndexByModelTariffUrl,object).pipe(map(response=>{
       return response.data;
     }));
   }
