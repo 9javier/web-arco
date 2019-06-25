@@ -112,15 +112,41 @@ export class PrinterService {
      * @todo cambiar todos los valores que por ahora están en el caso 4 por su correspondiente(es el valor que lo hace entrar en un case u otro)
      */
     let dictionaryOfCaseTypes = {
-      "1":4,
-      "2":4,
-      "3":4,
-      "4":4,
-      "5":4,
-      "6":4,
-      "7":4
+      "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
+      "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
+      "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
+      "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
+      "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
+      "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
+      "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
     }
-    
+
+    /*
+     * Example object to print product prices
+     *
+        printOptions.product = {
+          productShoeUnit:{
+            model:{
+              reference:price.model.reference
+            }
+          }
+        };
+        printOptions.price = {
+          percent: price.percent,
+          percentOutlet: price.percentOutlet,
+          totalPrice: price.totalPrice,
+          priceOriginal: price.priceOriginal,
+          priceDiscount: price.priceDiscount,
+          priceDiscountOutlet: price.priceDiscountOutlet,
+          typeLabel: price.typeLabel,
+          numRange: price.numRange,
+        };
+        printOptions.range = {
+          numRange: price.numRange,
+          value: '36-40'
+        };
+    */
+
     /**si se modifica el diccionario no hay necesidad de modificar esto */
     printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
 
@@ -187,6 +213,7 @@ export class PrinterService {
                 priceDiscountOutlet: price.priceDiscountOutlet,
                 typeLabel:price.typeLabel,
                 numRange: price.numRange,
+                // TODO -> valueRange: price.valueRange,
               };
             }
             innerObservable = innerObservable.pipe(flatMap(product=>{
@@ -359,7 +386,7 @@ export class PrinterService {
     let stringToBarcode = printOptions.text || printOptions.product.productShoeUnit.reference;
 
     switch (printOptions.type) {
-      case 0: // Test with Barcode and string of data below
+      case PrintModel.LabelTypes.LABEL_BARCODE_TEXT: // Test with Barcode and string of data below
         let size = '';
         if (stringToBarcode.length >= 11) {
           size = '45';
@@ -378,7 +405,7 @@ export class PrinterService {
           '^BCN,100,Y,N,N\n' +
           '^FD' + stringToBarcode + '^XZ\n';
         break;
-      case 1: // Tag with product reference, size and model details
+      case PrintModel.LabelTypes.LABEL_INFO_PRODUCT: // Tag with product reference, size and model details
         toPrint = "^XA^LH30,5^CI27^AVN^FO1,5^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^AVN^FO0,15^FB325,1,0,R,0^FD";
@@ -405,17 +432,117 @@ export class PrinterService {
           + printOptions.product.productShoeUnit.reference
           + "^FS^XZ";
         break;
-      case 2: // Tag with product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'Iniciales' + "^FS^ADN^FO10,95^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AVN^FO0,55^FB320,1,0,C,0^FD" + 'saleprice1' + " €^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,130^FD" + 'item' + "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^AAN^FO0,190^FB315,1,0,L,0^FD" + 'brand' + "^FS^AAN^FO0,190^FB315,1,0,C,0^FD" + 'style' + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD" + 'detcol' + "^FS^ADN^FO0,125^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,145^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF: // Tag with product price
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT: // Tag with product price
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,95^FB320,1,0,L,0^FD";
+        // toPrint += 'TagSzRng';
+        toPrint += "^FS^AVN^FO0,55^FB320,1,0,C,0^FD";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,130^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^AAN^FO0,190^FB315,1,0,L,0^FD"
+          // + 'brand'
+          + "^FS^AAN^FO0,190^FB315,1,0,C,0^FD"
+          // + 'style'
+          + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD"
+          // + 'detcol'
+          + "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
+          // + 'modelName'
+          + "^FS^ADN^FO0,145^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
-      case 3: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice2' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT: // Tag with current product price and previous price
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
+        // toPrint += 'TagSzRng';
+        toPrint += "^FS^AEN^FO10,30^FB310,1,0,L,0^FD";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD";
+        if (printOptions.price.priceDiscount) {
+          toPrint += printOptions.price.priceDiscount + '€';
+        }
+        toPrint += "^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
+        if (printOptions.price.percent) {
+          toPrint += printOptions.price.percent + '%';
+        }
+        toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
-      case 4: // Tag with original product pvp and product pvp for outlet
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO0,120^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AUN^FO0,80^FB335,1,0,R,0^FD" + 'saleprice4' + " €^FS^ARN^FO0,80^FB340,1,0,L,0^FDPVP Outlet:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET: // Tag with original product pvp and product pvp for outlet
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET: // Tag with original product pvp and product pvp for outlet
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO0,120^FB320,1,0,L,0^FD";
+        // toPrint += 'TagSzRng';
+        toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
+          + "PVP:";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^AUN^FO0,80^FB335,1,0,R,0^FD";
+        if (printOptions.price.priceDiscount) {
+          toPrint += printOptions.price.priceDiscount + '€';
+        }
+        toPrint += "^FS^ARN^FO0,80^FB340,1,0,L,0^FD"
+          + "PVP Outlet:"
+          + "^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
+        if (printOptions.price.percentOutlet) {
+          toPrint += printOptions.price.percentOutlet + '%';
+        }
+        toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
-      case 5: // Tag with original product pvp, product pvp for outlet and last product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AFN^FO0,60^FB310,1,0,L,0^FDPVP Outlet:" + 'saleprice4' + "€^FS^ATN^FO0,100^FB335,1,0,R,0^FD" + 'saleprice5' + " €^FS^ARN^FO0,100^FB340,1,0,L,0^FDÚltimo precio:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET: // Tag with original product pvp, product pvp for outlet and last product price
+        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
+        toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
+          + "PVP:";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^AFN^FO0,60^FB310,1,0,L,0^FD"
+          + "PVP Outlet:";
+        if (printOptions.price.priceDiscount) {
+          toPrint += printOptions.price.priceDiscount + '€';
+        }
+        toPrint += "^FS^ATN^FO0,100^FB335,1,0,R,0^FD";
+        if (printOptions.price.priceDiscountOutlet) {
+          toPrint += printOptions.price.priceDiscountOutlet + '€';
+        }
+        toPrint += "^FS^ARN^FO0,100^FB340,1,0,L,0^FD"
+          + "Último precio:"
+          + "^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
+        if (printOptions.price.percentOutlet) {
+          toPrint += printOptions.price.percentOutlet + '%';
+        }
+        toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
     }
 

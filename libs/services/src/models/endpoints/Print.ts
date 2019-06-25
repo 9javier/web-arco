@@ -89,6 +89,7 @@ export namespace PrintModel {
       priceDiscount?: number,
       priceDiscountOutlet?: number,
       numRange?: number,
+      valueRange?: string,
       typeLabel?:number;
     };
     type?: number;
@@ -98,4 +99,15 @@ export namespace PrintModel {
     reference: string,
     sizeRange: number[]
   }
+
+  export enum LabelTypes {
+    LABEL_BARCODE_TEXT = 0,
+    LABEL_INFO_PRODUCT = 1,
+    LABEL_PRICE_WITHOUT_TARIF = 2,
+    LABEL_PRICE_WITHOUT_TARIF_OUTLET = 3,
+    LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT = 4,
+    LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET = 5,
+    LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT = 6,
+    LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET = 7
+  };
 }
