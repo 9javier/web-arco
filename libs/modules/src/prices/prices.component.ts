@@ -135,7 +135,6 @@ export class PricesComponent implements OnInit {
       return price?object:false})
       .filter(price=>price);
       this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
-      alert(prices.length);
       this.printerService.printPrices({references:prices}).subscribe(result=>{
         console.log("result of impressions",result);
         this.intermediaryService.dismissLoading();
