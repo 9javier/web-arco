@@ -19,6 +19,7 @@ export class UpdateComponent implements OnInit {
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
     groupId:'',
+    prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
     is_main: [false, []],
     has_racks: [false, []],
     halls:'',
@@ -84,11 +85,22 @@ export class UpdateComponent implements OnInit {
     })
   }
 
+
+  /**
+   * Event triggered when user press a key in a field
+   * @param event event triggered
+   */
+  onlyUpperLetters(event){
+    let key = event.key
+    return /[a-zA-Z]/.test(key);
+  }
+
   /**
   * delete empty values 
   */
   sanitize(object:any):Object{
     object = JSON.parse(JSON.stringify(object));
+    object.prefix_container = object.prefix_container.toUpperCase();
     Object.keys(object).forEach(key=>{
       let value = object[key];
       if(value === "" || value === null)

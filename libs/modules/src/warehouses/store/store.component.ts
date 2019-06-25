@@ -20,6 +20,7 @@ export class StoreComponent implements OnInit {
     groupId:'',
     is_main: [false, []],
     has_racks: [false, []],
+    prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
     halls:'',
     rows:'',
     columns:'',
@@ -38,6 +39,15 @@ export class StoreComponent implements OnInit {
               ) {}
 
   /**
+   * Event triggered when user press a key in a field
+   * @param event event triggered
+   */
+  onlyUpperLetters(event){
+    let key = event.key
+    return /[a-zA-Z]/.test(key);
+  }
+
+  /**
    * Assign and unassign validators depends of value of another validators
    */
   changeValidatorsAndValues():void{
@@ -49,7 +59,6 @@ export class StoreComponent implements OnInit {
       store.setValue("");
       this.cd.detectChanges();
     });
-
     /**
      * Listen for changes in has_racks control 
     */
@@ -71,6 +80,7 @@ export class StoreComponent implements OnInit {
    */
   sanitize(object:any):Object{
     object = JSON.parse(JSON.stringify(object));
+    object.prefix_container = object.prefix_container.toUpperCase();
     object.reference = object.reference.toString();
     object.reference = (object.reference.length==1)?("00"+object.reference):(object.reference.length==2)?("0"+object.reference):(object.reference);
     Object.keys(object).forEach(key=>{
