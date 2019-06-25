@@ -27,6 +27,13 @@
             </div>
             <ion-input placeholder="Descripción" class="ion-margin-horizontal" formControlName="description" type="text" text></ion-input>
         </ion-item>
+        <!--Prefijo-->
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name="barcode"></ion-icon>
+            </div>
+            <ion-input style="text-transform: uppercase" (keypress)="onlyUpperLetters($event)" placeholder="Prefijo, Ej: ABCD" class="ion-margin-horizontal" formControlName="prefix_container" type="text" text></ion-input>
+        </ion-item>
         <!--Referencia-->
         <ion-item>
             <div slot="start" class="slot-start-icon">
