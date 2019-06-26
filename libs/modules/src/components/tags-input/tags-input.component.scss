@@ -16,19 +16,20 @@ div.wrapper {
         left: -1px;
         top: 100%;
         position: absolute;
-        background-color: #00BCD4;
+        background-color: white;
         z-index: 10000000;
         overflow: auto;
-        max-height: 100px;
+        max-height: 400px;
         .option {
-            &:hover {
-                background-color: #00c9e2;
-            }
+            &:hover,
             &.selected {
-                background-color: #00c9e2;
+                background-color: rgb(140, 140, 140);
+                color: white;
+                background-color: rgb(140, 140, 140);
             }
             cursor: pointer;
             padding: 10px 5px;
+            color: black;
         }
     }
     input {
@@ -39,15 +40,14 @@ div.wrapper {
     }
     div.tag {
         span.close {
-            color: #018697;
+            color: white;
             font-weight: bold;
             position: absolute;
-            right: 5px;
-            top: 1px;
+            right: 8px;
             cursor: pointer;
         }
         position: relative;
-        background: #00BCD4;
+        background: rgb(140, 140, 140);
         color: white;
         padding: 9px 18px;
         border-radius: 5px;
