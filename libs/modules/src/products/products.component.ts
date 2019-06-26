@@ -349,7 +349,13 @@ export class ProductsComponent implements OnInit {
   private updateFilterSourceSizes(sizes: FiltersModel.Size[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("sizes").value;
-    this.sizes = sizes;
+    this.sizes = sizes
+      .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
+      .map(size => {
+        size.id = <number>(<unknown>size.name);
+        return size;
+      })
+    ;
     if (value && value.length) {
       this.form.get("sizes").patchValue(value, {emitEvent: false});
     }
