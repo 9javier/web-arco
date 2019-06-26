@@ -24,6 +24,7 @@ import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
+import { TagsInputComponent } from "@suite/common-modules";
 
 
 @Component({
@@ -33,6 +34,12 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 })
 
 export class ProductsComponent implements OnInit {
+
+  @ViewChild('tagsInputModels') tagsInputModels: TagsInputComponent;
+  @ViewChild('tagsInputColors') tagsInputColors: TagsInputComponent;
+  @ViewChild('tagsInputSizes') tagsInputSizes: TagsInputComponent;
+  @ViewChild('tagsInputWarehouses') tagsInputWarehouses: TagsInputComponent;
+  @ViewChild('tagsInputContainers') tagsInputContainers: TagsInputComponent;
 
   pagerValues = [50, 100, 1000];
 
@@ -117,10 +124,17 @@ export class ProductsComponent implements OnInit {
     }
     Object.keys(object).forEach(key=>{
       if(object[key] instanceof Array){
-        for(let i = 0;i<object[key].length;i++)
-          if(object[key][i] === null || object[key][i] === "")
-            object[key].splice(i,1);
-      } else if (object[key] === null) {
+        if(object[key][0] instanceof Array){
+          object[key] = object[key][0];
+        } else {
+          for(let i = 0;i<object[key].length;i++) {
+            if(object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i,1);
+            }
+          }
+        }
+      }
+      if (object[key] === null || object[key] === "") {
         delete object[key];
       }
     });
@@ -248,6 +262,12 @@ export class ProductsComponent implements OnInit {
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
+      this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+      this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+      this.updateFilterSourceModels(searchsInContainer.data.filters.models);
+      this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+      this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
       let paginator = searchsInContainer.data.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
@@ -297,47 +317,69 @@ export class ProductsComponent implements OnInit {
 
   private updateFilterSourceColors(colors: FiltersModel.Color[]) {
     this.pauseListenFormChange = true;
+    let value = this.form.get("colors").value;
     this.colors = colors;
+    if (value && value.length) {
+      this.form.get("colors").patchValue(value, {emitEvent: false});
+    }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceContainers(containers: FiltersModel.Container[]) {
     this.pauseListenFormChange = true;
+    let value = this.form.get("containers").value;
     this.containers = containers.map(container => {
       container.name = container.reference;
       return container;
     });
+    if (value && value.length) {
+      this.form.get("containers").patchValue(value, {emitEvent: false});
+    }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceModels(models: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
+    let value = this.form.get("models").value;
     this.models = models.map(model => {
       model.id = <number>(<unknown>model.reference);
       model.name = model.reference;
       return model;
     });
+    if (value && value.length) {
+      this.form.get("models").patchValue(value, {emitEvent: false});
+    }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceSizes(sizes: FiltersModel.Size[]) {
     this.pauseListenFormChange = true;
+    let value = this.form.get("sizes").value;
     this.sizes = sizes;
+    if (value && value.length) {
+      this.form.get("sizes").patchValue(value, {emitEvent: false});
+    }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceWarehouses(warehouses: FiltersModel.Warehouse[]) {
     this.pauseListenFormChange = true;
+    let value = this.form.get("warehouses").value;
     this.warehouses = warehouses.map(warehouse => {
       warehouse.name = warehouse.reference + " - " + warehouse.name;
       return warehouse;
     });
+    if (value && value.length) {
+      this.form.get("warehouses").patchValue(value, {emitEvent: false});
+    }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceOrdertypes(ordertypes: FiltersModel.Group[]) {
     this.pauseListenFormChange = true;
+    let value = this.form.get("orderby").get("type").value;
     this.groups = ordertypes;
+    this.form.get("orderby").get("type").patchValue(value, {emitEvent: false});
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 }
