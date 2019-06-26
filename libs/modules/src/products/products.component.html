@@ -44,9 +44,14 @@
 
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <div formGroupName="orderby">
-                        <suite-tags-input placeholder="Ordenar" [options]="groups" formControlName="type"></suite-tags-input>
-                    </div>
+                    <ion-item formGroupName="orderby">
+                        <ion-label>
+                            Ordenar
+                        </ion-label>
+                        <ion-select formControlName="type" interface="popover">
+                            <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}</ion-select-option>
+                        </ion-select>
+                    </ion-item>
                 </ion-col>
             </ion-row>
         </ion-grid>

@@ -307,7 +307,7 @@ export class ProductsComponent implements OnInit {
     this.typeService.getOrderProductTypes().subscribe(ordertypes=>{
       this.groups = ordertypes;
       console.log(this.groups,TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT);
-      this.form.get("orderby").get("type").patchValue(TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
+      this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
