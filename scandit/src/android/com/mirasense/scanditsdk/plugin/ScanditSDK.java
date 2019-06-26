@@ -97,6 +97,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN = "matrixSimpleShowNextProductToScan";
   private static final String MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING = "matrixSimpleShowTextStartScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING = "matrixSimpleShowTextEndScanPacking";
+  private static final String MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM = "matrixSimpleShowFixedTextBottom";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -834,7 +835,7 @@ public class ScanditSDK extends CordovaPlugin {
               AlertDialog.Builder builderWarningProduct404 = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
               builderWarningProduct404
                 .setTitle("Atención")
-                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + modelProduct + " en la ubicación " + fLocation + "?")
+                .setMessage("¿Está seguro de querer reportar como no encontrado el producto " + modelProduct + " en la ubicación " + fLocation + "? (tendrá que escanear la ubicación para confirmar el reporte).")
                 .setCancelable(false)
                 .setPositiveButton("Reportar", (dialog, id) -> {
                   JSONObject jsonObject = new JSONObject();
@@ -998,6 +999,36 @@ public class ScanditSDK extends CordovaPlugin {
           } else {
             tvPackingEnd.setText("");
             tvPackingEnd.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      String text = "";
+      try {
+        show = args.getBoolean(0);
+        text = args.getString(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final boolean fShow = show;
+      final String fText= text;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          TextView tvBottomText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvBottomText", "id", package_name));
+
+          if (fShow) {
+            tvBottomText.setText(fText);
+            tvBottomText.setVisibility(View.VISIBLE);
+          } else {
+            tvBottomText.setText("");
+            tvBottomText.setVisibility(View.GONE);
           }
         }
       });

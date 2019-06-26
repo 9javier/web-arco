@@ -11,6 +11,7 @@ import {environment} from "../../environments/environment";
 import {AuthenticationService} from "../endpoint/authentication/authentication.service";
 import {Events} from "@ionic/angular";
 import {WarehouseModel} from "@suite/services";
+import {ScanditProvider} from "../../providers/scandit/scandit.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -36,6 +37,7 @@ export class ScanditService {
   private putProductNotFoundUrl = environment.apiBase+"/shoes/picking/{{workWaveOrderId}}/product-not-found/{{productId}}";
 
   private userWarehouse: WarehouseModel.Warehouse;
+  private scanContainerToNotFound: string = null;
 
   constructor(
     private http: HttpClient,
@@ -43,7 +45,8 @@ export class ScanditService {
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
     private authenticationService: AuthenticationService,
-    private events: Events
+    private events: Events,
+    private scanditProvider: ScanditProvider
   ) {
 
   }
@@ -375,7 +378,7 @@ export class ScanditService {
             throw e;
           }
         }
-      } else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {
+      } else if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.PRODUCT && !this.scannerPaused && code && code != '' && code != lastCodeScanned) {
         this.pickingLog(2, "26", "} else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {");
         if (!processInitiated) {
           this.pickingLog(2, "27", "if (!processInitiated) {");
@@ -476,6 +479,54 @@ export class ScanditService {
             this.hideTextMessage(1500);
           }
         }
+      } else if (this.scanContainerToNotFound && !response.action) {
+        if ((this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER_OLD) && productsToScan[0].inventory.container.reference == code) {
+          let productNotFoundId = productsToScan[0].product.id;
+          this.putProductNotFound(pickingId, productNotFoundId)
+            .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+              this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
+              if (res.code == 200 || res.code == 201) {
+                this.pickingLog(2, "53", "if (res.code == 200 || res.code == 201) {");
+                this.scanContainerToNotFound = null;
+                ScanditMatrixSimple.showFixedTextBottom(false, this.scanContainerToNotFound);
+                ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                this.hideTextMessage(1500);
+                this.getPendingListByPicking(pickingId)
+                  .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                    this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
+                    if (res.code == 200 || res.code == 201) {
+                      this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
+                      productsToScan = res.data;
+                      if (productsToScan.length > 0) {
+                        this.pickingLog(2, "56", "if (productsToScan.length > 0) {");
+                        ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                      } else {
+                        this.pickingLog(2, "57", "} else {");
+                        ScanditMatrixSimple.showNexProductToScan(false);
+                        setTimeout(() => {
+                          this.pickingLog(2, "58", "setTimeout(() => {");
+                          ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+                          ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                          this.hideTextMessage(1500);
+                        }, 2 * 1000);
+                      }
+
+                    }
+                  });
+              } else {
+                this.pickingLog(2, "59", "} else {");
+                ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                this.hideTextMessage(2000);
+              }
+            }, error => {
+              this.pickingLog(2, "60", "}, error => {");
+              ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+              this.hideTextMessage(2000);
+            });
+        } else {
+          ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
+          this.hideTextMessage(1500);
+        }
       } else {
         this.pickingLog(2, "49", "} else {");
         if (response.action == 'product_not_found') {
@@ -483,46 +534,11 @@ export class ScanditService {
           this.scannerPaused = false;
           if (response.found) {
             this.pickingLog(2, "51", "if (response.found) {");
-            let productNotFoundId = response.product_id;
-            this.putProductNotFound(pickingId, productNotFoundId)
-              .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
-                this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
-                if (res.code == 200 || res.code == 201) {
-                  this.pickingLog(2, "53", "if (res.code == 200 || res.code == 201) {");
-                  ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
-                  this.hideTextMessage(1500);
-                  this.getPendingListByPicking(pickingId)
-                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                      this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
-                      if (res.code == 200 || res.code == 201) {
-                        this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
-                        productsToScan = res.data;
-                        if (productsToScan.length > 0) {
-                          this.pickingLog(2, "56", "if (productsToScan.length > 0) {");
-                          ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                        } else {
-                          this.pickingLog(2, "57", "} else {");
-                          ScanditMatrixSimple.showNexProductToScan(false);
-                          setTimeout(() => {
-                            this.pickingLog(2, "58", "setTimeout(() => {");
-                            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
-                            ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
-                            this.hideTextMessage(1500);
-                          }, 2 * 1000);
-                        }
-
-                      }
-                    });
-                } else {
-                  this.pickingLog(2, "59", "} else {");
-                  ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                  this.hideTextMessage(2000);
-                }
-              }, error => {
-                this.pickingLog(2, "60", "}, error => {");
-                ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                this.hideTextMessage(2000);
-              });
+            this.scanContainerToNotFound = "Escanea la ubicación que estás revisando para comprobar que sea la correcta. Escanea el producto si lo encuentra.";
+            ScanditMatrixSimple.showFixedTextBottom(true, this.scanContainerToNotFound);
+          } else {
+            this.scanContainerToNotFound = null;
+            ScanditMatrixSimple.showFixedTextBottom(false, this.scanContainerToNotFound);
           }
         } else if (response.action == 'warning_product_not_found') {
           this.pickingLog(2, "61", "} else if (response.action == 'warning_product_not_found') {");
