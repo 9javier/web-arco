@@ -42,6 +42,7 @@ import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/
 import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
 import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {PrinterService} from "../../../../../../services/src/lib/printer/printer.service";
+import {PdfGeneratorService} from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
 
 
 @Component({
@@ -73,8 +74,8 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private warehouseService: WarehouseService,
-    private printerService: PrinterService
-
+    private printerService: PrinterService,
+    private pdfGeneratorService: PdfGeneratorService
   ) {
     console.log(this.dataSource);
     console.log('LIST COMPONENT');
@@ -334,7 +335,11 @@ export class ListComponent implements OnInit {
   async print(event, row){
     event.stopPropagation();
     if(row.reference){
-      await this.printerService.print({text: row.reference, type: 0});
+      if ((<any>window).cordova) {
+        await this.printerService.print({text: row.reference, type: 0});
+      } else {
+        this.pdfGeneratorService.printBarcodes([row.reference]);
+      }
     } else {
       console.debug("Not found reference", row);
     }
