@@ -1,5 +1,4 @@
-export class TagsInputOption{
-    id:number;
-    name:string;
-    alias?:string;
+import {Enum} from "@suite/services";
+
+export class TagsInputOption extends Enum {
 }
