@@ -24,7 +24,7 @@ import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-import { TagsInputComponent } from "@suite/common-modules";
+import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 
 
 @Component({
