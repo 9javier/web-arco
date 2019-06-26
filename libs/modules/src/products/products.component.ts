@@ -340,14 +340,14 @@ export class ProductsComponent implements OnInit {
 
   private updateFilterSourceModels(models: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("models").value;
+    let value = this.form.get("productReferencePattern").value;
     this.models = models.map(model => {
       model.id = <number>(<unknown>model.reference);
       model.name = model.reference;
       return model;
     });
     if (value && value.length) {
-      this.form.get("models").patchValue(value, {emitEvent: false});
+      this.form.get("productReferencePattern").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
