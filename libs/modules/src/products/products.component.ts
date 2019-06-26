@@ -294,9 +294,9 @@ export class ProductsComponent implements OnInit {
     });
     /**get warehouses to filter */
     this.filterServices.getWarehouses().subscribe((warehouses: FiltersModel.Warehouse[])=>{
-      this.warehouses = warehouses.map(container => {
-        container.name = container.reference + " - " + container.name;
-        return container;
+      this.warehouses = warehouses.map(warehouse => {
+        warehouse.name = warehouse.reference + " - " + warehouse.name;
+        return warehouse;
       });
       this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse)=>{
         this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
