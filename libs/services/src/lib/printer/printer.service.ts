@@ -406,7 +406,7 @@ export class PrinterService {
           '^FD' + stringToBarcode + '^XZ\n';
         break;
       case PrintModel.LabelTypes.LABEL_INFO_PRODUCT: // Tag with product reference, size and model details
-        toPrint = "^XA^LH30,5^CI27^AVN^FO1,5^FD"
+        toPrint = "^XA^CI28^LH30,5^AVN^FO1,5^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^AVN^FO0,15^FB325,1,0,R,0^FD";
         if (printOptions.product.productShoeUnit.size.name) {
@@ -434,7 +434,7 @@ export class PrinterService {
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF: // Tag with product price
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT: // Tag with product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,95^FB320,1,0,L,0^FD";
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,95^FB320,1,0,L,0^FD";
         // toPrint += 'TagSzRng';
         toPrint += "^FS^AVN^FO0,55^FB320,1,0,C,0^FD";
         if (printOptions.price.priceOriginal) {
@@ -459,8 +459,10 @@ export class PrinterService {
         toPrint += "^FS^XZ";
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
-        // toPrint += 'TagSzRng';
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
+        if (printOptions.price.percent) {
+          toPrint += printOptions.price.percent + '%';
+        }
         toPrint += "^FS^AEN^FO10,30^FB310,1,0,L,0^FD";
         if (printOptions.price.priceOriginal) {
           toPrint += printOptions.price.priceOriginal + '€';
@@ -474,9 +476,7 @@ export class PrinterService {
           + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
-        if (printOptions.price.percent) {
-          toPrint += printOptions.price.percent + '%';
-        }
+        // toPrint += 'name';
         toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
         if (printOptions.price.valueRange) {
           toPrint += printOptions.price.valueRange;
@@ -485,7 +485,7 @@ export class PrinterService {
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET: // Tag with original product pvp and product pvp for outlet
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET: // Tag with original product pvp and product pvp for outlet
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO0,120^FB320,1,0,L,0^FD";
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO0,120^FB320,1,0,L,0^FD";
         // toPrint += 'TagSzRng';
         toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
           + "PVP:";
@@ -513,7 +513,7 @@ export class PrinterService {
         toPrint += "^FS^XZ";
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET: // Tag with original product pvp, product pvp for outlet and last product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
         toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
           + "PVP:";
         if (printOptions.price.priceOriginal) {
