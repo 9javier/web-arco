@@ -83,6 +83,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   emptyOption():void{
     this.selectedOption = null;
     this.filteredOptions = this.filterOptions(this._options,"");
+    this._value = '';
     if(!this.multiple)
       this.onChange("");
     else
