@@ -23,7 +23,7 @@ import { ProductDetailsComponent } from './modals/product-details/product-detail
 import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
-import { Enum } from '../components/tags-input/models/enum.model';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 
 @Component({
@@ -71,7 +71,7 @@ export class ProductsComponent implements OnInit {
 
   /**Filters */
   colors:Array<FiltersModel.Color> = [];
-  containers:Array<Enum> = [];
+  containers:Array<TagsInputOption> = [];
   models:Array<FiltersModel.Model> = [];
   sizes:Array<FiltersModel.Size> = [];
   warehouses:Array<FiltersModel.Warehouse> = [];

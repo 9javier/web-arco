@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef,ViewChildren, QueryList, Query } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR  } from '@angular/forms';
-import { Enum } from './models/enum.model';
+import { TagsInputOption } from './models/tags-input-option.model';
 
 @Component({
   selector: 'suite-tags-input',
@@ -29,7 +29,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   @Input() multiple:boolean;
 
   /**Options to be selected*/
-  _options:Array<Enum> = [];
+  _options:Array<TagsInputOption> = [];
 
   /**Options DOM elements to scroll */
   @ViewChildren("optionList") optionsElements:QueryList<ElementRef>;
@@ -38,17 +38,17 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   optionPointerIndex:number = 0;
 
   /**Selected option */
-  selectedOption:Enum;
+  selectedOption:TagsInputOption;
 
   /**The current typed text transformed into option */
-  currentTextOption:Enum;
+  currentTextOption:TagsInputOption;
 
   /**Filtered options to be showeds */
-  filteredOptions:Array<Enum> = [];
+  filteredOptions:Array<TagsInputOption> = [];
 
-  selectedsOptions:Array<Enum> = [];
+  selectedsOptions:Array<TagsInputOption> = [];
 
-  filterOptions(options:Array<Enum>,text:string):Array<Enum>{
+  filterOptions(options:Array<TagsInputOption>,text:string):Array<TagsInputOption>{
     return options.filter(option=>option.name.toLowerCase().includes(text.toLowerCase()));
   }
 
@@ -56,7 +56,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * Select option via input options
    * @param option - the selected option
    */
-  selectOption(option:Enum):void{
+  selectOption(option:TagsInputOption):void{
     this.filteredOptions = [];
     this.selectedOption = option;
     if(!this.multiple)
