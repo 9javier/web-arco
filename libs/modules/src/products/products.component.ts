@@ -70,12 +70,12 @@ export class ProductsComponent implements OnInit {
   dataSource: any;
 
   /**Filters */
-  colors:Array<FiltersModel.Color> = [];
+  colors:Array<TagsInputOption> = [];
   containers:Array<TagsInputOption> = [];
-  models:Array<FiltersModel.Model> = [];
-  sizes:Array<FiltersModel.Size> = [];
-  warehouses:Array<FiltersModel.Warehouse> = [];
-  groups:Array<TypeModel.OrderProductType> = [];
+  models:Array<TagsInputOption> = [];
+  sizes:Array<TagsInputOption> = [];
+  warehouses:Array<TagsInputOption> = [];
+  groups:Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
@@ -273,35 +273,35 @@ export class ProductsComponent implements OnInit {
   getFilters():void{
 
     /**get colors to filter */
-    this.filterServices.getColors().subscribe(colors=>{
+    this.filterServices.getColors().subscribe((colors: FiltersModel.Color[])=>{
       this.colors = colors;
     });
     /**get containers to filter */
-    this.filterServices.getContainers().subscribe(containers=>{
-      this.containers = (<Array<any>>containers).map(container=>{
-        container.name = container.reference
+    this.filterServices.getContainers().subscribe((containers: FiltersModel.Container[])=>{
+      this.containers = containers.map(container=>{
+        container.name = container.reference;
         return container;
       });
       console.log(containers,"containers");
     });
     /**get models to filter */
-    this.filterServices.getModels().subscribe(models=>{
+    this.filterServices.getModels().subscribe((models: FiltersModel.Model[]) =>{
       this.models = models;
     });
     /**get sizes to filter*/
-    this.filterServices.getSizes().subscribe(sizes=>{
+    this.filterServices.getSizes().subscribe((sizes: FiltersModel.Size[])=>{
       this.sizes = sizes;
     });
     /**get warehouses to filter */
-    this.filterServices.getWarehouses().subscribe(warehouses=>{
+    this.filterServices.getWarehouses().subscribe((warehouses: FiltersModel.Warehouse[])=>{
       this.warehouses = warehouses;
-      this.warehouseService.getMain().subscribe(warehouse=>{
+      this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse)=>{
         this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
       });
     });
     /**get types to the orderby */
-    this.typeService.getOrderProductTypes().subscribe(ordertypes=>{
+    this.typeService.getOrderProductTypes().subscribe((ordertypes: FiltersModel.Group[])=>{
       this.groups = ordertypes;
       console.log(this.groups,TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT);
       this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});

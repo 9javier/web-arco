@@ -1,34 +1,35 @@
 import { Request } from './request';
 import { Mode } from '@ionic/core';
+import { Enum } from "@suite/services";
 export namespace FiltersModel{
     
-    export interface Color{
+    export interface Color extends Enum {
         id:number;
         name:string;
     }
 
-    export interface Warehouse{
+    export interface Warehouse extends Enum {
         id:number;
         reference:string;
         name:string;
     }
 
-    export interface Group{
+    export interface Group extends Enum {
         id:number;
         reference:string;
     }
 
-    export interface Container{
+    export interface Container extends Enum {
         id:number;
         reference:string;
     }
 
-    export interface Model{
+    export interface Model extends Enum {
         id:number;
         reference:string;
     }
 
-    export interface Size{
+    export interface Size extends Enum {
         id:number;
         reference:number;
         name:string;
