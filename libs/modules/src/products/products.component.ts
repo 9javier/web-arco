@@ -96,14 +96,6 @@ export class ProductsComponent implements OnInit {
     private printerService:PrinterService
   ) {}
 
-  enums=[{
-    id:1,
-    name:'HOLA'
-  },{
-    id:2,
-    name:'CHAO'
-  }];
-
     /**
    * clear empty values of objecto to sanitize it
    * @param object Object to sanitize
