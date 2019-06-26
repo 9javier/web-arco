@@ -173,9 +173,6 @@ export class ProductsComponent implements OnInit {
     console.log(this.form);
     //this.initProducts();
     this.getFilters();
-    /**
-     * Get the main warehouse to attacth their id to the request
-     */
     this.listenChanges();
   }
 
