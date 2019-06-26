@@ -88,7 +88,7 @@ export class ScanditService {
       if (response && response.barcode && (!this.scannerPaused || response.action == 'force_scanning')) {
         //Check Container or product
         let code = response.barcode.data;
-        if (code.match(/P([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
+        if (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
           //Container
           if(containerReference != code){
