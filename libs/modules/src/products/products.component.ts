@@ -286,7 +286,11 @@ export class ProductsComponent implements OnInit {
     });
     /**get models to filter */
     this.filterServices.getModels().subscribe((models: FiltersModel.Model[]) =>{
-      this.models = models;
+      this.models = models.map(model=>{
+        model.id = <number>(<unknown>model.reference);
+        model.name = model.reference;
+        return model;
+      });
     });
     /**get sizes to filter*/
     this.filterServices.getSizes().subscribe((sizes: FiltersModel.Size[])=>{
