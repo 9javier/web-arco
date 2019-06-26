@@ -6,7 +6,7 @@
         <ion-grid>
             <ion-row>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <suite-tags-input #tagsInputModels placeholder="Referencia" [options]="models" formControlName="productReferencePattern"></suite-tags-input>
+                    <suite-tags-input placeholder="Referencia" [options]="models" formControlName="productReferencePattern"></suite-tags-input>
                 </ion-col>
                 <!--<ion-col size="2" size-xs="12" size-md="4">
                     <ion-item>
@@ -19,10 +19,10 @@
                     </ion-item>
                 </ion-col>-->
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <suite-tags-input #tagsInputColors placeholder="Colores" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <suite-tags-input #tagsInputSizes placeholder="Tallas" [options]="sizes" formControlName="sizes" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Tallas" [options]="sizes" formControlName="sizes" multiple="true"></suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
                     <!--Warehouse multiple behaviour is not compatible ad all with the suite-tags-input control-->
@@ -36,11 +36,11 @@
                             </ion-select-option>
                         </ion-select>
                     </ion-item>-->
-                    <suite-tags-input #tagsInputWarehouses placeholder="Almacenes" [options]="warehouses" formControlName="warehouses" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehouses" multiple="true"></suite-tags-input>
 
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
-                    <suite-tags-input #tagsInputContainers placeholder="Ubicaciones" [options]="containers" formControlName="containers" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Ubicaciones" [options]="containers" formControlName="containers" multiple="true"></suite-tags-input>
 
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">

@@ -35,12 +35,6 @@ import { TagsInputComponent } from "../components/tags-input/tags-input.componen
 
 export class ProductsComponent implements OnInit {
 
-  @ViewChild('tagsInputModels') tagsInputModels: TagsInputComponent;
-  @ViewChild('tagsInputColors') tagsInputColors: TagsInputComponent;
-  @ViewChild('tagsInputSizes') tagsInputSizes: TagsInputComponent;
-  @ViewChild('tagsInputWarehouses') tagsInputWarehouses: TagsInputComponent;
-  @ViewChild('tagsInputContainers') tagsInputContainers: TagsInputComponent;
-
   pagerValues = [50, 100, 1000];
 
   /**timeout for send request */
