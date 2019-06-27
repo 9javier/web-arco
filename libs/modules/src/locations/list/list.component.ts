@@ -235,7 +235,7 @@ export class ListComponent implements OnInit {
                   }
                 });
                 element.freeLocations = freeLocations;
-                element.locations = freeLocations+'/'+totalLocations+' libres';
+                element.locations = freeLocations+'/'+enabledLocations+' libres';
                 element.hallEnabled = enabledLocations > 0;
                 if (element.expanded) {
                   this.expandedElement = element;
