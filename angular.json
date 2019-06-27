@@ -52,7 +52,7 @@
                                 "with": "apps/al/src/environments/environment.prod.ts"
                             }, {
                                 "replace": "libs/services/src/environments/environment.ts",
-                                "with": "libs/services/src/environments/environment.prod.ts"
+                                "with": "libs/services/src/environments/environment.prod.al.ts"
                             }],
                             "optimization": true,
                             "outputHashing": "all",

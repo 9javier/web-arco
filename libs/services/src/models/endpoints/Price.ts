@@ -91,6 +91,15 @@ export namespace PriceModel{
                 name: number
             },
             brand: any
+        },
+        range?: {
+          createdAt: string,
+          updatedAt: string,
+          id: number,
+          numRange: number,
+          startRange: number,
+          endRange: number,
+          isAvelon: boolean
         }
     }
 

@@ -51,7 +51,7 @@ export class PricesComponent implements OnInit {
 
 
 
-  displayedColumns: string[] = ['price', 'discount', 'percentage', 'select'];
+  displayedColumns: string[] = ['model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
   dataSource: any;
   tariffId:number;
 

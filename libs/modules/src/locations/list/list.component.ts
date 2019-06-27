@@ -213,6 +213,7 @@ export class ListComponent implements OnInit {
                 element.container = [];
                 let totalLocations = element.containers.length;
                 let freeLocations = 0;
+                let enabledLocations = 0;
                 element.totalContainers = totalLocations;
                 element.containers.forEach(containers => {
                   let rowIndex = containers.row - 1;
@@ -221,8 +222,11 @@ export class ListComponent implements OnInit {
                     element.container[rowIndex] = [];
                   }
                   element.container[rowIndex].push(containers);
-                  if (containers.enabled && containers.items <= 0) {
-                    freeLocations++;
+                  if (containers.enabled) {
+                    enabledLocations++;
+                    if (containers.items <= 0) {
+                      freeLocations++;
+                    }
                   }
                   if (containers.incidence) {
                     if (!element.incidence || (element.incidence && element.incidence != 'serious')) {
@@ -231,7 +235,8 @@ export class ListComponent implements OnInit {
                   }
                 });
                 element.freeLocations = freeLocations;
-                element.locations = freeLocations+'/'+totalLocations+' libres';
+                element.locations = freeLocations+'/'+enabledLocations+' libres';
+                element.hallEnabled = enabledLocations > 0;
                 if (element.expanded) {
                   this.expandedElement = element;
                 }
