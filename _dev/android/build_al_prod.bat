@@ -23,5 +23,6 @@ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore _dev\android\kr
 del Krack_AL_0_0_X.apk
 del Krack_AL_0_0_X_release.apk
 zipalign -v 4 "platforms\android\app\build\outputs\apk\release\app-release-unsigned.apk" Krack_AL_0_0_X_release.apk
+copy Krack_AL_0_0_X_release.apk Krack_AL_latest.apk
 
 popd
