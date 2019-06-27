@@ -17,6 +17,7 @@ export class TextareaComponent implements OnInit {
   inputPositioning: string = null;
   errorMessage: string = null;
   processInitiated: boolean;
+  lastCodeScanned: string = 'start';
 
   constructor(
     private alertController: AlertController,
@@ -36,6 +37,9 @@ export class TextareaComponent implements OnInit {
   keyUpInput(event) {
     let warehouseId = this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
+
+    if (dataWrited === this.lastCodeScanned) return;
+    this.lastCodeScanned = dataWrited;
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
       this.processInitiated = true;

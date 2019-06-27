@@ -15,22 +15,20 @@ export class UpdateComponent implements OnInit {
   formBuilderTemplateInputs = [
     {
       name: 'rows',
-      label: 'Número de Alturas',
+      label: 'Alturas',
       type: 'number',
       min:1,
-      value: [1, 2, 3, 4, 5],
       icon: {type: 'md', name: 'view_stream'}
     },
     {
       name: 'columns',
-      label: 'Número de Columnas',
+      label: 'Columnas',
       type: 'number',
       min:1,
-      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
       icon: {type: 'md', name: 'view_column'}
     }
   ];
-  title = 'Actualizar Pasillo';
+  title = 'Actualizar pasillo';
   apiEndpoint = 'Wharehouse Maps';
   redirectTo = '/halls';
 
