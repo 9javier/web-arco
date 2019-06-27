@@ -48,7 +48,7 @@
         </ion-fab>
     </ion-col>
     <ion-col size="2" size-xs>
-        <ion-fab *ngIf="showDeleteButton && printable" [@EnterLeave]="'flyIn'">
+        <ion-fab *ngIf="showDeleteButton && printable" [@EnterLeave]="'flyIn'" (click)="print($event, null)">
             <ion-fab-button color="light">
                 <ion-icon name="print"></ion-icon>
             </ion-fab-button>

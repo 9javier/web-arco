@@ -1,0 +1,6 @@
+div.barcode-list {
+  display: inline-block;
+  img.barcode {
+    width: calc(var(--max-modal-width) / 4);
+  }
+}

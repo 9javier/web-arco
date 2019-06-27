@@ -87,4 +87,7 @@
   --ion-color-lines: 0, 0, 0, 0.12;
   --ion-color-required-field: #f2545487;
   --ion-color-required-field-input: #f2545414;
+
+  --max-modal-height: calc(80vh + 56px);
+  --max-modal-width: calc((var(--max-modal-height) - 56px) / 1.33)
 }
