@@ -35,7 +35,7 @@ export class TextareaComponent implements OnInit {
 
   keyUpInput(event) {
     let warehouseId = this.warehouseService.idWarehouseMain;
-    let dataWrited = this.inputPositioning;
+    let dataWrited = (this.inputPositioning || "").trim();
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
       this.processInitiated = true;

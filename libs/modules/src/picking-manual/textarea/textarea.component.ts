@@ -73,7 +73,7 @@ export class TextareaComponent implements OnInit {
   }
 
   keyUpInput(event) {
-    let dataWrited = this.inputPicking;
+    let dataWrited = (this.inputPicking || "").trim();
 
     if (event.keyCode == 13 && dataWrited) {
       this.inputPicking = null;
