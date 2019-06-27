@@ -116,7 +116,7 @@
                 <!--Tienda-->
                 <ion-item *ngIf="createForm.value.hasWarehouse" class="inner-item">
                     <ion-select placeholder="Tienda" formControlName="warehouseId">
-                        <ion-select-option *ngFor="let warehouse of warehouses" value="{{warehouse.id}}">{{warehouse.name}}</ion-select-option>
+                        <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
             </ion-row>

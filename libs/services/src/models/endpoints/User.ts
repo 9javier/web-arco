@@ -25,6 +25,9 @@ export namespace UserModel {
       id: number;
       email: string;
       name: string;
+      warehouse?: {
+        id: number;
+      };
     };
     message: string;
     code: number;
