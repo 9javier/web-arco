@@ -588,6 +588,12 @@ export class PrinterService {
 <html>
 <head>
     <title></title>
+    <style>
+        @media print {
+            @page { margin: 0; }
+            body { margin: 1.6cm; }
+        }
+    </style>
 </head>
 <body>
     ${barcodesHTML}
