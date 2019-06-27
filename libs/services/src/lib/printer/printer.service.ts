@@ -584,10 +584,16 @@ export class PrinterService {
 
         let barcodesPopupWindow = window.open('', 'PRINT', 'height=400,width=600');
 
-        barcodesPopupWindow.document.write('<html><head><title></title>');
-        barcodesPopupWindow.document.write('</head><body >');
-        barcodesPopupWindow.document.write(barcodesHTML);
-        barcodesPopupWindow.document.write('</body></html>');
+        const printPageHtml = `
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    ${barcodesHTML}
+</body>
+</html>`;
+        barcodesPopupWindow.document.write(printPageHtml);
 
         barcodesPopupWindow.document.close(); // necessary for IE >= 10
         barcodesPopupWindow.focus(); // necessary for IE >= 10*/
