@@ -15,20 +15,18 @@ export class StoreComponent implements OnInit {
   formBuilderTemplateInputs = [
     {
       name: 'rows',
-      label: 'Número de Alturas',
-      type: 'select',
-      value: [1, 2, 3, 4, 5],
+      label: 'Alturas',
+      type: 'number',
       icon: {type: 'md', name: 'view_stream'}
     },
     {
       name: 'columns',
-      label: 'Número de Columnas',
-      type: 'select',
-      value: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
+      label: 'Columnas',
+      type: 'number',
       icon: {type: 'md', name: 'view_column'}
     }
   ];
-  title = 'Añadir Pasillo';
+  title = 'Añadir pasillo';
   apiEndpoint = 'Wharehouse Maps';
   redirectTo = '/halls';
 

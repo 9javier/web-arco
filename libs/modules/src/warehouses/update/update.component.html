@@ -95,23 +95,23 @@
             <!--Pasillo-->
             <ion-item>
                 <div slot="start" class="slot-start-icon">
-                    <ion-icon color="medium" name=""></ion-icon>
+                    <i class="material-icons">view_module</i>
                 </div>
                 <ion-input placeholder="Pasillos" class="ion-margin-horizontal" formControlName="halls" type="number" number></ion-input>
             </ion-item>
             <!--Altura-->
             <ion-item *ngIf="!currentHasRacks">
                 <div slot="start" class="slot-start-icon">
-                    <ion-icon color="medium" name=""></ion-icon>
+                    <i class="material-icons">view_stream</i>
                 </div>
-                <ion-input placeholder="Altura" class="ion-margin-horizontal" formControlName="rows" type="number" number></ion-input>
+                <ion-input placeholder="Alturas" class="ion-margin-horizontal" formControlName="rows" type="number" number></ion-input>
             </ion-item>
             <!--Columna-->
             <ion-item *ngIf="!currentHasRacks">
                 <div slot="start" class="slot-start-icon">
-                    <ion-icon color="medium" name=""></ion-icon>
+                    <i class="material-icons">view_column</i>
                 </div>
-                <ion-input placeholder="Columna" class="ion-margin-horizontal" formControlName="columns" type="number" number></ion-input>
+                <ion-input placeholder="Columnas" class="ion-margin-horizontal" formControlName="columns" type="number" number></ion-input>
             </ion-item>
         </ion-item-group>
     </form>
