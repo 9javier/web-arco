@@ -102,6 +102,14 @@ const routes: Routes = [
       name: 'Tarifas'
     }
   },
+  {
+    path: 'prices/:tariffId',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
+    data:{
+      name:'Prices'
+    }
+  }
 ];
 
 @NgModule({
