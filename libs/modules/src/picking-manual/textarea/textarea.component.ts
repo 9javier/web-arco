@@ -75,6 +75,9 @@ export class TextareaComponent implements OnInit {
   keyUpInput(event) {
     let dataWrited = (this.inputPicking || "").trim();
 
+    if (dataWrited === this.lastCodeScanned) return;
+    this.lastCodeScanned = dataWrited;
+
     if (event.keyCode == 13 && dataWrited) {
       this.inputPicking = null;
       if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {
@@ -154,12 +157,11 @@ export class TextareaComponent implements OnInit {
               }
             });
         }
-      } else if (dataWrited != this.lastCodeScanned && dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
+      } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
         if (!this.processInitiated) {
           this.inputPicking = null;
           this.presentToast(this.literalsJailPallet[this.typePacking].scan_before_products, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
-          this.lastCodeScanned = dataWrited;
           if (this.listProducts.length > 0) {
             let picking: InventoryModel.Picking = {
               packingReference: this.jailReference,
