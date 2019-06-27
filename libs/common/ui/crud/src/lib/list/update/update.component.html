@@ -27,8 +27,15 @@
                         </ion-item>
                     </div>
                     <!--Input numérico-->
-                    <div *ngIf="input.type == 'number'">
+                    <div *ngIf="input.type === 'number'">
                         <ion-item lines="none">
+                            <!-- Slot inicial para mostrar el icono -->
+                            <div slot="start" class="slot-start-icon">
+                                <i *ngIf="input.icon && input.icon.type == 'md'" class="material-icons">{{input.icon.name}}</i>
+                                <ion-icon color="medium" *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
+                                <ion-icon color="medium" *ngIf="!input.icon" name="person"></ion-icon>
+                            </div>
+                            <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="{{input.type}}" number max="{{input.max}}" min="{{input.min}}" [formControl]="f[input.name]"></ion-input>
                         </ion-item>
                     </div>
