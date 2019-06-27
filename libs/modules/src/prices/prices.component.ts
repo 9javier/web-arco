@@ -105,7 +105,7 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getPrices(51,this.tariffId,this.page,this.limit);
+      this.getPrices(this.tariffId,this.page,this.limit);
     });
   }
 
@@ -127,7 +127,6 @@ export class PricesComponent implements OnInit {
   printPrices(items):void{
     let prices = this.selectedForm.value.toSelect.map((price,i)=>{
       let object = {
-        warehouseId: items[i].warehouseId,
         tariffId:items[i].tariffId,
         modelId:items[i].modelId,
         numRange: items[i].numRange
@@ -150,7 +149,7 @@ export class PricesComponent implements OnInit {
       console.log("here");
       this.tariffId = Number(params.get("tariffId"));
       console.log(this.tariffId);
-      this.getPrices(51,this.tariffId,this.page,this.limit);
+      this.getPrices(this.tariffId,this.page,this.limit);
     });
     
   }
@@ -184,9 +183,11 @@ export class PricesComponent implements OnInit {
   /**
    * Get the tarif associatest to a tariff
    * @param tariffId - the id of the tariff
+   * @param page
+   * @param limit
    */
-  getPrices(warehouseId:number = 51,tariffId:number,page:number,limit:number):void{
-    this.priceService.getIndex(warehouseId, tariffId, page, limit).subscribe(prices=>{
+  getPrices(tariffId:number,page:number,limit:number):void{
+    this.priceService.getIndex(tariffId, page, limit).subscribe(prices=>{
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
