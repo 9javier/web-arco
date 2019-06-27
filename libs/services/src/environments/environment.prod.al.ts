@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBase: 'http://mga.krack.es:8080/api',
+  apiBase: 'http://conexion1.globalretail.es:57354/api',
   sga:{
     client_id:"krack-client-sga",
     client_secret:"fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"
