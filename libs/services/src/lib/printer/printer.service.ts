@@ -212,8 +212,8 @@ export class PrinterService {
                 priceDiscount: price.priceDiscount,
                 priceDiscountOutlet: price.priceDiscountOutlet,
                 typeLabel:price.typeLabel,
-                numRange: price.numRange,
-                // TODO -> valueRange: price.valueRange,
+                numRange: price.range.numRange,
+                valueRange: price.range.startRange+'-'+price.range.endRange,
               };
             }
             innerObservable = innerObservable.pipe(flatMap(product=>{
