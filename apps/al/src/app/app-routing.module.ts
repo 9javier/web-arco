@@ -94,6 +94,22 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-manual/picking-manual.module#PickingManualModule'
   },
+  {
+    path: 'tariff',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/tariff/tariff.module#TariffModule',
+    data:{
+      name: 'Tarifas'
+    }
+  },
+  {
+    path: 'prices/:tariffId',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
+    data:{
+      name:'Prices'
+    }
+  }
 ];
 
 @NgModule({

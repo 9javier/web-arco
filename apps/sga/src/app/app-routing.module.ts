@@ -205,6 +205,21 @@ const routes: Routes = [
     data:{
       name:'Notificaciones'
     }
+  },
+  {
+    path:'prices',
+    redirectTo:'products',
+    data:{
+      name:'Precios'
+    }
+  },
+  {
+    path: 'prices/:tariffId',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
+    data:{
+      name:'Prices'
+    }
   }
 ];
 

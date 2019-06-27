@@ -13,6 +13,7 @@ import {ScanditService} from "../../../../libs/services/src/lib/scandit/scandit.
 import {environment} from "../environments/environment";
 import {Observable} from "rxjs";
 import {app} from "@suite/services";
+import {DateAdapter} from "@angular/material";
 
 interface MenuItem {
   title: string;
@@ -96,6 +97,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private platform: Platform,
+    private dateAdapter: DateAdapter<any>,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private router: Router,
@@ -108,6 +110,7 @@ export class AppComponent implements OnInit {
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
+    this.dateAdapter.setLocale('es');
   }
 
   initializeApp() {

@@ -49,12 +49,13 @@ export class MenuComponent implements OnInit {
           id:'products',
           url: '/products',
           icon: 'basket'
-        },{
+        },
+        /*{
           title:'Etiquetas',
           id:'labels',
           url:'/labels',
           icon:'basket'
-        },
+        },*/
         {
           title: 'Gestión de almacén',
           id:'warehouses-management',

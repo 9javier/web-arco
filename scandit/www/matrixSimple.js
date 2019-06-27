@@ -81,6 +81,14 @@ var ScanditMatrixSimple = {
    */
   showTextEndScanPacking: function (show, type, packingReference) {
     exec(null, null, PLUGIN_NAME, "matrixSimpleShowTextEndScanPacking", [show, type, packingReference]);
+  },
+  /**
+   *
+   * @param show
+   * @param text
+   */
+  showFixedTextBottom: function (show, text) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleShowFixedTextBottom", [show, text]);
   }
 }
 

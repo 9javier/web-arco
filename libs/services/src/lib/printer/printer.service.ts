@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable,from } from 'rxjs';
 import { map,switchMap, flatMap } from 'rxjs/operators';
+import { PriceService } from '../endpoint/price/price.service';
 
 declare let cordova: any;
 
@@ -22,7 +23,7 @@ export class PrinterService {
 
   private address: string;
 
-  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService) {
+  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService,private priceService:PriceService) {
   }
 
   private async getConfiguredAddress(): Promise<string> {
@@ -96,6 +97,76 @@ export class PrinterService {
     }
   }
 
+  
+
+  /**
+   * Esta función es la equivalente a @see printProductBoxTag
+   * pero con la diferencia que será usada para imprimir los precios
+   * el asunto es que no sabía que labeltype correspondía a cada printOption
+   * así que por ahora haré un diccionario y ustedes modifíquenlo a su conveniencia
+   */
+  public async printPricesInZebra(printOptions: PrintModel.Print, macAddress?: string) {
+    /**
+     * este diccionario será utilizado para que a modo de clave valor se pueda obtener fácilmente
+     * cada clave corresponde con un tipo en el enum, y cada valor corresponde a un printOptionType para ser usado en el case
+     * @todo cambiar todos los valores que por ahora están en el caso 4 por su correspondiente(es el valor que lo hace entrar en un case u otro)
+     */
+    let dictionaryOfCaseTypes = {
+      "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
+      "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
+      "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
+      "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
+      "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
+      "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
+      "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
+    }
+
+    /*
+     * Example object to print product prices
+     *
+        printOptions.product = {
+          productShoeUnit:{
+            model:{
+              reference:price.model.reference
+            }
+          }
+        };
+        printOptions.price = {
+          percent: price.percent,
+          percentOutlet: price.percentOutlet,
+          totalPrice: price.totalPrice,
+          priceOriginal: price.priceOriginal,
+          priceDiscount: price.priceDiscount,
+          priceDiscountOutlet: price.priceDiscountOutlet,
+          typeLabel: price.typeLabel,
+          numRange: price.numRange,
+        };
+        printOptions.range = {
+          numRange: price.numRange,
+          value: '36-40'
+        };
+    */
+
+    /**si se modifica el diccionario no hay necesidad de modificar esto */
+    printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
+
+    console.log("Imprimiendo el precio",printOptions)
+
+    if (macAddress) {
+      this.address = macAddress;
+    } else {
+      this.address = await this.getConfiguredAddress();
+    }
+    if (this.address) {
+      return await this.toPrint(printOptions);
+    } else {
+      console.debug('Zbtprinter: Not connected');
+      return await this.connect()
+        .then(() => this.toPrint(printOptions));
+    }
+  }
+
+
   /**
    * Get products by reference in api
    * @returns an observable with the list of products needed
@@ -104,6 +175,59 @@ export class PrinterService {
     return this.http.post(this.getProductsByReferenceUrl,{references}).pipe(map((response:any)=>{
       return response.data;
     }))
+  }
+
+  /**
+   * Obtain the prices by reference and then print each of these prices
+   * @param referencesObject - object with the array of references to be sended
+   */
+  printPrices(referencesObject){
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
+      let innerObservable:Observable<any> = new Observable(observer=>{
+        observer.next(true);
+      }).pipe(flatMap((r)=>{
+        return new Observable(s=>{
+          return s.next();
+        })
+      }));
+      /**obtain the products */
+      return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices)=>{
+        /**Iterate and build object to print */
+        prices.forEach(pricesArray=>{
+          pricesArray.forEach(price=>{
+            let printOptions:PrintModel.Print = {};
+            if(price.typeLabel){
+              printOptions.product = {
+                productShoeUnit:{
+                  model:{
+                    reference:price.model.reference
+                  }
+                }
+              }
+              printOptions.price = {
+                percent: price.percent,
+                percentOutlet: price.percentOutlet,
+                totalPrice: price.totalPrice,
+                priceOriginal: price.priceOriginal,
+                priceDiscount: price.priceDiscount,
+                priceDiscountOutlet: price.priceDiscountOutlet,
+                typeLabel:price.typeLabel,
+                numRange: price.numRange,
+                // TODO -> valueRange: price.valueRange,
+              };
+            }
+            innerObservable = innerObservable.pipe(flatMap(product=>{
+              /**Transform the promise in observable and merge that with the other prints */
+              return from(this.printPricesInZebra(printOptions)
+              // stop errors and attempt to print next tag
+                .catch(reason => {}))
+            }))            
+          })
+        });
+        return innerObservable;
+      }));
+    }));
+    return observable;    
   }
 
   /**
@@ -176,8 +300,10 @@ export class PrinterService {
       /**obtain the products */
       return this.getProductsByReference(listReferences).pipe(switchMap((products)=>{
         console.log("busca los productos en el servicio",products);
+
         /**Iterate and build object to print */
         products.forEach(product=>{
+
           let printOptions:PrintModel.Print = {
             /**build the needed data for print */
             product: {
@@ -260,7 +386,7 @@ export class PrinterService {
     let stringToBarcode = printOptions.text || printOptions.product.productShoeUnit.reference;
 
     switch (printOptions.type) {
-      case 0: // Test with Barcode and string of data below
+      case PrintModel.LabelTypes.LABEL_BARCODE_TEXT: // Test with Barcode and string of data below
         let size = '';
         if (stringToBarcode.length >= 11) {
           size = '45';
@@ -279,8 +405,8 @@ export class PrinterService {
           '^BCN,100,Y,N,N\n' +
           '^FD' + stringToBarcode + '^XZ\n';
         break;
-      case 1: // Tag with product reference, size and model details
-        toPrint = "^XA^LH30,5^CI27^AVN^FO1,5^FD"
+      case PrintModel.LabelTypes.LABEL_INFO_PRODUCT: // Tag with product reference, size and model details
+        toPrint = "^XA^CI28^LH30,5^AVN^FO1,5^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^AVN^FO0,15^FB325,1,0,R,0^FD";
         if (printOptions.product.productShoeUnit.size.name) {
@@ -306,17 +432,117 @@ export class PrinterService {
           + printOptions.product.productShoeUnit.reference
           + "^FS^XZ";
         break;
-      case 2: // Tag with product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'Iniciales' + "^FS^ADN^FO10,95^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AVN^FO0,55^FB320,1,0,C,0^FD" + 'saleprice1' + " €^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,130^FD" + 'item' + "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^AAN^FO0,190^FB315,1,0,L,0^FD" + 'brand' + "^FS^AAN^FO0,190^FB315,1,0,C,0^FD" + 'style' + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD" + 'detcol' + "^FS^ADN^FO0,125^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,145^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF: // Tag with product price
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT: // Tag with product price
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,95^FB320,1,0,L,0^FD";
+        // toPrint += 'TagSzRng';
+        toPrint += "^FS^AVN^FO0,55^FB320,1,0,C,0^FD";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,130^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^AAN^FO0,190^FB315,1,0,L,0^FD"
+          // + 'brand'
+          + "^FS^AAN^FO0,190^FB315,1,0,C,0^FD"
+          // + 'style'
+          + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD"
+          // + 'detcol'
+          + "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
+          // + 'modelName'
+          + "^FS^ADN^FO0,145^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
-      case 3: // Tag with current product price and previous price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AEN^FO10,30^FB310,1,0,L,0^FD" + 'saleprice1' + "€^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD" + 'saleprice2' + " €^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT: // Tag with current product price and previous price
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
+        if (printOptions.price.percent) {
+          toPrint += printOptions.price.percent + '%';
+        }
+        toPrint += "^FS^AEN^FO10,30^FB310,1,0,L,0^FD";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^FO25,25^GD90,30,8,B,L^FS^FO25,25^GD90,30,8,B,R^FS^AVN^FO0,70^FB340,1,0,C,0^FD";
+        if (printOptions.price.priceDiscount) {
+          toPrint += printOptions.price.priceDiscount + '€';
+        }
+        toPrint += "^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
+        // toPrint += 'name';
+        toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
-      case 4: // Tag with original product pvp and product pvp for outlet
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO0,120^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AUN^FO0,80^FB335,1,0,R,0^FD" + 'saleprice4' + " €^FS^ARN^FO0,80^FB340,1,0,L,0^FDPVP Outlet:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET: // Tag with original product pvp and product pvp for outlet
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET: // Tag with original product pvp and product pvp for outlet
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO0,120^FB320,1,0,L,0^FD";
+        // toPrint += 'TagSzRng';
+        toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
+          + "PVP:";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^AUN^FO0,80^FB335,1,0,R,0^FD";
+        if (printOptions.price.priceDiscount) {
+          toPrint += printOptions.price.priceDiscount + '€';
+        }
+        toPrint += "^FS^ARN^FO0,80^FB340,1,0,L,0^FD"
+          + "PVP Outlet:"
+          + "^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
+        if (printOptions.price.percentOutlet) {
+          toPrint += printOptions.price.percentOutlet + '%';
+        }
+        toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
-      case 5: // Tag with original product pvp, product pvp for outlet and last product price
-        toPrint = "^XA^LH28,0^CI27^AFN^FO0,30^FB320,1,0,R,0^FD" + 'iniciales' + "^FS^ADN^FO10,130^FB320,1,0,L,0^FD" + 'TagSzRng' + "^FS^AFN^FO0,30^FB310,1,0,L,0^FDPVP:" + 'saleprice1' + "€^FS^AFN^FO0,60^FB310,1,0,L,0^FDPVP Outlet:" + 'saleprice4' + "€^FS^ATN^FO0,100^FB335,1,0,R,0^FD" + 'saleprice5' + " €^FS^ARN^FO0,100^FB340,1,0,L,0^FDÚltimo precio:^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD" + 'item' + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD" + 'barcode' + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD" + 'siglas' + "^FS^ADN^FO0,175^FB330,1,0,R,0^FD" + 'porcent' + "^FS^XZ";
+      case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET: // Tag with original product pvp, product pvp for outlet and last product price
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD^FS^ADN^FO10,130^FB320,1,0,L,0^FD";
+        toPrint += "^FS^AFN^FO0,30^FB310,1,0,L,0^FD"
+          + "PVP:";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + '€';
+        }
+        toPrint += "^FS^AFN^FO0,60^FB310,1,0,L,0^FD"
+          + "PVP Outlet:";
+        if (printOptions.price.priceDiscount) {
+          toPrint += printOptions.price.priceDiscount + '€';
+        }
+        toPrint += "^FS^ATN^FO0,100^FB335,1,0,R,0^FD";
+        if (printOptions.price.priceDiscountOutlet) {
+          toPrint += printOptions.price.priceDiscountOutlet + '€';
+        }
+        toPrint += "^FS^ARN^FO0,100^FB340,1,0,L,0^FD"
+          + "Último precio:"
+          + "^FS^AP^FO0,145^GB335,0,3^FS^AQ^FWB^FO5,155^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^FWN^FO40,155^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO0,155^FB330,1,0,R,0^FD";
+        if (printOptions.price.percentOutlet) {
+          toPrint += printOptions.price.percentOutlet + '%';
+        }
+        toPrint += "^FS^ADN^FO0,175^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
         break;
     }
 

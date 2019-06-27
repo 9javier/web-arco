@@ -23,6 +23,16 @@ div.content-ta {
       }
     }
   }
+  p.scan-container-not-found {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: var(--ion-color-primary);
+    font-size: 18px;
+    margin: 0;
+    padding: 18px 24px;
+  }
   p.scan-jail-picking {
     position: absolute;
     top: 15%;

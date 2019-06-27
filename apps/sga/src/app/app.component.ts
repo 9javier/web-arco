@@ -13,6 +13,7 @@ import {Observable} from "rxjs";
 import {TypesService} from "../../../../libs/services/src/lib/endpoint/types/types.service";
 import {TypeModel} from "../../../../libs/services/src/models/endpoints/Type";
 import {app} from '@suite/services'
+import {DateAdapter} from "@angular/material";
 
 interface MenuItem {
   title: string;
@@ -146,6 +147,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private platform: Platform,
+    private dateAdapter: DateAdapter<any>,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     public router: Router,
@@ -157,6 +159,7 @@ export class AppComponent implements OnInit {
     private typesService: TypesService
   ) {
     this.menu.enable(false, 'sidebar');
+    this.dateAdapter.setLocale('es');
   }
 
   initializeApp() {

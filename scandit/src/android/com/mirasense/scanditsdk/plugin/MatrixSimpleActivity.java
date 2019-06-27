@@ -69,7 +69,7 @@ public class MatrixSimpleActivity extends Activity {
     settings.setSymbologyEnabled(Barcode.SYMBOLOGY_CODE39, true);
     SymbologySettings symSettings128 = settings.getSymbologySettings(Barcode.SYMBOLOGY_CODE128);
     short[] activeSymbolCounts128 = new short[]{
-      7, 8, 9, 12, 14
+      7, 8, 9, 12, 14, 15, 16, 17, 18
     };
     symSettings128.setActiveSymbolCounts(activeSymbolCounts128);
 

@@ -7,7 +7,15 @@ export namespace TariffModel{
         activeFrom:string;
         activeTill:string;
     }
+    export interface ResponseTariffPaginator{
+        results:Array<Tariff>;
+        pagination:{
+            page:number;
+            limit:number;
+            totalResults:number;
+        }
+    }
     export interface ResponseTariff extends Request.Success{
-        data:Array<Tariff>;
+        data:ResponseTariffPaginator;
     }
 }

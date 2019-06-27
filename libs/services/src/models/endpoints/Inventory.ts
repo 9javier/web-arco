@@ -1,5 +1,6 @@
 import {Request} from './request';
 import {ShoesPickingModel} from "./ShoesPicking";
+import {FiltersModel} from "@suite/services";
 export namespace InventoryModel {
 
   export interface Picking {
@@ -59,6 +60,14 @@ export namespace InventoryModel {
     data:{
       results:Array<SearchInContainer>;
       pagination:Request.Paginator;
+      filters: {
+        colors: FiltersModel.Color[],
+        containers: FiltersModel.Container[],
+        models: FiltersModel.Model[],
+        sizes: FiltersModel.Size[],
+        warehouses: FiltersModel.Warehouse[],
+        ordertypes: FiltersModel.Group[],
+      }
     }
   }
 

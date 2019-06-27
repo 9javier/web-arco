@@ -39,7 +39,7 @@ export class TextareaComponent implements OnInit {
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
       this.processInitiated = true;
-      if (dataWrited.match(/P([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
+      if (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
         if (dataWrited != this.containerReference) {
           this.containerReference = dataWrited;
           this.dataToWrite = 'PRODUCTO / CONTENEDOR';

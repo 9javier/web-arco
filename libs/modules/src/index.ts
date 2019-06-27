@@ -138,3 +138,11 @@ export * from './list-picking/list-picking.module';
 /**Tariff */
 export * from './tariff/tariff.component';
 export * from './tariff/tariff.module';
+
+/**Prices */
+export * from './prices/prices.component';
+export * from './prices/prices.module';
+
+/**Tags-input */
+export * from './components/tags-input/tags-input.component';
+export * from './components/tags-input/tags-input.module';

@@ -9,6 +9,7 @@ import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {switchMap} from "rxjs/operators";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {Location} from "@angular/common";
+import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 
 @Component({
   selector: 'suite-textarea',
@@ -32,6 +33,7 @@ export class TextareaComponent implements OnInit {
   lastCodeScanned: string = 'start';
   productsScanned: string[] = [];
   literalsJailPallet: any = null;
+  scanContainerToNotFound: string = null;
 
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
@@ -46,7 +48,8 @@ export class TextareaComponent implements OnInit {
     private alertController: AlertController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+    private scanditProvider: ScanditProvider
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
@@ -73,6 +76,7 @@ export class TextareaComponent implements OnInit {
     let dataWrited = this.inputPicking;
 
     if (event.keyCode == 13 && dataWrited) {
+      this.inputPicking = null;
       if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {
         if (!this.processInitiated) {
           let typePackingScanned = 0;
@@ -229,6 +233,42 @@ export class TextareaComponent implements OnInit {
             this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
           }
         }
+      } else if (this.scanContainerToNotFound) {
+        if ((this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER_OLD) && this.nexProduct.inventory.container.reference == dataWrited) {
+          let productNotFoundId = this.nexProduct.product.id;
+          this.putProductNotFound(this.pickingId, productNotFoundId)
+            .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+              if (res.code == 200 || res.code == 201) {
+                this.scanContainerToNotFound = null;
+                this.dataToWrite = "PRODUCTO";
+
+                this.presentToast('El producto ha sido reportado como no encontrado', 1500, this.pickingProvider.colorsMessage.success.name);
+                this.getPendingListByPicking(this.pickingId)
+                  .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                    if (res.code == 200 || res.code == 201) {
+                      this.listProducts = res.data;
+                      if (this.listProducts.length > 0) {
+                        this.setNexProductToScan(this.listProducts[0]);
+                      } else {
+                        this.showNexProductToScan(false);
+                        setTimeout(() => {
+                          this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                          this.dataToWrite = 'CONTENEDOR';
+                          this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
+                        }, 2 * 1000);
+                      }
+
+                    }
+                  });
+              } else {
+                this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
+              }
+            }, error => {
+              this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
+            });
+        } else {
+          this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
+        }
       } else {
         if (this.processInitiated) {
           this.inputPicking = null;
@@ -317,41 +357,21 @@ export class TextareaComponent implements OnInit {
   async productNotFound() {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      subHeader: '¿Está seguro de querer reportar como no encontrado el producto '+this.nexProduct.product.reference+' en la ubicación '+this.nexProduct.inventory.container.reference+'?',
+      message: '¿Está seguro de querer reportar como no encontrado el producto <b>'+this.nexProduct.product.model.reference+'</b> en la ubicación <b>'+this.nexProduct.inventory.container.reference+'</b>?<br/>(tendrá que escanear la ubicación para confirmar el reporte).',
       backdropDismiss: false,
       buttons: [
-        'Cancelar',
+        {
+          text: 'Cancelar',
+          handler: () => {
+            this.scanContainerToNotFound = null;
+            this.dataToWrite = "PRODUCTO";
+          }
+        },
         {
           text: 'Reportar',
           handler: () => {
-            let productNotFoundId = this.nexProduct.product.id;
-            this.putProductNotFound(this.pickingId, productNotFoundId)
-              .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
-                if (res.code == 200 || res.code == 201) {
-                  this.presentToast('El producto ha sido reportado como no encontrado', 1500, this.pickingProvider.colorsMessage.success.name);
-                  this.getPendingListByPicking(this.pickingId)
-                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                      if (res.code == 200 || res.code == 201) {
-                        this.listProducts = res.data;
-                        if (this.listProducts.length > 0) {
-                          this.setNexProductToScan(this.listProducts[0]);
-                        } else {
-                          this.showNexProductToScan(false);
-                          setTimeout(() => {
-                            this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                            this.dataToWrite = 'CONTENEDOR';
-                            this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
-                          }, 2 * 1000);
-                        }
-
-                      }
-                    });
-                } else {
-                  this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
-                }
-              }, error => {
-                this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
-              });
+            this.scanContainerToNotFound = "Escanea la ubicación que estás revisando para comprobar que sea la correcta. Escanea el producto si lo encuentra.";
+            this.dataToWrite = "UBICACIÓN";
           }
         }]
     });

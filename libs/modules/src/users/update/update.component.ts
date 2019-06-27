@@ -94,6 +94,7 @@ export class UpdateComponent implements OnInit {
       observable.subscribe((response)=>{
         /**iba a usar el UserModel pero no está bien definido, así que prefiero no usarlo, sería bueno revisarlo */
         let user = response.body.data;
+        (<any>user).warehouseId = user.warehouse && user.warehouse.id;
         console.log(user);
         this.updateForm.patchValue(user);     
         /**call here to handle the async */

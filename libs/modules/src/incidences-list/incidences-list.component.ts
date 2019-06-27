@@ -8,6 +8,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {MatPaginator, PageEvent} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {TypeModel} from "@suite/services";
+import AttendedOption = IncidenceModel.AttendedOption;
 
 @Component({
   selector: 'incidences-list',
@@ -27,6 +28,9 @@ export class IncidencesListComponent implements OnInit {
   public expandedElement: IncidenceModel.Incidence | null;
   private actualPageFilter: IncidenceModel.SearchParameters;
   public typeSelected: TypeModel.Type;
+  public listAttendedOptions: AttendedOption[];
+  public attendedSelected: AttendedOption;
+  public textToSearch: string;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -41,6 +45,21 @@ export class IncidencesListComponent implements OnInit {
     this.typeSelected = this.incidencesService.listIncidencesTypes[0];
     this.listenPaginatorChanges();
     this.actualPageFilter = this.incidencesService.defaultFilters;
+
+    this.listAttendedOptions = [
+      {
+        id: 0,
+        value: 'Todas'
+      },
+      {
+        id: 1,
+        value: 'Atendidas'
+      },
+      {
+        id: 2,
+        value: 'No atendidas'
+      }];
+    this.attendedSelected = this.listAttendedOptions[0];
   }
 
   listenPaginatorChanges() {
@@ -80,12 +99,29 @@ export class IncidencesListComponent implements OnInit {
       });
   }
 
-  filterByType() {
+  changeFilters(data: IncidenceModel.IncidenceFilters) {
+    this.typeSelected = data.type;
+    this.attendedSelected = data.attended;
+    this.textToSearch = data.text;
+
     if (this.typeSelected.id == 0) {
       delete this.actualPageFilter.type;
     } else {
       this.actualPageFilter.type = this.typeSelected.id;
     }
+
+    if (this.attendedSelected.id == 0) {
+      delete this.actualPageFilter.attended;
+    } else {
+      this.actualPageFilter.attended = this.attendedSelected.id;
+    }
+
+    if (this.textToSearch) {
+      this.actualPageFilter.text = this.textToSearch;
+    } else {
+      delete this.actualPageFilter.text;
+    }
+
     this.actualPageFilter.page = 0;
     this.paginator.pageIndex = 0;
 
@@ -96,7 +132,7 @@ export class IncidencesListComponent implements OnInit {
     this.incidencesService
       .postSearch(parameters)
       .subscribe((res: IncidenceModel.ResponseSearch) => {
-        this.incidencesService.incidencesQuantity = res.data.count_search;
+        this.incidencesService.incidencesQuantityList = res.data.count_search;
         this.incidencesService.incidencesUnattendedQuantity = res.data.count;
         this.incidencesService.incidencesList = res.data.incidences;
       }, error => {

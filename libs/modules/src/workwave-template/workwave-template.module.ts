@@ -7,7 +7,7 @@ import {
   MatCheckboxModule,
   MatGridListModule,
   MatRadioModule,
-  MatDatepickerModule, MatNativeDateModule
+  MatDatepickerModule, MatNativeDateModule, DateAdapter
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { WorkwaveTemplateRoutingModule } from "./workwave-template-routing.module";
@@ -18,6 +18,7 @@ import {TitleListWorkwaveTemplateComponent} from "./list/list-title/list-title.c
 import {WorkwaveListWorkwaveTemplateComponent} from "./list/list-workwave/list-workwave.component";
 import {StoreComponent} from "./store/store.component";
 import {NgxMaterialTimepickerModule} from "ngx-material-timepicker";
+import {MondayStartingDateAdapterService} from "../../../services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
 
 @NgModule({
   declarations: [WorkwaveTemplateComponent, ListWorkwaveTemplateComponent, TitleListWorkwaveTemplateComponent, WorkwaveListWorkwaveTemplateComponent, StoreComponent],
@@ -36,6 +37,9 @@ import {NgxMaterialTimepickerModule} from "ngx-material-timepicker";
     MatDatepickerModule,
     MatNativeDateModule,
     NgxMaterialTimepickerModule
+  ],
+  providers: [
+    { provide: DateAdapter, useClass: MondayStartingDateAdapterService },
   ],
   entryComponents: [ListWorkwaveTemplateComponent, TitleListWorkwaveTemplateComponent, WorkwaveListWorkwaveTemplateComponent, StoreComponent]
 })

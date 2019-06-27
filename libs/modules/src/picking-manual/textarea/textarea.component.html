@@ -38,4 +38,5 @@
   </p>
   <p class="scan-jail-picking" *ngIf="scanJail">{{scanJail}}</p>
   <input id="input-ta" class="ta-picking" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)" [(ngModel)]="inputPicking">
+  <p class="scan-container-not-found" *ngIf="scanContainerToNotFound">{{scanContainerToNotFound}}</p>
 </div>

@@ -27,6 +27,8 @@ export class ScanditProvider {
   }
 
   private _codeValue: CodeValue = {
+    CONTAINER: 'container',
+    CONTAINER_OLD: 'container_old',
     JAIL: 'jail',
     PALLET: 'pallet',
     PRODUCT: 'product'
@@ -37,15 +39,23 @@ export class ScanditProvider {
 
   private _codeRegex: Regex[] = [
     {
-      value: 'jail',
+      value: this._codeValue.CONTAINER,
+      regex: /([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/
+    },
+    {
+      value: this._codeValue.CONTAINER_OLD,
+      regex: /P([0-9]){2}[A-Z]([0-9]){2}$/
+    },
+    {
+      value: this._codeValue.JAIL,
       regex: /J([0-9]){4}/
     },
     {
-      value: 'pallet',
+      value: this._codeValue.PALLET,
       regex: /P([0-9]){4}/
     },
     {
-      value: 'product',
+      value: this._codeValue.PRODUCT,
       regex: /([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/
     }
   ];
@@ -76,6 +86,8 @@ namespace Colors {
 }
 
 export interface CodeValue {
+  CONTAINER: string,
+  CONTAINER_OLD: string,
   JAIL: string,
   PALLET: string,
   PRODUCT: string

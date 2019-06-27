@@ -6,7 +6,7 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
-        <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goToProducts()"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goPrices(row.tariffId)"></tr>
 
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>
@@ -36,6 +36,5 @@
         </ng-container>
 
     </table>
-    <!-- <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator> -->
-
+    <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>
 </ion-content>
