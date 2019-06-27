@@ -65,7 +65,7 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns" style="cursor: pointer" [class.expanded]="expandedElement == row" (click)="selectRowToExpand(row)" [hidden]="!row.hallEnabled"></tr>
-        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" [@detailExpand]="row == expandedElement ? 'expanded' : 'collapsed'" style="overflow: hidden" [hidden]="!row.hallEnabled"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow" [@detailExpand]="(row == expandedElement && !row.hallEnabled) ? 'expanded' : 'collapsed'" style="overflow: hidden"></tr>
 
         <ng-container matColumnDef="icon">
             <th mat-header-cell *matHeaderCellDef></th>
