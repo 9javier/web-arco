@@ -43,6 +43,7 @@ import { HallModel } from "../../../../../../services/src/models/endpoints/Hall"
 import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {PrinterService} from "../../../../../../services/src/lib/printer/printer.service";
 import {PdfGeneratorService} from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
+import {ModalPrintComponent} from "../../../../../../modules/src/modal-print/modal-print.component";
 
 
 @Component({
@@ -334,14 +335,31 @@ export class ListComponent implements OnInit {
 
   async print(event, row){
     event.stopPropagation();
-    if(row.reference){
+    if ((row && row.reference) || this.selection.selected.length > 0) {
+      let listReferences: string[] = null;
+      if (row && row.reference) {
+        listReferences = [row.reference];
+      } else if (this.selection.selected.length > 0) {
+        listReferences = this.selection.selected.map((selection) => {
+          return (<any>selection).reference;
+        });
+      }
+
       if ((<any>window).cordova) {
-        await this.printerService.print({text: row.reference, type: 0});
+        for (let reference of listReferences) {
+          await this.printerService.print({text: reference, type: 0});
+        }
       } else {
-        this.pdfGeneratorService.printBarcodes([row.reference]);
+        this.pdfGeneratorService.referencesToPrint = listReferences;
+        const modal = await this.modalController.create({
+          component: ModalPrintComponent,
+          cssClass: 'modal-print'
+        });
+
+        return await modal.present();
       }
     } else {
-      console.debug("Not found reference", row);
+      console.debug("Not found reference", row || this.selection.selected);
     }
   }
 

@@ -8,6 +8,8 @@ declare var Canvas;
 })
 export class PdfGeneratorService {
 
+  private _referencesToPrint: string[] = [];
+
   constructor() {}
 
   printBarcodes(listBarcodes: string[]) {
@@ -23,4 +25,11 @@ export class PdfGeneratorService {
     var newWindow = window.open(uri);
   }
 
+  get referencesToPrint(): string[] {
+    return this._referencesToPrint;
+  }
+
+  set referencesToPrint(value: string[]) {
+    this._referencesToPrint = value;
+  }
 }
