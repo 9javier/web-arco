@@ -43,7 +43,6 @@ import { HallModel } from "../../../../../../services/src/models/endpoints/Hall"
 import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {PrinterService} from "../../../../../../services/src/lib/printer/printer.service";
 import {PdfGeneratorService} from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
-import {ModalPrintComponent} from "../../../../../../modules/src/modal-print/modal-print.component";
 
 
 @Component({
@@ -350,13 +349,7 @@ export class ListComponent implements OnInit {
           await this.printerService.print({text: reference, type: 0});
         }
       } else {
-        this.pdfGeneratorService.referencesToPrint = listReferences;
-        const modal = await this.modalController.create({
-          component: ModalPrintComponent,
-          cssClass: 'modal-print'
-        });
-
-        return await modal.present();
+        return await this.printerService.printBarcodesOnBrowser(listReferences);
       }
     } else {
       console.debug("Not found reference", row || this.selection.selected);

@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable,from } from 'rxjs';
 import { map,switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
+import * as JsBarcode from 'jsbarcode';
 
 declare let cordova: any;
 
@@ -557,6 +558,45 @@ export class PrinterService {
       color: color || "primary"
     });
     toast.present();
+  }
+
+  async printBarcodesOnBrowser(codes: string[]) {
+
+    let divBarcodes = document.createElement('div');
+    divBarcodes.style.display = "none";
+    document.body.append(divBarcodes);
+
+    let imageLoadPromises: Promise<void>[] = [];
+
+    for (let reference of codes) {
+      let newImage = document.createElement('img');
+      imageLoadPromises.push(new Promise((resolve) => { newImage.onload = <any>resolve; }));
+      newImage.id = reference;
+      newImage.className = 'barcode';
+      divBarcodes.appendChild(newImage);
+      JsBarcode("#"+reference, reference);
+    }
+
+    return Promise.all(imageLoadPromises)
+      .then(() => new Promise((resolve) => {
+        const barcodesHTML = divBarcodes.innerHTML;
+        divBarcodes.remove();
+
+        let barcodesPopupWindow = window.open('', 'PRINT', 'height=400,width=600');
+
+        barcodesPopupWindow.document.write('<html><head><title></title>');
+        barcodesPopupWindow.document.write('</head><body >');
+        barcodesPopupWindow.document.write(barcodesHTML);
+        barcodesPopupWindow.document.write('</body></html>');
+
+        barcodesPopupWindow.document.close(); // necessary for IE >= 10
+        barcodesPopupWindow.focus(); // necessary for IE >= 10*/
+
+        barcodesPopupWindow.print();
+        barcodesPopupWindow.close();
+
+        resolve();
+      }));
   }
 
 }

@@ -146,7 +146,3 @@ export * from './prices/prices.module';
 /**Tags-input */
 export * from './components/tags-input/tags-input.component';
 export * from './components/tags-input/tags-input.module';
-
-/**Modal Prints*/
-export * from './modal-print/modal-print.component';
-export * from './modal-print/modal-print.module';

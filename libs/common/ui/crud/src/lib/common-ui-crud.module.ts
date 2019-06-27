@@ -10,7 +10,6 @@ import { StoreComponent } from './list/store/store.component';
 import { UpdateComponent } from './list/update/update.component';
 import { MatListModule } from '@angular/material/list';
 import { BreadcrumbModule } from '../../../../../modules/src/components/breadcrumb/breadcrumb.module';
-import { ModalPrintComponent } from '../../../../../modules/src/modal-print/modal-print.component';
 
 @NgModule({
   imports: [
@@ -25,7 +24,7 @@ import { ModalPrintComponent } from '../../../../../modules/src/modal-print/moda
     RouterModule.forChild([{ path: '', component: ListComponent }])
   ],
   exports: [ListComponent, StoreComponent, UpdateComponent],
-  declarations: [ListComponent, StoreComponent, UpdateComponent, ModalPrintComponent],
-  entryComponents:[UpdateComponent, ModalPrintComponent]
+  declarations: [ListComponent, StoreComponent, UpdateComponent],
+  entryComponents:[UpdateComponent]
 })
 export class CommonUiCrudModule {}
