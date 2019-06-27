@@ -45,7 +45,7 @@ export class TariffComponent implements OnInit {
     private router:Router) { }
 
   ngOnInit() {
-    this.getTariffs(51,this.page,this.limit);
+    this.getTariffs(this.page,this.limit);
     this.listenChanges();
   }
 
@@ -58,7 +58,7 @@ export class TariffComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getTariffs(51,this.page,this.limit);
+      this.getTariffs(this.page,this.limit);
     });
   }
 
@@ -74,8 +74,8 @@ export class TariffComponent implements OnInit {
   /**
    * Get labels to show
    */
-  getTariffs(warehouse:number,page:number,limit:number):void{
-    this.tariffService.getIndex(warehouse, page, limit).subscribe(tariffs=>{
+  getTariffs(page:number,limit:number):void{
+    this.tariffService.getIndex(page, limit).subscribe(tariffs=>{
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
         result.activeFrom = new Date(result.activeFrom).toLocaleDateString();

@@ -17,12 +17,12 @@ export class TariffService {
 
   /**
    * Get all tariff of the system
-   * @param warehouseId - the warehouse of the tariff
+   * @param page
+   * @param limit
    * @returns observable with the tariff
    */
-  getIndex(warehouseId:number = 51,page:number = 1, limit:number =1):Observable<TariffModel.ResponseTariffPaginator>{
+  getIndex(page:number = 1, limit:number =1):Observable<TariffModel.ResponseTariffPaginator>{
     return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl,{
-      warehouseId: warehouseId,
       pagination: {
         page: page,
         limit: limit

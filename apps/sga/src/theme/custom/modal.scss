@@ -1,5 +1,5 @@
 :root {
-      ion-modal {
+  ion-modal {
     left: 0;
     right: 0;
     top: 0;
@@ -9,16 +9,47 @@
     display: flex;
     justify-content: center;
     align-items: center;
+        .modal-wrapper {
+          width: 100%;
+          height: 100%;
+        }
   }
-  
-  .modal-wrapper {
-    width: 100%;
-    height: 100%;
+
+  ion-modal.modal-print {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    contain: strict;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-writing-mode: bt-rl;
+    -ms-writing-mode: bt-rl;
+    .modal-wrapper {
+      height: var(--max-modal-height);
+      width: var(--max-modal-width);
+      img.barcode {
+        width: calc((var(--max-modal-width) - 32px) / 4);
+      }
+    }
   }
   @media only screen and (min-height: 600px) and (min-width: 768px) {
-    .modal-wrapper {
-      width: 600px;
-      height: calc(100vh - 6rem);
+    ion-modal {
+      .modal-wrapper {
+        width: 600px;
+        height: calc(100vh - 6rem);
+      }
+    }
+    ion-modal.modal-print {
+      .modal-wrapper {
+        height: var(--max-modal-height);
+        width: var(--max-modal-width);
+        img.barcode {
+          width: calc((var(--max-modal-width) - 32px) / 4);
+        }
+      }
     }
   }
 
