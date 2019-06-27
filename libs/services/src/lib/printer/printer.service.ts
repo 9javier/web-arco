@@ -582,7 +582,7 @@ export class PrinterService {
         const barcodesHTML = divBarcodes.innerHTML;
         divBarcodes.remove();
 
-        let barcodesPopupWindow = window.open('', 'PRINT', 'height=400,width=600');
+        let barcodesPopupWindow = window.open('', 'PRINT', 'height=800,width=800');
 
         const printPageHtml = `
 <html>
