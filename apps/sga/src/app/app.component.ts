@@ -163,7 +163,7 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
-    this.showMainHeader = false;
+    this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.showSidebar = false;
     this.platform.ready().then(async () => {
@@ -215,13 +215,13 @@ export class AppComponent implements OnInit {
               )
               .catch((possibleMainWarehouse404Error) => {})
               .then(() => this.router.navigate(['products']).then(sucess => {
-                  this.showMainHeader = true;
+                  this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
                 })
               );
           } else {
             this.menu.enable(false, 'sidebar');
-            this.showMainHeader = false;
+            this.mainHeaderShowHide(false);
             this.router.navigateByUrl('/login');
           }
         },10);
@@ -266,6 +266,18 @@ export class AppComponent implements OnInit {
             console.log(data);
           });
       });
+    }
+  }
+
+  mainHeaderShowHide(show: boolean) {
+    this.showMainHeader = show;
+    if (show) {
+      /* The BlueBird device Krack is using has a bug on the DOM renderer which makes the header to show blank. This
+       * ugly trick solves it. BTW, the 1 sec timeout is totally random and empyrical. */
+      setTimeout(() => {
+        document.querySelectorAll("ion-app > ion-header > ion-toolbar, ion-app > ion-header > ion-toolbar *")
+          .forEach((el: HTMLElement) => {el.style.zIndex = "auto"})
+      }, 1000);
     }
   }
 
