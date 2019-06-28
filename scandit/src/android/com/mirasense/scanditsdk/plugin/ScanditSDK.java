@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.mirasense.scanditsdk.plugin.adapters.PickingStoresAdapter;
 import com.scandit.barcodepicker.ScanSettings;
 import com.scandit.barcodepicker.ScanditLicense;
 import com.scandit.barcodepicker.internal.ScanditSDKGlobals;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.res.Resources;
@@ -88,6 +90,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String FINISH_DID_SCAN_COMMAND = "finishDidScanCallback";
   private static final String FINISH_DID_RECOGNIZE_NEW_CODES_COMMAND = "finishDidRecognizeNewCodesCallback";
   private static final String MATRIX_SIMPLE = "matrixSimple";
+  private static final String MATRIX_PICKING_STORES = "matrixPickingStores";
   private static final String SET_MATRIX_SIMPLE_TEXT = "setMatrixSimpleText";
   private static final String SHOW_MATRIX_SIMPLE_TEXT = "matrixSimpleShowText";
   private static final String SHOW_MATRIX_SIMPLE_TEXT_LOADER = "matrixSimpleShowLoader";
@@ -98,6 +101,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING = "matrixSimpleShowTextStartScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING = "matrixSimpleShowTextEndScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM = "matrixSimpleShowFixedTextBottom";
+  private static final String MATRIX_PICKING_STORES_LOAD_PRODUCTS = "matrixPickingStoresLoadProducts";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -556,6 +560,25 @@ public class ScanditSDK extends CordovaPlugin {
       b.putString("backgroundTitle", backgroundTitle);
       b.putString("colorTitle", colorTitle);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixSimpleActivity.class);
+      intent.putExtras(b);
+      this.cordova.startActivityForResult(this, intent, 6);
+    } else if (action.equals(MATRIX_PICKING_STORES)) {
+      mCallbackContextMatrixSimple = callbackContext;
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixPickingStores.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
     } else if(action.equals(SET_MATRIX_SIMPLE_TEXT)){
@@ -1018,7 +1041,7 @@ public class ScanditSDK extends CordovaPlugin {
       final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
 
       final boolean fShow = show;
-      final String fText= text;
+      final String fText = text;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
           TextView tvBottomText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvBottomText", "id", package_name));
@@ -1030,6 +1053,39 @@ public class ScanditSDK extends CordovaPlugin {
             tvBottomText.setText("");
             tvBottomText.setVisibility(View.GONE);
           }
+        }
+      });
+    } else if (action.equals(MATRIX_PICKING_STORES_LOAD_PRODUCTS)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      JSONArray products = null;
+      try {
+        products = args.getJSONArray(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      ArrayList<JSONObject> listProducts = new ArrayList<>();
+
+      try {
+        for (int i = 0; i < products.length(); i++) {
+          listProducts.add(products.getJSONObject(i));
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final ArrayList<JSONObject> fProducts = listProducts;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          PickingStoresAdapter pickingStoresAdapter = new PickingStoresAdapter(cordova.getActivity(), fProducts);
+          ListView lvPickingProducts = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("lvPickingProducts", "id", package_name));
+          lvPickingProducts.setAdapter(pickingStoresAdapter);
+          ListView lvPickingProductsFull = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("lvPickingProductsFull", "id", package_name));
+          lvPickingProductsFull.setAdapter(pickingStoresAdapter);
         }
       });
     } else {
