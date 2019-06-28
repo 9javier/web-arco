@@ -18,6 +18,7 @@ export class AuthenticationService {
 
   constructor(private storage: Storage) {
     console.log(storage);
+    console.log("dictionaryManagement", "AuthenticationService: constructor, before getDictionaryAccess");
     this.getDictionaryAccess();
   }
 
@@ -37,8 +38,10 @@ export class AuthenticationService {
 
   async getDictionaryAccess(){
     console.log("set dictionary access");
+    console.log("dictionaryManagement", "AuthenticationService: getDictionaryAccess, before storage.get");
     return await this.storage.get("dictionaryAcess").then(access=>{
       console.log("set dictionary access",access);
+      console.log("dictionaryManagement", "AuthenticationService: getDictionaryAccess, storage.get callback", JSON.stringify(access));
       this.dictionaryAcessState.next(access);
     });
   }
@@ -50,8 +53,13 @@ export class AuthenticationService {
     }
     if(refreshToken)
       await this.storage.set("refreshToken",refreshToken);
-    if(dictionary)
-      await this.storage.set("dictionaryAcess",dictionary).then(()=>this.getDictionaryAccess());
+    if(dictionary) {
+      console.log("dictionaryManagement", "AuthenticationService: login, before storage.set", JSON.stringify(dictionary));
+      await this.storage.set("dictionaryAcess",dictionary).then(()=> {
+        console.log("dictionaryManagement", "AuthenticationService: login, storage.set callback");
+        return this.getDictionaryAccess();
+      });
+    }
     return this.storage.set(TOKEN_KEY, `Bearer ${accessToken}`).then(() => {
       this.authenticationState.next(true);
     });

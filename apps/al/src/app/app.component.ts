@@ -174,6 +174,7 @@ export class AppComponent implements OnInit {
     app.name = "al";
     /**Set the dictionary access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
+      console.log("dictionaryManagement", "ngOnInit: dictionaryAcessState.subscribe", JSON.parse(JSON.stringify(state)));
       this.dictionary = state;
     });
   }
