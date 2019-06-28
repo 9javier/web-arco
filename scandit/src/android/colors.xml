@@ -17,4 +17,6 @@
     <color name="transparentGreen">#9939CC61</color>
     <color name="transparentYellow">#99FAD05C</color>
     <color name="transparentWhite">#BFFFFFFF</color>
+
+    <color name="cornersScanner">#fff</color>
 </resources>

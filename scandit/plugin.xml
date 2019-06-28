@@ -172,6 +172,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixBubblesActivity.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixScanOverlayListener.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/ClickCallback.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
 
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/UiUtils.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/ScreenshotHandler.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
@@ -188,6 +189,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/bubbles/MinimisedBubbleReferenceSerauto.java" target-dir="src/com/mirasense/scanditsdk/plugin/bubbles"/>
 
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/StockReference.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
 
 
     <source-file src="src/android/drawable/bg_rounded_bottom.xml" target-dir="res/drawable"/>
@@ -198,6 +200,10 @@
     <source-file src="src/android/drawable/ic_launcher_background.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_product.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/arrow_back.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/corner_bottom_left.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/corner_bottom_right.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/corner_top_left.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/corner_top_right.xml" target-dir="res/drawable"/>
     <source-file src="src/android/layout/bubble_maximised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised_data.xml" target-dir="res/layout"/>
@@ -210,6 +216,8 @@
     <source-file src="src/android/layout/references_matrixsimple.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/title_bar_matrixsimple.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/next_product_info.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/item_picking_store.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/references_matrix_picking_stores.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
 
   </platform>

@@ -8,6 +8,7 @@ import {ShoesPickingService} from "../../../../services/src/lib/endpoint/shoes-p
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {Router} from "@angular/router";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
+import {PickingScanditService} from "../../../../services/src/lib/scandit/picking/picking.service";
 
 @Component({
   selector: 'list-picking-tasks-template',
@@ -29,6 +30,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     private shoesPickingService: ShoesPickingService,
     private events: Events,
     private router: Router,
+    private pickingScanditService: PickingScanditService,
     private pickingProvider: PickingProvider
   ) {}
 
@@ -78,7 +80,11 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           if (this.pickingProvider.method == 'manual') {
             this.router.navigate(['picking/manual']);
           } else {
-            this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);
+            if (this.authenticationService.getWarehouseCurrentUser()) {
+              this.pickingScanditService.reception();
+            } else {
+              this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);
+            }
           }
         }, (error) => {
           if (this.loading) {
