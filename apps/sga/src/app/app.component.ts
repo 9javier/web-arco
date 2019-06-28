@@ -273,11 +273,16 @@ export class AppComponent implements OnInit {
     this.showMainHeader = show;
     if (show) {
       /* The BlueBird device Krack is using has a bug on the DOM renderer which makes the header to show blank. This
-       * ugly trick solves it. BTW, the 1 sec timeout is totally random and empyrical. */
-      setTimeout(() => {
+       * ugly trick solves it. BTW, the interval and attempt limit is totally random and empyrical. */
+      let giveUpCount = 10;
+      const redrawHeaderInterval = setInterval(() => {
         document.querySelectorAll("ion-app > ion-header > ion-toolbar, ion-app > ion-header > ion-toolbar *")
           .forEach((el: HTMLElement) => {el.style.zIndex = "auto"})
-      }, 1000);
+        giveUpCount--;
+        if (giveUpCount <= 0) {
+          clearInterval(redrawHeaderInterval);
+        }
+      }, 500);
     }
   }
 
