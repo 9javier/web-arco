@@ -163,7 +163,7 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
-    this.showMainHeader = false;
+    this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.showSidebar = false;
     this.platform.ready().then(async () => {
@@ -215,13 +215,13 @@ export class AppComponent implements OnInit {
               )
               .catch((possibleMainWarehouse404Error) => {})
               .then(() => this.router.navigate(['products']).then(sucess => {
-                  this.showMainHeader = true;
+                  this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
                 })
               );
           } else {
             this.menu.enable(false, 'sidebar');
-            this.showMainHeader = false;
+            this.mainHeaderShowHide(false);
             this.router.navigateByUrl('/login');
           }
         },10);
@@ -246,6 +246,7 @@ export class AppComponent implements OnInit {
     app.name = "sga";
     /**Set the dictionary of access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
+      console.log("dictionaryManagement", "ngOnInit: dictionaryAcessState.subscribe", JSON.parse(JSON.stringify(state)));
       this.dictionary = state;
     });
     this.initializeApp();
@@ -265,6 +266,23 @@ export class AppComponent implements OnInit {
             console.log(data);
           });
       });
+    }
+  }
+
+  mainHeaderShowHide(show: boolean) {
+    this.showMainHeader = show;
+    if (show) {
+      /* The BlueBird device Krack is using has a bug on the DOM renderer which makes the header to show blank. This
+       * ugly trick solves it. BTW, the interval and attempt limit is totally random and empyrical. */
+      let giveUpCount = 10;
+      const redrawHeaderInterval = setInterval(() => {
+        document.querySelectorAll("ion-app > ion-header > ion-toolbar, ion-app > ion-header > ion-toolbar *")
+          .forEach((el: HTMLElement) => {el.style.zIndex = "auto"})
+        giveUpCount--;
+        if (giveUpCount <= 0) {
+          clearInterval(redrawHeaderInterval);
+        }
+      }, 500);
     }
   }
 
