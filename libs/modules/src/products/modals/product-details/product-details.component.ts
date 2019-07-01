@@ -70,7 +70,7 @@ export class ProductDetailsComponent implements OnInit {
    * Print a Simple Product Tag
    */
   printProductTag() {
-    this.printerService.printProductBoxTag({product: <PrintModel.Product>this.product});
+    this.printerService.printProductBoxTag(this.printerService.buildString([{product: <PrintModel.Product>this.product}]));
   }
 
 }

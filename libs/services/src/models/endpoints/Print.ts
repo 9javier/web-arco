@@ -82,6 +82,7 @@ export namespace PrintModel {
     text?: string;
     product?: Product;
     price?:{
+      id?:number,
       percent?: number,
       percentOutlet?: number,
       totalPrice?: number,

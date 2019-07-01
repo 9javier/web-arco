@@ -124,9 +124,10 @@ export class PricesComponent implements OnInit {
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
-  printPrices(items):void{
+  printPrices(items,warehouseId:number=51):void{
     let prices = this.selectedForm.value.toSelect.map((price,i)=>{
       let object = {
+        warehouseId:warehouseId,
         tariffId:items[i].tariffId,
         modelId:items[i].modelId,
         numRange: items[i].numRange

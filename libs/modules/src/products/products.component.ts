@@ -298,7 +298,7 @@ export class ProductsComponent implements OnInit {
         this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
         setTimeout(() => {
           this.pauseListenFormChange = true;
-          this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
+          this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
           this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
           setTimeout(() => {
             this.pauseListenFormChange = false;
