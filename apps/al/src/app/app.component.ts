@@ -114,7 +114,7 @@ export class AppComponent implements OnInit {
   }
 
   initializeApp() {
-    this.showMainHeader = false;
+    this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.platform.ready().then(() => {
       if (this.platform.is('android')) {
@@ -154,7 +154,7 @@ export class AppComponent implements OnInit {
             .catch((possibleMainWarehouse404Error) => {})
             .then(() => this.router.navigate(['products'])
               .then(success => {
-                this.showMainHeader = true;
+                this.mainHeaderShowHide(true);
                 this.menu.enable(true, 'sidebar');
                 if (this.platform.is('android')) {
                   this.scanditService.setApiKey(environment.scandit_api_key);
@@ -163,7 +163,7 @@ export class AppComponent implements OnInit {
           );
         } else {
           this.router.navigate(['login']);
-          this.showMainHeader = false;
+          this.mainHeaderShowHide(false);
           this.menu.enable(false, 'sidebar');
         }
       });
@@ -174,6 +174,7 @@ export class AppComponent implements OnInit {
     app.name = "al";
     /**Set the dictionary access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
+      console.log("dictionaryManagement", "ngOnInit: dictionaryAcessState.subscribe", JSON.parse(JSON.stringify(state)));
       this.dictionary = state;
     });
   }
@@ -192,6 +193,23 @@ export class AppComponent implements OnInit {
       });
     } else if(p.url === 'positioning'){
       this.scanditService.positioning();
+    }
+  }
+
+  mainHeaderShowHide(show: boolean) {
+    this.showMainHeader = show;
+    if (show) {
+      /* The BlueBird device Krack is using has a bug on the DOM renderer which makes the header to show blank. This
+       * ugly trick solves it. BTW, the interval and attempt limit is totally random and empyrical. */
+      let giveUpCount = 10;
+      const redrawHeaderInterval = setInterval(() => {
+        document.querySelectorAll("ion-app > ion-header > ion-toolbar, ion-app > ion-header > ion-toolbar *")
+          .forEach((el: HTMLElement) => {el.style.zIndex = "auto"})
+        giveUpCount--;
+        if (giveUpCount <= 0) {
+          clearInterval(redrawHeaderInterval);
+        }
+      }, 500);
     }
   }
 
