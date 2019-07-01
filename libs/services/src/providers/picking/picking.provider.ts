@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
 import {PickingModel} from "../../models/endpoints/Picking";
+import {StoresLineRequestsModel} from "../../models/endpoints/StoresLineRequests";
 
 @Injectable({
   providedIn: 'root'
@@ -120,6 +121,22 @@ export class PickingProvider {
   }
   set listPickingsHistory(value: PickingModel.Picking[]) {
     this._listPickingsHistory = value;
+  }
+
+  private _listLineRequestsToStorePickings: StoresLineRequestsModel.StoresLineRequests[] = null;
+  get listLineRequestsToStorePickings(): StoresLineRequestsModel.StoresLineRequests[] {
+    return this._listLineRequestsToStorePickings;
+  }
+  set listLineRequestsToStorePickings(value: StoresLineRequestsModel.StoresLineRequests[]) {
+    this._listLineRequestsToStorePickings = value;
+  }
+
+  private _listProductsToStorePickings: StoresLineRequestsModel.LineRequests[] = null;
+  get listProductsToStorePickings(): StoresLineRequestsModel.LineRequests[] {
+    return this._listProductsToStorePickings;
+  }
+  set listProductsToStorePickings(value: StoresLineRequestsModel.LineRequests[]) {
+    this._listProductsToStorePickings = value;
   }
 
   private _listProductsFromPickingHistory: ShoesPickingModel.ShoesPicking[];

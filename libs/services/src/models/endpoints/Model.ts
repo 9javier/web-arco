@@ -5,6 +5,7 @@ export namespace ModelModel {
     id?: number;
     reference: number|string;
     color: number;
+    name?: string;
   }
 
   export interface ResponseIndex {

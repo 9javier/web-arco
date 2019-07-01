@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
+import {PickingProvider} from "../../../providers/picking/picking.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -11,140 +12,16 @@ declare let ScanditMatrixSimple;
 export class PickingScanditService {
 
   constructor(
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private pickingProvider: PickingProvider
   ) {}
 
-  async reception() {
-    let listProducts = [
-      {
-        "product": {
-          "model": {
-            "reference": "366383",
-            "brand": {
-              "name": "Nike"
-            }
-          },
-          "size": {
-            "name": "39"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "New balance"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "Nike"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "Puma"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389"
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "Adidas"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "Marca China"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "Otra marca China"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389"
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      },
-      {
-        "product": {
-          "model": {
-            "reference": "366389",
-            "brand": {
-              "name": "Adidas"
-            }
-          },
-          "size": {
-            "name": "38"
-          }
-        }
-      }
-    ];
+  async picking() {
+    let listProductsToStorePickings = this.pickingProvider.listProductsToStorePickings;
     ScanditMatrixSimple.initPickingStores((response) => {
       if (response.result) {
         if (response.action == 'matrix_simple') {
-          ScanditMatrixSimple.sendPickingStoresProducts(listProducts);
+          ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings);
         }
       }
     }, 'Picking', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color);

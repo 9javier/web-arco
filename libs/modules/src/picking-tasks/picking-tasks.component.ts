@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
+import {AuthenticationService} from "@suite/services";
 
 @Component({
   selector: 'suite-picking-tasks',
@@ -9,12 +10,15 @@ import {PickingProvider} from "../../../services/src/providers/picking/picking.p
 })
 export class PickingTasksComponent implements OnInit {
 
+  public isStore: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
+    private authenticationService: AuthenticationService,
     private pickingProvider: PickingProvider
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
       let paramsReceived = params.params;
       if (typeof paramsReceived.method == 'string' && paramsReceived.method == 'manual') {
@@ -23,6 +27,10 @@ export class PickingTasksComponent implements OnInit {
         this.pickingProvider.method = 'scanner';
       }
     });
+
+    if (this.authenticationService.getWarehouseCurrentUser()) {
+      this.isStore = true;
+    }
   }
 
 }
