@@ -40,7 +40,10 @@ export class TextareaComponent implements OnInit {
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
 
-      if (dataWrited === this.lastCodeScanned) return;
+      if (dataWrited === this.lastCodeScanned) {
+        this.inputPositioning = null;
+        return;
+      }
       this.lastCodeScanned = dataWrited;
 
       this.processInitiated = true;
