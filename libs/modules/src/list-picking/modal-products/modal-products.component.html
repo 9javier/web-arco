@@ -12,6 +12,9 @@
   <ion-list>
     <ion-item lines="inset" class="header-list-products">
       <ion-label>
+        Referencia
+      </ion-label>
+      <ion-label>
         Modelo
       </ion-label>
       <ion-label>
@@ -26,6 +29,9 @@
     </ion-item>
 
     <ion-item lines="inset" *ngFor="let product of listProducts">
+      <ion-label>
+        {{product?.product?.reference}}
+      </ion-label>
       <ion-label>
         {{product?.product?.model?.reference}}
       </ion-label>
