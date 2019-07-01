@@ -1,4 +1,6 @@
 import {Enum} from "@suite/services";
 
-export class TagsInputOption extends Enum {
+export class TagsInputOption {
+    id:any;
+    name:string;
 }

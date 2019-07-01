@@ -1,14 +1,17 @@
 div.wrapper {
+    outline: none;
     width: 100%;
     height: 48px;
     padding: 5px;
     box-sizing: border-box;
     border: 1px solid #dedede;
-    display: flex;
+    display: block;
     align-items: center;
     position: relative;
+    white-space: pre;
     div.options {
         display: none;
+        white-space: pre;
     }
     &:focus-within div.options {
         display: block;
@@ -32,25 +35,34 @@ div.wrapper {
             color: black;
         }
     }
+    .parent-editable {
+        outline: none;
+        white-space: pre;
+    }
     input {
         width: 100%;
         height: 100%;
         outline: none;
         border: none;
     }
-    div.tag {
-        span.close {
-            color: white;
-            font-weight: bold;
-            position: absolute;
-            right: 8px;
-            cursor: pointer;
-        }
-        position: relative;
-        background: rgb(140, 140, 140);
+    .input-tag {
+        outline: none;
+        //position: relative;
+        //background: rgb(140, 140, 140);
+        background: #242323;
+        padding: 2px 4px;
+        border-radius: 4px;
         color: white;
-        padding: 9px 18px;
-        border-radius: 5px;
-        width: 100%;
+        //display: inline-block;
+        //padding: 9px 18px;
+        //border-radius: 5px;
+        //max-height: 100%;
+        //text-overflow: clip;
+        //word-wrap: none;
+        //word-break: normal;
     }
+}
+
+.tag {
+    background: red!important;
 }
