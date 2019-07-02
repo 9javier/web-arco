@@ -423,8 +423,19 @@ export class PrinterService {
 
   private getTextToPrinter(printOptions: PrintModel.Print) {
     let toPrint = '';
-    let stringToBarcode = printOptions.text || printOptions.product.productShoeUnit.reference;
+    let toPrintReturn = '';
+    if (printOptions.text.length){
+      for (let i = 0; i < printOptions.text.length; i++) {
+        toPrintReturn += this.addTextToPrint(toPrint, printOptions.text[i], printOptions);
+      }
+    } else if (printOptions.product.productShoeUnit.reference) {
+      toPrintReturn += this.addTextToPrint(toPrint, printOptions.product.productShoeUnit.reference, printOptions);
+    }
 
+    return toPrintReturn;
+  }
+
+  private addTextToPrint(toPrint, stringToBarcode, printOptions) {
     switch (printOptions.type) {
       case PrintModel.LabelTypes.LABEL_BARCODE_TEXT: // Test with Barcode and string of data below
         let size = '';
@@ -585,7 +596,6 @@ export class PrinterService {
         toPrint += "^FS^XZ";
         break;
     }
-
     return toPrint;
   }
 

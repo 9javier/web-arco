@@ -75,10 +75,12 @@ export class TextareaComponent implements OnInit {
   keyUpInput(event) {
     let dataWrited = (this.inputPicking || "").trim();
 
-    if (dataWrited === this.lastCodeScanned) return;
-    this.lastCodeScanned = dataWrited;
+    if (dataWrited === this.lastCodeScanned) {
+      return;
+    }
 
     if (event.keyCode == 13 && dataWrited) {
+      this.lastCodeScanned = dataWrited;
       this.inputPicking = null;
       if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {
         if (!this.processInitiated) {
