@@ -2,11 +2,33 @@
     <ion-text color="primary">
         <suite-breadcrumb></suite-breadcrumb>
     </ion-text>
+    <ion-grid>
+        <ion-row>
+            <ion-col col-4>
+                <ion-item>
+                    <ion-select placeholder="Filtrar" (ionChange)="changeValue($event)">
+                        <ion-select-option *ngFor="let filterType of filterTypes; let i = index" value="{{filterType.id}}" [attr.selected]="!i">
+                            {{ filterType.name }}
+                        </ion-select-option>
+                    </ion-select>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
     <table mat-table [dataSource]="dataSource">
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <ng-container matColumnDef="impress">
+            <th mat-header-cell *matHeaderCellDef>
+
+            </th>
+            <td mat-cell *matCellDef="let price">
+                <ion-icon name="print" *ngIf="price?.impress"></ion-icon>
+            </td>
+        </ng-container>
 
         <ng-container matColumnDef="model">
             <th mat-header-cell *matHeaderCellDef>
@@ -44,12 +66,12 @@
             </td>
         </ng-container>
 
-      <ng-container matColumnDef="percentage">
-        <th mat-header-cell *matHeaderCellDef>Desc.</th>
-        <td mat-cell *matCellDef="let price">
-          {{ price?.percent }}%
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="percentage">
+            <th mat-header-cell *matHeaderCellDef>Desc.</th>
+            <td mat-cell *matCellDef="let price">
+                {{ price?.percent }}%
+            </td>
+        </ng-container>
 
         <ng-container matColumnDef="discount">
             <th mat-header-cell *matHeaderCellDef>

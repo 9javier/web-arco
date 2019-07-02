@@ -16,6 +16,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
   @Input() set options(options){
     if(options.length){
+      console.log(options, "teststs");
       this._options =options
       if(this.multiple)
         this.writeValue(this.values);
@@ -124,7 +125,6 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * empty the current selected option
    */
   emptyOption():void{
-    this.selectedOption = null;
     this.filteredOptions = this.filterOptions(this._options,"");
     this._value = '';
     if(!this.multiple)
@@ -134,6 +134,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     this.onTouch();
   }
 
+  intervalEmit;
   onKeyPress(event){
     let node:any = window.getSelection().anchorNode;
     if(node.parentElement.className != "parent-editable" )
@@ -144,12 +145,18 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     }else if(key == "Backspace"){
       if(node.className == "input-tag"){
         this.inputElement.nativeElement.removeChild(node);
-        this.emitSelection();        
+        clearTimeout(this.intervalEmit)
+        this.intervalEmit = setTimeout(()=>{
+          this.emitSelection();       
+        },100);
       }
     }else if(key == "Escape"){
       this.inputElement.nativeElement.blur();
       this.inputElement.nativeElement.removeChild(node);
-      this.emitSelection();
+      clearTimeout(this.intervalEmit)
+      this.intervalEmit = setTimeout(()=>{
+        this.emitSelection();       
+      },100);
     }
   }
 
@@ -285,11 +292,11 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
     /**nodo sobre el cual se está escribiendo*/
     let node = window.getSelection().anchorNode;
-    console.log("que pasa",node.textContent);
+    console.log("que pasa",this._options,node.textContent);
     /**y eso es lo que vamos a usar para filtrar */
-    this.filteredOptions = this.filterOptions(this._options,node.textContent);
+    this.filteredOptions = this.filterOptions([...this._options],node.textContent);
     console.warn(this.filteredOptions);
-    if(node.textContent && !this._options.find(option=>option.name.toLowerCase()==node.textContent.toLowerCase())){
+    if(node.textContent && !this._options.filter(option=>option.name.toLowerCase()==node.textContent.toLowerCase())[0]){
       this.currentTextOption = {
         id:node.textContent,
         name:node.textContent
@@ -425,7 +432,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @returns the last node inserted
    */
   insertTag(id:any,node?:Node,emit=true):Node{
-    let option = this._options.find(option=>option.id==id);
+    let option = this._options.filter(option=>option.id==id)[0];
     if(!option)
       option = {
         id:id,

@@ -256,12 +256,12 @@ export class ProductsComponent implements OnInit {
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+      /*this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
       this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
       this.updateFilterSourceModels(searchsInContainer.data.filters.models);
       this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
       this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);*/
       let paginator = searchsInContainer.data.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
