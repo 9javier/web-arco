@@ -17,7 +17,11 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   @Input() set options(options){
     if(options.length){
       console.log(options, "teststs");
-      this._options =options
+      this._options =options.map(option=>{
+        option.id = parseInt(option.id);
+        option.type = "number";
+        return option;
+      });
       if(this.multiple)
         this.writeValue(this.values);
       else
@@ -29,6 +33,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   flagEmmit = false;
   values:Array<any> = [];
   prevLength;
+
+  lastNode;
 
   /**The placeholder to be showed */
   @Input() placeholder = "";
@@ -79,7 +85,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     let tags =[];
     this.inputElement.nativeElement.childNodes.forEach(node => {
       if(node.dataset && node.dataset.id)
-        tags.push(node.dataset.id);
+        tags.push((node.dataset.type=="number")?parseInt(node.dataset.id):node.dataset.id.toString());
     });
     if(this.multiple)
       this.onChange(tags)
@@ -93,15 +99,20 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * Select option via input options
    * @param option - the selected option
    */
-  selectOption(option:TagsInputOption):void{
+  selectOption(option:TagsInputOption,click?):void{
     ////console.log(option.name,"hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
     this.filteredOptions = [];
     //this.selectedOption = option;
     this.optionPointerIndex = 0;
     /**Obtenemos el nodo que se está editando actualmente */
-    let node:Node = window.getSelection().anchorNode;
+    
+    let node;
+    if(!click)
+      node = window.getSelection().anchorNode;
+    else
+      node = this.lastNode;
     this.flagEmmit = true;
-    this.insertTag(option.id,(node!==this.inputElement.nativeElement)?node:null);
+    this.insertTag(option.id,(node!=this.inputElement.nativeElement)?node:null);
   }
 
   /**
@@ -292,6 +303,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
     /**nodo sobre el cual se está escribiendo*/
     let node = window.getSelection().anchorNode;
+    this.lastNode = node;
     console.log("que pasa",this._options,node.textContent);
     /**y eso es lo que vamos a usar para filtrar */
     this.filteredOptions = this.filterOptions([...this._options],node.textContent);
@@ -299,7 +311,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     if(node.textContent && !this._options.filter(option=>option.name.toLowerCase()==node.textContent.toLowerCase())[0]){
       this.currentTextOption = {
         id:node.textContent,
-        name:node.textContent
+        name:node.textContent,
+        type:"text"
       }
       this.filteredOptions = [this.currentTextOption].concat(this.filteredOptions);
     }
@@ -436,7 +449,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     if(!option)
       option = {
         id:id,
-        name:id
+        name:id,
+        type:"text"
       }
 
     if(!node){
@@ -447,7 +461,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     let tagSpan:HTMLElement = this.renderer.createElement('span');
     this.renderer.addClass(tagSpan,"input-tag")
     tagSpan.innerHTML = option.name;
-    tagSpan.dataset.id = option.id;
+    tagSpan.dataset.id = <string>option.id;
+    tagSpan.dataset.type = option.type;
     /**reemplazamos el nodo anterior con el nuevo */
     if(node.parentElement.className == "parent-editable")
       node.parentElement.replaceChild(tagSpan,node);
@@ -462,6 +477,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     let textNode = document.createTextNode(" ");
     /**inserto ese nodo justo después del que acabo de añadir*/
     this.insertAfter(textNode,tagSpan);
+    this.lastNode = textNode;
     /**y luego posiciono el cursor en ese nodo */
     if(this.inputElement.nativeElement === document.activeElement){
       let range = document.createRange();

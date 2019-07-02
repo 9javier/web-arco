@@ -1,10 +1,8 @@
 <div class="wrapper">
     <div class="parent-editable" contenteditable="true" (keydown)="onKeyPress($event)" (click)="clickEditable($event);" #input (input)="onInput($event)" (focus)="onTouch()" (keyup)="onKeyUp($event)">
     </div>
-
-    <!--<input placeholder="{{placeholder}}" #input type="text" (input)="onInput($event)" (focus)="onTouch()" (keyup)="onKeyUp($event)" />-->
     <div class="options" tabindex="{{-1}}">
-        <div #optionList class="option" [class.selected]="optionPointerIndex == i" *ngFor="let option of filteredOptions;let i = index" (click)="selectOption(option)" tabindex="{{i}}">
+        <div #optionList class="option" [class.selected]="optionPointerIndex == i" *ngFor="let option of filteredOptions;let i = index" (click)="selectOption(option,true)" tabindex="{{i}}">
             {{ option.name }}
         </div>
     </div>

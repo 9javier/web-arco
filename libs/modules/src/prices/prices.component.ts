@@ -158,6 +158,7 @@ export class PricesComponent implements OnInit {
       this.printerService.printPrices({references:prices}).subscribe(result=>{
         console.log("result of impressions",result);
         this.intermediaryService.dismissLoading();
+        this.getPrices(this.tariffId,this.page,this.limit,this.status);
       },error=>{
         this.intermediaryService.dismissLoading();
         console.log(error);
