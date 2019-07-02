@@ -79,7 +79,7 @@ export namespace PrintModel {
   }
 
   export interface Print {
-    text?: string;
+    text?: string[];
     product?: Product;
     price?:{
       id?:number,
