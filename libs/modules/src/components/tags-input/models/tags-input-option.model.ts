@@ -1,6 +1,7 @@
 import {Enum} from "@suite/services";
 
 export class TagsInputOption {
-    id:any;
+    id:number|string;
     name:string;
+    type:string;
 }
