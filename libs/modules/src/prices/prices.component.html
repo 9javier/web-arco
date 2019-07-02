@@ -56,7 +56,6 @@
                 {{ price?.range?.startRange }}-{{ price?.range?.endRange }}
             </td>
         </ng-container>
-
         <ng-container matColumnDef="price">
             <th mat-header-cell *matHeaderCellDef>
                 €
@@ -65,14 +64,12 @@
                 {{ price?.priceOriginal }}€
             </td>
         </ng-container>
-
         <ng-container matColumnDef="percentage">
             <th mat-header-cell *matHeaderCellDef>Desc.</th>
             <td mat-cell *matCellDef="let price">
                 {{ price?.percent }}%
             </td>
         </ng-container>
-
         <ng-container matColumnDef="discount">
             <th mat-header-cell *matHeaderCellDef>
                 € final
@@ -81,7 +78,6 @@
                 {{ price?.priceDiscount }}€
             </td>
         </ng-container>
-
         <ng-container matColumnDef="select" [formGroup]="selectedForm">
             <th mat-header-cell *matHeaderCellDef>
                 <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)"></ion-checkbox>
@@ -92,11 +88,8 @@
                 </ng-template>
             </td>
         </ng-container>
-
-
     </table>
     <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>
-
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
     <ion-fab-button (click)="printPrices(prices)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">

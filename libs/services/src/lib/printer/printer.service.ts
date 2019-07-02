@@ -424,7 +424,7 @@ export class PrinterService {
   private getTextToPrinter(printOptions: PrintModel.Print) {
     let toPrint = '';
     let toPrintReturn = '';
-    if (printOptions.text.length){
+    if (printOptions.text){
       for (let i = 0; i < printOptions.text.length; i++) {
         toPrintReturn += this.addTextToPrint(toPrint, printOptions.text[i], printOptions);
       }
