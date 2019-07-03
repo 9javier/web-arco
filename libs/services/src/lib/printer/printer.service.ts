@@ -9,6 +9,7 @@ import { Observable,from } from 'rxjs';
 import { map,switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
+import { forEach } from '@angular/router/src/utils/collection';
 
 declare let cordova: any;
 
@@ -21,6 +22,7 @@ export class PrinterService {
 
   /**urls for printer service */
   private getProductsByReferenceUrl:string = environment.apiBase+"/products/references";
+  private printNotifyUrl:string = environment.apiBase+"/filter/prices/printReferences";
 
   private address: string;
 
@@ -80,22 +82,39 @@ export class PrinterService {
     }
   }
 
-  public async printProductBoxTag(printOptions: PrintModel.Print, macAddress?: string) {
-    console.log("Estoy en la impresora zebra imprimiento este objeto: ",printOptions);
-    printOptions.type = 1;
 
+  /**
+   * Print string
+   * @param strToPrint string to print
+   * @param macAddress 
+   */
+  public async printProductBoxTag(strToPrint: string, macAddress?: string) {
     if (macAddress) {
       this.address = macAddress;
     } else {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      return await this.toPrint(printOptions);
+      return await this.toPrintFromString(strToPrint);
     } else {
       console.debug('Zbtprinter: Not connected');
       return await this.connect()
-        .then(() => this.toPrint(printOptions));
+        .then(() => this.toPrintFromString(strToPrint));
     }
+  }
+
+  /**
+   * Turn an array of objects into string ready to be printed
+   * @param options - the options to be converted in the needed string
+   */
+  buildString(options:Array<PrintModel.Print>):string{
+    let strToPrint:string = "";
+    /**If need separator between labels */
+    let separator:string = "";
+    options.forEach(option=>{ 
+      strToPrint+=this.getTextToPrinter(option)+separator;
+    });
+    return strToPrint;
   }
 
   
@@ -106,64 +125,18 @@ export class PrinterService {
    * el asunto es que no sabía que labeltype correspondía a cada printOption
    * así que por ahora haré un diccionario y ustedes modifíquenlo a su conveniencia
    */
-  public async printPricesInZebra(printOptions: PrintModel.Print, macAddress?: string) {
-    /**
-     * este diccionario será utilizado para que a modo de clave valor se pueda obtener fácilmente
-     * cada clave corresponde con un tipo en el enum, y cada valor corresponde a un printOptionType para ser usado en el case
-     * @todo cambiar todos los valores que por ahora están en el caso 4 por su correspondiente(es el valor que lo hace entrar en un case u otro)
-     */
-    let dictionaryOfCaseTypes = {
-      "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
-      "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
-      "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
-      "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
-      "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
-      "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
-      "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
-    }
-
-    /*
-     * Example object to print product prices
-     *
-        printOptions.product = {
-          productShoeUnit:{
-            model:{
-              reference:price.model.reference
-            }
-          }
-        };
-        printOptions.price = {
-          percent: price.percent,
-          percentOutlet: price.percentOutlet,
-          totalPrice: price.totalPrice,
-          priceOriginal: price.priceOriginal,
-          priceDiscount: price.priceDiscount,
-          priceDiscountOutlet: price.priceDiscountOutlet,
-          typeLabel: price.typeLabel,
-          numRange: price.numRange,
-        };
-        printOptions.range = {
-          numRange: price.numRange,
-          value: '36-40'
-        };
-    */
-
-    /**si se modifica el diccionario no hay necesidad de modificar esto */
-    printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
-
-    console.log("Imprimiendo el precio",printOptions)
-
+  public async printPricesInZebra(strToPrint: string, macAddress?: string) {
     if (macAddress) {
       this.address = macAddress;
     } else {
       this.address = await this.getConfiguredAddress();
     }
     if (this.address) {
-      return await this.toPrint(printOptions);
+      return await this.toPrintFromString(strToPrint);
     } else {
       console.debug('Zbtprinter: Not connected');
       return await this.connect()
-        .then(() => this.toPrint(printOptions));
+        .then(() => this.toPrintFromString(strToPrint));
     }
   }
 
@@ -183,6 +156,7 @@ export class PrinterService {
    * @param referencesObject - object with the array of references to be sended
    */
   printPrices(referencesObject){
+    console.log("ac[a es que falla")
     let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
       let innerObservable:Observable<any> = new Observable(observer=>{
         observer.next(true);
@@ -194,6 +168,7 @@ export class PrinterService {
       /**obtain the products */
       return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices)=>{
         /**Iterate and build object to print */
+        let options:Array<PrintModel.Print> = [];
         prices.forEach(pricesArray=>{
           pricesArray.forEach(price=>{
             let printOptions:PrintModel.Print = {};
@@ -206,6 +181,7 @@ export class PrinterService {
                 }
               }
               printOptions.price = {
+                id:price.id,
                 percent: price.percent,
                 percentOutlet: price.percentOutlet,
                 totalPrice: price.totalPrice,
@@ -213,22 +189,43 @@ export class PrinterService {
                 priceDiscount: price.priceDiscount,
                 priceDiscountOutlet: price.priceDiscountOutlet,
                 typeLabel:price.typeLabel,
-                numRange: price.range.numRange,
-                valueRange: price.range.startRange+'-'+price.range.endRange,
+                numRange: price.range?price.range.numRange:0,
+                valueRange: (price.range?String(price.range.startRange):'')+'-'+(price.range?String(price.range.endRange):''),
               };
             }
-            innerObservable = innerObservable.pipe(flatMap(product=>{
-              /**Transform the promise in observable and merge that with the other prints */
-              return from(this.printPricesInZebra(printOptions)
-              // stop errors and attempt to print next tag
-                .catch(reason => {}))
-            }))            
+            let dictionaryOfCaseTypes = {
+              "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
+              "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
+              "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
+              "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
+              "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
+              "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
+              "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
+            }
+            printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
+            options.push(printOptions);    
           })
         });
+        let strToPrint:string = this.buildString(options);
+        innerObservable = innerObservable.pipe(flatMap(product=>{
+            return from(this.printPricesInZebra(strToPrint).catch((_=>{})));
+        })).pipe(flatMap(response=>{
+          return this.printNotify(options.map(option=>option.price.id));
+        }));
         return innerObservable;
       }));
     }));
     return observable;    
+  }
+
+  /**
+   * Send notification to server after print any labels
+   * @param ids - the ids of printed labels
+   */
+  printNotify(ids:Array<Number>):Observable<boolean>{
+    return this.http.post(this.printNotifyUrl,{references:ids}).pipe(map(response=>{
+      return true;
+    }));
   }
 
   /**
@@ -247,6 +244,7 @@ export class PrinterService {
       }));
       /**obtain the products */
       return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
+        let options:Array<PrintModel.Print> = [];
         /**Iterate and build object to print */
         products.forEach(product=>{
           let printOptions:PrintModel.Print = {
@@ -255,16 +253,16 @@ export class PrinterService {
               productShoeUnit: {
                 reference: product.reference,
                 size: {
-                  name: product.size.name
+                  name: product.size?product.size.name:''
                 },
                 manufacturer: {
-                  name: product.brand.name
+                  name: product.brand?product.brand.name:''
                 },
                 model: {
-                  name: product.model.name,
-                  reference: product.model.reference,
+                  name: product.model?product.model.name:'',
+                  reference: product.model?product.model.reference:'',
                   color: {
-                    name: product.color.name
+                    name: product.color? product.color.name:''
                   },
                   season: {
                     name: product.season ? product.season.name : ''
@@ -273,13 +271,15 @@ export class PrinterService {
               }
             }
           };
-          innerObservable = innerObservable.pipe(flatMap(product=>{
-            /**Transform the promise in observable and merge that with the other prints */
-            return from(this.printProductBoxTag(printOptions)
-            // stop errors and attempt to print next tag
-              .catch(reason => {}))
-          }))
+          printOptions.type = 1;
+          /**Build the array for obtain the string to send to printer */
+          options.push(printOptions);
         });
+        /**Obtain the string from options */
+        let strToPrint = this.buildString(options);
+        innerObservable = innerObservable.pipe(flatMap(product=>{
+          return from(this.printProductBoxTag(strToPrint));
+        }));
         return innerObservable;
       }));
     }));
@@ -291,36 +291,36 @@ export class PrinterService {
    * @param listReferences references of products
    */
   printTagPrices(listReferences: string[]):Observable<Boolean>{
-    console.log("entra en el servicio");
     /** declare and obsevable to merge all print results */
-    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(switchMap(dummyValue=>{
-      console.log("entra en el primer observable");
+    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
       let innerObservable:Observable<any> = new Observable(observer=>{
         observer.next(true);
-      })
+      }).pipe(flatMap((r)=>{
+        return new Observable(s=>{
+          return s.next();
+        })
+      }));
       /**obtain the products */
-      return this.getProductsByReference(listReferences).pipe(switchMap((products)=>{
-        console.log("busca los productos en el servicio",products);
-
+      return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
+        let options:Array<PrintModel.Print> = [];
         /**Iterate and build object to print */
         products.forEach(product=>{
-
           let printOptions:PrintModel.Print = {
             /**build the needed data for print */
             product: {
               productShoeUnit: {
                 reference: product.reference,
                 size: {
-                  name: product.size.name
+                  name: product.size?product.size.name:''
                 },
                 manufacturer: {
-                  name: product.brand.name
+                  name: product.brand?product.brand.name:''
                 },
                 model: {
-                  name: product.model.name,
-                  reference: product.model.reference,
+                  name: product.model?product.model.name:'',
+                  reference: product.model?product.model.reference:'',
                   color: {
-                    name: product.color.name
+                    name: product.color? product.color.name:''
                   },
                   season: {
                     name: product.season ? product.season.name : ''
@@ -329,15 +329,15 @@ export class PrinterService {
               }
             }
           };
-          console.log(product);
-          console.log("lo que env[ia",printOptions);
-          innerObservable = innerObservable.pipe(switchMap(product=>{
-            /**Transform the promise in observable and merge that with the other prints */
-            return from(this.printProductBoxTag(printOptions)
-            // stop errors and attempt to print next tag
-              .catch(reason => {}))
-          }))
+          printOptions.type = 1;
+          /**Build the array for obtain the string to send to printer */
+          options.push(printOptions);
         });
+        /**Obtain the string from options */
+        let strToPrint = this.buildString(options);
+        innerObservable = innerObservable.pipe(flatMap(product=>{
+          return from(this.printProductBoxTag(strToPrint));
+        }));
         return innerObservable;
       }));
     }));
@@ -347,6 +347,45 @@ export class PrinterService {
   printTagPrice(product: PrintModel.ProductSizeRange) {
 
   }
+
+
+  /**
+   * Print labels with the zebra printed from string
+   * @param textToPrint string to be printed
+   */
+  private async toPrintFromString(textToPrint:string) {
+    if (this.address) {
+      if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
+        return new Promise((resolve, reject) => {
+          let printAttempts = 0;
+          let tryToPrintFn = () => {
+            printAttempts++;
+            cordova.plugins.zbtprinter.print(this.address, textToPrint,
+              (success) => {
+                //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                resolve();
+              }, (fail) => {
+                if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
+                  //console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                  this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+                  reject();
+                } else {
+                  //console.debug("Zbtprinter print attempt " + printAttempts + " fail:" + fail + ", retrying...", { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
+                  setTimeout(tryToPrintFn, 1000);
+                }
+              }
+            );
+          };
+          tryToPrintFn();
+        });
+      } else {
+        //console.debug("Zbtprinter not cordova, failed to print " + (printOptions.text || printOptions.product.productShoeUnit.reference) + " to " + this.address);
+      }
+    } else {
+      //console.debug('Zbtprinter: Not connected, failed to print ' + (printOptions.text || printOptions.product.productShoeUnit.reference) + " to " + this.address);
+    }
+  }
+
 
   private async toPrint(printOptions: PrintModel.Print) {
     if (this.address) {
@@ -384,8 +423,19 @@ export class PrinterService {
 
   private getTextToPrinter(printOptions: PrintModel.Print) {
     let toPrint = '';
-    let stringToBarcode = printOptions.text || printOptions.product.productShoeUnit.reference;
+    let toPrintReturn = '';
+    if (printOptions.text){
+      for (let i = 0; i < printOptions.text.length; i++) {
+        toPrintReturn += this.addTextToPrint(toPrint, printOptions.text[i], printOptions);
+      }
+    } else if (printOptions.product.productShoeUnit.reference) {
+      toPrintReturn += this.addTextToPrint(toPrint, printOptions.product.productShoeUnit.reference, printOptions);
+    }
 
+    return toPrintReturn;
+  }
+
+  private addTextToPrint(toPrint, stringToBarcode, printOptions) {
     switch (printOptions.type) {
       case PrintModel.LabelTypes.LABEL_BARCODE_TEXT: // Test with Barcode and string of data below
         let size = '';
@@ -546,7 +596,6 @@ export class PrinterService {
         toPrint += "^FS^XZ";
         break;
     }
-
     return toPrint;
   }
 

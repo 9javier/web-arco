@@ -27,6 +27,21 @@ export class PricesComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+
+  filterTypes = [{
+    id:1,
+    name:"All"
+  },{
+    id:2,
+    name:"Printed"
+  },{
+    id:3,
+    name:"No printed"
+  }];
+
+  status = this.filterTypes[0].id;
+
+
   pagerValues:Array<number> = [5, 10, 20];
 
   page:number = 0;
@@ -34,6 +49,11 @@ export class PricesComponent implements OnInit {
   limit:number = this.pagerValues[0];
 
   selectAllBinding;
+
+  changeValue(event){
+    this.status = event.detail.value;
+    this.getPrices(this.tariffId,0,this.limit,this.status);
+  }
 
 
   /**Arrays to be shown */
@@ -51,7 +71,7 @@ export class PricesComponent implements OnInit {
 
 
 
-  displayedColumns: string[] = ['model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
+  displayedColumns: string[] = ['impress','model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
   dataSource: any;
   tariffId:number;
 
@@ -105,7 +125,7 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getPrices(this.tariffId,this.page,this.limit);
+      this.getPrices(this.tariffId,this.page,this.limit,this.status);
     });
   }
 
@@ -124,9 +144,10 @@ export class PricesComponent implements OnInit {
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
-  printPrices(items):void{
+  printPrices(items,warehouseId:number=51):void{
     let prices = this.selectedForm.value.toSelect.map((price,i)=>{
       let object = {
+        warehouseId:warehouseId,
         tariffId:items[i].tariffId,
         modelId:items[i].modelId,
         numRange: items[i].numRange
@@ -137,6 +158,7 @@ export class PricesComponent implements OnInit {
       this.printerService.printPrices({references:prices}).subscribe(result=>{
         console.log("result of impressions",result);
         this.intermediaryService.dismissLoading();
+        this.getPrices(this.tariffId,this.page,this.limit,this.status);
       },error=>{
         this.intermediaryService.dismissLoading();
         console.log(error);
@@ -149,7 +171,7 @@ export class PricesComponent implements OnInit {
       console.log("here");
       this.tariffId = Number(params.get("tariffId"));
       console.log(this.tariffId);
-      this.getPrices(this.tariffId,this.page,this.limit);
+      this.getPrices(this.tariffId,this.page,this.limit,this.status);
     });
     
   }
@@ -186,8 +208,8 @@ export class PricesComponent implements OnInit {
    * @param page
    * @param limit
    */
-  getPrices(tariffId:number,page:number,limit:number):void{
-    this.priceService.getIndex(tariffId, page, limit).subscribe(prices=>{
+  getPrices(tariffId:number,page:number,limit:number, status:number):void{
+    this.priceService.getIndex(tariffId, page, limit, status).subscribe(prices=>{
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);

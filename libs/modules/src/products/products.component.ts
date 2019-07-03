@@ -256,12 +256,12 @@ export class ProductsComponent implements OnInit {
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+      /*this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
       this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
       this.updateFilterSourceModels(searchsInContainer.data.filters.models);
       this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
       this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);*/
       let paginator = searchsInContainer.data.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
@@ -298,7 +298,7 @@ export class ProductsComponent implements OnInit {
         this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
         setTimeout(() => {
           this.pauseListenFormChange = true;
-          this.form.get("warehouses").patchValue(["" + warehouse.id], {emitEvent: false});
+          this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
           this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
           setTimeout(() => {
             this.pauseListenFormChange = false;
@@ -352,7 +352,8 @@ export class ProductsComponent implements OnInit {
     this.sizes = sizes
       .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
       .map(size => {
-        size.id = <number>(<unknown>size.name);
+        console.log("probando los id del size",size);
+        size.id = <number>(<unknown>size.id);
         return size;
       })
     ;

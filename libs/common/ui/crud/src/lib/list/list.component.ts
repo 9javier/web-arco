@@ -345,9 +345,7 @@ export class ListComponent implements OnInit {
       }
 
       if ((<any>window).cordova) {
-        for (let reference of listReferences) {
-          await this.printerService.print({text: reference, type: 0});
-        }
+        this.printerService.print({text: listReferences, type: 0});
       } else {
         return await this.printerService.printBarcodesOnBrowser(listReferences);
       }

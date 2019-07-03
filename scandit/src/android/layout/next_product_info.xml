@@ -37,7 +37,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textSize="14sp"
-      android:text="Color:"/>
+      android:text="Marca:"/>
     <TextView
       android:id="@+id/tvManufacturer"
       android:layout_width="wrap_content"

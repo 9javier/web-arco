@@ -811,7 +811,7 @@ public class ScanditSDK extends CordovaPlugin {
             String location = "";
             String reference = fProduct.getJSONObject("product").getString("reference");
             String modelProduct = fProduct.getJSONObject("product").getJSONObject("model").getString("reference");
-            String colorProduct = fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("color").getString("name");
+            String brandProduct = fProduct.getJSONObject("product").getJSONObject("model").getJSONObject("brand").getString("name");
             String sizeProduct = fProduct.getJSONObject("product").getJSONObject("size").getString("name");
             if (fProduct.getJSONObject("inventory").has("rack") && !fProduct.getJSONObject("inventory").isNull("rack") && fProduct.getJSONObject("inventory").has("container") && !fProduct.getJSONObject("inventory").isNull("container")) {
               location = fProduct.getJSONObject("inventory").getJSONObject("container").getString("reference");
