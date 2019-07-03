@@ -1,31 +1,32 @@
 <h2 class="workwave-title">
-  <span (click)="goPreviousPage()" class="return-workwaves">{{typeWorkwave == 3 ? 'Plantillas' : 'Programadas'}} ></span> {{template.name}}
+    <span (click)="goPreviousPage()" class="return-workwaves">{{typeWorkwave == 3 ? 'Plantillas' : 'Programadas'}} ></span> {{template.name}}
 </h2>
 <p *ngIf="disableEdition" class="error-edit-text"><i>Ola de trabajo en ejecución. Imposible editar.</i></p>
 
-<div class="scroll-list"  [ngClass]="disableEdition ? 'scroll-list-error-edit' : 'scroll-list'">
-  <title-list-workwave-template></title-list-workwave-template>
-  <workwave-list-workwave-template [disableEdition]="disableEdition" *ngFor="let storeTemplate of listStoresTemplatesHighlighted" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
-  <mat-grid-list cols="12" rowHeight="54px" *ngIf="listStoresTemplatesHidden.length">
-    <mat-grid-tile colspan="12" rowspan="1">
-      Tiendas desactivadas...
-    </mat-grid-tile>
-  </mat-grid-list>
-  <title-list-workwave-template *ngIf="listStoresTemplatesHidden.length"></title-list-workwave-template>
-  <workwave-list-workwave-template [disableEdition]="disableEdition" *ngFor="let storeTemplate of listStoresTemplatesHidden" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
-
+<div class="scroll-list" [ngClass]="disableEdition ? 'scroll-list-error-edit' : 'scroll-list'">
+    <div class="stick-list-container">
+        <title-list-workwave-template></title-list-workwave-template>
+        <workwave-list-workwave-template [disableEdition]="disableEdition" *ngFor="let storeTemplate of listStoresTemplatesHighlighted" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
+        <mat-grid-list cols="12" rowHeight="54px" *ngIf="listStoresTemplatesHidden.length">
+            <mat-grid-tile colspan="12" rowspan="1">
+                Tiendas desactivadas...
+            </mat-grid-tile>
+        </mat-grid-list>
+        <title-list-workwave-template *ngIf="listStoresTemplatesHidden.length"></title-list-workwave-template>
+        <workwave-list-workwave-template [disableEdition]="disableEdition" *ngFor="let storeTemplate of listStoresTemplatesHidden" [storeTemplate]="storeTemplate" (changeStoreTemplate)="changeStoreTemplate($event)" (copyTemplateEmitter)="copyTemplateFromLatestEdited($event)"></workwave-list-workwave-template>
+    </div>
 </div>
 
 <ion-footer class="footer-products">
-  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button color="light" (click)="resetForm()" [disabled]="disableEdition">
-      <i class="material-icons">settings_backup_restore</i>
-    </ion-fab-button>
-    <ion-fab-button color="light" (click)="saveTemplate(RUN_NOW_TASK_ID)" [disabled]="disableEdition">
-      <i class="material-icons">play_arrow</i>
-    </ion-fab-button>
-    <ion-fab-button (click)="saveTemplate(typeWorkwave)" [disabled]="disableEdition">
-      <i class="material-icons">save</i>
-    </ion-fab-button>
-  </ion-fab>
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button color="light" (click)="resetForm()" [disabled]="disableEdition">
+            <i class="material-icons">settings_backup_restore</i>
+        </ion-fab-button>
+        <ion-fab-button color="light" (click)="saveTemplate(RUN_NOW_TASK_ID)" [disabled]="disableEdition">
+            <i class="material-icons">play_arrow</i>
+        </ion-fab-button>
+        <ion-fab-button (click)="saveTemplate(typeWorkwave)" [disabled]="disableEdition">
+            <i class="material-icons">save</i>
+        </ion-fab-button>
+    </ion-fab>
 </ion-footer>
