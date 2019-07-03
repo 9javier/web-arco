@@ -352,7 +352,8 @@ export class ProductsComponent implements OnInit {
     this.sizes = sizes
       .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
       .map(size => {
-        size.id = <number>(<unknown>size.name);
+        console.log("probando los id del size",size);
+        size.id = <number>(<unknown>size.id);
         return size;
       })
     ;

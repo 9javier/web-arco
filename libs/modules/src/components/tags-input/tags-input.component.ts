@@ -121,6 +121,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    */
   clickEditable(event):void{
     let target = event.target;
+    let node = window.getSelection().anchorNode;
+    this.filteredOptions = this.filterOptions(this._options,node.textContent);
     //console.log(window.getSelection());
   }
 
