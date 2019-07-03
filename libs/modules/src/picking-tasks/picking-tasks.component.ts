@@ -28,7 +28,7 @@ export class PickingTasksComponent implements OnInit {
       }
     });
 
-    if (this.authenticationService.getWarehouseCurrentUser()) {
+    if (await this.authenticationService.getWarehouseCurrentUser()) {
       this.isStore = true;
     }
   }
