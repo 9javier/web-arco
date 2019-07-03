@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {LoadingController, ModalController, ToastController} from "@ionic/angular";
-import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import {WorkwavesService, WorkwaveWeeklyPlan} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
@@ -24,6 +24,7 @@ export class StoreComponent implements OnInit {
   public listTypesPacking: TypeModel.Type[];
   public listTypesShippingOrder: TypeModel.Type[];
   public listTypesGeneration: TypeModel.Type[];
+  public weeklyPlan: WorkwaveWeeklyPlan;
 
   public workwave: WorkwaveModel.Workwave = {};
 
@@ -69,13 +70,17 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
+  changeWeeklyPlan() {
+    this.workwave.weeklyPlan = this.weeklyPlan.toString();
+  }
+
   saveWorkwave() {
 
   }
 
   workwaveOk() {
     if (this.workwaveType == 'schedule') {
-      if (this.workwave.warehouseId && this.workwave.time && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking && (this.workwave.date || this.workwave.everyday)) {
+      if (this.workwave.warehouseId && this.workwave.time && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking && (this.workwave.date || (this.workwave.everyday && this.workwave.weeklyPlan))) {
         return false;
       }
     } else if (this.workwaveType == 'template') {
@@ -96,6 +101,8 @@ export class StoreComponent implements OnInit {
     this.workwave.date = null;
     this.workwave.time = null;
     this.workwave.everyday = false;
+    this.weeklyPlan = WorkwaveWeeklyPlan.getDefault();
+    this.workwave.weeklyPlan = this.weeklyPlan.toString();
     this.workwave.warehouseId = null;
     this.workwave.typeGeneration = null;
     this.workwave.typeExecution = null;

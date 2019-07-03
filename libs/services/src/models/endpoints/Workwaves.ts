@@ -17,6 +17,7 @@ export namespace WorkwaveModel {
     time?: string;
     date?: string;
     everyday?: boolean;
+    weeklyPlan?: string;
     active?: boolean;
     typeExecution?: number;
     name?: string;
