@@ -16,6 +16,43 @@ export const PATH_GET_LIST_EXECUTED: string = PATH('Workwaves', 'List Executed')
 export const PATH_DELETE_DESTROY_TASK: string = PATH('Workwaves', 'Destroy Task').slice(0, -1);
 export const PATH_DELETE_DESTROY_TEMPLATE: string = PATH('Workwaves', 'Destroy Template').slice(0, -1);
 
+export class WorkwaveWeeklyPlan {
+  sunday: boolean;
+  monday: boolean;
+  tuesday: boolean;
+  wednesday: boolean;
+  thursday: boolean;
+  friday: boolean;
+  saturday: boolean;
+
+  public static getDefault(){
+    return this.fromString("0123456")
+  }
+
+  public static fromString(weeklyPlanString: string){
+    const workwaveWeeklyPlan = new WorkwaveWeeklyPlan();
+    workwaveWeeklyPlan.sunday = weeklyPlanString.indexOf("0") !== -1;
+    workwaveWeeklyPlan.monday = weeklyPlanString.indexOf("1") !== -1;
+    workwaveWeeklyPlan.tuesday = weeklyPlanString.indexOf("2") !== -1;
+    workwaveWeeklyPlan.wednesday = weeklyPlanString.indexOf("3") !== -1;
+    workwaveWeeklyPlan.thursday = weeklyPlanString.indexOf("4") !== -1;
+    workwaveWeeklyPlan.friday = weeklyPlanString.indexOf("5") !== -1;
+    workwaveWeeklyPlan.saturday = weeklyPlanString.indexOf("6") !== -1;
+    return workwaveWeeklyPlan;
+  }
+
+  public toString() {
+    return "" +
+      (this.sunday ? "0" : "") +
+      (this.monday ? "1" : "") +
+      (this.tuesday ? "2" : "") +
+      (this.wednesday ? "3" : "") +
+      (this.thursday ? "4" : "") +
+      (this.friday ? "5" : "") +
+      (this.saturday ? "6" : "");
+  }
+}
+
 @Injectable({
   providedIn: 'root'
 })

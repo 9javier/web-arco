@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {LoadingController, ModalController, NavParams, ToastController} from "@ionic/angular";
-import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import {WorkwavesService, WorkwaveWeeklyPlan} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
@@ -21,6 +21,7 @@ export class StoreComponent implements OnInit {
   public typeWorkwave: number;
   public previousTypeWorkwave: number;
   public listStores: any[];
+  public weeklyPlan: WorkwaveWeeklyPlan;
 
   public loading = null;
   public editing: boolean = false;
@@ -76,6 +77,10 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss(params);
   }
 
+  changeWeeklyPlan() {
+    this.workwave.weeklyPlan = this.weeklyPlan.toString();
+  }
+
   saveWorkwave() {
     if (!this.loading) {
       this.showLoading((this.editing ? 'Editando' : 'Creando') +' ola de trabajo...').then(() => {
@@ -88,6 +93,7 @@ export class StoreComponent implements OnInit {
           if (this.workwave.everyday) {
             this.workwave.date = this.dateTimeParserService.nowGlobalFormat();
           }
+          workwaveStore.weeklyPlan = this.weeklyPlan.toString();
           workwaveStore.date = this.workwave.date;
           workwaveStore.time = this.workwave.time;
           workwaveStore.everyday = this.workwave.everyday;
@@ -95,10 +101,12 @@ export class StoreComponent implements OnInit {
         } else if (this.workwaveType == 'template') {
           workwaveStore.name = this.workwave.name;
           workwaveStore.description = this.workwave.description;
+          workwaveStore.weeklyPlan = "";
           workwaveStore.type = 3;
         } else {
           workwaveStore.type = 1;
           workwaveStore.executionDate = this.dateTimeParserService.dateTimeNoFormat();
+          workwaveStore.weeklyPlan = "";
         }
 
         if (this.editing) {
@@ -196,7 +204,7 @@ export class StoreComponent implements OnInit {
 
   workwaveOk() {
     if (this.workwaveType == 'schedule') {
-      if (this.workwave.time && (this.workwave.dateForm.value || this.workwave.everyday)) {
+      if (this.workwave.time && (this.workwave.dateForm.value || (this.workwave.everyday && this.workwave.weeklyPlan))) {
         return false;
       }
     } else if (this.workwaveType == 'template') {
@@ -219,16 +227,24 @@ export class StoreComponent implements OnInit {
           this.workwave.dateForm = new FormControl(new Date(this.dateTimeParserService.dateMonthYear(this.workwave.releaseDate)));
           this.workwave.time = this.dateTimeParserService.hourMinute(this.workwave.releaseDate);
           this.workwave.everyday = this.workwave.type == 4;
+          this.weeklyPlan = (this.workwave.type == 4 && this.workwave.weeklyPlan) ?
+            WorkwaveWeeklyPlan.fromString(this.workwave.weeklyPlan) : WorkwaveWeeklyPlan.getDefault();
+          this.workwave.weeklyPlan = this.weeklyPlan.toString();
         }
       } else if (this.previousTypeWorkwave == 3) {
         this.workwave.dateForm = new FormControl();
         this.workwave.date = null;
         this.workwave.time = null;
         this.workwave.everyday = false;
+        this.weeklyPlan = WorkwaveWeeklyPlan.getDefault();
+        this.workwave.weeklyPlan = this.weeklyPlan.toString();
       } else if (this.previousTypeWorkwave == 4) {
         this.workwave.name = null;
         this.workwave.description = null;
         this.workwave.everyday = true;
+        this.weeklyPlan = this.workwave.weeklyPlan ?
+          WorkwaveWeeklyPlan.fromString(this.workwave.weeklyPlan) : WorkwaveWeeklyPlan.getDefault();;
+          this.workwave.weeklyPlan = this.weeklyPlan.toString();
         this.workwave.date = null;
         this.workwave.dateForm = new FormControl();
       }
@@ -239,6 +255,8 @@ export class StoreComponent implements OnInit {
       this.workwave.date = null;
       this.workwave.time = null;
       this.workwave.everyday = false;
+      this.weeklyPlan = WorkwaveWeeklyPlan.getDefault();
+      this.workwave.weeklyPlan = this.weeklyPlan.toString();
     }
   }
 
