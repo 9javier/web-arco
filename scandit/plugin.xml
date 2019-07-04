@@ -173,6 +173,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixScanOverlayListener.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/ClickCallback.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixPrintTags.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
 
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/UiUtils.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/ScreenshotHandler.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
@@ -218,6 +219,7 @@
     <source-file src="src/android/layout/next_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/item_picking_store.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrix_picking_stores.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/references_matrix_print_tags.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
 
   </platform>

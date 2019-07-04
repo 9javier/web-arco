@@ -25,6 +25,17 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   * @param typeTag
+   */
+  initPrintTags: function (successCallback, title, titleBackground, titleColor, typeTag) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixPrintTags", [title, titleBackground, titleColor, typeTag]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color
