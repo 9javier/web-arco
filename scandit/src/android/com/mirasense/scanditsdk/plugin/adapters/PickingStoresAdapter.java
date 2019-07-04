@@ -44,16 +44,14 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
     Log.i("Test::", products.get(position).toString());
 
     try {
-      if (!products.get(position).isNull("product")) {
-        if (!products.get(position).getJSONObject("product").isNull("model")) {
-          tvModelValue.setText(products.get(position).getJSONObject("product").getJSONObject("model").getString("reference"));
-          if (!products.get(position).getJSONObject("product").getJSONObject("model").isNull("brand")) {
-            tvBrandValue.setText(products.get(position).getJSONObject("product").getJSONObject("model").getJSONObject("brand").getString("name"));
-          }
+      if (!products.get(position).isNull("model")) {
+        tvModelValue.setText(products.get(position).getJSONObject("model").getString("reference"));
+        if (!products.get(position).getJSONObject("model").isNull("brand")) {
+          tvBrandValue.setText(products.get(position).getJSONObject("model").getJSONObject("brand").getString("name"));
         }
-        if (!products.get(position).getJSONObject("product").isNull("size")) {
-          tvSizeValue.setText(products.get(position).getJSONObject("product").getJSONObject("size").getString("name"));
-        }
+      }
+      if (!products.get(position).isNull("size")) {
+        tvSizeValue.setText(products.get(position).getJSONObject("size").getString("name"));
       }
     } catch (JSONException e) {
       e.printStackTrace();

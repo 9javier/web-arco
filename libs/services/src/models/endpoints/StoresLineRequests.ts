@@ -1,9 +1,10 @@
-import {ProductModel, WarehouseModel} from "@suite/services";
+import {ModelModel, SizeModel, WarehouseModel} from "@suite/services";
 
 export namespace StoresLineRequestsModel {
 
-  export interface StoresLineRequests extends WarehouseModel.Warehouse{
-    line_requests: LineRequests[],
+  export interface StoresLineRequests {
+    warehouse: WarehouseModel.Warehouse,
+    lines: LineRequests[],
     selected?: boolean
   }
 
@@ -13,8 +14,16 @@ export namespace StoresLineRequestsModel {
   }
 
   export interface LineRequests {
-    product: ProductModel.ProductPicking,
-    reference: string
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    reference: string,
+    source: number,
+    status: number,
+    requestDateTime: string,
+    typeShippingOrderLineRequest: number,
+    model: ModelModel.Model,
+    size: SizeModel.Size
   }
 
 }

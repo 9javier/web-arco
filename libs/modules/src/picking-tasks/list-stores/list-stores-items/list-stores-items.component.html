@@ -1,11 +1,11 @@
 <mat-accordion>
-  <div class="row-no-requests" *ngIf="!store.line_requests">
+  <div class="row-no-requests" *ngIf="!store.lines">
     <ion-row>
       <ion-col size="1" class="centered-col">
         <ion-checkbox disabled></ion-checkbox>
       </ion-col>
       <ion-col size="7" class="centered-col">
-        <mat-panel-title>{{store.name}}</mat-panel-title>
+        <mat-panel-title>{{store.warehouse.name}}</mat-panel-title>
       </ion-col>
       <ion-col size="4" class="qty-col centered-col">
         <mat-panel-description>Peticiones: 0</mat-panel-description>
@@ -13,36 +13,36 @@
     </ion-row>
   </div>
 
-  <mat-expansion-panel *ngIf="store.line_requests">
+  <mat-expansion-panel *ngIf="store.lines">
     <mat-expansion-panel-header>
       <ion-row>
         <ion-col size="1" class="centered-col">
           <ion-checkbox [(ngModel)]="storeChecked" (click)="avoidPropagation($event)" (ngModelChange)="changeSelectStore()"></ion-checkbox>
         </ion-col>
         <ion-col size="7" class="centered-col">
-          <mat-panel-title>{{store.name}}</mat-panel-title>
+          <mat-panel-title>{{store.warehouse.name}}</mat-panel-title>
         </ion-col>
         <ion-col size="4" class="qty-col centered-col">
-          <mat-panel-description>Peticiones: {{store.line_requests.length}}</mat-panel-description>
+          <mat-panel-description>Peticiones: {{store.lines.length}}</mat-panel-description>
         </ion-col>
       </ion-row>
     </mat-expansion-panel-header>
 
-    <ion-list *ngIf="store.line_requests">
-      <ion-item *ngFor="let lineRequest of store.line_requests">
+    <ion-list *ngIf="store.lines">
+      <ion-item *ngFor="let lineRequest of store.lines">
         <ion-label>
           <h2>
             <ion-row class="row-title-item">
               <ion-col size="6">
-                Modelo: {{lineRequest.product.model.reference}}
+                Modelo: {{lineRequest.model.reference}}
               </ion-col>
               <ion-col size="6">
-                Talla: {{lineRequest.product.size.name}}
+                Talla: {{lineRequest.size.name}}
               </ion-col>
             </ion-row>
           </h2>
-          <p>
-            Marca: Marca inventada
+          <p *ngIf="lineRequest.model.brand">
+            Marca: {{lineRequest.model.brand.name}}
           </p>
         </ion-label>
       </ion-item>

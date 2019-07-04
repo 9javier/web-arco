@@ -11,6 +11,8 @@ export namespace WarehouseModel {
     is_main?: boolean;
     has_racks?: boolean;
     group?: Array<GroupModel.Group> | GroupModel.Group;
+    is_outlet?: boolean;
+    prefix_container?: string;
   }
 
   export interface ResponseSingle extends Request.Success{

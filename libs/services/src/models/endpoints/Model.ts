@@ -1,11 +1,16 @@
-import {ModelModel} from "@suite/services";
+import {BrandModel} from "./Brand";
 
 export namespace ModelModel {
   export interface Model{
-    id?: number;
-    reference: number|string;
-    color: number;
-    name?: string;
+    id?: number,
+    reference: number|string,
+    color?: number,
+    name?: string,
+    createdAt?: string,
+    updatedAt?: string,
+    hash?: string,
+    avelonInternalBrandId?: number,
+    brand?: BrandModel.Brand
   }
 
   export interface ResponseIndex {
