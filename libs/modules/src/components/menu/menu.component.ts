@@ -4,6 +4,7 @@ import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
 import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
+import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -215,6 +216,18 @@ export class MenuComponent implements OnInit {
       id:'picking-tasks-manual'
     },
     {
+      title: 'Print Ref. Tag',
+      id: 'print-ref-tag',
+      icon: 'qr-scanner',
+      url: 'print/tag/ref'
+    },
+    {
+      title: 'Print Price Tag',
+      id: "print-price-tag",
+      icon: 'qr-scanner',
+      url: 'print/tag/price'
+    },
+    {
       title: 'Jaulas',
       id:'jails',
       url: '/jails/menu',
@@ -262,7 +275,8 @@ export class MenuComponent implements OnInit {
 
   constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
               private scanditService: ScanditService,
-              private receptionScanditService: ReceptionScanditService) { }
+              private receptionScanditService: ReceptionScanditService,
+              private printTagsScanditService: PrintTagsScanditService) { }
 
   /**
    * Select the links that be shown depends of dictionary paramethers
@@ -326,6 +340,10 @@ export class MenuComponent implements OnInit {
       this.scanditService.positioning();
     } else if(p.url === 'reception'){
       this.receptionScanditService.reception();
+    } else if (p.url === 'print/tag/ref') {
+      this.printTagsScanditService.printTagsReferences();
+    } else if (p.url === 'print/tag/price') {
+      this.printTagsScanditService.printTagsPrices();
     }
   }
 
