@@ -1,4 +1,15 @@
 <div class="scroll-list">
+  <div class="row-no-requests" *ngIf="stores.length > 0">
+    <ion-row>
+      <ion-col size="1" class="centered-col">
+        <ion-checkbox [(ngModel)]="allStoresSelected" (click)="selectAllStores()"></ion-checkbox>
+      </ion-col>
+      <ion-col size="11" class="centered-col">
+        <mat-panel-title>Seleccionar todo</mat-panel-title>
+      </ion-col>
+    </ion-row>
+  </div>
+
   <stores-picking-task-template *ngFor="let store of stores" [store]="store" (selectStore)="selectStore($event)"></stores-picking-task-template>
 </div>
 

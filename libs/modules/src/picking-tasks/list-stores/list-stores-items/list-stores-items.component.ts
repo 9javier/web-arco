@@ -11,8 +11,6 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
   @Input() store: StoresLineRequestsModel.StoresLineRequests = null;
   @Output() selectStore = new EventEmitter<StoresLineRequestsModel.StoresLineRequestsSelected>();
 
-  storeChecked: boolean = false;
-
   constructor() {}
 
   ngOnInit() {
@@ -24,7 +22,7 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
   }
 
   changeSelectStore() {
-    this.selectStore.next({store: this.store, selected: this.storeChecked})
+    this.selectStore.next({store: this.store, selected: this.store.selected})
   }
 
 }

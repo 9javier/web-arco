@@ -13,6 +13,8 @@ import {PickingStoreModel} from "../../../../services/src/models/endpoints/Picki
 export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
   public stores: StoresLineRequestsModel.StoresLineRequests[] = [];
+  private allStoresSelected: boolean = false;
+  private qtyStoresSelected: number = 0;
 
   constructor(
     private pickingStoreService: PickingStoreService,
@@ -32,6 +34,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
   selectStore(data: StoresLineRequestsModel.StoresLineRequestsSelected) {
     data.store.selected = data.selected;
+    if (data.store.selected) {
+      this.qtyStoresSelected++;
+    } else {
+      this.qtyStoresSelected--;
+    }
+    if (this.qtyStoresSelected == this.stores.length) {
+      this.allStoresSelected = true;
+    } else {
+      this.allStoresSelected = false;
+    }
   }
 
   checkLineRequestSelected(): boolean {
@@ -79,6 +91,12 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
         }, (error) => {
           console.error('Error Subscribe::Change status for picking-store::', error);
         });
+    }
+  }
+
+  selectAllStores() {
+    for (let iStore in this.stores) {
+      this.stores[iStore].selected = !this.allStoresSelected;
     }
   }
 
