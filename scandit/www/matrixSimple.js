@@ -106,6 +106,17 @@ var ScanditMatrixSimple = {
    */
   sendPickingStoresProducts: function (products) {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadProducts", [products]);
+  },
+  /**
+   *
+   * @param show
+   * @param text
+   */
+  setTextPickingStores: function (show, text) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresSetText", [show, text]);
+  },
+  finishPickingStores: function () {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresFinish");
   }
 }
 

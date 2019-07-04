@@ -102,6 +102,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING = "matrixSimpleShowTextEndScanPacking";
   private static final String MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM = "matrixSimpleShowFixedTextBottom";
   private static final String MATRIX_PICKING_STORES_LOAD_PRODUCTS = "matrixPickingStoresLoadProducts";
+  private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
+  private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -1081,13 +1083,50 @@ public class ScanditSDK extends CordovaPlugin {
       final ArrayList<JSONObject> fProducts = listProducts;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          PickingStoresAdapter pickingStoresAdapter = new PickingStoresAdapter(cordova.getActivity(), fProducts);
+          PickingStoresAdapter pickingStoresAdapter = new PickingStoresAdapter(cordova.getActivity(), fProducts, resources, package_name);
           ListView lvPickingProducts = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("lvPickingProducts", "id", package_name));
           lvPickingProducts.setAdapter(pickingStoresAdapter);
           ListView lvPickingProductsFull = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("lvPickingProductsFull", "id", package_name));
           lvPickingProductsFull.setAdapter(pickingStoresAdapter);
         }
       });
+    } else if (action.equals(MATRIX_PICKING_STORES_SET_TEXT)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      Boolean show = true;
+      String text = null;
+      try {
+        show = args.getBoolean(0);
+        text = args.getString(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final Boolean fShow = show;
+      final String fText = text;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
+          TextView tvPackingStartFull = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStartFull", "id", package_name));
+          if (fShow) {
+            tvPackingStart.setText(fText);
+            tvPackingStartFull.setText(fText);
+            tvPackingStart.setVisibility(View.VISIBLE);
+            tvPackingStartFull.setVisibility(View.VISIBLE);
+          } else {
+            tvPackingStart.setText(null);
+            tvPackingStartFull.setText(null);
+            tvPackingStart.setVisibility(View.GONE);
+            tvPackingStartFull.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if(action.equals(MATRIX_PICKING_STORES_FINISH)){
+      MatrixPickingStores.matrixPickingStores.finish();
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

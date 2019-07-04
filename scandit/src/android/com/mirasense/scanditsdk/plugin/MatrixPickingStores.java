@@ -22,9 +22,13 @@ import com.scandit.matrixscan.MatrixScan;
 import com.scandit.recognition.Barcode;
 import com.scandit.recognition.SymbologySettings;
 
+import org.apache.cordova.PluginResult;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MatrixPickingStores extends Activity {
 
-  public static Activity matrixSimple;
+  public static Activity matrixPickingStores;
   private BarcodePicker mPicker;
   private MatrixSimpleOverlayListener matrixScanListener;
   private FrameLayout pickerContainer;
@@ -131,7 +135,21 @@ public class MatrixPickingStores extends Activity {
       llListProductsFull.setVisibility(View.GONE);
     });
 
-    matrixSimple = this;
+   Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
+    btnFinishPickingStore.setOnClickListener(v -> {
+      JSONObject jsonObject = new JSONObject();
+      try {
+        jsonObject.put("result", true);
+        jsonObject.put("action", "matrix_simple_finish_picking");
+      } catch (JSONException e) {
+
+      }
+      PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+      pResult.setKeepCallback(true);
+      ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+    });
+
+    matrixPickingStores = this;
   }
 
   @Override
