@@ -1,6 +1,7 @@
 package com.mirasense.scanditsdk.plugin.adapters;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import com.scandit.galvintec.krack.logistica.dev.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,22 +20,28 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
 
   private final Activity context;
   private final ArrayList<JSONObject> products;
+  private final Resources resources;
+  private final String packageName;
 
-  public PickingStoresAdapter(Activity context, ArrayList<JSONObject> products) {
-    super(context, R.layout.item_picking_store, products);
+  public PickingStoresAdapter(Activity context, ArrayList<JSONObject> products, Resources resources, String packageName) {
+    super(context, resources.getIdentifier("item_picking_store", "layout", packageName), products);
     this.context=context;
     this.products = products;
+    this.resources = resources;
+    this.packageName = packageName;
   }
 
   @NonNull
   @Override
   public View getView (int position, @Nullable View view, @Nullable ViewGroup parent) {
     LayoutInflater inflater = context.getLayoutInflater();
-    View itemView = inflater.inflate(R.layout.item_picking_store, null);
+    View itemView = inflater.inflate(resources.getIdentifier("item_picking_store", "layout", packageName), null);
 
-    TextView tvModelValue = itemView.findViewById(R.id.tvModelValue);
-    TextView tvSizeValue = itemView.findViewById(R.id.tvSizeValue);
-    TextView tvBrandValue = itemView.findViewById(R.id.tvBrandValue);
+    TextView tvModelValue = itemView.findViewById(resources.getIdentifier("tvModelValue", "id", packageName));
+    TextView tvSizeValue = itemView.findViewById(resources.getIdentifier("tvSizeValue", "id", packageName));
+    TextView tvBrandValue = itemView.findViewById(resources.getIdentifier("tvBrandValue", "id", packageName));
+
+    Log.i("Test::", products.get(position).toString());
 
     try {
       if (!products.get(position).isNull("product")) {
