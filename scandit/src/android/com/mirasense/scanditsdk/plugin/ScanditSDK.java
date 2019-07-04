@@ -851,7 +851,7 @@ public class ScanditSDK extends CordovaPlugin {
               location = location.concat(" (P"+rack+row+column+")");
             }
             tvLocation.setText(location);
-            tvManufacturer.setText(colorProduct);
+            tvManufacturer.setText(brandProduct);
             tvModel.setText(modelProduct);
             tvSize.setText(sizeProduct);
 
