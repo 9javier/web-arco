@@ -268,6 +268,7 @@ export class MenuComponent implements OnInit {
    * Select the links that be shown depends of dictionary paramethers
    */
   filterPages(dictionary){
+    console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
     console.log("diccionario",app,dictionary);
     if(!app || !app.name)

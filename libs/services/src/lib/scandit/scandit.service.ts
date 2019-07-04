@@ -58,6 +58,7 @@ export class ScanditService {
   async positioning() {
     this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
 
+    let lastCodeScanned: string = "start";
     let positionsScanning = [];
     let containerReference = '';
     let warehouseId = this.userWarehouse ? this.userWarehouse.id : this.warehouseService.idWarehouseMain;
@@ -91,6 +92,10 @@ export class ScanditService {
       if (response && response.barcode && (!this.scannerPaused || response.action == 'force_scanning')) {
         //Check Container or product
         let code = response.barcode.data;
+
+        if (code === lastCodeScanned) return;
+        lastCodeScanned = code;
+
         if (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
           //Container
@@ -265,6 +270,10 @@ export class ScanditService {
         this.pickingLog(2, "2", "if (response.barcode) {");
         code = response.barcode.data;
       }
+
+      if (code === lastCodeScanned) return;
+      lastCodeScanned = code;
+
       //Check Jail/Pallet or product
       if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
         this.pickingLog(2, "3", "if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
@@ -378,7 +387,7 @@ export class ScanditService {
             throw e;
           }
         }
-      } else if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.PRODUCT && !this.scannerPaused && code && code != '' && code != lastCodeScanned) {
+      } else if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.PRODUCT && !this.scannerPaused && code) {
         this.pickingLog(2, "26", "} else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {");
         if (!processInitiated) {
           this.pickingLog(2, "27", "if (!processInitiated) {");
@@ -386,7 +395,6 @@ export class ScanditService {
           this.hideTextMessage(2000);
         } else {
           this.pickingLog(2, "28", "} else {");
-          lastCodeScanned = code;
           if (productsToScan.length > 0) {
             this.pickingLog(2, "29", "if (productsToScan.length > 0) {");
             let picking: InventoryModel.Picking = {

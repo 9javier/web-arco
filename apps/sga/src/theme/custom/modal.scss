@@ -42,6 +42,11 @@
         height: calc(100vh - 6rem);
       }
     }
+    ion-modal.picking-product-list {
+      .modal-wrapper {
+        width: 900px;
+      }
+    }
     ion-modal.modal-print {
       .modal-wrapper {
         height: var(--max-modal-height);

@@ -74,9 +74,21 @@
     </ion-col>
   </ion-row>
 
-  <ion-row class="row-repeat" *ngIf="workwaveType == 'schedule'" [ngClass]="workwaveType == 'schedule' ? 'last-child' : ''">
+  <ion-row class="row-repeat" *ngIf="workwaveType == 'schedule'">
     <ion-col color="light">
-      <mat-checkbox [(ngModel)]="workwave.everyday">Repetir todos los días</mat-checkbox>
+      <mat-checkbox [(ngModel)]="workwave.everyday">Repetir a diario</mat-checkbox>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="row-repeat" *ngIf="workwaveType == 'schedule' && workwave.everyday" [ngClass]="workwaveType == 'schedule' ? 'last-child' : ''">
+    <ion-col color="light">
+      <mat-checkbox [(ngModel)]="weeklyPlan.monday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">L</mat-checkbox>
+      <mat-checkbox [(ngModel)]="weeklyPlan.tuesday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">M</mat-checkbox>
+      <mat-checkbox [(ngModel)]="weeklyPlan.wednesday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">I</mat-checkbox>
+      <mat-checkbox [(ngModel)]="weeklyPlan.thursday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">J</mat-checkbox>
+      <mat-checkbox [(ngModel)]="weeklyPlan.friday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">V</mat-checkbox>
+      <mat-checkbox [(ngModel)]="weeklyPlan.saturday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">S</mat-checkbox>
+      <mat-checkbox [(ngModel)]="weeklyPlan.sunday" (change)="changeWeeklyPlan()" class="mat-checkbox-inline">D</mat-checkbox>
     </ion-col>
   </ion-row>
 

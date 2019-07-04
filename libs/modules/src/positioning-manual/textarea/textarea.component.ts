@@ -38,10 +38,14 @@ export class TextareaComponent implements OnInit {
     let warehouseId = this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
-    if (dataWrited === this.lastCodeScanned) return;
-    this.lastCodeScanned = dataWrited;
-
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
+
+      if (dataWrited === this.lastCodeScanned) {
+        this.inputPositioning = null;
+        return;
+      }
+      this.lastCodeScanned = dataWrited;
+
       this.processInitiated = true;
       if (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
         if (dataWrited != this.containerReference) {

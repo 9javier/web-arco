@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {LoadingController, ModalController, ToastController} from "@ionic/angular";
-import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import {WorkwavesService, WorkwaveWeeklyPlan} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
@@ -10,6 +10,10 @@ import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/
 import {WarehouseModel} from "@suite/services";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {NgxMaterialTimepickerTheme} from "ngx-material-timepicker";
+
+interface WeeklyPlan {
+
+}
 
 @Component({
   selector: 'suite-store',
@@ -24,6 +28,7 @@ export class StoreComponent implements OnInit {
   listTypesPacking: TypeModel.Type[];
   listTypesShippingOrder: TypeModel.Type[];
   listTypesGeneration: TypeModel.Type[];
+  weeklyPlan: WorkwaveWeeklyPlan;
 
   workwave: WorkwaveModel.Workwave = {};
 
@@ -69,13 +74,17 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
+  changeWeeklyPlan() {
+    this.workwave.weeklyPlan = this.weeklyPlan.toString();
+  }
+
   saveWorkwave() {
 
   }
 
   workwaveOk() {
     if (this.workwaveType == 'schedule') {
-      if (this.workwave.warehouseId && this.workwave.time && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking && (this.workwave.date || this.workwave.everyday)) {
+      if (this.workwave.warehouseId && this.workwave.time && this.workwave.typeShippingOrder && this.workwave.typeGeneration && this.workwave.typePacking && (this.workwave.date || (this.workwave.everyday && this.workwave.weeklyPlan))) {
         return false;
       }
     } else if (this.workwaveType == 'template') {
@@ -96,6 +105,8 @@ export class StoreComponent implements OnInit {
     this.workwave.date = null;
     this.workwave.time = null;
     this.workwave.everyday = false;
+    this.weeklyPlan = WorkwaveWeeklyPlan.getDefault();
+    this.workwave.weeklyPlan = this.weeklyPlan.toString();
     this.workwave.warehouseId = null;
     this.workwave.typeGeneration = null;
     this.workwave.typeExecution = null;
