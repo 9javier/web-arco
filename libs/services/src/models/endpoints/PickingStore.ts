@@ -6,6 +6,10 @@ export namespace PickingStoreModel {
     warehouseIds: number[]
   }
 
+  export interface CheckPacking {
+    packingReference: string
+  }
+
   export interface SendProcess extends ListStoresIds {
     productReference: string,
     packingReference: string
@@ -24,6 +28,13 @@ export namespace PickingStoreModel {
 
   export interface ResponseLineRequestsPending {
     data: StoresLineRequestsModel.LineRequests[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
+  export interface ResponseCheckPacking {
+    data: any;
     message: string;
     code: number;
     errors: any;

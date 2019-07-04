@@ -13,6 +13,7 @@ export class PickingStoreService {
 
   private getLineRequestsUrl = environment.apiBase + '/picking/store/lines-request';
   private postLineRequestsPendingUrl = environment.apiBase + '/picking/store/lines-request/pending';
+  private postCheckPackingUrl = environment.apiBase + '/picking/store/packing';
 
   constructor(
     private http: HttpClient,
@@ -30,6 +31,13 @@ export class PickingStoreService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.post<PickingStoreModel.ResponseLineRequestsPending>(this.postLineRequestsPendingUrl, parameters, { headers });
+    }));
+  }
+
+  postCheckPacking(parameters: PickingStoreModel.CheckPacking) : Observable<PickingStoreModel.ResponseCheckPacking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<PickingStoreModel.ResponseCheckPacking>(this.postCheckPackingUrl, parameters, { headers });
     }));
   }
 

@@ -47,20 +47,41 @@ export class PickingScanditService {
                 } else {
                   typePacking = 2;
                 }
-                // TODO replace next if-block by check of packing status with endpoints
-                if (isEmptyPacking) {
-                  referencePacking = codeScanned;
-                  processStarted = true;
+                this.pickingStoreService
+                  .postCheckPacking({
+                    packingReference: codeScanned
+                  })
+                  .subscribe((res: PickingStoreModel.ResponseCheckPacking) => {
+                    if (res.code == 200 || res.code == 201) {
+                      referencePacking = codeScanned;
+                      processStarted = true;
 
-                  ScanditMatrixSimple.setText(
-                    `${this.pickingProvider.literalsJailPallet[typePacking].process_started}${referencePacking}.`,
-                    this.scanditProvider.colorsMessage.info.color,
-                    this.scanditProvider.colorText.color,
-                    18);
-                  this.hideTextMessage(2000);
+                      ScanditMatrixSimple.setText(
+                        `${this.pickingProvider.literalsJailPallet[typePacking].process_started}${referencePacking}.`,
+                        this.scanditProvider.colorsMessage.info.color,
+                        this.scanditProvider.colorText.color,
+                        18);
+                      this.hideTextMessage(2000);
 
-                  ScanditMatrixSimple.setTextPickingStores(true, "Escanea los productos a incluir en el picking");
-                }
+                      ScanditMatrixSimple.setTextPickingStores(true, "Escanea los productos a incluir en el picking");
+                    } else {
+                      console.error('Error Subscribe::Check Packing Reference::', res);
+                      ScanditMatrixSimple.setText(
+                        res.message,
+                        this.scanditProvider.colorsMessage.error.color,
+                        this.scanditProvider.colorText.color,
+                        16);
+                      this.hideTextMessage(1500);
+                    }
+                  }, (error) => {
+                    console.error('Error Subscribe::Check Packing Reference::', error);
+                    ScanditMatrixSimple.setText(
+                      error.error.errors,
+                      this.scanditProvider.colorsMessage.error.color,
+                      this.scanditProvider.colorText.color,
+                      16);
+                    this.hideTextMessage(1500);
+                  });
               } else if (referencePacking != codeScanned) {
                 ScanditMatrixSimple.setText(
                   this.pickingProvider.literalsJailPallet[typePacking].wrong_process_finished,
