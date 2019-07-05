@@ -5,6 +5,7 @@ import {PickingStoreService} from "../../endpoint/picking-store/picking-store.se
 import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
 import {StoresLineRequestsModel} from "../../../models/endpoints/StoresLineRequests";
 import {ScanditModel} from "../../../models/scandit/Scandit";
+import {Events} from "@ionic/angular";
 
 declare let Scandit;
 declare let GScandit;
@@ -18,6 +19,7 @@ export class PickingScanditService {
   private timeoutHideText;
 
   constructor(
+    private events: Events,
     private pickingStoreService: PickingStoreService,
     private scanditProvider: ScanditProvider,
     private pickingProvider: PickingProvider
@@ -29,7 +31,6 @@ export class PickingScanditService {
     let processStarted: boolean = false;
     let typePacking: number = 1;
     let referencePacking: string = null;
-    let isEmptyPacking: boolean = true;
     let scannerPaused: boolean = false;
 
     ScanditMatrixSimple.initPickingStores((response: ScanditModel.ResponsePickingStores) => {
@@ -42,7 +43,7 @@ export class PickingScanditService {
             case this.scanditProvider.codeValue.JAIL:
               lastCodeScanned = codeScanned;
               if (!processStarted) {
-                if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+                if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL) {
                   typePacking = 1;
                 } else {
                   typePacking = 2;
@@ -138,6 +139,7 @@ export class PickingScanditService {
                             ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packing_to_end);
                           }, 2 * 1000);
                         }
+                        this.refreshListPickingsStores();
                       } else {
                         ScanditMatrixSimple.setText(
                           res.message,
@@ -188,11 +190,8 @@ export class PickingScanditService {
   }
 
   private loadLineRequestsPending(listProductsToStorePickings: StoresLineRequestsModel.LineRequests[], typePacking: number) {
-      let paramsLineRequestPending: PickingStoreModel.ListStoresIds = {
-        warehouseIds: this.pickingProvider.listStoresIdsToStorePicking
-      };
     this.pickingStoreService
-      .postLineRequestsPending(paramsLineRequestPending)
+      .getLineRequestsPending()
       .subscribe((res: PickingStoreModel.ResponseLineRequestsPending) => {
         if (res.code == 200 || res.code == 201) {
           listProductsToStorePickings = res.data;
@@ -207,6 +206,7 @@ export class PickingScanditService {
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packing_to_end);
             }, 2 * 1000);
           }
+          this.refreshListPickingsStores();
         }
       });
   }
@@ -220,7 +220,8 @@ export class PickingScanditService {
 
     this.pickingStoreService
       .postPickingStoreChangeStatus({
-        status: 3
+        status: 3,
+        warehouseIds: this.pickingProvider.listStoresIdsToStorePicking
       })
       .subscribe((res: PickingStoreModel.ResponseChangeStatus) => {
         if (res.code == 200 || res.code == 201) {
@@ -231,6 +232,10 @@ export class PickingScanditService {
       }, (error) => {
         console.error('Error Subscribe::Change status for picking-store::', error);
       });
+  }
+
+  private refreshListPickingsStores() {
+    this.events.publish('picking-stores:refresh');
   }
 
   private hideTextMessage(delay: number){
