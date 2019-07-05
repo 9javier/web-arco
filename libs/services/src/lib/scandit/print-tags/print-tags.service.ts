@@ -53,6 +53,7 @@ export class PrintTagsScanditService {
                 this.printerService.printTagBarcode([codeScanned]);
                 break;
               case 2:
+                this.printerService.printTagPrices([codeScanned]);
                 break;
             }
           } else {
