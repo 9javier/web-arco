@@ -16,9 +16,10 @@ import {ListPickingTasksTemplateComponent} from "./list/list.component";
 import {PickingTaskTemplateComponent} from "./list/list-items/list-items.component";
 import {ListStoresPickingTasksTemplateComponent} from "./list-stores/list-stores.component";
 import {StoresPickingTaskTemplateComponent} from "./list-stores/list-stores-items/list-stores-items.component";
+import {StoresPickingTaskInitiatedTemplateComponent} from "./list-stores/list-stores-initiated/list-stores-initiated.component";
 
 @NgModule({
-  declarations: [PickingTasksComponent, ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent],
+  declarations: [PickingTasksComponent, ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent, StoresPickingTaskInitiatedTemplateComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -34,7 +35,7 @@ import {StoresPickingTaskTemplateComponent} from "./list-stores/list-stores-item
     MatRadioModule
   ],
   entryComponents: [
-    ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent
+    ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent, StoresPickingTaskInitiatedTemplateComponent
   ]
 })
 export class PickingTasksModule {}

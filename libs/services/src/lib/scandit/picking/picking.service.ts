@@ -5,6 +5,7 @@ import {PickingStoreService} from "../../endpoint/picking-store/picking-store.se
 import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
 import {StoresLineRequestsModel} from "../../../models/endpoints/StoresLineRequests";
 import {ScanditModel} from "../../../models/scandit/Scandit";
+import {Events} from "@ionic/angular";
 
 declare let Scandit;
 declare let GScandit;
@@ -18,6 +19,7 @@ export class PickingScanditService {
   private timeoutHideText;
 
   constructor(
+    private events: Events,
     private pickingStoreService: PickingStoreService,
     private scanditProvider: ScanditProvider,
     private pickingProvider: PickingProvider
@@ -29,7 +31,6 @@ export class PickingScanditService {
     let processStarted: boolean = false;
     let typePacking: number = 1;
     let referencePacking: string = null;
-    let isEmptyPacking: boolean = true;
     let scannerPaused: boolean = false;
 
     ScanditMatrixSimple.initPickingStores((response: ScanditModel.ResponsePickingStores) => {
@@ -42,25 +43,46 @@ export class PickingScanditService {
             case this.scanditProvider.codeValue.JAIL:
               lastCodeScanned = codeScanned;
               if (!processStarted) {
-                if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+                if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL) {
                   typePacking = 1;
                 } else {
                   typePacking = 2;
                 }
-                // TODO replace next if-block by check of packing status with endpoints
-                if (isEmptyPacking) {
-                  referencePacking = codeScanned;
-                  processStarted = true;
+                this.pickingStoreService
+                  .postCheckPacking({
+                    packingReference: codeScanned
+                  })
+                  .subscribe((res: PickingStoreModel.ResponseCheckPacking) => {
+                    if (res.code == 200 || res.code == 201) {
+                      referencePacking = codeScanned;
+                      processStarted = true;
 
-                  ScanditMatrixSimple.setText(
-                    `${this.pickingProvider.literalsJailPallet[typePacking].process_started}${referencePacking}.`,
-                    this.scanditProvider.colorsMessage.info.color,
-                    this.scanditProvider.colorText.color,
-                    18);
-                  this.hideTextMessage(2000);
+                      ScanditMatrixSimple.setText(
+                        `${this.pickingProvider.literalsJailPallet[typePacking].process_started}${referencePacking}.`,
+                        this.scanditProvider.colorsMessage.info.color,
+                        this.scanditProvider.colorText.color,
+                        18);
+                      this.hideTextMessage(2000);
 
-                  ScanditMatrixSimple.setTextPickingStores(true, "Escanea los productos a incluir en el picking");
-                }
+                      ScanditMatrixSimple.setTextPickingStores(true, "Escanea los productos a incluir en el picking");
+                    } else {
+                      console.error('Error Subscribe::Check Packing Reference::', res);
+                      ScanditMatrixSimple.setText(
+                        res.message,
+                        this.scanditProvider.colorsMessage.error.color,
+                        this.scanditProvider.colorText.color,
+                        16);
+                      this.hideTextMessage(1500);
+                    }
+                  }, (error) => {
+                    console.error('Error Subscribe::Check Packing Reference::', error);
+                    ScanditMatrixSimple.setText(
+                      error.error.errors,
+                      this.scanditProvider.colorsMessage.error.color,
+                      this.scanditProvider.colorText.color,
+                      16);
+                    this.hideTextMessage(1500);
+                  });
               } else if (referencePacking != codeScanned) {
                 ScanditMatrixSimple.setText(
                   this.pickingProvider.literalsJailPallet[typePacking].wrong_process_finished,
@@ -117,6 +139,7 @@ export class PickingScanditService {
                             ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packing_to_end);
                           }, 2 * 1000);
                         }
+                        this.refreshListPickingsStores();
                       } else {
                         ScanditMatrixSimple.setText(
                           res.message,
@@ -167,11 +190,8 @@ export class PickingScanditService {
   }
 
   private loadLineRequestsPending(listProductsToStorePickings: StoresLineRequestsModel.LineRequests[], typePacking: number) {
-      let paramsLineRequestPending: PickingStoreModel.ListStoresIds = {
-        warehouseIds: this.pickingProvider.listStoresIdsToStorePicking
-      };
     this.pickingStoreService
-      .postLineRequestsPending(paramsLineRequestPending)
+      .getLineRequestsPending()
       .subscribe((res: PickingStoreModel.ResponseLineRequestsPending) => {
         if (res.code == 200 || res.code == 201) {
           listProductsToStorePickings = res.data;
@@ -186,6 +206,7 @@ export class PickingScanditService {
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packing_to_end);
             }, 2 * 1000);
           }
+          this.refreshListPickingsStores();
         }
       });
   }
@@ -199,7 +220,8 @@ export class PickingScanditService {
 
     this.pickingStoreService
       .postPickingStoreChangeStatus({
-        status: 3
+        status: 3,
+        warehouseIds: this.pickingProvider.listStoresIdsToStorePicking
       })
       .subscribe((res: PickingStoreModel.ResponseChangeStatus) => {
         if (res.code == 200 || res.code == 201) {
@@ -210,6 +232,10 @@ export class PickingScanditService {
       }, (error) => {
         console.error('Error Subscribe::Change status for picking-store::', error);
       });
+  }
+
+  private refreshListPickingsStores() {
+    this.events.publish('picking-stores:refresh');
   }
 
   private hideTextMessage(delay: number){

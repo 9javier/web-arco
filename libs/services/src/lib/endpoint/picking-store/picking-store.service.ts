@@ -11,13 +11,22 @@ import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
 })
 export class PickingStoreService {
 
+  private getInitiatedUrl = environment.apiBase + '/picking/store/initiated';
   private getLineRequestsUrl = environment.apiBase + '/picking/store/lines-request';
   private postLineRequestsPendingUrl = environment.apiBase + '/picking/store/lines-request/pending';
+  private postCheckPackingUrl = environment.apiBase + '/picking/store/packing';
 
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService
   ) {}
+
+  getInitiated() : Observable<PickingStoreModel.ResponseInitiated> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.get<PickingStoreModel.ResponseInitiated>(this.getInitiatedUrl, { headers });
+    }));
+  }
 
   getLineRequests() : Observable<PickingStoreModel.ResponseLineRequests> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
@@ -26,10 +35,17 @@ export class PickingStoreService {
     }));
   }
 
-  postLineRequestsPending(parameters: PickingStoreModel.ListStoresIds) : Observable<PickingStoreModel.ResponseLineRequestsPending> {
+  getLineRequestsPending() : Observable<PickingStoreModel.ResponseLineRequestsPending> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingStoreModel.ResponseLineRequestsPending>(this.postLineRequestsPendingUrl, parameters, { headers });
+      return this.http.get<PickingStoreModel.ResponseLineRequestsPending>(this.postLineRequestsPendingUrl, { headers });
+    }));
+  }
+
+  postCheckPacking(parameters: PickingStoreModel.CheckPacking) : Observable<PickingStoreModel.ResponseCheckPacking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<PickingStoreModel.ResponseCheckPacking>(this.postCheckPackingUrl, parameters, { headers });
     }));
   }
 

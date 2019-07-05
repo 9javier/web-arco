@@ -8,10 +8,8 @@ import {StoresLineRequestsModel} from "../../../../../services/src/models/endpoi
 })
 export class StoresPickingTaskTemplateComponent implements OnInit {
 
-  @Input() store: StoresLineRequestsModel.StoresLineRequests = null;
+  @Input() lineRequestByStore: StoresLineRequestsModel.StoresLineRequests = null;
   @Output() selectStore = new EventEmitter<StoresLineRequestsModel.StoresLineRequestsSelected>();
-
-  storeChecked: boolean = false;
 
   constructor() {}
 
@@ -24,7 +22,7 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
   }
 
   changeSelectStore() {
-    this.selectStore.next({store: this.store, selected: this.storeChecked})
+    this.selectStore.next({store: this.lineRequestByStore, selected: this.lineRequestByStore.selected})
   }
 
 }
