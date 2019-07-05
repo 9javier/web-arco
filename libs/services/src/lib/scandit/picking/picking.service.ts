@@ -122,6 +122,7 @@ export class PickingScanditService {
                     .subscribe((res: PickingStoreModel.ResponseSendProcess) => {
                       if (res.code == 200 || res.code == 201) {
                         listProductsToStorePickings = res.data.linesRequestPending;
+                        ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings);
                         ScanditMatrixSimple.setText(
                           `Producto ${codeScanned} escaneado y añadido ${this.pickingProvider.literalsJailPallet[typePacking].toThe}.`,
                           this.scanditProvider.colorsMessage.info.color,
@@ -195,6 +196,7 @@ export class PickingScanditService {
       .subscribe((res: PickingStoreModel.ResponseLineRequestsPending) => {
         if (res.code == 200 || res.code == 201) {
           listProductsToStorePickings = res.data;
+          ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings);
           if (listProductsToStorePickings.length < 1) {
             setTimeout(() => {
               ScanditMatrixSimple.setText(
