@@ -53,7 +53,6 @@ export class ReceptionScanditService {
                   packingReference: code
                 })
                 .subscribe((res: ReceptionModel.ResponseReceive) => {
-                  console.debug('Test::Res -> ', res);
                   if (res.code == 200 || res.code == 201) {
                     let msgSetText = 'Registrada la recepción de ';
                     if (typePacking == 1) {

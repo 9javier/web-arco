@@ -87,7 +87,6 @@ export class ListPickingTasksTemplateComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          console.debug('Test::Error Subscribe -> ', error);
         });
     });
   }
