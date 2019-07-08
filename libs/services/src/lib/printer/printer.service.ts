@@ -232,13 +232,13 @@ export class PrinterService {
    * Obtain product by reference and then print each of these products
    * @param listReferences references to print
    */
-   printTagBarcode(listReferences: string[]):Observable<Boolean>{
+   printTagBarcode(listReferences: string[]): Observable<Boolean> {
     /** declare and obsevable to merge all print results */
-    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
-      let innerObservable:Observable<any> = new Observable(observer=>{
+    let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+      let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
-      }).pipe(flatMap((r)=>{
-        return new Observable(s=>{
+      }).pipe(flatMap((r) => {
+        return new Observable(s => {
           return s.next();
         })
       }));

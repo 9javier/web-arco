@@ -50,10 +50,20 @@ export class PrintTagsScanditService {
           if (codeScanned.length == 18) {
             switch (this.typeTags) {
               case 1:
-                this.printerService.printTagBarcode([codeScanned]);
+                this.printerService.printTagBarcode([codeScanned])
+                  .subscribe((res) => {
+                    console.log('Printed product tag ... ', res);
+                  }, (error) => {
+                    console.warn('Error to print tag ... ', error);
+                  });
                 break;
               case 2:
-                this.printerService.printTagPrices([codeScanned]);
+                this.printerService.printTagPrices([codeScanned])
+                  .subscribe((res) => {
+                    console.log('Printed price tag ... ', res);
+                  }, (error) => {
+                    console.warn('Error to print tag ... ', error);
+                  });
                 break;
             }
           } else {
