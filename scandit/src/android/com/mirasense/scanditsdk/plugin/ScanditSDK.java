@@ -104,6 +104,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_LOAD_PRODUCTS = "matrixPickingStoresLoadProducts";
   private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
   private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
+  private static final String MATRIX_PRINT_TAGS = "matrixPrintTags";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -583,6 +584,28 @@ public class ScanditSDK extends CordovaPlugin {
       Intent intent = new Intent(this.cordova.getActivity(), MatrixPickingStores.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
+    } else if (action.equals(MATRIX_PRINT_TAGS)) {
+      mCallbackContextMatrixSimple = callbackContext;
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+      int typeTag = 1;
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+        typeTag = args.getInt(3);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
+      b.putInt("typeTag", typeTag);
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixPrintTags.class);
+      intent.putExtras(b);
+      this.cordova.startActivityForResult(this, intent, 6);
     } else if(action.equals(SET_MATRIX_SIMPLE_TEXT)){
 
       String package_name = cordova.getActivity().getApplication().getPackageName();
@@ -851,7 +874,7 @@ public class ScanditSDK extends CordovaPlugin {
               location = location.concat(" (P"+rack+row+column+")");
             }
             tvLocation.setText(location);
-            tvManufacturer.setText(colorProduct);
+            tvManufacturer.setText(brandProduct);
             tvModel.setText(modelProduct);
             tvSize.setText(sizeProduct);
 

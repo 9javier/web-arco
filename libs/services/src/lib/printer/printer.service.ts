@@ -232,13 +232,13 @@ export class PrinterService {
    * Obtain product by reference and then print each of these products
    * @param listReferences references to print
    */
-   printTagBarcode(listReferences: string[]):Observable<Boolean>{
+   printTagBarcode(listReferences: string[]): Observable<Boolean> {
     /** declare and obsevable to merge all print results */
-    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
-      let innerObservable:Observable<any> = new Observable(observer=>{
+    let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+      let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
-      }).pipe(flatMap((r)=>{
-        return new Observable(s=>{
+      }).pipe(flatMap((r) => {
+        return new Observable(s => {
           return s.next();
         })
       }));
@@ -290,57 +290,63 @@ export class PrinterService {
    * Print the prices of products
    * @param listReferences references of products
    */
-  printTagPrices(listReferences: string[]):Observable<Boolean>{
-    /** declare and obsevable to merge all print results */
-    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
-      let innerObservable:Observable<any> = new Observable(observer=>{
+  printTagPrices(listReferences: string[]): Observable<Boolean> {
+    let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+      let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
-      }).pipe(flatMap((r)=>{
-        return new Observable(s=>{
+      }).pipe(flatMap((r) => {
+        return new Observable(s => {
           return s.next();
         })
       }));
-      /**obtain the products */
-      return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
-        let options:Array<PrintModel.Print> = [];
-        /**Iterate and build object to print */
-        products.forEach(product=>{
-          let printOptions:PrintModel.Print = {
-            /**build the needed data for print */
-            product: {
-              productShoeUnit: {
-                reference: product.reference,
-                size: {
-                  name: product.size?product.size.name:''
-                },
-                manufacturer: {
-                  name: product.brand?product.brand.name:''
-                },
-                model: {
-                  name: product.model?product.model.name:'',
-                  reference: product.model?product.model.reference:'',
-                  color: {
-                    name: product.color? product.color.name:''
-                  },
-                  season: {
-                    name: product.season ? product.season.name : ''
-                  }
+
+      return this.priceService.postPricesByProductsReferences({references: listReferences}).pipe(flatMap((prices) => {
+        let options: Array<PrintModel.Print> = [];
+        prices.forEach(price => {
+          let printOptions: PrintModel.Print = {};
+          if(price.typeLabel){
+            printOptions.product = {
+              productShoeUnit:{
+                model:{
+                  reference:price.model.reference
                 }
               }
             }
-          };
-          printOptions.type = 1;
-          /**Build the array for obtain the string to send to printer */
+            printOptions.price = {
+              id:price.id,
+              percent: price.percent,
+              percentOutlet: price.percentOutlet,
+              totalPrice: price.totalPrice,
+              priceOriginal: price.priceOriginal,
+              priceDiscount: price.priceDiscount,
+              priceDiscountOutlet: price.priceDiscountOutlet,
+              typeLabel:price.typeLabel,
+              numRange: price.range?price.range.numRange:0,
+              valueRange: (price.range?String(price.range.startRange):'')+'-'+(price.range?String(price.range.endRange):''),
+            };
+          }
+          let dictionaryOfCaseTypes = {
+            "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
+            "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
+            "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
+            "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
+            "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
+            "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
+            "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
+          }
+          printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
           options.push(printOptions);
         });
-        /**Obtain the string from options */
-        let strToPrint = this.buildString(options);
+        let strToPrint:string = this.buildString(options);
         innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.printProductBoxTag(strToPrint));
+          return from(this.printPricesInZebra(strToPrint).catch((_=>{})));
+        })).pipe(flatMap(response=>{
+          return this.printNotify(options.map(option=>option.price.id));
         }));
         return innerObservable;
       }));
     }));
+
     return observable;
   }
 
@@ -428,7 +434,7 @@ export class PrinterService {
       for (let i = 0; i < printOptions.text.length; i++) {
         toPrintReturn += this.addTextToPrint(toPrint, printOptions.text[i], printOptions);
       }
-    } else if (printOptions.product.productShoeUnit.reference) {
+    } else {
       toPrintReturn += this.addTextToPrint(toPrint, printOptions.product.productShoeUnit.reference, printOptions);
     }
 

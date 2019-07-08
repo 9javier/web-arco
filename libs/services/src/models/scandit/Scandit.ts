@@ -1,9 +1,17 @@
 export namespace ScanditModel {
 
-  export interface ResponsePickingStores {
+  export interface Response {
     result: boolean,
-    action?: Actions,
     barcode: Barcode
+  }
+
+  export interface ResponsePickingStores extends Response {
+    action?: ActionsPickingStores
+  }
+
+  export interface ResponsePrintTags extends Response {
+    action: ActionsPrintTags,
+    type_tags?: 1|2
   }
 
   interface Barcode {
@@ -11,9 +19,13 @@ export namespace ScanditModel {
     id: number
   }
 
-  enum Actions {
+  enum ActionsPickingStores {
     init_picking = 'matrix_simple',
     finish_picking = 'matrix_simple_finish_picking'
+  }
+
+  enum ActionsPrintTags {
+    change_type = 'change_tag_type'
   }
 
 }

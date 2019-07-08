@@ -36,6 +36,12 @@ export namespace PriceModel{
         }
     }
 
+    export interface ResponsePricesByProductsReferences {
+      data: PriceByModelTariff[],
+      message: string,
+      code: number
+    }
+
     export interface ResponsePrice extends Request.Success{
         data:ResponsePricePaginated
     }
@@ -43,6 +49,11 @@ export namespace PriceModel{
     export interface ResponsePriceByModelTariff extends Request.Success{
         data:Array<Array<PriceByModelTariff>>;
     }
+
+    export interface ProductsReferences {
+      references: string[]
+    }
+
     export interface PriceByModelTariff extends Request.Success{
         createdAt: string,
         updatedAt: string,
