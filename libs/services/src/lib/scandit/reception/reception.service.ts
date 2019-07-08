@@ -45,9 +45,12 @@ export class ReceptionScanditService {
           this.scannerPaused = true;
           switch (this.scanditProvider.checkCodeValue(code)) {
             case this.scanditProvider.codeValue.JAIL:
-              typePacking = 1;
             case this.scanditProvider.codeValue.PALLET:
-              typePacking = 2;
+              if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.JAIL) {
+                typePacking = 1;
+              } else {
+                typePacking = 2;
+              }
               this.receptionService
                 .postReceive({
                   packingReference: code
