@@ -96,7 +96,7 @@ export class ScanditService {
         if (code === lastCodeScanned) return;
         lastCodeScanned = code;
 
-        if (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
+        if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
           //Container
           if(containerReference != code){
@@ -126,7 +126,9 @@ export class ScanditService {
                   warehouseId: warehouseId,
                   force: true
                 };
-                if (containerReference) params.containerReference = containerReference;
+                if (containerReference) {
+                  params.containerReference = containerReference;
+                }
 
                 this.storeProductInContainer(params, response);
               } else {
@@ -155,7 +157,9 @@ export class ScanditService {
                   productReference: productReference,
                   warehouseId: warehouseId
                 };
-                if (containerReference) params.containerReference = containerReference;
+                if (containerReference) {
+                  params.containerReference = containerReference;
+                }
                 this.storeProductInContainer(params, response);
               }
             }
