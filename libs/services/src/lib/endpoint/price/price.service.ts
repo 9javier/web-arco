@@ -23,8 +23,9 @@ export class PriceService {
    * @param page
    * @param limit
    */
-  getIndex(tariffId:number,page:number,limit:number,status:number):Observable<PriceModel.ResponsePricePaginated>{
+  getIndex(tariffId:number,page:number,limit:number,status:number,warehouseId:number):Observable<PriceModel.ResponsePricePaginated>{
     return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
+      warehouseId:warehouseId,
       tariffId:tariffId,
       status:status,
       pagination:{
