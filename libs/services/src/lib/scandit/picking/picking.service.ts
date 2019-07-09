@@ -17,6 +17,7 @@ declare let ScanditMatrixSimple;
 export class PickingScanditService {
 
   private timeoutHideText;
+  private intervalCleanLastCodeScanned = null;
 
   constructor(
     private events: Events,
@@ -28,10 +29,20 @@ export class PickingScanditService {
   async picking() {
     let listProductsToStorePickings = this.pickingProvider.listProductsToStorePickings;
     let lastCodeScanned: string = 'start';
+    let timeLastCodeScanned: number = 0;
     let processStarted: boolean = false;
     let typePacking: number = 1;
     let referencePacking: string = null;
     let scannerPaused: boolean = false;
+
+    this.clearTimeoutCleanLastCodeScanned();
+    this.intervalCleanLastCodeScanned = setInterval(() => {
+      if (this.scanditProvider.checkCodeValue(lastCodeScanned) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(lastCodeScanned) == this.scanditProvider.codeValue.JAIL) {
+        if(Math.abs((new Date().getTime() - timeLastCodeScanned) / 1000) > 4){
+          lastCodeScanned = 'start';
+        }
+      }
+    }, 1000);
 
     ScanditMatrixSimple.initPickingStores((response: ScanditModel.ResponsePickingStores) => {
       if (!scannerPaused && response.result) {
@@ -42,7 +53,15 @@ export class PickingScanditService {
             case this.scanditProvider.codeValue.PALLET:
             case this.scanditProvider.codeValue.JAIL:
               lastCodeScanned = codeScanned;
-              if (!processStarted) {
+              timeLastCodeScanned = new Date().getTime();
+              if(processStarted && referencePacking != codeScanned){
+                ScanditMatrixSimple.setText(
+                  this.pickingProvider.literalsJailPallet[typePacking].wrong_process_finished,
+                  this.scanditProvider.colorsMessage.error.color,
+                  this.scanditProvider.colorText.color,
+                  18);
+                this.hideTextMessage(2000);
+              } else {
                 if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL) {
                   typePacking = 1;
                 } else {
@@ -53,26 +72,70 @@ export class PickingScanditService {
                     packingReference: codeScanned
                   })
                   .subscribe((res: PickingStoreModel.ResponseCheckPacking) => {
-                    if (res.code == 200 || res.code == 201) {
-                      referencePacking = codeScanned;
-                      processStarted = true;
+                    if(res){
+                      if (res.code == 200 || res.code == 201) {
+                        referencePacking = codeScanned;
+                        if(res.data.packingStatus == 2){
+                          processStarted = true;
+                          ScanditMatrixSimple.setText(
+                            `${this.pickingProvider.literalsJailPallet[typePacking].process_started}${referencePacking}.`,
+                            this.scanditProvider.colorsMessage.info.color,
+                            this.scanditProvider.colorText.color,
+                            18);
+                          this.hideTextMessage(2000);
 
+                          ScanditMatrixSimple.setTextPickingStores(true, "Escanea los productos a incluir en el picking");
+                        } else if(res.data.packingStatus == 3){
+                          processStarted = false;
+                          ScanditMatrixSimple.setText(
+                            `${this.pickingProvider.literalsJailPallet[typePacking].process_end_packing}${referencePacking}.`,
+                            this.scanditProvider.colorsMessage.info.color,
+                            this.scanditProvider.colorText.color,
+                            18);
+                          this.hideTextMessage(2000);
+                          ScanditMatrixSimple.setTextPickingStores(true, "Escanea la jaula para el picking");
+
+                        } else {
+                          processStarted = false;
+                          console.error('Error Subscribe::Check Packing Reference::', res);
+                          ScanditMatrixSimple.setText(
+                            res.message,
+                            this.scanditProvider.colorsMessage.error.color,
+                            this.scanditProvider.colorText.color,
+                            16);
+                          this.hideTextMessage(1500);
+                        }
+
+                        if(res.data.linesPending.length == 0){
+                          const scanUnlockTimeout = setTimeout(() => { scannerPaused = false; }, 10 * 1000);
+                          try {
+                            this.finishPicking();
+                          } catch (e) {
+                            scannerPaused = false;
+                            clearTimeout(scanUnlockTimeout);
+                            this.clearTimeoutCleanLastCodeScanned();
+                            throw e;
+                          }
+                        }
+
+                      } else {
+                        console.error('Error Subscribe::Check Packing Reference::', res);
+                        ScanditMatrixSimple.setText(
+                          res.message,
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
+                      }
+                    } else {
+                      processStarted = false;
                       ScanditMatrixSimple.setText(
-                        `${this.pickingProvider.literalsJailPallet[typePacking].process_started}${referencePacking}.`,
+                        `${this.pickingProvider.literalsJailPallet[typePacking].process_packing_empty}${referencePacking}.`,
                         this.scanditProvider.colorsMessage.info.color,
                         this.scanditProvider.colorText.color,
                         18);
                       this.hideTextMessage(2000);
-
-                      ScanditMatrixSimple.setTextPickingStores(true, "Escanea los productos a incluir en el picking");
-                    } else {
-                      console.error('Error Subscribe::Check Packing Reference::', res);
-                      ScanditMatrixSimple.setText(
-                        res.message,
-                        this.scanditProvider.colorsMessage.error.color,
-                        this.scanditProvider.colorText.color,
-                        16);
-                      this.hideTextMessage(1500);
+                      ScanditMatrixSimple.setTextPickingStores(true, "Escanea la jaula para el picking");
                     }
                   }, (error) => {
                     console.error('Error Subscribe::Check Packing Reference::', error);
@@ -83,22 +146,6 @@ export class PickingScanditService {
                       16);
                     this.hideTextMessage(1500);
                   });
-              } else if (referencePacking != codeScanned) {
-                ScanditMatrixSimple.setText(
-                  this.pickingProvider.literalsJailPallet[typePacking].wrong_process_finished,
-                  this.scanditProvider.colorsMessage.error.color,
-                  this.scanditProvider.colorText.color,
-                  18);
-                this.hideTextMessage(2000);
-              } else {
-                const scanUnlockTimeout = setTimeout(() => { scannerPaused = false; }, 10 * 1000);
-                try {
-                  this.finishPicking();
-                } catch (e) {
-                  scannerPaused = false;
-                  clearTimeout(scanUnlockTimeout);
-                  throw e;
-                }
               }
               break;
             case this.scanditProvider.codeValue.PRODUCT:
@@ -219,7 +266,7 @@ export class PickingScanditService {
       this.scanditProvider.colorsMessage.info.color,
       this.scanditProvider.colorText.color,
       18);
-
+    this.clearTimeoutCleanLastCodeScanned();
     this.pickingStoreService
       .postPickingStoreChangeStatus({
         status: 3,
@@ -247,6 +294,13 @@ export class PickingScanditService {
     this.timeoutHideText = setTimeout(() => {
       ScanditMatrixSimple.showText(false);
     }, delay);
+  }
+
+  private clearTimeoutCleanLastCodeScanned(){
+    if(this.intervalCleanLastCodeScanned){
+      clearTimeout(this.intervalCleanLastCodeScanned);
+      this.intervalCleanLastCodeScanned = null;
+    }
   }
 
 }
