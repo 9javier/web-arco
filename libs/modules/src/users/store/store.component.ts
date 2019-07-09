@@ -4,7 +4,7 @@ import { RolesService, RolModel,WarehousesService,WarehouseModel } from '@suite/
 import { HttpResponse } from '@angular/common/http';
 import { Observable, observable } from 'rxjs';
 import { UsersService,UserModel } from '@suite/services';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { UtilsComponent } from '../../components/utils/utils.component';
 import { validators } from '../../utils/validators';
 
@@ -31,7 +31,8 @@ export class StoreComponent implements OnInit {
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
     hasWarehouse:false,
-    warehouseId:['']
+    warehouseId:[''],
+    permits: new FormArray([])
   };
 
   /**the allowed roles of the user */
@@ -42,6 +43,7 @@ export class StoreComponent implements OnInit {
 
 
   constructor(
+    private alertController: AlertController,
     private rolesService: RolesService,
     private formBuilder: FormBuilder,
     private userService:UsersService,
@@ -74,10 +76,62 @@ export class StoreComponent implements OnInit {
     this.createForm = this.formBuilder.group(
       this.formBuilderDataInputs,
       {
-        validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveItems("roles")]
+        validators: [validators.MustMatch('password', 'confirmPassword'),validators.havePermits("permits")]
       }
     );
   }
+
+  /**
+   * Open prompt for select and create a new warehouse to attach to the user for select permissions
+   * @param callback - using for execute before
+   */
+  async selectNewWarehouse(callback:Function){
+    const alert = await this.alertController.create({
+      header:"Asignar warehouse",
+      inputs: this.warehouses.map(warehouse=>{
+        return (<any>{
+          name:"warehouse",
+          label:warehouse.name,
+          type:"radio",
+          value:warehouse.id
+        })
+      }),
+      buttons:[{
+        text:'Cancelar'
+      },(<any>{
+        text:'Añadir',
+        handler:(data)=>{
+          callback.bind(this)(data);
+        }
+      })]
+    });
+    return alert.present();
+  }
+
+  /**
+   * Attach warehouse to user
+   * @param warehouseId - id of warehouse to add
+   */
+  addWarehouseToUser(warehouseId:number):void{
+    console.log(this.createForm);
+    (<FormArray>this.createForm.get("permits")).push(this.formBuilder.group({
+      name:this.warehouses.find(warehouse=>warehouse.id == warehouseId).name,
+      warehouseId:warehouseId,
+      roles:(new FormArray(this.roles.map(rol=>new FormControl(false))))
+    }));
+    console.log("this is the warehouse id", warehouseId);
+  }
+
+  /**
+   * Delete permission from formgroup to send to server
+   * @param index the index of the permission to be deleted
+   */
+  deletePermision(event,index:number):void{
+    event.preventDefault();
+    event.stopPropagation();
+    (<FormArray>this.createForm.get("permits")).removeAt(index);
+  }
+
   
   /**
   * close the current instance of update modal
@@ -95,12 +149,7 @@ export class StoreComponent implements OnInit {
       .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
           this.roles = res.body.data;
-          /**We need an array form control to manage the roles for the user*/
-          this.createForm.addControl("roles",new FormArray(
-            this.roles.map(rol=>{
-              return new FormControl(false);
-            })
-          ));          
+          /**We need an array form control to manage the roles for the user*/     
         });
       });    
   }
@@ -136,7 +185,10 @@ export class StoreComponent implements OnInit {
 submit():void{
   let user = this.createForm.value;
   /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
-  user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
+  user.permits = user.permits.map((permit,i)=>{
+    permit.roles = permit.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
+    return permit;
+  });
   user.roleId = user.roles?user.roles[0].id:null;
   this.utilsComponent.presentLoading();
   this.userService.postStore(this.sanitize(user)).then(observable=>{

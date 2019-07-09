@@ -24,7 +24,8 @@ export class UpdateComponent implements OnInit {
     password: ['',Validators.minLength(4)],
     confirmPassword: [''],
     hasWarehouse:false,
-    warehouseId:['']
+    warehouseId:[''],
+    
   };
 
   /**list of warehouses */
@@ -77,7 +78,7 @@ export class UpdateComponent implements OnInit {
     this.updateForm = this.formBuilder.group(
       this.formBuilderDataInputs,
       {
-        validators: [validators.MustMatch('password', 'confirmPassword'),validators.haveItems("roles")]
+        validators: [validators.MustMatch('password', 'confirmPassword'),validators.havePermits("permits")]
       }
     );
     console.log((this.updateForm));
@@ -119,18 +120,22 @@ export class UpdateComponent implements OnInit {
       .getIndex()
       .then((data: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
+          this.updateForm.addControl("permits", new FormArray([]))
           this.roles = res.body.data;
-          let userRoles = user.roles.map(rol=>rol.id);
-          console.log("user roles",userRoles);
-          /**We need an array form control to manage the roles for the user*/
-          this.updateForm.addControl("roles",new FormArray(
-            this.roles.map(rol=>{
-              /**In order to get the actives roles of user, 
-               * if the user not have the rol the result of indexOf is -1, 
-               * then -1+1 == 0 and !!0 is false !!anyNumber is true */
-              return new FormControl(!!(1- -userRoles.indexOf(rol.id)));
-            })
-          ));          
+          let permits = user.permits;
+          for(let i = 0; i < permits.length;i++){
+            let userRoles = permits[i].roles.map(rol=>rol.id);
+            (<FormArray>this.updateForm.controls.permits).push(this.formBuilder.group({
+              name:this.warehouses.find(warehouse=>warehouse.id == permits[i].warehouseId).name,
+              warehouseId:permits[i].warehouseId,
+              roles: this.roles.map(rol=>{
+                /**In order to get the actives roles of user, 
+                 * if the user not have the rol the result of indexOf is -1, 
+                 * then -1+1 == 0 and !!0 is false !!anyNumber is true */
+                return new FormControl(!!(1- -userRoles.indexOf(rol.id)));
+              })
+            }));
+          }   
         });
       });    
   }
@@ -154,7 +159,11 @@ export class UpdateComponent implements OnInit {
   submit():void{
     let user = this.updateForm.value;
     /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
-    user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
+    //user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
+    user.permits = user.permits.map((permit,i)=>{
+      permit.roles = permit.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
+      return permit;
+    });
     user.id = this.id;
     user.roleId = user.roles?user.roles[0].id:null;
     this.utilsComponent.presentLoading();

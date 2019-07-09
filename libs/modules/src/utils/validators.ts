@@ -20,6 +20,25 @@ MustMatch:function (controlName: string, matchingControlName: string) {
       }
     };
   },
+  havePermits:function(controlName){
+    return (formGroup:FormGroup) =>{
+      let control = formGroup.controls[controlName];
+      if(!control || (control && control.errors))
+        return;
+      if(!control.value.length) 
+        control.setErrors({ havePermits: true });
+      
+      let controlsR = control["controls"];
+      for(let i=0; i<controlsR.length;i++){
+        console.log("the f controlR",controlsR[i]);
+        let controlR = controlsR[i]['controls']['roles'];
+        if(!(controlR.value.indexOf(true) - -1))
+          control.setErrors({ havePermits: true });
+        else
+          control.setErrors(null);        
+      }
+    }
+  },
   /**verify that the control have at least one item */
   haveItems:function(controlName){
     return (formGroup:FormGroup) =>{
