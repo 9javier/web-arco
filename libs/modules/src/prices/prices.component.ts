@@ -209,7 +209,9 @@ export class PricesComponent implements OnInit {
    * @param limit
    */
   getPrices(tariffId:number,page:number,limit:number, status:number):void{
+    this.intermediaryService.presentLoading();
     this.priceService.getIndex(tariffId, page, limit, status).subscribe(prices=>{
+      this.intermediaryService.dismissLoading();
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
