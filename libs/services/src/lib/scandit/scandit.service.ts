@@ -137,7 +137,6 @@ export class ScanditService {
             } else {
               this.positioningLog(2, "1.4.2.2", "action NO force");
               let searchProductPosition = positionsScanning.filter(el => el.product == productReference && ((containerReference && el.position == containerReference) || (!containerReference && el.warehouse == warehouseId)));
-              console.debug('Test::SearchProductPosition -> ', searchProductPosition);
               if(searchProductPosition.length > 0){
                 this.positioningLog(3, "1.4.2.2.1", "ignored, duplicate!");
               }

@@ -15,6 +15,27 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initPickingStores: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor]);
+  },
+  /**
+   *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   * @param typeTag
+   */
+  initPrintTags: function (successCallback, title, titleBackground, titleColor, typeTag) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixPrintTags", [title, titleBackground, titleColor, typeTag]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color
@@ -89,6 +110,24 @@ var ScanditMatrixSimple = {
    */
   showFixedTextBottom: function (show, text) {
     exec(null, null, PLUGIN_NAME, "matrixSimpleShowFixedTextBottom", [show, text]);
+  },
+  /**
+   *
+   * @param products
+   */
+  sendPickingStoresProducts: function (products) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadProducts", [products]);
+  },
+  /**
+   *
+   * @param show
+   * @param text
+   */
+  setTextPickingStores: function (show, text) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresSetText", [show, text]);
+  },
+  finishPickingStores: function () {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresFinish");
   }
 }
 

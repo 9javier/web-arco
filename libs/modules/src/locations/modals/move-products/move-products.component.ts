@@ -60,7 +60,6 @@ export class MoveProductsComponent implements OnInit {
 
     this.listWarehousesOrigin = this.warehouseService.listWarehouses;
     this.listWarehousesDestiny = this.warehouseService.listWarehouses;
-    console.debug('Test::ListWarehousesDestiny -> ', this.listWarehousesDestiny);
     this.listHallsOriginal = this.warehouseService.listHalls;
     this.listRowsOriginal = this.warehouseService.listRows;
     this.listColumnsOriginal = this.warehouseService.listColumns;

@@ -18,7 +18,6 @@ export class PdfGeneratorService {
       html += '<svg id="barcode"></svg>';
       let canvas = new Canvas();
       let result = JsBarcode(canvas, "Hi world!");
-      console.debug('Test::Result -> ', result);
     }
     html += '</body></html>';
     var uri = "data:text/html," + encodeURIComponent(html);

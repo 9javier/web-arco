@@ -13,6 +13,7 @@ export class PriceService {
   /**urls of for the price service */
   private getIndexUrl:string = environment.apiBase+"/filter/prices/tariff";
   private getIndexByModelTariffUrl:string = environment.apiBase+"/filter/prices/references";
+  private postPricesByProductsReferencesUrl: string = environment.apiBase + "/filter/prices/references-products";
 
   constructor(private http:HttpClient) { }
 
@@ -31,7 +32,6 @@ export class PriceService {
         limit:limit
       }
     }).pipe(map(response=>{
-      console.log("respuesta",response)
       return response.data;
     }));
   }
@@ -42,6 +42,17 @@ export class PriceService {
    */
   getIndexByModelTariff(object):Observable<Array<Array<PriceModel.PriceByModelTariff>>>{
     return this.http.post<PriceModel.ResponsePriceByModelTariff>(this.getIndexByModelTariffUrl,object).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  /**
+   * Search prices by products references
+   * @param parameters object for search
+   */
+  postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Observable<PriceModel.PriceByModelTariff[]> {
+
+    return this.http.post<PriceModel.ResponsePricesByProductsReferences>(this.postPricesByProductsReferencesUrl, parameters).pipe(map(response => {
       return response.data;
     }));
   }

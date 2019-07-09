@@ -23,6 +23,7 @@ export namespace ProductModel {
       reference: string;
       datasetHash: string;
       hash: string;
+      name?: string;
       color: {
         createdAt: string;
         updatedAt: string;

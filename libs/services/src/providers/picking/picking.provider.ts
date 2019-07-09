@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
 import {PickingModel} from "../../models/endpoints/Picking";
+import {StoresLineRequestsModel} from "../../models/endpoints/StoresLineRequests";
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,7 @@ export class PickingProvider {
       process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
       process_started: 'Proceso iniciado con la Jaula ',
       scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo la Jaula utilizada para finalizar el proceso',
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
       toThe: "a la Jaula",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
@@ -52,6 +54,7 @@ export class PickingProvider {
       process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
       process_started: 'Proceso iniciado con la Jaula ',
       scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo la Jaula utilizada para finalizar el proceso',
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
       toThe: "a la Jaula",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
@@ -62,6 +65,7 @@ export class PickingProvider {
       process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
       process_started: 'Proceso iniciado con el Pallet ',
       scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo el Pallet utilizado para finalizar el proceso',
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
       toThe: "al Pallet",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
@@ -72,6 +76,7 @@ export class PickingProvider {
       process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
       process_started: 'Proceso iniciado con el Pallet ',
       scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
+      scan_packing_to_end: 'Escanea de nuevo el Pallet utilizado para finalizar el proceso',
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
       toThe: "al Pallet",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
@@ -120,6 +125,30 @@ export class PickingProvider {
   }
   set listPickingsHistory(value: PickingModel.Picking[]) {
     this._listPickingsHistory = value;
+  }
+
+  private _listLineRequestsToStorePickings: StoresLineRequestsModel.StoresLineRequests[] = null;
+  get listLineRequestsToStorePickings(): StoresLineRequestsModel.StoresLineRequests[] {
+    return this._listLineRequestsToStorePickings;
+  }
+  set listLineRequestsToStorePickings(value: StoresLineRequestsModel.StoresLineRequests[]) {
+    this._listLineRequestsToStorePickings = value;
+  }
+
+  private _listProductsToStorePickings: StoresLineRequestsModel.LineRequests[] = null;
+  get listProductsToStorePickings(): StoresLineRequestsModel.LineRequests[] {
+    return this._listProductsToStorePickings;
+  }
+  set listProductsToStorePickings(value: StoresLineRequestsModel.LineRequests[]) {
+    this._listProductsToStorePickings = value;
+  }
+
+  private _listStoresIdsToStorePicking: number[] = null;
+  get listStoresIdsToStorePicking(): number[] {
+    return this._listStoresIdsToStorePicking;
+  }
+  set listStoresIdsToStorePicking(value: number[]) {
+    this._listStoresIdsToStorePicking = value;
   }
 
   private _listProductsFromPickingHistory: ShoesPickingModel.ShoesPicking[];
