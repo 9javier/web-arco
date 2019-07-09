@@ -397,7 +397,7 @@ export class PrinterService {
               this.retryInterval = null;
           });
         }
-      });
+      },500);
     }
   }
 
