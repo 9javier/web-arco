@@ -75,7 +75,9 @@ export class TariffComponent implements OnInit {
    * Get labels to show
    */
   getTariffs(page:number,limit:number):void{
+    this.intermediaryService.presentLoading();
     this.tariffService.getIndex(page, limit).subscribe(tariffs=>{
+      this.intermediaryService.dismissLoading();
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
         result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
