@@ -355,11 +355,59 @@ export class PrinterService {
   }
 
 
+  faileds:Array<string>=[];
+  failedsStr:string="";
+  retryInterval;
+  reFailed = false;
+  /**
+   * Laun an interval that resend the failed request to printer
+   */
+  launchInterval(){
+    /**si no hay un instervalo activo */
+    if(!this.retryInterval){
+      /**crea un intervalo que intentará reimprimir */
+      this.retryInterval = setInterval(()=>{
+        /**esto funciona como bandera, si hay un texto quiere decir que hay algo imprimiendose, si no, no */
+        if(!this.failedsStr){
+          /**We adding the faileds strings tail into failedString */
+          for(let i = 0;i<this.faileds.length;i++){
+            this.failedsStr+=this.faileds[i];
+          }
+          /**And then empty the array */
+          this.faileds = [];
+          /**try to print */
+          this.toPrintFromString(this.failedsStr,true).then(success=>{
+            /**Allow the new errors to be printed */
+            this.failedsStr = "";
+            /**If no have more faileds request to print stop the interval */
+            if(!this.faileds.length)
+              clearInterval(this.retryInterval);
+              this.retryInterval = null;
+          });
+        /**Si hay un failedStr quiere decir que hay algo imprimiendose , y si hay un refailed quiere decir que la solicitud que fallo es una que habia fallado anteriormente */
+        }else if(this.reFailed){
+          /**colocamos la bandera nuevamente como falsa ya que si habia fallado lo volveremos a intentar y la respuesta la obtendremos luego */
+          this.reFailed = false;
+          this.toPrintFromString(this.failedsStr,true).then(success=>{
+            /**Allow the new errors to be printed */
+            this.failedsStr = "";
+            /**If no have more faileds request to print stop the interval */
+            if(!this.faileds.length)
+              clearInterval(this.retryInterval);
+              this.retryInterval = null;
+          });
+        }
+      });
+    }
+  }
+
+
   /**
    * Print labels with the zebra printed from string
-   * @param textToPrint string to be printed
+   * @param textToPrint - string to be printed
+   * @param failed - the solicitude comes from a failed request
    */
-  private async toPrintFromString(textToPrint:string) {
+  private async toPrintFromString(textToPrint:string,failed:boolean=false) {
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
         return new Promise((resolve, reject) => {
@@ -371,6 +419,14 @@ export class PrinterService {
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                 resolve();
               }, (fail) => {
+                
+                /**if !failed means that the request must be added to faildeds */
+                if(!failed){
+                  this.faileds.push(textToPrint)
+                }else{
+                  this.reFailed = true;
+                }
+                this.launchInterval();
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
                   //console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                   this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
