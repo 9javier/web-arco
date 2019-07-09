@@ -6,7 +6,8 @@ import {
   IntermediaryService,
   LabelsService,
   PriceModel,
-  PriceService
+  PriceService,
+  WarehousesService
 
 } from '@suite/services';
 
@@ -52,15 +53,30 @@ export class PricesComponent implements OnInit {
 
   changeValue(event){
     this.status = event.detail.value;
-    this.getPrices(this.tariffId,0,this.limit,this.status);
+    this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
   }
 
+  reSearch(){
+    this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
+  }
+
+  getWarehouses():void{
+    this.warehousesService.getIndex().then(observable=>{
+      observable.subscribe(warehouses=>{
+        this.warehouses = warehouses.body.data;
+      });
+    })
+  }
 
   /**Arrays to be shown */
   labels:Array<any> = [];
 
   /**List of prices */
   prices:Array<PriceModel.Price> = [];
+
+  filters:FormGroup = this.formBuilder.group({
+    warehouseId:51
+  });
 
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({
@@ -80,7 +96,8 @@ export class PricesComponent implements OnInit {
     private priceService:PriceService,
     private intermediaryService:IntermediaryService,
     private formBuilder:FormBuilder,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private warehousesService:WarehousesService
   ) {
 
   }
@@ -125,7 +142,7 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getPrices(this.tariffId,this.page,this.limit,this.status);
+      this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
     });
   }
 
@@ -158,7 +175,7 @@ export class PricesComponent implements OnInit {
       this.printerService.printPrices({references:prices}).subscribe(result=>{
         console.log("result of impressions",result);
         this.intermediaryService.dismissLoading();
-        this.getPrices(this.tariffId,this.page,this.limit,this.status);
+        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
       },error=>{
         this.intermediaryService.dismissLoading();
         console.log(error);
@@ -167,11 +184,12 @@ export class PricesComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getWarehouses();
     this.route.paramMap.subscribe(params => {
       console.log("here");
       this.tariffId = Number(params.get("tariffId"));
       console.log(this.tariffId);
-      this.getPrices(this.tariffId,this.page,this.limit,this.status);
+      this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
     });
     
   }
@@ -208,9 +226,9 @@ export class PricesComponent implements OnInit {
    * @param page
    * @param limit
    */
-  getPrices(tariffId:number,page:number,limit:number, status:number):void{
+  getPrices(tariffId:number,page:number,limit:number, status:number,warehouseId:number):void{
     this.intermediaryService.presentLoading();
-    this.priceService.getIndex(tariffId, page, limit, status).subscribe(prices=>{
+    this.priceService.getIndex(tariffId, page, limit, status,warehouseId).subscribe(prices=>{
       this.intermediaryService.dismissLoading();
       this.prices = prices.results;
       this.initSelectForm(this.prices);

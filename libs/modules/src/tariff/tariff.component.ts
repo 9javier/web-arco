@@ -6,7 +6,8 @@ import {
   IntermediaryService,
   LabelsService,
   TariffService,
-  TariffModel
+  TariffModel,
+  WarehousesService
 
 } from '@suite/services';
 
@@ -26,6 +27,12 @@ export class TariffComponent implements OnInit {
     /**Arrays to be shown */
     tariffs:Array<any> = [];
 
+    filters:FormGroup = this.formBuilder.group({
+      warehouseId:51
+    })
+
+    warehouses:Array<any> = [];
+
     /**Quantity of items for show in any page */
     pagerValues = [20, 30, 40];
 
@@ -38,15 +45,29 @@ export class TariffComponent implements OnInit {
     displayedColumns: string[] = ['name', 'initDate', 'endDate'];
     dataSource: any;
 
+    warehouseId:number = 51;
+
   constructor(    
     private intermediaryService:IntermediaryService,
     private formBuilder:FormBuilder,
     private tariffService:TariffService,
-    private router:Router) { }
+    private router:Router,
+    private warehousesService:WarehousesService) { }
 
   ngOnInit() {
-    this.getTariffs(this.page,this.limit);
+    console.log(this.filters);
+    this.filters.patchValue({warehouseId:1});
+    this.getWarehouses();
+    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
     this.listenChanges();
+  }
+  /**
+   * filter the tariff by warehouse
+   * @param event 
+   */
+  filterByWarehouse(event){
+    this.warehouseId = event.detail.value;
+    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
   }
 
   listenChanges():void{
@@ -58,7 +79,7 @@ export class TariffComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getTariffs(this.page,this.limit);
+      this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
     });
   }
 
@@ -71,12 +92,20 @@ export class TariffComponent implements OnInit {
     this.router.navigate(['prices',id]);
   }
 
+  getWarehouses():void{
+    this.warehousesService.getIndex().then(observable=>{
+      observable.subscribe(warehouses=>{
+        this.warehouses = warehouses.body.data;
+      });
+    })
+  }
+
   /**
    * Get labels to show
    */
-  getTariffs(page:number,limit:number):void{
+  getTariffs(page:number,limit:number,id:number=51):void{
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit).subscribe(tariffs=>{
+    this.tariffService.getIndex(page, limit,id).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
