@@ -42,7 +42,7 @@ export class PricesComponent implements OnInit {
 
   status = this.filterTypes[0].id;
 
-
+  warehouses:Array<any> = [];
   pagerValues:Array<number> = [5, 10, 20];
 
   page:number = 0;
