@@ -23,7 +23,7 @@ export class TariffService {
    */
   getIndex(page:number = 1, limit:number =1,id:number = 51):Observable<TariffModel.ResponseTariffPaginator>{
     return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl,{
-      warehouseId:id,
+      //warehouseId:id,
       pagination: {
         page: page,
         limit: limit
