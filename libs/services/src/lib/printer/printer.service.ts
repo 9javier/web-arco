@@ -365,9 +365,10 @@ export class PrinterService {
    * @param str - the string to add to the tail
    */
   async tailManagement(str?:string){
+    /**añadimos un string a la cola de impresión */
     if(str)
       this.tail.push(str);
-    /**si no hay un instervalo activo */
+    /**si no hay un instervalo activo creamos uno */
     if(!this.printInterval){
       /**crea un intervalo que intentará imprimir */
       this.printInterval = setInterval(()=>{
@@ -379,16 +380,16 @@ export class PrinterService {
           }
           /**vaciamos por completo el array, ya que acabamos de mandar a imprimir todo, y aunque fallara, lo tenemos almacenado en tailStr*/
           this.tail = [];
-          /**try to print */
-          this.toPrintFromString(this.tailStr,true).then(success=>{
+          /**intentamos imprimir */
+          this.toPrintFromString(this.tailStr).then(success=>{
             /**Si se imprime borramos el texto de cola y vaciamos la bandera lo cual permitirá mandar la orden de imprimir nuevamente */
             this.tailStr = "";
-            /**If no have more faileds request to print stop the interval */
+            /**Si no hay más nada para imprimir matamos el intervalo */
             if(!this.tail.length){
               clearInterval(this.printInterval);
               this.printInterval = null;
             }
-          /**si la solicitud falla activamos la bandera failed */
+          /**si la solicitud falla activamos la bandera failed para que la próxima vez que entre al intervalo lo vuelva a intentar*/
           }).catch(error=>{
             this.failed = true;
           });
@@ -396,10 +397,10 @@ export class PrinterService {
         }else if(this.failed){
           /**colocamos la bandera nuevamente como falsa ya que si habia fallado lo volveremos a intentar y la respuesta la obtendremos luego */
           this.failed = false;
-          this.toPrintFromString(this.tailStr,true).then(success=>{
+          this.toPrintFromString(this.tailStr).then(success=>{
             /**Allow the new errors to be printed */
             this.tailStr = "";
-            /**If no have more faileds request to print stop the interval */
+            /**Si no hay nada para imprimir matamos el intervalo*/
             if(!this.tail.length){
               clearInterval(this.printInterval);
               this.printInterval = null;
