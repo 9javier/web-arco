@@ -31,9 +31,11 @@ export class TextareaComponent implements OnInit {
   processInitiated: boolean = false;
   jailReference: string = null;
   lastCodeScanned: string = 'start';
+  timeLastCodeScanned: number = 0;
   productsScanned: string[] = [];
   literalsJailPallet: any = null;
   scanContainerToNotFound: string = null;
+  intervalCleanLastCodeScanned = null;
 
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
@@ -63,6 +65,15 @@ export class TextareaComponent implements OnInit {
     this.packingReference = this.pickingProvider.packingReference;
     this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
 
+    this.clearTimeoutCleanLastCodeScanned();
+    this.intervalCleanLastCodeScanned = setInterval(() => {
+      if (this.scanditProvider.checkCodeValue(this.lastCodeScanned) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(this.lastCodeScanned) == this.scanditProvider.codeValue.JAIL) {
+        if(Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4){
+          this.lastCodeScanned = 'start';
+        }
+      }
+    }, 1000);
+
     if (this.listProducts.length > 0) {
       this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
     } else {
@@ -85,7 +96,7 @@ export class TextareaComponent implements OnInit {
 
       this.inputPicking = null;
       if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {
-        if (!this.processInitiated) {
+        if (this.listProducts.length != 0) {
           let typePackingScanned = 0;
           if (dataWrited.match(/J([0-9]){4}/)) {
             typePackingScanned = 1;
@@ -94,6 +105,7 @@ export class TextareaComponent implements OnInit {
           }
 
           if ((this.packingReference && this.packingReference == dataWrited) || !this.packingReference) {
+            this.timeLastCodeScanned = new Date().getTime();
             if (typePackingScanned == this.typePacking) {
               this.postVerifyPacking({
                 status: 2,
@@ -106,16 +118,48 @@ export class TextareaComponent implements OnInit {
                   } else {
                     this.typePacking = 2;
                   }
-                  this.processInitiated = true;
-                  this.inputPicking = null;
-                  this.jailReference = dataWrited;
-                  this.dataToWrite = 'PRODUCTO';
-                  if (!this.packingReference) {
+                  if(res){
+                    if (res.code == 200 || res.code == 201) {
+                      if(res.data.packingStatus == 2){
+                        this.processInitiated = true;
+                        this.inputPicking = null;
+                        this.jailReference = dataWrited;
+                        this.dataToWrite = 'PRODUCTO';
+                        if (!this.packingReference) {
+                          this.packingReference = this.jailReference;
+                        }
+                        this.setNexProductToScan(this.listProducts[0]);
+                        this.presentToast(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`, 2000, this.pickingProvider.colorsMessage.info.name);
+                        this.showTextStartScanPacking(false, this.typePacking, '');
+                      } else if(res.data.packingStatus == 3){
+                        this.processInitiated = false;
+                        this.inputPicking = null;
+                        this.jailReference = null;
+                        this.dataToWrite = 'CONTENEDOR';
+                        this.packingReference = this.jailReference;
+                        this.presentToast(`${this.literalsJailPallet[this.typePacking].process_end_packing}${dataWrited}.`, 2000, this.pickingProvider.colorsMessage.info.name);
+                        this.showNexProductToScan(false);
+                        this.showTextStartScanPacking(true, this.typePacking, '');
+                      } else {
+                        this.processInitiated = false;
+                        this.inputPicking = null;
+                        this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
+                      }
+                    } else {
+                      this.processInitiated = false;
+                      this.inputPicking = null;
+                      this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
+                    }
+                  } else {
+                    this.processInitiated = false;
+                    this.inputPicking = null;
+                    this.jailReference = null;
+                    this.dataToWrite = 'CONTENEDOR';
                     this.packingReference = this.jailReference;
+                    this.presentToast(`${this.literalsJailPallet[this.typePacking].process_packing_empty}${dataWrited}.`, 2000, this.pickingProvider.colorsMessage.info.name);
+                    this.showNexProductToScan(false);
+                    this.showTextStartScanPacking(true, this.typePacking, '');
                   }
-                  this.setNexProductToScan(this.listProducts[0]);
-                  this.presentToast(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`, 2000, this.pickingProvider.colorsMessage.info.name);
-                  this.showTextStartScanPacking(false, this.typePacking, '');
                 }, (error) => {
                   this.inputPicking = null;
                   if (error.error.code == 404) {
@@ -132,28 +176,27 @@ export class TextareaComponent implements OnInit {
             this.inputPicking = null;
             this.presentToast(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, 2000, this.pickingProvider.colorsMessage.error.name);
           }
-        } else if (this.listProducts.length != 0) {
-          this.inputPicking = null;
-          this.presentToast('Continúe escaneando los productos que se le indican antes de finalizar el proceso.', 2000, this.pickingProvider.colorsMessage.error.name);
-        } else if (this.jailReference != dataWrited) {
+        } else if (this.jailReference && this.jailReference != dataWrited) {
           this.inputPicking = null;
           this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
           this.postVerifyPacking({
             status: 3,
             pickingId: this.pickingId,
-            packingReference: this.jailReference
+            packingReference: dataWrited
           })
             .subscribe((res) => {
               this.inputPicking = null;
               this.presentToast('Proceso finalizado correctamente.', 1500, this.pickingProvider.colorsMessage.success.name);
               this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
+              this.clearTimeoutCleanLastCodeScanned();
               setTimeout(() => {
                 this.location.back();
                 this.events.publish('picking:remove');
               }, 1.5 * 1000);
             }, (error) => {
               this.inputPicking = null;
+              this.clearTimeoutCleanLastCodeScanned();
               if (error.error.code == 404) {
                 this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
               } else {
@@ -286,10 +329,10 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  private postVerifyPacking(packing) : Observable<PickingModel.ResponseUpdate> {
+  private postVerifyPacking(packing) : Observable<any> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingModel.ResponseUpdate>(this.postVerifyPackingUrl, packing, { headers });
+      return this.http.post<any>(this.postVerifyPackingUrl, packing, { headers });
     }));
   }
 
@@ -343,11 +386,20 @@ export class TextareaComponent implements OnInit {
 
   private showTextEndScanPacking(show: boolean, typePacking: number, packingReference: string) {
     if (show) {
-      if (typePacking == 1) {
-        this.scanJail = "Escanea la Jaula " + packingReference + " para finalizar el proceso de picking.";
+      if(packingReference){
+        if (typePacking == 1) {
+          this.scanJail = "Escanea la Jaula " + packingReference + " para finalizar el proceso de picking.";
+        } else {
+          this.scanJail = "Escanea el Pallet " + packingReference + " para finalizar el proceso de picking.";
+        }
       } else {
-        this.scanJail = "Escanea el Pallet " + packingReference + " para finalizar el proceso de picking.";
+        if (typePacking == 1) {
+          this.scanJail = "Escanea la Jaula para finalizar el proceso de picking.";
+        } else {
+          this.scanJail = "Escanea el Pallet para finalizar el proceso de picking.";
+        }
       }
+
     } else {
       this.scanJail = null;
     }
@@ -394,5 +446,12 @@ export class TextareaComponent implements OnInit {
     });
 
     toast.present();
+  }
+
+  private clearTimeoutCleanLastCodeScanned(){
+    if(this.intervalCleanLastCodeScanned){
+      clearTimeout(this.intervalCleanLastCodeScanned);
+      this.intervalCleanLastCodeScanned = null;
+    }
   }
 }

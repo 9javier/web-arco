@@ -337,7 +337,7 @@ export class ScanditService {
                         packingReference = code;
                         packingReference = null;
                         ScanditMatrixSimple.showNexProductToScan(false);
-                        ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                        ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
                         this.hideTextMessage(2000);
                         ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
                       } else {
@@ -410,6 +410,7 @@ export class ScanditService {
                 ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
                 this.hideTextMessage(1500);
                 ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
+                this.clearTimeoutCleanLastCodeScanned();
                 setTimeout(() => {
                   this.pickingLog(2, "22", "setTimeout(() => {");
                   ScanditMatrixSimple.finish();
@@ -419,6 +420,7 @@ export class ScanditService {
                 this.pickingLog(2, "23", "}, (error) => {");
                 this.scannerPaused = false;
                 clearTimeout(scanUnlockTimeout);
+                this.clearTimeoutCleanLastCodeScanned();
                 if (error.error.code == 404) {
                   this.pickingLog(2, "24", "if (error.error.code == 404) {");
                   ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
@@ -432,6 +434,7 @@ export class ScanditService {
           } catch (e) {
             this.scannerPaused = false;
             clearTimeout(scanUnlockTimeout);
+            this.clearTimeoutCleanLastCodeScanned();
             throw e;
           }
         }
