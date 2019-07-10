@@ -42,7 +42,7 @@ export class PricesComponent implements OnInit {
   selectAllBinding;
 
   changeValue(event){
-    this.status = parseInt(event.detail.value);
+    //this.status = parseInt(event.detail.value);
     this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
   }
 
@@ -132,7 +132,8 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
+      if(this.status === 0 || this.status) 
+        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
     });
   }
 
