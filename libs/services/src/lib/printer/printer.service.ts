@@ -156,7 +156,6 @@ export class PrinterService {
    * @param referencesObject - object with the array of references to be sended
    */
   printPrices(referencesObject){
-    console.log("ac[a es que falla")
     let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
       let innerObservable:Observable<any> = new Observable(observer=>{
         observer.next(true);
@@ -223,6 +222,8 @@ export class PrinterService {
    * @param ids - the ids of printed labels
    */
   printNotify(ids:Array<Number>):Observable<boolean>{
+    console.log("entra en esto");
+    console.log(ids);
     return this.http.post(this.printNotifyUrl,{references:ids}).pipe(map(response=>{
       return true;
     }));

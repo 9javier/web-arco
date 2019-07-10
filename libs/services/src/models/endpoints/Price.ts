@@ -27,6 +27,15 @@ export namespace PriceModel{
         tariffId: number
     }
 
+    export interface StatusType{
+        id:number,
+        name:string
+    }
+
+    export interface ResponseStatusType extends Request.Success{
+        data:StatusType[],
+    }
+
     export interface ResponsePricePaginated{
         results:Array<Price>;
         pagination: {
