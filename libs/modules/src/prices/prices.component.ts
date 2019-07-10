@@ -29,18 +29,8 @@ export class PricesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
-  filterTypes = [{
-    id:1,
-    name:"All"
-  },{
-    id:2,
-    name:"Printed"
-  },{
-    id:3,
-    name:"No printed"
-  }];
-
-  status = this.filterTypes[0].id;
+  filterTypes:Array<PriceModel.StatusType> = [];
+  status:number;
 
   warehouses:Array<any> = [];
   pagerValues:Array<number> = [5, 10, 20];
@@ -52,7 +42,7 @@ export class PricesComponent implements OnInit {
   selectAllBinding;
 
   changeValue(event){
-    this.status = event.detail.value;
+    this.status = parseInt(event.detail.value);
     this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
   }
 
@@ -158,19 +148,30 @@ export class PricesComponent implements OnInit {
   }
 
   /**
+   * Get the name of status based on id
+   * @param id - the id of the status
+   */
+  getNameOfStatus(id:number):string{
+    return this.filterTypes.find(status=>{
+      return status.id == id
+    }).name;
+  }
+  /**
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
   printPrices(items,warehouseId:number=51):void{
     let prices = this.selectedForm.value.toSelect.map((price,i)=>{
+      console.log(items[i]);
       let object = {
         warehouseId:warehouseId,
-        tariffId:items[i].tariffId,
-        modelId:items[i].modelId,
+        tariffId:items[i].tariff.id,
+        modelId:items[i].model.id,
         numRange: items[i].numRange
       }
       return price?object:false})
       .filter(price=>price);
+      console.log(prices);
       this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
       this.printerService.printPrices({references:prices}).subscribe(result=>{
         console.log("result of impressions",result);
@@ -185,13 +186,18 @@ export class PricesComponent implements OnInit {
 
   ngOnInit() {
     this.getWarehouses();
-    this.route.paramMap.subscribe(params => {
-      console.log("here");
-      this.tariffId = Number(params.get("tariffId"));
-      console.log(this.tariffId);
-      this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
-    });
-    
+    this.priceService.getStatusEnum().subscribe(status=>{
+      this.filterTypes = status;
+      this.status = this.filterTypes.find((status)=>{
+        return status.name.toLowerCase() == "todos";
+      }).id;
+      this.route.paramMap.subscribe(params => {
+        console.log("here");
+        this.tariffId = Number(params.get("tariffId"));
+        console.log(this.tariffId);
+        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
+      });
+    });    
   }
 
   ngAfterViewInit(): void {

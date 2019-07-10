@@ -18,6 +18,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [PricesComponent],
   imports: [
+    FormsModule,
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
