@@ -1,7 +1,8 @@
 export namespace ReceptionModel {
   export interface Reception {
     force?: boolean,
-    packingReference: string
+    packingReference: string,
+    quantityProducts: number
   }
 
   export interface ResponseReceive {
