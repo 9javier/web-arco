@@ -5,6 +5,7 @@ import {ShoesPickingService} from "../../../../services/src/lib/endpoint/shoes-p
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {ModalController} from "@ionic/angular";
 import {ListProductsComponent} from "../modal-products/modal-products.component";
+import {JailModel} from "@suite/services";
 
 @Component({
   selector: 'picking',
@@ -41,6 +42,16 @@ export class PickingComponent implements OnInit {
     });
 
     return await modalProducts.present();
+  }
+
+  processPickingPackings(): string {
+    if (this.pickingHistory.packingRef) {
+      return this.pickingHistory.packingRef;
+    } else {
+      return this.pickingHistory.listPackings.map((packing: JailModel.Jail) => {
+        return packing.reference;
+      }).join(', ');
+    }
   }
 
 }
