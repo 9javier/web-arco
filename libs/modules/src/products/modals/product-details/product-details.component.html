@@ -61,7 +61,7 @@
                         Almacén {{ historical.destinationWarehouse.reference }} - {{ historical.destinationWarehouse.name }}
                     </p>
                     <p>
-                        Ubicación: {{ historical.destinationContainer.reference}}
+                        Ubicación: {{ historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
                     </p>
                     <p>
                         Acción realizada: {{actionTypes[historical.typeAction]}}
