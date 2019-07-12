@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { PricesComponent } from './prices.component';
 import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
+import { MatListModule, MatTableModule, MatPaginatorModule, MatExpansionModule, MatSlideToggleModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { RouterModule,Routes } from '@angular/router';
+import { ResponsiveLayoutModule } from '../components/responsive-layout/responsive-layout.module';
 
 const routes: Routes = [
   {
@@ -17,6 +18,7 @@ const routes: Routes = [
 @NgModule({
   declarations: [PricesComponent],
   imports: [
+    FormsModule,
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
@@ -25,6 +27,9 @@ const routes: Routes = [
     MatPaginatorModule,
     BreadcrumbModule,
     RouterModule.forChild(routes),
+    ResponsiveLayoutModule,
+    MatExpansionModule,
+    MatSlideToggleModule
   ]
 })
 export class PricesModule { }

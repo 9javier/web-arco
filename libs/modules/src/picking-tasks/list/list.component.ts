@@ -80,7 +80,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           if (this.pickingProvider.method == 'manual') {
             this.router.navigate(['picking/manual']);
           } else {
-              this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType, this.pickingService.pickingAssignments[0].packingRef);
+              this.scanditService.picking(this.pickingService.pickingAssignments[0].id, listProducts, this.pickingService.pickingAssignments[0].packingType);
           }
         }, (error) => {
           if (this.loading) {

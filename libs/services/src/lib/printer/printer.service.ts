@@ -156,7 +156,6 @@ export class PrinterService {
    * @param referencesObject - object with the array of references to be sended
    */
   printPrices(referencesObject){
-    console.log("ac[a es que falla")
     let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
       let innerObservable:Observable<any> = new Observable(observer=>{
         observer.next(true);
@@ -208,7 +207,7 @@ export class PrinterService {
         });
         let strToPrint:string = this.buildString(options);
         innerObservable = innerObservable.pipe(flatMap(product=>{
-            return from(this.printPricesInZebra(strToPrint).catch((_=>{})));
+            return from(this.tailManagement(strToPrint).catch((_=>{})));
         })).pipe(flatMap(response=>{
           return this.printNotify(options.map(option=>option.price.id));
         }));
@@ -223,6 +222,8 @@ export class PrinterService {
    * @param ids - the ids of printed labels
    */
   printNotify(ids:Array<Number>):Observable<boolean>{
+    console.log("entra en esto");
+    console.log(ids);
     return this.http.post(this.printNotifyUrl,{references:ids}).pipe(map(response=>{
       return true;
     }));
@@ -278,7 +279,7 @@ export class PrinterService {
         /**Obtain the string from options */
         let strToPrint = this.buildString(options);
         innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.printProductBoxTag(strToPrint));
+          return from(this.tailManagement(strToPrint));
         }));
         return innerObservable;
       }));
@@ -339,7 +340,7 @@ export class PrinterService {
         });
         let strToPrint:string = this.buildString(options);
         innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.printPricesInZebra(strToPrint).catch((_=>{})));
+          return from(this.tailManagement(strToPrint).catch((_=>{})));
         })).pipe(flatMap(response=>{
           return this.printNotify(options.map(option=>option.price.id));
         }));
@@ -355,11 +356,82 @@ export class PrinterService {
   }
 
 
+  tail:Array<string>=[];
+  /**es el texto que se va a imprimir, pero también funciona a modo de bandera que nos dice si algo está imprimiéndose */
+  tailStr:string="";
+  printInterval;
+  failed = false;
+  /**
+   * Add string to tail of prints and launch the printer
+   * @param str - the string to add to the tail
+   */
+  async tailManagement(str?:string){
+    /**añadimos un string a la cola de impresión */
+    if(str)
+      this.tail.push(str);
+    /**si no hay un instervalo activo creamos uno */
+    if(!this.printInterval){
+      /**crea un intervalo que intentará imprimir */
+      this.printInterval = setInterval(()=>{
+        /**esto funciona como bandera, si hay un texto quiere decir que hay algo imprimiendose, si no, no */
+        if(!this.tailStr){
+          /**añadimos los elementos de la cola a un string único para imprimir */
+          for(let i = 0;i<this.tail.length;i++){
+            this.tailStr+=this.tail[i];
+          }
+          /**vaciamos por completo el array, ya que acabamos de mandar a imprimir todo, y aunque fallara, lo tenemos almacenado en tailStr*/
+          this.tail = [];
+          /**intentamos imprimir */
+          this.toPrintFromString(this.tailStr).then(success=>{
+            /**Si se imprime borramos el texto de cola y vaciamos la bandera lo cual permitirá mandar la orden de imprimir nuevamente */
+            this.tailStr = "";
+            /**Si no hay más nada para imprimir matamos el intervalo */
+            if(!this.tail.length){
+              clearInterval(this.printInterval);
+              this.printInterval = null;
+            }
+          /**si la solicitud falla activamos la bandera failed para que la próxima vez que entre al intervalo lo vuelva a intentar*/
+          }).catch(error=>{
+            this.failed = true;
+          });
+        /**Si hay un tailStr quiere decir que algo se est[a imprimiendo, a menos que la bandera failed se haya activado, en ese caso volvemos a mandar la misma solicitud*/
+        }else if(this.failed){
+          /**colocamos la bandera nuevamente como falsa ya que si habia fallado lo volveremos a intentar y la respuesta la obtendremos luego */
+          this.failed = false;
+          this.toPrintFromString(this.tailStr).then(success=>{
+            /**Allow the new errors to be printed */
+            this.tailStr = "";
+            /**Si no hay nada para imprimir matamos el intervalo*/
+            if(!this.tail.length){
+              clearInterval(this.printInterval);
+              this.printInterval = null;
+            }
+          }).catch(error=>{
+            this.failed = true;
+          });
+        }
+      },500);
+    }
+  }
+
+
   /**
    * Print labels with the zebra printed from string
-   * @param textToPrint string to be printed
+   * @param textToPrint - string to be printed
+   * @param failed - the solicitude comes from a failed request
    */
-  private async toPrintFromString(textToPrint:string) {
+  private async toPrintFromString(textToPrint:string,macAddress?) {
+
+    /**añadimos esto a la lógica del toPrint */
+    if (macAddress) {
+      this.address = macAddress;
+    } else {
+      this.address = await this.getConfiguredAddress();
+    }
+
+    if (!this.address)
+      await this.connect()
+  
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
         return new Promise((resolve, reject) => {
