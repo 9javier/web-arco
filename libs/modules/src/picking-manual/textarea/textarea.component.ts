@@ -31,6 +31,7 @@ export class TextareaComponent implements OnInit {
   processInitiated: boolean = false;
   jailReference: string = null;
   lastCodeScanned: string = 'start';
+  lastCarrierScanned: string = '';
   timeLastCodeScanned: number = 0;
   productsScanned: string[] = [];
   literalsJailPallet: any = null;
@@ -77,6 +78,7 @@ export class TextareaComponent implements OnInit {
     if (this.listProducts.length > 0) {
       this.showTextStartScanPacking(true, this.typePacking, this.packingReference || '');
     } else {
+      if(this.lastCarrierScanned) this.packingReference = this.lastCarrierScanned;
       this.jailReference = this.packingReference;
       this.processInitiated = true;
       this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
@@ -106,6 +108,7 @@ export class TextareaComponent implements OnInit {
 
           if ((this.packingReference && this.packingReference == dataWrited) || !this.packingReference) {
             this.timeLastCodeScanned = new Date().getTime();
+            this.lastCarrierScanned = dataWrited;
             if (typePackingScanned == this.typePacking) {
               this.postVerifyPacking({
                 status: 2,
