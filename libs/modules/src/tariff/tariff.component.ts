@@ -34,7 +34,7 @@ export class TariffComponent implements OnInit {
     warehouses:Array<any> = [];
 
     /**Quantity of items for show in any page */
-    pagerValues = [20, 30, 40];
+    pagerValues = [50, 100, 500];
 
     private page:number = 0;
     private limit:number = this.pagerValues[0];

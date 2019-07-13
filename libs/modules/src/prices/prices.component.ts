@@ -33,7 +33,7 @@ export class PricesComponent implements OnInit {
   status:number;
 
   warehouses:Array<any> = [];
-  pagerValues:Array<number> = [5, 10, 20];
+  pagerValues:Array<number> = [50, 100, 500];
 
   page:number = 0;
 
