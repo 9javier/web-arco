@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, from } from 'rxjs';
 import {WarehouseModel} from "@suite/services";
 
 const TOKEN_KEY = 'access_token';
@@ -20,6 +20,14 @@ export class AuthenticationService {
     console.log(storage);
     console.log("dictionaryManagement", "AuthenticationService: constructor, before getDictionaryAccess");
     this.getDictionaryAccess();
+  }
+
+    /**
+   * Get the last sucessfull login username
+   * @returns the last username loged from this terminal
+   */
+  getUsername():Observable<string>{
+    return from(this.storage.get("username"));
   }
 
   async checkToken() {
