@@ -14,12 +14,19 @@ import { TagsInputOption } from './models/tags-input-option.model';
 })
 export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
+  @Input() literal:boolean = false;
+
   @Input() set options(options){
     if(options.length){
       console.log(options, "teststs");
       this._options =options.map(option=>{
-        option.id = parseInt(option.id);
-        option.type = "number";
+        if(!this.literal){
+          option.id = parseInt(option.id);
+          option.type = "number";
+        }else{
+          option.id = option.name;
+          option.type = "string";
+        }
         return option;
       });
       if(this.multiple)
