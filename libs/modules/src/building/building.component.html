@@ -1,3 +1,41 @@
-<p>
-  building works!
-</p>
+<ion-content padding="true">
+    <ion-text color="primary">
+        <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+
+    <div class="mat-table-wrapper-overflow-x">
+        <table mat-table [dataSource]="dataSource">
+
+            <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
+
+            <tr mat-row (click)="goDetails(row)" *matRowDef="let row; columns: columns"></tr>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                <td mat-cell *matCellDef="let building">
+                    {{ building?.name }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="select" [formGroup]="selectedForm">
+                <th mat-header-cell *matHeaderCellDef>
+                    <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let building;let i = index" (click)="prevent($event)">
+                    <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                        <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]['controls']['selected']"></ion-checkbox>
+                    </ng-template>
+                </td>
+            </ng-container>
+
+
+        </table>
+    </div>
+
+
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="storeBuilding()">
+        <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+</ion-fab>

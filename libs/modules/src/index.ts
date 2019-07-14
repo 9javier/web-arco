@@ -146,3 +146,7 @@ export * from './prices/prices.module';
 /**Tags-input */
 export * from './components/tags-input/tags-input.component';
 export * from './components/tags-input/tags-input.module';
+
+/**Building */
+export * from './building/building.component';
+export * from './building/building.module';

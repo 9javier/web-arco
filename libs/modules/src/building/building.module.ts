@@ -6,6 +6,9 @@ import { StoreComponent } from './modals/store/store.component';
 import { UpdateComponent } from './modals/update/update.component';
 import { Routes, RouterModule } from '@angular/router';
 import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -16,9 +19,13 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [BuildingComponent, InformationComponent, StoreComponent, UpdateComponent],
+  entryComponents: [InformationComponent, StoreComponent, BuildingComponent],
   imports: [
+    ReactiveFormsModule,
+    IonicModule,
     CommonModule,
-    RouterModule.forRoot(routes),
+    BreadcrumbModule,
+    RouterModule.forChild(routes),
     MatListModule,
     MatTableModule,
     MatPaginatorModule
