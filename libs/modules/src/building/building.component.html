@@ -8,7 +8,7 @@
 
             <tr mat-header-row *matHeaderRowDef="columns; sticky: true"></tr>
 
-            <tr mat-row (click)="goDetails(row)" *matRowDef="let row; columns: columns"></tr>
+            <tr mat-row (click)="update(row)" *matRowDef="let row; columns: columns"></tr>
 
             <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Nombre</th>
@@ -35,6 +35,10 @@
 
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button *ngIf="selectedForm.valid" color="danger" (click)="deleteBuildings()">
+        <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <br>
     <ion-fab-button (click)="storeBuilding()">
         <ion-icon name="add"></ion-icon>
     </ion-fab-button>

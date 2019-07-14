@@ -4,8 +4,11 @@ import { StoreComponent } from './modals/store/store.component';
 import { BuildingModel } from '../../../services/src/models/endpoints/building.model';
 import { BuildingService } from '../../../services/src/lib/endpoint/building/building.service';
 import { MatTableDataSource } from '@angular/material';
-import { FormBuilder, FormGroup,FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup,FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
+import { IntermediaryService } from '@suite/services';
+import { Observable } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'suite-building',
@@ -22,17 +25,35 @@ export class BuildingComponent implements OnInit {
 
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({},{
-    validators:validators.haveItems("toSelect")
+    validators:validators.haveItemsInner("toSelect")
   });
   
   constructor(
     private modalCtrl:ModalController,
     private buildingService:BuildingService,
     private formBuilder:FormBuilder,
+    private intermediaryService:IntermediaryService
   ) { }
 
   ngOnInit() {
     this.getBuildings();
+  }
+
+  /**
+   * Update Building
+   * @param building the building to be updated
+   */
+  update(building:BuildingModel.Building):void{
+
+  }
+
+  /**
+   * Cancel the normal behaviour of event
+   * @param event event to cancel
+   */
+  prevent(event):void{
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   /**
@@ -46,6 +67,17 @@ export class BuildingComponent implements OnInit {
         selected:false
       });
     })));
+  }
+
+    /**
+   * Select or unselect all visible buildings
+   * @param event to check the status
+   */
+  selectAll(event):void{
+    let value = event.detail.checked;
+    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control=>{
+      control.get("selected").setValue(value);
+    });
   }
 
 
@@ -66,6 +98,25 @@ export class BuildingComponent implements OnInit {
     this.buildingService.getIndex().subscribe(buildings=>{
       this.initSelectForm(buildings);
       this.dataSource = new MatTableDataSource<BuildingModel.Building>(buildings);
+    });
+  }
+
+  /**
+   * Delete all selected buildings
+   */
+  deleteBuildings():void{
+    let deleteObservable = new Observable(observer=>observer.next());
+    let selecteds:Array<{id:number,selected:boolean}> = this.selectedForm.value.toSelect;
+    selecteds.forEach(building => {
+      if(building.selected)
+        deleteObservable = deleteObservable.pipe(switchMap(response=>{
+          return this.buildingService.delete(building.id);
+        }));
+    });
+    this.intermediaryService.presentLoading();
+    deleteObservable.subscribe(message=>{
+      this.intermediaryService.dismissLoading();
+      this.getBuildings();
     });
   }
 
