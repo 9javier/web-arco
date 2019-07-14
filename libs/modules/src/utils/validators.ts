@@ -32,6 +32,20 @@ MustMatch:function (controlName: string, matchingControlName: string) {
         control.setErrors(null);
     }
   },
+    /**verify that the control have at least one item */
+    haveItemsInner:function(controlName){
+      let flag = false;
+      return (formGroup:FormGroup) =>{
+        const control = formGroup.controls[controlName];
+        if(!control || (control && control.errors))
+          return;
+        let values = control.value.map(items=>items.selected);
+        if(!(values.indexOf(true) - -1))
+          control.setErrors({ haveItems: true });
+        else
+          control.setErrors(null);
+      }
+    },
   /**verify that the control have at least one item */
   locationsPattern:function(controlName){
     return (formGroup: FormGroup) => {

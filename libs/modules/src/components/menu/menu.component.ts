@@ -169,7 +169,12 @@ export class MenuComponent implements OnInit {
       id:'logout',
       url: 'logout',
       icon: 'log-out'
-    }
+    },{
+      title: 'Building',
+      id:'building',
+      url: '/building',
+      icon: 'basket'
+    },
   ];
 
   alPages: MenuItemList = [
@@ -177,6 +182,12 @@ export class MenuComponent implements OnInit {
       title: 'Productos',
       id:'products',
       url: '/products',
+      icon: 'basket'
+    },
+    {
+      title: 'Building',
+      id:'building',
+      url: '/building',
       icon: 'basket'
     },
     {
