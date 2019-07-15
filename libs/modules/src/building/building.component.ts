@@ -9,6 +9,8 @@ import { validators } from '../utils/validators';
 import { IntermediaryService } from '@suite/services';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { InformationComponent } from './modals/information/information.component';
+import { UpdateComponent } from './modals/update/update.component';
 
 @Component({
   selector: 'suite-building',
@@ -43,8 +45,17 @@ export class BuildingComponent implements OnInit {
    * Update Building
    * @param building the building to be updated
    */
-  update(building:BuildingModel.Building):void{
-
+  async update(building:BuildingModel.Building){
+    let updateModal = (await this.modalCtrl.create({
+      component: UpdateComponent,
+      componentProps:{
+        building
+      }
+    }));
+    updateModal.onDidDismiss().then(()=>{
+      this.getBuildings();
+    });
+    updateModal.present();
   }
 
   /**
@@ -86,9 +97,13 @@ export class BuildingComponent implements OnInit {
    * Open store building modal
    */
   async storeBuilding(){
-    (await this.modalCtrl.create({
+    let storeModal = (await this.modalCtrl.create({
       component: StoreComponent
-    })).present();
+    }));
+    storeModal.onDidDismiss().then(()=>{
+      this.getBuildings();
+    });
+    storeModal.present();
   }
 
   /**
