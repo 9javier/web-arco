@@ -18,7 +18,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: './login/login.module#LoginPageModule',
+    loadChildren: '../../../../libs/modules/src/login/login.module#LoginPageModule',
     data:{
       name:'Login'
     }
