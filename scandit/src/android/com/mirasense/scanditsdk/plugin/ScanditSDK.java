@@ -105,6 +105,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
   private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
   private static final String MATRIX_PRINT_TAGS = "matrixPrintTags";
+  private static final String MATRIX_SIMPLE_SHOW_BUTTON_FINISH_RECEPTION = "matrixSimpleShowButtonFinishReception";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -1148,8 +1149,46 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
-    } else if(action.equals(MATRIX_PICKING_STORES_FINISH)){
+    } else if(action.equals(MATRIX_PICKING_STORES_FINISH)) {
       MatrixPickingStores.matrixPickingStores.finish();
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_BUTTON_FINISH_RECEPTION)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      Boolean show = true;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final Boolean fShow = show;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          Button btnFinishReception = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishReception", "id", package_name));
+          if (fShow) {
+            btnFinishReception.setVisibility(View.VISIBLE);
+
+            btnFinishReception.setOnClickListener(view -> {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("action", "finish_reception");
+              } catch (JSONException e) {
+
+              }
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
+          } else {
+            btnFinishReception.setVisibility(View.GONE);
+          }
+        }
+      });
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

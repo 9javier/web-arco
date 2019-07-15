@@ -113,6 +113,13 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param show
+   */
+  showButtonFinishReception: function (show) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleShowButtonFinishReception", [show]);
+  },
+  /**
+   *
    * @param products
    */
   sendPickingStoresProducts: function (products) {

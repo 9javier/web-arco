@@ -31,7 +31,8 @@ export class ReceptionProvider {
 
   private _literalsJailPallet: any = {
     1: {
-      next_steps: `Para completar el proceso:\n- Vuelve a escanear la jaula ${this._referencePacking} para validar la recepción de todos sus productos.\n- Escanea los productos recibidos de la jaula uno a uno y vuelva a escanear la jaula ${this._referencePacking} para validar la recepción.`,
+      next_steps: `Para completar el proceso vuelve a escanear la jaula ${this._referencePacking} para validar la recepción de todos sus productos.`,
+      next_steps_to_empty: `Para completar el proceso escanea los productos recibidos de la jaula uno a uno y finalice el proceso con el botón inferior.`,
       reception_finished: 'Registrada la recepción de la jaula con ',
       reception_resumed: `Vuelve a escanear la jaula ${this._referencePacking} para continuar con la recepción`,
       reception_started: 'Recepción iniciada con la jaula ',
@@ -40,7 +41,8 @@ export class ReceptionProvider {
       wrong_packing_finish: 'Escanea la misma jaula para finalizar la recepción.'
     },
     'jail': {
-      next_steps: `Para completar el proceso:\n- Vuelve a escanear la jaula ${this._referencePacking} para validar la recepción de todos sus productos.\n- Escanea los productos recibidos de la jaula uno a uno y vuelva a escanear la jaula ${this._referencePacking} para validar la recepción.`,
+      next_steps: `Para completar el proceso vuelve a escanear la jaula ${this._referencePacking} para validar la recepción de todos sus productos.`,
+      next_steps_to_empty: `Para completar el proceso escanea los productos recibidos de la jaula uno a uno y finalice el proceso con el botón inferior.`,
       reception_finished: 'Registrada la recepción de la jaula con ',
       reception_resumed: `Vuelve a escanear la jaula ${this._referencePacking} para continuar con la recepción`,
       reception_started: 'Recepción iniciada con la jaula ',
@@ -49,7 +51,8 @@ export class ReceptionProvider {
       wrong_packing_finish: 'Escanea la misma jaula para finalizar la recepción.'
     },
     2: {
-      next_steps: `Para completar el proceso:\n- Vuelve a escanear el pallet ${this._referencePacking} para validar la recepción de todos sus productos.\n- Escanea los productos recibidos del pallet uno a uno y vuelva a escanear el pallet ${this._referencePacking} para validar la recepción.`,
+      next_steps: `Para completar el proceso vuelve a escanear el pallet ${this._referencePacking} para validar la recepción de todos sus productos.`,
+      next_steps_to_empty: `Para completar el proceso escanea los productos recibidos del pallet uno a uno y finalice el proceso con el botón inferior.`,
       reception_finished: 'Registrada la recepción del pallet con ',
       reception_resumed: `Vuelve a escanear el pallet ${this._referencePacking} para continuar con la recepción`,
       reception_started: 'Recepción iniciada con el pallet ',
@@ -58,7 +61,8 @@ export class ReceptionProvider {
       wrong_packing_finish: 'Escanea el mismo pallet para finalizar la recepción.'
     },
     'pallet': {
-      next_steps: `Para completar el proceso:\n- Vuelve a escanear el pallet ${this._referencePacking} para validar la recepción de todos sus productos.\n- Escanea los productos recibidos del pallet uno a uno y vuelva a escanear el pallet ${this._referencePacking} para validar la recepción.`,
+      next_steps: `Para completar el proceso vuelve a escanear el pallet ${this._referencePacking} para validar la recepción de todos sus productos.`,
+      next_steps_to_empty: `Para completar el proceso escanea los productos recibidos del pallet uno a uno y finalice el proceso con el botón inferior.`,
       reception_finished: 'Registrada la recepción del pallet con ',
       reception_resumed: `Vuelve a escanear el pallet ${this._referencePacking} para continuar con la recepción`,
       reception_started: 'Recepción iniciada con el pallet ',
@@ -85,6 +89,14 @@ export class ReceptionProvider {
   }
   set qtyProductsReceived(value: number) {
     this._qtyProductsReceived = value;
+  }
+
+  private _qtyProductsToReceive: number = 0;
+  get qtyProductsToReceive(): number {
+    return this._qtyProductsToReceive;
+  }
+  set qtyProductsToReceive(value: number) {
+    this._qtyProductsToReceive = value;
   }
 
 // TODO set to false to request the user if want force the reception

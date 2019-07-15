@@ -12,7 +12,9 @@ import {ReceptionModel} from "../../../../models/endpoints/Reception";
 export class ReceptionService {
 
   /**Urls for the picking service */
-  private getShowUrl = environment.apiBase + '/process/receive';
+  private postReceiveUrl = environment.apiBase + '/process/receive';
+  private getCheckPackingUrl = environment.apiBase + '/process/receive/check/';
+  private getCheckProductsPackingUrl = environment.apiBase + '/process/receive/check/{{reference}}/products';
 
   constructor(
     private http: HttpClient,
@@ -24,7 +26,25 @@ export class ReceptionService {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       parameters.force = true;
 
-      return this.http.post<ReceptionModel.ResponseReceive>(this.getShowUrl, parameters, { headers });
+      return this.http.post<ReceptionModel.ResponseReceive>(this.postReceiveUrl, parameters, { headers });
+    }));
+  }
+
+  getCheckPacking(packingReference: string) : Observable<ReceptionModel.ResponseCheckPacking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.get<ReceptionModel.ResponseCheckPacking>(this.getCheckPackingUrl+packingReference, { headers });
+    }));
+  }
+
+  getCheckProductsPacking(packingReference: string) : Observable<ReceptionModel.ResponseCheckProductsPacking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      let url = this.getCheckProductsPackingUrl.replace('{{reference}}', packingReference);
+
+      return this.http.get<ReceptionModel.ResponseCheckProductsPacking>(url, { headers });
     }));
   }
 }

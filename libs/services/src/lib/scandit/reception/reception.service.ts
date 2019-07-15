@@ -23,6 +23,8 @@ export class ReceptionScanditService {
   private timeoutHideText;
   private scannerPaused: boolean = false;
   private userWarehouse: WarehouseModel.Warehouse;
+  private lastCodeScanned: string;
+  private typeReception: number = 1;
 
   constructor(
     private alertController: AlertController,
@@ -36,10 +38,11 @@ export class ReceptionScanditService {
     private receptionProvider: ReceptionProvider
   ) {}
 
-  async reception() {
+  async reception(typeReception: number) {
     this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
-    let lastCodeScanned: string = 'start';
+    this.lastCodeScanned = 'start';
     this.receptionProvider.resumeProcessStarted = false;
+    this.typeReception = typeReception;
 
     ScanditMatrixSimple.init((response) => {
       let code = '';
@@ -48,72 +51,16 @@ export class ReceptionScanditService {
         if (response.barcode) {
           code = response.barcode.data;
 
-          if (!this.scannerPaused && code != lastCodeScanned) {
-            lastCodeScanned = code;
+          if (!this.scannerPaused && code != this.lastCodeScanned) {
+            this.lastCodeScanned = code;
             this.scannerPaused = true;
             switch (this.scanditProvider.checkCodeValue(code)) {
               case this.scanditProvider.codeValue.JAIL:
               case this.scanditProvider.codeValue.PALLET:
-                setTimeout(() => {
-                  lastCodeScanned = 'start';
-                }, 2 * 1000);
-                if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.JAIL) {
-                  this.receptionProvider.typePacking = 1;
-                } else {
-                  this.receptionProvider.typePacking = 2;
-                }
-
-                if (!this.receptionProvider.processStarted) {
-                  // TODO validate packing
-                  this.receptionProvider.processStarted = true;
-                  this.receptionProvider.referencePacking = code;
-                  this.receptionProvider.resumeProcessStarted = true;
-
-                  ScanditMatrixSimple.showFixedTextBottom(true, this.receptionProvider.literalsJailPallet.next_steps);
-
-                  ScanditMatrixSimple.setText(
-                    `${this.receptionProvider.literalsJailPallet.reception_started}${code}`,
-                    this.scanditProvider.colorsMessage.success.color,
-                    this.scanditProvider.colorText.color,
-                    16);
-                  this.hideTextMessage(1500);
-                  setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
-                } else {
-                  if (code == this.receptionProvider.referencePacking) {
-                    if (this.receptionProvider.qtyProductsReceived > 0) {
-                      this.setPackingAsReceived(code);
-                    } else {
-                      this.notifyReceptionAllProducts(code);
-                    }
-                  } else {
-                    let message = '';
-                    if (this.receptionProvider.resumeProcessStarted) {
-                      message = this.receptionProvider.literalsJailPallet.wrong_packing_finish;
-                    } else {
-                      message = this.receptionProvider.literalsJailPallet.wrong_packing_resume;
-                    }
-                    ScanditMatrixSimple.setText(
-                      this.receptionProvider.literalsJailPallet.wrong_packing_resume,
-                      this.scanditProvider.colorsMessage.error.color,
-                      this.scanditProvider.colorText.color,
-                      16);
-                    this.hideTextMessage(1500);
-                    setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
-                  }
-                }
+                this.processPackingScanned(code);
                 break;
               case this.scanditProvider.codeValue.PRODUCT:
-                if (!this.receptionProvider.processStarted) {
-                  ScanditMatrixSimple.setText(
-                    'Escanea primero la jaula o pallet recibido para iniciar el proceso.',
-                    this.scanditProvider.colorsMessage.info.color,
-                    this.scanditProvider.colorText.color,
-                    16);
-                  this.hideTextMessage(2000);
-                  setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
-                } else {
-                  this.setProductAsReceived(code);
-                }
+                this.processProductScanned(code);
                 break;
               default:
                 ScanditMatrixSimple.setText(
@@ -136,12 +83,107 @@ export class ReceptionScanditService {
                 }
               }
               break;
+            case 'finish_reception':
+
+              break;
             default:
               break;
           }
         }
       }
     }, 'Recepción', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color);
+  }
+
+  private processPackingScanned(code: string) {
+    if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.JAIL) {
+      this.receptionProvider.typePacking = 1;
+    } else {
+      this.receptionProvider.typePacking = 2;
+    }
+
+    if (this.typeReception == 1) {
+      this.setPackingAsReceived(code);
+    } else if (this.typeReception == 2) {
+      if (!this.receptionProvider.processStarted) {
+        this.receptionService
+          .getCheckPacking(code)
+          .subscribe((res: ReceptionModel.ResponseCheckPacking) => {
+            if (res.code == 200) {
+              this.receptionProvider.processStarted = true;
+              this.receptionProvider.referencePacking = code;
+              this.receptionProvider.resumeProcessStarted = true;
+
+              ScanditMatrixSimple.showFixedTextBottom(true, this.receptionProvider.literalsJailPallet.next_steps_to_empty);
+
+              ScanditMatrixSimple.setText(
+                `${this.receptionProvider.literalsJailPallet.reception_started}${code}`,
+                this.scanditProvider.colorsMessage.success.color,
+                this.scanditProvider.colorText.color,
+                16);
+              this.hideTextMessage(1500);
+              setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+
+              this.checkProductsForPacking();
+            } else {
+              ScanditMatrixSimple.setText(
+                res.errors,
+                this.scanditProvider.colorsMessage.error.color,
+                this.scanditProvider.colorText.color,
+                16);
+              this.hideTextMessage(2000);
+              setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+            }
+          }, (error) => {
+            ScanditMatrixSimple.setText(
+              error.error.errors,
+              this.scanditProvider.colorsMessage.error.color,
+              this.scanditProvider.colorText.color,
+              16);
+            this.hideTextMessage(2000);
+            setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+          });
+      } else {
+        if (code == this.receptionProvider.referencePacking) {
+          if (this.receptionProvider.qtyProductsReceived > 0) {
+            this.setPackingAsReceived(code);
+          } else {
+            this.notifyReceptionAllProducts(code);
+          }
+        } else {
+          let message = '';
+          if (this.receptionProvider.resumeProcessStarted) {
+            message = this.receptionProvider.literalsJailPallet.wrong_packing_finish;
+          } else {
+            message = this.receptionProvider.literalsJailPallet.wrong_packing_resume;
+          }
+          ScanditMatrixSimple.setText(
+            message,
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
+          setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+        }
+      }
+    }
+  }
+
+  private processProductScanned(code: string) {
+    if (this.typeReception == 1) {
+      // TODO warning message notice that this method is only to scan jail or pallet, not products
+    } else {
+      if (!this.receptionProvider.processStarted) {
+        ScanditMatrixSimple.setText(
+          'Escanea primero la jaula o pallet recibido para iniciar el proceso.',
+          this.scanditProvider.colorsMessage.info.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(2000);
+        setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+      } else {
+        this.setProductAsReceived(code);
+      }
+    }
   }
 
   private setProductAsReceived(referenceProduct: string) {
@@ -210,6 +252,18 @@ export class ReceptionScanditService {
     });
   }
 
+  private checkProductsForPacking() {
+    this.receptionService
+      .getCheckProductsPacking(this.receptionProvider.referencePacking)
+      .subscribe((res: ReceptionModel.ResponseCheckProductsPacking) => {
+        if (res.code == 200) {
+          this.receptionProvider.qtyProductsToReceive = res.data.quantity;
+        }
+      }, (error) => {
+
+      });
+  }
+
   private notifyReceptionAllProducts(packingReference: string) {
     this.presentAlert(
       this.receptionProvider.literalsJailPallet.warning_reception_all,
@@ -220,8 +274,7 @@ export class ReceptionScanditService {
   private setPackingAsReceived(packingReference: string) {
     this.receptionService
       .postReceive({
-        packingReference: packingReference,
-        quantityProducts: this.receptionProvider.qtyProductsReceived
+        packingReference: packingReference
       })
       .subscribe((res: ReceptionModel.ResponseReceive) => {
         if (res.code == 200 || res.code == 201) {
