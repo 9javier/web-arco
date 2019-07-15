@@ -19,7 +19,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [BuildingComponent, InformationComponent, StoreComponent, UpdateComponent],
-  entryComponents: [InformationComponent, StoreComponent, BuildingComponent],
+  entryComponents: [InformationComponent, StoreComponent, BuildingComponent, UpdateComponent],
   imports: [
     ReactiveFormsModule,
     IonicModule,
