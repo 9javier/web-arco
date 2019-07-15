@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastController, LoadingController, AlertController } from '@ionic/angular';
+import { duration } from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +15,28 @@ export class IntermediaryService {
    * Show error message
    * @param message - message to be toasted
    */
-  async presentToastError(message:string) {
+  async presentToastError(message:string,duration=1000) {
     let toast = (await this.toastCtrl.create({
       message: message,
-      duration: 1000,
+      duration: duration,
       color: 'danger',
       position: 'top'
     })).present();
+  }
+
+  /**
+   * Show toast
+   * @param message - message to be presented
+   * @param duration - te duration of the visible toast
+   */
+  async presentToastSuccess(message:string,duration=1000){
+    let toast = (await this.toastCtrl.create({
+      message:message,
+      duration:duration,
+      color:'success',
+      position:'top'
+    }))
+    return toast.present();
   }
 
   /**

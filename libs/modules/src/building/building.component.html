@@ -35,7 +35,7 @@
 
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="selectedForm.valid" color="danger" (click)="deleteBuildings()">
+    <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="deleteBuildings()">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
     <br>

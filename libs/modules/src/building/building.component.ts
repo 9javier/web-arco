@@ -9,6 +9,7 @@ import { validators } from '../utils/validators';
 import { IntermediaryService } from '@suite/services';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { InformationComponent } from './modals/information/information.component';
 
 @Component({
   selector: 'suite-building',
@@ -86,9 +87,13 @@ export class BuildingComponent implements OnInit {
    * Open store building modal
    */
   async storeBuilding(){
-    (await this.modalCtrl.create({
+    let storeModal = (await this.modalCtrl.create({
       component: StoreComponent
-    })).present();
+    }));
+    storeModal.onDidDismiss().then(()=>{
+      this.getBuildings();
+    });
+    storeModal.present();
   }
 
   /**
