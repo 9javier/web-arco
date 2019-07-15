@@ -30,6 +30,13 @@ const routes: Routes = [
     data:{
       name:'Productos'
     }
+  },{
+    path: 'building',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
+    data:{
+      name:'Building'
+    }
   },
   {
     path: 'warehouse',

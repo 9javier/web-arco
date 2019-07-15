@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController, NavParams } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 
 
@@ -20,6 +20,8 @@ export class UpdateComponent implements OnInit {
     is_store: [false, []],
     groupId:'',
     prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
+    hasBuilding: [false,[]],
+    buildingId:[''],
     is_main: [false, []],
     has_racks: [false, []],
     halls:'',
@@ -29,7 +31,7 @@ export class UpdateComponent implements OnInit {
   });
   private warehouseId;
   private currentHasRacks;
-
+  buildings:Array<BuildingModel.Building> = [];
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
   constructor(private modalCtrl:ModalController,
     private formBuilder:FormBuilder,
@@ -37,6 +39,7 @@ export class UpdateComponent implements OnInit {
     private warehouseGroupService:WarehouseGroupService,
     private cd: ChangeDetectorRef,
     private navParams:NavParams,
+    private buildingService:BuildingService
     ) {
       this.warehouseId = this.navParams.data.id;
       this.getWarehouse(this.warehouseId);
@@ -55,6 +58,16 @@ export class UpdateComponent implements OnInit {
       store.setValue("");
       this.cd.detectChanges();
     });
+
+        /**Listen for changes on hasBuilding control */
+        this.updateForm.get("hasBuilding").valueChanges.subscribe((hasBuilding)=>{
+          let buildingId = this.updateForm.get("buildingId")
+          buildingId.clearValidators();
+          buildingId.setValue("");
+          buildingId.setValidators(hasBuilding?[Validators.required]:[])
+          this.cd.detectChanges();
+        });
+
     /**Listen for changes in has_racks control */
     this.updateForm.get("has_racks").valueChanges.subscribe((hasRacks)=>{
       let hallways = this.updateForm.get("halls");
@@ -95,6 +108,15 @@ export class UpdateComponent implements OnInit {
     return /[a-zA-Z]/.test(key);
   }
 
+    /**
+   * Get all registereds buildings
+   */
+  getBuildings():void{
+    this.buildingService.getIndex().subscribe(buildings=>{
+      this.buildings = buildings
+    });
+  }
+
   /**
   * delete empty values 
   */
@@ -132,6 +154,7 @@ export class UpdateComponent implements OnInit {
 
   ngOnInit() {
     this.getWharehousesGroup();
+    this.getBuildings();
     this.changeValidatorsAndValues();
   }
 
