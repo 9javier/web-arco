@@ -81,7 +81,7 @@ export class UpdateComponent implements OnInit {
         validators: [validators.MustMatch('password', 'confirmPassword'),validators.havePermits("permits")]
       }
     );
-    console.log((this.updateForm));
+    this.updateForm.addControl("permits",new FormArray([]));
   }
 
   /**
@@ -98,6 +98,7 @@ export class UpdateComponent implements OnInit {
         (<any>user).warehouseId = user.warehouse && user.warehouse.id;
         console.log(user);
         this.updateForm.patchValue(user);     
+        console.log(user);
         /**call here to handle the async */
         this.getRoles(user);
       });
@@ -157,15 +158,22 @@ export class UpdateComponent implements OnInit {
  * update the user
  */
   submit():void{
+    let roles = [];
     let user = this.updateForm.value;
     /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
     //user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
     user.permits = user.permits.map((permit,i)=>{
-      permit.roles = permit.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
+      permit.roles = permit.roles.map((flag,i)=>{
+        let rol = flag?({rol:this.roles[i].id}):null;
+        if(rol && !roles.find(_rol=>_rol.id == rol.rol))
+          roles.push({id:rol.rol});
+        return rol;
+      }).filter(rolId=>rolId);
       return permit;
     });
+    user.roles = roles;
     user.id = this.id;
-    user.roleId = user.roles?user.roles[0].id:null;
+   
     this.utilsComponent.presentLoading();
     this.userService.putUpdate(this.sanitize(user)).then(observable=>{
       observable.subscribe(user=>{

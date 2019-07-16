@@ -116,7 +116,7 @@ export class StoreComponent implements OnInit {
     console.log(this.createForm);
     (<FormArray>this.createForm.get("permits")).push(this.formBuilder.group({
       name:this.warehouses.find(warehouse=>warehouse.id == warehouseId).name,
-      warehouseId:warehouseId,
+      warehouse:warehouseId,
       roles:(new FormArray(this.roles.map(rol=>new FormControl(false))))
     }));
     console.log("this is the warehouse id", warehouseId);
@@ -183,13 +183,20 @@ export class StoreComponent implements OnInit {
  * update the user
  */
 submit():void{
+  let roles = [];
   let user = this.createForm.value;
   /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
   user.permits = user.permits.map((permit,i)=>{
-    permit.roles = permit.roles.map((flag,i)=>flag?this.roles[i].id:null).filter(rolId=>rolId);
+    permit.roles = permit.roles.map((flag,i)=>{
+      let rol = flag?({rol:this.roles[i].id}):null;
+      if(rol && !roles.find(_rol=>_rol.id == rol.rol))
+        roles.push({id:rol.rol});
+      return rol;
+    }).filter(rolId=>rolId);
     return permit;
   });
-  user.roleId = user.roles?user.roles[0].id:null;
+  user.roles = roles;
+  //user.roleId = user.roles?user.roles[0].id:null;
   this.utilsComponent.presentLoading();
   this.userService.postStore(this.sanitize(user)).then(observable=>{
     observable.subscribe(user=>{
