@@ -54,7 +54,7 @@ export class ProductDetailsComponent implements OnInit {
    * Get historical of products
    */
   getProductHistorical():void{
-    this.productService.getHistorical(this.product.id).subscribe(historical=>{
+    this.productService.getHistorical(this.product.productShoeUnit.id).subscribe(historical=>{
       this.productHistorical = historical;
     });
   }
