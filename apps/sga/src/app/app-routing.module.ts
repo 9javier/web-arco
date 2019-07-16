@@ -20,6 +20,13 @@ const routes: Routes = [
     data:{
       name: 'Usuarios'
     }
+  },  {
+    path: 'calendar',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/calendar-picking//calendar-picking.module#CalendarPickingModule',
+    data:{
+      name: 'Calendar'
+    }
   },
   {
     path: 'roles',
