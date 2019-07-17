@@ -99,3 +99,7 @@ export * from './models/enum.model';
 /**Building */
 export * from './models/endpoints/building.model';
 export * from './lib/endpoint/building/building.service';
+
+/**Calendar */
+export * from './models/endpoints/calendar.model';
+export * from './lib/endpoint/calendar/calendar.service';

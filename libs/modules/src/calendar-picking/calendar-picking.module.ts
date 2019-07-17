@@ -4,6 +4,8 @@ import { CalendarPickingComponent } from './calendar-picking.component';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { DpDatePickerModule } from 'ng2-date-picker';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatExpansionModule, MatListModule, MatCheckboxModule } from '@angular/material';
 
 const routes: Routes = [
   {
@@ -18,7 +20,12 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     IonicModule,
-    DpDatePickerModule
+    DpDatePickerModule,
+    FormsModule,
+    MatExpansionModule,
+    MatListModule,
+    ReactiveFormsModule,
+    MatCheckboxModule
   ]
 })
 export class CalendarPickingModule { }
