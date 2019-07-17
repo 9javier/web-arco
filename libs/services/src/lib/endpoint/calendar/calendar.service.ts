@@ -16,8 +16,28 @@ export class CalendarService {
   /**Urls for groups service */
   private getShowTemplateUrl:string = environment.apiBase+"/picking/calendar/template/{{id}}";
   private getIndexTemplateUrl:string = environment.apiBase+"/picking/calendar/template";
+  private storeUrl:string = environment.apiBase+"/picking/calendar/";
+  private storeTemplateUrl:string = environment.apiBase+"/picking/calendar/template/";
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * Store new ??? in s erver
+   */
+  store(value:CalendarModel.SingleTemplateParams):Observable<CalendarModel.Template>{
+      return this.http.post<CalendarModel.SingleTemplateRequest>(this.storeUrl,value).pipe(map(response=>{
+          return response.data;
+      }));
+  }
+
+   /**
+   * Store new ??? in s erver
+   */
+  storeTemplate(value:CalendarModel.SingleTemplateParams):Observable<CalendarModel.Template>{
+    return this.http.post<CalendarModel.SingleTemplateRequest>(this.storeTemplateUrl,value).pipe(map(response=>{
+        return response.data;
+    }));
+}
 
   /**
    * Get template by the id

@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { DpDatePickerModule } from 'ng2-date-picker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule, MatListModule, MatCheckboxModule } from '@angular/material';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 
 const routes: Routes = [
   {
@@ -25,7 +26,8 @@ const routes: Routes = [
     MatExpansionModule,
     MatListModule,
     ReactiveFormsModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    BreadcrumbModule
   ]
 })
 export class CalendarPickingModule { }

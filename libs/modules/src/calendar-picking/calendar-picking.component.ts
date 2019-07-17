@@ -2,7 +2,7 @@ import { Component, OnInit,ViewChild } from '@angular/core';
 import { DatePickerComponent,IDatePickerConfig } from 'ng2-date-picker';
 import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
 import { FormBuilder, FormGroup, FormArray, Form } from '@angular/forms';
-import { WarehouseModel,CalendarModel,CalendarService } from '@suite/services';
+import { WarehouseModel,CalendarModel,CalendarService, IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-calendar-picking',
@@ -22,7 +22,6 @@ export class CalendarPickingComponent implements OnInit {
   dates;
 
   form:FormGroup = this.formBuilder.group({
-    date:[],
     warehouses: new FormArray([])
   });
 
@@ -34,7 +33,8 @@ export class CalendarPickingComponent implements OnInit {
   constructor(
     private warehouseService:WarehouseService,
     private calendarService:CalendarService,
-    private formBuilder:FormBuilder
+    private formBuilder:FormBuilder,
+    private intermediaryService:IntermediaryService
   ) { }
 
   ngOnInit() {
@@ -49,17 +49,66 @@ export class CalendarPickingComponent implements OnInit {
   startListener(group:FormGroup){
     group.get("selected").valueChanges.subscribe(change=>{
       (<FormArray>group.parent).controls.forEach(control=>{
-        control.get("radio").setValue(false,{eemitEvent:false});
+        control.get("radio").setValue(false,{emitEvent:false});
       });
     });
     group.get("radio").valueChanges.subscribe(change=>{
+      alert("test")
       if(change){
         (<FormArray>group.parent).controls.forEach(control=>{
-          control.get("selected").setValue(false,{eemitEvent:false});
+          control.get("selected").setValue(false,{emitEvent:false});
+          control.get("radio").setValue(false,{emitEvent:false});
         });
-        group.get("selected").setValue(true,{eemitEvent:false});
-        group.get("radio").setValue(true,{eemitEvent:false});
+        group.get("selected").setValue(true,{emitEvent:false});
+        group.get("radio").setValue(true,{emitEvent:false});
       }
+    });
+  }
+  /**
+   * Format the form value to the needed by the server
+   */
+  formatValue(rawValue:any,store=false):CalendarModel.SingleTemplateParams{
+    let value:CalendarModel.SingleTemplateParams = JSON.parse(JSON.stringify(rawValue));
+    value.warehouses = (<Array<any>>rawValue.warehouses.map(value=>{
+      return ({
+        originWarehouseId:value.originWarehouse.id,
+        destinationWarehouseIds:(value.warehousesDestinations.map(warehouse=>warehouse.selected?warehouse.id:false)).filter(value=>value)
+      })
+    })).filter(object=>(object.destinationWarehouseIds.length > 0));
+    console.log(value);
+    return value;
+  }
+
+  /**
+   * Store new ????
+   */
+  store(value:CalendarModel.SingleTemplateParams):void{
+    value.dates = this.dates.map(date=>date.format("YYYY-MM-DD"));
+    this.intermediaryService.presentLoading();
+    this.calendarService.store(value).subscribe(()=>{
+      this.initForm();
+      this.intermediaryService.presentToastSuccess("Guardado con éxito");
+      this.intermediaryService.dismissLoading();
+    },(error)=>{
+      this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
+      this.intermediaryService.dismissLoading();
+    });
+    console.log(value);
+  }
+
+  /**
+   * Store a new template
+   * @param template - the template to save
+   */
+  storeTemplate(template:CalendarModel.SingleTemplateParams):void{
+    this.intermediaryService.presentLoading();
+    this.calendarService.storeTemplate(template).subscribe(()=>{
+      this.initForm();
+      this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
+      this.intermediaryService.dismissLoading();
+    },()=>{
+      this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
+      this.intermediaryService.dismissLoading();
     });
   }
  
@@ -108,6 +157,9 @@ export class CalendarPickingComponent implements OnInit {
    * Obtain the template base and init form
    */
   initForm():void{
+    this.form = this.formBuilder.group({
+      warehouses: new FormArray([])
+    });
     this.calendarService.getBase().subscribe(base=>{
       base.warehouses.forEach(warehouse=>{
         (<FormArray>this.form.get("warehouses")).push(

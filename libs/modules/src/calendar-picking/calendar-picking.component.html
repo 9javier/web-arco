@@ -1,4 +1,5 @@
-<ion-content>
+<ion-content padding="true">
+    <suite-breadcrumb></suite-breadcrumb>
     <ion-grid>
         <ion-row>
             <ion-col size="6">
@@ -60,6 +61,6 @@
     </ion-grid>
 </ion-content>
 <ion-footer>
-    <ion-button>GUARDAR</ion-button>
-    <ion-button>PLANTILLA</ion-button>
+    <ion-button [disabled]="!(formatValue(form.value).warehouses.length && dates.length)" (click)="store(formatValue(form.value))">GUARDAR</ion-button>
+    <ion-button [disabled]="!formatValue(form.value).warehouses.length" (click)="storeTemplate(formatValue(form.value))">PLANTILLA</ion-button>
 </ion-footer>

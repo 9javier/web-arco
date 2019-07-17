@@ -22,6 +22,14 @@ export namespace CalendarModel{
         data:Template
     }
 
+    export interface SingleTemplateParams{
+        dates?:Array<string>;
+        warehouses:Array<{
+            originWarehouseId:number;
+            destinationWarehouseIds:number;
+        }>
+    }
+
     export interface CollectionTemplateRequest extends Request.Success{
         data:Array<Template>;
     }
