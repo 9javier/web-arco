@@ -156,13 +156,13 @@ export class MenuComponent implements OnInit {
           url: '/pallets/menu',
           icon: 'cube'
         },
-        {
-          title: 'Calendar',
-          id:'calendar',
-          url: '/calendar',
-          icon: 'md-calendar'
-        },
       ]
+    },
+    {
+      title: 'Calendar',
+      id:'calendar',
+      url: '/calendar',
+      icon: 'md-calendar'
     },
     {
       title:'Tarifa',
