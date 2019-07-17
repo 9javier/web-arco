@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel, BuildingService } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 import { IntermediaryService } from '@suite/services';
 
@@ -20,6 +20,8 @@ export class StoreComponent implements OnInit {
     groupId:'',
     is_main: [false, []],
     has_racks: [false, []],
+    hasBuilding: [false,[]],
+    buildingId:[''],
     prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
     halls:'',
     rows:'',
@@ -27,6 +29,7 @@ export class StoreComponent implements OnInit {
     is_outlet:false
   });
 
+  buildings:Array<BuildingModel.Building> = [];
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
 
   constructor(
@@ -35,7 +38,8 @@ export class StoreComponent implements OnInit {
               private formBuilder:FormBuilder,
               private warehousesService:WarehousesService,
               private warehouseGroupService:WarehouseGroupService,
-              private cd: ChangeDetectorRef
+              private cd: ChangeDetectorRef,
+              private buildingService:BuildingService
               ) {}
 
   /**
@@ -48,6 +52,15 @@ export class StoreComponent implements OnInit {
   }
 
   /**
+   * Get all registereds buildings
+   */
+  getBuildings():void{
+    this.buildingService.getIndex().subscribe(buildings=>{
+      this.buildings = buildings
+    });
+  }
+
+  /**
    * Assign and unassign validators depends of value of another validators
    */
   changeValidatorsAndValues():void{
@@ -57,6 +70,15 @@ export class StoreComponent implements OnInit {
       let store = this.createForm.get("groupId")
       store.clearValidators();
       store.setValue("");
+      this.cd.detectChanges();
+    });
+
+    /**Listen for changes on hasBuilding control */
+    this.createForm.get("hasBuilding").valueChanges.subscribe((hasBuilding)=>{
+      let buildingId = this.createForm.get("buildingId")
+      buildingId.clearValidators();
+      buildingId.setValue("");
+      buildingId.setValidators(hasBuilding?[Validators.required]:[])
       this.cd.detectChanges();
     });
     /**
@@ -121,6 +143,7 @@ export class StoreComponent implements OnInit {
 
   ngOnInit() {
     this.getWharehousesGroup();
+    this.getBuildings();
     this.changeValidatorsAndValues();
   }
 

@@ -1,0 +1,28 @@
+<ion-list>
+  <ion-list-header>
+    <ion-label class="title-section">Tiendas</ion-label>
+  </ion-list-header>
+  <ion-item *ngFor="let store of stores">
+    {{store.reference}}&nbsp;{{store.name}}
+  </ion-item>
+  <ion-list-header class="header-line-requests-list">
+    <ion-label class="title-section">Peticiones</ion-label>
+  </ion-list-header>
+  <ion-item *ngFor="let lineRequest of lineRequests">
+    <ion-label>
+      <h2>
+        <ion-row class="row-title-item">
+          <ion-col size="6">
+            Modelo: {{lineRequest.model.reference}}
+          </ion-col>
+          <ion-col size="6">
+            Talla: {{lineRequest.size.name}}
+          </ion-col>
+        </ion-row>
+      </h2>
+      <p *ngIf="lineRequest.model.brand">
+        Marca: {{lineRequest.model.brand.name}}
+      </p>
+    </ion-label>
+  </ion-item>
+</ion-list>

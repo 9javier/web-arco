@@ -252,7 +252,9 @@ export class ProductsComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters):void{
+    this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
+      this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
@@ -287,8 +289,8 @@ export class ProductsComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters():void{
-
-    this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {
+    this.intermediaryService.presentLoading();
+    this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
       this.inventoryServices.searchInContainer({pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
         this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
         this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
@@ -301,6 +303,7 @@ export class ProductsComponent implements OnInit {
           this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
           this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
           setTimeout(() => {
+            this.intermediaryService.dismissLoading();
             this.pauseListenFormChange = false;
             this.searchInContainer(this.sanitize(this.getFormValueCopy()));
           }, 0);

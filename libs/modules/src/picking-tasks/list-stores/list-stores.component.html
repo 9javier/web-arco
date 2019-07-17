@@ -1,0 +1,26 @@
+<div class="scroll-list">
+  <ion-progress-bar type="indeterminate" *ngIf="isLoadingData"></ion-progress-bar>
+
+  <div class="row-no-requests" *ngIf="lineRequestsByStores.length > 0">
+    <ion-row>
+      <ion-col size="1" class="centered-col">
+        <ion-checkbox [(ngModel)]="allStoresSelected" (click)="selectAllStores()"></ion-checkbox>
+      </ion-col>
+      <ion-col size="11" class="centered-col">
+        <mat-panel-title>Seleccionar todo</mat-panel-title>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <stores-picking-task-template *ngFor="let lineRequestByStore of lineRequestsByStores" [lineRequestByStore]="lineRequestByStore" (selectStore)="selectStore($event)"></stores-picking-task-template>
+
+  <stores-picking-task-initiated-template *ngIf="stores.length > 0 && lineRequests.length > 0" [stores]="stores" [lineRequests]="lineRequests"></stores-picking-task-initiated-template>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="initPicking()" *ngIf="checkLineRequestSelected()">
+      <i class="material-icons">play_arrow</i>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

@@ -18,7 +18,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: './login/login.module#LoginPageModule',
+    loadChildren: '../../../../libs/modules/src/login/login.module#LoginPageModule',
     data:{
       name:'Login'
     }
@@ -29,6 +29,13 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule',
     data:{
       name:'Productos'
+    }
+  },{
+    path: 'building',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
+    data:{
+      name:'Building'
     }
   },
   {

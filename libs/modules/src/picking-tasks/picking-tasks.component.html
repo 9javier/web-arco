@@ -1,1 +1,3 @@
-<list-picking-tasks-template></list-picking-tasks-template>
+<list-picking-tasks-template *ngIf="!isStore"></list-picking-tasks-template>
+
+<list-stores-picking-tasks-template *ngIf="isStore"></list-stores-picking-tasks-template>

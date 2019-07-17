@@ -83,7 +83,7 @@ export class StoreComponent implements OnInit {
 
   saveWorkwave() {
     if (!this.loading) {
-      this.showLoading((this.editing ? 'Editando' : 'Creando') +' ola de trabajo...').then(() => {
+      this.showLoading((this.editing ? this.workwaveType == 'run' ? 'Lanzando' : 'Editando' : 'Creando') + ' ola de trabajo...').then(() => {
         let workwaveStore: any = {};
         workwaveStore.warehouses = this.listStores;
 
@@ -124,10 +124,10 @@ export class StoreComponent implements OnInit {
                   if (this.workwaveType == 'run') {
                     if (res.body.data.pickings && res.body.data.pickings.length > 0) {
                       this.goToList('save_run', res.body.data.id);
-                      this.presentToast('Ola de trabajo actualizada', 'success');
+                      this.presentToast('Ola de trabajo lanzada.', 'success');
                     } else {
                       this.goToList('save', null);
-                      this.presentToast('Ola de trabajo actualizada. No se le han generado Tareas de Picking', 'success');
+                      this.presentToast('Ola de trabajo lanzada. No se le han generado Tareas de Picking', 'success');
                     }
                   } else {
                     this.goToList('save', null);

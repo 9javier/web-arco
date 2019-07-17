@@ -142,9 +142,9 @@ export class UpdateComponent implements OnInit {
 
   async printBarcode() {
     if(this.container && this.container.reference){
-      await this.printerService.print({text: this.container.reference, type: 0});
+      await this.printerService.print({text: [this.container.reference], type: 0});
     } else {
-      console.debug("Not found reference", this.container);
+      // Reference not found
     }
   }
 

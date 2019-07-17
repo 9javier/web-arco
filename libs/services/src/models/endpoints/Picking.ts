@@ -1,4 +1,4 @@
-import {TypeModel, UserProcessesModel, WarehouseModel} from "@suite/services";
+import {JailModel, TypeModel, UserProcessesModel, WarehouseModel} from "@suite/services";
 import {WorkwaveModel} from "./Workwaves";
 
 export namespace PickingModel {
@@ -26,6 +26,7 @@ export namespace PickingModel {
     status?: number;
     packingId?: number;
     packingRef?: string;
+    listPackings?: JailModel.Jail[];
     packingType?: number;
     workwave?: WorkwaveModel.Workwave;
     workWavesOrderWarehouses?: WorkwaveOrderWarehouse[];

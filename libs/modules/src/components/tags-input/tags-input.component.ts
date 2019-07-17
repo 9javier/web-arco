@@ -14,12 +14,19 @@ import { TagsInputOption } from './models/tags-input-option.model';
 })
 export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
+  @Input() literal:boolean = false;
+
   @Input() set options(options){
     if(options.length){
       console.log(options, "teststs");
       this._options =options.map(option=>{
-        option.id = parseInt(option.id);
-        option.type = "number";
+        if(!this.literal){
+          option.id = parseInt(option.id);
+          option.type = "number";
+        }else{
+          option.id = option.name;
+          option.type = "string";
+        }
         return option;
       });
       if(this.multiple)
@@ -302,15 +309,15 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @summary this function is not an angular way for dataBinding
    */
   onInput(event):void{
-
+    
     /**nodo sobre el cual se está escribiendo*/
     let node = window.getSelection().anchorNode;
     this.lastNode = node;
     console.log("que pasa",this._options,node.textContent);
     /**y eso es lo que vamos a usar para filtrar */
-    this.filteredOptions = this.filterOptions([...this._options],node.textContent);
+    this.filteredOptions = this.filterOptions([...this._options],node.textContent.trim());
     console.warn(this.filteredOptions);
-    if(node.textContent && !this._options.filter(option=>option.name.toLowerCase()==node.textContent.toLowerCase())[0]){
+    if(node.textContent && !this._options.filter(option=>option.name.toLowerCase()==(node.textContent.trim()).toLowerCase())[0]){
       this.currentTextOption = {
         id:node.textContent,
         name:node.textContent,

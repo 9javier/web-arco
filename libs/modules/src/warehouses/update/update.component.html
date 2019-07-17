@@ -41,6 +41,25 @@
             </div>
             <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
         </ion-item>
+        <!--Tiene building-->
+        <ion-item>
+            <ion-label lines="none" no-padding>
+                <div inset lines="none">
+                    <ion-item no-padding>
+                        <mat-checkbox formControlName="hasBuilding">posee building</mat-checkbox>
+                    </ion-item>
+                </div>
+            </ion-label>
+        </ion-item>
+        <!--buildings-->
+        <ion-item *ngIf="updateForm.value.hasBuilding && buildings && buildings.length">
+            <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name=""></ion-icon>
+            </div>
+            <ion-select placeholder="Building" formControlName="buildingId" okText="Ok" cancelText="Cancelar">
+                <ion-select-option *ngFor="let building of buildings" [value]="building.id">{{building.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
         <!--Es tienda-->
         <ion-item>
             <ion-label lines="none" no-padding>

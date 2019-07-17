@@ -20,6 +20,13 @@ const routes: Routes = [
     data:{
       name: 'Usuarios'
     }
+  },  {
+    path: 'calendar',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/calendar-picking//calendar-picking.module#CalendarPickingModule',
+    data:{
+      name: 'Calendar'
+    }
   },
   {
     path: 'roles',
@@ -219,6 +226,13 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
     data:{
       name:'Prices'
+    }
+  },{
+    path: 'building',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
+    data:{
+      name:'Building'
     }
   }
 ];
