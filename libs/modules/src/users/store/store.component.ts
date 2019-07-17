@@ -195,7 +195,7 @@ submit():void{
     }).filter(rolId=>rolId);
     return permit;
   });
-  user.roles = roles;
+  //user.roles = roles;
   //user.roleId = user.roles?user.roles[0].id:null;
   this.utilsComponent.presentLoading();
   this.userService.postStore(this.sanitize(user)).then(observable=>{

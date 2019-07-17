@@ -4,7 +4,7 @@ import { RolesService, RolModel } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UsersService,WarehouseModel, WarehousesService } from '@suite/services';
-import { NavParams,ModalController } from '@ionic/angular';
+import { NavParams,ModalController, AlertController } from '@ionic/angular';
 import { UtilsComponent } from '../../components/utils/utils.component';
 import { validators } from '../../utils/validators';
 
@@ -18,15 +18,16 @@ export class UpdateComponent implements OnInit {
   formBuilderDataInputs = {
     employedId:[''],
     name: ['', [Validators.required, Validators.minLength(4)]],
-    roleId: ['', [Validators.required]],
     email: ['', [Validators.required/*, Validators.email*/]],
     address: [''],
     password: ['',Validators.minLength(4)],
     confirmPassword: [''],
     hasWarehouse:false,
     warehouseId:[''],
+    permits: new FormArray([])
     
   };
+
 
   /**list of warehouses */
   warehouses:Array<WarehouseModel.Warehouse> = [];
@@ -46,11 +47,60 @@ export class UpdateComponent implements OnInit {
     private userService:UsersService,
     private navParams:NavParams,
     private modalController:ModalController,
-    private warehouseService:WarehousesService
+    private warehouseService:WarehousesService,
+    private alertController:AlertController
   ) {
     console.log(this.navParams);
-    let id = this.id = this.navParams.data.id;
-    this.getUser(id);
+  }
+  /**
+   * Attach warehouse to user
+   * @param warehouseId - id of warehouse to add
+   */
+  addWarehouseToUser(warehouseId:number):void{
+    console.log(this.updateForm);
+    (<FormArray>this.updateForm.get("permits")).push(this.formBuilder.group({
+      name:this.warehouses.find(warehouse=>warehouse.id == warehouseId).name,
+      warehouse:warehouseId,
+      roles:(new FormArray(this.roles.map(rol=>new FormControl(false))))
+    }));
+    console.log("this is the warehouse id", warehouseId);
+  }
+
+    /**
+   * Delete permission from formgroup to send to server
+   * @param index the index of the permission to be deleted
+   */
+  deletePermision(event,index:number):void{
+    event.preventDefault();
+    event.stopPropagation();
+    (<FormArray>this.updateForm.get("permits")).removeAt(index);
+  }
+
+   /**
+   * Open prompt for select and create a new warehouse to attach to the user for select permissions
+   * @param callback - using for execute before
+   */
+  async selectNewWarehouse(callback:Function){
+    const alert = await this.alertController.create({
+      header:"Asignar warehouse",
+      inputs: this.warehouses.map(warehouse=>{
+        return (<any>{
+          name:"warehouse",
+          label:warehouse.name,
+          type:"radio",
+          value:warehouse.id
+        })
+      }),
+      buttons:[{
+        text:'Cancelar'
+      },(<any>{
+        text:'Añadir',
+        handler:(data)=>{
+          callback.bind(this)(data);
+        }
+      })]
+    });
+    return alert.present();
   }
 
     /**
@@ -95,12 +145,12 @@ export class UpdateComponent implements OnInit {
       observable.subscribe((response)=>{
         /**iba a usar el UserModel pero no está bien definido, así que prefiero no usarlo, sería bueno revisarlo */
         let user = response.body.data;
+        this.getRoles(user);
         (<any>user).warehouseId = user.warehouse && user.warehouse.id;
         console.log(user);
         this.updateForm.patchValue(user);     
         console.log(user);
         /**call here to handle the async */
-        this.getRoles(user);
       });
     })
   }
@@ -123,7 +173,16 @@ export class UpdateComponent implements OnInit {
         data.subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
           this.updateForm.addControl("permits", new FormArray([]))
           this.roles = res.body.data;
-          let permits = user.permits;
+          user.permits.forEach(permit=>{
+            (<FormArray>this.updateForm.get("permits")).push(this.formBuilder.group({
+              name:permit.warehouse.name,
+              warehouse:permit.warehouse.id,
+              roles:(new FormArray(this.roles.map(rol=>new FormControl(!!permit.roles.find(_rol=>{
+                return rol.id==_rol.rol.id
+              })))))
+            }));
+          });
+          /*let permits = user.permits;
           for(let i = 0; i < permits.length;i++){
             let userRoles = permits[i].roles.map(rol=>rol.id);
             (<FormArray>this.updateForm.controls.permits).push(this.formBuilder.group({
@@ -133,10 +192,10 @@ export class UpdateComponent implements OnInit {
                 /**In order to get the actives roles of user, 
                  * if the user not have the rol the result of indexOf is -1, 
                  * then -1+1 == 0 and !!0 is false !!anyNumber is true */
-                return new FormControl(!!(1- -userRoles.indexOf(rol.id)));
+            /*    return new FormControl(!!(1- -userRoles.indexOf(rol.id)));
               })
             }));
-          }   
+          }  */ 
         });
       });    
   }
@@ -192,6 +251,8 @@ export class UpdateComponent implements OnInit {
       observable.subscribe(response=>{
         if(response.body && response.body.data)
           this.warehouses = response.body.data;
+          let id = this.id = this.navParams.data.id;
+          this.getUser(id);
       });
     });
   }

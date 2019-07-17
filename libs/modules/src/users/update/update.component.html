@@ -58,11 +58,11 @@
                 </ion-item>
                 <div class="container-permits">
                     Permisos:
-                    <div [class.error]="createForm['controls'].permits.touched" class="advise" *ngIf="createForm['controls'].permits.invalid">
+                    <div [class.error]="updateForm['controls'].permits.touched" class="advise" *ngIf="updateForm['controls'].permits.invalid">
                         Se necesita al menos un almacén, con al menos un rol
                     </div>
-                    <div [formGroup]="control" *ngFor="let control of createForm['controls'].permits['controls'];let i = index" (click)="createForm['controls'].permits.touched = true">
-                        <ion-item [class.invalid]="!createForm['controls']?.permits?.valid && createForm['controls'].permits.touched">
+                    <div [formGroup]="control" *ngFor="let control of updateForm['controls'].permits['controls'];let i = index" (click)="updateForm['controls'].permits.touched = true">
+                        <ion-item [class.invalid]="!updateForm['controls']?.permits?.valid && updateForm['controls'].permits.touched">
                             <mat-accordion multi="false">
                                 <mat-expansion-panel>
                                     <mat-expansion-panel-header>
