@@ -291,7 +291,7 @@ export class ProductsComponent implements OnInit {
   getFilters():void{
     this.intermediaryService.presentLoading();
     this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
-      this.inventoryServices.searchInContainer({pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+      this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
         this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
         this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
         this.updateFilterSourceModels(searchsInContainer.data.filters.models);
