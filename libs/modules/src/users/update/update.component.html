@@ -56,40 +56,44 @@
                     "></ion-icon>
                     </ion-input>
                 </ion-item>
-                <!--Roles-->
-                <div class="container-roles" *ngIf="updateForm['controls']?.roles['controls']">
-                    <ion-item [class.invalid]="!updateForm['controls']?.roles?.valid">
-                        <div slot="start" class="slot-start-icon">
-                            <ion-icon color="medium" name="list-box"></ion-icon>
-                        </div>
-                        <mat-accordion multi="false">
-                            <mat-expansion-panel>
-                                <mat-expansion-panel-header>
-                                    <ion-grid>
-                                        <ion-row>
-                                            <ion-col size="3">
-                                                <mat-panel-title> Roles </mat-panel-title>
-                                            </ion-col>
-                                            <ion-col size="7">
-                                                <mat-panel-description></mat-panel-description>
-                                            </ion-col>
-                                            <ion-col size="1">
-                                            </ion-col>
-                                        </ion-row>
-                                    </ion-grid>
+                <div class="container-permits">
+                    Permisos:
+                    <div [class.error]="updateForm['controls'].permits.touched" class="advise" *ngIf="updateForm['controls'].permits.invalid">
+                        Se necesita al menos un almacén, con al menos un rol
+                    </div>
+                    <div [formGroup]="control" *ngFor="let control of updateForm['controls'].permits['controls'];let i = index" (click)="updateForm['controls'].permits.touched = true">
+                        <ion-item [class.invalid]="!updateForm['controls']?.permits?.valid && updateForm['controls'].permits.touched">
+                            <mat-accordion multi="false">
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        <ion-grid>
+                                            <ion-row>
+                                                <ion-col size="11">
 
-                                </mat-expansion-panel-header>
+                                                    <mat-panel-title> {{control.controls.name.value}} </mat-panel-title>
+                                                </ion-col>
+                                                <ion-col size="1">
+                                                    <ion-badge color="danger" (click)="deletePermision($event,i)">-</ion-badge>
+                                                </ion-col>
+                                            </ion-row>
+                                        </ion-grid>
+                                    </mat-expansion-panel-header>
+                                    <div>
+                                        <ion-item *ngFor="let control of control['controls'].roles['controls'];let i = index">
+                                            <ion-label>{{roles[i].name}}</ion-label>
+                                            <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
+                                        </ion-item>
+                                    </div>
+                                    <mat-list style="display: flex; justify-content:center;"></mat-list>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </ion-item>
+                    </div>
+                    <div>
 
-                                <div>
-                                    <ion-item *ngFor="let control of updateForm['controls'].roles['controls'];let i = index">
-                                        <ion-label>{{roles[i].name}}</ion-label>
-                                        <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
-                                    </ion-item>
-                                </div>
-                                <mat-list style="display: flex; justify-content:center;"></mat-list>
-                            </mat-expansion-panel>
-                        </mat-accordion>
-                    </ion-item>
+                        <ion-button (click)="selectNewWarehouse(addWarehouseToUser)">Agregar permiso +</ion-button>
+                    </div>
+
                 </div>
                 <!--Direction-->
                 <ion-item lines="none">

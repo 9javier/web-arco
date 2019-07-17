@@ -28,6 +28,20 @@ export namespace UserModel {
       warehouse?: {
         id: number;
       };
+      permits:[{
+        id:number;
+        warehouse:{
+          name:string;
+          id:number;
+        },
+        roles:[{
+          id:number;
+          rol:{
+            id:number;
+            name:string;
+          }
+        }]
+      }]
     };
     message: string;
     code: number;
