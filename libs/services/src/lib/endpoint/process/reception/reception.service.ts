@@ -15,6 +15,8 @@ export class ReceptionService {
   private postReceiveUrl = environment.apiBase + '/process/receive';
   private getCheckPackingUrl = environment.apiBase + '/process/receive/check/';
   private getCheckProductsPackingUrl = environment.apiBase + '/process/receive/check/{{reference}}/products';
+  private postReceiveProductUrl = environment.apiBase + '/process/receive/products';
+  private getNotReceivedProductsUrl = environment.apiBase + '/process/receive/notreceived/';
 
   constructor(
     private http: HttpClient,
@@ -45,6 +47,22 @@ export class ReceptionService {
       let url = this.getCheckProductsPackingUrl.replace('{{reference}}', packingReference);
 
       return this.http.get<ReceptionModel.ResponseCheckProductsPacking>(url, { headers });
+    }));
+  }
+
+  postReceiveProduct(parameters: ReceptionModel.ReceptionProduct) : Observable<ReceptionModel.ResponseReceptionProduct> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.post<ReceptionModel.ResponseReceptionProduct>(this.postReceiveProductUrl, parameters, { headers });
+    }));
+  }
+
+  getNotReceivedProducts(packingReference: string) : Observable<ReceptionModel.ResponseNotReceivedProducts> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.get<ReceptionModel.ResponseNotReceivedProducts>(this.getNotReceivedProductsUrl+packingReference, { headers });
     }));
   }
 }
