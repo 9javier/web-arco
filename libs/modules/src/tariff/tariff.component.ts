@@ -117,6 +117,8 @@ export class TariffComponent implements OnInit {
       let paginator = tariffs.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
+    },()=>{
+      this.intermediaryService.dismissLoading();
     })
   }
 
