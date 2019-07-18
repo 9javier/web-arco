@@ -9,7 +9,7 @@ import { ServerPostmanEnvironment } from './postman/Server.postman_environment';
 // @ts-ignore
 import API_COLLECTION from './postman/Api.Team.postman_collection.json';
 // @ts-ignore
-import ENV_COLLECTION from './postman/Localhost.postman_environment.json';
+import ENV_COLLECTION from './postman/Server.postman_environment.json';
 import {environment} from "../libs/services/src/environments/environment";
 
 const ENV: ServerPostmanEnvironment = ENV_COLLECTION;
