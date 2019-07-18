@@ -44,16 +44,19 @@ export class IntermediaryService {
    * @param message - the message to be showed in loading
    */
   async presentLoading(message:string = ""){
-    this.loading = true;
-    this.loadingCtrl.create({
-      message:message
-    }).then(loading=>{
-      loading.present().then(()=>{
-        this.created = true;
-        if(!this.loading)
-          this.dismissLoading();
-      });
-    })
+    if(!this.loading){
+      this.loading = true;
+      this.loadingCtrl.create({
+        message:message
+      }).then(loading=>{
+        loading.present().then(()=>{
+          this.created = true;
+          if(!this.loading)
+            this.dismissLoading();
+        });
+      })
+    }
+
   }
 
   /**

@@ -150,3 +150,7 @@ export * from './components/tags-input/tags-input.module';
 /**Building */
 export * from './building/building.component';
 export * from './building/building.module';
+
+/**Calendar picking */
+export * from './calendar-picking/calendar-picking.component';
+export * from './calendar-picking/calendar-picking.module';

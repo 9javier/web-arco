@@ -243,6 +243,8 @@ export class PricesComponent implements OnInit {
       let paginator = prices.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
+    },()=>{
+      this.intermediaryService.dismissLoading();
     });
   }
 }

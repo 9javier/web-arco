@@ -42,7 +42,7 @@
             <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
         </ion-item>
         <!--Tiene building-->
-        <ion-item>
+        <ion-item *ngIf="buildings && buildings.length">
             <ion-label lines="none" no-padding>
                 <div inset lines="none">
                     <ion-item no-padding>
