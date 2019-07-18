@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input, Output, EventEmitter } from '@angular/core';
 import {  app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
@@ -287,13 +287,18 @@ export class MenuComponent implements OnInit {
   }
 
   menuPagesFiltered: MenuItemList = [];
+@Output() menuTitle = new EventEmitter();
 
-
-
+  
   constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
               private scanditService: ScanditService,
               private receptionScanditService: ReceptionScanditService,
               private printTagsScanditService: PrintTagsScanditService) { }
+
+  returnTitle(item:MenuSectionItem){
+    this.currentRoute = item.title
+    this.menuTitle.emit(item.title);
+  }
 
   /**
    * Select the links that be shown depends of dictionary paramethers
@@ -342,6 +347,7 @@ export class MenuComponent implements OnInit {
   tapOption(p) {
     console.log(p);
     this.currentRoute = p.title;
+    this.menuTitle.emit(p.title);
     if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
         this.loginService

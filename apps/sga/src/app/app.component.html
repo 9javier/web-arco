@@ -31,7 +31,7 @@
                 </ion-toolbar>
             </ion-header>
             <ion-content>
-                <suite-menu [alloweds]="dictionary"></suite-menu>
+                <suite-menu [alloweds]="dictionary" (menuTitle)="changeMenutTitle($event)"></suite-menu>
             </ion-content>
         </ion-menu>
 
