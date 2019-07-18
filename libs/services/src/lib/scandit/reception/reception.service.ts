@@ -72,7 +72,11 @@ export class ReceptionScanditService {
         } else if (response.action) {
           switch (response.action) {
             case 'matrix_simple':
-              ScanditMatrixSimple.showButtonFinishReception(true);
+              if (this.typeReception == 2) {
+                ScanditMatrixSimple.showButtonFinishReception(true);
+              } else {
+                ScanditMatrixSimple.showButtonFinishReception(false);
+              }
               break;
             case 'finish_reception':
               // Request user scan packing to set as empty
