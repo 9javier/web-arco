@@ -113,6 +113,10 @@ export class AppComponent implements OnInit {
     this.dateAdapter.setLocale('es');
   }
 
+  changeMenutTitle(title:string){
+    this.currentRoute = title;
+  }
+
   initializeApp() {
     this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;

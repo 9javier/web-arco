@@ -142,6 +142,7 @@ export class AppComponent implements OnInit {
   }
 
 
+
   /**timeout to prevent avoid login page */
   private loginTimeout;
 
@@ -160,6 +161,10 @@ export class AppComponent implements OnInit {
   ) {
     this.menu.enable(false, 'sidebar');
     this.dateAdapter.setLocale('es');
+  }
+
+  changeMenutTitle(title:string){
+    this.currentRoute = title;
   }
 
   initializeApp() {
