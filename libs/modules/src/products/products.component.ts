@@ -151,12 +151,12 @@ export class ProductsComponent implements OnInit {
    */
   printLabelProducts():void{
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
-    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    //this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagBarcode(references).subscribe(result=>{
       console.log("result of impressions",result);
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
     },error=>{
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
       console.log(error);
     });
     console.log(references);
@@ -167,12 +167,12 @@ export class ProductsComponent implements OnInit {
    */
   printPriceProducts():void{
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
-    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    //this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagPrices(references).subscribe(result=>{
       console.log("result of impressions",result);
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
     },error=>{
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
       console.log(error);
     });
     console.log(references);
@@ -252,9 +252,9 @@ export class ProductsComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters):void{
-    this.intermediaryService.presentLoading();
+    //this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
@@ -268,7 +268,7 @@ export class ProductsComponent implements OnInit {
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
     },()=>{
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
     });
   }
 
@@ -291,10 +291,10 @@ export class ProductsComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters():void{
-    this.intermediaryService.presentLoading();
+    //this.intermediaryService.presentLoading();
     this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
       this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
-        this.intermediaryService.dismissLoading();
+        //this.intermediaryService.dismissLoading();
         this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
         this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
         this.updateFilterSourceModels(searchsInContainer.data.filters.models);
@@ -311,10 +311,10 @@ export class ProductsComponent implements OnInit {
           }, 0);
         }, 0);
       },()=>{
-        this.intermediaryService.dismissLoading();
+        //this.intermediaryService.dismissLoading();
       });
     },()=>{
-      this.intermediaryService.dismissLoading();
+      //this.intermediaryService.dismissLoading();
     });
   }
 
