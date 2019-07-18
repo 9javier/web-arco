@@ -169,17 +169,17 @@ export class MenuComponent implements OnInit {
       id:'tariff-sga',
       url:'/tariff',
       icon:'logo-usd'
+    },{
+      title: 'Building',
+      id:'building',
+      url: '/building',
+      icon: 'basket'
     },
     {
       title: 'Cerrar sesión',
       id:'logout',
       url: 'logout',
       icon: 'log-out'
-    },{
-      title: 'Building',
-      id:'building',
-      url: '/building',
-      icon: 'basket'
     },
   ];
 
