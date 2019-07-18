@@ -10,7 +10,7 @@
                         Plantilla
                     </ion-label>
                     <ion-select (ionChange)="selectTemplate($event.detail.value)">
-                        <ion-select-option *ngFor="let template of templates" [value]="template">{{template.id}}</ion-select-option>
+                        <ion-select-option *ngFor="let template of templates" [value]="template">{{template.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
 
@@ -22,8 +22,16 @@
                 </div>
             </ion-col>
             <ion-col size="6" [formGroup]="form">
+                <ion-item *ngIf="selectDates.length">
+                    <ion-label>
+                        Fechas
+                    </ion-label>
+                    <ion-select (ionChange)="selectTemplate($event.detail.value,$event.detail.value.value)">
+                        <ion-select-option *ngFor="let date of selectDates" [value]="date">{{date.date}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
                 <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls']">
-                    <mat-expansion-panel>
+                    <mat-expansion-panel (opened)="warehouse['controls']?.opened.setValue(true)" (closed)="warehouse['controls']?.opened.setValue(false)">
                         <mat-expansion-panel-header>
                             <ion-grid>
                                 <ion-row>
@@ -42,8 +50,8 @@
 
                         </mat-expansion-panel-header>
 
-                        <div>
-                            <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].warehousesDestinations['controls']">
+                        <div *ngIf="warehouse.value.opened">
+                            <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
                                 <mat-checkbox formControlName="selected"></mat-checkbox>
                                 <ion-label>{{destination.value.name}}</ion-label>
                                 <mat-checkbox formControlName="radio"></mat-checkbox>
@@ -61,6 +69,6 @@
     </ion-grid>
 </ion-content>
 <ion-footer>
-    <ion-button [disabled]="!(formatValue(form.value).warehouses.length && dates.length)" (click)="store(formatValue(form.value))">GUARDAR</ion-button>
+    <ion-button [disabled]="!(formatValue(form.value).warehouses.length && dates.length)" (click)="store()">GUARDAR</ion-button>
     <ion-button [disabled]="!formatValue(form.value).warehouses.length" (click)="storeTemplate(formatValue(form.value))">PLANTILLA</ion-button>
 </ion-footer>
