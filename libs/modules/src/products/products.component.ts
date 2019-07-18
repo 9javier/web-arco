@@ -267,6 +267,8 @@ export class ProductsComponent implements OnInit {
       let paginator = searchsInContainer.data.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
+    },()=>{
+      this.intermediaryService.dismissLoading();
     });
   }
 
@@ -292,6 +294,7 @@ export class ProductsComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
       this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+        this.intermediaryService.dismissLoading();
         this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
         this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
         this.updateFilterSourceModels(searchsInContainer.data.filters.models);
@@ -303,12 +306,15 @@ export class ProductsComponent implements OnInit {
           this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
           this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
           setTimeout(() => {
-            this.intermediaryService.dismissLoading();
             this.pauseListenFormChange = false;
             this.searchInContainer(this.sanitize(this.getFormValueCopy()));
           }, 0);
         }, 0);
+      },()=>{
+        this.intermediaryService.dismissLoading();
       });
+    },()=>{
+      this.intermediaryService.dismissLoading();
     });
   }
 
