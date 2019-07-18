@@ -409,7 +409,7 @@ export class ScanditService {
             this.postVerifyPacking({
               status: 3,
               pickingId: pickingId,
-              packingReference: jailReference
+              packingReference: code
             })
               .subscribe((res) => {
                 this.pickingLog(2, "21", ".subscribe((res) => {");
