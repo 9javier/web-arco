@@ -44,7 +44,7 @@
                         </ion-item>
                     </ion-list>
                 </ion-menu-toggle>-->
-                <suite-menu [alloweds]="dictionary"></suite-menu>
+                <suite-menu [alloweds]="dictionary" (menuTitle)="changeMenutTitle($event)"></suite-menu>
             </ion-content>
         </ion-menu>
 
