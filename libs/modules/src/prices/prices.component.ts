@@ -6,7 +6,8 @@ import {
   IntermediaryService,
   LabelsService,
   PriceModel,
-  PriceService
+  PriceService,
+  WarehousesService
 
 } from '@suite/services';
 
@@ -28,21 +29,11 @@ export class PricesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
-  filterTypes = [{
-    id:1,
-    name:"All"
-  },{
-    id:2,
-    name:"Printed"
-  },{
-    id:3,
-    name:"No printed"
-  }];
+  filterTypes:Array<PriceModel.StatusType> = [];
+  status:number;
 
-  status = this.filterTypes[0].id;
-
-
-  pagerValues:Array<number> = [5, 10, 20];
+  warehouses:Array<any> = [];
+  pagerValues:Array<number> = [50, 100, 500];
 
   page:number = 0;
 
@@ -51,16 +42,31 @@ export class PricesComponent implements OnInit {
   selectAllBinding;
 
   changeValue(event){
-    this.status = event.detail.value;
-    this.getPrices(this.tariffId,0,this.limit,this.status);
+    //this.status = parseInt(event.detail.value);
+    this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
   }
 
+  reSearch(){
+    this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
+  }
+
+  getWarehouses():void{
+    this.warehousesService.getIndex().then(observable=>{
+      observable.subscribe(warehouses=>{
+        this.warehouses = warehouses.body.data;
+      });
+    })
+  }
 
   /**Arrays to be shown */
   labels:Array<any> = [];
 
   /**List of prices */
   prices:Array<PriceModel.Price> = [];
+
+  filters:FormGroup = this.formBuilder.group({
+    warehouseId:51
+  });
 
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({
@@ -80,7 +86,8 @@ export class PricesComponent implements OnInit {
     private priceService:PriceService,
     private intermediaryService:IntermediaryService,
     private formBuilder:FormBuilder,
-    private route:ActivatedRoute
+    private route:ActivatedRoute,
+    private warehousesService:WarehousesService
   ) {
 
   }
@@ -125,7 +132,8 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getPrices(this.tariffId,this.page,this.limit,this.status);
+      if(this.status === 0 || this.status) 
+        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
     });
   }
 
@@ -141,24 +149,35 @@ export class PricesComponent implements OnInit {
   }
 
   /**
+   * Get the name of status based on id
+   * @param id - the id of the status
+   */
+  getNameOfStatus(id:number):string{
+    return this.filterTypes.find(status=>{
+      return status.id == id
+    }).name;
+  }
+  /**
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
   printPrices(items,warehouseId:number=51):void{
     let prices = this.selectedForm.value.toSelect.map((price,i)=>{
+      console.log(items[i]);
       let object = {
         warehouseId:warehouseId,
-        tariffId:items[i].tariffId,
-        modelId:items[i].modelId,
+        tariffId:items[i].tariff.id,
+        modelId:items[i].model.id,
         numRange: items[i].numRange
       }
       return price?object:false})
       .filter(price=>price);
+      console.log(prices);
       this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
       this.printerService.printPrices({references:prices}).subscribe(result=>{
         console.log("result of impressions",result);
         this.intermediaryService.dismissLoading();
-        this.getPrices(this.tariffId,this.page,this.limit,this.status);
+        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
       },error=>{
         this.intermediaryService.dismissLoading();
         console.log(error);
@@ -167,13 +186,19 @@ export class PricesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      console.log("here");
-      this.tariffId = Number(params.get("tariffId"));
-      console.log(this.tariffId);
-      this.getPrices(this.tariffId,this.page,this.limit,this.status);
-    });
-    
+    this.getWarehouses();
+    this.priceService.getStatusEnum().subscribe(status=>{
+      this.filterTypes = status;
+      this.status = this.filterTypes.find((status)=>{
+        return status.name.toLowerCase() == "todos";
+      }).id;
+      this.route.paramMap.subscribe(params => {
+        console.log("here");
+        this.tariffId = Number(params.get("tariffId"));
+        console.log(this.tariffId);
+        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
+      });
+    });    
   }
 
   ngAfterViewInit(): void {
@@ -208,8 +233,10 @@ export class PricesComponent implements OnInit {
    * @param page
    * @param limit
    */
-  getPrices(tariffId:number,page:number,limit:number, status:number):void{
-    this.priceService.getIndex(tariffId, page, limit, status).subscribe(prices=>{
+  getPrices(tariffId:number,page:number,limit:number, status:number,warehouseId:number):void{
+    this.intermediaryService.presentLoading();
+    this.priceService.getIndex(tariffId, page, limit, status,warehouseId).subscribe(prices=>{
+      this.intermediaryService.dismissLoading();
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);

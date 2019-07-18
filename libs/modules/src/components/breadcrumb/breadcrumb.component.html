@@ -17,6 +17,26 @@
             </ng-template>
             </span>
         </h1>
+    </div>
+    <div portrait>
+
+        <h5>
+            <span *ngFor="let breadCrumb of breadCrumbs;let i = index">
+              <span *ngIf="breadCrumb.path;else withoutLink" routerLink="/{{breadCrumb.path}}">
+                  {{
+                    i ? " > "+breadCrumb.data.name:breadCrumb.data.name
+                  }}
+              </span>
+
+            <ng-template #withoutLink>
+                <span>
+                    {{
+                     i ? " > "+breadCrumb.data.name:breadCrumb.data.name
+                    }}
+                  </span>
+            </ng-template>
+            </span>
+        </h5>
 
     </div>
 </suite-responsive-layout>

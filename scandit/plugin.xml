@@ -140,6 +140,8 @@
       <activity android:configChanges="orientation|screenSize" android:name="com.mirasense.scanditsdk.plugin.MatrixBubblesActivity"/>
       <activity android:configChanges="orientation|screenSize" android:name="com.mirasense.scanditsdk.plugin.MatrixWithDataActivity"/>
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixSimpleActivity"/>
+      <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixPickingStores"/>
+      <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixPrintTags"/>
     </config-file>
     <!-- The .so/.jar and resources are all contained in the ScanditBarcodeScanner.aar file, which we reference from build.gradle -->
     <framework custom="true" src="src/android/build.gradle" type="gradleReference"/>

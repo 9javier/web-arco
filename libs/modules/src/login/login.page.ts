@@ -20,8 +20,10 @@ import { AppInfo } from 'config/base';
 })
 export class LoginComponent implements OnInit {
   user: RequestLogin = {
-    username: 'admin@krackonline.com',
-    password: 'ChangeMe.1234',
+    /**admin@krackonline.com*/
+    username: '',
+    /**ChangeMe.1234 */
+    password: '',
     grant_type: 'password'
   };
 
@@ -36,7 +38,20 @@ export class LoginComponent implements OnInit {
     private loadingController: LoadingController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user.username = '';
+    this.user.password = '';
+    this.getLastUsername();
+  }
+
+  /**
+   * Get the last username thats been logged in the system
+   */
+  getLastUsername():void{
+    this.authenticationService.getUsername().subscribe(username=>{
+      this.user.username = username;
+    });
+  }
 
   login(user: RequestLogin) {
     console.log(user);

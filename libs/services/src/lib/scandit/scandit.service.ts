@@ -38,6 +38,7 @@ export class ScanditService {
 
   private userWarehouse: WarehouseModel.Warehouse;
   private scanContainerToNotFound: string = null;
+  private intervalCleanLastCodeScanned = null;
 
   constructor(
     private http: HttpClient,
@@ -222,9 +223,10 @@ export class ScanditService {
     });
   }
 
-  picking(pickingId: number, listProducts: ShoesPickingModel.ShoesPicking[], typePacking: number, packingReference: string) {
+  picking(pickingId: number, listProducts: ShoesPickingModel.ShoesPicking[], typePacking: number) {
     let processInitiated: boolean = false;
-    let jailReference: string = null;
+    let jailReference: string = '';
+    let lastCarrierScanned: string = '';
     let productsToScan: ShoesPickingModel.ShoesPicking[] = listProducts;
     let productsScanned: string[] = [];
     let lastCodeScanned: string = "start";
@@ -233,6 +235,8 @@ export class ScanditService {
         not_registered: 'La Jaula escaneada no está registrada en el sistema.',
         process_resumed: 'Para continuar con el proceso de picking escanea la Jaula ',
         process_started: 'Proceso iniciado con la Jaula ',
+        process_end_packing: 'Proceso finalizado con la Jaula ',
+        process_packing_empty: 'Desasociada del picking la Jaula ',
         scan_before_products: 'Escanea la Jaula a utilizar antes de comenzar el proceso.',
         scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
         toThe: "a la Jaula",
@@ -243,6 +247,8 @@ export class ScanditService {
         not_registered: 'El Pallet escaneado no está registrado en el sistema.',
         process_resumed: 'Para continuar con el proceso de picking escanea el Pallet ',
         process_started: 'Proceso iniciado con el Pallet ',
+        process_end_packing: 'Proceso finalizado con el Pallet ',
+        process_packing_empty: 'Desasociada del picking el Pallet ',
         scan_before_products: 'Escanea el Pallet a utilizar antes de comenzar el proceso.',
         scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
         toThe: "al Pallet",
@@ -250,6 +256,17 @@ export class ScanditService {
         wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.'
       }
     };
+    let timeLastCodeScanned: number = 0;
+    let packingReference: string = '';
+
+    this.clearTimeoutCleanLastCodeScanned();
+    this.intervalCleanLastCodeScanned = setInterval(() => {
+      if (this.scanditProvider.checkCodeValue(lastCodeScanned) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(lastCodeScanned) == this.scanditProvider.codeValue.JAIL) {
+        if(Math.abs((new Date().getTime() - timeLastCodeScanned) / 1000) > 4){
+          lastCodeScanned = 'start';
+        }
+      }
+    }, 1000);
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
@@ -280,8 +297,8 @@ export class ScanditService {
       //Check Jail/Pallet or product
       if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
         this.pickingLog(2, "3", "if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
-        if (!processInitiated) {
-          this.pickingLog(2, "4", "if (!processInitiated) {");
+        if (productsToScan.length != 0) {
+          this.pickingLog(2, "4", "if (productsToScan.length != 0) {");
           let typePackingScanned = 0;
           if (code.match(/J([0-9]){4}/)) {
             this.pickingLog(2, "5", "if (code.match(/J([0-9]){4}/)) {");
@@ -292,6 +309,8 @@ export class ScanditService {
           }
 
           if ((packingReference && packingReference == code) || !packingReference) {
+            timeLastCodeScanned = new Date().getTime();
+            lastCarrierScanned = code;
             this.pickingLog(2, "7", "if ((packingReference && packingReference == code) || !packingReference) {");
             if (typePackingScanned == typePacking) {
               this.pickingLog(2, "8", "if (typePackingScanned == typePacking) {");
@@ -309,16 +328,52 @@ export class ScanditService {
                     this.pickingLog(2, "11", "} else {");
                     typePacking = 2;
                   }
-                  processInitiated = true;
-                  jailReference = code;
-                  if (!packingReference) {
-                    this.pickingLog(2, "12", "if (!packingReference) {");
-                    packingReference = jailReference;
+                  if(res){
+                    if (res.code == 200 || res.code == 201) {
+                      if(res.data.packingStatus == 2){
+                        processInitiated = true;
+                        jailReference = code;
+                        packingReference = code;
+                        ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                        ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                        this.hideTextMessage(2000);
+                        ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
+                      } else if(res.data.packingStatus == 3){
+                        processInitiated = false;
+                        packingReference = code;
+                        packingReference = '';
+                        ScanditMatrixSimple.showNexProductToScan(false);
+                        ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_end_packing}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                        this.hideTextMessage(2000);
+                        ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
+                      } else {
+                        processInitiated = false;
+                        console.error('Error Subscribe::Check Packing Reference::', res);
+                        ScanditMatrixSimple.setText(
+                          res.message,
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
+                      }
+                    } else {
+                      processInitiated = false;
+                      console.error('Error Subscribe::Check Packing Reference::', res);
+                      ScanditMatrixSimple.setText(
+                        res.message,
+                        this.scanditProvider.colorsMessage.error.color,
+                        this.scanditProvider.colorText.color,
+                        16);
+                      this.hideTextMessage(1500);
+                    }
+                  } else {
+                    processInitiated = false;
+                    packingReference = '';
+                    ScanditMatrixSimple.showNexProductToScan(false);
+                    ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_packing_empty}${code}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                    ScanditMatrixSimple.showTextStartScanPacking(true, typePacking, '');
+                    this.hideTextMessage(2000);
                   }
-                  ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                  ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_started}${jailReference}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-                  this.hideTextMessage(2000);
-                  ScanditMatrixSimple.showTextStartScanPacking(false, typePacking, '');
                 }, (error) => {
                   this.pickingLog(2, "13", "}, (error) => {");
                   if (error.error.code == 404) {
@@ -341,11 +396,7 @@ export class ScanditService {
             ScanditMatrixSimple.setText(`${literalsJailPallet[typePacking].process_resumed}${packingReference}.`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           }
-        } else if (productsToScan.length != 0) {
-          this.pickingLog(2, "18", "} else if (productsToScan.length != 0) {");
-          ScanditMatrixSimple.setText('Continúe escaneando los productos que se le indican antes de finalizar el proceso.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-          this.hideTextMessage(2000);
-        } else if (jailReference != code) {
+        } else if (jailReference && jailReference != code) {
           this.pickingLog(2, "19", "} else if (jailReference != code) {");
           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].wrong_process_finished, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
@@ -364,7 +415,8 @@ export class ScanditService {
                 this.pickingLog(2, "21", ".subscribe((res) => {");
                 ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
                 this.hideTextMessage(1500);
-                ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference);
+                ScanditMatrixSimple.showTextEndScanPacking(false, typePacking, jailReference ? jailReference : lastCarrierScanned);
+                this.clearTimeoutCleanLastCodeScanned();
                 setTimeout(() => {
                   this.pickingLog(2, "22", "setTimeout(() => {");
                   ScanditMatrixSimple.finish();
@@ -374,6 +426,7 @@ export class ScanditService {
                 this.pickingLog(2, "23", "}, (error) => {");
                 this.scannerPaused = false;
                 clearTimeout(scanUnlockTimeout);
+                this.clearTimeoutCleanLastCodeScanned();
                 if (error.error.code == 404) {
                   this.pickingLog(2, "24", "if (error.error.code == 404) {");
                   ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
@@ -387,6 +440,7 @@ export class ScanditService {
           } catch (e) {
             this.scannerPaused = false;
             clearTimeout(scanUnlockTimeout);
+            this.clearTimeoutCleanLastCodeScanned();
             throw e;
           }
         }
@@ -424,7 +478,7 @@ export class ScanditService {
                     ScanditMatrixSimple.showNexProductToScan(false);
                     setTimeout(() => {
                       this.pickingLog(2, "35", "setTimeout(() => {");
-                      ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+                      ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
                       ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                       this.hideTextMessage(1500);
                     }, 2 * 1000);
@@ -447,7 +501,7 @@ export class ScanditService {
                           ScanditMatrixSimple.showNexProductToScan(false);
                           setTimeout(() => {
                             this.pickingLog(2, "41", "setTimeout(() => {");
-                            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+                            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
                             ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                             this.hideTextMessage(1500);
                           }, 2 * 1000);
@@ -473,7 +527,7 @@ export class ScanditService {
                         ScanditMatrixSimple.showNexProductToScan(false);
                         setTimeout(() => {
                           this.pickingLog(2, "47", "setTimeout(() => {");
-                          ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+                          ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
                           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                           this.hideTextMessage(1500);
                         }, 2 * 1000);
@@ -485,7 +539,7 @@ export class ScanditService {
           } else {
             this.pickingLog(2, "48", "} else {");
             ScanditMatrixSimple.showNexProductToScan(false);
-            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
             ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
             this.hideTextMessage(1500);
           }
@@ -516,7 +570,7 @@ export class ScanditService {
                         ScanditMatrixSimple.showNexProductToScan(false);
                         setTimeout(() => {
                           this.pickingLog(2, "58", "setTimeout(() => {");
-                          ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+                          ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
                           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                           this.hideTextMessage(1500);
                         }, 2 * 1000);
@@ -563,7 +617,7 @@ export class ScanditService {
             this.pickingLog(2, "64", "} else {");
             jailReference = packingReference;
             processInitiated = true;
-            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference);
+            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
           }
         }
       }
@@ -579,10 +633,10 @@ export class ScanditService {
     }, delay);
   }
 
-  private postVerifyPacking(packing) : Observable<PickingModel.ResponseUpdate> {
+  private postVerifyPacking(packing) : Observable<any> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingModel.ResponseUpdate>(this.postVerifyPackingUrl, packing, { headers });
+      return this.http.post<any>(this.postVerifyPackingUrl, packing, { headers });
     }));
   }
 
@@ -619,6 +673,13 @@ export class ScanditService {
     params.unshift("positioning log", "\t" + index + "\t" + message);
     var logFunction = type === 3 ? console.error : (type === 2 ? console.warn : console.log);
     logFunction.apply(console, params);
+  }
+
+  private clearTimeoutCleanLastCodeScanned(){
+    if(this.intervalCleanLastCodeScanned){
+      clearTimeout(this.intervalCleanLastCodeScanned);
+      this.intervalCleanLastCodeScanned = null;
+    }
   }
 
 }

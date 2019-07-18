@@ -2,3 +2,14 @@
     color: #979797;
     cursor: pointer;
 }
+
+h5 {
+    display: inline
+}
+
+[portrait] {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -6,6 +6,8 @@ import {
   HttpResponse
 } from '@angular/common/http';
 
+import { Storage } from '@ionic/storage'; 
+
 import {
   RequestLogin,
   ResponseLogin,
@@ -20,6 +22,7 @@ import {
 } from '../../../../../../config/postman/Api.Team.postman_collection';
 
 import { Observable } from 'rxjs/internal/Observable';
+import { map } from 'rxjs/operators';
 
 import {
   PATH,
@@ -28,7 +31,8 @@ import {
   ACCESS_TOKEN,
   AppInfo
 } from '../../../../../../config/base';
-import { environment,app } from '../../../environments/environment';;
+import { environment,app } from '../../../environments/environment';import { from } from 'rxjs';
+;
 
 export const HEADERS_LOGIN: any[] = HEADERS('OAuth2', 'Login');
 export const AUTH_LOGIN: Auth1 = AUTH('OAuth2', 'Login');
@@ -50,7 +54,7 @@ export class Oauth2Service {
 
  
   
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private storage:Storage) {}
 
   /**
    * @returns authorization headers for authenticate the aplication
@@ -91,7 +95,10 @@ export class Oauth2Service {
     return this.http.post<ResponseLogin>(PATH_POST_LOGIN, body, {
       headers: headers,
       observe: 'response'
-    });
+    }).pipe(map(response=>{
+      this.storage.set("username",user.username);
+      return response;
+    }));
   }
 
   /**
