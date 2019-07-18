@@ -3,7 +3,7 @@ import { DatePickerComponent,IDatePickerConfig } from 'ng2-date-picker';
 import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
 import { FormBuilder, FormGroup, FormArray, Form } from '@angular/forms';
 import { WarehouseModel,CalendarModel,CalendarService, IntermediaryService } from '@suite/services';
-import { AlertController } from '@ionic/angular';
+import { AlertController, IonSelect } from '@ionic/angular';
 
 @Component({
   selector: 'suite-calendar-picking',
@@ -12,6 +12,7 @@ import { AlertController } from '@ionic/angular';
 })
 export class CalendarPickingComponent implements OnInit {
 
+  @ViewChild("templates") templatesSelect:IonSelect;
   calendarConfiguration:IDatePickerConfig  = {
     closeOnSelect:false,
     allowMultiSelect:true,
@@ -19,11 +20,16 @@ export class CalendarPickingComponent implements OnInit {
     appendTo:'.append',
     drops:'down'
   } 
+  currentTemplate;
   initialValue = null;
   templateBase:Array<CalendarModel.TemplateWarehouse> = [];
   dates;
   date:string;
   selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [];
+
+  template:FormGroup = this.formBuilder.group({
+    template:''
+  });
 
   form:FormGroup = this.formBuilder.group({
     warehouses: new FormArray([])
@@ -146,7 +152,7 @@ export class CalendarPickingComponent implements OnInit {
       calendars:[]
     }
     this.selectDates.forEach(date=>{
-      let value = this.formatValue(date.value);
+      let value = this.formatValue(((this.date!= 'all')?date.value:this.form.value));
       value["date"] =date.date;
       if(value.warehouses.length)
         globalValues.calendars.push(value)
@@ -154,7 +160,7 @@ export class CalendarPickingComponent implements OnInit {
     
     this.intermediaryService.presentLoading();
     this.calendarService.store(globalValues).subscribe(()=>{
-      this.initTemplateBase(this.templateBase);
+      this.clear()
       this.intermediaryService.presentToastSuccess("Guardado con éxito");
       this.intermediaryService.dismissLoading();
     },(error)=>{
@@ -193,7 +199,7 @@ export class CalendarPickingComponent implements OnInit {
             template.name = data.name;
             this.intermediaryService.presentLoading();
             this.calendarService.storeTemplate(template).subscribe(()=>{
-              this.initTemplateBase(this.templateBase);
+              this.clear();
               this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
               this.intermediaryService.dismissLoading();
             },()=>{
@@ -250,9 +256,8 @@ export class CalendarPickingComponent implements OnInit {
     }
       
     let warehouses = template.warehouses;
-    console.log("estos son",warehouses);
     this.initTemplateBase(this.templateBase);
-    this.date = template.date;
+    this.date = template.date || this.date;
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
         if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
@@ -304,6 +309,11 @@ export class CalendarPickingComponent implements OnInit {
     });
     this.getTemplates();
     this.initialValue = this.form.value;
+  }
+
+  clear(){
+    this.template.get("template").patchValue('',{emitEvent:false});
+    this.initTemplateBase(this.templateBase);
   }
 
   /**
