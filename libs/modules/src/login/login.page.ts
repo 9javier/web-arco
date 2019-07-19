@@ -29,6 +29,7 @@ export class LoginComponent implements OnInit {
 
   private loading = null;
   public versionNumber: string = null;
+  public isMobileApp: boolean = false;
 
   constructor(
     private loginService: Oauth2Service,
@@ -45,9 +46,12 @@ export class LoginComponent implements OnInit {
     this.getLastUsername();
     // Check if is mobile app and get appVersionNumber
     if (window.cordova) {
+      this.isMobileApp = true;
       (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
         this.versionNumber = versionNumber;
       });
+    } else {
+      this.isMobileApp = false;
     }
   }
 
