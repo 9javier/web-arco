@@ -105,6 +105,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
   private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
   private static final String MATRIX_PRINT_TAGS = "matrixPrintTags";
+  private static final String MATRIX_SIMPLE_SHOW_BUTTON_FINISH_RECEPTION = "matrixSimpleShowButtonFinishReception";
+  private static final String MATRIX_SIMPLE_SHOW_WARNING = "matrixSimpleShowWarning";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -1148,8 +1150,106 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
-    } else if(action.equals(MATRIX_PICKING_STORES_FINISH)){
+    } else if(action.equals(MATRIX_PICKING_STORES_FINISH)) {
       MatrixPickingStores.matrixPickingStores.finish();
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_BUTTON_FINISH_RECEPTION)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      Boolean show = true;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final Boolean fShow = show;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          Button btnFinishReception = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishReception", "id", package_name));
+          if (fShow) {
+            btnFinishReception.setVisibility(View.VISIBLE);
+
+            btnFinishReception.setOnClickListener(view -> {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("action", "finish_reception");
+              } catch (JSONException e) {
+
+              }
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            });
+          } else {
+            btnFinishReception.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(MATRIX_SIMPLE_SHOW_WARNING)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      Boolean show = true;
+      String text = "Ha ocurrido un problema que requiere de su intervención.";
+      String actionWarning = "not_defined";
+      String textPositiveButton = "Aceptar";
+      String textNegativeButton = null;
+      try {
+        show = args.getBoolean(0);
+        text = args.getString(1);
+        actionWarning = args.getString(2);
+        textPositiveButton = args.getString(3);
+        textNegativeButton = args.getString(4);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      if (show) {
+        String fActionWarning = actionWarning;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
+        builder
+          .setTitle("Atención")
+          .setMessage(text)
+          .setCancelable(false)
+          .setPositiveButton(textPositiveButton, (dialog, id) -> {
+            JSONObject jsonObject = new JSONObject();
+            try {
+              jsonObject.put("result", true);
+              jsonObject.put("response", true);
+              jsonObject.put("action", fActionWarning);
+            } catch (JSONException e) {
+
+            }
+            PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pResult.setKeepCallback(true);
+            mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          });
+
+        if (textNegativeButton != null) {
+          builder.setNegativeButton(textNegativeButton, (dialog, id) -> {
+            JSONObject jsonObject = new JSONObject();
+            try {
+              jsonObject.put("result", true);
+              jsonObject.put("response", false);
+              jsonObject.put("action", fActionWarning);
+            } catch (JSONException e) {
+
+            }
+            PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+            pResult.setKeepCallback(true);
+            mCallbackContextMatrixSimple.sendPluginResult(pResult);
+          });
+        }
+
+        builder.create();
+        builder.show();
+      }
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

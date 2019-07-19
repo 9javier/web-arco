@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {InventoryModel, InventoryService} from "@suite/services";
+import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel} from "@suite/services";
 import {AlertController, ToastController} from "@ionic/angular";
 
 @Component({
@@ -18,24 +18,31 @@ export class TextareaComponent implements OnInit {
   errorMessage: string = null;
   processInitiated: boolean;
   lastCodeScanned: string = 'start';
+  private userWarehouse: WarehouseModel.Warehouse;
 
   constructor(
     private alertController: AlertController,
     private toastController: ToastController,
     private warehouseService: WarehouseService,
-    private inventoryService: InventoryService
+    private inventoryService: InventoryService,
+    private authenticationService: AuthenticationService
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.processInitiated = false;
+    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
+
+    if (this.userWarehouse && !this.userWarehouse.has_racks) {
+      this.dataToWrite = 'PRODUCTO';
+    }
   }
 
   keyUpInput(event) {
-    let warehouseId = this.warehouseService.idWarehouseMain;
+    let warehouseId = this.userWarehouse ? this.userWarehouse.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
@@ -47,7 +54,7 @@ export class TextareaComponent implements OnInit {
       this.lastCodeScanned = dataWrited;
 
       this.processInitiated = true;
-      if (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
+      if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
         if (dataWrited != this.containerReference) {
           this.containerReference = dataWrited;
           this.dataToWrite = 'PRODUCTO / CONTENEDOR';
@@ -58,21 +65,30 @@ export class TextareaComponent implements OnInit {
           this.processInitiated = false;
         }
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
-        this.storeProductInContainer({
+        let params: any = {
           productReference: dataWrited,
-          containerReference: this.containerReference,
           warehouseId: warehouseId
-        });
+        };
+
+        if (this.containerReference) {
+          params.containerReference = this.containerReference;
+        }
+
+        this.storeProductInContainer(params);
 
         this.inputPositioning = null;
         this.errorMessage = null;
-      } else if (!this.containerReference) {
+      } else if ((!this.userWarehouse && !this.containerReference) || (this.userWarehouse && this.userWarehouse.has_racks && !this.containerReference)) {
         this.inputPositioning = null;
         this.errorMessage = '¡Referencia del contenedor errónea!';
         this.processInitiated = false;
       } else {
         this.inputPositioning = null;
-        this.errorMessage = '¡Referencia del producto/contenedor errónea!';
+        if (this.userWarehouse && !this.userWarehouse.has_racks) {
+          this.errorMessage = '¡Referencia del producto errónea!';
+        } else {
+          this.errorMessage = '¡Referencia del producto/contenedor errónea!';
+        }
         this.processInitiated = false;
       }
     }
