@@ -66,6 +66,9 @@
         <div>
           <ion-button expand="full" (click)="login(user)" z>Entrar</ion-button>
           <a (click)="presentPasswordAlert()" color="dark">¿Contraseña?</a>
+          <p class="version-number" *ngIf="versionNumber">
+            v {{versionNumber}}
+          </p>
         </div>
       </ion-col>
     </ion-row>
