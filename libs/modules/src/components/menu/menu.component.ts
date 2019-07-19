@@ -209,6 +209,12 @@ export class MenuComponent implements OnInit {
       url: 'reception'
     },
     {
+      title: 'Vaciar jaula',
+      id: 'empty-carrier',
+      icon: 'qr-scanner',
+      url: 'reception/empty-carrier'
+    },
+    {
       title: 'Ubicar/Escanear',
       id:'positioning',
       icon: 'qr-scanner',
@@ -361,8 +367,10 @@ export class MenuComponent implements OnInit {
       });
     } else if(p.url === 'positioning'){
       this.scanditService.positioning();
-    } else if(p.url === 'reception'){
-      this.receptionScanditService.reception();
+    } else if(p.url === 'reception') {
+      this.receptionScanditService.reception(1);
+    } else if (p.url == 'reception/empty-carrier') {
+      this.receptionScanditService.reception(2);
     } else if (p.url === 'print/tag/ref') {
       this.printTagsScanditService.printTagsReferences();
     } else if (p.url === 'print/tag/price') {
