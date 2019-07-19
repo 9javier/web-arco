@@ -25,7 +25,11 @@ export class CalendarPickingComponent implements OnInit {
   templateBase:Array<CalendarModel.TemplateWarehouse> = [];
   dates;
   date:string;
-  selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [];
+  selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
+    date:'all',
+    warehouses:[],
+    value:null
+  }];
 
   template:FormGroup = this.formBuilder.group({
     template:''
@@ -141,7 +145,7 @@ export class CalendarPickingComponent implements OnInit {
    */
   store():void{
     if(this.date){
-      this.selectDates.forEach(date=>{
+      this.selectDates.forEach((date,i)=>{
         if(date.date == this.date){
           date.value = this.form.value;
         }
@@ -151,7 +155,9 @@ export class CalendarPickingComponent implements OnInit {
     let globalValues = {
       calendars:[]
     }
-    this.selectDates.forEach(date=>{
+    this.selectDates.forEach((date,i)=>{
+      if(i==0)
+        return false;
       let value = this.formatValue(((this.date!= 'all')?date.value:this.form.value));
       value["date"] =date.date;
       if(value.warehouses.length)

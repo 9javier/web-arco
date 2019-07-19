@@ -63,11 +63,11 @@ export class IntermediaryService {
    * close the latest modal
    */
   async dismissLoading(){
-    /**flag what indicate that loading has been close */
     this.loading = false;
     if(this.created)
       await this.loadingCtrl.dismiss().then(message=>{
         this.created = false;
+        /**flag what indicate that loading has been close */
       });
   }
 
