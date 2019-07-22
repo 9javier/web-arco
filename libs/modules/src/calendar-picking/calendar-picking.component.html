@@ -5,7 +5,10 @@
             <ion-col size="6">
             </ion-col>
             <ion-col size="6" [formGroup]="template">
+                <link rel="stylesheet" [href]="sanitizer.sanitize(styles)">
+                <div>test</div>
                 <ion-item>
+
                     <ion-label>
                         Plantilla
                     </ion-label>
@@ -27,12 +30,16 @@
                 <div *ngIf="!date && formatValue(form.value).warehouses.length" class="warning">
                     Debe seleccionar al menos una fecha para almacenar
                 </div>
+
                 <ion-item *ngIf="selectDates.length">
                     <ion-label>
                         Fechas
                     </ion-label>
-                    <ion-select (ionChange)="selectTemplate($event.detail.value,$event.detail.value.value)">
-                        <ion-select-option *ngFor="let date of selectDates" [value]="date">{{date.date}}</ion-select-option>
+                    <ion-select *ngIf="!loadingDates" (ionChange)="selectTemplate($event.detail.value,$event.detail.value.value,$event.detail.value)">
+                        <div *ngFor="let date of selectDates">
+                            <ion-select-option [value]="date">{{date.date}}</ion-select-option>
+                        </div>
+
                     </ion-select>
                 </ion-item>
                 <div class="overAuto">

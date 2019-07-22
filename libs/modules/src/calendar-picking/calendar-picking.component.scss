@@ -50,6 +50,12 @@ ion-footer {
     .dp-picker-input {
         display: none;
     }
+    .dp-calendar-day.dp-selected {
+        background: #ea5348 !important;
+        &.tselected {
+            background: #2196f3 !important;
+        }
+    }
     .dp-calendar-weekday.ng-star-inserted {
         width: 50px;
     }

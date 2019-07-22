@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild } from '@angular/core';
+import { Component, OnInit,ViewChild, Sanitizer, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { DatePickerComponent,IDatePickerConfig } from 'ng2-date-picker';
 import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
 import { FormBuilder, FormGroup, FormArray, Form } from '@angular/forms';
@@ -13,6 +13,7 @@ import { AlertController, IonSelect } from '@ionic/angular';
 export class CalendarPickingComponent implements OnInit {
 
   @ViewChild("templates") templatesSelect:IonSelect;
+
   calendarConfiguration:IDatePickerConfig  = {
     closeOnSelect:false,
     allowMultiSelect:true,
@@ -24,7 +25,7 @@ export class CalendarPickingComponent implements OnInit {
   initialValue = null;
   templateBase:Array<CalendarModel.TemplateWarehouse> = [];
   dates;
-  date:string;
+  date:{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any};
   selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
     date:'all',
     warehouses:[],
@@ -49,31 +50,39 @@ export class CalendarPickingComponent implements OnInit {
     private calendarService:CalendarService,
     private formBuilder:FormBuilder,
     private intermediaryService:IntermediaryService,
-    private alertController:AlertController
+    private alertController:AlertController,
+    private sanitizer:Sanitizer,
+    private changeDetectorRef:ChangeDetectorRef
   ) { }
-
+  loadingDates:boolean = false;
   ngOnInit() {
-    //this.getWarehouses();
-    //this.initForm();
     this.getBase();
-    this.datePicker.onSelect.subscribe(changes=>{
+  
+    this.datePicker.onSelect.subscribe((changes)=>{
       let selectDates = this.dates.map(_=>{
         return _.format("YYYY-MM-DD");
       });
+      let auxDates = [];
       selectDates.forEach(date=>{
+        this.loadingDates = true;
         let aux = this.selectDates.find(_date=>{return (_date.date == date)});
         if(!aux){
-          this.selectDates.push(
+          auxDates.push(
             {
               date:date,
               warehouses:[],
               value:null
             }
           );
+        }else{
+          auxDates.push(aux)
         }
       })
+      this.selectDates = auxDates;
+      this.changeDetectorRef.detectChanges();
       this.intermediaryService.presentLoading();
       this.calendarService.getTemplatesByDate(selectDates).subscribe(templates=>{
+        setTimeout(()=>{this.loadingDates = false},10);
         this.intermediaryService.dismissLoading();
         /**recorro todos los templates */
         templates.forEach(template=>{
@@ -83,7 +92,9 @@ export class CalendarPickingComponent implements OnInit {
             }
           });
         });
+        this.manageSelectedClass();
       },()=>{
+        setTimeout(()=>{this.loadingDates = false},10);
         this.intermediaryService.dismissLoading();
       })
       console.log(this.selectDates);
@@ -105,12 +116,45 @@ export class CalendarPickingComponent implements OnInit {
     })
   }
 
+  manageSelectedClass():void{
+    let days = <any>document.getElementsByClassName("dp-calendar-day");
+    for(let i=0;i<days.length;i++){
+      let day = days[i];
+      this.selectDates.forEach(date=>{
+        if(date.date.split("-").reverse().join("-") == day.dataset.date){
+          console.log(date.warehouses.length, date.value?this.formatValue(date.value).warehouses.length:0);
+          if((date.warehouses.length) || (date.value && this.formatValue(date.value).warehouses.length)){
+            day.className+= ' tselected'; 
+          }else{
+            console.log("borrando")
+            day.className = day.className.replace(/tselected/g, "");
+            
+          }
+            
+        }
+      });
+    }
+  }
+
   /**
    * Start listener for an specific group
    * @param group - group to atach listener
    */
   startListener(group:FormGroup){
     group.get("selected").valueChanges.subscribe(change=>{
+      //if(this.formatValue(this.form.value).warehouses.length)
+      setTimeout(()=>{
+        if(this.date){
+          this.selectDates.forEach(date=>{
+            if(date.date == this.date.date){
+              
+              date.value = JSON.parse(JSON.stringify(this.form.value));
+              console.log(this.formatValue(date.value).warehouses.length);
+            }
+          })
+        }
+        this.manageSelectedClass();
+      },300);
       (<FormArray>group.parent).controls.forEach(control=>{
         control.get("radio").setValue(false,{emitEvent:false});
       });
@@ -144,21 +188,13 @@ export class CalendarPickingComponent implements OnInit {
    * Store new ????
    */
   store():void{
-    if(this.date){
-      this.selectDates.forEach((date,i)=>{
-        if(date.date == this.date){
-          date.value = this.form.value;
-        }
-         
-      })
-    }
     let globalValues = {
       calendars:[]
     }
     this.selectDates.forEach((date,i)=>{
       if(i==0)
         return false;
-      let value = this.formatValue(((this.date!= 'all')?date.value:this.form.value));
+      let value = this.formatValue((date.value));
       value["date"] =date.date;
       if(value.warehouses.length)
         globalValues.calendars.push(value)
@@ -246,24 +282,14 @@ export class CalendarPickingComponent implements OnInit {
    * Charge template for render in page
    * @param template - the template selected
    */
-  selectTemplate(template:CalendarModel.Template,value){
-
-    if(this.date){
-      this.selectDates.forEach(date=>{
-        if(date.date == this.date){
-          date.value = this.form.value;
-        }
-         
-      })
-    }
+  selectTemplate(template:CalendarModel.Template,value,date){
+    this.date = date; 
     if(value){
       this.form.patchValue(value,{emitEvent:false});
       return false;
     }
-      
     let warehouses = template.warehouses;
     this.initTemplateBase(this.templateBase);
-    this.date = template.date || this.date;
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
         if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
