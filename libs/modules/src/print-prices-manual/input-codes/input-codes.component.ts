@@ -73,35 +73,35 @@ export class InputCodesComponent implements OnInit {
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
-          // Query sizes_range for product model
-          this.priceService
-            .postPricesByModel(dataWrote)
-            .subscribe((response) => {
-              console.debug('Test::Response -> ', response);
-              if (response && response.length == 1) {
-                switch (this.typeTags) {
-                  case 2:
-                    this.printerService.printTagPriceUsingPrice(response[0]);
-                    break;
-                }
-              } else if (response && response.length > 1) {
-                // Request user select size to print
-                let listItems = response.map((productPrice, iProductPrice) => {
-                  let label = productPrice.rangesNumbers.sizeRangeNumberMin;
-                  if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
-                    label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
-                  }
+          if (this.typeTags == 1) {
+            this.presentToast(`Escanea un código de caja para reimprimir la etiqueta de caja del producto.`, 'danger');
+          } else {
+            // Query sizes_range for product model
+            this.priceService
+              .postPricesByModel(dataWrote)
+              .subscribe((response) => {
+                console.debug('Test::Response -> ', response);
+                if (response && response.length == 1) {
+                  this.printerService.printTagPriceUsingPrice(response[0]);
+                } else if (response && response.length > 1) {
+                  // Request user select size to print
+                  let listItems = response.map((productPrice, iProductPrice) => {
+                    let label = productPrice.rangesNumbers.sizeRangeNumberMin;
+                    if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
+                      label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
+                    }
 
-                  return {
-                    name: 'radio'+iProductPrice,
-                    type: 'radio',
-                    label: label,
-                    value: iProductPrice
-                  }
-                });
-                this.presentAlertSelect(listItems, response);
-              }
-            });
+                    return {
+                      name: 'radio'+iProductPrice,
+                      type: 'radio',
+                      label: label,
+                      value: iProductPrice
+                    }
+                  });
+                  this.presentAlertSelect(listItems, response);
+                }
+              });
+          }
           break;
         default:
           let typeCode = 'caja';
