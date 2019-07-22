@@ -413,7 +413,9 @@ export class MenuComponent implements OnInit {
   }
 
   openSubMenuItem(menuItem) {
-    if (this.iconsDirection === 'end') this.toggleSidebar();
+    if (this.iconsDirection === 'end') {
+      this.toggleSidebar();
+    }
 
     menuItem.open = !menuItem.open;
   }
