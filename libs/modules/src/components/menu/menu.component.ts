@@ -241,14 +241,42 @@ export class MenuComponent implements OnInit {
     {
       title: 'Print Ref. Tag',
       id: 'print-ref-tag',
-      icon: 'qr-scanner',
-      url: 'print/tag/ref'
+      open: false,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Escaner',
+          id: 'print-ref-tag',
+          url: 'print/tag/ref',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Manual',
+          id: 'print-ref-tag-manual',
+          url: '/print-tag/manual/box',
+          icon: 'create'
+        }
+      ]
     },
     {
       title: 'Print Price Tag',
       id: "print-price-tag",
-      icon: 'qr-scanner',
-      url: 'print/tag/price'
+      open: false,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Escaner',
+          id: 'print-price-tag',
+          url: 'print/tag/price',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Manual',
+          id: 'print-price-tag-manual',
+          url: '/print-tag/manual/price',
+          icon: 'create'
+        }
+      ]
     },
     {
       title: 'Jaulas',
@@ -371,10 +399,16 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.receptionScanditService.reception(2);
-    } else if (p.url === 'print/tag/ref') {
+    }
+  }
+
+  tapOptionSubitem(p) {
+    if (p.url === 'print/tag/ref') {
       this.printTagsScanditService.printTagsReferences();
     } else if (p.url === 'print/tag/price') {
       this.printTagsScanditService.printTagsPrices();
+    } else {
+      this.returnTitle(p);
     }
   }
 

@@ -154,3 +154,7 @@ export * from './building/building.module';
 /**Calendar picking */
 export * from './calendar-picking/calendar-picking.component';
 export * from './calendar-picking/calendar-picking.module';
+
+/**Manual Print Prices*/
+export * from './print-prices-manual/print-prices-manual.component';
+export * from './print-prices-manual/print-prices-manual.module';
