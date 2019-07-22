@@ -144,6 +144,17 @@ var ScanditMatrixSimple = {
   showWarning: function (show, text, action, textPositiveButton, textNegativeButton) {
     exec(null, null, PLUGIN_NAME, "matrixSimpleShowWarning", [show, text, action, textPositiveButton, textNegativeButton]);
   },
+  /**
+   *
+   * @param show
+   * @param text
+   * @param action
+   * @param textPositiveButton
+   * @param textNegativeButton
+   */
+  showAlertSelectSizeToPrint: function (title, listItems) {
+    exec(null, null, PLUGIN_NAME, "matrixSimpleAlertSelectSizeToPrint", [title, listItems]);
+  },
   finishPickingStores: function () {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresFinish");
   }

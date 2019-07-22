@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ToastController} from "@ionic/angular";
+import {AlertController, ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {PriceService} from "@suite/services";
 
 @Component({
   selector: 'suite-input-codes',
@@ -18,7 +20,10 @@ export class InputCodesComponent implements OnInit {
 
   constructor(
     private toastController: ToastController,
-    private printerService: PrinterService
+    private alertController: AlertController,
+    private printerService: PrinterService,
+    private priceService: PriceService,
+    private scanditProvider: ScanditProvider
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
@@ -39,40 +44,72 @@ export class InputCodesComponent implements OnInit {
       }
       this.lastCodeScanned = dataWrote;
 
-      if (dataWrote.length == 18) {
-        if (!this.typeTagsBoolean) {
-          this.typeTags = 1;
-        } else {
-          this.typeTags = 2;
-        }
-
-        switch (this.typeTags) {
-          case 1:
-            this.inputProduct = null;
-            this.printerService.printTagBarcode([dataWrote])
-              .subscribe((res) => {
-                console.log('Printed product tag ... ', res);
-              }, (error) => {
-                console.warn('Error to print tag ... ', error);
-              });
-            break;
-          case 2:
-            this.inputProduct = null;
-            this.printerService.printTagPrices([dataWrote])
-              .subscribe((res) => {
-                console.log('Printed price tag ... ', res);
-              }, (error) => {
-                console.warn('Error to print tag ... ', error);
-              });
-            break;
-        }
+      if (!this.typeTagsBoolean) {
+        this.typeTags = 1;
       } else {
-        let typeCode = 'caja';
-        if (this.typeTags == 2) {
-          typeCode = 'precio';
-        }
-        this.inputProduct = null;
-        this.presentToast(`Escanea un código de caja para imprimir la etiqueta de ${typeCode} del producto.`, 'danger');
+        this.typeTags = 2;
+      }
+
+      this.inputProduct = null;
+      switch (this.scanditProvider.checkCodeValue(dataWrote)) {
+        case this.scanditProvider.codeValue.PRODUCT:
+          switch (this.typeTags) {
+            case 1:
+              this.printerService.printTagBarcode([dataWrote])
+                .subscribe((res) => {
+                  console.log('Printed product tag ... ', res);
+                }, (error) => {
+                  console.warn('Error to print tag ... ', error);
+                });
+              break;
+            case 2:
+              this.printerService.printTagPrices([dataWrote])
+                .subscribe((res) => {
+                  console.log('Printed price tag ... ', res);
+                }, (error) => {
+                  console.warn('Error to print tag ... ', error);
+                });
+              break;
+          }
+          break;
+        case this.scanditProvider.codeValue.PRODUCT_MODEL:
+          // Query sizes_range for product model
+          this.priceService
+            .postPricesByModel(dataWrote)
+            .subscribe((response) => {
+              console.debug('Test::Response -> ', response);
+              if (response && response.length == 1) {
+                switch (this.typeTags) {
+                  case 2:
+                    this.printerService.printTagPriceUsingPrice(response[0]);
+                    break;
+                }
+              } else if (response && response.length > 1) {
+                // Request user select size to print
+                let listItems = response.map((productPrice, iProductPrice) => {
+                  let label = productPrice.rangesNumbers.sizeRangeNumberMin;
+                  if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
+                    label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
+                  }
+
+                  return {
+                    name: 'radio'+iProductPrice,
+                    type: 'radio',
+                    label: label,
+                    value: iProductPrice
+                  }
+                });
+                this.presentAlertSelect(listItems, response);
+              }
+            });
+          break;
+        default:
+          let typeCode = 'caja';
+          if (this.typeTags == 2) {
+            typeCode = 'precio';
+          }
+          this.presentToast(`Escanea un código de caja o precio para reimprimir la etiqueta de ${typeCode} del producto.`, 'danger');
+          break;
       }
     }
   }
@@ -91,6 +128,36 @@ export class InputCodesComponent implements OnInit {
           document.getElementById('input-ta').focus();
         },500);
       });
+  }
+
+  private async presentAlertSelect(listItems: any[], listProductPrices: any[]) {
+    const alert = await this.alertController.create({
+      header: 'Selecciona talla a usar',
+      inputs: listItems,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancelar');
+          }
+        }, {
+          text: 'Seleccionar',
+          handler: (data) => {
+            console.log('Confirm Seleccionar -> ', data);
+            // Avoid close alert without selection
+            if (typeof data == 'undefined') {
+              return false;
+            }
+
+            this.printerService.printTagPriceUsingPrice(listProductPrices[data]);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
 }

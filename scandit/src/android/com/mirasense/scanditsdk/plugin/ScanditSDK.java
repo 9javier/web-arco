@@ -16,6 +16,7 @@ import android.Manifest;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -107,6 +108,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PRINT_TAGS = "matrixPrintTags";
   private static final String MATRIX_SIMPLE_SHOW_BUTTON_FINISH_RECEPTION = "matrixSimpleShowButtonFinishReception";
   private static final String MATRIX_SIMPLE_SHOW_WARNING = "matrixSimpleShowWarning";
+  private static final String MATRIX_SIMPLE_ALERT_SELECT_SIZE_TO_PRINT = "matrixSimpleAlertSelectSizeToPrint";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -1249,6 +1251,57 @@ public class ScanditSDK extends CordovaPlugin {
 
         builder.create();
         builder.show();
+      }
+    } else if (action.equals(MATRIX_SIMPLE_ALERT_SELECT_SIZE_TO_PRINT)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      String title = "Selecciona talla a usar";
+      JSONArray listItems = null;
+      String[] listSizesToPrint = null;
+      try {
+        title = args.getString(0);
+        listItems = args.getJSONArray(1);
+
+        if (listItems != null && listItems.length() > 0) {
+          listSizesToPrint = new String[listItems.length()];
+
+          for (int iPriceProduct = 0; iPriceProduct < listItems.length(); iPriceProduct++) {
+            JSONObject product = listItems.getJSONObject(iPriceProduct);
+            JSONObject rangesNumbers = product.getJSONObject("rangesNumbers");
+            if (rangesNumbers != null) {
+              String sizeRangeNumberMax = rangesNumbers.getString("sizeRangeNumberMax");
+              String sizeRangeNumberMin = rangesNumbers.getString("sizeRangeNumberMin");
+
+              String rangeSizes = sizeRangeNumberMin;
+              if (!sizeRangeNumberMin.equals(sizeRangeNumberMax)) {
+                rangeSizes = rangeSizes.concat(" - " + sizeRangeNumberMax);
+              }
+              listSizesToPrint[iPriceProduct] = rangeSizes;
+            }
+          }
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      if (listSizesToPrint != null && listSizesToPrint.length > 0) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MatrixPrintTags.matrixPrintTags);
+        builder.setTitle(title);
+        builder.setItems(listSizesToPrint, (dialogInterface, i) -> {
+          JSONObject jsonObject = new JSONObject();
+          try {
+            jsonObject.put("result", true);
+            jsonObject.put("size_selected", i);
+            jsonObject.put("action", "select_size");
+          } catch (JSONException e) {
+
+          }
+          PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+          pResult.setKeepCallback(true);
+          mCallbackContextMatrixSimple.sendPluginResult(pResult);
+        });
+        builder.create().show();
       }
     } else {
       callbackContext.error("Invalid Action: " + action);
