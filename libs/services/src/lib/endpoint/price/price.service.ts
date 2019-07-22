@@ -16,6 +16,7 @@ export class PriceService {
   private getIndexByModelTariffUrl:string = environment.apiBase+"/filter/prices/references";
   private postPricesByProductsReferencesUrl: string = environment.apiBase + "/filter/prices/references-products";
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
+  private postPricesByModelUrl: string = environment.apiBase + "/filter/prices/model";
 
   constructor(private http:HttpClient) { }
 
@@ -65,6 +66,16 @@ export class PriceService {
   postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Observable<PriceModel.PriceByModelTariff[]> {
 
     return this.http.post<PriceModel.ResponsePricesByProductsReferences>(this.postPricesByProductsReferencesUrl, parameters).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postPricesByModel(model: string): Observable<any[]> {
+    let parameters = {
+      reference: model
+    };
+
+    return this.http.post<any>(this.postPricesByModelUrl, parameters).pipe(map(response=>{
       return response.data;
     }));
   }

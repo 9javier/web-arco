@@ -11,7 +11,8 @@ export namespace ScanditModel {
 
   export interface ResponsePrintTags extends Response {
     action: ActionsPrintTags,
-    type_tags?: 1|2
+    type_tags?: 1|2,
+    size_selected?: number
   }
 
   interface Barcode {
@@ -25,7 +26,8 @@ export namespace ScanditModel {
   }
 
   enum ActionsPrintTags {
-    change_type = 'change_tag_type'
+    change_type = 'change_tag_type',
+    select_size = 'select_size'
   }
 
 }
