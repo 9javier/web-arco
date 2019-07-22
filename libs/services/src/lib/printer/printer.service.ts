@@ -189,7 +189,7 @@ export class PrinterService {
                 priceDiscountOutlet: price.priceDiscountOutlet,
                 typeLabel:price.typeLabel,
                 numRange: price.range?price.range.numRange:0,
-                valueRange: (price.range?String(price.range.startRange):'')+'-'+(price.range?String(price.range.endRange):''),
+                valueRange: price.rangesNumbers ? String(price.rangesNumbers.sizeRangeNumberMin) + (price.rangesNumbers.sizeRangeNumberMin != price.rangesNumbers.sizeRangeNumberMin) ? '-' + price.rangesNumbers.sizeRangeNumberMax : '' : '',
               };
             }
             let dictionaryOfCaseTypes = {
@@ -323,7 +323,7 @@ export class PrinterService {
               priceDiscountOutlet: price.priceDiscountOutlet,
               typeLabel:price.typeLabel,
               numRange: price.range?price.range.numRange:0,
-              valueRange: (price.range?String(price.range.startRange):'')+'-'+(price.range?String(price.range.endRange):''),
+              valueRange: price.rangesNumbers ? price.rangesNumbers.sizeRangeNumberMin && price.rangesNumbers.sizeRangeNumberMax && price.rangesNumbers.sizeRangeNumberMin == price.rangesNumbers.sizeRangeNumberMax ? String(price.rangesNumbers.sizeRangeNumberMin) : String(price.rangesNumbers.sizeRangeNumberMin) + '-' + String(price.rangesNumbers.sizeRangeNumberMax) : '',
             };
           }
           let dictionaryOfCaseTypes = {

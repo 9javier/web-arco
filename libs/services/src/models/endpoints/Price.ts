@@ -120,7 +120,11 @@ export namespace PriceModel{
           startRange: number,
           endRange: number,
           isAvelon: boolean
-        }
+        },
+      rangesNumbers?: {
+        sizeRangeNumberMin: string,
+        sizeRangeNumberMax: string
+      }
     }
 
 }
