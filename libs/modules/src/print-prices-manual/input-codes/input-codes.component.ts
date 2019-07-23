@@ -70,45 +70,60 @@ export class InputCodesComponent implements OnInit {
                   console.warn('Error to print tag ... ', error);
                 });
               break;
+            default:
+              this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+              break;
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
-          if (this.typeTags == 1) {
-            this.presentToast(`Escanea un código de caja para reimprimir la etiqueta de caja del producto.`, 'danger');
-          } else {
-            // Query sizes_range for product model
-            this.priceService
-              .postPricesByModel(dataWrote)
-              .subscribe((response) => {
-                console.debug('Test::Response -> ', response);
-                if (response && response.length == 1) {
-                  this.printerService.printTagPriceUsingPrice(response[0]);
-                } else if (response && response.length > 1) {
-                  // Request user select size to print
-                  let listItems = response.map((productPrice, iProductPrice) => {
-                    let label = productPrice.rangesNumbers.sizeRangeNumberMin;
-                    if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
-                      label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
-                    }
+          switch (this.typeTags) {
+            case 1:
+              this.presentToast('Escanea un código de caja para reimprimir la etiqueta de caja del producto.', 'danger');
+              break;
+            case 2:
+              // Query sizes_range for product model
+              this.priceService
+                .postPricesByModel(dataWrote)
+                .subscribe((response) => {
+                  console.debug('Test::Response -> ', response);
+                  if (response && response.length == 1) {
+                    this.printerService.printTagPriceUsingPrice(response[0]);
+                  } else if (response && response.length > 1) {
+                    // Request user select size to print
+                    let listItems = response.map((productPrice, iProductPrice) => {
+                      let label = productPrice.rangesNumbers.sizeRangeNumberMin;
+                      if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
+                        label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
+                      }
 
-                    return {
-                      name: 'radio'+iProductPrice,
-                      type: 'radio',
-                      label: label,
-                      value: iProductPrice
-                    }
-                  });
-                  this.presentAlertSelect(listItems, response);
-                }
-              });
+                      return {
+                        name: 'radio'+iProductPrice,
+                        type: 'radio',
+                        label: label,
+                        value: iProductPrice
+                      }
+                    });
+                    this.presentAlertSelect(listItems, response);
+                  }
+                }, (error) => {
+                  this.lastCodeScanned = 'start';
+                  this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                });
+              break;
+            default:
+              this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+              break;
           }
           break;
         default:
-          let typeCode = 'caja';
-          if (this.typeTags == 2) {
-            typeCode = 'precio';
+          let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
+          if (this.typeTags == 1) {
+            msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
+          } else if (this.typeTags == 2) {
+            msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
           }
-          this.presentToast(`Escanea un código de caja o precio para reimprimir la etiqueta de ${typeCode} del producto.`, 'danger');
+
+          this.presentToast(msg, 'danger');
           break;
       }
     }

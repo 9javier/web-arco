@@ -70,38 +70,68 @@ export class PrintTagsScanditService {
                       console.warn('Error to print tag ... ', error);
                     });
                   break;
+                default:
+                  ScanditMatrixSimple.setText(
+                    'El código escaneado no es válido para la operación que se espera realizar.',
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    16);
+                  this.hideTextMessage(1500);
+                  break;
               }
               break;
             case this.scanditProvider.codeValue.PRODUCT_MODEL:
-              if (this.typeTags == 1) {
-                ScanditMatrixSimple.setText(
-                  'Escanea un código de caja para reimprimir la etiqueta de caja del producto.',
-                  this.scanditProvider.colorsMessage.error.color,
-                  this.scanditProvider.colorText.color,
-                  16);
-                this.hideTextMessage(1500);
-              } else {
-                // Query sizes_range for product model
-                this.priceService
-                  .postPricesByModel(codeScanned)
-                  .subscribe((response) => {
-                    if (response && response.length == 1) {
-                      this.printerService.printTagPriceUsingPrice(response[0]);
-                    } else if (response && response.length > 1) {
-                      this.listProductsPrices = response;
-                      // Request user select size to print
-                      ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', response);
-                    }
-                  });
+              switch (this.typeTags) {
+                case 1:
+                  ScanditMatrixSimple.setText(
+                    'Escanea un código de caja para reimprimir la etiqueta de caja del producto.',
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    16);
+                  this.hideTextMessage(1500);
+                  break;
+                case 2:
+                  // Query sizes_range for product model
+                  this.priceService
+                    .postPricesByModel(codeScanned)
+                    .subscribe((response) => {
+                      if (response && response.length == 1) {
+                        this.printerService.printTagPriceUsingPrice(response[0]);
+                      } else if (response && response.length > 1) {
+                        this.listProductsPrices = response;
+                        // Request user select size to print
+                        ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', response);
+                      }
+                    }, (error) => {
+                      // Reset last-code-scanned to can scan another time the same code
+                      lastCodeScanned = 'start';
+                      ScanditMatrixSimple.setText(
+                        'Ha ocurrido un error al consultar los precios del artículo escaneado.',
+                        this.scanditProvider.colorsMessage.error.color,
+                        this.scanditProvider.colorText.color,
+                        16);
+                      this.hideTextMessage(1500);
+                    });
+                  break;
+                default:
+                  ScanditMatrixSimple.setText(
+                    'El código escaneado no es válido para la operación que se espera realizar.',
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    16);
+                  this.hideTextMessage(1500);
+                  break;
               }
               break;
             default:
-              let typeCode = 'caja';
-              if (this.typeTags == 2) {
-                typeCode = 'precio';
+              let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
+              if (this.typeTags == 1) {
+                msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
+              } else if (this.typeTags == 2) {
+                msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
               }
               ScanditMatrixSimple.setText(
-                `Escanea un código de caja para imprimir la etiqueta de ${typeCode} del producto.`,
+                msg,
                 this.scanditProvider.colorsMessage.error.color,
                 this.scanditProvider.colorText.color,
                 16);
