@@ -5,7 +5,8 @@ import {
   ResponseLogin,
   RequestLogin,
   ErrorResponseLogin,
-  Oauth2Service
+  Oauth2Service,
+  IntermediaryService
 } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
@@ -37,7 +38,8 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService,
     public toastController: ToastController,
     public alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -83,7 +85,7 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.presentToast(errorResponse.message);
+          this.intermediaryService.presentToastError("Error en usuario o contraseña");
           console.log(errorResponse);
         }
       );
