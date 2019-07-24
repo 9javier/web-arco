@@ -57,6 +57,7 @@ export class CalendarPickingComponent implements OnInit {
   loadingDates:boolean = false;
   ngOnInit() {
     this.getBase();
+    this.getCalendarDates();
   
     this.datePicker.onSelect.subscribe((changes)=>{
       let selectDates = this.dates.map(_=>{
@@ -77,6 +78,7 @@ export class CalendarPickingComponent implements OnInit {
         }else{
           auxDates.push(aux)
         }
+        this.getCalendarDates();
       })
       this.selectDates = auxDates;
       this.changeDetectorRef.detectChanges();
@@ -131,6 +133,18 @@ export class CalendarPickingComponent implements OnInit {
             
           }
             
+        }
+      });
+    }
+  }
+
+  manageHaveClass(dates:Array<string>):void{
+    let days = <any>document.getElementsByClassName("dp-calendar-day");
+    for(let i=0;i<days.length;i++){
+      let day = days[i];
+      dates.forEach(date=>{
+        if(date.split("-").reverse().join("-") == day.dataset.date){
+          day.className+= ' haveDate'; 
         }
       });
     }
@@ -205,6 +219,7 @@ export class CalendarPickingComponent implements OnInit {
       this.clear()
       this.intermediaryService.presentToastSuccess("Guardado con éxito");
       this.intermediaryService.dismissLoading();
+      this.getCalendarDates();
     },(error)=>{
       this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
       this.intermediaryService.dismissLoading();
@@ -242,6 +257,7 @@ export class CalendarPickingComponent implements OnInit {
             this.intermediaryService.presentLoading();
             this.calendarService.storeTemplate(template).subscribe(()=>{
               this.clear();
+              this.getCalendarDates();
               this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
               this.intermediaryService.dismissLoading();
             },()=>{
@@ -276,6 +292,19 @@ export class CalendarPickingComponent implements OnInit {
     this.calendarService.getTemplates().subscribe(templates=>{
       this.templates = templates;
     });
+  }
+
+  /**
+   * Tells if all dates have selected warehouses
+   * @returns status of submit
+   */
+  validToStore(){
+    let flag = true;
+    this.selectDates.forEach(value=>{
+      if(!(value.warehouses.length || (value.value && this.formatValue(value.value).warehouses.length)))
+        flag = false;
+    });
+    return flag;
   }
 
   /**
@@ -345,7 +374,15 @@ export class CalendarPickingComponent implements OnInit {
 
   clear(){
     this.template.get("template").patchValue('',{emitEvent:false});
+    this.selectDates = [];
+    this.dates = [];
     this.initTemplateBase(this.templateBase);
+  }
+
+  getCalendarDates():void{
+    this.calendarService.getCalendarDates().subscribe(dates=>{
+      this.manageHaveClass(dates);
+    });
   }
 
   /**
@@ -386,6 +423,7 @@ export class CalendarPickingComponent implements OnInit {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
     this.datePicker.api.open();
+    console.log(this.datePicker);
   }
 
 }

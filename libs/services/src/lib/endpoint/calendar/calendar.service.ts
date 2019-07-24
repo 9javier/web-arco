@@ -20,6 +20,7 @@ export class CalendarService {
   private storeTemplateUrl:string = environment.apiBase+"/picking/calendar/template/";
   private templatesByDateUrl:string = environment.apiBase+"/picking/calendar/warehouses-by-dates";
   private getBaseUrl:string = environment.apiBase+"/picking/calendar/warehouses";
+  private getCalendarDatesUrl:string = environment.apiBase+"/picking/calendar/calendar-dates";
 
 
   constructor(private http: HttpClient) {}
@@ -83,6 +84,16 @@ export class CalendarService {
   getBaseBad():Observable<Array<CalendarModel.TemplateWarehouse>>{
     return this.http.get<CalendarModel.BadRequest>(this.getBaseUrl).pipe(map(response=>{
         return response.data;
+    }));
+  }
+
+  /**
+   * Get the dates in the calendar that have templates saveds
+   * @returns te array of dates that have templates saveds
+   */
+  getCalendarDates():Observable<Array<string>>{
+    return this.http.get<CalendarModel.CalendarDateResponse>(this.getCalendarDatesUrl).pipe(map(response=>{
+        return response.data.map(date=>date.split("T")[0]);
     }));
   }
 

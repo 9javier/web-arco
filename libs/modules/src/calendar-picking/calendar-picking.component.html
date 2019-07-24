@@ -6,9 +6,7 @@
             </ion-col>
             <ion-col size="6" [formGroup]="template">
                 <link rel="stylesheet" [href]="sanitizer.sanitize(styles)">
-                <div>test</div>
                 <ion-item>
-
                     <ion-label>
                         Plantilla
                     </ion-label>
@@ -83,7 +81,7 @@
     </ion-grid>
 </ion-content>
 <ion-footer>
-    <ion-button [disabled]="!formatValue(form.value).warehouses.length || !date" (click)="store()">GUARDAR</ion-button>
+    <ion-button [disabled]="!date || !validToStore() " (click)="store()">GUARDAR</ion-button>
     <ion-button [disabled]="!formatValue(form.value).warehouses.length" (click)="storeTemplate(formatValue(form.value))">PLANTILLA</ion-button>
     <ion-button *ngIf="formatValue(form.value).warehouses.length" color="danger" (click)="clear()">
         <ion-icon name="trash"></ion-icon> CLEAR</ion-button>
