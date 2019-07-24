@@ -4,7 +4,7 @@ import {ActionSheetController, LoadingController, ToastController} from "@ionic/
 import {Router} from "@angular/router";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
-import {AuthenticationService, TypeModel} from "@suite/services";
+import {AuthenticationService, TypeModel, TypesService} from "@suite/services";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 
 @Component({
@@ -18,16 +18,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
   public isLoadingData: boolean = true;
   private loading: any;
 
-  private carriersTypes: TypeModel.Type[] = [
-    {
-      id: 1,
-      name: 'Jaula'
-    },
-    {
-      id: 2,
-      name: 'Pallet'
-    }
-  ];
+  private carriersTypes: TypeModel.Type[] = [];
 
   constructor(
     private router: Router,
@@ -37,10 +28,12 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private carriersService: CarriersService,
     private printTagsScanditService: PrintTagsScanditService,
-    private printerService: PrinterService
+    private printerService: PrinterService,
+    private typesService: TypesService
   ) {}
 
   ngOnInit() {
+    this.carriersTypes = this.typesService.listPacking;
     this.loadCarriers();
   }
 
