@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
+import {MenuController} from "@ionic/angular";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -322,10 +323,15 @@ export class MenuComponent implements OnInit {
 @Output() menuTitle = new EventEmitter();
 
   
-  constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
-              private scanditService: ScanditService,
-              private receptionScanditService: ReceptionScanditService,
-              private printTagsScanditService: PrintTagsScanditService) { }
+  constructor(
+    private loginService:Oauth2Service,
+    private router:Router,
+    private authenticationService:AuthenticationService,
+    private scanditService: ScanditService,
+    private receptionScanditService: ReceptionScanditService,
+    private printTagsScanditService: PrintTagsScanditService,
+    private menuController: MenuController
+  ) { }
 
   returnTitle(item:MenuSectionItem){
     this.currentRoute = item.title
@@ -401,6 +407,7 @@ export class MenuComponent implements OnInit {
   }
 
   tapOptionSubitem(p) {
+    this.menuController.close();
     if (p.url === 'print/tag/ref') {
       this.printTagsScanditService.printTagsReferences();
     } else if (p.url === 'print/tag/price') {
