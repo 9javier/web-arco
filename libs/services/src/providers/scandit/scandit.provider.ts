@@ -31,7 +31,8 @@ export class ScanditProvider {
     CONTAINER_OLD: 'container_old',
     JAIL: 'jail',
     PALLET: 'pallet',
-    PRODUCT: 'product'
+    PRODUCT: 'product',
+    PRODUCT_MODEL: 'product_model'
   };
   get codeValue(): CodeValue {
     return this._codeValue;
@@ -57,6 +58,10 @@ export class ScanditProvider {
     {
       value: this._codeValue.PRODUCT,
       regex: /([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/
+    },
+    {
+      value: this._codeValue.PRODUCT_MODEL,
+      regex: /([0-9]){1,6}$/
     }
   ];
 
@@ -90,7 +95,8 @@ export interface CodeValue {
   CONTAINER_OLD: string,
   JAIL: string,
   PALLET: string,
-  PRODUCT: string
+  PRODUCT: string,
+  PRODUCT_MODEL: string
 }
 
 export interface Regex {

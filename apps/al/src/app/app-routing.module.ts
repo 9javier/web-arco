@@ -116,6 +116,22 @@ const routes: Routes = [
     data:{
       name:'Prices'
     }
+  },
+  {
+    path: 'print-tag/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
+    data:{
+      name: 'Prices'
+    }
+  },
+  {
+    path: 'print-tag/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
+    data:{
+      name: 'Prices'
+    }
   }
 ];
 
