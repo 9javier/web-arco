@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
-import {ActionSheetController, ToastController} from "@ionic/angular";
+import {ActionSheetController, LoadingController, ToastController} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
-import {AuthenticationService} from "@suite/services";
+import {AuthenticationService, TypeModel} from "@suite/services";
+import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 
 @Component({
   selector: 'list-packing-relabel',
@@ -15,14 +16,28 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
 
   public listCarriers: CarrierModel.Carrier[];
   public isLoadingData: boolean = true;
+  private loading: any;
+
+  private carriersTypes: TypeModel.Type[] = [
+    {
+      id: 1,
+      name: 'Jaula'
+    },
+    {
+      id: 2,
+      name: 'Pallet'
+    }
+  ];
 
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
     private toastController: ToastController,
+    private loadingController: LoadingController,
     private authenticationService: AuthenticationService,
     private carriersService: CarriersService,
-    private printTagsScanditService: PrintTagsScanditService
+    private printTagsScanditService: PrintTagsScanditService,
+    private printerService: PrinterService
   ) {}
 
   ngOnInit() {
@@ -66,26 +81,83 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
 
   public async relabelPacking() {
     let actionSheet = await this.actionSheetController.create({
-      header: 'Contenido de la jaula',
+      header: 'Contenido del recipiente',
       buttons: [
         {
-          text: 'Jaula con contenido',
+          text: 'Recipiente con contenido',
           icon: 'square',
           handler: () => {
             // Scan product inside packing and get jail where it is to print label
             this.printTagsScanditService.printTagsPackings();
           }
         }, {
-          text: 'Jaula vacía',
+          text: 'Recipiente vacío',
           icon: 'square-outline',
           handler: () => {
-            // TODO create new packing and print label
+            // Create new packing and print label
+            this.actionSheetSelectCarrierType();
           }
         }
       ]
     });
 
     await actionSheet.present();
+  }
+
+  // ActionSheet with type of carries to generate
+  public async actionSheetSelectCarrierType() {
+    let buttons = [];
+
+    for (let carrierType of this.carriersTypes) {
+      buttons.push({
+        text: carrierType.name,
+        icon: 'cube',
+        handler: () => {
+          this.showLoading('Generando recipiente y mandando a imprimir...');
+          this.generateNewCarrier(carrierType);
+        }
+      });
+    }
+
+    let actionSheet = await this.actionSheetController.create({
+      header: 'Tipo de recipiente',
+      buttons: buttons
+    });
+
+    await actionSheet.present();
+  }
+
+  private generateNewCarrier(carrierType: TypeModel.Type) {
+    this.carriersService
+      .postGenerate({
+        packingType: carrierType.id
+      })
+      .subscribe((res: CarrierModel.ResponseGenerate) => {
+        this.loading.dismiss();
+        if (res.code == 201) {
+          this.printerService.print({text: [res.data.reference], type: 0});
+        } else {
+          console.error('Error::Subscribe::GetCarrierOfProduct::', res);
+          let msgErrorByCarrierType = 'un nuevo recipiente';
+          if (carrierType.id == 1) {
+            msgErrorByCarrierType = 'una nueva jaula';
+          } else if (carrierType.id == 2) {
+            msgErrorByCarrierType = 'un nuevo pallet';
+          }
+          this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger');
+        }
+      }, (error) => {
+        this.loading.dismiss();
+
+        console.error('Error::Subscribe::GetCarrierOfProduct::', error);
+        let msgErrorByCarrierType = 'un nuevo recipiente';
+        if (carrierType.id == 1) {
+          msgErrorByCarrierType = 'una nueva jaula';
+        } else if (carrierType.id == 2) {
+          msgErrorByCarrierType = 'un nuevo pallet';
+        }
+        this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger');
+      });
   }
 
   private async presentToast(msg: string, color: string = 'primary') {
@@ -102,6 +174,14 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           document.getElementById('input-ta').focus();
         },500);
       });
+  }
+
+  private async showLoading(message: string) {
+    this.loading = await this.loadingController.create({
+      message: message,
+      translucent: true,
+    });
+    return await this.loading.present();
   }
 
 }

@@ -12,6 +12,8 @@ import {CarrierModel} from "../../../models/endpoints/Carrier";
 })
 export class CarriersService {
 
+  private postGenerateUrl: string = environment.apiBase + "/carriers/generate";
+
   // Relabel
   private postListByWarehouseUrl: string = environment.apiBase + "/carriers/warehouses/show";
 
@@ -27,4 +29,13 @@ export class CarriersService {
       return this.http.post<CarrierModel.ResponseListByWarehouse>(this.postListByWarehouseUrl, parameters, { headers });
     }));
   }
+
+  postGenerate(parameters: CarrierModel.ParamsGenerate) : Observable<CarrierModel.ResponseGenerate> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.post<CarrierModel.ResponseGenerate>(this.postGenerateUrl, parameters, { headers });
+    }));
+  }
+
 }

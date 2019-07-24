@@ -15,8 +15,19 @@ export namespace CarrierModel {
     warehouseId: number
   }
 
+  export interface ParamsGenerate {
+    packingType: number
+  }
+
   export interface ResponseListByWarehouse {
     data: Carrier[],
+    message?: string,
+    errors?: any,
+    code: number
+  }
+
+  export interface ResponseGenerate {
+    data: Carrier,
     message?: string,
     errors?: any,
     code: number
