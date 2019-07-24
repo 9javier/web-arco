@@ -140,6 +140,14 @@ const routes: Routes = [
     data:{
       name: 'Prices'
     }
+  },
+  {
+    path: 'print/packing/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-relabel-packing-manual/print-relabel-packing-manual.module#PrintRelabelPackingManualModule',
+    data:{
+      name: 'Prices'
+    }
   }
 ];
 

@@ -162,3 +162,7 @@ export * from './print-prices-manual/print-prices-manual.module';
 /**Relabel Packings*/
 export * from './print-relabel-packing/print-relabel-packing.component';
 export * from './print-relabel-packing/print-relabel-packing.module';
+
+/**Relabel Packings Manual*/
+export * from './print-relabel-packing-manual/print-relabel-packing-manual.component';
+export * from './print-relabel-packing-manual/print-relabel-packing-manual.module';

@@ -80,8 +80,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           text: 'Recipiente con contenido',
           icon: 'square',
           handler: () => {
-            // Scan product inside packing and get jail where it is to print label
-            this.printTagsScanditService.printTagsPackings();
+            this.actionSheetSelectTypeScan();
           }
         }, {
           text: 'Recipiente vacío',
@@ -89,6 +88,33 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           handler: () => {
             // Create new packing and print label
             this.actionSheetSelectCarrierType();
+          }
+        }
+      ]
+    });
+
+    await actionSheet.present();
+  }
+
+  // ActionSheet with methods to scan product and print their carrier
+  public async actionSheetSelectTypeScan() {
+    let actionSheet = await this.actionSheetController.create({
+      header: 'Tipo de comprobación',
+      buttons: [
+        {
+          text: 'Escaneo de producto',
+          icon: 'qr-scanner',
+          handler: () => {
+            // Scan product inside packing and get jail where it is to print label
+            this.printTagsScanditService.printTagsPackings();
+          }
+        },
+        {
+          text: 'Introducción manual de producto',
+          icon: 'create',
+          handler: () => {
+            // Set manually product reference to get carrier and print
+            this.router.navigate(['print/packing/manual']);
           }
         }
       ]
