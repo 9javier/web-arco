@@ -9,6 +9,10 @@ export namespace CalendarModel{
         warehouses:Array<TemplateWarehouse>;
     }
 
+    export interface CalendarDateResponse extends Request.Success{
+        data:Array<string>
+    }
+
     export interface TemplateWarehouse{
         createAt:string;
         updateAt:string;

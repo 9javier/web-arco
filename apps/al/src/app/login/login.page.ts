@@ -5,7 +5,8 @@ import {
   ResponseLogin,
   RequestLogin,
   ErrorResponseLogin,
-  Oauth2Service
+  Oauth2Service,
+  IntermediaryService
 } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
@@ -32,7 +33,8 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService,
     public toastController: ToastController,
     public alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private intermediaryService:IntermediaryService
   ) {}
 
   ngOnInit() {}
@@ -56,8 +58,8 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.presentToast(errorResponse.message);
-          console.log(errorResponse);
+          //this.intermediaryService.presentToastError("Usuario o contraseña incorrecta");
+          //console.log(errorResponse);
         }
       );
     });
@@ -71,7 +73,7 @@ export class LoginComponent implements OnInit {
     });
     toast.present();
   }
-
+ 
   async showLoading(message: string) {
     this.loading = await this.loadingController.create({
       message: message,
