@@ -58,6 +58,18 @@ export class CalendarPickingComponent implements OnInit {
   ngOnInit() {
     this.getBase();
     this.getCalendarDates();
+
+    this.datePicker.onLeftNav.subscribe(changes=>{
+      this.getCalendarDates();
+    });
+
+    this.datePicker.onRightNav.subscribe(changes=>{
+      this.getCalendarDates();
+    });
+
+    this.datePicker.onGoToCurrent.subscribe(changes=>{
+      this.getCalendarDates();
+    })
   
     this.datePicker.onSelect.subscribe((changes)=>{
       let selectDates = this.dates.map(_=>{
