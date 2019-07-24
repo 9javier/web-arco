@@ -85,45 +85,7 @@ export class PrintTagsScanditService {
                   break;
                 case 3:
                   // Check packing of product
-                  this.packingInventorService
-                    .getCarrierOfProduct(codeScanned)
-                    .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
-                      if (res.code == 200) {
-                        this.printerService.print({text: [res.data.reference], type: 0})
-                      } else {
-                        console.error('Error::Subscribe::GetCarrierOfProduct::', res);
-                        let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
-                        if (res.message) {
-                          msgError = res.message;
-                        } else if (res.errors && typeof res.errors == 'string') {
-                          msgError = res.errors;
-                        }
-                        ScanditMatrixSimple.setText(
-                          msgError,
-                          this.scanditProvider.colorsMessage.error.color,
-                          this.scanditProvider.colorText.color,
-                          16);
-                        this.hideTextMessage(1500);
-                      }
-                    }, (error) => {
-                      console.error('Error::Subscribe::GetCarrierOfProduct::', error);
-                      let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
-                      if (error.error) {
-                        if (error.error.message) {
-                          msgError = error.error.message;
-                        } else if (error.error.errors) {
-                          msgError = error.error.errors;
-                        } else if (typeof error.error == 'string') {
-                          msgError = error.error;
-                        }
-                      }
-                      ScanditMatrixSimple.setText(
-                        msgError,
-                        this.scanditProvider.colorsMessage.error.color,
-                        this.scanditProvider.colorText.color,
-                        16);
-                      this.hideTextMessage(1500);
-                    });
+                  this.getCarrierOfProductAndPrint(codeScanned);
                   break;
                 default:
                   ScanditMatrixSimple.setText(
@@ -202,6 +164,48 @@ export class PrintTagsScanditService {
         }
       }
     }, 'Imprimir etiquetas', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color, this.typeTags);
+  }
+
+  private getCarrierOfProductAndPrint(codeScanned: string) {
+    this.packingInventorService
+      .getCarrierOfProduct(codeScanned)
+      .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
+        if (res.code == 200) {
+          this.printerService.print({text: [res.data.reference], type: 0})
+        } else {
+          console.error('Error::Subscribe::GetCarrierOfProduct::', res);
+          let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
+          if (res.message) {
+            msgError = res.message;
+          } else if (res.errors && typeof res.errors == 'string') {
+            msgError = res.errors;
+          }
+          ScanditMatrixSimple.setText(
+            msgError,
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
+        }
+      }, (error) => {
+        console.error('Error::Subscribe::GetCarrierOfProduct::', error);
+        let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
+        if (error.error) {
+          if (error.error.message) {
+            msgError = error.error.message;
+          } else if (error.error.errors) {
+            msgError = error.error.errors;
+          } else if (typeof error.error == 'string') {
+            msgError = error.error;
+          }
+        }
+        ScanditMatrixSimple.setText(
+          msgError,
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
+      });
   }
 
   private hideTextMessage(delay: number){
