@@ -158,3 +158,7 @@ export * from './calendar-picking/calendar-picking.module';
 /**Manual Print Prices*/
 export * from './print-prices-manual/print-prices-manual.component';
 export * from './print-prices-manual/print-prices-manual.module';
+
+/**Group warehouse picking */
+export * from './group-warehouse-picking/group-warehouse-picking.module';
+export * from './group-warehouse-picking/group-warehouse-picking.component';

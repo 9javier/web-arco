@@ -63,6 +63,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'group-warehouse-picking',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/group-warehouse-picking/group-warehouse-picking.module#GroupWarehousePickingModule',
+    data:{
+      name:'Login'
+    }
+  },
+  {
     path: 'jails',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',
