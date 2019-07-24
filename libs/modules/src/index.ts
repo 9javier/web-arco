@@ -158,3 +158,7 @@ export * from './calendar-picking/calendar-picking.module';
 /**Manual Print Prices*/
 export * from './print-prices-manual/print-prices-manual.component';
 export * from './print-prices-manual/print-prices-manual.module';
+
+/**Relabel Packings*/
+export * from './print-relabel-packing/print-relabel-packing.component';
+export * from './print-relabel-packing/print-relabel-packing.module';

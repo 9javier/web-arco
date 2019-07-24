@@ -1,0 +1,24 @@
+<div class="scroll-list">
+  <ion-progress-bar type="indeterminate" *ngIf="isLoadingData"></ion-progress-bar>
+
+  <mat-grid-list cols="12" rowHeight="54px" *ngIf="!isLoadingData">
+    <mat-grid-tile colspan="7" rowspan="1">
+      <div class="tile-title">Referencia</div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="5" rowspan="1">
+      <div class="tile-title">Estado</div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <packing-relabel *ngFor="let carrier of listCarriers" [carrier]="carrier"></packing-relabel>
+
+  <p *ngIf="!isLoadingData && (!listCarriers || listCarriers.length < 1)" class="msg-empty-carriers">
+    No hay recipientes pendientes de recibir o ya recibidos
+  </p>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-button expand="block" class="btn-relabel" (click)="relabelPacking()">
+    Código ilegible
+  </ion-button>
+</ion-footer>

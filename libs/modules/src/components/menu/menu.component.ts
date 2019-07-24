@@ -239,39 +239,37 @@ export class MenuComponent implements OnInit {
       id:'picking-tasks-manual'
     },
     {
-      title: 'Print Ref. Tag',
-      id: 'print-ref-tag',
+      title: 'Etiquetado',
+      id: 'print-tags',
       open: false,
       type: 'wrapper',
       children: [
         {
-          title: 'Escaner',
+          title: 'Reetiquetado Jaula',
+          id: 'print-packing',
+          url: '/print/packing',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Código Caja',
           id: 'print-ref-tag',
           url: 'print/tag/ref',
           icon: 'qr-scanner'
         },
         {
-          title: 'Manual',
+          title: 'Código Caja',
           id: 'print-ref-tag-manual',
           url: '/print-tag/manual/box',
           icon: 'create'
-        }
-      ]
-    },
-    {
-      title: 'Print Price Tag',
-      id: "print-price-tag",
-      open: false,
-      type: 'wrapper',
-      children: [
+        },
         {
-          title: 'Escaner',
+          title: 'Código Exposición',
           id: 'print-price-tag',
           url: 'print/tag/price',
           icon: 'qr-scanner'
         },
         {
-          title: 'Manual',
+          title: 'Código Exposición',
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
           icon: 'create'

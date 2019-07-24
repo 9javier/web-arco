@@ -3,6 +3,8 @@ import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {PrinterService} from "../../printer/printer.service";
 import {PriceService} from "@suite/services";
+import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
+import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
 
 declare let Scandit;
 declare let GScandit;
@@ -13,7 +15,12 @@ declare let ScanditMatrixSimple;
 })
 export class PrintTagsScanditService {
 
-  private typeTags: 1|2 = 1;
+  /*
+   * 1 - Reference Tag
+   * 2 - Price Tag
+   * 3 - Packing Tag
+   */
+  private typeTags: 1|2|3 = 1;
   private timeoutHideText;
 
   private listProductsPrices: any[];
@@ -21,6 +28,7 @@ export class PrintTagsScanditService {
   constructor(
     private printerService: PrinterService,
     private priceService: PriceService,
+    private packingInventorService: PackingInventoryService,
     private scanditProvider: ScanditProvider
   ) {}
 
@@ -31,6 +39,11 @@ export class PrintTagsScanditService {
 
   printTagsPrices() {
     this.typeTags = 2;
+    this.initPrintTags();
+  }
+
+  printTagsPackings() {
+    this.typeTags = 3;
     this.initPrintTags();
   }
 
@@ -68,6 +81,48 @@ export class PrintTagsScanditService {
                       console.log('Printed price tag ... ', res);
                     }, (error) => {
                       console.warn('Error to print tag ... ', error);
+                    });
+                  break;
+                case 3:
+                  // Check packing of product
+                  this.packingInventorService
+                    .getCarrierOfProduct(codeScanned)
+                    .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
+                      if (res.code == 200) {
+                        this.printerService.print({text: [res.data.reference], type: 0})
+                      } else {
+                        console.error('Error::Subscribe::GetCarrierOfProduct::', res);
+                        let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
+                        if (res.message) {
+                          msgError = res.message;
+                        } else if (res.errors && typeof res.errors == 'string') {
+                          msgError = res.errors;
+                        }
+                        ScanditMatrixSimple.setText(
+                          msgError,
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
+                      }
+                    }, (error) => {
+                      console.error('Error::Subscribe::GetCarrierOfProduct::', error);
+                      let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
+                      if (error.error) {
+                        if (error.error.message) {
+                          msgError = error.error.message;
+                        } else if (error.error.errors) {
+                          msgError = error.error.errors;
+                        } else if (typeof error.error == 'string') {
+                          msgError = error.error;
+                        }
+                      }
+                      ScanditMatrixSimple.setText(
+                        msgError,
+                        this.scanditProvider.colorsMessage.error.color,
+                        this.scanditProvider.colorText.color,
+                        16);
+                      this.hideTextMessage(1500);
                     });
                   break;
                 default:

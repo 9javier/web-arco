@@ -1,0 +1,107 @@
+import {Component, OnInit} from '@angular/core';
+import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
+import {ActionSheetController, ToastController} from "@ionic/angular";
+import {Router} from "@angular/router";
+import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
+import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
+import {AuthenticationService} from "@suite/services";
+
+@Component({
+  selector: 'list-packing-relabel',
+  templateUrl: './list-packing.component.html',
+  styleUrls: ['./list-packing.component.scss']
+})
+export class ListPackingRelabelTemplateComponent implements OnInit {
+
+  public listCarriers: CarrierModel.Carrier[];
+  public isLoadingData: boolean = true;
+
+  constructor(
+    private router: Router,
+    private actionSheetController: ActionSheetController,
+    private toastController: ToastController,
+    private authenticationService: AuthenticationService,
+    private carriersService: CarriersService,
+    private printTagsScanditService: PrintTagsScanditService
+  ) {}
+
+  ngOnInit() {
+    this.loadCarriers();
+  }
+
+  private async loadCarriers() {
+    this.isLoadingData = true;
+
+    let warehouse = await this.authenticationService.getWarehouseCurrentUser();
+    let warehouseId = warehouse.id;
+
+    this.carriersService
+      .postListByWarehouse({ warehouseId })
+      .subscribe((res: CarrierModel.ResponseListByWarehouse) => {
+        this.isLoadingData = false;
+
+        if (res.code == 200) {
+          if (res.data && res.data.length > 0) {
+            this.listCarriers = res.data;
+          }
+        } else {
+          console.error('Error::Subscribe::GetCarrierOfProduct::', res);
+          let warehouseTypeName = 'de la tienda';
+          if (warehouse.has_racks) {
+            warehouseTypeName = 'del almacén';
+          }
+          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
+        }
+      }, (error) => {
+        this.isLoadingData = false;
+
+        console.error('Error::Subscribe::GetCarrierOfProduct::', error);
+        let warehouseTypeName = 'de la tienda';
+        if (warehouse.has_racks) {
+          warehouseTypeName = 'del almacén';
+        }
+        this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
+      });
+  }
+
+  public async relabelPacking() {
+    let actionSheet = await this.actionSheetController.create({
+      header: 'Contenido de la jaula',
+      buttons: [
+        {
+          text: 'Jaula con contenido',
+          icon: 'square',
+          handler: () => {
+            // Scan product inside packing and get jail where it is to print label
+            this.printTagsScanditService.printTagsPackings();
+          }
+        }, {
+          text: 'Jaula vacía',
+          icon: 'square-outline',
+          handler: () => {
+            // TODO create new packing and print label
+          }
+        }
+      ]
+    });
+
+    await actionSheet.present();
+  }
+
+  private async presentToast(msg: string, color: string = 'primary') {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'bottom',
+      duration: 1500,
+      color: color
+    });
+
+    toast.present()
+      .then(() => {
+        setTimeout(() => {
+          document.getElementById('input-ta').focus();
+        },500);
+      });
+  }
+
+}
