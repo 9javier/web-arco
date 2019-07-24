@@ -49,7 +49,8 @@ export class PickingProvider {
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
       toThe: "a la Jaula",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
-      wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.'
+      wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
+      scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
     },
     'jail': {
       not_registered: 'La Jaula escaneada no está registrada en el sistema.',
@@ -62,7 +63,8 @@ export class PickingProvider {
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo la Jaula utilizada para finalizar el proceso.',
       toThe: "a la Jaula",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
-      wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.'
+      wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
+      scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
     },
     2: {
       not_registered: 'El Pallet escaneado no está registrado en el sistema.',
@@ -75,7 +77,8 @@ export class PickingProvider {
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
       toThe: "al Pallet",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
-      wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.'
+      wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.',
+      scan_packings_to_end: 'Escanee los pallets utilizados para finalizar el picking',
     },
     'pallet': {
       not_registered: 'El Pallet escaneado no está registrado en el sistema.',
@@ -88,7 +91,8 @@ export class PickingProvider {
       scan_to_end: 'Todos los productos han sido escaneados. Escanea de nuevo el Pallet utilizado para finalizar el proceso.',
       toThe: "al Pallet",
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea un Pallet para comenzar el proceso de picking.',
-      wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.'
+      wrong_process_finished: 'El Pallet escaneado es diferente al Pallet con el que inició el proceso.',
+      scan_packings_to_end: 'Escanee los pallets utilizados para finalizar el picking',
     }
   };
   get literalsJailPallet(): any {

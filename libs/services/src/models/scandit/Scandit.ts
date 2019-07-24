@@ -21,7 +21,8 @@ export namespace ScanditModel {
 
   enum ActionsPickingStores {
     init_picking = 'matrix_simple',
-    finish_picking = 'matrix_simple_finish_picking'
+    finish_picking = 'matrix_simple_finish_picking',
+    packing = 'matrix_simple_scan_packings',
   }
 
   enum ActionsPrintTags {

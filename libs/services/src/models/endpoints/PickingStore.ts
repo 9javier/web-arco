@@ -7,13 +7,12 @@ export namespace PickingStoreModel {
     warehouseIds: number[]
   }
 
-  export interface CheckPacking {
-    packingReference: string
+  export interface PostPacking {
+    packingReferences: string[]
   }
 
-  export interface SendProcess extends ListStoresIds {
-    productReference: string,
-    packingReference: string
+  export interface SendProcess {
+    productReference: string
   }
 
   export interface ChangeStatus {
@@ -24,7 +23,7 @@ export namespace PickingStoreModel {
   export interface InitiatedPicking {
     status: 1|2|3,
     destinationWarehouses: WarehouseModel.Warehouse[],
-    linesPending: StoresLineRequestsModel.LineRequests[]
+    linesPending: ResponseDataLineRequestsPending
   }
 
   export interface ResponseInitiated {
@@ -41,14 +40,25 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
+  export interface Pagination {
+    page: number;
+    limit: number;
+    totalResults: number;
+  }
+
+  export interface ResponseDataLineRequestsPending {
+    results: StoresLineRequestsModel.LineRequests[];
+    pagination: Pagination
+  }
+
   export interface ResponseLineRequestsPending {
-    data: StoresLineRequestsModel.LineRequests[];
+    data: ResponseDataLineRequestsPending;
     message: string;
     code: number;
     errors: any;
   }
 
-  export interface ResponseCheckPacking {
+  export interface ResponsePostPacking {
     data: any;
     message: string;
     code: number;
@@ -58,7 +68,7 @@ export namespace PickingStoreModel {
   export interface ResponseSendProcess {
     data: {
       inventory: any,
-      linesRequestPending: StoresLineRequestsModel.LineRequests[]
+      linesRequestPending: ResponseDataLineRequestsPending
     };
     message: string;
     code: number;

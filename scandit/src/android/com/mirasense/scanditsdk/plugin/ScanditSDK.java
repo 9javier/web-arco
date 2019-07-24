@@ -104,6 +104,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_LOAD_PRODUCTS = "matrixPickingStoresLoadProducts";
   private static final String MATRIX_PICKING_STORES_SET_TEXT= "matrixPickingStoresSetText";
   private static final String MATRIX_PICKING_STORES_FINISH = "matrixPickingStoresFinish";
+  private static final String MATRIX_PICKING_STORES_SHOW_BUTTON_FINISH = "matrixPickingStoresShowButtonFinish";
+  private static final String MATRIX_PICKING_STORES_SHOW_BUTTON_PACKING = "matrixPickingStoresShowButtonPacking";
   private static final String MATRIX_PRINT_TAGS = "matrixPrintTags";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
@@ -570,10 +572,12 @@ public class ScanditSDK extends CordovaPlugin {
       String title = "";
       String backgroundTitle = "";
       String colorTitle = "";
+      String textInit = "";
       try {
         title = args.getString(0);
         backgroundTitle = args.getString(1);
         colorTitle = args.getString(2);
+        textInit = args.getString(3);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -581,6 +585,7 @@ public class ScanditSDK extends CordovaPlugin {
       b.putString("title", title);
       b.putString("backgroundTitle", backgroundTitle);
       b.putString("colorTitle", colorTitle);
+      b.putString("textInit", textInit);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixPickingStores.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
@@ -1150,6 +1155,48 @@ public class ScanditSDK extends CordovaPlugin {
       });
     } else if(action.equals(MATRIX_PICKING_STORES_FINISH)){
       MatrixPickingStores.matrixPickingStores.finish();
+    } else if (action.equals(MATRIX_PICKING_STORES_SHOW_BUTTON_FINISH)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final boolean fShow = show;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          Button btnFinishPickingStore = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
+          if(btnFinishPickingStore != null){
+            btnFinishPickingStore.setVisibility(fShow ? View.VISIBLE : View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(MATRIX_PICKING_STORES_SHOW_BUTTON_PACKING)) {
+      String package_name = cordova.getActivity().getApplication().getPackageName();
+      Resources resources = cordova.getActivity().getApplication().getResources();
+
+      boolean show = false;
+      try {
+        show = args.getBoolean(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      final boolean fShow = show;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          Button btnPackingPickingStore = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
+          if(btnPackingPickingStore != null){
+            btnPackingPickingStore.setVisibility(fShow ? View.VISIBLE : View.GONE);
+          }
+        }
+      });
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

@@ -38,14 +38,14 @@ export class PickingStoreService {
   getLineRequestsPending() : Observable<PickingStoreModel.ResponseLineRequestsPending> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<PickingStoreModel.ResponseLineRequestsPending>(this.postLineRequestsPendingUrl, { headers });
+      return this.http.post<PickingStoreModel.ResponseLineRequestsPending>(this.postLineRequestsPendingUrl, { headers });
     }));
   }
 
-  postCheckPacking(parameters: PickingStoreModel.CheckPacking) : Observable<PickingStoreModel.ResponseCheckPacking> {
+  postPackings(parameters: PickingStoreModel.PostPacking) : Observable<PickingStoreModel.ResponsePostPacking> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingStoreModel.ResponseCheckPacking>(this.postCheckPackingUrl, parameters, { headers });
+      return this.http.post<PickingStoreModel.ResponsePostPacking>(this.postCheckPackingUrl, parameters, { headers });
     }));
   }
 

@@ -42,10 +42,12 @@ public class MatrixPickingStores extends Activity {
     String title = "AL Krack";
     String backgroundTitle = "#FFFFFF";
     String colorTitle = "#424242";
+    String textInit = "";
     if (b != null) {
       title = b.getString("title", "AL Krack");
       backgroundTitle = b.getString("backgroundTitle", "#FFFFFF");
       colorTitle = b.getString("colorTitle", "#424242");
+      textInit = b.getString("textInit", "");
     }
 
     String package_name = getApplication().getPackageName();
@@ -68,6 +70,9 @@ public class MatrixPickingStores extends Activity {
     ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setText(title);
     ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setTextColor(Color.parseColor(colorTitle));
 
+    TextView tvPackingStart = this.findViewById(android.R.id.content).getRootView().findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
+    tvPackingStart.setText(textInit);
+    tvPackingStart.setVisibility(View.VISIBLE);
 
     ScanditSDK.setViewDataMatrixSimple(this.findViewById(android.R.id.content).getRootView());
 
@@ -136,12 +141,26 @@ public class MatrixPickingStores extends Activity {
       llListProductsFull.setVisibility(View.GONE);
     });
 
-   Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
+    Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
+    Button btnPackingPickingStore = findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
     btnFinishPickingStore.setOnClickListener(v -> {
       JSONObject jsonObject = new JSONObject();
       try {
         jsonObject.put("result", true);
         jsonObject.put("action", "matrix_simple_finish_picking");
+      } catch (JSONException e) {
+
+      }
+      PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+      pResult.setKeepCallback(true);
+      ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+    });
+
+    btnPackingPickingStore.setOnClickListener(v -> {
+      JSONObject jsonObject = new JSONObject();
+      try {
+        jsonObject.put("result", true);
+        jsonObject.put("action", "matrix_simple_scan_packings");
       } catch (JSONException e) {
 
       }

@@ -49,7 +49,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
         if (res.code == 200 && res.data && res.data.status == 2 && res.data.destinationWarehouses && res.data.linesPending) {
           this.lineRequestsByStores = [];
           this.stores = res.data.destinationWarehouses;
-          this.lineRequests = res.data.linesPending;
+          this.lineRequests = res.data.linesPending.results;
           this.isLoadingData = false;
           this.isPickingInitiated = true;
         } else {
@@ -133,7 +133,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
               .getLineRequestsPending()
               .subscribe((res: PickingStoreModel.ResponseLineRequestsPending) => {
                 if (res.code == 200 || res.code == 201) {
-                  this.pickingProvider.listProductsToStorePickings = res.data;
+                  this.pickingProvider.listProductsToStorePickings = res.data.results;
                   this.pickingScanditService.picking();
                 }
               });
