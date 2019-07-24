@@ -246,7 +246,7 @@ export class MenuComponent implements OnInit {
       type: 'wrapper',
       children: [
         {
-          title: 'Reetiquetado Jaula',
+          title: 'Reetiquetado Recipiente',
           id: 'print-packing',
           url: '/print/packing',
           icon: 'pricetags'
