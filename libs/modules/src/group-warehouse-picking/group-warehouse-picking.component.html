@@ -1,0 +1,60 @@
+<ion-content padding="true">
+    <ion-text color="primary">
+        <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <table mat-table [dataSource]="dataSource">
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goGroup(row)"></tr>
+
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>
+                            nombre
+                        </th>
+                        <td mat-cell *matCellDef="let group">
+                            {{ group?.name }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="initDate">
+                        <th mat-header-cell *matHeaderCellDef>
+                            fecha inicio
+                        </th>
+                        <td mat-cell *matCellDef="let group">
+                            {{ group?.createdAt }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="endDate">
+                        <th mat-header-cell *matHeaderCellDef>
+                            fecha de modificación
+                        </th>
+                        <td mat-cell *matCellDef="let group">
+                            {{ group?.updatedAt }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="delete">
+                        <th mat-header-cell *matHeaderCellDef>
+                            <ion-checkbox></ion-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let group;let i = index" (click)="prevent($event)">
+                            <form [formGroup]="toDelete">
+                                <ion-checkbox [formControl]="toDelete.get('groups')['controls'][i]['controls']?.selected"></ion-checkbox>
+                            </form>
+                        </td>
+                    </ng-container>
+                </table>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button *ngIf="haveToDelete(toDelete.value.groups)" (click)="delete()" color="danger">
+        <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button (click)="store()">
+        <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+</ion-fab>

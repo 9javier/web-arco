@@ -103,3 +103,7 @@ export * from './lib/endpoint/building/building.service';
 /**Calendar */
 export * from './models/endpoints/calendar.model';
 export * from './lib/endpoint/calendar/calendar.service';
+
+/**Group warehouse picking */
+export * from './lib/endpoint/group-warehouse-picking/group-warehouse-picking.service';
+export * from './models/endpoints/group-warehouse-model';

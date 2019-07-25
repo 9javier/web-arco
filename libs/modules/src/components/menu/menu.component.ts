@@ -158,10 +158,16 @@ export class MenuComponent implements OnInit {
         },
       ]
     },
+    
     {
       title: 'Calendar',
       id:'calendar',
       url: '/calendar',
+      icon: 'md-calendar'
+    },{
+      title: 'Group warehouse picking',
+      id:'group-warehouse-picking',
+      url: '/group-warehouse-picking',
       icon: 'md-calendar'
     },
     {
