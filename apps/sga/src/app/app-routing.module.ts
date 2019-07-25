@@ -67,7 +67,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-warehouse-picking/group-warehouse-picking.module#GroupWarehousePickingModule',
     data:{
-      name:'Login'
+      name:'Group warehouse picking'
     }
   },
   {

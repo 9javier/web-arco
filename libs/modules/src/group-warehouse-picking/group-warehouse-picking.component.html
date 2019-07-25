@@ -1,3 +1,48 @@
-<p>
-  group-warehouse-picking works!
-</p>
+<ion-content padding="true">
+    <ion-text color="primary">
+        <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+    <ion-grid>
+        <ion-row>
+            <ion-col>
+                <table mat-table [dataSource]="dataSource">
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goGroup(row.id)"></tr>
+
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef>
+                            nombre
+                        </th>
+                        <td mat-cell *matCellDef="let group">
+                            {{ group?.name }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="initDate">
+                        <th mat-header-cell *matHeaderCellDef>
+                            fecha inicio
+                        </th>
+                        <td mat-cell *matCellDef="let group">
+                            {{ group?.createdAt }}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="endDate">
+                        <th mat-header-cell *matHeaderCellDef>
+                            fecha de modificación
+                        </th>
+                        <td mat-cell *matCellDef="let group">
+                            {{ group?.updatedAt }}
+                        </td>
+                    </ng-container>
+
+                </table>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="store()">
+        <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+</ion-fab>
