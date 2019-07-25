@@ -7,6 +7,7 @@ import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/mate
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { StoreModule } from './modals/store/store.module';
 import { UpdateModule } from './modals/update/update.module';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes:Routes = [
   {
@@ -25,7 +26,8 @@ const routes:Routes = [
     MatPaginatorModule,
     BreadcrumbModule,
     StoreModule,
-    UpdateModule
+    UpdateModule,
+    ReactiveFormsModule
   ]
 })
 export class GroupWarehousePickingModule { }

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 import { GroupWarehousePickingModel, GroupWarehousePickingService, IntermediaryService } from '@suite/services';
 import { NavParams, ModalController } from '@ionic/angular';
-import { ViewController } from '@ionic/core';
+import { DataComponent } from '../data/data.component';
 
 @Component({
   selector: 'suite-update',
@@ -9,6 +9,8 @@ import { ViewController } from '@ionic/core';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
+
+  @ViewChild(DataComponent) data:DataComponent;
 
   group:GroupWarehousePickingModel.GroupWarehousePicking;
   

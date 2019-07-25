@@ -1,9 +1,12 @@
 import { Component, OnInit,Input } from '@angular/core';
-import { GroupWarehousePickingService,GroupWarehousePickingModel } from '@suite/services';
+import { GroupWarehousePickingService,GroupWarehousePickingModel, IntermediaryService } from '@suite/services';
 import { MatTableDataSource } from '@angular/material';
 import { ModalController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import { UpdateComponent } from './modals/update/update.component';
+import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
+import { Observable,merge } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'suite-group-warehouse-picking',
@@ -14,17 +17,66 @@ export class GroupWarehousePickingComponent implements OnInit {
 
 
 
-  displayedColumns: string[] = ['name','initDate','endDate'];
+  displayedColumns: string[] = ['name','initDate','endDate','delete'];
   dataSource: MatTableDataSource<GroupWarehousePickingModel.GroupWarehousePicking>;
+
+  toDelete:FormGroup = this.formBuilder.group({
+    groups:(new FormArray([]))
+  })
 
   groupWarehousePickings:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
   constructor(
     private groupWarehousePickingService:GroupWarehousePickingService,
-    private modalController:ModalController) { }
+    private modalController:ModalController,
+    private formBuilder:FormBuilder,
+    private intermediaryService:IntermediaryService,
+    ) { }
 
   ngOnInit() {
     this.getGroupWarehousePicking();
   }
+
+  /**
+   * Delete all warehouses
+   */
+  delete():void{
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    (<[{id:number,selected:boolean}]>this.toDelete.value.groups).forEach(group=>{
+      if(group.selected){
+        deletions = deletions.pipe(switchMap(()=>{
+            return (this.groupWarehousePickingService.delete(group.id))
+          }))
+        }
+    });
+
+    this.intermediaryService.presentLoading();
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getGroupWarehousePicking();
+      this.intermediaryService.presentToastSuccess("Grupos eliminados con exito");
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.getGroupWarehousePicking();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los grupos");
+    });
+  }
+
+  /**
+   * Prevent default
+   * @param event 
+   */
+  prevent(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  haveToDelete(groups):boolean{
+    let group = groups.find(group=>{
+      return group.selected;
+    })
+    return !!group;
+  }
+  
 
   /**
    * Show details of group for update
@@ -34,7 +86,7 @@ export class GroupWarehousePickingComponent implements OnInit {
     let modal = await this.modalController.create({
       component:UpdateComponent,
       componentProps:{
-        group
+        group:group
       }
     });
     modal.onDidDismiss().then(()=>{
@@ -49,6 +101,12 @@ export class GroupWarehousePickingComponent implements OnInit {
   getGroupWarehousePicking():void{
     this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
       this.groupWarehousePickings = groupWarehousePickings;
+      this.groupWarehousePickings.forEach(groupWarehousePicking=>{
+        (<FormArray>this.toDelete.get("groups")).push(this.formBuilder.group({
+          id:groupWarehousePicking.id,
+          selected:false
+        }));
+      });
       this.dataSource = new MatTableDataSource<any>(this.groupWarehousePickings);
     });
   }

@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [UpdateComponent],
+  entryComponents:[UpdateComponent],
   imports: [
     CommonModule,
     DataModule,
