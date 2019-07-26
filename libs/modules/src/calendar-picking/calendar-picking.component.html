@@ -5,13 +5,11 @@
             <ion-col size="6">
             </ion-col>
             <ion-col size="6" [formGroup]="template">
-                <link rel="stylesheet" [href]="sanitizer.sanitize(styles)">
                 <ion-item>
                     <ion-label>
                         Plantilla
                     </ion-label>
-                    <ion-select formControlName="template"
-                        (ionChange)="selectTemplate(templates[$event.detail.value],null)">
+                    <ion-select formControlName="template" (ionChange)="selectTemplate(templates[$event.detail.value],null)">
                         <ion-select-option *ngFor="let template of templates;let i = index" [value]="i">
                             {{template.name}}</ion-select-option>
                     </ion-select>
@@ -44,8 +42,7 @@
                 </ion-item>
                 <div class="overAuto">
                     <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls']">
-                        <mat-expansion-panel (opened)="warehouse['controls']?.opened.setValue(true)"
-                            (closed)="warehouse['controls']?.opened.setValue(false)">
+                        <mat-expansion-panel (opened)="warehouse['controls']?.opened.setValue(true)" (closed)="warehouse['controls']?.opened.setValue(false)">
                             <mat-expansion-panel-header>
                                 <ion-grid>
                                     <ion-row>
@@ -65,8 +62,7 @@
                             </mat-expansion-panel-header>
 
                             <div *ngIf="warehouse.value.opened">
-                                <ion-item [formGroup]="destination" class="no-border"
-                                    *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
+                                <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
                                     <mat-checkbox formControlName="selected"></mat-checkbox>
                                     <ion-label>{{destination.value.name}}</ion-label>
                                     <mat-checkbox formControlName="radio"></mat-checkbox>

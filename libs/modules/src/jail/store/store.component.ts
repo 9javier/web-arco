@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'suite-store',
@@ -23,7 +24,13 @@ export class StoreComponent implements OnInit {
     .name;
   redirectTo = '/jails';
 
-  constructor() {}
+  constructor(
+    private modalController:ModalController
+  ) {}
 
   ngOnInit() {}
+
+  close():void{
+    this.modalController.dismiss();
+  }
 }

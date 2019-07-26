@@ -1,4 +1,4 @@
-<suite-ui-crud-list
+<!--<suite-ui-crud-list
   padding
   [dataColumns]="columns"
   [title]="title"
@@ -7,3 +7,65 @@
   [routePath]="routePath"
   [printable]="true"
 ></suite-ui-crud-list>
+-->
+<ion-content padding="true">
+    <div class="table-container">
+        <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element">
+                    <ion-checkbox></ion-checkbox>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reference">
+                <th mat-header-cell *matHeaderCellDef> Referencia </th>
+                <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="packing">
+                <th mat-header-cell *matHeaderCellDef> Packing </th>
+                <td mat-cell *matCellDef="let element"> {{element.packingType}} </td>
+            </ng-container>
+            <ng-container matColumnDef="warehouse">
+                <th mat-header-cell *matHeaderCellDef> Warehouse </th>
+                <td mat-cell *matCellDef="let element"> {{element?.warehouse?.name}}
+                    <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="buttons-print">
+                <th mat-header-cell *matHeaderCellDef> Imprimir</th>
+                <td mat-cell *matCellDef="let element"> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
+                    <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <ion-grid>
+                            <ion-row>
+                                <ion-col size="12">
+                                    Destinos asociados a esta jaula:
+                                </ion-col>
+                                <ion-col size="12">
+                                    <ion-item *ngFor="let carrier of element.carrierWarehousesDestiny">
+
+                                        <ion-select>
+                                            <ion-select-option *ngFor="let warehouse of warehouses" [selected]="warehouse.id == carrier.warehouse.id" [value]="warehouse.id">
+                                                {{warehouse.name}}
+                                            </ion-select-option>
+                                        </ion-select>
+                                    </ion-item>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
+        </table>
+    </div>
+</ion-content>
