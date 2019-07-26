@@ -5,6 +5,10 @@ export namespace ScanditModel {
     barcode: Barcode
   }
 
+  export interface ResponseSimple extends Response {
+    action?: ActionsSimple
+  }
+
   export interface ResponsePickingStores extends Response {
     action?: ActionsPickingStores
   }
@@ -18,6 +22,10 @@ export namespace ScanditModel {
   interface Barcode {
     data: string,
     id: number
+  }
+
+  enum ActionsSimple {
+    init_scandit = 'matrix_simple'
   }
 
   enum ActionsPickingStores {

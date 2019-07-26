@@ -169,3 +169,7 @@ export * from './print-relabel-packing-manual/print-relabel-packing-manual.modul
 
 export * from './group-warehouse-picking/group-warehouse-picking.component';
 export * from './group-warehouse-picking/group-warehouse-picking.module';
+
+/**Seal Packing Manual*/
+export * from './seal-packing-manual/seal-packing-manual.component';
+export * from './seal-packing-manual/seal-packing-manual.module';

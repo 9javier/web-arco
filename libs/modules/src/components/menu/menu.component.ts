@@ -6,6 +6,7 @@ import {ScanditService} from "../../../../services/src/lib/scandit/scandit.servi
 import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {MenuController} from "@ionic/angular";
+import {SealScanditService} from "../../../../services/src/lib/scandit/seal/seal.service";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -210,18 +211,6 @@ export class MenuComponent implements OnInit {
       icon: 'apps'
     },
     {
-      title: 'Recepción',
-      id: 'reception',
-      icon: 'qr-scanner',
-      url: 'reception'
-    },
-    {
-      title: 'Vaciar jaula',
-      id: 'empty-carrier',
-      icon: 'qr-scanner',
-      url: 'reception/empty-carrier'
-    },
-    {
       title: 'Ubicar/Escanear',
       id:'positioning',
       icon: 'qr-scanner',
@@ -244,6 +233,37 @@ export class MenuComponent implements OnInit {
       icon: 'qr-scanner',
       url: '/picking-tasks/manual',
       id:'picking-tasks-manual'
+    },
+    {
+      title: 'Recipientes',
+      open: false,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Precintar',
+          id: 'packing-seal',
+          url: 'packing/seal',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Precintar',
+          id: 'packing-seal-manual',
+          url: '/packing/seal/manual',
+          icon: 'create'
+        },
+        {
+          title: 'Recepcionar',
+          id: 'reception',
+          url: 'reception',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Vaciar',
+          id: 'empty-carrier',
+          url: 'reception/empty-carrier',
+          icon: 'qr-scanner'
+        }
+      ]
     },
     {
       title: 'Etiquetado',
@@ -284,34 +304,35 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Jaulas',
-      id:'jails',
-      url: '/jails/menu',
-      icon: 'grid'
-    },
-    {
-      title: 'Palets',
-      id:'pallets',
-      url: '/pallets/menu',
-      icon: 'cube'
-    },
-    {
-      title: 'Almacenes',
-      url: '/warehouses',
-      icon: 'filing',
-      id:'warehouses'
+      title: 'Configuración',
+      open: false,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Jaulas',
+          id:'jails',
+          url: '/jails/menu',
+          icon: 'grid'
+        },
+        {
+          title: 'Almacenes',
+          url: '/warehouses',
+          icon: 'filing',
+          id:'warehouses'
+        },
+        {
+          title:'Tarifa',
+          id:'tariff-al',
+          url:'/tariff',
+          icon:'logo-usd'
+        }
+      ]
     },
     {
       title: 'Ajustes',
       id:'settings',
       url: '/settings',
       icon: 'cog'
-    },
-    {
-      title:'Tarifa',
-      id:'tariff-al',
-      url:'/tariff',
-      icon:'logo-usd'
     },
     {
       title: 'Cerrar sesión',
@@ -336,6 +357,7 @@ export class MenuComponent implements OnInit {
     private scanditService: ScanditService,
     private receptionScanditService: ReceptionScanditService,
     private printTagsScanditService: PrintTagsScanditService,
+    private sealScanditService: SealScanditService,
     private menuController: MenuController
   ) { }
 
@@ -423,6 +445,12 @@ export class MenuComponent implements OnInit {
       this.printTagsScanditService.printTagsReferences();
     } else if (p.url === 'print/tag/price') {
       this.printTagsScanditService.printTagsPrices();
+    } else if (p.url === 'packing/seal') {
+      this.sealScanditService.seal();
+    } else if(p.url === 'reception') {
+      this.receptionScanditService.reception(1);
+    } else if (p.url == 'reception/empty-carrier') {
+      this.receptionScanditService.reception(2);
     } else {
       this.returnTitle(p);
     }
