@@ -92,7 +92,6 @@ export class UpdateComponent implements OnInit {
   getWarehouse(id:number):void{
     this.warehousesService.getShow(id).subscribe(warehouse=>{
       /**the models in backend differs then the model is useless */
-
       this.currentHasRacks = warehouse.has_racks;
       let warehouseToPatch:any = warehouse;
       if(warehouse.group)

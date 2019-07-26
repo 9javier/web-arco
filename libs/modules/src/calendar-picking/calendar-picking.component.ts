@@ -323,7 +323,7 @@ export class CalendarPickingComponent implements OnInit {
    * Charge template for render in page
    * @param template - the template selected
    */
-  selectTemplate(template:CalendarModel.Template,value,date){
+  selectTemplate(template:CalendarModel.Template,value=null,date=null){
     this.date = date; 
     if(value){
       this.form.patchValue(value,{emitEvent:false});

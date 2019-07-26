@@ -1,69 +1,58 @@
 <div class="table-container mat-elevation-z8">
-  <filters-incidences
-    [listIncidencesTypes]="incidencesService.listIncidencesTypes"
-    [typeSelected]="typeSelected"
-    [listAttendedOptions]="listAttendedOptions"
-    [attendedSelected]="attendedSelected"
-    [textToSearch]="textToSearch"
-    (changeFilters)="changeFilters($event)">
-  </filters-incidences>
+    <filters-incidences [listIncidencesTypes]="incidencesService.listIncidencesTypes" [typeSelected]="typeSelected" [listAttendedOptions]="listAttendedOptions" [attendedSelected]="attendedSelected" [textToSearch]="textToSearch" (changeFilters)="changeFilters($event)">
+    </filters-incidences>
+    <table mat-table multiTemplateDataRows [dataSource]="incidencesService.incidencesList" class="table-incidences">
+        <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+        </ng-container>
 
-  <table mat-table multiTemplateDataRows [dataSource]="incidencesService.incidencesList" class="table-incidences">
-    <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef> ID </th>
-      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-    </ng-container>
+        <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> Título </th>
+            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef> Título </th>
-      <td mat-cell *matCellDef="let element"> {{element.title}} </td>
-    </ng-container>
+        <ng-container matColumnDef="typeIncidence">
+            <th mat-header-cell *matHeaderCellDef> Tipo </th>
+            <td mat-cell *matCellDef="let element"> {{incidencesService.getIncidenceTypeText(element.typeIncidence)}} </td>
+        </ng-container>
 
-    <ng-container matColumnDef="typeIncidence">
-      <th mat-header-cell *matHeaderCellDef> Tipo </th>
-      <td mat-cell *matCellDef="let element"> {{incidencesService.getIncidenceTypeText(element.typeIncidence)}} </td>
-    </ng-container>
+        <ng-container matColumnDef="btnAttend">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element" class="btn-attend">
+                <ion-button (click)="attendIncidence($event, element)">
+                    <ion-icon name="checkbox-outline"></ion-icon>
+                </ion-button>
+            </td>
+        </ng-container>
 
-    <ng-container matColumnDef="btnAttend">
-      <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element" class="btn-attend">
-        <ion-button (click)="attendIncidence($event, element)">
-          <ion-icon name="checkbox-outline"></ion-icon>
-        </ion-button>
-      </td>
-    </ng-container>
+        <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
+                <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                    <div class="example-element-description">
+                        <p>{{element.description}}</p>
+                        <ul *ngIf="element.typeIncidence == 8">
+                            <li *ngIf="element.model">
+                                Modelo: <b>{{element.model.reference}}</b>
+                            </li>
+                            <li *ngIf="element.color">
+                                Color: <b>{{element.color.name}}</b>
+                            </li>
+                            <li *ngIf="element.size">
+                                Talla: <b>{{element.size.name}}</b>
+                            </li>
+                        </ul>
+                        <p class="time-text">{{showDateTime(element.createdAt)}}</p>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
 
-    <ng-container matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
-        <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <div class="example-element-description">
-            <p>{{element.description}}</p>
-            <ul *ngIf="element.typeIncidence == 8">
-              <li *ngIf="element.model">
-                Modelo: <b>{{element.model.reference}}</b>
-              </li>
-              <li *ngIf="element.color">
-                Color: <b>{{element.color.name}}</b>
-              </li>
-              <li *ngIf="element.size">
-                Talla: <b>{{element.size.name}}</b>
-              </li>
-            </ul>
-            <p class="time-text">{{showDateTime(element.createdAt)}}</p>
-          </div>
-        </div>
-      </td>
-    </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
+    </table>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row
-        *matRowDef="let row; columns: displayedColumns;"
-        class="incidence-row"
-        [class.incidence-expanded-row]="expandedElement === row"
-        (click)="expandedElement = expandedElement === row ? null : row">
-    </tr>
-    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
-  </table>
-
-  <mat-paginator [length]="incidencesService.incidencesQuantityList" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [length]="incidencesService.incidencesQuantityList" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
 </div>

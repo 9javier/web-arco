@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatTableModule, MatCheckboxModule } from '@angular/material';
+import { MatTableModule, MatCheckboxModule, MatPaginatorModule, MatListModule } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { JailRoutingModule } from './jail-routing.module';
 import { JailComponent } from './jail.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import {CommonUiCrudModule} from '@suite/common/ui/crud';
+import { DataModule } from './data/data.module';
 
 
 @NgModule({
@@ -21,7 +22,11 @@ import {CommonUiCrudModule} from '@suite/common/ui/crud';
     MatCheckboxModule,
     JailRoutingModule,
     CommonUiCrudModule,
-    CdkTableModule
+    CdkTableModule,
+    DataModule,
+    MatPaginatorModule,
+    MatListModule,
+    FormsModule,
   ], entryComponents: [
     StoreComponent
   ]

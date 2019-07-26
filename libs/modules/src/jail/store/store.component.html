@@ -1,7 +1,27 @@
-<suite-ui-crud-store
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Crear grupo</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <suite-data></suite-data>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <!--<ion-button slot="end" color="primary" [disabled]="data.form.invalid" (click)="submit(data.getValue())">Guardar</ion-button>-->
+    </ion-toolbar>
+</ion-footer>
+<!--<suite-ui-crud-store
   [title]="title"
   [formBuilderDataInputs]="formBuilderDataInputs"
   [formBuilderTemplateInputs]="formBuilderTemplateInputs"
   [apiEndpoint]="apiEndpoint"
   [redirectTo]="redirectTo"
 ></suite-ui-crud-store>
+-->
