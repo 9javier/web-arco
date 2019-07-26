@@ -13,6 +13,8 @@ export class CarrierService {
   /**Private urls for Carrier service */
   private carrierUrl:string = environment.apiBase+"/carriers";
   private singleCarrierUrl:string = environment.apiBase+"/carriers/{{id}}";
+  private warehouseDestination:string = environment.apiBase+"/carriers/warehouse/{{id}}";
+  private packingUrl:string = environment.apiBase+"/types/packing";
 
   constructor(private http:HttpClient) { }
 
@@ -24,6 +26,16 @@ export class CarrierService {
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierUrl).pipe(map(response=>{
       return response.data;
     }));
+  }
+
+  getPackingTypes(){
+    return this.http.get(this.packingUrl).pipe(map((response)=>{
+      return (<any>response).data;
+    }))
+  }
+
+  updateDestination(id,destination){
+    return this.http.put(this.warehouseDestination.replace("{{id}}",String(id)),destination);
   }
 
   /**
