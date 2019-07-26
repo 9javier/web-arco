@@ -1,3 +1,18 @@
-<p>
-  data works!
-</p>
+<form [formGroup]="form">
+    <ion-item>
+        <ion-label slot="start">Referencia</ion-label>
+        <ion-input formControlName="reference" placeholder="Ejem J0001"></ion-input>
+    </ion-item>
+    <br>
+    <ion-item *ngIf="form['controls']?.warehouse" [formGroup]="form['controls']?.warehouse">
+        <ion-select placeholder="Location warehouse" formControlName="id">
+            <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}</ion-select-option>
+        </ion-select>
+    </ion-item>
+    <br>
+    <ion-item>
+        <ion-select placeholder="Packing" formControlName="packingType">
+            <ion-select-option *ngFor="let packing of packings" [value]="packing.id">{{packing.name}}</ion-select-option>
+        </ion-select>
+    </ion-item>
+</form>
