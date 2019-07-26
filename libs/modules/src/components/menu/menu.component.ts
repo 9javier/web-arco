@@ -373,7 +373,7 @@ export class MenuComponent implements OnInit {
         });
         /**if the page is a wrapper and have childrens then add it */
         let auxPage = JSON.parse(JSON.stringify(page));
-        auxPage.childen = auxChildren;
+        auxPage.children = auxChildren;
         /** */
         if(auxChildren.length)
           this.menuPagesFiltered.push(auxPage);
