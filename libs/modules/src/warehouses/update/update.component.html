@@ -41,6 +41,15 @@
             </div>
             <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
         </ion-item>
+        <!--Group warehouse picking-->
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name="barcode"></ion-icon>
+            </div>
+            <ion-select placeholder="Group warehouse picking" formControlName="groupsWarehousePicking" multiple="true">
+                <ion-select-option *ngFor="let group of groupWarehousesPicking" [value]="group.id">{{group.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
         <!--Tiene building-->
         <ion-item *ngIf="buildings && buildings.length">
             <ion-label lines="none" no-padding>

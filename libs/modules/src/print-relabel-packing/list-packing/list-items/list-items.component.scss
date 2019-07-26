@@ -1,0 +1,15 @@
+mat-grid-list {
+  mat-grid-tile.mat-grid-tile {
+    font-size: 16px;
+    line-height: 20px;
+    div.tile-value {
+      justify-content: start !important;
+      width: 100%;
+      color: var(--ion-color-tertiary);
+      padding: 16px;
+    }
+  }
+}
+mat-grid-list.separator-list {
+  border-bottom: 1px solid #c3c3c3;
+}

@@ -159,6 +159,13 @@ export * from './calendar-picking/calendar-picking.module';
 export * from './print-prices-manual/print-prices-manual.component';
 export * from './print-prices-manual/print-prices-manual.module';
 
-/**Group warehouse picking */
-export * from './group-warehouse-picking/group-warehouse-picking.module';
+/**Relabel Packings*/
+export * from './print-relabel-packing/print-relabel-packing.component';
+export * from './print-relabel-packing/print-relabel-packing.module';
+
+/**Relabel Packings Manual*/
+export * from './print-relabel-packing-manual/print-relabel-packing-manual.component';
+export * from './print-relabel-packing-manual/print-relabel-packing-manual.module';
+
 export * from './group-warehouse-picking/group-warehouse-picking.component';
+export * from './group-warehouse-picking/group-warehouse-picking.module';

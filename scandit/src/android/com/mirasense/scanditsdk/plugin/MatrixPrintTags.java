@@ -119,11 +119,29 @@ public class MatrixPrintTags extends Activity {
     arrowBack.setOnClickListener(v -> finish());
 
     Switch sTypeTags = findViewById(resources.getIdentifier("sTypeTags", "id", package_name));
+    TextView tvTagsName = findViewById(resources.getIdentifier("tvTagsName", "id", package_name));
+    TextView tvPricesName = findViewById(resources.getIdentifier("tvPricesName", "id", package_name));
+
     if (typeTag == 1) {
+      sTypeTags.setVisibility(View.VISIBLE);
+      tvTagsName.setVisibility(View.VISIBLE);
+      tvPricesName.setVisibility(View.VISIBLE);
       sTypeTags.setChecked(false);
-    } else {
+    } else if (typeTag == 2) {
+      sTypeTags.setVisibility(View.VISIBLE);
+      tvTagsName.setVisibility(View.VISIBLE);
+      tvPricesName.setVisibility(View.VISIBLE);
       sTypeTags.setChecked(true);
+    } else if (typeTag == 3) {
+      sTypeTags.setVisibility(View.GONE);
+      tvTagsName.setVisibility(View.GONE);
+      tvPricesName.setVisibility(View.GONE);
+    } else {
+      sTypeTags.setVisibility(View.GONE);
+      tvTagsName.setVisibility(View.GONE);
+      tvPricesName.setVisibility(View.GONE);
     }
+
     sTypeTags.setOnClickListener(view -> {
       int typeTagSelected = 1;
       if (((Switch)view).isChecked()) {

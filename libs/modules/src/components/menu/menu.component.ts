@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
 import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
+import {MenuController} from "@ionic/angular";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -245,39 +246,37 @@ export class MenuComponent implements OnInit {
       id:'picking-tasks-manual'
     },
     {
-      title: 'Print Ref. Tag',
-      id: 'print-ref-tag',
+      title: 'Etiquetado',
+      id: 'print-tags',
       open: false,
       type: 'wrapper',
       children: [
         {
-          title: 'Escaner',
+          title: 'Reetiquetado Recipiente',
+          id: 'print-packing',
+          url: '/print/packing',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Código Caja',
           id: 'print-ref-tag',
           url: 'print/tag/ref',
           icon: 'qr-scanner'
         },
         {
-          title: 'Manual',
+          title: 'Código Caja',
           id: 'print-ref-tag-manual',
           url: '/print-tag/manual/box',
           icon: 'create'
-        }
-      ]
-    },
-    {
-      title: 'Print Price Tag',
-      id: "print-price-tag",
-      open: false,
-      type: 'wrapper',
-      children: [
+        },
         {
-          title: 'Escaner',
+          title: 'Código Exposición',
           id: 'print-price-tag',
           url: 'print/tag/price',
           icon: 'qr-scanner'
         },
         {
-          title: 'Manual',
+          title: 'Código Exposición',
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
           icon: 'create'
@@ -330,10 +329,15 @@ export class MenuComponent implements OnInit {
 @Output() menuTitle = new EventEmitter();
 
   
-  constructor(private loginService:Oauth2Service,private router:Router,private authenticationService:AuthenticationService,
-              private scanditService: ScanditService,
-              private receptionScanditService: ReceptionScanditService,
-              private printTagsScanditService: PrintTagsScanditService) { }
+  constructor(
+    private loginService:Oauth2Service,
+    private router:Router,
+    private authenticationService:AuthenticationService,
+    private scanditService: ScanditService,
+    private receptionScanditService: ReceptionScanditService,
+    private printTagsScanditService: PrintTagsScanditService,
+    private menuController: MenuController
+  ) { }
 
   returnTitle(item:MenuSectionItem){
     this.currentRoute = item.title
@@ -409,6 +413,7 @@ export class MenuComponent implements OnInit {
   }
 
   tapOptionSubitem(p) {
+    this.menuController.close();
     if (p.url === 'print/tag/ref') {
       this.printTagsScanditService.printTagsReferences();
     } else if (p.url === 'print/tag/price') {
