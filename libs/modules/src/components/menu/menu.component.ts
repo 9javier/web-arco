@@ -351,14 +351,16 @@ export class MenuComponent implements OnInit {
     console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
     console.log("diccionario",app,dictionary);
-    if(!app || !app.name)
+    if(!app || !app.name) {
       return false;
+    }
     /**obtain the routes for the current application */
     let auxPages = this.menuPages[this.app.name];
     console.log(auxPages)
     this.menuPagesFiltered = [];
-    if(!auxPages)
+    if(!auxPages) {
       return false;
+    }
     /**iterate over all pages of the application */
     auxPages.forEach((page:any)=>{
       /**to save the childrens of the actual page */
@@ -368,20 +370,23 @@ export class MenuComponent implements OnInit {
         page.children.forEach(children => {
           console.log(dictionary[children.id],children.id)
           /**if the childen is allowed then add if */
-          if(dictionary[children.id])
-            auxChildren.push(children)
+          if(dictionary[children.id]) {
+            auxChildren.push(children);
+          }
         });
         /**if the page is a wrapper and have childrens then add it */
         let auxPage = JSON.parse(JSON.stringify(page));
         auxPage.children = auxChildren;
         /** */
-        if(auxChildren.length)
+        if(auxChildren.length) {
           this.menuPagesFiltered.push(auxPage);
+        }
       /**if not is a wrapper then is a normal category the check if plus easy */
       }else{
         console.log(dictionary[page.id],page.id)
-        if(dictionary[page.id])
+        if(dictionary[page.id]) {
           this.menuPagesFiltered.push(page);
+        }
       }
     });
   
