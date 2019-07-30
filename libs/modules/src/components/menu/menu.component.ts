@@ -278,6 +278,18 @@ export class MenuComponent implements OnInit {
           icon: 'pricetags'
         },
         {
+          title: 'Reetiquetado Productos',
+          id: 'print-product',
+          url: 'print/product/relabel',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Reetiquetado Productos',
+          id: 'print-product-manual',
+          url: '/print/product/relabel',
+          icon: 'create'
+        },
+        {
           title: 'Código Caja',
           id: 'print-ref-tag',
           url: 'print/tag/ref',
@@ -451,6 +463,8 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.receptionScanditService.reception(2);
+    } else if (p.url == 'print/product/relabel') {
+      this.printTagsScanditService.printRelabelProducts();
     } else {
       this.returnTitle(p);
     }

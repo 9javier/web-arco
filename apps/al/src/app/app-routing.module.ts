@@ -156,6 +156,14 @@ const routes: Routes = [
     data:{
       name: 'Precintar'
     }
+  },
+  {
+    path: 'print/product/relabel',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-relabel-product-manual/print-relabel-product-manual.module#PrintRelabelProductManualModule',
+    data:{
+      name: 'Retiquetación'
+    }
   }
 ];
 

@@ -51,6 +51,32 @@ export namespace ProductModel {
     data: Product[];
   }
 
+  export interface SizesAndModel {
+    sizes: SizeModel.Size[],
+    model: ModelModel.Model
+  }
+
+  export interface ResponseInfo {
+    data?: Product|SizesAndModel,
+    errors?: string,
+    message: string,
+    code: number
+  }
+
+  export interface ParamsRelabel {
+    warehouseId: number,
+    modelId: number,
+    sizeId: number,
+    locationReference?: string
+  }
+
+  export interface ResponseRelabel {
+    data?: Product | SizesAndModel,
+    errors?: string,
+    message: string,
+    code: number
+  }
+
   export interface ProductHistory{
   }
 
