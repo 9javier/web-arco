@@ -7,7 +7,7 @@
 
   <mat-grid-tile colspan="5" rowspan="1">
     <div class="tile-value">
-      {{carrier.status == 1 ? 'Vacío' : (carrier.status == 2 ? 'Cargando' : (carrier.status == 3 ? 'Enviada' : 'Desconocido'))}}
+      {{carrier.status == 1 ? 'Vacío' : (carrier.status == 2 ? 'Cargando' : (carrier.status == 3 ? 'Enviado' : (carrier.status == 4 ? 'Precintado' : 'Desconocido')))}}
     </div>
   </mat-grid-tile>
 </mat-grid-list>
