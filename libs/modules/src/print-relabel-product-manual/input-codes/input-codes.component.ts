@@ -83,9 +83,12 @@ export class InputCodesComponent implements OnInit {
               this.presentAlertSelect(listItems, responseSizeAndModel);
             }
           }
+        } else {
+          this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
         }
       }, (error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
+        this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
       });
   }
 
@@ -100,9 +103,12 @@ export class InputCodesComponent implements OnInit {
       .subscribe((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // TODO Do product print
+        } else {
+          this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
         }
       }, (error) => {
         console.error('Error::Subscribe::Relabel -> ', error);
+        this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
       });
   }
 

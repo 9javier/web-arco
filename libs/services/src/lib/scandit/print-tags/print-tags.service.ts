@@ -217,9 +217,22 @@ export class PrintTagsScanditService {
               ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', listItems);
             }
           }
+        } else {
+          ScanditMatrixSimple.setText(
+            'No se ha podido consultar la información del producto escaneado.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
         }
       }, (error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
+        ScanditMatrixSimple.setText(
+          'No se ha podido consultar la información del producto escaneado.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
       });
   }
 
@@ -234,9 +247,22 @@ export class PrintTagsScanditService {
       .subscribe((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // TODO Do product print
+        } else {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un error al intentar consultar la información de la talla.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
         }
       }, (error) => {
         console.error('Error::Subscribe::Relabel -> ', error);
+        ScanditMatrixSimple.setText(
+          'Ha ocurrido un error al intentar consultar la información de la talla.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
       });
   }
 
