@@ -245,42 +245,11 @@ export class PrinterService {
         })
       }));
       /**obtain the products */
-      return this.getProductsByReference(listReferences).pipe(flatMap((products)=>{
-        let options:Array<PrintModel.Print> = [];
-        /**Iterate and build object to print */
-        products.forEach(product=>{
-          let printOptions:PrintModel.Print = {
-            /**build the needed data for print */
-            product: {
-              productShoeUnit: {
-                reference: product.reference,
-                size: {
-                  name: product.size?product.size.name:''
-                },
-                manufacturer: {
-                  name: product.brand?product.brand.name:''
-                },
-                model: {
-                  name: product.model?product.model.name:'',
-                  reference: product.model?product.model.reference:'',
-                  color: {
-                    name: product.color? product.color.name:''
-                  },
-                  season: {
-                    name: product.season ? product.season.name : ''
-                  }
-                }
-              }
-            }
-          };
-          printOptions.type = 1;
-          /**Build the array for obtain the string to send to printer */
-          options.push(printOptions);
-        });
-        /**Obtain the string from options */
-        let strToPrint = this.buildString(options);
-        innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.tailManagement(strToPrint));
+      return this.getProductsByReference(listReferences).pipe(flatMap((products) => {
+        let dataToPrint = this.processProductToPrintTagBarcode(products);
+
+        innerObservable = innerObservable.pipe(flatMap(product => {
+          return from(this.tailManagement(dataToPrint));
         }));
         return innerObservable;
       }));
@@ -289,39 +258,63 @@ export class PrinterService {
   }
 
   public printTagBarcodeUsingProduct(product: ProductModel.Product) {
+     let dataToPrint = this.processProductToPrintTagBarcode(product);
+
+     if (dataToPrint) {
+       this.tailManagement(dataToPrint);
+     }
+  }
+
+  private processProductToPrintTagBarcode(dataToProcess: (ProductModel.Product | Array<ProductModel.Product>)): string {
     let options:Array<PrintModel.Print> = [];
 
-    let printOptions:PrintModel.Print = {
-      /**build the needed data for print */
-      product: {
-        productShoeUnit: {
-          reference: product.reference,
-          size: {
-            name: product.size ? product.size.name : ''
-          },
-          manufacturer: {
-            name: product.brand ? product.brand.name : ''
-          },
-          model: {
-            name: product.model ? product.model.name : '',
-            reference: product.model ? product.model.reference : '',
-            color: {
-              name: product.model.color ? product.model.color.name : ''
+    let arrayProductsToProcess: Array<ProductModel.Product> = [];
+
+    if (!Array.isArray(dataToProcess)) {
+      arrayProductsToProcess.push(dataToProcess);
+    } else {
+      arrayProductsToProcess = dataToProcess;
+    }
+
+    /** Iterate and build object to print */
+    for (let iProduct in arrayProductsToProcess) {
+      let product = arrayProductsToProcess[iProduct];
+
+      let printOptions: PrintModel.Print = {
+        /** Build the needed data for print */
+        type: 1,
+        product: {
+          productShoeUnit: {
+            reference: product.reference,
+            size: {
+              name: product.size ? product.size.name : ''
             },
-            season: {
-              name: product.season ? product.season.name : ''
+            manufacturer: {
+              name: product.brand ? product.brand.name : ''
+            },
+            model: {
+              name: product.model ? product.model.name : '',
+              reference: product.model ? product.model.reference : '',
+              color: {
+                name: product.model.color ? product.model.color.name : ''
+              },
+              season: {
+                name: product.season ? product.season.name : ''
+              }
             }
           }
         }
-      }
-    };
-    printOptions.type = 1;
+      };
 
-    options.push(printOptions);
+      /** Build the array for obtain the string to send to printer */
+      options.push(printOptions);
+    }
 
     if (options) {
-      let strToPrint = this.buildString(options);
-      this.tailManagement(strToPrint);
+      /** Obtain the string from options */
+      return this.buildString(options);
+    } else {
+      return null;
     }
   }
 
