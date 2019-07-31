@@ -1,15 +1,18 @@
-import {ProductModel} from "@suite/services";
 import { WarehouseModel } from './Warehouse';
 import { ModelModel } from './Model';
 import { SizeModel } from './Size';
+import {BrandModel} from "./Brand";
+import {SeasonModel} from "./Season";
 
 export namespace ProductModel {
   export interface Product {
     id?: number;
-    reference: number;
-    initialWarehouse: Array<WarehouseModel.Warehouse>;
-    model: Array<ModelModel.Model>;
-    size: Array<SizeModel.Size>;
+    reference: string;
+    initialWarehouse: WarehouseModel.Warehouse;
+    model: ModelModel.Model;
+    size: SizeModel.Size;
+    brand: BrandModel.Brand;
+    season: SeasonModel.Season
   }
 
   export interface ProductPicking {
@@ -71,7 +74,7 @@ export namespace ProductModel {
   }
 
   export interface ResponseRelabel {
-    data?: Product | SizesAndModel,
+    data?: Product,
     errors?: string,
     message: string,
     code: number
