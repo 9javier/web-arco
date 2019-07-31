@@ -10,6 +10,7 @@ import { map,switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
 import { forEach } from '@angular/router/src/utils/collection';
+import {ProductModel} from "@suite/services";
 
 declare let cordova: any;
 
@@ -285,6 +286,43 @@ export class PrinterService {
       }));
     }));
     return observable;
+  }
+
+  public printTagBarcodeUsingProduct(product: ProductModel.Product) {
+    let options:Array<PrintModel.Print> = [];
+
+    let printOptions:PrintModel.Print = {
+      /**build the needed data for print */
+      product: {
+        productShoeUnit: {
+          reference: product.reference,
+          size: {
+            name: product.size ? product.size.name : ''
+          },
+          manufacturer: {
+            name: product.brand ? product.brand.name : ''
+          },
+          model: {
+            name: product.model ? product.model.name : '',
+            reference: product.model ? product.model.reference : '',
+            color: {
+              name: product.model.color ? product.model.color.name : ''
+            },
+            season: {
+              name: product.season ? product.season.name : ''
+            }
+          }
+        }
+      }
+    };
+    printOptions.type = 1;
+
+    options.push(printOptions);
+
+    if (options) {
+      let strToPrint = this.buildString(options);
+      this.tailManagement(strToPrint);
+    }
   }
 
   /**

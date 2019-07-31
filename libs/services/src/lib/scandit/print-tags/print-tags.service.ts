@@ -246,7 +246,8 @@ export class PrintTagsScanditService {
       })
       .subscribe((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
-          // TODO Do product print
+          // Do product print
+          this.printerService.printTagBarcodeUsingProduct(res.data);
         } else {
           ScanditMatrixSimple.setText(
             'Ha ocurrido un error al intentar consultar la información de la talla.',
