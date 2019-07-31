@@ -15,6 +15,12 @@ export namespace ProductModel {
     season: SeasonModel.Season
   }
 
+  export interface ProductShoesUnit {
+    id: number,
+    initialWarehouseReference: string,
+    reference: string
+  }
+
   export interface ProductPicking {
     id: number;
     reference: string;

@@ -177,3 +177,7 @@ export * from './seal-packing-manual/seal-packing-manual.module';
 /**Relabel Products Manual*/
 export * from './print-relabel-product-manual/print-relabel-product-manual.component';
 export * from './print-relabel-product-manual/print-relabel-product-manual.module';
+
+/**Print Products Received*/
+export * from './print-received-product/print-received-product.component';
+export * from './print-received-product/print-received-product.module';

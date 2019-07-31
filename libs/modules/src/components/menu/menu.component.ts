@@ -272,6 +272,12 @@ export class MenuComponent implements OnInit {
       type: 'wrapper',
       children: [
         {
+          title: 'Productos Recibidos',
+          id: 'print-products-received',
+          url: '/print/product/received',
+          icon: 'md-exit'
+        },
+        {
           title: 'Reetiquetado Recipiente',
           id: 'print-packing',
           url: '/print/packing',
