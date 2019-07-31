@@ -267,7 +267,6 @@ export class PrinterService {
 
   private processProductToPrintTagBarcode(dataToProcess: (ProductModel.Product | Array<ProductModel.Product>)): string {
     let options:Array<PrintModel.Print> = [];
-
     let arrayProductsToProcess: Array<ProductModel.Product> = [];
 
     if (!Array.isArray(dataToProcess)) {
@@ -333,47 +332,12 @@ export class PrinterService {
       }));
 
       return this.priceService.postPricesByProductsReferences({references: listReferences}).pipe(flatMap((prices) => {
-        let options: Array<PrintModel.Print> = [];
-        prices.forEach(price => {
-          let printOptions: PrintModel.Print = {};
-          if(price.typeLabel){
-            printOptions.product = {
-              productShoeUnit:{
-                model:{
-                  reference:price.model.reference
-                }
-              }
-            }
-            printOptions.price = {
-              id:price.id,
-              percent: price.percent,
-              percentOutlet: price.percentOutlet,
-              totalPrice: price.totalPrice,
-              priceOriginal: price.priceOriginal,
-              priceDiscount: price.priceDiscount,
-              priceDiscountOutlet: price.priceDiscountOutlet,
-              typeLabel:price.typeLabel,
-              numRange: price.range?price.range.numRange:0,
-              valueRange: price.rangesNumbers ? price.rangesNumbers.sizeRangeNumberMin && price.rangesNumbers.sizeRangeNumberMax && price.rangesNumbers.sizeRangeNumberMin == price.rangesNumbers.sizeRangeNumberMax ? String(price.rangesNumbers.sizeRangeNumberMin) : String(price.rangesNumbers.sizeRangeNumberMin) + '-' + String(price.rangesNumbers.sizeRangeNumberMax) : '',
-            };
-          }
-          let dictionaryOfCaseTypes = {
-            "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
-            "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
-            "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
-            "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
-            "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
-            "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
-            "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
-          }
-          printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
-          options.push(printOptions);
-        });
-        let strToPrint:string = this.buildString(options);
+        let dataToPrint = this.processProductToPrintTagPrice(prices);
+
         innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.tailManagement(strToPrint).catch((_=>{})));
+          return from(this.tailManagement(dataToPrint.valuePrint).catch((_=>{})));
         })).pipe(flatMap(response=>{
-          return this.printNotify(options.map(option=>option.price.id));
+          return this.printNotify(dataToPrint.options.map(option=>option.price.id));
         }));
         return innerObservable;
       }));
@@ -383,31 +347,15 @@ export class PrinterService {
   }
 
   public printTagPriceUsingPrice(price) {
-    let options: Array<PrintModel.Print> = [];
+    let dataToPrint = this.processProductToPrintTagPrice(price);
 
-    let printOptions: PrintModel.Print = {};
-    if(price.typeLabel){
-      printOptions.product = {
-        productShoeUnit: {
-          model: {
-            reference: price.model.reference
-          }
-        }
-      };
-      printOptions.price = {
-        id: price.id,
-        percent: price.percent,
-        percentOutlet: price.percentOutlet,
-        totalPrice: price.totalPrice,
-        priceOriginal: price.priceOriginal,
-        priceDiscount: price.priceDiscount,
-        priceDiscountOutlet: price.priceDiscountOutlet,
-        typeLabel:price.typeLabel,
-        numRange: price.range ? price.range.numRange : 0,
-        valueRange: price.rangesNumbers ? price.rangesNumbers.sizeRangeNumberMin && price.rangesNumbers.sizeRangeNumberMax && price.rangesNumbers.sizeRangeNumberMin == price.rangesNumbers.sizeRangeNumberMax ? String(price.rangesNumbers.sizeRangeNumberMin) : String(price.rangesNumbers.sizeRangeNumberMin) + '-' + String(price.rangesNumbers.sizeRangeNumberMax) : '',
-      };
+    if (dataToPrint) {
+      this.tailManagement(dataToPrint.valuePrint);
     }
-    let dictionaryOfCaseTypes = {
+  }
+
+  private processProductToPrintTagPrice(dataToProcess: (any | Array<any>)): { valuePrint, options } {
+    const dictionaryOfCaseTypes = {
       "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
       "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
       "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
@@ -416,16 +364,69 @@ export class PrinterService {
       "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
       "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
     };
-    printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
 
-    options.push(printOptions);
+    let options:Array<PrintModel.Print> = [];
+    let arrayPricesToProcess: Array<any> = [];
+
+    if (!Array.isArray(dataToProcess)) {
+      arrayPricesToProcess.push(dataToProcess);
+    } else {
+      arrayPricesToProcess = dataToProcess;
+    }
+
+    /** Iterate and build object to print */
+    for (let iPrice in arrayPricesToProcess) {
+      let price = arrayPricesToProcess[iPrice];
+
+      if (price.typeLabel) {
+        let printOptions: PrintModel.Print = {
+          type: dictionaryOfCaseTypes[price.typeLabel],
+          product: {
+            productShoeUnit: {
+              model: {
+                reference: price.model.reference
+              }
+            }
+          },
+          price: {
+            id: price.id,
+            percent: price.percent,
+            percentOutlet: price.percentOutlet,
+            totalPrice: price.totalPrice,
+            priceOriginal: price.priceOriginal,
+            priceDiscount: price.priceDiscount,
+            priceDiscountOutlet: price.priceDiscountOutlet,
+            typeLabel:price.typeLabel,
+            numRange: price.range ? price.range.numRange : 0,
+            valueRange: this.getCorrectValueRange(price)
+          }
+        };
+
+        /** Build the array for obtain the string to send to printer */
+        options.push(printOptions);
+      }
+    }
 
     if (options) {
-      let strToPrint:string = this.buildString(options);
-      this.tailManagement(strToPrint);
+      /** Obtain the string from options */
+      return { valuePrint: this.buildString(options), options: options };
+    } else {
+      return null;
     }
   }
 
+  private getCorrectValueRange(dataToObtainValueRange): string {
+    if (dataToObtainValueRange && dataToObtainValueRange.rangesNumbers) {
+      let rangesNumbers = dataToObtainValueRange.rangesNumbers;
+      if (rangesNumbers.sizeRangeNumberMin && rangesNumbers.sizeRangeNumberMax && rangesNumbers.sizeRangeNumberMin == rangesNumbers.sizeRangeNumberMax) {
+        return String(rangesNumbers.sizeRangeNumberMin);
+      } else {
+        return String(rangesNumbers.sizeRangeNumberMin) + '-' + String(rangesNumbers.sizeRangeNumberMax);
+      }
+    } else {
+      return '';
+    }
+  }
 
   tail:Array<string>=[];
   /**es el texto que se va a imprimir, pero también funciona a modo de bandera que nos dice si algo está imprimiéndose */
