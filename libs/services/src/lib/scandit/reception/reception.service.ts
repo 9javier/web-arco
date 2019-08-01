@@ -8,6 +8,7 @@ import {ReceptionService} from "../../endpoint/process/reception/reception.servi
 import {WarehouseModel} from "@suite/services";
 import {ReceptionModel} from "../../../models/endpoints/Reception";
 import {ReceptionProvider} from "../../../providers/reception/reception.provider";
+import {Router} from "@angular/router";
 
 declare let ScanditMatrixSimple;
 
@@ -23,6 +24,7 @@ export class ReceptionScanditService {
   private typeReception: number = 1;
 
   constructor(
+    private router: Router,
     private alertController: AlertController,
     private auth: AuthenticationService,
     private events: Events,
@@ -199,6 +201,12 @@ export class ReceptionScanditService {
             this.receptionProvider.referencePacking = null;
             this.receptionProvider.typePacking = 0;
             this.receptionProvider.processStarted = false;
+
+            if (res.data.quantity > 0) {
+              // Close Scandit and navigate to list of products received
+              ScanditMatrixSimple.finish();
+              this.router.navigate(['print', 'product', 'received', 'scandit']);
+            }
           } else if (this.typeReception == 2) {
 
           }

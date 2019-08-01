@@ -16,7 +16,7 @@ const routes: Routes = [
     component: PrintReceivedProductComponent
   },
   {
-    path: ':type',
+    path: 'scandit',
     component: PrintReceivedProductComponent
   }
 ];
