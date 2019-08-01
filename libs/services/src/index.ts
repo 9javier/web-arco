@@ -111,3 +111,7 @@ export * from './models/endpoints/group-warehouse-model';
 /**Carrier */
 export * from './lib/endpoint/carrier/carrier.service';
 export * from './models/endpoints/calendar.model';
+
+/**User time */
+export * from './lib/endpoint/user-time/user-time.service';
+export * from './models/endpoints/user-time.model';

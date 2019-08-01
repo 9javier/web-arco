@@ -196,6 +196,11 @@ export class MenuComponent implements OnInit {
       id:'products',
       url: '/products',
       icon: 'basket'
+    },{
+      title: 'User time',
+      id:'user-time',
+      url: '/user-time',
+      icon: 'time'
     },
     {
       title: 'Building',
@@ -316,7 +321,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Cerrar sesión',
       id:'logout',
-      url: 'logout',
+      url: '/user-time/logout',
       icon: 'log-out'
     }
   ];
