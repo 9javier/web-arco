@@ -167,6 +167,7 @@ export * from './print-relabel-packing/print-relabel-packing.module';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.component';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.module';
 
+/**Group picking */
 export * from './group-warehouse-picking/group-warehouse-picking.component';
 export * from './group-warehouse-picking/group-warehouse-picking.module';
 
@@ -177,6 +178,10 @@ export * from './seal-packing-manual/seal-packing-manual.module';
 /**Relabel Products Manual*/
 export * from './print-relabel-product-manual/print-relabel-product-manual.component';
 export * from './print-relabel-product-manual/print-relabel-product-manual.module';
+
+/**User time */
+export * from './user-time/user-time.component'
+export * from './user-time/user-time.module'
 
 /**Print Products Received*/
 export * from './print-received-product/print-received-product.component';
