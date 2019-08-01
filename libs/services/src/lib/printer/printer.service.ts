@@ -341,6 +341,10 @@ export class PrinterService {
       let price = arrayPricesToProcess[iPrice];
 
       if (price.typeLabel) {
+        if (price.typeLabel == 7 && price.priceDiscount == price.priceDiscountOutlet) {
+          price.typeLabel = 5;
+        }
+
         let printOptions: PrintModel.Print = {
           type: dictionaryOfCaseTypes[price.typeLabel],
           product: {
