@@ -73,6 +73,12 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
+    ,{
+      title: 'User time',
+      id:'user-time',
+      url: '/user-time',
+      icon: 'time'
+    },
     {
       title: 'Olas de trabajo',
       open: true,

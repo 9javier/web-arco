@@ -20,6 +20,13 @@ const routes: Routes = [
     data:{
       name:'User time'
     }
+  },{
+    path: 'user-time',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+    data:{
+      name:'User time'
+    }
   },
   {
     path: 'home',
