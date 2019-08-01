@@ -161,6 +161,22 @@ const routes: Routes = [
     data:{
       name: 'Prices'
     }
+  },
+  {
+    path: 'packing/seal/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/seal-packing-manual/seal-packing-manual.module#SealPackingManualModule',
+    data:{
+      name: 'Precintar'
+    }
+  },
+  {
+    path: 'print/product/relabel',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-relabel-product-manual/print-relabel-product-manual.module#PrintRelabelProductManualModule',
+    data:{
+      name: 'Retiquetación'
+    }
   }
 ];
 

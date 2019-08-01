@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {PrinterService} from "../../printer/printer.service";
-import {PriceService} from "@suite/services";
+import {AuthenticationService, PriceService, ProductModel, ProductsService} from "@suite/services";
 import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
 import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
 
@@ -20,15 +20,18 @@ export class PrintTagsScanditService {
    * 2 - Price Tag
    * 3 - Packing Tag
    */
-  private typeTags: 1|2|3 = 1;
+  private typeTags: 1|2|3|4 = 1;
   private timeoutHideText;
 
   private listProductsPrices: any[];
+  private productRelabel: ProductModel.SizesAndModel;
 
   constructor(
     private printerService: PrinterService,
     private priceService: PriceService,
     private packingInventorService: PackingInventoryService,
+    private productsService: ProductsService,
+    private authService: AuthenticationService,
     private scanditProvider: ScanditProvider
   ) {}
 
@@ -44,6 +47,11 @@ export class PrintTagsScanditService {
 
   printTagsPackings() {
     this.typeTags = 3;
+    this.initPrintTags();
+  }
+
+  printRelabelProducts() {
+    this.typeTags = 4;
     this.initPrintTags();
   }
 
@@ -86,6 +94,14 @@ export class PrintTagsScanditService {
                 case 3:
                   // Check packing of product
                   this.getCarrierOfProductAndPrint(codeScanned);
+                  break;
+                case 4:
+                  this.printerService.printTagBarcode([codeScanned])
+                    .subscribe((res) => {
+                      console.log('Printed product tag ... ', res);
+                    }, (error) => {
+                      console.warn('Error to print tag ... ', error);
+                    });
                   break;
                 default:
                   ScanditMatrixSimple.setText(
@@ -130,6 +146,9 @@ export class PrintTagsScanditService {
                       this.hideTextMessage(1500);
                     });
                   break;
+                case 4:
+                  this.getSizeListByReference(codeScanned);
+                  break;
                 default:
                   ScanditMatrixSimple.setText(
                     'El código escaneado no es válido para la operación que se espera realizar.',
@@ -146,6 +165,8 @@ export class PrintTagsScanditService {
                 msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
               } else if (this.typeTags == 2) {
                 msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
+              } else if (this.typeTags == 4) {
+                msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder reetiquetar el producto.';
               }
               ScanditMatrixSimple.setText(
                 msg,
@@ -160,10 +181,90 @@ export class PrintTagsScanditService {
           this.typeTags = response.type_tags;
         } else if (response.action == 'select_size') {
           let sizeSelected: number = response.size_selected;
-          this.printerService.printTagPriceUsingPrice(this.listProductsPrices[sizeSelected]);
+          if (this.typeTags == 2) {
+            this.printerService.printTagPriceUsingPrice(this.listProductsPrices[sizeSelected]);
+          } else if (this.typeTags == 4) {
+            let modelId = this.productRelabel.model.id;
+            let sizeId = this.productRelabel.sizes[sizeSelected].id;
+            this.postRelabelProduct(modelId, sizeId);
+          }
         }
       }
     }, 'Imprimir etiquetas', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color, this.typeTags);
+  }
+
+  private getSizeListByReference(code: string) {
+    this.productsService
+      .getInfo(code)
+      .subscribe((res: ProductModel.ResponseInfo) => {
+        if (res.code == 200) {
+          let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
+          if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
+            if (responseSizeAndModel.sizes.length == 1) {
+              this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+            } else {
+              let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
+              this.productRelabel = responseSizeAndModel;
+
+              let listItems = responseSizeAndModel.sizes.map((size) => {
+                return {
+                  rangesNumbers: {
+                    sizeRangeNumberMax: size.name,
+                    sizeRangeNumberMin: size.name
+                  }
+                }
+              });
+              ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', listItems);
+            }
+          }
+        } else {
+          ScanditMatrixSimple.setText(
+            'No se ha podido consultar la información del producto escaneado.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
+        }
+      }, (error) => {
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        ScanditMatrixSimple.setText(
+          'No se ha podido consultar la información del producto escaneado.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
+      });
+  }
+
+  private async postRelabelProduct(modelId: number, sizeId: number) {
+    let warehouseId = (await this.authService.getWarehouseCurrentUser()).id;
+    this.productsService
+      .postRelabel({
+        modelId,
+        sizeId,
+        warehouseId
+      })
+      .subscribe((res: ProductModel.ResponseRelabel) => {
+        if (res.code == 200) {
+          // Do product print
+          this.printerService.printTagBarcodeUsingProduct(res.data);
+        } else {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un error al intentar consultar la información de la talla.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
+        }
+      }, (error) => {
+        console.error('Error::Subscribe::Relabel -> ', error);
+        ScanditMatrixSimple.setText(
+          'Ha ocurrido un error al intentar consultar la información de la talla.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
+      });
   }
 
   private getCarrierOfProductAndPrint(codeScanned: string) {

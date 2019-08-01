@@ -6,6 +6,7 @@ import {ScanditService} from "../../../../services/src/lib/scandit/scandit.servi
 import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {MenuController} from "@ionic/angular";
+import {SealScanditService} from "../../../../services/src/lib/scandit/seal/seal.service";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -215,18 +216,6 @@ export class MenuComponent implements OnInit {
       icon: 'apps'
     },
     {
-      title: 'Recepción',
-      id: 'reception',
-      icon: 'qr-scanner',
-      url: 'reception'
-    },
-    {
-      title: 'Vaciar jaula',
-      id: 'empty-carrier',
-      icon: 'qr-scanner',
-      url: 'reception/empty-carrier'
-    },
-    {
       title: 'Ubicar/Escanear',
       id:'positioning',
       icon: 'qr-scanner',
@@ -251,6 +240,37 @@ export class MenuComponent implements OnInit {
       id:'picking-tasks-manual'
     },
     {
+      title: 'Recipientes',
+      open: false,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Precintar',
+          id: 'packing-seal',
+          url: 'packing/seal',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Precintar',
+          id: 'packing-seal-manual',
+          url: '/packing/seal/manual',
+          icon: 'create'
+        },
+        {
+          title: 'Recepcionar',
+          id: 'reception',
+          url: 'reception',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Vaciar',
+          id: 'empty-carrier',
+          url: 'reception/empty-carrier',
+          icon: 'qr-scanner'
+        }
+      ]
+    },
+    {
       title: 'Etiquetado',
       id: 'print-tags',
       open: false,
@@ -261,6 +281,18 @@ export class MenuComponent implements OnInit {
           id: 'print-packing',
           url: '/print/packing',
           icon: 'pricetags'
+        },
+        {
+          title: 'Reetiquetado Productos',
+          id: 'print-product',
+          url: 'print/product/relabel',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Reetiquetado Productos',
+          id: 'print-product-manual',
+          url: '/print/product/relabel',
+          icon: 'create'
         },
         {
           title: 'Código Caja',
@@ -289,34 +321,35 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Jaulas',
-      id:'jails',
-      url: '/jails/menu',
-      icon: 'grid'
-    },
-    {
-      title: 'Palets',
-      id:'pallets',
-      url: '/pallets/menu',
-      icon: 'cube'
-    },
-    {
-      title: 'Almacenes',
-      url: '/warehouses',
-      icon: 'filing',
-      id:'warehouses'
+      title: 'Configuración',
+      open: false,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Jaulas',
+          id:'jails',
+          url: '/jails/menu',
+          icon: 'grid'
+        },
+        {
+          title: 'Almacenes',
+          url: '/warehouses',
+          icon: 'filing',
+          id:'warehouses'
+        },
+        {
+          title:'Tarifa',
+          id:'tariff-al',
+          url:'/tariff',
+          icon:'logo-usd'
+        }
+      ]
     },
     {
       title: 'Ajustes',
       id:'settings',
       url: '/settings',
       icon: 'cog'
-    },
-    {
-      title:'Tarifa',
-      id:'tariff-al',
-      url:'/tariff',
-      icon:'logo-usd'
     },
     {
       title: 'Cerrar sesión',
@@ -341,6 +374,7 @@ export class MenuComponent implements OnInit {
     private scanditService: ScanditService,
     private receptionScanditService: ReceptionScanditService,
     private printTagsScanditService: PrintTagsScanditService,
+    private sealScanditService: SealScanditService,
     private menuController: MenuController
   ) { }
 
@@ -356,14 +390,16 @@ export class MenuComponent implements OnInit {
     console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
     console.log("diccionario",app,dictionary);
-    if(!app || !app.name)
+    if(!app || !app.name) {
       return false;
+    }
     /**obtain the routes for the current application */
     let auxPages = this.menuPages[this.app.name];
     console.log(auxPages)
     this.menuPagesFiltered = [];
-    if(!auxPages)
+    if(!auxPages) {
       return false;
+    }
     /**iterate over all pages of the application */
     auxPages.forEach((page:any)=>{
       /**to save the childrens of the actual page */
@@ -373,20 +409,23 @@ export class MenuComponent implements OnInit {
         page.children.forEach(children => {
           console.log(dictionary[children.id],children.id)
           /**if the childen is allowed then add if */
-          if(dictionary[children.id])
-            auxChildren.push(children)
+          if(dictionary[children.id]) {
+            auxChildren.push(children);
+          }
         });
         /**if the page is a wrapper and have childrens then add it */
         let auxPage = JSON.parse(JSON.stringify(page));
-        auxPage.childen = auxChildren;
+        auxPage.children = auxChildren;
         /** */
-        if(auxChildren.length)
+        if(auxChildren.length) {
           this.menuPagesFiltered.push(auxPage);
+        }
       /**if not is a wrapper then is a normal category the check if plus easy */
       }else{
         console.log(dictionary[page.id],page.id)
-        if(dictionary[page.id])
+        if(dictionary[page.id]) {
           this.menuPagesFiltered.push(page);
+        }
       }
     });
   
@@ -423,6 +462,14 @@ export class MenuComponent implements OnInit {
       this.printTagsScanditService.printTagsReferences();
     } else if (p.url === 'print/tag/price') {
       this.printTagsScanditService.printTagsPrices();
+    } else if (p.url === 'packing/seal') {
+      this.sealScanditService.seal();
+    } else if(p.url === 'reception') {
+      this.receptionScanditService.reception(1);
+    } else if (p.url == 'reception/empty-carrier') {
+      this.receptionScanditService.reception(2);
+    } else if (p.url == 'print/product/relabel') {
+      this.printTagsScanditService.printRelabelProducts();
     } else {
       this.returnTitle(p);
     }

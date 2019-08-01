@@ -1,9 +1,9 @@
 export namespace SizeModel {
   export interface Size{
     id?: number,
-    reference: number|string,
+    reference: string,
     number: number|string,
-    name: number|string,
+    name: string,
     description?: string,
     datasetHash?: string,
     createdAt?: string,

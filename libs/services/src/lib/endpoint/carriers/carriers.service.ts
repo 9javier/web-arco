@@ -13,6 +13,7 @@ import {CarrierModel} from "../../../models/endpoints/Carrier";
 export class CarriersService {
 
   private postGenerateUrl: string = environment.apiBase + "/carriers/generate";
+  private postSealUrl: string = environment.apiBase + "/carriers/seal";
 
   // Relabel
   private postListByWarehouseUrl: string = environment.apiBase + "/carriers/warehouses/show";
@@ -35,6 +36,14 @@ export class CarriersService {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
 
       return this.http.post<CarrierModel.ResponseGenerate>(this.postGenerateUrl, parameters, { headers });
+    }));
+  }
+
+  postSeal(parameters: CarrierModel.ParamsSeal) : Observable<CarrierModel.ResponseSeal> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.post<CarrierModel.ResponseSeal>(this.postSealUrl, parameters, { headers });
     }));
   }
 

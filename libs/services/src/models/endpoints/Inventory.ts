@@ -137,6 +137,21 @@ export namespace InventoryModel {
     code: number;
   }
 
+  export interface ParamsCheckContainer {
+    containerReference: string,
+    inventoryId: number
+  }
+
+  export interface ResponseCheckContainer {
+    data?: {
+      containerReference: string,
+      inventory: Inventory
+    };
+    errors?: string;
+    message: string;
+    code: number;
+  }
+
   export interface ErrorResponseIndex {
     statusCode: number;
     status: number;

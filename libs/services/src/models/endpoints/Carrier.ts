@@ -19,6 +19,10 @@ export namespace CarrierModel {
     packingType: number
   }
 
+  export interface ParamsSeal {
+    reference: string
+  }
+
   export interface ResponseListByWarehouse {
     data: Carrier[],
     message?: string,
@@ -27,6 +31,13 @@ export namespace CarrierModel {
   }
 
   export interface ResponseGenerate {
+    data: Carrier,
+    message?: string,
+    errors?: any,
+    code: number
+  }
+
+  export interface ResponseSeal {
     data: Carrier,
     message?: string,
     errors?: any,

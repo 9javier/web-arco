@@ -47,7 +47,7 @@
             </ion-item>
             <ion-item>
                 <ion-label>
-                    Ubicación: {{product?.container?.reference}}
+                    Ubicación: {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : ''}}
                 </ion-label>
             </ion-item>
         </ion-list>

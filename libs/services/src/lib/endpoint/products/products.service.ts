@@ -7,7 +7,8 @@ import { AuthenticationService } from '../authentication/authentication.service'
 import { ProductModel } from '../../../models/endpoints/Product';
 
 import { environment } from '../../../environments/environment';
-import { map } from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
+import {from} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
@@ -16,7 +17,9 @@ export class ProductsService {
   /**routes for services */
   private getHistoricalUrl = environment.apiBase+'/products/history/{{id}}';
   private getIndexUrl:string = environment.apiBase+'/products';
-  
+  private getInfoUrl: string = environment.apiBase + '/products/info/';
+  private postRelabelUrl: string = environment.apiBase + '/products/relabel';
+
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<ProductModel.ResponseIndex>>> {
@@ -35,6 +38,22 @@ export class ProductsService {
   getHistorical(id:number):Observable<any>{
     return this.http.get(this.getHistoricalUrl.replace("{{id}}",id.toString())).pipe(map((response:any)=>{
       return response.data;
+    }));
+  }
+
+  getInfo(reference: string): Observable<ProductModel.ResponseInfo> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.get<ProductModel.ResponseInfo>(this.getInfoUrl + reference, { headers });
+    }));
+  }
+
+  postRelabel(params: ProductModel.ParamsRelabel): Observable<ProductModel.ResponseRelabel> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.post<ProductModel.ResponseRelabel>(this.postRelabelUrl, params,  { headers });
     }));
   }
 }
