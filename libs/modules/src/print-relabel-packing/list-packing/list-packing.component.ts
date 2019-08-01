@@ -41,7 +41,10 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
     this.isLoadingData = true;
 
     let warehouse = await this.authenticationService.getWarehouseCurrentUser();
-    let warehouseId = warehouse.id;
+    let warehouseId = null;
+    if (warehouse) {
+      warehouseId = warehouse.id;
+    }
 
     this.carriersService
       .postListByWarehouse({ warehouseId })
