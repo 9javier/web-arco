@@ -63,12 +63,17 @@ export class InputCodesComponent implements OnInit {
   private getSizeListByReference(dataWrote: string) {
     this.productsService
       .getInfo(dataWrote)
-      .subscribe((res: ProductModel.ResponseInfo) => {
+      .subscribe(async (res: ProductModel.ResponseInfo) => {
         if (res.code == 200) {
           let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
-              this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+              let warehouseId = await this.getWarehouseId();
+              if (warehouseId) {
+                this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+              } else {
+                this.presentAlertInput(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+              }
             } else {
               let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
 
@@ -92,19 +97,20 @@ export class InputCodesComponent implements OnInit {
       });
   }
 
-  private async postRelabelProduct(modelId: number, sizeId: number) {
-    let warehouseUser = await this.authService.getWarehouseCurrentUser();
-    let warehouseId = null;
-    if (warehouseUser) {
-      warehouseId = warehouseUser.id;
+  private async postRelabelProduct(modelId: number, sizeId: number, locationReference?: string) {
+    let warehouseId = await this.getWarehouseId();
+    let paramsRelabel: ProductModel.ParamsRelabel = {
+      modelId,
+      sizeId,
+      warehouseId
+    };
+
+    if (locationReference) {
+      paramsRelabel.locationReference = locationReference;
     }
 
     this.productsService
-      .postRelabel({
-        modelId,
-        sizeId,
-        warehouseId
-      })
+      .postRelabel(paramsRelabel)
       .subscribe((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // Do product print
@@ -142,13 +148,10 @@ export class InputCodesComponent implements OnInit {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancelar');
-          }
+          cssClass: 'secondary'
         }, {
           text: 'Seleccionar',
-          handler: (data) => {
+          handler: async (data) => {
             console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
@@ -157,13 +160,52 @@ export class InputCodesComponent implements OnInit {
 
             let modelId = listProductsSizes.model.id;
             let sizeId = listProductsSizes.sizes[data].id;
-            this.postRelabelProduct(modelId, sizeId);
+            let warehouseId = await this.getWarehouseId();
+            if (warehouseId) {
+              this.postRelabelProduct(modelId, sizeId);
+            } else {
+              this.presentAlertInput(modelId, sizeId);
+            }
           }
         }
       ]
     });
 
     await alert.present();
+  }
+
+  private async presentAlertInput(modelId: number, sizeId: number) {
+    const alert = await this.alertController.create({
+      header: 'Ubicación del producto',
+      message: 'Introduce la referencia de la ubicación o el embalaje en que está el producto. Si no está en ninguno de estos sitios continúa sin rellenar este campo.',
+      inputs: [{
+        name: 'reference',
+        type: 'text',
+        placeholder: 'Referencia '
+      }],
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Continuar',
+          handler: (data) => {
+            let reference = data.reference.trim();
+            this.postRelabelProduct(modelId, sizeId, reference);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async getWarehouseId() {
+    let warehouseUser = await this.authService.getWarehouseCurrentUser();
+    let warehouseId = null;
+    if (warehouseUser) {
+      warehouseId = warehouseUser.id;
+    }
+
+    return warehouseId;
   }
 
 }
