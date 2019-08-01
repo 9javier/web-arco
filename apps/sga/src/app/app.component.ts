@@ -133,7 +133,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = this.appPages[0].children[0].title;
+  currentRoute: string = "User time";
   deploySidebarSmallDevices = false;
 
 
@@ -219,7 +219,7 @@ export class AppComponent implements OnInit {
                 })
               )
               .catch((possibleMainWarehouse404Error) => {})
-              .then(() => this.router.navigate(['products']).then(sucess => {
+              .then(() => this.router.navigate(['user-time/products']).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
                 })
