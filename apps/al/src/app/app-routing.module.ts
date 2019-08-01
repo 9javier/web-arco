@@ -9,6 +9,19 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path:'logout',
+    redirectTo:'login',
+    pathMatch:'full'
+  },
+  {
+    path: 'user-time/:redirect',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+    data:{
+      name:'User time'
+    }
+  },
+  {
     path: 'home',
     canActivate: [AuthGuard],
     loadChildren: './home/home.module#HomePageModule',

@@ -167,5 +167,10 @@ export * from './print-relabel-packing/print-relabel-packing.module';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.component';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.module';
 
+/**Group picking */
 export * from './group-warehouse-picking/group-warehouse-picking.component';
 export * from './group-warehouse-picking/group-warehouse-picking.module';
+
+/**User time */
+export * from './user-time/user-time.component'
+export * from './user-time/user-time.module'
