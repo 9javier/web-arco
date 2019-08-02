@@ -247,13 +247,13 @@ export class MenuComponent implements OnInit {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
-          icon: 'pricetags'
+          icon: 'barcode'
         },
         {
           title: 'Reetiquetado productos manual',
           id: 'print-product-manual',
           url: '/print/product/relabel',
-          icon: 'pricetags'
+          icon: 'barcode'
         }*/
       ]
     },
@@ -273,13 +273,13 @@ export class MenuComponent implements OnInit {
           title: 'Código exposición',
           id: 'print-price-tag',
           url: 'print/tag/price',
-          icon: 'basket'
+          icon: 'pricetags'
         },
         {
           title: 'Código exposición manual',
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
-          icon: 'basket'
+          icon: 'pricetags'
         }
       ]
     },
