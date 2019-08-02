@@ -4,9 +4,20 @@ export namespace UserTimeModel{
 
     export interface UserTimeRequest{
         type:number;
-        force:boolean;
     }
-    
+
+    export interface UserRegisterTime {
+      id: number;
+      inputDate: string;
+      outputDate: string;
+      createdAt: string;
+      updatedAt: string;
+    }
+
+    export interface UserRegisterTimeResponse extends Request.Success {
+      data: UserRegisterTime
+    }
+
     export interface UserTimeResponse extends Request.Success{
         data:UserTime
     }
