@@ -182,3 +182,7 @@ export * from './print-relabel-product-manual/print-relabel-product-manual.modul
 /**User time */
 export * from './user-time/user-time.component'
 export * from './user-time/user-time.module'
+
+/**Print Products Received*/
+export * from './print-received-product/print-received-product.component';
+export * from './print-received-product/print-received-product.module';

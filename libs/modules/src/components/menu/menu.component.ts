@@ -43,6 +43,12 @@ export class MenuComponent implements OnInit {
   currentRoute:string = "";
   sgaPages: MenuItemList = [
     {
+      title: 'Registro horario',
+      id:'user-time',
+      url: '/user-time',
+      icon: 'time'
+    },
+    {
       title: 'Logística',
       open: true,
       type:'wrapper',
@@ -72,12 +78,6 @@ export class MenuComponent implements OnInit {
           icon: 'notifications'
         }
       ]
-    },
-    ,{
-      title: 'User time',
-      id:'user-time',
-      url: '/user-time',
-      icon: 'time'
     },
     {
       title: 'Olas de trabajo',
@@ -130,6 +130,19 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Picking Tiendas',
+      open: true,
+      type:'wrapper',
+      children: [
+        {
+          title: 'Calendario Picking',
+          id:'calendar',
+          url: '/calendar',
+          icon: 'md-calendar'
+        }
+      ]
+    },
+    {
       title: 'Configuración',
       open: true,
       type:'wrapper',
@@ -141,53 +154,42 @@ export class MenuComponent implements OnInit {
           icon: 'filing'
         },
         {
-          title: 'Grupos de tiendas',
+          title: 'Grupos de almacenes',
           id:'warehouses-group',
           url: '/groups/menu',
           icon: 'person'
         },
         {
-          title: 'Asignar grupos de tiendas',
+          title: 'Asignar grupos de almacenes',
           id:'group-to-warehouse',
           url: '/group-to-warehouse',
           icon: 'people'
         },
         {
-          title: 'Jaulas',
+          title: 'Grupos de tiendas para picking',
+          id:'group-warehouse-picking',
+          url: '/group-warehouse-picking',
+          icon: 'people'
+        },
+        {
+          title: 'Edificios',
+          id:'building',
+          url: '/building',
+          icon: 'business'
+        },
+        {
+          title: 'Embalajes',
           id:'jails',
           url: '/jails/menu',
           icon: 'grid'
         },
-        {
-          title: 'Palets',
-          id:'pallets',
-          url: '/pallets/menu',
-          icon: 'cube'
-        },
       ]
     },
-    
     {
-      title: 'Calendar',
-      id:'calendar',
-      url: '/calendar',
-      icon: 'md-calendar'
-    },{
-      title: 'Group warehouse picking',
-      id:'group-warehouse-picking',
-      url: '/group-warehouse-picking',
-      icon: 'md-calendar'
-    },
-    {
-      title:'Tarifa',
+      title:'Tarifas',
       id:'tariff-sga',
       url:'/tariff',
       icon:'logo-usd'
-    },{
-      title: 'Building',
-      id:'building',
-      url: '/building',
-      icon: 'basket'
     },
     {
       title: 'Cerrar sesión',
@@ -199,54 +201,56 @@ export class MenuComponent implements OnInit {
 
   alPages: MenuItemList = [
     {
-      title: 'Productos',
-      id:'products',
-      url: '/products',
-      icon: 'basket'
-    },{
-      title: 'User time',
+      title: 'Registro horario',
       id:'user-time',
       url: '/user-time',
       icon: 'time'
     },
     {
-      title: 'Building',
-      id:'building',
-      url: '/building',
-      icon: 'basket'
+      title: 'Logística',
+      open: true,
+      type: 'wrapper',
+      children: [
+        {
+          title: 'Productos',
+          id:'products',
+          url: '/products',
+          icon: 'basket'
+        },
+        {
+          title: 'Ubicar/Escanear',
+          id:'positioning',
+          icon: 'locate',
+          url: 'positioning'
+        },
+        {
+          title: 'Ubicar/Escanear Manualmente',
+          icon: 'locate',
+          url: '/positioning/manual',
+          id:'positioning-manual'
+        },
+        {
+          title: 'Tareas de Picking',
+          id:"picking-task",
+          icon: 'qr-scanner',
+          url: '/picking-tasks'
+        },
+        {
+          title: 'Tareas de Picking Manualmente',
+          icon: 'qr-scanner',
+          url: '/picking-tasks/manual',
+          id:'picking-tasks-manual'
+        },
+        {
+          title: 'Gestión de almacén',
+          id:'warehouses-management',
+          url: '/warehouse/manage',
+          icon: 'apps'
+        },
+      ]
     },
     {
-      title: 'Gestión de almacén',
-      id:'warehouses-management',
-      url: '/warehouse/manage',
-      icon: 'apps'
-    },
-    {
-      title: 'Ubicar/Escanear',
-      id:'positioning',
-      icon: 'qr-scanner',
-      url: 'positioning'
-    },
-    {
-      title: 'Ubicar/Escanear Manualmente',
-      icon: 'qr-scanner',
-      url: '/positioning/manual',
-      id:'positioning-manual'
-    },
-    {
-      title: 'Tareas de Picking',
-      id:"picking-task",
-      icon: 'qr-scanner',
-      url: '/picking-tasks'
-    },
-    {
-      title: 'Tareas de Picking Manualmente',
-      icon: 'qr-scanner',
-      url: '/picking-tasks/manual',
-      id:'picking-tasks-manual'
-    },
-    {
-      title: 'Recipientes',
+      title: 'Embalajes',
       open: false,
       type: 'wrapper',
       children: [
@@ -254,25 +258,25 @@ export class MenuComponent implements OnInit {
           title: 'Precintar',
           id: 'packing-seal',
           url: 'packing/seal',
-          icon: 'qr-scanner'
+          icon: 'paper-plane'
         },
         {
-          title: 'Precintar',
+          title: 'Precintar Manual',
           id: 'packing-seal-manual',
           url: '/packing/seal/manual',
-          icon: 'create'
+          icon: 'paper-plane'
         },
         {
           title: 'Recepcionar',
           id: 'reception',
           url: 'reception',
-          icon: 'qr-scanner'
+          icon: 'archive'
         },
         {
           title: 'Vaciar',
           id: 'empty-carrier',
           url: 'reception/empty-carrier',
-          icon: 'qr-scanner'
+          icon: 'square-outline'
         }
       ]
     },
@@ -283,46 +287,52 @@ export class MenuComponent implements OnInit {
       type: 'wrapper',
       children: [
         {
-          title: 'Reetiquetado Recipiente',
+          title: 'Productos Recibidos',
+          id: 'print-products-received',
+          url: '/print/product/received',
+          icon: 'archive'
+        },
+        {
+          title: 'Reetiquetado Embalajes',
           id: 'print-packing',
           url: '/print/packing',
-          icon: 'pricetags'
+          icon: 'grid'
         },
         {
           title: 'Reetiquetado Productos',
           id: 'print-product',
           url: 'print/product/relabel',
-          icon: 'qr-scanner'
+          icon: 'pricetags'
         },
         {
-          title: 'Reetiquetado Productos',
+          title: 'Reetiquetado Productos Manual',
           id: 'print-product-manual',
           url: '/print/product/relabel',
-          icon: 'create'
+          icon: 'pricetags'
         },
         {
           title: 'Código Caja',
           id: 'print-ref-tag',
           url: 'print/tag/ref',
-          icon: 'qr-scanner'
+          icon: 'barcode'
         },
         {
-          title: 'Código Caja',
+          title: 'Código Caja Manual',
           id: 'print-ref-tag-manual',
           url: '/print-tag/manual/box',
-          icon: 'create'
+          icon: 'barcode'
         },
         {
           title: 'Código Exposición',
           id: 'print-price-tag',
           url: 'print/tag/price',
-          icon: 'qr-scanner'
+          icon: 'basket'
         },
         {
-          title: 'Código Exposición',
+          title: 'Código Exposición Manual',
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
-          icon: 'create'
+          icon: 'basket'
         }
       ]
     },
@@ -332,24 +342,30 @@ export class MenuComponent implements OnInit {
       type: 'wrapper',
       children: [
         {
-          title: 'Jaulas',
-          id:'jails',
-          url: '/jails/menu',
-          icon: 'grid'
-        },
-        {
           title: 'Almacenes',
           url: '/warehouses',
           icon: 'filing',
           id:'warehouses'
         },
         {
-          title:'Tarifa',
-          id:'tariff-al',
-          url:'/tariff',
-          icon:'logo-usd'
+          title: 'Edificios',
+          id:'building',
+          url: '/building',
+          icon: 'business'
+        },
+        {
+          title: 'Embalajes',
+          id:'jails',
+          url: '/jails/menu',
+          icon: 'grid'
         }
       ]
+    },
+    {
+      title:'Tarifas',
+      id:'tariff-al',
+      url:'/tariff',
+      icon:'logo-usd'
     },
     {
       title: 'Ajustes',
@@ -372,7 +388,7 @@ export class MenuComponent implements OnInit {
   menuPagesFiltered: MenuItemList = [];
 @Output() menuTitle = new EventEmitter();
 
-  
+
   constructor(
     private loginService:Oauth2Service,
     private router:Router,
@@ -434,7 +450,7 @@ export class MenuComponent implements OnInit {
         }
       }
     });
-  
+
    //this.currentRoute = this.menuPagesFiltered[0].children[0].title;
   }
 

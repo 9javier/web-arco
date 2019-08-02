@@ -237,7 +237,12 @@ export class PrintTagsScanditService {
   }
 
   private async postRelabelProduct(modelId: number, sizeId: number) {
-    let warehouseId = (await this.authService.getWarehouseCurrentUser()).id;
+    let warehouseUser = await this.authService.getWarehouseCurrentUser();
+    let warehouseId = null;
+    if (warehouseUser) {
+      warehouseId = warehouseUser.id;
+    }
+
     this.productsService
       .postRelabel({
         modelId,

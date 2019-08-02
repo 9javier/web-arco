@@ -167,50 +167,12 @@ export class PrinterService {
       }));
       /**obtain the products */
       return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices)=>{
-        /**Iterate and build object to print */
-        let options:Array<PrintModel.Print> = [];
-        prices.forEach(pricesArray=>{
-          pricesArray.forEach(price=>{
-            let printOptions:PrintModel.Print = {};
-            if(price.typeLabel){
-              printOptions.product = {
-                productShoeUnit:{
-                  model:{
-                    reference:price.model.reference
-                  }
-                }
-              }
-              printOptions.price = {
-                id:price.id,
-                percent: price.percent,
-                percentOutlet: price.percentOutlet,
-                totalPrice: price.totalPrice,
-                priceOriginal: price.priceOriginal,
-                priceDiscount: price.priceDiscount,
-                priceDiscountOutlet: price.priceDiscountOutlet,
-                typeLabel:price.typeLabel,
-                numRange: price.range?price.range.numRange:0,
-                valueRange: price.rangesNumbers ? String(price.rangesNumbers.sizeRangeNumberMin) + (price.rangesNumbers.sizeRangeNumberMin != price.rangesNumbers.sizeRangeNumberMin) ? '-' + price.rangesNumbers.sizeRangeNumberMax : '' : '',
-              };
-            }
-            let dictionaryOfCaseTypes = {
-              "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
-              "2": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF,
-              "3": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET,
-              "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
-              "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
-              "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
-              "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
-            }
-            printOptions.type = dictionaryOfCaseTypes[printOptions.price.typeLabel];
-            options.push(printOptions);    
-          })
-        });
-        let strToPrint:string = this.buildString(options);
+        let dataToPrint = this.processProductToPrintTagPrice(prices);
+
         innerObservable = innerObservable.pipe(flatMap(product=>{
-            return from(this.tailManagement(strToPrint).catch((_=>{})));
+            return from(this.tailManagement(dataToPrint.valuePrint).catch((_=>{})));
         })).pipe(flatMap(response=>{
-          return this.printNotify(options.map(option=>option.price.id));
+          return this.printNotify(dataToPrint.options.map(option=>option.price.id));
         }));
         return innerObservable;
       }));
@@ -379,6 +341,10 @@ export class PrinterService {
       let price = arrayPricesToProcess[iPrice];
 
       if (price.typeLabel) {
+        if (price.typeLabel == 7 && price.priceDiscount == price.priceDiscountOutlet) {
+          price.typeLabel = 5;
+        }
+
         let printOptions: PrintModel.Print = {
           type: dictionaryOfCaseTypes[price.typeLabel],
           product: {

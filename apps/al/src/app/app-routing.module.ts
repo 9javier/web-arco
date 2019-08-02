@@ -184,6 +184,14 @@ const routes: Routes = [
     data:{
       name: 'Retiquetación'
     }
+  },
+  {
+    path: 'print/product/received',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-received-product/print-received-product.module#PrintReceivedProductModule',
+    data:{
+      name: 'Recibidos'
+    }
   }
 ];
 

@@ -1,0 +1,52 @@
+<mat-accordion multi="false">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <mat-panel-title>
+              Modelo {{ productReceived.model.name }}
+            </mat-panel-title>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </mat-expansion-panel-header>
+
+    <!-- Data showed to expand product data -->
+    <ion-row>
+      <ion-col size="7">
+        Referencia
+      </ion-col>
+      <ion-col size="5" class="align-right">
+        {{ productReceived.model.reference }}
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="7">
+        Talla
+      </ion-col>
+      <ion-col size="5" class="align-right">
+        {{ productReceived.size.name }}
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="7">
+        Fecha de recepción
+      </ion-col>
+      <ion-col size="5" class="align-right">
+        {{ processDate(productReceived.createdAt) }}
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="7">
+        Imprimir
+      </ion-col>
+      <ion-col size="5" class="align-right">
+        <ion-checkbox [formControl]="selectedFormControl"></ion-checkbox>
+      </ion-col>
+    </ion-row>
+  </mat-expansion-panel>
+</mat-accordion>
