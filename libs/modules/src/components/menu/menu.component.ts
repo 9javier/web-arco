@@ -199,7 +199,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Cerrar sesión',
       id:'logout',
-      url: 'logout',
+      url: '/user-time/logout',
       icon: 'log-out'
     },
   ];
