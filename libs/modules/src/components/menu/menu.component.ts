@@ -207,64 +207,98 @@ export class MenuComponent implements OnInit {
       icon: 'time'
     },
     {
-      title: 'Logística',
+      title: 'Productos',
       open: true,
       type: 'wrapper',
+      icon: 'basket',
       children: [
         {
           title: 'Productos',
-          id:'products',
+          id: 'products',
           url: '/products',
           icon: 'basket'
         },
         {
-          title: 'Ubicar/Escanear',
-          id:'positioning',
+          title: 'Productos recibidos',
+          id: 'print-products-received',
+          url: '/print/product/received',
+          icon: 'archive'
+        },
+        {
+          title: 'Reetiquetado productos',
+          id: 'print-product',
+          url: 'print/product/relabel',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Reetiquetado productos manual',
+          id: 'print-product-manual',
+          url: '/print/product/relabel',
+          icon: 'pricetags'
+        }
+      ]
+    },
+    {
+      title: 'Tarifas',
+      open: false,
+      type: 'wrapper',
+      icon: 'logo-usd',
+      children: [
+        {
+          title: 'Tarifas',
+          id: 'tariff-al',
+          url: '/tariff',
+          icon: 'logo-usd'
+        },
+        {
+          title: 'Código exposición',
+          id: 'print-price-tag',
+          url: 'print/tag/price',
+          icon: 'basket'
+        },
+        {
+          title: 'Código exposición manual',
+          id: 'print-price-tag-manual',
+          url: '/print-tag/manual/price',
+          icon: 'basket'
+        }
+      ]
+    },
+    {
+      title: 'Logística',
+      open: false,
+      type: 'wrapper',
+      icon: 'send',
+      children: [
+        {
+          title: 'Ubicar/escanear',
+          id: 'positioning',
           icon: 'locate',
           url: 'positioning'
         },
         {
-          title: 'Ubicar/Escanear Manualmente',
+          title: 'Ubicar/escanear manualmente',
           icon: 'locate',
           url: '/positioning/manual',
-          id:'positioning-manual'
+          id: 'positioning-manual'
         },
         {
           title: 'Tareas de Picking',
-          id:"picking-task",
+          id: 'picking-task',
           icon: 'qr-scanner',
           url: '/picking-tasks'
         },
         {
-          title: 'Tareas de Picking Manualmente',
+          title: 'Tareas de picking manualmente',
           icon: 'qr-scanner',
           url: '/picking-tasks/manual',
-          id:'picking-tasks-manual'
+          id: 'picking-tasks-manual'
         },
         {
           title: 'Gestión de almacén',
-          id:'warehouses-management',
+          id: 'warehouses-management',
           url: '/warehouse/manage',
           icon: 'apps'
-        },
-      ]
-    },
-    {
-      title: 'Embalajes',
-      open: false,
-      type: 'wrapper',
-      children: [
-        {
-          title: 'Precintar',
-          id: 'packing-seal',
-          url: 'packing/seal',
-          icon: 'paper-plane'
-        },
-        {
-          title: 'Precintar Manual',
-          id: 'packing-seal-manual',
-          url: '/packing/seal/manual',
-          icon: 'paper-plane'
         },
         {
           title: 'Recepcionar',
@@ -277,62 +311,29 @@ export class MenuComponent implements OnInit {
           id: 'empty-carrier',
           url: 'reception/empty-carrier',
           icon: 'square-outline'
-        }
-      ]
-    },
-    {
-      title: 'Etiquetado',
-      id: 'print-tags',
-      open: false,
-      type: 'wrapper',
-      children: [
-        {
-          title: 'Productos Recibidos',
-          id: 'print-products-received',
-          url: '/print/product/received',
-          icon: 'archive'
         },
         {
-          title: 'Reetiquetado Embalajes',
-          id: 'print-packing',
-          url: '/print/packing',
+          title: 'Embalajes',
+          id: 'jails',
+          url: '/jails/menu',
           icon: 'grid'
         },
         {
-          title: 'Reetiquetado Productos',
-          id: 'print-product',
-          url: 'print/product/relabel',
-          icon: 'pricetags'
+          title: 'Reetiquetado embalajes',
+          id: 'print-packing',
+          url: '/print/packing',
+          icon: 'grid'
+        },{
+          title: 'Precintar embalaje',
+          id: 'packing-seal',
+          url: 'packing/seal',
+          icon: 'paper-plane'
         },
         {
-          title: 'Reetiquetado Productos Manual',
-          id: 'print-product-manual',
-          url: '/print/product/relabel',
-          icon: 'pricetags'
-        },
-        {
-          title: 'Código Caja',
-          id: 'print-ref-tag',
-          url: 'print/tag/ref',
-          icon: 'barcode'
-        },
-        {
-          title: 'Código Caja Manual',
-          id: 'print-ref-tag-manual',
-          url: '/print-tag/manual/box',
-          icon: 'barcode'
-        },
-        {
-          title: 'Código Exposición',
-          id: 'print-price-tag',
-          url: 'print/tag/price',
-          icon: 'basket'
-        },
-        {
-          title: 'Código Exposición Manual',
-          id: 'print-price-tag-manual',
-          url: '/print-tag/manual/price',
-          icon: 'basket'
+          title: 'Precintar embalaje manual',
+          id: 'packing-seal-manual',
+          url: '/packing/seal/manual',
+          icon: 'paper-plane'
         }
       ]
     },
@@ -340,38 +341,15 @@ export class MenuComponent implements OnInit {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
+      icon: 'build',
       children: [
         {
-          title: 'Almacenes',
-          url: '/warehouses',
-          icon: 'filing',
-          id:'warehouses'
-        },
-        {
-          title: 'Edificios',
-          id:'building',
-          url: '/building',
-          icon: 'business'
-        },
-        {
-          title: 'Embalajes',
-          id:'jails',
-          url: '/jails/menu',
-          icon: 'grid'
+          title: 'Ajustes',
+          id: 'settings',
+          url: '/settings',
+          icon: 'cog'
         }
       ]
-    },
-    {
-      title:'Tarifas',
-      id:'tariff-al',
-      url:'/tariff',
-      icon:'logo-usd'
-    },
-    {
-      title: 'Ajustes',
-      id:'settings',
-      url: '/settings',
-      icon: 'cog'
     },
     {
       title: 'Cerrar sesión',
