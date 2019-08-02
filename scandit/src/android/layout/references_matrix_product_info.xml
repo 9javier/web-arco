@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <FrameLayout
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="20"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="3"
+      android:orientation="horizontal"
+      android:background="@color/transparentScanner"
+      android:gravity="center"
+      android:paddingBottom="10dp"
+      android:paddingEnd="5dp"
+      android:paddingStart="5dp">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+      <EditText
+        android:id="@+id/etReferenceToSearch"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8"
+        android:hint="Referencia"
+        android:drawableEnd="@drawable/ic_close"
+        android:drawableTint="@color/transparentWhite"
+        android:textColor="@color/transparentWhite"
+        android:textColorHint="@color/transparentWhite"
+        android:layout_marginEnd="10dp"
+        android:maxLines="1"
+        android:minLines="1"/>
+
+      <ImageButton
+        android:id="@+id/btnSearchProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_search"
+        android:background="@drawable/bg_round_button"
+        android:tint="#000"
+        android:layout_gravity="end|center_vertical"
+        android:padding="5dp"/>
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="8"
+      android:orientation="horizontal">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner"/>
+
+      <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8">
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_top_left"
+          android:layout_alignParentStart="true"/>
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_top_right"
+          android:layout_alignParentEnd="true"/>
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_bottom_left"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentBottom="true"/>
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_bottom_right"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentBottom="true"/>
+
+      </RelativeLayout>
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="9"
+      android:orientation="vertical"
+      android:background="@color/transparentScanner"/>
+
+  </LinearLayout>
+
+</RelativeLayout>

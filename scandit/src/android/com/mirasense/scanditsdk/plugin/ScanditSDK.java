@@ -92,6 +92,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String FINISH_DID_RECOGNIZE_NEW_CODES_COMMAND = "finishDidRecognizeNewCodesCallback";
   private static final String MATRIX_SIMPLE = "matrixSimple";
   private static final String MATRIX_PICKING_STORES = "matrixPickingStores";
+  private static final String MATRIX_PRODUCT_INFO = "matrixProductInfo";
   private static final String SET_MATRIX_SIMPLE_TEXT = "setMatrixSimpleText";
   private static final String SHOW_MATRIX_SIMPLE_TEXT = "matrixSimpleShowText";
   private static final String SHOW_MATRIX_SIMPLE_TEXT_LOADER = "matrixSimpleShowLoader";
@@ -1303,6 +1304,25 @@ public class ScanditSDK extends CordovaPlugin {
         });
         builder.create().show();
       }
+    } else if (action.equals(MATRIX_PRODUCT_INFO)) {
+      mCallbackContextMatrixSimple = callbackContext;
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixProductInfo.class);
+      intent.putExtras(b);
+      this.cordova.startActivityForResult(this, intent, 6);
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

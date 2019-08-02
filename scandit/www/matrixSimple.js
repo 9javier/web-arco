@@ -36,6 +36,16 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initProductInfo: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixProductInfo", [title, titleBackground, titleColor]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color
