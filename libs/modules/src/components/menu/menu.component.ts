@@ -44,14 +44,15 @@ export class MenuComponent implements OnInit {
   sgaPages: MenuItemList = [
     {
       title: 'Registro horario',
-      id:'user-time',
+      id: 'user-time',
       url: '/user-time',
       icon: 'time'
     },
     {
       title: 'Logística',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'filing',
       children: [
         {
           title: 'Productos',
@@ -82,7 +83,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Olas de trabajo',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'hammer',
       children: [
         {
           title: 'Programadas',
@@ -107,7 +109,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Gestión de usuarios',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'contacts',
       children: [
         {
           title: 'Gestión de usuarios',
@@ -132,7 +135,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Picking Tiendas',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'cart',
       children: [
         {
           title: 'Calendario Picking',
@@ -145,7 +149,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Configuración',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'options',
       children: [
         {
           title: 'Almacenes',
