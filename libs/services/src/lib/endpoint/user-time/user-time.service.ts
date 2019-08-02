@@ -12,6 +12,7 @@ export class UserTimeService {
 
   /**Urls for user time service */
   private registerTimeUrl:string = environment.apiBase+"/users-register-time/";
+  private userRegisterTimeUrl:string = environment.apiBase+"/users-register-time/user";
 
   constructor(
     private http:HttpClient
@@ -26,5 +27,15 @@ export class UserTimeService {
         return response.data;
       }));
     }
+
+  /**
+   * Register a time of work of employee in the system
+   * @param request - the object to be registered
+   */
+  userRegisterTime():Observable<UserTimeModel.UserRegisterTime>{
+    return this.http.get<UserTimeModel.UserRegisterTimeResponse>(this.userRegisterTimeUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
 
 }

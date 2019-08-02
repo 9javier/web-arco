@@ -67,14 +67,14 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
     data:{
-      name:'User time'
+      name:'Registro horario'
     }
   },{
     path: 'user-time',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
     data:{
-      name:'User time'
+      name:'Registro horario'
     }
   },
   {
