@@ -167,6 +167,21 @@ var ScanditMatrixSimple = {
   },
   finishPickingStores: function () {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresFinish");
+  },
+  /**
+   *
+   * @param show
+   * @param product
+   */
+  showProductExtendedInfo: function (show, product) {
+    exec(null, null, PLUGIN_NAME, "matrixProductInfoShowExtended", [show, product]);
+  },
+  /**
+   *
+   * @param show
+   */
+  showProgressBarProductExtendedInfo: function (show) {
+    exec(null, null, PLUGIN_NAME, "matrixShowProgressBarProductExtendedInfo", [show]);
   }
 }
 

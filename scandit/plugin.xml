@@ -194,6 +194,12 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/bubbles/MinimisedBubbleReferenceSerauto.java" target-dir="src/com/mirasense/scanditsdk/plugin/bubbles"/>
 
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/StockReference.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Brand.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Color.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Price.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/ProductModel.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Season.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Size.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
 
 
@@ -228,6 +234,9 @@
     <source-file src="src/android/layout/references_matrix_picking_stores.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrix_print_tags.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrix_product_info.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/column_sizes_extended_product_info.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/table_sizes_extended_product_info.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/extended_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
 
   </platform>

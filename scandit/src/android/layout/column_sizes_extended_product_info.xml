@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:paddingStart="8dp"
+  android:gravity="end">
+
+  <TextView
+    android:id="@+id/tvExtendedInfoSize"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textStyle="bold"
+    android:textColor="@color/transparentWhite"/>
+  <TextView
+    android:id="@+id/tvExtendedInfoStock"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textStyle="bold"
+    android:textColor="@color/transparentWhite"/>
+  <TextView
+    android:id="@+id/tvExtendedInfoPrice"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textStyle="bold"
+    android:textColor="@color/transparentWhite"/>
+
+</LinearLayout>

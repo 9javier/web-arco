@@ -44,7 +44,7 @@
         android:textColorHint="@color/transparentWhite"
         android:layout_marginEnd="10dp"
         android:maxLines="1"
-        android:minLines="1"/>
+        android:inputType="number"/>
 
       <ImageButton
         android:id="@+id/btnSearchProduct"
@@ -66,7 +66,7 @@
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="8"
+      android:layout_weight="5"
       android:orientation="horizontal">
 
       <LinearLayout
@@ -119,9 +119,39 @@
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="9"
+      android:layout_weight="12"
       android:orientation="vertical"
-      android:background="@color/transparentScanner"/>
+      android:background="@color/transparentScanner">
+      <LinearLayout
+        android:id="@+id/llPBExtendedProductInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:visibility="gone">
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:text="Cargando producto..."
+          android:textSize="12sp"
+          android:textColor="@color/transparentWhite"/>
+        <ProgressBar
+          style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp"
+          android:indeterminate="true"/>
+      </LinearLayout>
+      <include
+        android:id="@+id/llExtendedProductInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/extended_product_info"
+        android:visibility="gone"
+        android:layout_marginTop="16dp"/>
+    </LinearLayout>
 
   </LinearLayout>
 

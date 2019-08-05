@@ -3,21 +3,36 @@ package com.mirasense.scanditsdk.plugin;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.Switch;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.galvintec.krack.logistica.dev.R;
+import com.mirasense.scanditsdk.plugin.models.Price;
+import com.mirasense.scanditsdk.plugin.models.ProductModel;
+import com.mirasense.scanditsdk.plugin.models.Size;
 import com.scandit.barcodepicker.BarcodePicker;
 import com.scandit.barcodepicker.ScanOverlay;
 import com.scandit.barcodepicker.ScanSettings;
@@ -28,6 +43,9 @@ import com.scandit.recognition.SymbologySettings;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.io.InputStream;
 
 public class MatrixProductInfo extends Activity {
 
@@ -90,7 +108,7 @@ public class MatrixProductInfo extends Activity {
     settings.setMaxNumberOfCodesPerFrame(1);
     settings.setCodeRejectionEnabled(true);
 
-    settings.setActiveScanningArea(ScanSettings.ORIENTATION_PORTRAIT, new RectF(0.1f, 0.15f, 0.9f, 0.55f));
+    settings.setActiveScanningArea(ScanSettings.ORIENTATION_PORTRAIT, new RectF(0.1f, 0.15f, 0.9f, 0.4f));
     settings.setActiveScanningArea(ScanSettings.ORIENTATION_LANDSCAPE, new RectF(0.4f, 0.2f, 0.6f, 0.8f));
 
     // Instantiate the barcode picker by using the settings defined above.
@@ -138,26 +156,125 @@ public class MatrixProductInfo extends Activity {
     //    endregion
 
     // region Search function
-    btnSearchProduct.setOnClickListener(view -> {
-      String referenceToSearch = etReferenceToSearch.getText().toString();
-      if (!referenceToSearch.isEmpty()) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-          jsonObject.put("result", true);
-          JSONObject jsonObjectBarcode = new JSONObject();
-          jsonObjectBarcode.put("data", referenceToSearch);
-          jsonObject.put("barcode", jsonObjectBarcode);
-        } catch (JSONException e) {
-
-        }
-        PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-        pResult.setKeepCallback(true);
-        ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
-      }
-    });
+    btnSearchProduct.setOnClickListener(view -> searchProduct(etReferenceToSearch, resources, package_name));
     // endregion
 
+    // region Search function with enter on keyboard
+    etReferenceToSearch.setOnKeyListener((view, i, keyEvent) -> {
+      if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && i == KeyEvent.KEYCODE_ENTER) {
+        searchProduct(etReferenceToSearch, resources, package_name);
+        return true;
+      }
+      return false;
+    });
+    //endregion
+
     matrixProductInfo = this;
+  }
+
+  public void searchProduct(EditText etReferenceToSearch, Resources resources, String package_name) {
+    LinearLayout llPBExtendedProductInfo = findViewById(resources.getIdentifier("llPBExtendedProductInfo", "id", package_name));
+
+    hideKeyboard(this);
+
+    if (llPBExtendedProductInfo.getVisibility() == View.GONE) {
+      llPBExtendedProductInfo.setVisibility(View.VISIBLE);
+    }
+
+    String referenceToSearch = etReferenceToSearch.getText().toString();
+    if (!referenceToSearch.isEmpty()) {
+      JSONObject jsonObject = new JSONObject();
+      try {
+        jsonObject.put("result", true);
+        JSONObject jsonObjectBarcode = new JSONObject();
+        jsonObjectBarcode.put("data", referenceToSearch);
+        jsonObject.put("barcode", jsonObjectBarcode);
+      } catch (JSONException e) {
+
+      }
+      PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+      pResult.setKeepCallback(true);
+      ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+    }
+  }
+
+  public static void loadProductExtendedInfo(LinearLayout llExtendedProductInfo, ProductModel productModel, Resources resources, String package_name, Context appContext) {
+    ImageView ivProductImage = llExtendedProductInfo.findViewById(resources.getIdentifier("ivProductImage", "id", package_name));
+    TextView tvModelName = llExtendedProductInfo.findViewById(resources.getIdentifier("tvModelName", "id", package_name));
+    TextView tvSeason = llExtendedProductInfo.findViewById(resources.getIdentifier("tvSeason", "id", package_name));
+    TextView tvModelReference = llExtendedProductInfo.findViewById(resources.getIdentifier("tvModelReference", "id", package_name));
+    TextView tvColor = llExtendedProductInfo.findViewById(resources.getIdentifier("tvColor", "id", package_name));
+    TextView tvBrandName = llExtendedProductInfo.findViewById(resources.getIdentifier("tvBrandName", "id", package_name));
+    TableLayout tlTableSizesProduct = llExtendedProductInfo.findViewById(resources.getIdentifier("tlTableSizesProduct", "id", package_name));
+
+    if (productModel.getImageUrl() == null || productModel.getImageUrl().isEmpty()) {
+      ivProductImage.setVisibility(View.GONE);
+    } else {
+      ivProductImage.setVisibility(View.VISIBLE);
+      new DownloadImageFromInternet(ivProductImage).execute(productModel.getImageUrl());
+    }
+
+    if (!productModel.getName().isEmpty()) {
+      tvModelName.setText(productModel.getName());
+    }
+    if (!productModel.getSeason().getName().isEmpty()) {
+      tvSeason.setText(productModel.getSeason().getName());
+    }
+    if (!productModel.getReference().isEmpty()) {
+      tvModelReference.setText(productModel.getReference());
+    }
+    if (!productModel.getColor().getName().isEmpty()) {
+      tvColor.setText(productModel.getColor().getName());
+    } else {
+      tvColor.setText("- sin especificar -");
+    }
+    if (!productModel.getBrand().getName().isEmpty()) {
+      tvBrandName.setText(productModel.getBrand().getName());
+    } else {
+      tvBrandName.setText("- sin especificar -");
+    }
+
+    if (productModel.getSizes().size() > 0) {
+      tlTableSizesProduct.removeAllViews();
+      int limitForRow = 5;
+      int countColumnsAdded = 0;
+      int countRows = 0;
+      TableRow llTableExtendedProductInfo = (TableRow) View.inflate(appContext, R.layout.table_sizes_extended_product_info, null);
+      for (int iSize = 0; iSize < productModel.getSizes().size(); iSize++) {
+        Size size = productModel.getSizes().get(iSize);
+
+        if (countColumnsAdded == limitForRow) {
+          tlTableSizesProduct.addView(llTableExtendedProductInfo, countRows);
+          countRows++;
+          countColumnsAdded = 0;
+          llTableExtendedProductInfo = (TableRow) View.inflate(appContext, R.layout.table_sizes_extended_product_info, null);
+        }
+
+        LinearLayout llColumnExtendedProductInfo = (LinearLayout) View.inflate(appContext, R.layout.column_sizes_extended_product_info, null);
+        String priceSize = "0";
+        if (size.getPrice() != null) {
+          Price price = size.getPrice();
+          if (!price.getPriceDiscountOutlet().equals("0") && !price.getPriceDiscountOutlet().equals("0.00")) {
+            priceSize = price.getPriceDiscountOutlet();
+          } else if (!price.getPriceDiscount().equals("0") && !price.getPriceDiscount().equals("0.00")) {
+            priceSize = price.getPriceDiscount();
+          } else if (!price.getPriceOriginal().equals("0") && !price.getPriceOriginal().equals("0.00")) {
+            priceSize = price.getPriceOriginal();
+          }
+        }
+        ((TextView)llColumnExtendedProductInfo.findViewById(R.id.tvExtendedInfoSize)).setText(size.getName());
+        ((TextView)llColumnExtendedProductInfo.findViewById(R.id.tvExtendedInfoStock)).setText(String.valueOf(size.getStock()));
+        ((TextView)llColumnExtendedProductInfo.findViewById(R.id.tvExtendedInfoPrice)).setText(priceSize);
+
+        llTableExtendedProductInfo.addView(llColumnExtendedProductInfo);
+
+        countColumnsAdded++;
+      }
+      if (countColumnsAdded != 0) {
+        tlTableSizesProduct.addView(llTableExtendedProductInfo, countRows);
+      }
+      tlTableSizesProduct.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override
@@ -185,6 +302,39 @@ public class MatrixProductInfo extends Activity {
   @Override
   public void onBackPressed() {
     super.onBackPressed();
+  }
+
+  public static void hideKeyboard(Activity activity) {
+    View view = activity.findViewById(android.R.id.content);
+    if (view != null) {
+      InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+  }
+
+  private static class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
+    ImageView imageView;
+
+    public DownloadImageFromInternet(ImageView imageView) {
+      this.imageView = imageView;
+    }
+
+    protected Bitmap doInBackground(String... urls) {
+      String imageURL = urls[0];
+      Bitmap bImage = null;
+
+      try {
+        InputStream in = new java.net.URL(imageURL).openStream();
+        bImage = BitmapFactory.decodeStream(in);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      return bImage;
+    }
+
+    protected void onPostExecute(Bitmap result) {
+      imageView.setImageBitmap(result);
+    }
   }
 
 }
