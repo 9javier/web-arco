@@ -210,7 +210,7 @@
       android:layout_alignParentBottom="true"
       android:background="@color/black"
       android:textColor="@color/white"
-      android:text="Escanear recipientes"
+      android:text="Escanear embalajes"
       />
   </LinearLayout>
 

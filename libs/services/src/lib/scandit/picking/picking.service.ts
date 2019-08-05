@@ -109,14 +109,14 @@ export class PickingScanditService {
               || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
               this.packingReferences.push(codeScanned);
               ScanditMatrixSimple.setText(
-                `Escaneado recipiente ${codeScanned} para añadir al picking`,
+                `Escaneado embalaje ${codeScanned} para añadir al picking`,
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 18);
               this.hideTextMessage(1500);
             } else {
               ScanditMatrixSimple.setText(
-                `Escanee un recipiente válido`,
+                `Escanee un embalaje válido`,
                 this.scanditProvider.colorsMessage.error.color,
                 this.scanditProvider.colorText.color,
                 18);
@@ -140,13 +140,13 @@ export class PickingScanditService {
             ScanditMatrixSimple.sendPickingStoresProducts([]);
             ScanditMatrixSimple.showButtonPickingStorePacking(false);
             ScanditMatrixSimple.showButtonPickingStoreFinish(true);
-            ScanditMatrixSimple.setTextPickingStores(true, `Escanee los recipientes a usar en el picking`);
+            ScanditMatrixSimple.setTextPickingStores(true, `Escanee los embalajes a usar en el picking`);
             scanMode = 'carriers';
             this.packingReferences = [];
           } else if (response.action == 'matrix_simple_finish_picking') {
             if(this.packingReferences.length == 0){
               ScanditMatrixSimple.setText(
-                `Añada al menos un recipiente al picking`,
+                `Añada al menos un embalaje al picking`,
                 this.scanditProvider.colorsMessage.error.color,
                 this.scanditProvider.colorText.color,
                 18);
@@ -205,7 +205,7 @@ export class PickingScanditService {
             18);
           this.hideTextMessage(2000);
           this.packingReferences = [];
-          ScanditMatrixSimple.setTextPickingStores(true, `Escanee nuevamente los recipientes a usar en el picking`);
+          ScanditMatrixSimple.setTextPickingStores(true, `Escanee nuevamente los embalajes a usar en el picking`);
         }
       }, (error) => {
         ScanditMatrixSimple.setText(
@@ -215,7 +215,7 @@ export class PickingScanditService {
           18);
         this.hideTextMessage(2000);
         this.packingReferences = [];
-        ScanditMatrixSimple.setTextPickingStores(true, `Escanee nuevamente los recipientes a usar en el picking`);
+        ScanditMatrixSimple.setTextPickingStores(true, `Escanee nuevamente los embalajes a usar en el picking`);
       });
   }
 
