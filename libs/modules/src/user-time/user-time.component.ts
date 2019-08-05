@@ -100,7 +100,7 @@ export class UserTimeComponent implements OnInit {
 
   dateInitRegisterTime() : string {
     moment.locale('es');
-    return moment(this.userRegisterTime.inputDate).format('DD/MM/YYYY hh:mm:ss');
+    return moment(this.userRegisterTime.inputDate).format('DD/MM/YYYY HH:mm:ss');
   }
 
 }
