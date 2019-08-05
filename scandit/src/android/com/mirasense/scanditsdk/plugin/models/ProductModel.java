@@ -53,6 +53,14 @@ public class ProductModel {
         size.fromJsonObject(productSizes.getJSONObject(iSize));
         this.sizes.add(size);
       }
+
+      ArrayList<Size> sizesTemp = new ArrayList<>();
+      for (Size size: this.sizes) {
+        if (size.getStock() > 0) {
+          sizesTemp.add(size);
+        }
+      }
+      this.sizes = sizesTemp;
     }
   }
 

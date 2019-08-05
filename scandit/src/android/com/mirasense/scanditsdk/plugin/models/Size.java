@@ -9,7 +9,7 @@ public class Size {
   private String number;
   private String name;
   private String description;
-  private int stock = 100;
+  private int stock;
   private Price price;
 
   public Size() {}
@@ -24,6 +24,9 @@ public class Size {
       this.price.fromJsonObject(size.getJSONObject("price"));
     } else {
       this.price = null;
+    }
+    if (!size.isNull("stock")) {
+      this.stock = size.getJSONObject("stock").getInt("cantidad");
     }
   }
 
