@@ -54,6 +54,9 @@ public class MatrixProductInfo extends Activity {
   private MatrixSimpleOverlayListener matrixScanListener;
   private FrameLayout pickerContainer;
 
+  private String package_name;
+  private Resources resources;
+
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +72,8 @@ public class MatrixProductInfo extends Activity {
       colorTitle = b.getString("colorTitle", "#424242");
     }
 
-    String package_name = getApplication().getPackageName();
-    Resources resources = getApplication().getResources();
+    package_name = getApplication().getPackageName();
+    resources = getApplication().getResources();
 
     ActionBar actionBar = getActionBar();
     actionBar.setDisplayShowCustomEnabled(true);
@@ -115,6 +118,7 @@ public class MatrixProductInfo extends Activity {
     mPicker = new BarcodePicker(this, settings);
 
     matrixScanListener = new MatrixSimpleOverlayListener();
+    matrixScanListener.setContextActivity(this);
 
     MatrixScan matrixScan = new MatrixScan(mPicker, matrixScanListener);
 
@@ -275,6 +279,18 @@ public class MatrixProductInfo extends Activity {
       }
       tlTableSizesProduct.setVisibility(View.VISIBLE);
     }
+  }
+
+  public void showProgressBar(boolean show) {
+    this.runOnUiThread(() -> {
+      LinearLayout llPBExtendedProductInfo = findViewById(resources.getIdentifier("llPBExtendedProductInfo", "id", package_name));
+
+      if (show) {
+        llPBExtendedProductInfo.setVisibility(View.VISIBLE);
+      } else {
+        llPBExtendedProductInfo.setVisibility(View.GONE);
+      }
+    });
   }
 
   @Override
