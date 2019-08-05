@@ -3,8 +3,8 @@ import {BrandModel} from "./Brand";
 export namespace ModelModel {
   export interface Model{
     id?: number,
-    reference: number|string,
-    color?: number,
+    reference: string,
+    color?: any,
     name?: string,
     createdAt?: string,
     updatedAt?: string,

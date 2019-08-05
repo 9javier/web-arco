@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController, NavParams } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 
 
@@ -19,6 +19,7 @@ export class UpdateComponent implements OnInit {
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
     groupId:'',
+    groupsWarehousePicking:[''],
     prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
     hasBuilding: [false,[]],
     buildingId:[''],
@@ -29,6 +30,7 @@ export class UpdateComponent implements OnInit {
     columns:'',
     is_outlet:false
   });
+  groupWarehousesPicking:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
   private warehouseId;
   private currentHasRacks;
   buildings:Array<BuildingModel.Building> = [];
@@ -39,7 +41,8 @@ export class UpdateComponent implements OnInit {
     private warehouseGroupService:WarehouseGroupService,
     private cd: ChangeDetectorRef,
     private navParams:NavParams,
-    private buildingService:BuildingService
+    private buildingService:BuildingService,
+    private groupWarehousePickingService:GroupWarehousePickingService
     ) {
       this.warehouseId = this.navParams.data.id;
       this.getWarehouse(this.warehouseId);
@@ -89,13 +92,21 @@ export class UpdateComponent implements OnInit {
   getWarehouse(id:number):void{
     this.warehousesService.getShow(id).subscribe(warehouse=>{
       /**the models in backend differs then the model is useless */
-
       this.currentHasRacks = warehouse.has_racks;
       let warehouseToPatch:any = warehouse;
       if(warehouse.group)
         warehouseToPatch.groupId = warehouseToPatch.group.id;
+      warehouseToPatch.groupsWarehousePicking = warehouseToPatch.groupsWarehousePicking.map(group=>{
+        return group.id
+      });
       this.updateForm.patchValue(warehouseToPatch);
     })
+  }
+
+  getGroupWarehousePicking():void{
+    this.groupWarehousePickingService.getIndex().subscribe(groups=>{
+      this.groupWarehousesPicking = groups;
+    });
   }
 
 
@@ -156,6 +167,7 @@ export class UpdateComponent implements OnInit {
     this.getWharehousesGroup();
     this.getBuildings();
     this.changeValidatorsAndValues();
+    this.getGroupWarehousePicking();
   }
 
   /**close the current instance of the modal */

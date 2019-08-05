@@ -41,6 +41,7 @@ export class TextareaComponent implements OnInit {
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
   private putProductNotFoundUrl = environment.apiBase+"/shoes/picking/{{workWaveOrderId}}/product-not-found/{{productId}}";
+  private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
   constructor(
     private http: HttpClient,
@@ -286,37 +287,47 @@ export class TextareaComponent implements OnInit {
           }
         }
       } else if (this.scanContainerToNotFound) {
-        if ((this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER_OLD) && this.nexProduct.inventory.container.reference == dataWrited) {
-          let productNotFoundId = this.nexProduct.product.id;
-          this.putProductNotFound(this.pickingId, productNotFoundId)
-            .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
-              if (res.code == 200 || res.code == 201) {
-                this.scanContainerToNotFound = null;
-                this.dataToWrite = "PRODUCTO";
-
-                this.presentToast('El producto ha sido reportado como no encontrado', 1500, this.pickingProvider.colorsMessage.success.name);
-                this.getPendingListByPicking(this.pickingId)
-                  .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+        if ((this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
+          this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id)
+            .subscribe((res: InventoryModel.ResponseCheckContainer) => {
+              if (res.code == 200) {
+                let productNotFoundId = this.nexProduct.product.id;
+                this.putProductNotFound(this.pickingId, productNotFoundId)
+                  .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
                     if (res.code == 200 || res.code == 201) {
-                      this.listProducts = res.data;
-                      if (this.listProducts.length > 0) {
-                        this.setNexProductToScan(this.listProducts[0]);
-                      } else {
-                        this.showNexProductToScan(false);
-                        setTimeout(() => {
-                          this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                          this.dataToWrite = 'CONTENEDOR';
-                          this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
-                        }, 2 * 1000);
-                      }
+                      this.scanContainerToNotFound = null;
+                      this.dataToWrite = "PRODUCTO";
 
+                      this.presentToast('El producto ha sido reportado como no encontrado', 1500, this.pickingProvider.colorsMessage.success.name);
+                      this.getPendingListByPicking(this.pickingId)
+                        .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                          if (res.code == 200 || res.code == 201) {
+                            this.listProducts = res.data;
+                            if (this.listProducts.length > 0) {
+                              this.setNexProductToScan(this.listProducts[0]);
+                            } else {
+                              this.showNexProductToScan(false);
+                              setTimeout(() => {
+                                this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                                this.dataToWrite = 'CONTENEDOR';
+                                this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
+                              }, 2 * 1000);
+                            }
+
+                          }
+                        });
+                    } else {
+                      this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
                     }
+                  }, error => {
+                    this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
                   });
               } else {
-                this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
+                this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
               }
-            }, error => {
-              this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
+            }, (error) => {
+              console.error('Error::Subscribe::CheckContainerProduct -> ', error);
+              this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
             });
         } else {
           this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
@@ -352,6 +363,15 @@ export class TextareaComponent implements OnInit {
       let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
       putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
       return this.http.put<ShoesPickingModel.ResponseProductNotFound>(putProductNotFoundUrl, { headers });
+    }));
+  }
+
+  private postCheckContainerProduct(containerReference: string, inventoryId: number) : Observable<InventoryModel.ResponseCheckContainer> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      let params: InventoryModel.ParamsCheckContainer = { inventoryId, containerReference };
+
+      return this.http.post<InventoryModel.ResponseCheckContainer>(this.postCheckContainerProductUrl, params, { headers });
     }));
   }
 

@@ -9,6 +9,26 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path:'logout',
+    redirectTo:'login',
+    pathMatch:'full'
+  },
+  {
+    path: 'user-time/:redirect',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+    data:{
+      name:'Registro horario'
+    }
+  },{
+    path: 'user-time',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+    data:{
+      name:'Registro horario'
+    }
+  },
+  {
     path: 'home',
     canActivate: [AuthGuard],
     loadChildren: './home/home.module#HomePageModule',
@@ -115,6 +135,62 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
     data:{
       name:'Prices'
+    }
+  },
+  {
+    path: 'print-tag/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
+    data:{
+      name: 'Prices'
+    }
+  },
+  {
+    path: 'print-tag/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
+    data:{
+      name: 'Prices'
+    }
+  },
+  {
+    path: 'print/packing',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-relabel-packing/print-relabel-packing.module#PrintRelabelPackingModule',
+    data:{
+      name: 'Prices'
+    }
+  },
+  {
+    path: 'print/packing/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-relabel-packing-manual/print-relabel-packing-manual.module#PrintRelabelPackingManualModule',
+    data:{
+      name: 'Prices'
+    }
+  },
+  {
+    path: 'packing/seal/manual',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/seal-packing-manual/seal-packing-manual.module#SealPackingManualModule',
+    data:{
+      name: 'Precintar'
+    }
+  },
+  {
+    path: 'print/product/relabel',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-relabel-product-manual/print-relabel-product-manual.module#PrintRelabelProductManualModule',
+    data:{
+      name: 'Retiquetación'
+    }
+  },
+  {
+    path: 'print/product/received',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-received-product/print-received-product.module#PrintReceivedProductModule',
+    data:{
+      name: 'Recibidos'
     }
   }
 ];

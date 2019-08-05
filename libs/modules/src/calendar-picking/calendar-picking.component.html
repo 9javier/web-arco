@@ -3,64 +3,88 @@
     <ion-grid>
         <ion-row>
             <ion-col size="6">
+                <ion-button color="danger" *ngIf="selectDates.length > 1" (click)="clearCalendar()">clear</ion-button>
             </ion-col>
-            <ion-col size="6">
+            <ion-col size="6" [formGroup]="template">
                 <ion-item>
                     <ion-label>
                         Plantilla
                     </ion-label>
-                    <ion-select (ionChange)="selectTemplate($event.detail.value)">
-                        <ion-select-option *ngFor="let template of templates" [value]="template">{{template.id}}</ion-select-option>
+                    <ion-select formControlName="template" (ionChange)="selectTemplate(templates[$event.detail.value],null)">
+                        <ion-select-option *ngFor="let template of templates;let i = index" [value]="i">
+                            {{template.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
 
             </ion-col>
             <ion-col size="6" class="ion-datepicker">
                 <div class="append">
-                    {{dates}}
                     <dp-date-picker [(ngModel)]="dates" [config]="calendarConfiguration"></dp-date-picker>
                 </div>
             </ion-col>
             <ion-col size="6" [formGroup]="form">
-                <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls']">
-                    <mat-expansion-panel>
-                        <mat-expansion-panel-header>
-                            <ion-grid>
-                                <ion-row>
-                                    <ion-col size="3">
-                                        <mat-panel-title>
-                                            {{ warehouse.value.originWarehouse.name }}
-                                        </mat-panel-title>
-                                    </ion-col>
-                                    <ion-col size="7">
-                                        <mat-panel-description></mat-panel-description>
-                                    </ion-col>
-                                    <ion-col size="1">
-                                    </ion-col>
-                                </ion-row>
-                            </ion-grid>
+                <div *ngIf="!formatValue(form.value).warehouses.length" class="error">
+                    Debe seleccionar al menos un destino
+                </div>
+                <div *ngIf="!date && formatValue(form.value).warehouses.length" class="warning">
+                    Debe seleccionar al menos una fecha para almacenar
+                </div>
 
-                        </mat-expansion-panel-header>
-
-                        <div>
-                            <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].warehousesDestinations['controls']">
-                                <mat-checkbox formControlName="selected"></mat-checkbox>
-                                <ion-label>{{destination.value.name}}</ion-label>
-                                <mat-checkbox formControlName="radio"></mat-checkbox>
-                            </ion-item>
-                            <!--<ion-item *ngFor="let control of createForm['controls'].roles['controls'];let i = index">
-                                        <ion-label>{{roles[i].name}}</ion-label>
-                                        <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
-                                    </ion-item>-->
+                <ion-item *ngIf="selectDates.length">
+                    <ion-label>
+                        Fechas
+                    </ion-label>
+                    <ion-select *ngIf="!loadingDates" (ionChange)="selectTemplate($event.detail.value,$event.detail.value.value,$event.detail.value)">
+                        <div *ngFor="let date of selectDates">
+                            <ion-select-option [value]="date">{{date.date}}</ion-select-option>
                         </div>
-                        <mat-list style="display: flex; justify-content:center;"></mat-list>
-                    </mat-expansion-panel>
-                </mat-accordion>
+
+                    </ion-select>
+                </ion-item>
+                <div class="overAuto">
+                    <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls']">
+                        <mat-expansion-panel (opened)="warehouse['controls']?.opened.setValue(true)" (closed)="warehouse['controls']?.opened.setValue(false)">
+                            <mat-expansion-panel-header>
+                                <ion-grid>
+                                    <ion-row>
+                                        <ion-col size="3">
+                                            <mat-panel-title>
+                                                {{ warehouse.value.originWarehouse.name }}
+                                            </mat-panel-title>
+                                        </ion-col>
+                                        <ion-col size="7">
+                                            <mat-panel-description></mat-panel-description>
+                                        </ion-col>
+                                        <ion-col size="1">
+                                        </ion-col>
+                                    </ion-row>
+                                </ion-grid>
+
+                            </mat-expansion-panel-header>
+
+                            <div *ngIf="warehouse.value.opened">
+                                <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
+                                    <mat-checkbox formControlName="selected"></mat-checkbox>
+                                    <ion-label>{{destination.value.name}}</ion-label>
+                                    <mat-checkbox formControlName="radio"></mat-checkbox>
+                                </ion-item>
+                                <!--<ion-item *ngFor="let control of createForm['controls'].roles['controls'];let i = index">
+                                                    <ion-label>{{roles[i].name}}</ion-label>
+                                                    <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
+                                                </ion-item>-->
+                            </div>
+                            <mat-list style="display: flex; justify-content:center;"></mat-list>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </div>
             </ion-col>
         </ion-row>
     </ion-grid>
 </ion-content>
 <ion-footer>
-    <ion-button [disabled]="!(formatValue(form.value).warehouses.length && dates.length)" (click)="store(formatValue(form.value))">GUARDAR</ion-button>
+    <ion-button [disabled]="!date || !validToStore() " (click)="store()">GUARDAR</ion-button>
     <ion-button [disabled]="!formatValue(form.value).warehouses.length" (click)="storeTemplate(formatValue(form.value))">PLANTILLA</ion-button>
+    <ion-button *ngIf="formatValue(form.value).warehouses.length" color="danger" (click)="clear()">
+        <ion-icon name="trash"></ion-icon> CLEAR
+    </ion-button>
 </ion-footer>

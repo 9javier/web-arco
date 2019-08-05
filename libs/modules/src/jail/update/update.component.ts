@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,ViewChild} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
+import { NavParams, ModalController } from '@ionic/angular';
+import { CarrierService, IntermediaryService } from '@suite/services';
+import { DataComponent } from '../data/data.component';
 
 @Component({
   selector: 'suite-update',
@@ -24,8 +27,36 @@ export class UpdateComponent implements OnInit {
     .name;
 
   redirectTo = '/jails/list';
+  jail;
 
-  constructor() {}
+  constructor(
+    private navParams:NavParams,
+    private carrierService:CarrierService,
+    private intermediaryService:IntermediaryService,
+    private modalController:ModalController
+    ) {
+    this.jail = this.navParams.get("jail");
+    console.log("jail",this.jail);
+  }
+
+  @ViewChild(DataComponent) data:DataComponent;
 
   ngOnInit() {}
+  
+  submit(value){
+    this.intermediaryService.presentLoading();
+    this.carrierService.update(this.jail.id,value).subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess("Jaula actualizada con éxito");
+      this.close();
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError("Error actualizando jaula");
+    })
+  }
+
+  close(){
+    this.modalController.dismiss();
+  }
+
 }

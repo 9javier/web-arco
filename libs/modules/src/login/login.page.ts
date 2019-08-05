@@ -5,7 +5,8 @@ import {
   ResponseLogin,
   RequestLogin,
   ErrorResponseLogin,
-  Oauth2Service
+  Oauth2Service,
+  IntermediaryService
 } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
@@ -28,6 +29,8 @@ export class LoginComponent implements OnInit {
   };
 
   private loading = null;
+  public versionNumber: string = null;
+  public isMobileApp: boolean = false;
 
   constructor(
     private loginService: Oauth2Service,
@@ -35,13 +38,23 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService,
     public toastController: ToastController,
     public alertController: AlertController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
     this.user.username = '';
     this.user.password = '';
     this.getLastUsername();
+    // Check if is mobile app and get appVersionNumber
+    if (window.cordova) {
+      this.isMobileApp = true;
+      (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
+        this.versionNumber = versionNumber;
+      });
+    } else {
+      this.isMobileApp = false;
+    }
   }
 
   /**
@@ -72,7 +85,7 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.presentToast(errorResponse.message);
+          this.intermediaryService.presentToastError("Error en usuario o contraseña");
           console.log(errorResponse);
         }
       );

@@ -133,13 +133,14 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = this.appPages[0].children[0].title;
+  currentRoute: string = "Registro horario";
   deploySidebarSmallDevices = false;
 
 
 
   dictionary = {
   }
+
 
 
   /**timeout to prevent avoid login page */
@@ -160,6 +161,10 @@ export class AppComponent implements OnInit {
   ) {
     this.menu.enable(false, 'sidebar');
     this.dateAdapter.setLocale('es');
+  }
+
+  changeMenutTitle(title:string){
+    this.currentRoute = title;
   }
 
   initializeApp() {
@@ -214,7 +219,7 @@ export class AppComponent implements OnInit {
                 })
               )
               .catch((possibleMainWarehouse404Error) => {})
-              .then(() => this.router.navigate(['products']).then(sucess => {
+              .then(() => this.router.navigate(['user-time/products']).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
                 })

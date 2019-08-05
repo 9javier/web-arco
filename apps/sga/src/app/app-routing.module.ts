@@ -63,6 +63,29 @@ const routes: Routes = [
     }
   },
   {
+    path: 'user-time/:redirect',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+    data:{
+      name:'Registro horario'
+    }
+  },{
+    path: 'user-time',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
+    data:{
+      name:'Registro horario'
+    }
+  },
+  {
+    path: 'group-warehouse-picking',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/group-warehouse-picking/group-warehouse-picking.module#GroupWarehousePickingModule',
+    data:{
+      name:'Group warehouse picking'
+    }
+  },
+  {
     path: 'jails',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',

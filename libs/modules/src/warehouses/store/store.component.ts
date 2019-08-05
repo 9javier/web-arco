@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel, BuildingService } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel, BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 import { IntermediaryService } from '@suite/services';
 
@@ -18,6 +18,7 @@ export class StoreComponent implements OnInit {
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
     groupId:'',
+    groupsWarehousePicking:[''],
     is_main: [false, []],
     has_racks: [false, []],
     hasBuilding: [false,[]],
@@ -31,6 +32,7 @@ export class StoreComponent implements OnInit {
 
   buildings:Array<BuildingModel.Building> = [];
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
+  groupWarehousesPicking:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
 
   constructor(
               private intermediaryService:IntermediaryService,
@@ -39,7 +41,8 @@ export class StoreComponent implements OnInit {
               private warehousesService:WarehousesService,
               private warehouseGroupService:WarehouseGroupService,
               private cd: ChangeDetectorRef,
-              private buildingService:BuildingService
+              private buildingService:BuildingService,
+              private groupWarehousePickingService:GroupWarehousePickingService
               ) {}
 
   /**
@@ -57,6 +60,12 @@ export class StoreComponent implements OnInit {
   getBuildings():void{
     this.buildingService.getIndex().subscribe(buildings=>{
       this.buildings = buildings
+    });
+  }
+
+  getGroupWarehousePicking():void{
+    this.groupWarehousePickingService.getIndex().subscribe(groups=>{
+      this.groupWarehousesPicking = groups;
     });
   }
 
@@ -145,6 +154,7 @@ export class StoreComponent implements OnInit {
     this.getWharehousesGroup();
     this.getBuildings();
     this.changeValidatorsAndValues();
+    this.getGroupWarehousePicking();
   }
 
   /**close the current instance of the modal */

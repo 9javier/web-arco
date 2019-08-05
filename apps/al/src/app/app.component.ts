@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, NavigationExtras} from '@angular/router';
 
 import { Platform, MenuController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { ResponseLogout, Oauth2Service } from '@suite/services';
+import {ResponseLogout, Oauth2Service, TypeModel, TypesService} from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 import {ScannerConfigurationService} from "../../../../libs/services/src/lib/scanner-configuration/scanner-configuration.service";
@@ -93,7 +93,7 @@ export class AppComponent implements OnInit {
   showMainHeader = false;
   deploySidebarSmallDevices = false;
   iconsDirection = 'start';
-  currentRoute: string = this.appPages[0].title;
+  currentRoute: string = "Registro horario";
 
   constructor(
     private platform: Platform,
@@ -106,11 +106,16 @@ export class AppComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private warehouseService: WarehouseService,
     private scannerConfigurationService: ScannerConfigurationService,
-    private scanditService: ScanditService
+    private scanditService: ScanditService,
+    private typesService: TypesService
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
     this.dateAdapter.setLocale('es');
+  }
+
+  changeMenutTitle(title:string){
+    this.currentRoute = title;
   }
 
   initializeApp() {
@@ -130,6 +135,12 @@ export class AppComponent implements OnInit {
       // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
       this.warehouseService.loadWarehousesData();
 
+      // Load all types from backend
+      let typesToLoad: TypeModel.TypeLoad = {
+        packing: true
+      };
+      this.typesService.init(typesToLoad);
+
       window.innerWidth < 992
         ? (this.deploySidebarSmallDevices = true)
         : (this.deploySidebarSmallDevices = false);
@@ -139,7 +150,7 @@ export class AppComponent implements OnInit {
         if (state) {
           // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
           this.warehouseService.loadWarehousesData();
-
+ 
           this.warehouseService
             .init()
             .then((data: Observable<HttpResponse<any>>) =>
@@ -152,7 +163,7 @@ export class AppComponent implements OnInit {
               })
             )
             .catch((possibleMainWarehouse404Error) => {})
-            .then(() => this.router.navigate(['products'])
+            .then(() => this.router.navigate(['user-time'])
               .then(success => {
                 this.mainHeaderShowHide(true);
                 this.menu.enable(true, 'sidebar');

@@ -5,18 +5,27 @@ export namespace ScanditModel {
     barcode: Barcode
   }
 
+  export interface ResponseSimple extends Response {
+    action?: ActionsSimple
+  }
+
   export interface ResponsePickingStores extends Response {
     action?: ActionsPickingStores
   }
 
   export interface ResponsePrintTags extends Response {
     action: ActionsPrintTags,
-    type_tags?: 1|2
+    type_tags?: 1|2,
+    size_selected?: number
   }
 
   interface Barcode {
     data: string,
     id: number
+  }
+
+  enum ActionsSimple {
+    init_scandit = 'matrix_simple'
   }
 
   enum ActionsPickingStores {
@@ -26,7 +35,8 @@ export namespace ScanditModel {
   }
 
   enum ActionsPrintTags {
-    change_type = 'change_tag_type'
+    change_type = 'change_tag_type',
+    select_size = 'select_size'
   }
 
 }

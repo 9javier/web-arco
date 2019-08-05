@@ -35,6 +35,7 @@ export class ScanditService {
   private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
   private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
   private putProductNotFoundUrl = environment.apiBase+"/shoes/picking/{{workWaveOrderId}}/product-not-found/{{productId}}";
+  private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
   private userWarehouse: WarehouseModel.Warehouse;
   private scanContainerToNotFound: string = null;
@@ -97,7 +98,7 @@ export class ScanditService {
         if (code === lastCodeScanned) return;
         lastCodeScanned = code;
 
-        if (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/)) {
+        if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
           //Container
           if(containerReference != code){
@@ -127,7 +128,9 @@ export class ScanditService {
                   warehouseId: warehouseId,
                   force: true
                 };
-                if (containerReference) params.containerReference = containerReference;
+                if (containerReference) {
+                  params.containerReference = containerReference;
+                }
 
                 this.storeProductInContainer(params, response);
               } else {
@@ -156,7 +159,9 @@ export class ScanditService {
                   productReference: productReference,
                   warehouseId: warehouseId
                 };
-                if (containerReference) params.containerReference = containerReference;
+                if (containerReference) {
+                  params.containerReference = containerReference;
+                }
                 this.storeProductInContainer(params, response);
               }
             }
@@ -405,7 +410,7 @@ export class ScanditService {
             this.postVerifyPacking({
               status: 3,
               pickingId: pickingId,
-              packingReference: jailReference
+              packingReference: code
             })
               .subscribe((res) => {
                 this.pickingLog(2, "21", ".subscribe((res) => {");
@@ -541,48 +546,60 @@ export class ScanditService {
           }
         }
       } else if (this.scanContainerToNotFound && !response.action) {
-        if ((this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER_OLD) && productsToScan[0].inventory.container.reference == code) {
-          let productNotFoundId = productsToScan[0].product.id;
-          this.putProductNotFound(pickingId, productNotFoundId)
-            .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
-              this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
-              if (res.code == 200 || res.code == 201) {
-                this.pickingLog(2, "53", "if (res.code == 200 || res.code == 201) {");
-                this.scanContainerToNotFound = null;
-                ScanditMatrixSimple.showFixedTextBottom(false, this.scanContainerToNotFound);
-                ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
-                this.hideTextMessage(1500);
-                this.getPendingListByPicking(pickingId)
-                  .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                    this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
+        if ((this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
+          this.postCheckContainerProduct(code, productsToScan[0].inventory.id)
+            .subscribe((res: InventoryModel.ResponseCheckContainer) => {
+              if (res.code == 200) {
+                let productNotFoundId = productsToScan[0].product.id;
+                this.putProductNotFound(pickingId, productNotFoundId)
+                  .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+                    this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
                     if (res.code == 200 || res.code == 201) {
-                      this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
-                      productsToScan = res.data;
-                      if (productsToScan.length > 0) {
-                        this.pickingLog(2, "56", "if (productsToScan.length > 0) {");
-                        ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                      } else {
-                        this.pickingLog(2, "57", "} else {");
-                        ScanditMatrixSimple.showNexProductToScan(false);
-                        setTimeout(() => {
-                          this.pickingLog(2, "58", "setTimeout(() => {");
-                          ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
-                          ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
-                          this.hideTextMessage(1500);
-                        }, 2 * 1000);
-                      }
+                      this.pickingLog(2, "53", "if (res.code == 200 || res.code == 201) {");
+                      this.scanContainerToNotFound = null;
+                      ScanditMatrixSimple.showFixedTextBottom(false, this.scanContainerToNotFound);
+                      ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                      this.hideTextMessage(1500);
+                      this.getPendingListByPicking(pickingId)
+                        .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                          this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
+                          if (res.code == 200 || res.code == 201) {
+                            this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
+                            productsToScan = res.data;
+                            if (productsToScan.length > 0) {
+                              this.pickingLog(2, "56", "if (productsToScan.length > 0) {");
+                              ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                            } else {
+                              this.pickingLog(2, "57", "} else {");
+                              ScanditMatrixSimple.showNexProductToScan(false);
+                              setTimeout(() => {
+                                this.pickingLog(2, "58", "setTimeout(() => {");
+                                ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
+                                ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                                this.hideTextMessage(1500);
+                              }, 2 * 1000);
+                            }
 
+                          }
+                        });
+                    } else {
+                      this.pickingLog(2, "59", "} else {");
+                      ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                      this.hideTextMessage(2000);
                     }
+                  }, error => {
+                    this.pickingLog(2, "60", "}, error => {");
+                    ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                    this.hideTextMessage(2000);
                   });
               } else {
-                this.pickingLog(2, "59", "} else {");
-                ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                this.hideTextMessage(2000);
+                ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
+                this.hideTextMessage(1500);
               }
-            }, error => {
-              this.pickingLog(2, "60", "}, error => {");
-              ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-              this.hideTextMessage(2000);
+            }, (error) => {
+              console.error('Error::Subscribe::CheckContainerProduct -> ', error);
+              ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
+              this.hideTextMessage(1500);
             });
         } else {
           ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
@@ -649,6 +666,15 @@ export class ScanditService {
       let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
       putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
       return this.http.put<ShoesPickingModel.ResponseProductNotFound>(putProductNotFoundUrl, { headers });
+    }));
+  }
+
+  private postCheckContainerProduct(containerReference: string, inventoryId: number) : Observable<InventoryModel.ResponseCheckContainer> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      let params: InventoryModel.ParamsCheckContainer = { inventoryId, containerReference };
+
+      return this.http.post<InventoryModel.ResponseCheckContainer>(this.postCheckContainerProductUrl, params, { headers });
     }));
   }
 
