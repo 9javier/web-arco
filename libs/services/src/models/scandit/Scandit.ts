@@ -19,6 +19,10 @@ export namespace ScanditModel {
     size_selected?: number
   }
 
+  export interface ResponseProductInfo extends Response {
+    action?: string
+  }
+
   interface Barcode {
     data: string,
     id: number
