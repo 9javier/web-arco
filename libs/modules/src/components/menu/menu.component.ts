@@ -45,14 +45,15 @@ export class MenuComponent implements OnInit {
   sgaPages: MenuItemList = [
     {
       title: 'Registro horario',
-      id:'user-time',
+      id: 'user-time',
       url: '/user-time',
       icon: 'time'
     },
     {
       title: 'Logística',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'filing',
       children: [
         {
           title: 'Productos',
@@ -83,7 +84,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Olas de trabajo',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'hammer',
       children: [
         {
           title: 'Programadas',
@@ -108,7 +110,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Gestión de usuarios',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'contacts',
       children: [
         {
           title: 'Gestión de usuarios',
@@ -133,7 +136,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Picking Tiendas',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'cart',
       children: [
         {
           title: 'Calendario Picking',
@@ -146,7 +150,8 @@ export class MenuComponent implements OnInit {
     {
       title: 'Configuración',
       open: true,
-      type:'wrapper',
+      type: 'wrapper',
+      icon: 'options',
       children: [
         {
           title: 'Almacenes',
@@ -195,7 +200,7 @@ export class MenuComponent implements OnInit {
     {
       title: 'Cerrar sesión',
       id:'logout',
-      url: 'logout',
+      url: '/user-time/logout',
       icon: 'log-out'
     },
   ];
@@ -208,115 +213,30 @@ export class MenuComponent implements OnInit {
       icon: 'time'
     },
     {
-      title: 'Logística',
+      title: 'Productos',
       open: true,
       type: 'wrapper',
+      icon: 'basket',
       children: [
         {
           title: 'Productos',
-          id:'products',
+          id: 'products',
           url: '/products',
           icon: 'basket'
         },
         {
-          title: 'Info. producto',
+          title: 'Consulta',
           id: 'products-info',
           url: 'products/info',
           icon: 'information-circle'
         },
         {
-          title: 'Ubicar/Escanear',
-          id:'positioning',
-          icon: 'locate',
-          url: 'positioning'
-        },
-        {
-          title: 'Ubicar/Escanear Manualmente',
-          icon: 'locate',
-          url: '/positioning/manual',
-          id:'positioning-manual'
-        },
-        {
-          title: 'Tareas de Picking',
-          id:"picking-task",
-          icon: 'qr-scanner',
-          url: '/picking-tasks'
-        },
-        {
-          title: 'Tareas de Picking Manualmente',
-          icon: 'qr-scanner',
-          url: '/picking-tasks/manual',
-          id:'picking-tasks-manual'
-        },
-        {
-          title: 'Gestión de almacén',
-          id:'warehouses-management',
-          url: '/warehouse/manage',
-          icon: 'apps'
-        },
-      ]
-    },
-    {
-      title: 'Embalajes',
-      open: false,
-      type: 'wrapper',
-      children: [
-        {
-          title: 'Precintar',
-          id: 'packing-seal',
-          url: 'packing/seal',
-          icon: 'paper-plane'
-        },
-        {
-          title: 'Precintar Manual',
-          id: 'packing-seal-manual',
-          url: '/packing/seal/manual',
-          icon: 'paper-plane'
-        },
-        {
-          title: 'Recepcionar',
-          id: 'reception',
-          url: 'reception',
-          icon: 'archive'
-        },
-        {
-          title: 'Vaciar',
-          id: 'empty-carrier',
-          url: 'reception/empty-carrier',
-          icon: 'square-outline'
-        }
-      ]
-    },
-    {
-      title: 'Etiquetado',
-      id: 'print-tags',
-      open: false,
-      type: 'wrapper',
-      children: [
-        {
-          title: 'Productos Recibidos',
+          title: 'Productos recibidos',
           id: 'print-products-received',
           url: '/print/product/received',
           icon: 'archive'
         },
-        {
-          title: 'Reetiquetado Embalajes',
-          id: 'print-packing',
-          url: '/print/packing',
-          icon: 'grid'
-        },
-        {
-          title: 'Reetiquetado Productos',
-          id: 'print-product',
-          url: 'print/product/relabel',
-          icon: 'pricetags'
-        },
-        {
-          title: 'Reetiquetado Productos Manual',
-          id: 'print-product-manual',
-          url: '/print/product/relabel',
-          icon: 'pricetags'
-        },
+        // TODO When enable Relabel of Products, remove the next two sections
         {
           title: 'Código Caja',
           id: 'print-ref-tag',
@@ -329,17 +249,117 @@ export class MenuComponent implements OnInit {
           url: '/print-tag/manual/box',
           icon: 'barcode'
         },
-        {
-          title: 'Código Exposición',
-          id: 'print-price-tag',
-          url: 'print/tag/price',
-          icon: 'basket'
+        // TODO When enable Relabel of Products, decompose the next two sections
+        /*{
+          title: 'Reetiquetado productos',
+          id: 'print-product',
+          url: 'print/product/relabel',
+          icon: 'barcode'
         },
         {
-          title: 'Código Exposición Manual',
+          title: 'Reetiquetado productos manual',
+          id: 'print-product-manual',
+          url: '/print/product/relabel',
+          icon: 'barcode'
+        }*/
+      ]
+    },
+    {
+      title: 'Tarifas',
+      open: false,
+      type: 'wrapper',
+      icon: 'logo-usd',
+      children: [
+        {
+          title: 'Tarifas',
+          id: 'tariff-al',
+          url: '/tariff',
+          icon: 'logo-usd'
+        },
+        {
+          title: 'Código exposición',
+          id: 'print-price-tag',
+          url: 'print/tag/price',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Código exposición manual',
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
-          icon: 'basket'
+          icon: 'pricetags'
+        }
+      ]
+    },
+    {
+      title: 'Logística',
+      open: false,
+      type: 'wrapper',
+      icon: 'send',
+      children: [
+        {
+          title: 'Ubicar/escanear',
+          id: 'positioning',
+          icon: 'locate',
+          url: 'positioning'
+        },
+        {
+          title: 'Ubicar/escanear manualmente',
+          icon: 'locate',
+          url: '/positioning/manual',
+          id: 'positioning-manual'
+        },
+        {
+          title: 'Tareas de Picking',
+          id: 'picking-task',
+          icon: 'qr-scanner',
+          url: '/picking-tasks'
+        },
+        {
+          title: 'Tareas de picking manualmente',
+          icon: 'qr-scanner',
+          url: '/picking-tasks/manual',
+          id: 'picking-tasks-manual'
+        },
+        {
+          title: 'Gestión de almacén',
+          id: 'warehouses-management',
+          url: '/warehouse/manage',
+          icon: 'apps'
+        },
+        {
+          title: 'Recepcionar',
+          id: 'reception',
+          url: 'reception',
+          icon: 'archive'
+        },
+        {
+          title: 'Vaciar',
+          id: 'empty-carrier',
+          url: 'reception/empty-carrier',
+          icon: 'square-outline'
+        },
+        {
+          title: 'Embalajes',
+          id: 'jails',
+          url: '/jails/menu',
+          icon: 'grid'
+        },
+        {
+          title: 'Reetiquetado embalajes',
+          id: 'print-packing',
+          url: '/print/packing',
+          icon: 'grid'
+        },{
+          title: 'Precintar embalaje',
+          id: 'packing-seal',
+          url: 'packing/seal',
+          icon: 'paper-plane'
+        },
+        {
+          title: 'Precintar embalaje manual',
+          id: 'packing-seal-manual',
+          url: '/packing/seal/manual',
+          icon: 'paper-plane'
         }
       ]
     },
@@ -347,38 +367,15 @@ export class MenuComponent implements OnInit {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
+      icon: 'build',
       children: [
         {
-          title: 'Almacenes',
-          url: '/warehouses',
-          icon: 'filing',
-          id:'warehouses'
-        },
-        {
-          title: 'Edificios',
-          id:'building',
-          url: '/building',
-          icon: 'business'
-        },
-        {
-          title: 'Embalajes',
-          id:'jails',
-          url: '/jails/menu',
-          icon: 'grid'
+          title: 'Ajustes',
+          id: 'settings',
+          url: '/settings',
+          icon: 'cog'
         }
       ]
-    },
-    {
-      title:'Tarifas',
-      id:'tariff-al',
-      url:'/tariff',
-      icon:'logo-usd'
-    },
-    {
-      title: 'Ajustes',
-      id:'settings',
-      url: '/settings',
-      icon: 'cog'
     },
     {
       title: 'Cerrar sesión',

@@ -75,7 +75,11 @@ export class CalendarPickingComponent implements OnInit {
       let selectDates = this.dates.map(_=>{
         return _.format("YYYY-MM-DD");
       });
-      let auxDates = [];
+      let auxDates = [{
+        date:'all',
+        warehouses:[],
+        value:null
+      }];
       selectDates.forEach(date=>{
         this.loadingDates = true;
         let aux = this.selectDates.find(_date=>{return (_date.date == date)});
@@ -220,7 +224,11 @@ export class CalendarPickingComponent implements OnInit {
     this.selectDates.forEach((date,i)=>{
       if(i==0)
         return false;
-      let value = this.formatValue((date.value));
+      let value;
+      if(this.date.date != 'all')
+        value = this.formatValue((date.value));
+      else
+        value = this.formatValue(this.form.value);
       value["date"] =date.date;
       if(value.warehouses.length)
         globalValues.calendars.push(value)
@@ -312,6 +320,8 @@ export class CalendarPickingComponent implements OnInit {
    */
   validToStore(){
     let flag = true;
+    if(this.date.date == 'all' && this.formatValue(this.form.value).warehouses.length )
+      return true;
     this.selectDates.forEach(value=>{
       if(!(value.warehouses.length || (value.value && this.formatValue(value.value).warehouses.length)))
         flag = false;
@@ -384,11 +394,25 @@ export class CalendarPickingComponent implements OnInit {
     this.initialValue = this.form.value;
   }
 
+  clearCalendar(){
+    this.selectDates = [{
+      date:'all',
+      warehouses:[],
+      value:null
+    }];
+    this.dates = [];  
+    this.getCalendarDates()
+  }
   clear(){
     this.template.get("template").patchValue('',{emitEvent:false});
-    this.selectDates = [];
+    this.selectDates = [{
+      date:'all',
+      warehouses:[],
+      value:null
+    }];
     this.dates = [];
     this.initTemplateBase(this.templateBase);
+    this.getCalendarDates();
   }
 
   getCalendarDates():void{

@@ -55,7 +55,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           if (res.data && res.data.length > 0) {
             this.listCarriers = res.data;
           }
-        } else {
+        } else if (res.code != 204) {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let warehouseTypeName = 'de la tienda';
           if (warehouse.has_racks) {
@@ -67,11 +67,14 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
         this.isLoadingData = false;
 
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
-        let warehouseTypeName = 'de la tienda';
-        if (warehouse.has_racks) {
-          warehouseTypeName = 'del almacén';
+
+        if (error.error.code != 204) {
+          let warehouseTypeName = 'de la tienda';
+          if (warehouse.has_racks) {
+            warehouseTypeName = 'del almacén';
+          }
+          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
         }
-        this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
       });
   }
 

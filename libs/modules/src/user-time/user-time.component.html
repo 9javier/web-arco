@@ -1,14 +1,17 @@
 <ion-content>
     <ion-grid>
         <ion-row>
-            <ion-col size="4"></ion-col>
-            <ion-col size="4" class="col-buttons">
-                <ion-button *ngIf="(redirect == 'products') || !redirect" expand="block" (click)="register()">REGISTRAR</ion-button>
-                <ion-button *ngIf="(redirect == 'logout') || !redirect" expand="block" (click)="stop()">DETENER</ion-button>
+            <ion-col size="12">
+              <div *ngIf="userRegisterTime" class="ion-text-center">Inicio de registro</div>
+              <div *ngIf="userRegisterTime" class="ion-text-center">{{dateInitRegisterTime()}}</div>
+            </ion-col>
+            <ion-col sizeXs="10" sizeSm="10" sizeMd="6" sizeLg="4" sizeXl="4" offsetXs="1" offsetSm="1" offsetMd="3" offsetLg="4" offsetXl="4" class="col-buttons">
+                <ion-button *ngIf="!userRegisterTime" expand="block" (click)="register()">REGISTRAR INICIO</ion-button>
+                <ion-button *ngIf="userRegisterTime" expand="block" (click)="stop()">DETENER REGISTRO</ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>
 </ion-content>
 <ion-footer>
-    <ion-button slot="end" color="danger" (click)="cancel()">CANCELAR</ion-button>
+    <ion-button *ngIf="userRegisterTime && (redirect == 'logout')" slot="end" color="danger" (click)="cancel()">CANCELAR</ion-button>
 </ion-footer>
