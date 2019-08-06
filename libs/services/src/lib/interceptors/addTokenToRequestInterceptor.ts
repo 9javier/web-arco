@@ -18,6 +18,7 @@ import { Observable, throwError, from, BehaviorSubject } from 'rxjs';
 import { catchError,map, switchMap,finalize,filter,take } from 'rxjs/operators';
 import { Oauth2Service } from '../endpoint/oauth2/oauth2.service';
 import { IntermediaryService } from '../endpoint/intermediary/intermediary.service';
+import {ToastController} from "@ionic/angular";
 
 @Injectable()
 export class AddTokenToRequestInterceptor implements HttpInterceptor {
@@ -26,11 +27,13 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
     private intermediaryService:IntermediaryService,
     private router: Router,
     private route: ActivatedRoute,
-    private oauth2Service:Oauth2Service
+    private oauth2Service:Oauth2Service,
+    private toastController: ToastController
   ) {}
 
   isRefreshingToken: boolean = false;
   tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  private isToastVisible: boolean = false;
 
   addTokenToRequest(request:HttpRequest<any>,next:HttpHandler):Observable<HttpEvent<any>>{
     return from(this.authenticationService.getCurrentToken()).pipe(switchMap(token=>{
@@ -62,6 +65,13 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                   return error;
                 }));
               }
+          }
+
+          if (this.authenticationService.isAuthenticated()) {
+            this.authenticationService.logout();
+            if (!this.isToastVisible) {
+              this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
+            }
           }
           return new Observable(observer=>observer.error(err));
         }));
@@ -130,5 +140,19 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     return this.addTokenToRequest(request,next);
+  }
+
+  async presentToast(msg, color) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 3750,
+      color: color || "primary"
+    });
+    toast.present();
+    this.isToastVisible = true;
+    setTimeout(() => {
+      this.isToastVisible = false;
+    }, 3750);
   }
 }
