@@ -65,14 +65,17 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                   return error;
                 }));
               }
+              break;
+            case 0:
+              if (err.statusText == 'Unknown Error' && this.authenticationService.isAuthenticated()) {
+                this.authenticationService.logout();
+                if (!this.isToastVisible) {
+                  this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
+                }
+              }
+              break;
           }
 
-          if (this.authenticationService.isAuthenticated()) {
-            this.authenticationService.logout();
-            if (!this.isToastVisible) {
-              this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
-            }
-          }
           return new Observable(observer=>observer.error(err));
         }));
       }else{
