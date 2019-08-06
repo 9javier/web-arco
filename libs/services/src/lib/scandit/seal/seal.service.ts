@@ -32,7 +32,7 @@ export class SealScanditService {
 
           if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
             || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
-            // TODO Seal the packing
+            // Seal the packing
             this.carriersService
               .postSeal({
                 reference: codeScanned
