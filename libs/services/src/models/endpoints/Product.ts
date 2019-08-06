@@ -3,6 +3,7 @@ import { ModelModel } from './Model';
 import { SizeModel } from './Size';
 import {BrandModel} from "./Brand";
 import {SeasonModel} from "./Season";
+import {PriceModel} from "@suite/services";
 
 export namespace ProductModel {
   export interface Product {
@@ -56,6 +57,10 @@ export namespace ProductModel {
     };
   }
 
+  interface SizePrice extends SizeModel.Size {
+    price: PriceModel.Price
+  }
+
   export interface ResponseIndex {
     data: Product[];
   }
@@ -67,6 +72,16 @@ export namespace ProductModel {
 
   export interface ResponseInfo {
     data?: Product|SizesAndModel,
+    errors?: string,
+    message: string,
+    code: number
+  }
+
+  export interface ResponseExtendedInfo {
+    data?: {
+      productModel: ModelModel.Model,
+      sizes: SizePrice[]
+    },
     errors?: string,
     message: string,
     code: number

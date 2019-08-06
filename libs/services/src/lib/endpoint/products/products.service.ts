@@ -19,6 +19,7 @@ export class ProductsService {
   private getIndexUrl:string = environment.apiBase+'/products';
   private getInfoUrl: string = environment.apiBase + '/products/info/';
   private postRelabelUrl: string = environment.apiBase + '/products/relabel';
+  private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -54,6 +55,14 @@ export class ProductsService {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
 
       return this.http.post<ProductModel.ResponseRelabel>(this.postRelabelUrl, params,  { headers });
+    }));
+  }
+
+  getExtendedInfo(reference: string): Observable<ProductModel.ResponseExtendedInfo> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      return this.http.get<ProductModel.ResponseExtendedInfo>(this.getExtendedInfoUrl + reference, { headers });
     }));
   }
 }

@@ -7,6 +7,7 @@ import {ReceptionScanditService} from "../../../../services/src/lib/scandit/rece
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {MenuController} from "@ionic/angular";
 import {SealScanditService} from "../../../../services/src/lib/scandit/seal/seal.service";
+import {ProductInfoScanditService} from "../../../../services/src/lib/scandit/product-info/product-info.service";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -224,6 +225,12 @@ export class MenuComponent implements OnInit {
           icon: 'basket'
         },
         {
+          title: 'Consulta',
+          id: 'products-info',
+          url: 'products/info',
+          icon: 'information-circle'
+        },
+        {
           title: 'Productos recibidos',
           id: 'print-products-received',
           url: '/print/product/received',
@@ -394,6 +401,7 @@ export class MenuComponent implements OnInit {
     private receptionScanditService: ReceptionScanditService,
     private printTagsScanditService: PrintTagsScanditService,
     private sealScanditService: SealScanditService,
+    private productInfoScanditService: ProductInfoScanditService,
     private menuController: MenuController
   ) { }
 
@@ -489,6 +497,8 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(2);
     } else if (p.url == 'print/product/relabel') {
       this.printTagsScanditService.printRelabelProducts();
+    } else if (p.url == 'products/info') {
+      this.productInfoScanditService.init();
     } else {
       this.returnTitle(p);
     }

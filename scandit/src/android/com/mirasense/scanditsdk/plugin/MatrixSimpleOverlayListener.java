@@ -13,6 +13,8 @@ package com.mirasense.scanditsdk.plugin;
  * limitations under the License.
  */
 
+import android.content.Context;
+
 import com.scandit.matrixscan.Frame;
 import com.scandit.matrixscan.MatrixScan;
 import com.scandit.matrixscan.MatrixScanListener;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 
 public class MatrixSimpleOverlayListener implements MatrixScanListener {
 
+  private Context context = null;
 
   public MatrixSimpleOverlayListener() {
   }
@@ -36,6 +39,12 @@ public class MatrixSimpleOverlayListener implements MatrixScanListener {
 
     for (long id : didUpdate.getAddedIdentifiers()) {
       if (didUpdate.getTrackedCodes().containsKey(id)) {
+        if (this.context != null) {
+          if (this.context instanceof MatrixProductInfo) {
+            ((MatrixProductInfo) this.context).showProgressBar(true);
+          }
+        }
+
         JSONObject jsonObject = new JSONObject();
         try {
           jsonObject.put("result", true);
@@ -51,6 +60,10 @@ public class MatrixSimpleOverlayListener implements MatrixScanListener {
         ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
       }
     }
+  }
+
+  public void setContextActivity(Context context) {
+    this.context = context;
   }
 
   @Override

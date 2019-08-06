@@ -37,6 +37,16 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initProductInfo: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixProductInfo", [title, titleBackground, titleColor]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color
@@ -172,6 +182,21 @@ var ScanditMatrixSimple = {
    */
   showButtonPickingStorePacking: function (show) {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresShowButtonPacking", [show]);
+  },
+  /**
+   *
+   * @param show
+   * @param product
+   */
+  showProductExtendedInfo: function (show, product) {
+    exec(null, null, PLUGIN_NAME, "matrixProductInfoShowExtended", [show, product]);
+  },
+  /**
+   *
+   * @param show
+   */
+  showProgressBarProductExtendedInfo: function (show) {
+    exec(null, null, PLUGIN_NAME, "matrixShowProgressBarProductExtendedInfo", [show]);
   }
 }
 
