@@ -14,7 +14,7 @@ import { environment } from '../../../environments/environment';
 export class GroupsService {
 
   /**Urls for groups service */
-  private getIndexUrl:string = environment.apiBase+"/warehouses/categories";
+  private getIndexUrl:string = environment.apiBase+"/warehouses/groups/categories";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 

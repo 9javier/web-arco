@@ -19,7 +19,7 @@ export class WarehouseGroupService {
   /**ésto es lo único reutilizable, por lo tanto lo único que está en un archivo de configuración */
   private apiBase = environment.apiBase;
   /**pero realmente éstas url no son reutilizables, solo son utilizadas en este servicio, por lo tanto no tiene sentido ponerlas en otro lugar sino acá */
-  private getIndexUrl = this.apiBase+"/warehouses/groups?include=warehouses";
+  private getIndexUrl = this.apiBase+"/warehouses/groups/categories?include=warehouses";
 
   constructor(
     private http:HttpClient,

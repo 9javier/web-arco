@@ -18,13 +18,13 @@ const PATH_GET_PRODUCTS_HISTORY_CONTAINER: string = PATH('Inventory Process', 'L
 export class InventoryService {
 
   /**Urls for the inventory service */
-  private postStoreUrl:string = environment.apiBase+"/inventory/process";
+  private postStoreUrl:string = environment.apiBase+"/processes/positioner-main";
   private getProductsByContainerUrl:string = environment.apiBase+"/inventory/container/{{id}}";
-  private getProductsHistoryByContainerUrl:string = environment.apiBase+"/inventory/process/container/{{id}}";
+  private getProductsHistoryByContainerUrl:string = environment.apiBase+"/inventory/processes/container/{{id}}";
 
 
-  private postGlobalUrl:string = environment.apiBase+"/inventory/process/global";
-  private postPickingUrl:string = environment.apiBase+"/inventory/process/piking";
+  private postGlobalUrl:string = environment.apiBase+"/processes/positioner-main/global";
+  private postPickingUrl:string = environment.apiBase+"/processes/picking-main/direct";
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
 

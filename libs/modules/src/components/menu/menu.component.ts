@@ -489,6 +489,8 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(2);
     } else if (p.url == 'print/product/relabel') {
       this.printTagsScanditService.printRelabelProducts();
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
     } else {
       this.returnTitle(p);
     }

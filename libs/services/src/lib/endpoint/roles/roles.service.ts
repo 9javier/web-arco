@@ -16,13 +16,13 @@ import { environment } from '../../../environments/environment';
 export class RolesService {
 
   /**Urls for the roles service */
-  private getIndexUrl:string = environment.apiBase+"/roles";
-  private postStoreUrl:string = environment.apiBase+"/roles";
-  private getShowUrl:string = environment.apiBase+"/roles/{{id}}";
-  private putUpdateUrl:string = environment.apiBase+"/roles/{{id}}";
-  private destroyUrl:string = environment.apiBase+"/roles/{{id}}";
-  private postAssignRolToUserUrl:string =environment.apiBase+"/users/{{userId}}/roles/{{rolId}";
-  private deleteRolToUserUrl:string = environment.apiBase+"/users/{{userId}}/roles/{{rolId}";
+  private getIndexUrl:string = environment.apiBase+"/gestion-permissions/roles";
+  private postStoreUrl:string = environment.apiBase+"/gestion-permissions/roles";
+  private getShowUrl:string = environment.apiBase+"/gestion-permissions/roles/{{id}}";
+  private putUpdateUrl:string = environment.apiBase+"/gestion-permissions/roles/{{id}}";
+  private destroyUrl:string = environment.apiBase+"/gestion-permissions/roles/{{id}}";
+  private postAssignRolToUserUrl:string =environment.apiBase+"/gestion-permissions/users/{{userId}}/roles/{{rolId}";
+  private deleteRolToUserUrl:string = environment.apiBase+"/gestion-permissions/users/{{userId}}/roles/{{rolId}";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
