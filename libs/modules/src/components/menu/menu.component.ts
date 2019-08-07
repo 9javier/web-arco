@@ -198,6 +198,12 @@ export class MenuComponent implements OnInit {
       icon:'logo-usd'
     },
     {
+      title:'Agencias',
+      id:'agency',
+      url:'/manage-agencies',
+      icon:'logo-usd'
+    },
+    {
       title: 'Cerrar sesión',
       id:'logout',
       url: '/user-time/logout',
