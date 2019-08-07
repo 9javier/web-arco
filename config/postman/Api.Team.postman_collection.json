@@ -24,12 +24,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/api/users",
+							"raw": "{{url}}/api/gestion-permissions/users",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users"
 							]
 						}
@@ -63,12 +64,13 @@
 							"raw": "{\n\t\"email\": \"tesssssssssst14@t.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testest\",\n\t\"address\": \"mazatlán\",\n\t\"phone\": \"669117862\",\n\t\"roles\" : [{\"id\": 1}, {\"id\": 2}],\n\t\"employedId\":2\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users",
+							"raw": "{{url}}/api/gestion-permissions/users",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users"
 							]
 						}
@@ -98,12 +100,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/1",
+							"raw": "{{url}}/api/gestion-permissions/users/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"1"
 							]
@@ -138,12 +141,13 @@
 							"raw": "{\n\t\"email\": \"test5@t.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testeeeest\",\n\t\"address\": \"mazddatlán\",\n\t\"phone\": \"67862\",\n\t\"roleId\" : 5,\n\t\"roles\" : [{\"id\": 3}, {\"id\": 4}]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/6",
+							"raw": "{{url}}/api/gestion-permissions/users/6",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"6"
 							]
@@ -178,12 +182,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/2",
+							"raw": "{{url}}/api/gestion-permissions/users/2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"2"
 							]
@@ -218,12 +223,13 @@
 							"raw": "{\n\t\"email\": \"ivan@ivanh.com\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/password/email",
+							"raw": "{{url}}/api/gestion-permissions/users/password/email",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"password",
 								"email"
@@ -259,12 +265,13 @@
 							"raw": "{\n\t\"new_password\": \"secret\",\n\t\"check_password\": \"secret\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/password/reset?token=f67d562351becf0a404421947aec55d27d2db4978bbdb4bea8da23bd4dae561e",
+							"raw": "{{url}}/api/gestion-permissions/users/password/reset?token=f67d562351becf0a404421947aec55d27d2db4978bbdb4bea8da23bd4dae561e",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"password",
 								"reset"
@@ -306,12 +313,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/1/processType/2",
+							"raw": "{{url}}/api/gestion-permissions/users/1/processType/2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"1",
 								"processType",
@@ -480,12 +488,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/api/roles",
+							"raw": "{{url}}/api/gestion-permissions/roles",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles"
 							]
 						}
@@ -519,12 +528,13 @@
 							"raw": "{\n    \"name\": \"uiht\",\n    \"description\": \"role test\",\n    \"app_enabled\": true,\n    \"sga_enabled\": true,\n    \"groups\": [2,3],\n    \"status\": true\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/roles",
+							"raw": "{{url}}/api/gestion-permissions/roles",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles"
 							]
 						}
@@ -561,12 +571,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/8",
+							"raw": "{{url}}/api/gestion-permissions/roles/8",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"8"
 							]
@@ -601,12 +612,13 @@
 							"raw": "{\n    \"name\": \"Dev team\",\n    \"description\": \"role dev team\",\n    \"sga_enabled\": true,\n    \"app_enabled\": true,\n    \"status\": true,\n    \"groups\": [1]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/6",
+							"raw": "{{url}}/api/gestion-permissions/roles/6",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"6"
 							]
@@ -641,12 +653,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/1",
+							"raw": "{{url}}/api/gestion-permissions/roles/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"1"
 							]
@@ -674,12 +687,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/2/roles/1",
+							"raw": "{{url}}/api/gestion-permissions/users/2/roles/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"2",
 								"roles",
@@ -709,12 +723,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/2/roles/1",
+							"raw": "{{url}}/api/gestion-permissions/users/2/roles/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"2",
 								"roles",
@@ -744,12 +759,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/2/group/3",
+							"raw": "{{url}}/api/gestion-permissions/roles/2/group/3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"2",
 								"group",
@@ -779,12 +795,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/2/group/1",
+							"raw": "{{url}}/api/gestion-permissions/roles/2/group/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"2",
 								"group",
@@ -821,12 +838,13 @@
 							"raw": "{\n \"status\": true\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/1/status",
+							"raw": "{{url}}/api/gestion/permissions/roles/1/status",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"1",
 								"status"
@@ -862,12 +880,13 @@
 							"raw": "{\n\t\"groups\": [1,2]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/4/groups",
+							"raw": "{{url}}/api/gestion-permissions/roles/4/groups",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"4",
 								"groups"
@@ -1070,12 +1089,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/2/permissions/2",
+							"raw": "{{url}}/api/gestion-permissions/roles/2/permissions/2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"2",
 								"permissions",
@@ -1105,12 +1125,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/roles/2/permissions/2",
+							"raw": "{{url}}/api/gestion-permissions/roles/2/permissions/2",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"roles",
 								"2",
 								"permissions",
@@ -1822,14 +1843,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups?include=warehouses",
+							"raw": "{{url}}/api/warehouses/groups/categories?include=warehouses",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"groups"
+								"groups",
+								"categories"
 							],
 							"query": [
 								{
@@ -1868,14 +1890,15 @@
 							"raw": "{\n\t\"name\": \"Gama Alta1\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups",
+							"raw": "{{url}}/api/warehouses/groups/categories",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
 								"warehouses",
-								"groups"
+								"groups",
+								"categories"
 							]
 						}
 					},
@@ -1897,7 +1920,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups/1?include=warehouses",
+							"raw": "{{url}}/api/warehouses/groups/categories/1?include=warehouses",
 							"host": [
 								"{{url}}"
 							],
@@ -1905,6 +1928,7 @@
 								"api",
 								"warehouses",
 								"groups",
+								"categories",
 								"1"
 							],
 							"query": [
@@ -1937,7 +1961,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups/2",
+							"raw": "{{url}}/api/warehouses/groups/categories/2",
 							"host": [
 								"{{url}}"
 							],
@@ -1945,6 +1969,7 @@
 								"api",
 								"warehouses",
 								"groups",
+								"categories",
 								"2"
 							]
 						}
@@ -1978,7 +2003,7 @@
 							"raw": "{\n\t\"name\": \"Gama Media\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/warehouses/groups/1",
+							"raw": "{{url}}/api/warehouses/groups/categories/1",
 							"host": [
 								"{{url}}"
 							],
@@ -1986,6 +2011,7 @@
 								"api",
 								"warehouses",
 								"groups",
+								"categories",
 								"1"
 							]
 						}
@@ -2664,12 +2690,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/api/users/1/roles",
+							"raw": "{{url}}/api/gestion-permissions/users/1/roles",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
+                "gestion-permissions",
 								"users",
 								"1",
 								"roles"
@@ -4498,14 +4525,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/inventory/process",
+							"raw": "{{url}}/api/processes/positioner-main",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process"
+								"processes",
+								"positioner-main"
 							]
 						}
 					},
@@ -4534,14 +4561,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/inventory/process/1",
+							"raw": "{{url}}/api/processes/positioner-main/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process",
+								"processes",
+								"positioner-main",
 								"1"
 							]
 						}
@@ -4575,14 +4602,14 @@
 							"raw": "{\n    \"productReference\": \"000000010100100001\",\n    \"containerReference\": \"P000A02C003\",\n    \"warehouseId\": 1\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/inventory/process",
+							"raw": "{{url}}/api/processes/positioner-main",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process"
+								"processes",
+								"positioner-main"
 							]
 						}
 					},
@@ -4611,14 +4638,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/inventory/process/rollback/1",
+							"raw": "{{url}}/api/processes/positioner-main/rollback/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process",
+								"processes",
+								"positioner-main",
 								"rollback",
 								"1"
 							]
@@ -4649,14 +4676,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/inventory/process/container/1",
+							"raw": "{{url}}/api/processes/positioner-main/container/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process",
+								"processes",
+								"positioner-main",
 								"container",
 								"1"
 							]
@@ -4691,14 +4718,14 @@
 							"raw": "{\n\t\"ids\":[1,2,3]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/inventory/process/container",
+							"raw": "{{url}}/api/processes/positioner-main/container",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process",
+								"processes",
+								"positioner-main",
 								"container"
 							]
 						}
@@ -4732,14 +4759,14 @@
 							"raw": "{\n\t\"warehouseId\": 2,\n\t\"references\":\n\t[\n\t\t\"P001A01C001\",\n\t\t\"P001A01C002\",\n\t\t\"P001A01C003\",\n\t\t\"P001A01C004\"\n\t]\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/inventory/process/container/reference",
+							"raw": "{{url}}/api/processes/positioner-main/container/reference",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process",
+								"processes",
+                "positioner-main",
 								"container",
 								"reference"
 							]
@@ -4770,14 +4797,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{url}}/api/inventory/process/product/1",
+							"raw": "{{url}}/api/processes/positioner-main/product/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"api",
-								"inventory",
-								"process",
+								"processes",
+								"positioner-main",
 								"product",
 								"1"
 							]

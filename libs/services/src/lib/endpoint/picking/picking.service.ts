@@ -12,10 +12,10 @@ import {AuthenticationService} from "@suite/services";
 export class PickingService {
 
   /**Urls for the picking service */
-  private getShowUrl = environment.apiBase+"/workwaves/order/{{id}}";
-  private getListByUserUrl = environment.apiBase+"/workwaves/order/{{id}}/user";
-  private putUpdateUrl = environment.apiBase+"/workwaves/order";
-  private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
+  private getShowUrl = environment.apiBase+"/processes/picking-main/order/{{id}}";
+  private getListByUserUrl = environment.apiBase+"/processes/picking-main/order/{{id}}/user";
+  private putUpdateUrl = environment.apiBase+"/processes/picking-main";
+  private postVerifyPackingUrl = environment.apiBase+"/processes/picking-main/packing";
 
   private _pickingAssignments: PickingModel.Picking[] = [];
 

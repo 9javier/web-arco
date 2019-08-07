@@ -33,14 +33,14 @@ export class HallsService {
   /**urls for halls service */
   private getIndexUrl:string = environment.apiBase+"/warehouses/{{id}}/racks";
   private getFullIndexUrl:string = environment.apiBase+"/warehouses/{{id}}/racks/full";
-  private postStoreUrl:string = environment.apiBase+"/racks/";
-  private getShowUrl:string = environment.apiBase+"/racks/{{id}}/containers";
-  private putUpdateUrl:string = environment.apiBase+"/racks/{{id}}";
-  private deleteDestroyUrl:string = environment.apiBase+"/racks/{{id}}";
-  private updateDisableUrl:string = environment.apiBase+"/containers/{{id}}";
-  private updateEnableUrl:string = environment.apiBase+"/containers/{{id}}";
-  private updateLockUrl:string = environment.apiBase+"/containers/{{id}}";
-  private updateUnlockUrl:string = environment.apiBase+"/containers/{{id}}";
+  private postStoreUrl:string = environment.apiBase+"/warehouses/racks/";
+  private getShowUrl:string = environment.apiBase+"/warehouses/racks/{{id}}/containers";
+  private putUpdateUrl:string = environment.apiBase+"/warehouses/racks/{{id}}";
+  private deleteDestroyUrl:string = environment.apiBase+"/warehouses/racks/{{id}}";
+  private updateDisableUrl:string = environment.apiBase+"/warehouses/containers/{{id}}";
+  private updateEnableUrl:string = environment.apiBase+"/warehouses/containers/{{id}}";
+  private updateLockUrl:string = environment.apiBase+"/warehouses/containers/{{id}}";
+  private updateUnlockUrl:string = environment.apiBase+"/warehouses/containers/{{id}}";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
