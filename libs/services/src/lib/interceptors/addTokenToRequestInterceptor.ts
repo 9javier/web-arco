@@ -50,16 +50,13 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
         pipe(catchError((err,caught)=>{
           switch (err.status) {
             case 403:
-              console.log(1);
               return this.handle401Error(request, next);
             case 401:
-              console.log(2);
               if(!request.url.includes("/api/oauth2/"))
                 return this.handle401Error(request, next);
               this.authenticationService.logout();
               return new Observable(observer=>observer.error(err));
             case 400:
-              console.log(3);
               if(request.url.includes('token')){
                 return new Observable(observer=>{
                   observer.error();
@@ -68,16 +65,25 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                   return error;
                 }));
               }
+              break;
+            case 500:
+              if (this.authenticationService.isAuthenticated) {
+                this.authenticationService.logout();
+                if (!this.isToastVisible) {
+                  this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
+                }
+              }
+              break;
+            case 0:
+              if (err.statusText == 'Unknown Error' && this.authenticationService.isAuthenticated()) {
+                this.authenticationService.logout();
+                if (!this.isToastVisible) {
+                  this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
+                }
+              }
+              break;
           }
 
-          /*if (this.authenticationService.isAuthenticated()) {
-            this.authenticationService.logout();
-            if (!this.isToastVisible) {
-              this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
-            }
-          } else {
-            this.presentToast('El servidor no se encuentra disponible en este instante.', 'danger');
-          }*/
           return new Observable(observer=>observer.error(err));
         }));
       }else{
