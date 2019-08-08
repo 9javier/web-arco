@@ -157,13 +157,8 @@ public class MatrixPickingStores extends Activity {
     pickerContainer.addView(mPicker);
     mPicker.startScanning();
 
-    ImageButton arrowBack = (ImageButton) findViewById(resources.getIdentifier("arrow_back_button", "id", package_name));
-    arrowBack.setOnClickListener( new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        finish();
-      }
-    });
+    ImageButton arrowBack = findViewById(resources.getIdentifier("arrow_back_button", "id", package_name));
+    arrowBack.setOnClickListener(v -> finish());
 
     RelativeLayout rlTitleSmallProductsList = findViewById(resources.getIdentifier("rlTitleSmallProductsList", "id", package_name));
     rlTitleSmallProductsList.setOnClickListener(v -> {

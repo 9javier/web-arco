@@ -3,7 +3,6 @@ package com.mirasense.scanditsdk.plugin.adapters;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,12 +75,12 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
   }
 
   public ArrayList<KeyPairBoolData> getAllItems() {
-    return arrayList;
+    return mOriginalValues;
   }
 
   public ArrayList<KeyPairBoolData> getSelectedItems() {
     ArrayList<KeyPairBoolData> selectedItems = new ArrayList<>();
-    for (KeyPairBoolData item : arrayList) {
+    for (KeyPairBoolData item : mOriginalValues) {
       if (item.isSelected()) {
         selectedItems.add(item);
       }
@@ -91,7 +90,7 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
 
   public ArrayList<Long> getSelectedIds() {
     ArrayList<Long> selectedItemsIds = new ArrayList<>();
-    for (KeyPairBoolData item : arrayList) {
+    for (KeyPairBoolData item : mOriginalValues) {
       if (item.isSelected()) {
         selectedItemsIds.add(item.getId());
       }
@@ -106,7 +105,6 @@ public class SearchItemsAdapter extends RecyclerView.Adapter<SearchItemsAdapter.
       @SuppressWarnings("unchecked")
       @Override
       protected void publishResults(CharSequence constraint, FilterResults results) {
-
         arrayList = (ArrayList<KeyPairBoolData>) results.values;
         notifyDataSetChanged();
       }
