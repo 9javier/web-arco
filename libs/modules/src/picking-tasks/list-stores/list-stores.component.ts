@@ -106,6 +106,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
       this.pickingProvider.listStoresIdsToStorePicking = this.stores.map((store) => {
         return store.id;
       });
+      this.pickingProvider.listProductsProcessedToStorePickings = [];
     } else {
       this.pickingProvider.listLineRequestsToStorePickings = this.lineRequestsByStores.filter((store) => {
         return store.selected;
@@ -119,7 +120,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
       }
       this.pickingProvider.listProductsToStorePickings = listProductsToStorePickings;
       this.pickingProvider.listStoresIdsToStorePicking = listStoresIdsToStorePickings;
+      this.pickingProvider.listProductsProcessedToStorePickings = [];
     }
+
+    let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
+      orderbys: [],
+      sizes: [],
+      colors: [],
+      models: [],
+      brands: []
+    };
 
     if ((<any>window).cordova) {
       this.pickingStoreService
@@ -130,10 +140,12 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
         .subscribe((res: PickingStoreModel.ResponseChangeStatus) => {
           if (res.code == 200 || res.code == 201) {
             this.pickingStoreService
-              .getLineRequestsPending()
-              .subscribe((res: PickingStoreModel.ResponseLineRequestsPending) => {
+              .postLineRequestFiltered(filtersToGetProducts)
+              .subscribe((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
                 if (res.code == 200 || res.code == 201) {
-                  this.pickingProvider.listProductsToStorePickings = res.data.results;
+                  this.pickingProvider.listProductsToStorePickings = res.data.pending;
+                  this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
+                  this.pickingProvider.listFiltersPicking = res.data.filters;
                   this.pickingScanditService.picking();
                 }
               });

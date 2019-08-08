@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
 import {PickingModel} from "../../models/endpoints/Picking";
 import {StoresLineRequestsModel} from "../../models/endpoints/StoresLineRequests";
+import {PickingStoreModel} from "../../models/endpoints/PickingStore";
 
 @Injectable({
   providedIn: 'root'
@@ -153,6 +154,22 @@ export class PickingProvider {
   }
   set listProductsToStorePickings(value: StoresLineRequestsModel.LineRequests[]) {
     this._listProductsToStorePickings = value;
+  }
+
+  private _listProductsProcessedToStorePickings: StoresLineRequestsModel.LineRequests[] = null;
+  get listProductsProcessedToStorePickings(): StoresLineRequestsModel.LineRequests[] {
+    return this._listProductsProcessedToStorePickings;
+  }
+  set listProductsProcessedToStorePickings(value: StoresLineRequestsModel.LineRequests[]) {
+    this._listProductsProcessedToStorePickings = value;
+  }
+
+  private _listFiltersPicking: PickingStoreModel.Filters = null;
+  get listFiltersPicking(): PickingStoreModel.Filters {
+    return this._listFiltersPicking;
+  }
+  set listFiltersPicking(value: PickingStoreModel.Filters) {
+    this._listFiltersPicking = value;
   }
 
   private _listStoresIdsToStorePicking: number[] = null;

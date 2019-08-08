@@ -27,11 +27,20 @@ export class PickingScanditService {
   ) {}
 
   async picking() {
+    let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
+      orderbys: [],
+      sizes: [],
+      colors: [],
+      models: [],
+      brands: []
+    };
     let listProductsToStorePickings = this.pickingProvider.listProductsToStorePickings;
+    let listProductsProcessed = this.pickingProvider.listProductsProcessedToStorePickings;
     let lastCodeScanned: string = 'start';
     let typePacking: number = 1;
     let scannerPaused: boolean = false;
     let scanMode = 'products';
+    let filtersPicking = this.pickingProvider.listFiltersPicking;
 
     const textPickingStoresInit = listProductsToStorePickings.length == 0 ? this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end : 'Escanea los productos a incluir en el picking';
 
@@ -44,14 +53,16 @@ export class PickingScanditService {
               lastCodeScanned = codeScanned;
               if (listProductsToStorePickings.length > 0) {
                 let paramsPickingStoreProcess: PickingStoreModel.SendProcess = {
-                  productReference: codeScanned
+                  productReference: codeScanned,
+                  filters: filtersToGetProducts
                 };
                 this.pickingStoreService
                   .postPickingStoreProcess(paramsPickingStoreProcess)
                   .subscribe((res: PickingStoreModel.ResponseSendProcess) => {
                     if (res.code == 200 || res.code == 201) {
-                      listProductsToStorePickings = res.data.linesRequestPending.results;
-                      ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings);
+                      listProductsToStorePickings = res.data.linesRequestFiltered.pending;
+                      listProductsProcessed = res.data.linesRequestFiltered.processed;
+                      ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                       ScanditMatrixSimple.setText(
                         `Producto ${codeScanned} escaneado y añadido al picking.`,
                         this.scanditProvider.colorsMessage.info.color,
@@ -77,7 +88,7 @@ export class PickingScanditService {
                         this.scanditProvider.colorText.color,
                         18);
                       this.hideTextMessage(2000);
-                      this.loadLineRequestsPending(listProductsToStorePickings, typePacking);
+                      this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
                     }
                   }, (error) => {
                     ScanditMatrixSimple.setText(
@@ -86,7 +97,7 @@ export class PickingScanditService {
                       this.scanditProvider.colorText.color,
                       18);
                     this.hideTextMessage(2000);
-                    this.loadLineRequestsPending(listProductsToStorePickings, typePacking);
+                    this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
                   });
               } else {
                 ScanditMatrixSimple.setText(
@@ -126,7 +137,7 @@ export class PickingScanditService {
 
         } else {
           if (response.action == 'matrix_simple') {
-            ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings);
+            ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, filtersPicking);
             if (listProductsToStorePickings.length < 1) {
               ScanditMatrixSimple.setText(
                 `No hay más productos pendientes de añadir al picking.`,
@@ -137,7 +148,7 @@ export class PickingScanditService {
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
             }
           } else if (response.action == 'matrix_simple_scan_packings') {
-            ScanditMatrixSimple.sendPickingStoresProducts([]);
+            ScanditMatrixSimple.sendPickingStoresProducts([], [], null);
             ScanditMatrixSimple.showButtonPickingStorePacking(false);
             ScanditMatrixSimple.showButtonPickingStoreFinish(true);
             ScanditMatrixSimple.setTextPickingStores(true, `Escanee los embalajes a usar en el picking`);
@@ -154,19 +165,51 @@ export class PickingScanditService {
             } else {
               this.finishPicking();
             }
+          } else if (response.action == 'filters') {
+            filtersToGetProducts = {
+              models: response.filters.model.map(filter => {
+                return filter.id;
+              }),
+              brands: response.filters.brand.map(filter => {
+                return filter.id;
+              }),
+              colors: response.filters.color.map(filter => {
+                return filter.id;
+              }),
+              sizes: response.filters.size.map(filter => {
+                return filter.name;
+              }),
+              orderbys: response.filters.sort.map(filter => {
+                return {
+                  type: filter.id,
+                  order: filter.type_sort.toLowerCase()
+                };
+              })
+            };
+            this.pickingStoreService
+              .postLineRequestFiltered(filtersToGetProducts)
+              .subscribe((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+                if (res.code == 200) {
+                  listProductsToStorePickings = res.data.pending;
+                  listProductsProcessed = res.data.processed;
+                  ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                  this.refreshListPickingsStores();
+                }
+              });
           }
         }
       }
     }, 'Picking', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color, textPickingStoresInit);
   }
 
-  private loadLineRequestsPending(listProductsToStorePickings: StoresLineRequestsModel.LineRequests[], typePacking: number) {
+  private loadLineRequestsPending(listProductsToStorePickings: StoresLineRequestsModel.LineRequests[], listProductsProcessed: StoresLineRequestsModel.LineRequests[], filtersToGetProducts: PickingStoreModel.ParamsFiltered, typePacking: number) {
     this.pickingStoreService
-      .getLineRequestsPending()
-      .subscribe((res: PickingStoreModel.ResponseLineRequestsPending) => {
+      .postLineRequestFiltered(filtersToGetProducts)
+      .subscribe((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
         if (res.code == 200 || res.code == 201) {
-          listProductsToStorePickings = res.data.results;
-          ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings);
+          listProductsToStorePickings = res.data.pending;
+          listProductsProcessed = res.data.processed;
+          ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
           if (listProductsToStorePickings.length < 1) {
             setTimeout(() => {
               ScanditMatrixSimple.setText(

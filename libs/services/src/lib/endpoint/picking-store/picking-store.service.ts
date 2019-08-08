@@ -15,6 +15,7 @@ export class PickingStoreService {
   private getLineRequestsUrl = environment.apiBase + '/picking/store/lines-request';
   private postLineRequestsPendingUrl = environment.apiBase + '/picking/store/lines-request/pending';
   private postCheckPackingUrl = environment.apiBase + '/picking/store/packing';
+  private postLineRequestsFilteredUrl = environment.apiBase + '/picking/store/lines-request/filtered';
 
   constructor(
     private http: HttpClient,
@@ -46,6 +47,13 @@ export class PickingStoreService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.post<PickingStoreModel.ResponsePostPacking>(this.postCheckPackingUrl, parameters, { headers });
+    }));
+  }
+
+  postLineRequestFiltered(parameters: PickingStoreModel.ParamsFiltered) : Observable<PickingStoreModel.ResponseLineRequestsFiltered> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<PickingStoreModel.ResponseLineRequestsFiltered>(this.postLineRequestsFilteredUrl, parameters, { headers });
     }));
   }
 

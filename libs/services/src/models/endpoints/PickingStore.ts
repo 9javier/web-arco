@@ -12,7 +12,8 @@ export namespace PickingStoreModel {
   }
 
   export interface SendProcess {
-    productReference: string
+    productReference: string,
+    filters: ParamsFiltered
   }
 
   export interface ChangeStatus {
@@ -46,9 +47,44 @@ export namespace PickingStoreModel {
     totalResults: number;
   }
 
+  interface FiltersSortTypes {
+    type: number,
+    order: string
+  }
+
+  export interface ParamsFiltered {
+    models: number[],
+    colors: number[],
+    sizes: string[],
+    brands: number[],
+    orderbys: FiltersSortTypes[]
+  }
+
+  export interface FilterObj {
+    id: number,
+    name: string,
+    reference?: string
+  }
+
+  export interface Filters {
+    brands?: FilterObj[],
+    colors?: FilterObj[],
+    models?: FilterObj[],
+    ordertypes?: FilterObj[],
+    sizes?: FilterObj[]
+  }
+
   export interface ResponseDataLineRequestsPending {
     results: StoresLineRequestsModel.LineRequests[];
-    pagination: Pagination
+    pagination: Pagination,
+    filters: Filters
+  }
+
+
+  export interface ResponseDataLineRequestsFiltered {
+    pending: StoresLineRequestsModel.LineRequests[],
+    processed: StoresLineRequestsModel.LineRequests[],
+    filters: Filters
   }
 
   export interface ResponseLineRequestsPending {
@@ -65,10 +101,17 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
+  export interface ResponseLineRequestsFiltered {
+    data: ResponseDataLineRequestsFiltered,
+    message: string,
+    code: number,
+    errors: any
+  }
+
   export interface ResponseSendProcess {
     data: {
       inventory: any,
-      linesRequestPending: ResponseDataLineRequestsPending
+      linesRequestFiltered: ResponseDataLineRequestsFiltered
     };
     message: string;
     code: number;
