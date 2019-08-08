@@ -2,20 +2,37 @@ package com.mirasense.scanditsdk.plugin;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mirasense.scanditsdk.plugin.adapters.SearchItemsAdapter;
+import com.mirasense.scanditsdk.plugin.adapters.SortItemsAdapter;
+import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
+import com.mirasense.scanditsdk.plugin.models.KeyPairBoolData;
+import com.mirasense.scanditsdk.plugin.models.SingleFilterPickingStores;
+import com.mirasense.scanditsdk.plugin.utility.DragItemTouchHelper;
 import com.scandit.barcodepicker.BarcodePicker;
 import com.scandit.barcodepicker.ScanOverlay;
 import com.scandit.barcodepicker.ScanSettings;
@@ -27,12 +44,35 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class MatrixPickingStores extends Activity {
 
   public static Activity matrixPickingStores;
   private BarcodePicker mPicker;
   private MatrixSimpleOverlayListener matrixScanListener;
   private FrameLayout pickerContainer;
+
+  private SearchItemsAdapter searchItemsAdapter;
+  private SortItemsAdapter sortItemsAdapter;
+  private ItemTouchHelper mItemTouchHelper;
+  private static FiltersPickingStores filtersPickingStores;
+
+  private static ArrayList<KeyPairBoolData> filtersSortTypes;
+  private static ArrayList<KeyPairBoolData> filtersModels;
+  private static ArrayList<KeyPairBoolData> filtersBrands;
+  private static ArrayList<KeyPairBoolData> filtersSizes;
+  private static ArrayList<KeyPairBoolData> filtersColors;
+
+  private final int FILTER_SORT_TYPE = 1;
+  private final int FILTER_MODEL = 2;
+  private final int FILTER_BRAND = 3;
+  private final int FILTER_SIZE = 4;
+  private final int FILTER_COLOR = 5;
+
+  private static final int SORT_TYPE_NONE = 1;
+  private static final int SORT_TYPE_ASC = 2;
+  private static final int SORT_TYPE_DESC = 3;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +209,268 @@ public class MatrixPickingStores extends Activity {
       ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
     });
 
+    initializeFilters(resources, package_name);
+
     matrixPickingStores = this;
+  }
+
+  public static void loadFiltersPicking(FiltersPickingStores newFilters) {
+    filtersPickingStores = newFilters;
+
+    if (filtersPickingStores != null) {
+      filtersSortTypes = new ArrayList<>();
+      filtersModels = new ArrayList<>();
+      filtersBrands = new ArrayList<>();
+      filtersSizes = new ArrayList<>();
+      filtersColors = new ArrayList<>();
+
+      if (filtersPickingStores.getOrderTypes().size() > 0) {
+        for (SingleFilterPickingStores orderType : filtersPickingStores.getOrderTypes()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(orderType.getId());
+          keyPairBoolData.setName(orderType.getName());
+          keyPairBoolData.setObject(orderType);
+          filtersSortTypes.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getModels().size() > 0) {
+        for (SingleFilterPickingStores model : filtersPickingStores.getModels()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(model.getId());
+          keyPairBoolData.setName(model.getReference() + " - " + model.getName());
+          keyPairBoolData.setObject(model);
+          filtersModels.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getBrands().size() > 0) {
+        for (SingleFilterPickingStores brand : filtersPickingStores.getBrands()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(brand.getId());
+          keyPairBoolData.setName(brand.getName());
+          keyPairBoolData.setObject(brand);
+          filtersBrands.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getSizes().size() > 0) {
+        for (SingleFilterPickingStores size : filtersPickingStores.getSizes()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(size.getId());
+          keyPairBoolData.setName(size.getName());
+          keyPairBoolData.setObject(size);
+          filtersSizes.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getColors().size() > 0) {
+        for (SingleFilterPickingStores color : filtersPickingStores.getColors()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(color.getId());
+          keyPairBoolData.setName(color.getName());
+          keyPairBoolData.setObject(color);
+          filtersColors.add(keyPairBoolData);
+        }
+      }
+    }
+  }
+
+  private void initializeFilters(Resources resources, String package_name) {
+    TextView tvSortBy = findViewById(resources.getIdentifier("tvSortBy", "id", package_name));
+    TextView tvFilterModel = findViewById(resources.getIdentifier("tvFilterModel", "id", package_name));
+    TextView tvFilterBrand = findViewById(resources.getIdentifier("tvFilterBrand", "id", package_name));
+    TextView tvFilterSize = findViewById(resources.getIdentifier("tvFilterSize", "id", package_name));
+    TextView tvFilterColor = findViewById(resources.getIdentifier("tvFilterColor", "id", package_name));
+
+    tvSortBy.setOnClickListener(view -> {
+      this.openSortItemsSpinner(resources, package_name, tvSortBy, filtersSortTypes, FILTER_SORT_TYPE, "Ordenar por");
+    });
+    tvFilterModel.setOnClickListener(view -> {
+      this.openSearchItemsSpinner(resources, package_name, tvFilterModel, filtersModels, FILTER_MODEL, "Modelos");
+    });
+    tvFilterBrand.setOnClickListener(view -> {
+      this.openSearchItemsSpinner(resources, package_name, tvFilterBrand, filtersBrands, FILTER_BRAND, "Marcas");
+    });
+    tvFilterSize.setOnClickListener(view -> {
+      this.openSearchItemsSpinner(resources, package_name, tvFilterSize, filtersSizes, FILTER_SIZE, "Tallas");
+    });
+    tvFilterColor.setOnClickListener(view -> {
+      this.openSearchItemsSpinner(resources, package_name, tvFilterColor, filtersColors, FILTER_COLOR, "Colores");
+    });
+  }
+
+  private void openSearchItemsSpinner(Resources resources, String package_name, TextView tvSelected, final ArrayList<KeyPairBoolData> listItems, int filterType, String titleAlert) {
+    if (filtersPickingStores != null) {
+      ViewGroup viewGroup = findViewById(android.R.id.content);
+      View customView = LayoutInflater.from(this).inflate(resources.getIdentifier("spinner_search", "layout", package_name), viewGroup, false);
+
+      final ArrayList<KeyPairBoolData> originListItemsForCancel = new ArrayList<>();
+      for (KeyPairBoolData keyPair : listItems) {
+        originListItemsForCancel.add(new KeyPairBoolData(keyPair));
+      }
+
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, resources.getIdentifier("DarkAlert", "style", package_name));
+      builder.setTitle(titleAlert);
+      builder.setPositiveButton("Aceptar", (dialogInterface, i) -> {
+        if (searchItemsAdapter.getSelectedItems().size() > 0) {
+          ArrayList<String> listValuesToShow = new ArrayList<>();
+          for (KeyPairBoolData value: searchItemsAdapter.getSelectedItems()) {
+            String fieldToJoin = ((SingleFilterPickingStores)value.getObject()).getName();
+            if (filterType == FILTER_MODEL) {
+              fieldToJoin = ((SingleFilterPickingStores)value.getObject()).getReference();
+            }
+            listValuesToShow.add(fieldToJoin);
+          }
+          String valuesSelected = "";
+          if (searchItemsAdapter.getSelectedItems().size() > 1) {
+            valuesSelected = "("+searchItemsAdapter.getSelectedItems().size()+") ";
+          }
+          valuesSelected = valuesSelected.concat(TextUtils.join(", ", listValuesToShow));
+          tvSelected.setText(valuesSelected);
+        }
+
+        switch (filterType) {
+          case FILTER_MODEL:
+            filtersModels = searchItemsAdapter.getAllItems();
+            break;
+          case FILTER_BRAND:
+            filtersBrands = searchItemsAdapter.getAllItems();
+            break;
+          case FILTER_SIZE:
+            filtersSizes = searchItemsAdapter.getAllItems();
+            break;
+          case FILTER_COLOR:
+            filtersColors = searchItemsAdapter.getAllItems();
+            break;
+        }
+        responseFiltersToIonic();
+      });
+      builder.setNegativeButton("Cancelar", (dialogInterface, i) -> {
+        switch (filterType) {
+          case FILTER_MODEL:
+            filtersModels = originListItemsForCancel;
+            break;
+          case FILTER_BRAND:
+            filtersBrands = originListItemsForCancel;
+            break;
+          case FILTER_SIZE:
+            filtersSizes = originListItemsForCancel;
+            break;
+          case FILTER_COLOR:
+            filtersColors = originListItemsForCancel;
+            break;
+        }
+      });
+      builder.setView(customView).create().show();
+
+      if (listItems.size() > 0) {
+        searchItemsAdapter = new SearchItemsAdapter(this, listItems, resources, package_name, resources.getIdentifier("item_spinner_search", "layout", package_name));
+
+        RecyclerView rvItemsToFilter = customView.findViewById(resources.getIdentifier("rvItemsToFilter", "id", package_name));
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rvItemsToFilter.setLayoutManager(llm);
+        rvItemsToFilter.setAdapter(searchItemsAdapter);
+
+        EditText etFilterSearch = customView.findViewById(resources.getIdentifier("etFilterSearch", "id", package_name));
+        etFilterSearch.addTextChangedListener(new TextWatcher() {
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            searchItemsAdapter.getFilter().filter(s.toString());
+          }
+
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+          }
+
+          @Override
+          public void afterTextChanged(Editable s) {
+          }
+        });
+      } else {
+        Log.i("Test::", "No filters for brand");
+      }
+    }
+  }
+
+  private  void openSortItemsSpinner(Resources resources, String package_name, TextView tvSelected, final ArrayList<KeyPairBoolData> listItems, int filterType, String titleAlert) {
+    if (filtersPickingStores != null) {
+      ViewGroup viewGroup = findViewById(android.R.id.content);
+      View customView = LayoutInflater.from(this).inflate(resources.getIdentifier("spinner_sort", "layout", package_name), viewGroup, false);
+
+      final ArrayList<KeyPairBoolData> originListItemsForCancel = new ArrayList<>();
+      for (KeyPairBoolData keyPair : listItems) {
+        originListItemsForCancel.add(new KeyPairBoolData(keyPair));
+      }
+
+      AlertDialog.Builder builder = new AlertDialog.Builder(this, resources.getIdentifier("DarkAlert", "style", package_name));
+      builder.setTitle(titleAlert);
+      builder.setPositiveButton("Aceptar", (dialogInterface, i) -> {
+        if (sortItemsAdapter.getSelectedItems().size() > 0) {
+          ArrayList<String> listValuesToShow = new ArrayList<>();
+          for (KeyPairBoolData value: sortItemsAdapter.getSelectedItems()) {
+            SingleFilterPickingStores singleFilterPickingStores = ((SingleFilterPickingStores)value.getObject());
+            String typeSortText = "ASC";
+            if (value.getTypeSort() == SORT_TYPE_DESC) {
+              typeSortText = "DESC";
+            }
+            listValuesToShow.add(singleFilterPickingStores.getName() + " " + typeSortText);
+          }
+          String valuesSelected = "";
+          if (sortItemsAdapter.getSelectedItems().size() > 1) {
+            valuesSelected = "("+sortItemsAdapter.getSelectedItems().size()+") ";
+          }
+          valuesSelected = valuesSelected.concat(TextUtils.join(", ", listValuesToShow));
+          tvSelected.setText(valuesSelected);
+        }
+
+        if (filterType == FILTER_SORT_TYPE) {
+          filtersSortTypes = sortItemsAdapter.getAllItems();
+        }
+
+        responseFiltersToIonic();
+      });
+      builder.setNegativeButton("Cancelar", (dialogInterface, i) -> {
+        if (filterType == FILTER_SORT_TYPE) {
+          filtersSortTypes = originListItemsForCancel;
+        }
+      });
+      builder.setView(customView).create().show();
+
+      if (listItems.size() > 0) {
+        sortItemsAdapter = new SortItemsAdapter(this, listItems, resources, package_name);
+
+        RecyclerView rvItemsToFilter = customView.findViewById(resources.getIdentifier("rvItemsToSort", "id", package_name));
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        rvItemsToFilter.setLayoutManager(llm);
+        rvItemsToFilter.setAdapter(sortItemsAdapter);
+
+        sortItemsAdapter.setDragListener(viewHolder -> mItemTouchHelper.startDrag(viewHolder));
+        ItemTouchHelper.Callback callback = new DragItemTouchHelper(sortItemsAdapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(rvItemsToFilter);
+      }
+    }
+  }
+
+  private void responseFiltersToIonic() {
+    JSONObject jsonObject = new JSONObject();
+    try {
+      jsonObject.put("result", true);
+      jsonObject.put("action", "filters");
+      JSONObject filtersToIonic = new JSONObject();
+      filtersToIonic.put("sort", KeyPairBoolData.arrayToJsonArray(filtersSortTypes));
+      filtersToIonic.put("model", KeyPairBoolData.arrayToJsonArray(filtersModels));
+      filtersToIonic.put("brand", KeyPairBoolData.arrayToJsonArray(filtersBrands));
+      filtersToIonic.put("size", KeyPairBoolData.arrayToJsonArray(filtersSizes));
+      filtersToIonic.put("color", KeyPairBoolData.arrayToJsonArray(filtersColors));
+      jsonObject.put("filters", filtersToIonic);
+    } catch (JSONException e) {
+
+    }
+    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+    pResult.setKeepCallback(true);
+    ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
   }
 
   @Override

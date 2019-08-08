@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:padding="15dp"
+  android:focusable="true"
+  android:clickable="true"
+  android:background="@drawable/bg_ripple_item_spinner">
+
+  <TextView
+    android:id="@+id/tvItemSpinnerSearch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_centerVertical="true"
+    android:layout_toLeftOf="@+id/cbItemSpinnerSearch"
+    android:text="Item Name"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="@color/white"
+    android:layout_toStartOf="@+id/cbItemSpinnerSearch"
+    android:layout_alignParentStart="true"/>
+
+  <CheckBox
+    android:id="@+id/cbItemSpinnerSearch"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:clickable="false"
+    android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

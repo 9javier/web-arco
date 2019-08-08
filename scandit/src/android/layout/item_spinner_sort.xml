@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:focusable="true"
+  android:clickable="true"
+  android:background="@drawable/bg_ripple_item_spinner">
+
+  <ImageButton
+    android:id="@+id/ibSort"
+    android:layout_width="39dp"
+    android:layout_height="48dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="8dp"
+    android:background="@android:color/transparent"
+    android:tint="@color/btn_sort"
+    android:src="@drawable/ic_sort_16dp"
+    android:layout_alignParentStart="true"
+    android:layout_centerVertical="true"/>
+
+  <TextView
+    android:id="@+id/tvItemSpinnerSort"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_centerVertical="true"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:text="Item name"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="@color/white"
+    android:layout_toEndOf="@+id/ibSort"/>
+
+  <TextView
+    android:id="@+id/tvSortTypeSelected"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_centerVertical="true"
+    android:paddingStart="8dp"
+    android:paddingEnd="15dp"
+    android:text="ASC."
+    android:textColor="@color/white"
+    android:visibility="gone"/>
+
+  <ImageView
+    android:id="@+id/ivSortTypeNoSelected"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_centerVertical="true"
+    android:paddingStart="8dp"
+    android:paddingEnd="15dp"
+    android:tint="@color/white"
+    android:src="@drawable/ic_sort_none"
+    android:visibility="visible"/>
+
+</RelativeLayout>

@@ -181,6 +181,7 @@
 
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/UiUtils.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/ScreenshotHandler.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/DragItemTouchHelper.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/bubbles/BaseBubble.java" target-dir="src/com/mirasense/scanditsdk/plugin/bubbles"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/bubbles/BubbleData.java" target-dir="src/com/mirasense/scanditsdk/plugin/bubbles"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/bubbles/IndicatorState.java" target-dir="src/com/mirasense/scanditsdk/plugin/bubbles"/>
@@ -201,6 +202,8 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Season.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Size.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SearchItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SortItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
 
 
     <source-file src="src/android/drawable/bg_rounded_bottom.xml" target-dir="res/drawable"/>
@@ -212,12 +215,19 @@
     <source-file src="src/android/drawable/ic_product.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_close.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_search.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_arrow_down.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_sort.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_sort_16dp.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_sort_none.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/arrow_back.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/corner_bottom_left.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/corner_bottom_right.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/corner_top_left.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/corner_top_right.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/bg_round_button.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_filters_picking_stores.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_et_spinner_search.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_ripple_item_spinner.xml" target-dir="res/drawable"/>
     <source-file src="src/android/layout/bubble_maximised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised_data.xml" target-dir="res/layout"/>
@@ -237,7 +247,13 @@
     <source-file src="src/android/layout/column_sizes_extended_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/table_sizes_extended_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/extended_product_info.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/filters_picking_stores.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/spinner_search.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/spinner_sort.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/item_spinner_search.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/item_spinner_sort.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
+    <source-file src="src/android/styles.xml" target-dir="res/values"/>
 
   </platform>
   <platform name="windows">

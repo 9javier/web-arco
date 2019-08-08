@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.mirasense.scanditsdk.plugin.adapters.PickingStoresAdapter;
+import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
 import com.scandit.barcodepicker.ScanSettings;
 import com.scandit.barcodepicker.ScanditLicense;
@@ -1097,8 +1098,18 @@ public class ScanditSDK extends CordovaPlugin {
       Resources resources = cordova.getActivity().getApplication().getResources();
 
       JSONArray products = null;
+      JSONArray productsProcessed = null;
+      JSONObject filters = null;
+      FiltersPickingStores filtersPickingStores = null;
       try {
         products = args.getJSONArray(0);
+        productsProcessed = args.getJSONArray(1);
+        filters = args.getJSONObject(2);
+        if (filters != null) {
+          filtersPickingStores = new FiltersPickingStores();
+          filtersPickingStores.fromJsonObject(filters);
+          MatrixPickingStores.loadFiltersPicking(filtersPickingStores);
+        }
       } catch (JSONException e) {
         e.printStackTrace();
       }

@@ -132,9 +132,11 @@ var ScanditMatrixSimple = {
   /**
    *
    * @param products
+   * @param productsProcessed
+   * @param filters
    */
-  sendPickingStoresProducts: function (products) {
-    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadProducts", [products]);
+  sendPickingStoresProducts: function (products, productsProcessed, filters) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadProducts", [products, productsProcessed, filters]);
   },
   /**
    *
