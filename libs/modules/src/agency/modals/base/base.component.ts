@@ -14,7 +14,7 @@ export class BaseComponent implements OnInit {
       this.form.patchValue(agency);
   }
 
-  private form:FormGroup = this.formBuilder.group({
+  form:FormGroup = this.formBuilder.group({
     id:[''],
     name:['',Validators.required],
     address:['',Validators.required],

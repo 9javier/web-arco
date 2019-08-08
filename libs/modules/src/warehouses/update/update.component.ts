@@ -156,7 +156,10 @@ export class UpdateComponent implements OnInit {
       this.buildings = buildings
     });
   }
-
+  onlyNumbers(event){
+    let key = event.key
+    return /[0-9]/.test(key);
+  }
   /**
   * delete empty values 
   */

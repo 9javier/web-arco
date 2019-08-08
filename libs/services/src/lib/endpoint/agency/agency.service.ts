@@ -42,7 +42,7 @@ export class AgencyService {
     return this.http.delete(this.singleRequestUrl.replace("{{id}}",String(id)));
   }
 
-  store(agency:AgencyModel.Request):Observable<AgencyModel.Agency>{
+  store(agency:AgencyModel.Agency):Observable<AgencyModel.Agency>{
     return this.http.post<AgencyModel.SingleResponse>(this.requestUrl,agency).pipe(map(response=>{
       return response.data;
     }));
@@ -53,7 +53,7 @@ export class AgencyService {
    * @param id 
    * @param agency 
    */
-  update(id:number, agency:AgencyModel.Request):Observable<AgencyModel.Agency>{
+  update(id:number, agency:AgencyModel.Agency):Observable<AgencyModel.Agency>{
     return this.http.put<AgencyModel.SingleResponse>(this.singleRequestUrl.replace("{{id}}",String(id)),agency).pipe(map(response=>{
       return response.data;
     }))
