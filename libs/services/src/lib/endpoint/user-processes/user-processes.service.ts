@@ -22,7 +22,7 @@ export class UserProcessesService {
   /**Urls for the user-processes service */
   private getIndexUrl:string = environment.apiBase+'/users/processes';
   private postAssignUrl:string = environment.apiBase+'/users/processes/assign';
-  private postUnAssignUrl:string = environment.apiBase+'/api/users/processes/unassign';
+  private postUnAssignUrl:string = environment.apiBase+'/users/processes/unassign';
 
   constructor(
     private http: HttpClient,

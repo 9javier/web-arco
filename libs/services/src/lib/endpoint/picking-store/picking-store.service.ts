@@ -11,10 +11,10 @@ import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
 })
 export class PickingStoreService {
 
-  private getInitiatedUrl = environment.apiBase + '/picking/store/initiated';
-  private getLineRequestsUrl = environment.apiBase + '/picking/store/lines-request';
-  private postLineRequestsPendingUrl = environment.apiBase + '/picking/store/lines-request/pending';
-  private postCheckPackingUrl = environment.apiBase + '/picking/store/packing';
+  private getInitiatedUrl = environment.apiBase + '/processes/picking-store/initiated';
+  private getLineRequestsUrl = environment.apiBase + '/processes/picking-store/lines-request';
+  private postLineRequestsPendingUrl = environment.apiBase + '/processes/picking-store/lines-request/pending';
+  private postCheckPackingUrl = environment.apiBase + '/processes/picking-store/packing';
 
   constructor(
     private http: HttpClient,
@@ -51,8 +51,8 @@ export class PickingStoreService {
 
 
   // Send_Process endpoints
-  private postPickingStoreProcessUrl = environment.apiBase + '/picking/store/process';
-  private postPickingStoreChangeStatusUrl = environment.apiBase + '/picking/store/change-status';
+  private postPickingStoreProcessUrl = environment.apiBase + '/processes/picking-store/process';
+  private postPickingStoreChangeStatusUrl = environment.apiBase + '/processes/picking-store/change-status';
 
   postPickingStoreProcess(parameters: PickingStoreModel.SendProcess) : Observable<PickingStoreModel.ResponseSendProcess> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {

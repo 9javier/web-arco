@@ -43,7 +43,7 @@ export class WarehousesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<WarehouseModel.ResponseUpdate>(
-      this.deleteGroupToWarehouseUrl.replace("{{warehousesId}}",String(warehousesId)).replace("{{groupId}}",String(groupId)),
+      this.deleteGroupToWarehouseUrl.replace("{{warehouseId}}",String(warehousesId)).replace("{{groupId}}",String(groupId)),
       {},
       {
         headers: headers,
@@ -108,7 +108,7 @@ export class WarehousesService {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<WarehouseModel.ResponseDelete>(
-      this.deleteGroupToWarehouseUrl.replace("{{warehousesId}}",String(warehousesId)).replace("{{groupId}}",String(groupId)),
+      this.deleteGroupToWarehouseUrl.replace("{{warehouseId}}",String(warehousesId)).replace("{{groupId}}",String(groupId)),
       {
         headers: headers,
         observe: 'response'

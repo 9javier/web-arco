@@ -38,9 +38,9 @@ export class TextareaComponent implements OnInit {
   scanContainerToNotFound: string = null;
   intervalCleanLastCodeScanned = null;
 
-  private postVerifyPackingUrl = environment.apiBase+"/workwaves/order/packing";
-  private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
-  private putProductNotFoundUrl = environment.apiBase+"/shoes/picking/{{workWaveOrderId}}/product-not-found/{{productId}}";
+  private postVerifyPackingUrl = environment.apiBase+"/processes/picking-main/packing";
+  private getPendingListByPickingUrl = environment.apiBase+"/processes/picking-main/shoes/{{id}}/pending";
+  private putProductNotFoundUrl = environment.apiBase+"/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
   constructor(

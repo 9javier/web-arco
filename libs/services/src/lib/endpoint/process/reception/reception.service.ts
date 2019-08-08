@@ -12,11 +12,11 @@ import {ReceptionModel} from "../../../../models/endpoints/Reception";
 export class ReceptionService {
 
   /**Urls for the picking service */
-  private postReceiveUrl = environment.apiBase + '/process/receive';
-  private getCheckPackingUrl = environment.apiBase + '/process/receive/check/';
-  private getCheckProductsPackingUrl = environment.apiBase + '/process/receive/check/{{reference}}/products';
-  private postReceiveProductUrl = environment.apiBase + '/process/receive/products';
-  private getNotReceivedProductsUrl = environment.apiBase + '/process/receive/notreceived/';
+  private postReceiveUrl = environment.apiBase + '/processes/receive-store';
+  private getCheckPackingUrl = environment.apiBase + '/processes/receive-store/check/';
+  private getCheckProductsPackingUrl = environment.apiBase + '/processes/receive-store/check/{{reference}}/products';
+  private postReceiveProductUrl = environment.apiBase + '/processes/receive-store/products';
+  private getNotReceivedProductsUrl = environment.apiBase + '/processes/receive-store/notreceived/';
 
   constructor(
     private http: HttpClient,

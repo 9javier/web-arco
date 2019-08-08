@@ -11,8 +11,8 @@ import {ShoesPickingModel} from "../../../models/endpoints/ShoesPicking";
 })
 export class ShoesPickingService {
 
-  private getListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/picking";
-  private getPendingListByPickingUrl = environment.apiBase+"/shoes/picking/{{id}}/pending";
+  private getListByPickingUrl = environment.apiBase+"/processes/picking-main/shoes//{{id}}";
+  private getPendingListByPickingUrl = environment.apiBase+"/processes/picking-main/shoes/{{id}}/pending";
 
   constructor(
     private http: HttpClient,
