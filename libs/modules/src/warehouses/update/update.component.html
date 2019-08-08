@@ -27,6 +27,33 @@
             </div>
             <ion-input placeholder="Descripción" class="ion-margin-horizontal" formControlName="description" type="text" text></ion-input>
         </ion-item>
+        <!--Manage agency-->
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name="barcode"></ion-icon>
+            </div>
+            <ion-select placeholder="Manage agency" formControlName="manageAgencyId">
+                <ion-select-option *ngFor="let agency of agencies" [value]="agency.id">{{agency.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <!--Packing type-->
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name="barcode"></ion-icon>
+            </div>
+            <ion-select placeholder="Packing type" formControlName="TypePackingId">
+
+                <ion-select-option *ngFor="let packingType of packingTypes" [value]="packingType.id">{{packingType.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <!--MthresholdShippingStore-->
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <ion-icon color="medium" name="barcode"></ion-icon>
+            </div>
+            <ion-input style="text-transform: uppercase" (keypress)="onlyNumbers($event)" placeholder="Máximo de envíos" class="ion-margin-horizontal" formControlName="thresholdShippingStore" type="text" text></ion-input>
+        </ion-item>
+
         <!--Prefijo-->
         <ion-item>
             <div slot="start" class="slot-start-icon">

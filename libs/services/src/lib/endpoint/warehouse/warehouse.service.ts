@@ -21,6 +21,8 @@ export class WarehouseService {
   private getFullIndexUrl:string = environment.apiBase+"/warehouses/full";
   private warehouseMainUrl:string = environment.apiBase+"/warehouses/main";
 
+
+
   private _idWarehouseMain: number;
   private _listWarehouses: any[] = [];
   private _listHalls: any = {};

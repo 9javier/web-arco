@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController, NavParams } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel, AgencyService, AgencyModel } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 
 
@@ -20,7 +20,7 @@ export class UpdateComponent implements OnInit {
     is_store: [false, []],
     groupId:'',
     groupsWarehousePicking:[''],
-    prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
+    prefix_container:['',[Validators.required,Validators.minLength(1),Validators.maxLength(4)]],
     hasBuilding: [false,[]],
     buildingId:[''],
     is_main: [false, []],
@@ -28,15 +28,21 @@ export class UpdateComponent implements OnInit {
     halls:'',
     rows:'',
     columns:'',
+    TypePackingId:['',Validators.required],
+    thresholdShippingStore:['',Validators.required],
+    manageAgencyId:'',
     is_outlet:false
   });
   groupWarehousesPicking:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
   private warehouseId;
+  agencies:AgencyModel.Agency[] = [];
+  packingTypes:Array<any> = [];
   private currentHasRacks;
   buildings:Array<BuildingModel.Building> = [];
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
   constructor(private modalCtrl:ModalController,
     private formBuilder:FormBuilder,
+    private agencyService:AgencyService,
     private warehousesService:WarehousesService,
     private warehouseGroupService:WarehouseGroupService,
     private cd: ChangeDetectorRef,
@@ -62,6 +68,8 @@ export class UpdateComponent implements OnInit {
       this.cd.detectChanges();
     });
 
+    
+
         /**Listen for changes on hasBuilding control */
         this.updateForm.get("hasBuilding").valueChanges.subscribe((hasBuilding)=>{
           let buildingId = this.updateForm.get("buildingId")
@@ -84,6 +92,23 @@ export class UpdateComponent implements OnInit {
       this.cd.detectChanges();
     });    
   }
+    /**
+   * Get all agencies
+   */
+  getAgencies(){
+    this.agencyService.getAll().subscribe(agencies=>{
+      this.agencies = agencies;
+    })
+  }
+
+  /**
+   * Get the packing types
+   */
+  getPackingTypes(){
+    this.warehousesService.getTypePacking().subscribe((packingTypes)=>{
+      this.packingTypes = packingTypes;
+    })
+  }
 
   /**
    * get the warehouse to edit
@@ -96,6 +121,10 @@ export class UpdateComponent implements OnInit {
       let warehouseToPatch:any = warehouse;
       if(warehouse.group)
         warehouseToPatch.groupId = warehouseToPatch.group.id;
+      if(warehouseToPatch.manageAgency)
+        warehouseToPatch.manageAgencyId = warehouseToPatch.manageAgency.id;
+      if(warehouseToPatch.packingType)
+        warehouseToPatch.TypePackingId = warehouseToPatch.packingType;
       warehouseToPatch.groupsWarehousePicking = warehouseToPatch.groupsWarehousePicking.map(group=>{
         return group.id
       });
@@ -134,6 +163,10 @@ export class UpdateComponent implements OnInit {
   sanitize(object:any):Object{
     object = JSON.parse(JSON.stringify(object));
     object.prefix_container = object.prefix_container.toUpperCase();
+    if(object.manageAgencyId)
+      object.manageAgencyId = parseInt(object.manageAgencyId);
+    if(object.thresholdShippingStore)
+      object.thresholdShippingStore = parseInt(object.thresholdShippingStore)
     Object.keys(object).forEach(key=>{
       let value = object[key];
       if(value === "" || value === null)
@@ -166,6 +199,8 @@ export class UpdateComponent implements OnInit {
   ngOnInit() {
     this.getWharehousesGroup();
     this.getBuildings();
+    this.getAgencies();
+    this.getPackingTypes();
     this.changeValidatorsAndValues();
     this.getGroupWarehousePicking();
   }

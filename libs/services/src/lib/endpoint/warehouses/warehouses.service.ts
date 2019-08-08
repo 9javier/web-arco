@@ -25,6 +25,7 @@ export class WarehousesService {
   private updateUrl = this.getShowUrl;
   private postAssignGroupToCategoryUrl:string = this.apiBase+"/warehouses/{{warehouseId}}/groups/{{groupId}}";
   private deleteGroupToWarehouseUrl:string = this.postAssignGroupToCategoryUrl;
+  private enumPackingUrl:string = environment.apiBase+"/types/packing";
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<Observable<HttpResponse<WarehouseModel.ResponseIndex>>> {
@@ -34,6 +35,15 @@ export class WarehousesService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+    /**
+   * Get enum of packing
+   */
+  getTypePacking(){
+    return this.http.get(this.enumPackingUrl).pipe(map((response:any)=>{
+      return response.data;
+    }))
   }
 
   async postAssignGroupToCategory(
