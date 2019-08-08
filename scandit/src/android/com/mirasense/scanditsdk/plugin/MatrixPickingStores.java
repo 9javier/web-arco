@@ -328,6 +328,23 @@ public class MatrixPickingStores extends Activity {
           }
           valuesSelected = valuesSelected.concat(TextUtils.join(", ", listValuesToShow));
           tvSelected.setText(valuesSelected);
+        } else {
+          String defaultMessageFilter = "";
+          switch (filterType) {
+            case FILTER_MODEL:
+              defaultMessageFilter = "Filtro modelo";
+              break;
+            case FILTER_BRAND:
+              defaultMessageFilter = "Filtro marca";
+              break;
+            case FILTER_SIZE:
+              defaultMessageFilter = "Filtro talla";
+              break;
+            case FILTER_COLOR:
+              defaultMessageFilter = "Filtro color";
+              break;
+          }
+          tvSelected.setText(defaultMessageFilter);
         }
 
         switch (filterType) {
@@ -422,6 +439,8 @@ public class MatrixPickingStores extends Activity {
           }
           valuesSelected = valuesSelected.concat(TextUtils.join(", ", listValuesToShow));
           tvSelected.setText(valuesSelected);
+        } else {
+          tvSelected.setText("Ordenar por");
         }
 
         if (filterType == FILTER_SORT_TYPE) {
