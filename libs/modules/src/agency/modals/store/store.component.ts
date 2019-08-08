@@ -32,7 +32,7 @@ export class StoreComponent implements OnInit {
    * Store new agency
    * @param agency
    */
-  submit(agency:AgencyModel.Request):void{
+  submit(agency:AgencyModel.Agency):void{
     this.intermediaryService.presentLoading();
     this.agencyService.store(agency).subscribe((response)=>{
       this.intermediaryService.dismissLoading();
