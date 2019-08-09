@@ -11,8 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.galvintec.prestaappkrack.tiendas.R;
-import com.mirasense.scanditsdk.plugin.adapters.PickingStoresAdapter;
+import com.galvintec.krack.logistica.dev.R;
 import com.mirasense.scanditsdk.plugin.adapters.ProcessedPickingStoresAdapter;
 
 import org.json.JSONObject;

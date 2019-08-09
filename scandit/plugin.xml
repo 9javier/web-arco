@@ -201,6 +201,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/ProductModel.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Season.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Size.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/LineRequestsProduct.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SearchItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SortItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
@@ -265,6 +266,7 @@
     <source-file src="src/android/layout/fragment_pending_products_picking_stores_full.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/fragment_processed_products_picking_stores.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/fragment_processed_products_picking_stores_full.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/product_info_picking_store.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
     <source-file src="src/android/styles.xml" target-dir="res/values"/>
 
