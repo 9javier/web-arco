@@ -178,6 +178,12 @@ export class MenuComponent implements OnInit {
           icon: 'people'
         },
         {
+          title:'Agencias',
+          id:'agency',
+          url:'/manage-agencies',
+          icon:'train'
+        },
+        {
           title: 'Edificios',
           id:'building',
           url: '/building',
@@ -195,12 +201,6 @@ export class MenuComponent implements OnInit {
       title:'Tarifas',
       id:'tariff-sga',
       url:'/tariff',
-      icon:'logo-usd'
-    },
-    {
-      title:'Agencias',
-      id:'agency',
-      url:'/manage-agencies',
       icon:'logo-usd'
     },
     {
