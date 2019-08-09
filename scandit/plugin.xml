@@ -206,6 +206,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SortItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PageAdapterFull.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PageAdapterSmall.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/ProcessedPickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/fragments/PendingProductsPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/fragments"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/fragments/PendingProductsPickingStoresFull.java" target-dir="src/com/mirasense/scanditsdk/plugin/fragments"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/fragments/ProcessedProductsPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/fragments"/>

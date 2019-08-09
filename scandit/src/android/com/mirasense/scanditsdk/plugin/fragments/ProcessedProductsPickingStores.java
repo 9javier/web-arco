@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.galvintec.krack.logistica.dev.R;
 import com.mirasense.scanditsdk.plugin.adapters.PickingStoresAdapter;
+import com.mirasense.scanditsdk.plugin.adapters.ProcessedPickingStoresAdapter;
 
 import org.json.JSONObject;
 
@@ -82,7 +83,7 @@ public class ProcessedProductsPickingStores extends Fragment {
   }
 
   public void updateListView(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
-    PickingStoresAdapter processedProductsAdapter = new PickingStoresAdapter(activity, productsProcessed, resources, package_name);
+    ProcessedPickingStoresAdapter processedProductsAdapter = new ProcessedPickingStoresAdapter(activity, productsProcessed, resources, package_name);
     ListView lvProcessedPickingProducts = mainView.findViewById(resources.getIdentifier("lvProcessedPickingProducts", "id", package_name));
     lvProcessedPickingProducts.setAdapter(processedProductsAdapter);
   }

@@ -1122,7 +1122,7 @@ public class ScanditSDK extends CordovaPlugin {
           listProductsPending.add(products.getJSONObject(i));
         }
         for (int i = 0; i < productsProcessed.length(); i++) {
-          listProductsProcessed.add(products.getJSONObject(i));
+          listProductsProcessed.add(productsProcessed.getJSONObject(i));
         }
       } catch (JSONException e) {
         e.printStackTrace();
