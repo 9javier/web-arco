@@ -201,6 +201,9 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/ProductModel.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Season.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Size.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/FiltersPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/KeyPairBoolData.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/SingleFilterPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SearchItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SortItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
