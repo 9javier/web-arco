@@ -1,15 +1,20 @@
 package com.mirasense.scanditsdk.plugin;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -27,8 +32,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.mirasense.scanditsdk.plugin.adapters.PageAdapterFull;
+import com.mirasense.scanditsdk.plugin.adapters.PageAdapterSmall;
 import com.mirasense.scanditsdk.plugin.adapters.SearchItemsAdapter;
 import com.mirasense.scanditsdk.plugin.adapters.SortItemsAdapter;
+import com.mirasense.scanditsdk.plugin.fragments.PendingProductsPickingStores;
+import com.mirasense.scanditsdk.plugin.fragments.PendingProductsPickingStoresFull;
+import com.mirasense.scanditsdk.plugin.fragments.ProcessedProductsPickingStores;
+import com.mirasense.scanditsdk.plugin.fragments.ProcessedProductsPickingStoresFull;
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.KeyPairBoolData;
 import com.mirasense.scanditsdk.plugin.models.SingleFilterPickingStores;
@@ -46,7 +57,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MatrixPickingStores extends Activity {
+public class MatrixPickingStores extends AppCompatActivity implements ProcessedProductsPickingStores.OnFragmentInteractionListener, PendingProductsPickingStores.OnFragmentInteractionListener, PendingProductsPickingStoresFull.OnFragmentInteractionListener, ProcessedProductsPickingStoresFull.OnFragmentInteractionListener {
 
   public static Activity matrixPickingStores;
   private BarcodePicker mPicker;
@@ -74,6 +85,9 @@ public class MatrixPickingStores extends Activity {
   private static final int SORT_TYPE_ASC = 2;
   private static final int SORT_TYPE_DESC = 3;
 
+  private static PageAdapterSmall pageAdapterSmall;
+  private static PageAdapterFull pageAdapterFull;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -93,12 +107,6 @@ public class MatrixPickingStores extends Activity {
     String package_name = getApplication().getPackageName();
     Resources resources = getApplication().getResources();
 
-    ActionBar actionBar = getActionBar();
-    actionBar.setDisplayShowCustomEnabled(true);
-    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(backgroundTitle)));
-    actionBar.setCustomView(resources.getIdentifier("title_bar_matrixsimple", "layout", package_name));
-    ScanditSDK.setActionBar(actionBar);
-
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
       WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -106,6 +114,13 @@ public class MatrixPickingStores extends Activity {
       WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
     setContentView(resources.getIdentifier("references_matrix_picking_stores", "layout", package_name));
+
+    Toolbar toolbarPickingStores = findViewById(resources.getIdentifier("toolbarPickingStores", "id", package_name));
+    setSupportActionBar(toolbarPickingStores);
+
+    ActionBar actionBar = getSupportActionBar();
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(backgroundTitle)));
 
     ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setText(title);
     ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setTextColor(Color.parseColor(colorTitle));
@@ -175,6 +190,53 @@ public class MatrixPickingStores extends Activity {
       LinearLayout llListProductsFull = findViewById(resources.getIdentifier("llListProductsFull", "id", package_name));
       llListProductsFull.setVisibility(View.GONE);
     });
+
+    pageAdapterSmall = new PageAdapterSmall(getSupportFragmentManager(), 2);
+    pageAdapterFull = new PageAdapterFull(getSupportFragmentManager(), 2);
+
+    // region Small list of products
+    LinearLayout llTabsSmall = findViewById(resources.getIdentifier("tabsSmall", "id", package_name));
+    ViewPager vpTabsSmall = llTabsSmall.findViewById(resources.getIdentifier("vpTabsProductsLists", "id", package_name));
+    vpTabsSmall.setAdapter(pageAdapterSmall);
+    TabLayout tlProductsListsSmall = llTabsSmall.findViewById(resources.getIdentifier("tlProductsLists", "id", package_name));
+    tlProductsListsSmall.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+      @Override
+      public void onTabSelected(TabLayout.Tab tab) {
+        vpTabsSmall.setCurrentItem(tab.getPosition());
+      }
+      @Override
+      public void onTabUnselected(TabLayout.Tab tab) {
+
+      }
+      @Override
+      public void onTabReselected(TabLayout.Tab tab) {
+
+      }
+    });
+    vpTabsSmall.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tlProductsListsSmall));
+    // endregion
+
+    // region Large list of products
+    LinearLayout llTabsFull = findViewById(resources.getIdentifier("tabsFull", "id", package_name));
+    ViewPager vpTabsFull = llTabsFull.findViewById(resources.getIdentifier("vpTabsProductsListsFull", "id", package_name));
+    vpTabsFull.setAdapter(pageAdapterFull);
+    TabLayout tlProductsListsFull = llTabsFull.findViewById(resources.getIdentifier("tlProductsListsFull", "id", package_name));
+    tlProductsListsFull.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+      @Override
+      public void onTabSelected(TabLayout.Tab tab) {
+        vpTabsFull.setCurrentItem(tab.getPosition());
+      }
+      @Override
+      public void onTabUnselected(TabLayout.Tab tab) {
+
+      }
+      @Override
+      public void onTabReselected(TabLayout.Tab tab) {
+
+      }
+    });
+    vpTabsFull.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tlProductsListsFull));
+    // endregion
 
     Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
     Button btnPackingPickingStore = findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
@@ -268,6 +330,28 @@ public class MatrixPickingStores extends Activity {
           filtersColors.add(keyPairBoolData);
         }
       }
+    }
+  }
+
+  public static void loadProductsPending(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
+    PendingProductsPickingStores pendingFragment = pageAdapterSmall.getPendingFragment();
+    if (pendingFragment != null) {
+      pendingFragment.updateListView(activity, resources, package_name, productsPending);
+    }
+    PendingProductsPickingStoresFull pendingFragmentFull = pageAdapterFull.getPendingFragment();
+    if (pendingFragmentFull != null) {
+      pendingFragmentFull.updateListView(activity, resources, package_name, productsPending);
+    }
+  }
+
+  public static void loadProductsProcessed(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
+    ProcessedProductsPickingStores processedFragment = pageAdapterSmall.getProcessedFragment();
+    if (processedFragment != null) {
+      processedFragment.updateListView(activity, resources, package_name, productsProcessed);
+    }
+    ProcessedProductsPickingStoresFull processedFragmentFull = pageAdapterFull.getProcessedFragment();
+    if (processedFragmentFull != null) {
+      processedFragmentFull.updateListView(activity, resources, package_name, productsProcessed);
     }
   }
 
@@ -514,4 +598,8 @@ public class MatrixPickingStores extends Activity {
     super.onBackPressed();
   }
 
+  @Override
+  public void onFragmentInteraction(Uri uri) {
+
+  }
 }

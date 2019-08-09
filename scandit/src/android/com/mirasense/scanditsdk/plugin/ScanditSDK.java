@@ -22,7 +22,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.mirasense.scanditsdk.plugin.adapters.PickingStoresAdapter;
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
 import com.scandit.barcodepicker.ScanSettings;
@@ -39,7 +38,6 @@ import org.json.JSONException;
 
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.res.Resources;
@@ -1116,24 +1114,26 @@ public class ScanditSDK extends CordovaPlugin {
 
       final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
 
-      ArrayList<JSONObject> listProducts = new ArrayList<>();
+      ArrayList<JSONObject> listProductsPending = new ArrayList<>();
+      ArrayList<JSONObject> listProductsProcessed = new ArrayList<>();
 
       try {
         for (int i = 0; i < products.length(); i++) {
-          listProducts.add(products.getJSONObject(i));
+          listProductsPending.add(products.getJSONObject(i));
+        }
+        for (int i = 0; i < productsProcessed.length(); i++) {
+          listProductsProcessed.add(products.getJSONObject(i));
         }
       } catch (JSONException e) {
         e.printStackTrace();
       }
 
-      final ArrayList<JSONObject> fProducts = listProducts;
+      final ArrayList<JSONObject> fProductsPending = listProductsPending;
+      final ArrayList<JSONObject> fProductsProcessed = listProductsProcessed;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          PickingStoresAdapter pickingStoresAdapter = new PickingStoresAdapter(cordova.getActivity(), fProducts, resources, package_name);
-          ListView lvPickingProducts = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("lvPickingProducts", "id", package_name));
-          lvPickingProducts.setAdapter(pickingStoresAdapter);
-          ListView lvPickingProductsFull = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("lvPickingProductsFull", "id", package_name));
-          lvPickingProductsFull.setAdapter(pickingStoresAdapter);
+          MatrixPickingStores.loadProductsPending(cordova.getActivity(), resources, package_name, fProductsPending);
+          MatrixPickingStores.loadProductsProcessed(cordova.getActivity(), resources, package_name, fProductsProcessed);
         }
       });
     } else if (action.equals(MATRIX_PICKING_STORES_SET_TEXT)) {

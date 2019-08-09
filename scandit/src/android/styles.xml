@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <style name="MyToolbarTheme"
+    parent="@style/ThemeOverlay.AppCompat.Dark">
+    <item name="colorControlNormal">@color/white</item>
+    <item name="titleTextColor">@color/white</item>
+  </style>
+
   <style name="DarkAlert" parent="AlertDialog.AppCompat">
     <item name="android:windowBackground">@color/dark_alert</item>
     <item name="android:windowIsFloating">true</item>

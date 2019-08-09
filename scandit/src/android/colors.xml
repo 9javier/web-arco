@@ -28,4 +28,5 @@
   <color name="dark_alert">#363636</color>
   <color name="dark_alert_light">#414141</color>
   <color name="btn_sort">#6e6e6e</color>
+  <color name="ripple_spinner">#6e6e6e</color>
 </resources>
