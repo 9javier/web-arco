@@ -182,6 +182,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'manage-agencies',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/agency//agency.module#AgencyModule',
+    data:{
+      name:'Agencias'
+    }
+  },
+  {
     path: 'workwaves-templates',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-templates/workwaves-templates.module#WorkwavesTemplatesModule',

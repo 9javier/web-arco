@@ -19,8 +19,8 @@ export class PermissionsService {
   /**Urls of permissions service */
   private getIndexUrl:string = environment.apiBase+"/permissions";
   private getShowUrl:string = environment.apiBase+"/permissions/{{id}}";
-  private postAssignPermissionToRolUrl:string = environment.apiBase+"/roles/{{rolId}}/permissions/{{permissionId}}";
-  private deletePermissionToRolUrl:string = environment.apiBase+"/roles/{{rolId}}/permissions/{{permissionId}}"
+  private postAssignPermissionToRolUrl:string = environment.apiBase+"/gestion-permissions/roles/{{rolId}}/permissions/{{permissionId}}";
+  private deletePermissionToRolUrl:string = environment.apiBase+"/gestion-permissions/roles/{{rolId}}/permissions/{{permissionId}}"
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 

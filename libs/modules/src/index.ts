@@ -186,3 +186,7 @@ export * from './user-time/user-time.module'
 /**Print Products Received*/
 export * from './print-received-product/print-received-product.component';
 export * from './print-received-product/print-received-product.module';
+
+/**Agency */
+export * from './agency/agency.component';
+export * from './agency/agency.module';

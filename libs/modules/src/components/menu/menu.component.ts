@@ -178,6 +178,12 @@ export class MenuComponent implements OnInit {
           icon: 'people'
         },
         {
+          title:'Agencias',
+          id:'agency',
+          url:'/manage-agencies',
+          icon:'train'
+        },
+        {
           title: 'Edificios',
           id:'building',
           url: '/building',
@@ -499,6 +505,8 @@ export class MenuComponent implements OnInit {
       this.printTagsScanditService.printRelabelProducts();
     } else if (p.url == 'products/info') {
       this.productInfoScanditService.init();
+    } else if(p.url === 'positioning'){
+      this.scanditService.positioning();
     } else {
       this.returnTitle(p);
     }

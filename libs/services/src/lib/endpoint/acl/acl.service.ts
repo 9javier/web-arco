@@ -21,8 +21,8 @@ import { ACLModel } from '../../../models/endpoints/ACL';
 export class AclService {
   
   /**urls for acl service */
-  private getUserRolesUrl:string = environment.apiBase+"/users/{{id}}/roles";
-  private getRolPermissionsUrl:string = environment.apiBase+"/roles/{{id}}/permissions";
+  private getUserRolesUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}/roles";
+  private getRolPermissionsUrl:string = environment.apiBase+"/gestion-permissions/roles/{{id}}/permissions";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 

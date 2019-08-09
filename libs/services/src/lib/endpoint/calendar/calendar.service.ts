@@ -14,13 +14,13 @@ import { of } from 'rxjs'
 export class CalendarService {
 
   /**Urls for groups service */
-  private getShowTemplateUrl:string = environment.apiBase+"/picking/calendar/template/{{id}}";
-  private getIndexTemplateUrl:string = environment.apiBase+"/picking/calendar/template";
-  private storeUrl:string = environment.apiBase+"/picking/calendar/";
-  private storeTemplateUrl:string = environment.apiBase+"/picking/calendar/template/";
-  private templatesByDateUrl:string = environment.apiBase+"/picking/calendar/warehouses-by-dates";
-  private getBaseUrl:string = environment.apiBase+"/picking/calendar/warehouses";
-  private getCalendarDatesUrl:string = environment.apiBase+"/picking/calendar/calendar-dates";
+  private getShowTemplateUrl:string = environment.apiBase+"/processes/picking-calendar/template/{{id}}";
+  private getIndexTemplateUrl:string = environment.apiBase+"/processes/picking-calendar/template";
+  private storeUrl:string = environment.apiBase+"/processes/picking-calendar/";
+  private storeTemplateUrl:string = environment.apiBase+"/processes/picking-calendar/template/";
+  private templatesByDateUrl:string = environment.apiBase+"/processes/picking-calendar/warehouses-by-dates";
+  private getBaseUrl:string = environment.apiBase+"/processes/picking-calendar/warehouses";
+  private getCalendarDatesUrl:string = environment.apiBase+"/processes/picking-calendar/calendar-dates";
 
 
   constructor(private http: HttpClient) {}

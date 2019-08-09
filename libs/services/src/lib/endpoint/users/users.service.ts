@@ -26,11 +26,11 @@ export const PATH_DEL_DESTROY: string = PATH('Users', 'Destroy').slice(0, -1);
 export class UsersService {
 
   /**Urls for users service */
-  private getIndexUrl:string = environment.apiBase+"/users";
-  private postStoreUrl:string = environment.apiBase+"/users";
-  private getShowUrl:string = environment.apiBase+"/users/{{id}}";
-  private putUpdateUrl:string = environment.apiBase+"/users/{{id}}";
-  private delDestroyUrl:string = environment.apiBase+"/users/{{id}}";
+  private getIndexUrl:string = environment.apiBase+"/gestion-permissions/users";
+  private postStoreUrl:string = environment.apiBase+"/gestion-permissions/users";
+  private getShowUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
+  private putUpdateUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
+  private delDestroyUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 

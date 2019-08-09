@@ -28,7 +28,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users",
+							"raw": "{{url}}/api/gestion-permissions/users",
 							"host": [
 								"{{url}}"
 							],
@@ -67,7 +67,7 @@
 							"raw": "{\n\t\"email\": \"test5@t.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testest\",\n\t\"address\": \"mazatlán\",\n\t\"phone\": \"6691167862\",\n\t\"roleId\" : 5\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users",
+							"raw": "{{url}}/api/gestion-permissions/users",
 							"host": [
 								"{{url}}"
 							],
@@ -102,7 +102,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/1200",
+							"raw": "{{url}}/api/gestion-permissions/users/1200",
 							"host": [
 								"{{url}}"
 							],
@@ -142,7 +142,7 @@
 							"raw": "{\n\t\"email\": \"test5@t.com\",\n\t\"password\": \"password\",\n\t\"name\": \"testeeeest\",\n\t\"address\": \"mazddatlán\",\n\t\"phone\": \"67862\",\n\t\"roleId\" : 5,\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/6",
+							"raw": "{{url}}/api/gestion-permissions/users/6",
 							"host": [
 								"{{url}}"
 							],
@@ -182,7 +182,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/2",
+							"raw": "{{url}}/api/gestion-permissions/users/2",
 							"host": [
 								"{{url}}"
 							],
@@ -222,7 +222,7 @@
 							"raw": "{\n\t\"email\": \"ivan@ivanh.com\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/password/email",
+							"raw": "{{url}}/api/gestion-permissions/users/password/email",
 							"host": [
 								"{{url}}"
 							],
@@ -263,7 +263,7 @@
 							"raw": "{\n\t\"new_password\": \"secret\",\n\t\"check_password\": \"secret\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/api/users/password/reset?token=f67d562351becf0a404421947aec55d27d2db4978bbdb4bea8da23bd4dae561e",
+							"raw": "{{url}}/api/gestion-permissions/users/password/reset?token=f67d562351becf0a404421947aec55d27d2db4978bbdb4bea8da23bd4dae561e",
 							"host": [
 								"{{url}}"
 							],
@@ -502,7 +502,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/2/roles/1",
+							"raw": "{{url}}/api/gestion-permissions/users/2/roles/1",
 							"host": [
 								"{{url}}"
 							],
@@ -537,7 +537,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/2/roles/1",
+							"raw": "{{url}}/api/gestion-permissions/users/2/roles/1",
 							"host": [
 								"{{url}}"
 							],
@@ -2393,7 +2393,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/api/users/1/roles",
+							"raw": "{{url}}/api/gestion-permissions/users/1/roles",
 							"host": [
 								"{{url}}"
 							],

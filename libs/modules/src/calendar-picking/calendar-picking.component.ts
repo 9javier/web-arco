@@ -322,8 +322,10 @@ export class CalendarPickingComponent implements OnInit {
     let flag = true;
     if(this.date.date == 'all' && this.formatValue(this.form.value).warehouses.length )
       return true;
-    this.selectDates.forEach(value=>{
-      if(!(value.warehouses.length || (value.value && this.formatValue(value.value).warehouses.length)))
+    this.selectDates.forEach((date,i)=>{
+      if(!i)
+        return true;
+      if(!(date.warehouses.length || (date.value && this.formatValue(date.value).warehouses.length)))
         flag = false;
     });
     return flag;
