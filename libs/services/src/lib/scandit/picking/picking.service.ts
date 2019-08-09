@@ -137,7 +137,9 @@ export class PickingScanditService {
 
         } else {
           if (response.action == 'matrix_simple') {
-            ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, filtersPicking);
+            setTimeout(() => {
+              ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, filtersPicking);
+            }, 1 * 1000);
             if (listProductsToStorePickings.length < 1) {
               ScanditMatrixSimple.setText(
                 `No hay más productos pendientes de añadir al picking.`,
