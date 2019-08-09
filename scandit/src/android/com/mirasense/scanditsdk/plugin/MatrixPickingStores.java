@@ -88,6 +88,13 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   private static PageAdapterSmall pageAdapterSmall;
   private static PageAdapterFull pageAdapterFull;
 
+  private boolean hasLoadedFullList = false;
+  private static Activity activityForLoadFull = null;
+  private static Resources resourcesForLoadFull = null;
+  private static String packageNameForLoadFull = null;
+  private static ArrayList<JSONObject> productsPendingForLoadFull = null;
+  private static ArrayList<JSONObject> productsProcessedForLoadFull = null;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -181,6 +188,14 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       llListProductsSmall.setVisibility(View.GONE);
       LinearLayout llListProductsFull = findViewById(resources.getIdentifier("llListProductsFull", "id", package_name));
       llListProductsFull.setVisibility(View.VISIBLE);
+
+      if (!hasLoadedFullList) {
+        new android.os.Handler().postDelayed(() -> {
+          loadProductsPendingFull(activityForLoadFull, resourcesForLoadFull, packageNameForLoadFull, productsPendingForLoadFull);
+          loadProductsProcessedFull(activityForLoadFull, resourcesForLoadFull, packageNameForLoadFull, productsProcessedForLoadFull);
+          hasLoadedFullList = true;
+        }, 1 * 1000);
+      }
     });
 
     RelativeLayout rlTitleFullProductsList = findViewById(resources.getIdentifier("rlTitleFullProductsList", "id", package_name));
@@ -334,21 +349,37 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   }
 
   public static void loadProductsPending(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
+    activityForLoadFull = activity;
+    resourcesForLoadFull = resources;
+    packageNameForLoadFull = package_name;
+    productsPendingForLoadFull = productsPending;
     PendingProductsPickingStores pendingFragment = pageAdapterSmall.getPendingFragment();
     if (pendingFragment != null) {
       pendingFragment.updateListView(activity, resources, package_name, productsPending);
     }
+    loadProductsPendingFull(activity, resources, package_name, productsPending);
+  }
+
+  public static void loadProductsProcessed(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
+    if (activityForLoadFull == null) activityForLoadFull = activity;
+    if (resourcesForLoadFull == null) resourcesForLoadFull = resources;
+    if (packageNameForLoadFull == null) packageNameForLoadFull = package_name;
+    productsProcessedForLoadFull = productsProcessed;
+    ProcessedProductsPickingStores processedFragment = pageAdapterSmall.getProcessedFragment();
+    if (processedFragment != null) {
+      processedFragment.updateListView(activity, resources, package_name, productsProcessed);
+    }
+    loadProductsProcessedFull(activity, resources, package_name, productsProcessed);
+  }
+
+  public static void loadProductsPendingFull(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
     PendingProductsPickingStoresFull pendingFragmentFull = pageAdapterFull.getPendingFragment();
     if (pendingFragmentFull != null) {
       pendingFragmentFull.updateListView(activity, resources, package_name, productsPending);
     }
   }
 
-  public static void loadProductsProcessed(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
-    ProcessedProductsPickingStores processedFragment = pageAdapterSmall.getProcessedFragment();
-    if (processedFragment != null) {
-      processedFragment.updateListView(activity, resources, package_name, productsProcessed);
-    }
+  public static void loadProductsProcessedFull(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
     ProcessedProductsPickingStoresFull processedFragmentFull = pageAdapterFull.getProcessedFragment();
     if (processedFragmentFull != null) {
       processedFragmentFull.updateListView(activity, resources, package_name, productsProcessed);
