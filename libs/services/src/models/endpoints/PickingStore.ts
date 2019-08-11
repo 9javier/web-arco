@@ -7,13 +7,13 @@ export namespace PickingStoreModel {
     warehouseIds: number[]
   }
 
-  export interface CheckPacking {
-    packingReference: string
+  export interface PostPacking {
+    packingReferences: string[]
   }
 
-  export interface SendProcess extends ListStoresIds {
+  export interface SendProcess {
     productReference: string,
-    packingReference: string
+    filters: ParamsFiltered
   }
 
   export interface ChangeStatus {
@@ -24,7 +24,7 @@ export namespace PickingStoreModel {
   export interface InitiatedPicking {
     status: 1|2|3,
     destinationWarehouses: WarehouseModel.Warehouse[],
-    linesPending: StoresLineRequestsModel.LineRequests[]
+    linesPending: ResponseDataLineRequestsPending
   }
 
   export interface ResponseInitiated {
@@ -41,24 +41,77 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
+  export interface Pagination {
+    page: number;
+    limit: number;
+    totalResults: number;
+  }
+
+  interface FiltersSortTypes {
+    type: number,
+    order: string
+  }
+
+  export interface ParamsFiltered {
+    models: number[],
+    colors: number[],
+    sizes: string[],
+    brands: number[],
+    orderbys: FiltersSortTypes[]
+  }
+
+  export interface FilterObj {
+    id: number,
+    name: string,
+    reference?: string
+  }
+
+  export interface Filters {
+    brands?: FilterObj[],
+    colors?: FilterObj[],
+    models?: FilterObj[],
+    ordertypes?: FilterObj[],
+    sizes?: FilterObj[]
+  }
+
+  export interface ResponseDataLineRequestsPending {
+    results: StoresLineRequestsModel.LineRequests[];
+    pagination: Pagination,
+    filters: Filters
+  }
+
+
+  export interface ResponseDataLineRequestsFiltered {
+    pending: StoresLineRequestsModel.LineRequests[],
+    processed: StoresLineRequestsModel.LineRequests[],
+    filters: Filters
+  }
+
   export interface ResponseLineRequestsPending {
-    data: StoresLineRequestsModel.LineRequests[];
+    data: ResponseDataLineRequestsPending;
     message: string;
     code: number;
     errors: any;
   }
 
-  export interface ResponseCheckPacking {
+  export interface ResponsePostPacking {
     data: any;
     message: string;
     code: number;
     errors: any;
   }
 
+  export interface ResponseLineRequestsFiltered {
+    data: ResponseDataLineRequestsFiltered,
+    message: string,
+    code: number,
+    errors: any
+  }
+
   export interface ResponseSendProcess {
     data: {
       inventory: any,
-      linesRequestPending: StoresLineRequestsModel.LineRequests[]
+      linesRequestFiltered: ResponseDataLineRequestsFiltered
     };
     message: string;
     code: number;

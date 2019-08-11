@@ -10,7 +10,14 @@ export namespace ScanditModel {
   }
 
   export interface ResponsePickingStores extends Response {
-    action?: ActionsPickingStores
+    action?: ActionsPickingStores,
+    filters: {
+      sort: Filters[],
+      model: Filters[],
+      brand: Filters[],
+      size: Filters[],
+      color: Filters[]
+    }
   }
 
   export interface ResponsePrintTags extends Response {
@@ -21,6 +28,12 @@ export namespace ScanditModel {
 
   export interface ResponseProductInfo extends Response {
     action?: string
+  }
+
+  interface Filters {
+    id: number,
+    name: string,
+    type_sort?: string
   }
 
   interface Barcode {
@@ -34,7 +47,9 @@ export namespace ScanditModel {
 
   enum ActionsPickingStores {
     init_picking = 'matrix_simple',
-    finish_picking = 'matrix_simple_finish_picking'
+    finish_picking = 'matrix_simple_finish_picking',
+    packing = 'matrix_simple_scan_packings',
+    filters = 'filters'
   }
 
   enum ActionsPrintTags {

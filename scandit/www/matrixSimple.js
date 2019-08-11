@@ -19,9 +19,10 @@ var ScanditMatrixSimple = {
    * @param title
    * @param titleBackground
    * @param titleColor
+   * @param textInitInfo
    */
-  initPickingStores: function (successCallback, title, titleBackground, titleColor) {
-    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor]);
+  initPickingStores: function (successCallback, title, titleBackground, titleColor, textInitInfo) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor, textInitInfo]);
   },
   /**
    *
@@ -131,9 +132,11 @@ var ScanditMatrixSimple = {
   /**
    *
    * @param products
+   * @param productsProcessed
+   * @param filters
    */
-  sendPickingStoresProducts: function (products) {
-    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadProducts", [products]);
+  sendPickingStoresProducts: function (products, productsProcessed, filters) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadProducts", [products, productsProcessed, filters]);
   },
   /**
    *
@@ -167,6 +170,20 @@ var ScanditMatrixSimple = {
   },
   finishPickingStores: function () {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresFinish");
+  },
+  /**
+   *
+   * @param show
+   */
+  showButtonPickingStoreFinish: function (show) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresShowButtonFinish", [show]);
+  },
+  /**
+   *
+   * @param show
+   */
+  showButtonPickingStorePacking: function (show) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresShowButtonPacking", [show]);
   },
   /**
    *

@@ -83,7 +83,6 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
               }
               break;
           }
-
           return new Observable(observer=>observer.error(err));
         }));
       }else{

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +15,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
+public class ProcessedPickingStoresAdapter extends ArrayAdapter<JSONObject> {
 
   private final Activity context;
   private final ArrayList<JSONObject> products;
   private final Resources resources;
   private final String packageName;
 
-  public PickingStoresAdapter(Activity context, ArrayList<JSONObject> products, Resources resources, String packageName) {
+  public ProcessedPickingStoresAdapter(Activity context, ArrayList<JSONObject> products, Resources resources, String packageName) {
     super(context, resources.getIdentifier("item_picking_store", "layout", packageName), products);
     this.context=context;
     this.products = products;
@@ -54,6 +53,13 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
     } catch (JSONException e) {
       e.printStackTrace();
     }
+
+    itemView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+
+      }
+    });
 
     return itemView;
   }

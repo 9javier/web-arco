@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+      android:id="@+id/tvFilterModel"
+      android:layout_width="0dp"
+      android:layout_height="40dp"
+      android:layout_weight="1"
+      android:layout_marginEnd="4dp"
+      android:gravity="center"
+      android:padding="4dp"
+      android:textSize="14sp"
+      android:text="Filtro modelo"
+      android:textColor="@color/transparentWhite"
+      android:drawableEnd="@drawable/ic_arrow_down"
+      android:drawableTint="@color/transparentWhite"
+      android:background="@drawable/bg_filters_picking_stores"
+      android:clickable="true"
+      android:focusable="true"
+      android:ellipsize="end"
+      android:scrollHorizontally="true"
+      android:maxLines="1"/>
+
+    <TextView
+      android:id="@+id/tvFilterBrand"
+      android:layout_width="0dp"
+      android:layout_height="40dp"
+      android:layout_weight="1"
+      android:layout_marginStart="4dp"
+      android:gravity="center"
+      android:padding="4dp"
+      android:textSize="14sp"
+      android:text="Filtro marca"
+      android:textColor="@color/transparentWhite"
+      android:drawableEnd="@drawable/ic_arrow_down"
+      android:drawableTint="@color/transparentWhite"
+      android:background="@drawable/bg_filters_picking_stores"
+      android:clickable="true"
+      android:focusable="true"
+      android:ellipsize="end"
+      android:scrollHorizontally="true"
+      android:maxLines="1"/>
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
+
+    <TextView
+      android:id="@+id/tvFilterSize"
+      android:layout_width="0dp"
+      android:layout_height="40dp"
+      android:layout_weight="1"
+      android:layout_marginEnd="4dp"
+      android:gravity="center"
+      android:padding="4dp"
+      android:textSize="14sp"
+      android:text="Filtro talla"
+      android:textColor="@color/transparentWhite"
+      android:drawableEnd="@drawable/ic_arrow_down"
+      android:drawableTint="@color/transparentWhite"
+      android:background="@drawable/bg_filters_picking_stores"
+      android:clickable="true"
+      android:focusable="true"
+      android:ellipsize="end"
+      android:scrollHorizontally="true"
+      android:maxLines="1"/>
+
+    <TextView
+      android:id="@+id/tvFilterColor"
+      android:layout_width="0dp"
+      android:layout_height="40dp"
+      android:layout_weight="1"
+      android:layout_marginStart="4dp"
+      android:gravity="center"
+      android:padding="4dp"
+      android:textSize="14sp"
+      android:text="Filtro color"
+      android:textColor="@color/transparentWhite"
+      android:drawableEnd="@drawable/ic_arrow_down"
+      android:drawableTint="@color/transparentWhite"
+      android:background="@drawable/bg_filters_picking_stores"
+      android:clickable="true"
+      android:focusable="true"
+      android:ellipsize="end"
+      android:scrollHorizontally="true"
+      android:maxLines="1"/>
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <TextView
+      android:id="@+id/tvSortBy"
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
+      android:gravity="center"
+      android:padding="4dp"
+      android:textSize="14sp"
+      android:text="Ordenar por"
+      android:textColor="@color/transparentWhite"
+      android:drawableEnd="@drawable/ic_arrow_down"
+      android:drawableTint="@color/transparentWhite"
+      android:background="@drawable/bg_filters_picking_stores"
+      android:clickable="true"
+      android:focusable="true"
+      android:ellipsize="end"
+      android:scrollHorizontally="true"
+      android:maxLines="1"/>
+
+  </LinearLayout>
+
+</LinearLayout>

@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <android.support.v7.widget.Toolbar
+    android:id="@+id/toolbarPickingStores"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    app:titleTextColor="@android:color/white"
+    android:background="?attr/colorPrimary">
+    <include layout="@layout/title_bar_matrixsimple"/>
+  </android.support.v7.widget.Toolbar>
 
   <FrameLayout
     android:id="@+id/picker"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    android:layout_below="@id/toolbarPickingStores"/>
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10">
+    android:weightSum="10"
+    android:layout_below="@id/toolbarPickingStores">
     <RelativeLayout
       android:layout_width="match_parent"
       android:layout_height="0dp"
@@ -57,7 +68,8 @@
       android:layout_height="0dp"
       android:layout_weight="7"
       android:orientation="vertical"
-      android:background="@color/transparentScanner">
+      android:background="@color/transparentScanner"
+      android:visibility="visible">
       <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -74,7 +86,17 @@
             android:layout_centerHorizontal="true"
             android:textSize="14sp"
             android:textColor="@color/transparentWhite"
-            android:text="Escanea la jaula para el picking"/>
+            android:text=""/>
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/ibFullProductsList"
+            android:layout_centerVertical="true"
+            android:textSize="14sp"
+            android:textColor="@color/transparentWhite"
+            android:text="Filtros"/>
           <ImageButton
             android:id="@+id/ibFullProductsList"
             android:layout_width="16dp"
@@ -90,12 +112,19 @@
           android:layout_height="1dp"
           android:background="#484848"/>
       </LinearLayout>
+
+      <include
+        android:id="@+id/tabsSmall"
+        layout="@layout/lists_products_picking_stores"/>
+
       <ListView
         android:id="@+id/lvPickingProducts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="56dp">
+        android:paddingBottom="56dp"
+        android:visibility="gone">
       </ListView>
+
     </LinearLayout>
   </LinearLayout>
 
@@ -105,7 +134,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/transparentScanner"
-    android:visibility="gone">
+    android:visibility="gone"
+    android:layout_below="@id/toolbarPickingStores">
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -122,7 +152,7 @@
           android:layout_centerHorizontal="true"
           android:textSize="14sp"
           android:textColor="@color/transparentWhite"
-          android:text="Escanea la jaula para el picking"/>
+          android:text="Filtrado de resultados"/>
         <ImageButton
           android:id="@+id/ibSmallProductsList"
           android:layout_width="16dp"
@@ -139,11 +169,22 @@
         android:layout_height="1dp"
         android:background="#484848"/>
     </LinearLayout>
+
+    <include
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      layout="@layout/filters_picking_stores"
+      />
+
+    <include
+      android:id="@+id/tabsFull"
+      layout="@layout/lists_products_picking_stores_full"/>
     <ListView
       android:id="@+id/lvPickingProductsFull"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:paddingBottom="56dp">
+      android:paddingBottom="56dp"
+      android:visibility="gone">
     </ListView>
   </LinearLayout>
 
@@ -199,7 +240,19 @@
       android:layout_alignParentBottom="true"
       android:background="@color/black"
       android:textColor="@color/white"
-      android:text="Finalizar picking"/>
+      android:text="Finalizar picking"
+      android:visibility="gone"/>
+
+    <Button
+      android:id="@+id/btnPackingPickingStore"
+      android:layout_width="match_parent"
+      android:layout_height="56dp"
+      android:layout_alignParentBottom="true"
+      android:background="@color/black"
+      android:textColor="@color/white"
+      android:text="Escanear embalajes"
+      />
+
   </LinearLayout>
 
 </RelativeLayout>
