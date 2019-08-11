@@ -27,7 +27,7 @@ export class CalendarPickingComponent implements OnInit {
   dates;
   date:{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any};
   selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
-    date:'all',
+    date:'todas las fechas seleccionadas',
     warehouses:[],
     value:null
   }];
@@ -87,7 +87,7 @@ export class CalendarPickingComponent implements OnInit {
         return _.format("YYYY-MM-DD");
       });
       let auxDates = [{
-        date:'all',
+        date:'todas las fechas seleccionadas',
         warehouses:[],
         value:null
       }];
@@ -150,7 +150,7 @@ export class CalendarPickingComponent implements OnInit {
   clearData(){
     this.form.patchValue(this.initialValue,{emitEvent:false});
     this.selectDates.forEach(date=>{
-      if(this.date.date == date.date || this.date.date == 'all')
+      if(this.date.date == date.date || this.date.date == 'todas las fechas seleccionadas')
         date.value = this.initialValue;
       this.manageSelectedClass();
     })
@@ -198,7 +198,7 @@ export class CalendarPickingComponent implements OnInit {
       setTimeout(()=>{
         if(this.date){
           this.selectDates.forEach(date=>{
-            if(date.date == this.date.date || this.date.date == 'all'){
+            if(date.date == this.date.date || this.date.date == 'todas las fechas seleccionadas'){
               date.value = JSON.parse(JSON.stringify(this.form.value));
               console.log(this.formatValue(date.value).warehouses.length);
             }
@@ -246,7 +246,7 @@ export class CalendarPickingComponent implements OnInit {
       if(i==0)
         return false;
       let value;
-      if(this.date.date != 'all')
+      if(this.date.date != 'todas las fechas seleccionadas')
         value = this.formatValue((date.value));
       else
         value = this.formatValue(this.form.value);
@@ -341,7 +341,7 @@ export class CalendarPickingComponent implements OnInit {
    */
   validToStore(){
     let flag = true;
-    if(this.date.date == 'all' && this.formatValue(this.form.value).warehouses.length )
+    if(this.date.date == 'todas las fechas seleccionadas' && this.formatValue(this.form.value).warehouses.length )
       return true;
     this.selectDates.forEach((date,i)=>{
       if(!i)
@@ -423,7 +423,7 @@ export class CalendarPickingComponent implements OnInit {
 
   clearCalendar(){
     this.selectDates = [{
-      date:'all',
+      date:'todas las fechas seleccionadas',
       warehouses:[],
       value:null
     }];
@@ -433,7 +433,7 @@ export class CalendarPickingComponent implements OnInit {
   clear(){
     this.template.get("template").patchValue('',{emitEvent:false});
     this.selectDates = [{
-      date:'all',
+      date:'todas las fechas seleccionadas',
       warehouses:[],
       value:null
     }];

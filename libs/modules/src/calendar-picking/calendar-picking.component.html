@@ -21,6 +21,19 @@
                 <div class="append">
                     <dp-date-picker [(ngModel)]="dates" [config]="calendarConfiguration"></dp-date-picker>
                 </div>
+                <div class="legend">
+                    <span style="color:#2196f3">
+                        Datos almacenados
+                    </span>,
+                    <span style="color:#008000">
+                        Hay información
+                    </span>,
+                    <span style="color:#ea5348">
+                        No hay información
+                    </span>
+
+
+                </div>
             </ion-col>
             <ion-col size="6">
                 <div *ngIf="!formatValue(form.value).warehouses.length" class="error">
