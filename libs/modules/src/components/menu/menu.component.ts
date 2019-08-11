@@ -209,12 +209,6 @@ export class MenuComponent implements OnInit {
       url:'/tariff',
       icon:'logo-usd'
     },
-    {
-      title: 'Cerrar sesión',
-      id:'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
-    },
   ];
 
   alPages: MenuItemList = [
@@ -394,12 +388,7 @@ export class MenuComponent implements OnInit {
         }
       ]
     },
-    {
-      title: 'Cerrar sesión',
-      id:'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
-    }
+
   ];
   private menuPages = {
     sga:this.sgaPages,
@@ -433,6 +422,31 @@ export class MenuComponent implements OnInit {
   filterPages(dictionary){
     console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
+    let logoutItem = dictionary['user-time']?({
+      title: 'Cerrar sesión',
+      id:'logout',
+      url: '/user-time/logout',
+      icon: 'log-out'
+    }):(    {
+      title: 'Cerrar sesión',
+      id:'logout',
+      url: '/logout',
+      icon: 'log-out'
+    });
+    if(!this.alPages.find(item=>(<any>item).id=="logout"))
+      this.alPages.push(logoutItem);
+    else
+      this.alPages.forEach((item,i)=>{
+        if((<any>item).id == "logout")
+          this.alPages[i] = logoutItem;
+      });
+    if(!this.sgaPages.find(item=>(<any>item).id=="logout"))  
+      this.sgaPages.push(logoutItem);
+      else
+      this.sgaPages.forEach((item,i)=>{
+        if((<any>item).id == "logout")
+          this.sgaPages[i] = logoutItem;
+      });
     console.log("diccionario",app,dictionary);
     if(!app || !app.name) {
       return false;
