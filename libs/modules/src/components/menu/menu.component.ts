@@ -154,6 +154,12 @@ export class MenuComponent implements OnInit {
       icon: 'options',
       children: [
         {
+        title: 'Variables globales',
+        id: 'global-variables',
+        url: '/global-variables',
+        icon: 'cog'
+      },
+        {
           title: 'Almacenes',
           id:'warehouses',
           url: '/warehouses',
@@ -379,6 +385,11 @@ export class MenuComponent implements OnInit {
           title: 'Ajustes',
           id: 'settings',
           url: '/settings',
+          icon: 'cog'
+        },{
+          title: 'Variables globales',
+          id: 'global-variables',
+          url: '/global-variables',
           icon: 'cog'
         }
       ]
