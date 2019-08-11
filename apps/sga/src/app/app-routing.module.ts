@@ -184,9 +184,17 @@ const routes: Routes = [
   {
     path: 'manage-agencies',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/agency//agency.module#AgencyModule',
+    loadChildren: '../../../../libs/modules/src/agency/agency.module#AgencyModule',
     data:{
       name:'Agencias'
+    }
+  },  
+  {
+    path: 'global-variables',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/global-variables/global-variables.module#GlobalVariablesModule',
+    data:{
+      name:'Variables globales'
     }
   },
   {

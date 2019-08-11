@@ -119,3 +119,7 @@ export * from './models/endpoints/user-time.model';
 /**Agency */
 export * from './lib/endpoint/agency/agency.service';
 export * from './models/endpoints/agency.model';
+
+/**Global variables */
+ export * from './lib/endpoint/global-variable/global-variable.service';
+ export * from './models/endpoints/global-variable.model';
