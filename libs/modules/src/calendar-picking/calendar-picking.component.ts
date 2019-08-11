@@ -32,6 +32,10 @@ export class CalendarPickingComponent implements OnInit {
     value:null
   }];
 
+  openeds:Array<boolean> = [];
+
+  modelDate;
+
   template:FormGroup = this.formBuilder.group({
     template:''
   });
@@ -55,6 +59,11 @@ export class CalendarPickingComponent implements OnInit {
     private changeDetectorRef:ChangeDetectorRef
   ) { }
   loadingDates:boolean = false;
+
+  compareDate(obj1,obj2){
+    return obj1.date == obj2.date;
+  }
+
   ngOnInit() {
     this.getBase();
     this.getCalendarDates();
@@ -71,6 +80,8 @@ export class CalendarPickingComponent implements OnInit {
       this.getCalendarDates();
     })
   
+
+
     this.datePicker.onSelect.subscribe((changes)=>{
       let selectDates = this.dates.map(_=>{
         return _.format("YYYY-MM-DD");
@@ -110,6 +121,8 @@ export class CalendarPickingComponent implements OnInit {
             }
           });
         });
+        this.modelDate = auxDates[0];
+        this.date = this.modelDate;
         this.manageSelectedClass();
       },()=>{
         setTimeout(()=>{this.loadingDates = false},10);
@@ -131,6 +144,15 @@ export class CalendarPickingComponent implements OnInit {
       this.initTemplateBase(warehouses);
     },()=>{
       this.intermediaryService.dismissLoading();
+    })
+  }
+
+  clearData(){
+    this.form.patchValue(this.initialValue,{emitEvent:false});
+    this.selectDates.forEach(date=>{
+      if(this.date.date == date.date || this.date.date == 'all')
+        date.value = this.initialValue;
+      this.manageSelectedClass();
     })
   }
 
@@ -176,8 +198,7 @@ export class CalendarPickingComponent implements OnInit {
       setTimeout(()=>{
         if(this.date){
           this.selectDates.forEach(date=>{
-            if(date.date == this.date.date){
-              
+            if(date.date == this.date.date || this.date.date == 'all'){
               date.value = JSON.parse(JSON.stringify(this.form.value));
               console.log(this.formatValue(date.value).warehouses.length);
             }
@@ -340,9 +361,12 @@ export class CalendarPickingComponent implements OnInit {
     if(value){
       this.form.patchValue(value,{emitEvent:false});
       return false;
+    }else{
+      this.form.patchValue(this.initialValue,{emitEvent:false});
+      return false;
     }
-    let warehouses = template.warehouses;
-    this.initTemplateBase(this.templateBase);
+    /*let warehouses = template.warehouses;
+    //this.initTemplateBase(this.templateBase);
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
         if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
@@ -354,7 +378,7 @@ export class CalendarPickingComponent implements OnInit {
           })
         }
       })
-    });
+    });*/
   }
 
   /**
@@ -369,10 +393,11 @@ export class CalendarPickingComponent implements OnInit {
     this.form = this.formBuilder.group({
       warehouses: new FormArray([])
     });
+    this.openeds = [];
     warehouses.forEach(warehouse=>{
+      this.openeds.push(false);
       (<FormArray>this.form.get("warehouses")).push(
         this.formBuilder.group({
-          opened:false,
           originWarehouse:this.formBuilder.group({
             id:warehouse.originWarehouse.id,
             name:warehouse.originWarehouse.name
