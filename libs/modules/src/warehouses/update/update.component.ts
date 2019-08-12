@@ -28,8 +28,8 @@ export class UpdateComponent implements OnInit {
     halls:'',
     rows:'',
     columns:'',
-    TypePackingId:['',Validators.required],
-    thresholdShippingStore:['',Validators.required],
+    TypePackingId:[''],
+    thresholdShippingStore:[''],
     manageAgencyId:'',
     is_outlet:false
   });
