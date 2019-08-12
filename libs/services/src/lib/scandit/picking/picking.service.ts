@@ -150,7 +150,6 @@ export class PickingScanditService {
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
             }
           } else if (response.action == 'matrix_simple_scan_packings') {
-            ScanditMatrixSimple.sendPickingStoresProducts([], [], null);
             ScanditMatrixSimple.showButtonPickingStorePacking(false);
             ScanditMatrixSimple.showButtonPickingStoreFinish(true);
             ScanditMatrixSimple.setTextPickingStores(true, `Escanee los embalajes a usar`);
