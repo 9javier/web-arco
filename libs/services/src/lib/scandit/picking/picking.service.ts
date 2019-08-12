@@ -42,7 +42,7 @@ export class PickingScanditService {
     let scanMode = 'products';
     let filtersPicking = this.pickingProvider.listFiltersPicking;
 
-    const textPickingStoresInit = listProductsToStorePickings.length == 0 ? this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end : 'Escanea los productos a incluir en el picking';
+    const textPickingStoresInit = listProductsToStorePickings.length == 0 ? this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end : 'Escanea los productos a incluir';
 
     ScanditMatrixSimple.initPickingStores((response: ScanditModel.ResponsePickingStores) => {
       if (!scannerPaused && response.result) {
@@ -153,7 +153,7 @@ export class PickingScanditService {
             ScanditMatrixSimple.sendPickingStoresProducts([], [], null);
             ScanditMatrixSimple.showButtonPickingStorePacking(false);
             ScanditMatrixSimple.showButtonPickingStoreFinish(true);
-            ScanditMatrixSimple.setTextPickingStores(true, `Escanee los embalajes a usar en el picking`);
+            ScanditMatrixSimple.setTextPickingStores(true, `Escanee los embalajes a usar`);
             scanMode = 'carriers';
             this.packingReferences = [];
           } else if (response.action == 'matrix_simple_finish_picking') {
@@ -250,7 +250,7 @@ export class PickingScanditService {
             18);
           this.hideTextMessage(2000);
           this.packingReferences = [];
-          ScanditMatrixSimple.setTextPickingStores(true, `Escanee nuevamente los embalajes a usar en el picking`);
+          ScanditMatrixSimple.setTextPickingStores(true, `Escanee de nuevo los embalajes a usar`);
         }
       }, (error) => {
         ScanditMatrixSimple.setText(
@@ -260,7 +260,7 @@ export class PickingScanditService {
           18);
         this.hideTextMessage(2000);
         this.packingReferences = [];
-        ScanditMatrixSimple.setTextPickingStores(true, `Escanee nuevamente los embalajes a usar en el picking`);
+        ScanditMatrixSimple.setTextPickingStores(true, `Escanee de nuevo los embalajes a usar`);
       });
   }
 
