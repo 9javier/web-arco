@@ -41,8 +41,6 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
     TextView tvSizeValue = itemView.findViewById(resources.getIdentifier("tvSizeValue", "id", packageName));
     TextView tvBrandValue = itemView.findViewById(resources.getIdentifier("tvBrandValue", "id", packageName));
 
-    Log.i("Test::", products.get(position).toString());
-
     try {
       if (!products.get(position).isNull("model")) {
         tvModelValue.setText(products.get(position).getJSONObject("model").getString("reference"));

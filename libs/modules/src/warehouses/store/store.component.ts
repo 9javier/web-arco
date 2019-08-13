@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel, BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel, BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel, AgencyService, AgencyModel } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 import { IntermediaryService } from '@suite/services';
 
@@ -23,27 +23,33 @@ export class StoreComponent implements OnInit {
     has_racks: [false, []],
     hasBuilding: [false,[]],
     buildingId:[''],
-    prefix_container:['',[Validators.required,Validators.minLength(4),Validators.maxLength(4)]],
+    prefix_container:['',[Validators.required,Validators.minLength(1),Validators.maxLength(4)]],
     halls:'',
     rows:'',
     columns:'',
+    TypePackingId:[''],
+    thresholdShippingStore:[''],
+    manageAgencyId:'',
     is_outlet:false
   });
 
   buildings:Array<BuildingModel.Building> = [];
   groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
   groupWarehousesPicking:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
+  agencies:AgencyModel.Agency[] = [];
+  packingTypes:Array<{id:number;name:string}> = [];
 
   constructor(
-              private intermediaryService:IntermediaryService,
-              private modalCtrl:ModalController,
-              private formBuilder:FormBuilder,
-              private warehousesService:WarehousesService,
-              private warehouseGroupService:WarehouseGroupService,
-              private cd: ChangeDetectorRef,
-              private buildingService:BuildingService,
-              private groupWarehousePickingService:GroupWarehousePickingService
-              ) {}
+    private agencyService:AgencyService,
+    private intermediaryService:IntermediaryService,
+    private modalCtrl:ModalController,
+    private formBuilder:FormBuilder,
+    private warehousesService:WarehousesService,
+    private warehouseGroupService:WarehouseGroupService,
+    private cd: ChangeDetectorRef,
+    private buildingService:BuildingService,
+    private groupWarehousePickingService:GroupWarehousePickingService
+  ) {}
 
   /**
    * Event triggered when user press a key in a field
@@ -52,6 +58,29 @@ export class StoreComponent implements OnInit {
   onlyUpperLetters(event){
     let key = event.key
     return /[a-zA-Z]/.test(key);
+  }
+
+  onlyNumbers(event){
+    let key = event.key
+    return /[0-9]/.test(key);
+  }
+
+  /**
+   * Get all agencies
+   */
+  getAgencies(){
+    this.agencyService.getAll().subscribe(agencies=>{
+      this.agencies = agencies;
+    })
+  }
+
+  /**
+   * Get the packing types
+   */
+  getPackingTypes(){
+    this.warehousesService.getTypePacking().subscribe((packingTypes)=>{
+      this.packingTypes = packingTypes;
+    })
   }
 
   /**
@@ -113,6 +142,8 @@ export class StoreComponent implements OnInit {
     object = JSON.parse(JSON.stringify(object));
     object.prefix_container = object.prefix_container.toUpperCase();
     object.reference = object.reference.toString();
+    if(object.manageAgencyId)
+      object.manageAgencyId = parseInt(object.manageAgencyId);
     object.reference = (object.reference.length==1)?("00"+object.reference):(object.reference.length==2)?("0"+object.reference):(object.reference);
     Object.keys(object).forEach(key=>{
       let value = object[key];
@@ -153,6 +184,8 @@ export class StoreComponent implements OnInit {
   ngOnInit() {
     this.getWharehousesGroup();
     this.getBuildings();
+    this.getAgencies();
+    this.getPackingTypes();
     this.changeValidatorsAndValues();
     this.getGroupWarehousePicking();
   }

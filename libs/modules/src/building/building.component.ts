@@ -20,7 +20,7 @@ import { UpdateComponent } from './modals/update/update.component';
 export class BuildingComponent implements OnInit {
 
   /**Columns to show in table */
-  columns:Array<string> = ["name","select"];
+  columns:Array<string> = ["name","phone","address","agency","select"];
 
   /**The data to be showed in html table */
   dataSource:MatTableDataSource<BuildingModel.Building>;

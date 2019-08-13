@@ -154,6 +154,12 @@ export class MenuComponent implements OnInit {
       icon: 'options',
       children: [
         {
+        title: 'Variables globales',
+        id: 'global-variables',
+        url: '/global-variables',
+        icon: 'cog'
+      },
+        {
           title: 'Almacenes',
           id:'warehouses',
           url: '/warehouses',
@@ -178,6 +184,12 @@ export class MenuComponent implements OnInit {
           icon: 'people'
         },
         {
+          title:'Agencias',
+          id:'agency',
+          url:'/manage-agencies',
+          icon:'train'
+        },
+        {
           title: 'Edificios',
           id:'building',
           url: '/building',
@@ -196,12 +208,6 @@ export class MenuComponent implements OnInit {
       id:'tariff-sga',
       url:'/tariff',
       icon:'logo-usd'
-    },
-    {
-      title: 'Cerrar sesión',
-      id:'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
     },
   ];
 
@@ -374,15 +380,15 @@ export class MenuComponent implements OnInit {
           id: 'settings',
           url: '/settings',
           icon: 'cog'
+        },{
+          title: 'Variables globales',
+          id: 'global-variables',
+          url: '/global-variables',
+          icon: 'cog'
         }
       ]
     },
-    {
-      title: 'Cerrar sesión',
-      id:'logout',
-      url: '/user-time/logout',
-      icon: 'log-out'
-    }
+
   ];
   private menuPages = {
     sga:this.sgaPages,
@@ -416,6 +422,31 @@ export class MenuComponent implements OnInit {
   filterPages(dictionary){
     console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
+    let logoutItem = dictionary['user-time']?({
+      title: 'Cerrar sesión',
+      id:'logout',
+      url: '/user-time/logout',
+      icon: 'log-out'
+    }):(    {
+      title: 'Cerrar sesión',
+      id:'logout',
+      url: '/logout',
+      icon: 'log-out'
+    });
+    if(!this.alPages.find(item=>(<any>item).id=="logout"))
+      this.alPages.push(logoutItem);
+    else
+      this.alPages.forEach((item,i)=>{
+        if((<any>item).id == "logout")
+          this.alPages[i] = logoutItem;
+      });
+    if(!this.sgaPages.find(item=>(<any>item).id=="logout"))  
+      this.sgaPages.push(logoutItem);
+      else
+      this.sgaPages.forEach((item,i)=>{
+        if((<any>item).id == "logout")
+          this.sgaPages[i] = logoutItem;
+      });
     console.log("diccionario",app,dictionary);
     if(!app || !app.name) {
       return false;

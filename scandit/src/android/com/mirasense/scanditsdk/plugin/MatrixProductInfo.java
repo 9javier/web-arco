@@ -29,7 +29,6 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.galvintec.krack.logistica.dev.R;
 import com.mirasense.scanditsdk.plugin.models.Price;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
 import com.mirasense.scanditsdk.plugin.models.Size;
@@ -243,7 +242,7 @@ public class MatrixProductInfo extends Activity {
       int limitForRow = 5;
       int countColumnsAdded = 0;
       int countRows = 0;
-      TableRow llTableExtendedProductInfo = (TableRow) View.inflate(appContext, R.layout.table_sizes_extended_product_info, null);
+      TableRow llTableExtendedProductInfo = (TableRow) View.inflate(appContext, resources.getIdentifier("table_sizes_extended_product_info", "layout", package_name), null);
       for (int iSize = 0; iSize < productModel.getSizes().size(); iSize++) {
         Size size = productModel.getSizes().get(iSize);
 
@@ -251,10 +250,10 @@ public class MatrixProductInfo extends Activity {
           tlTableSizesProduct.addView(llTableExtendedProductInfo, countRows);
           countRows++;
           countColumnsAdded = 0;
-          llTableExtendedProductInfo = (TableRow) View.inflate(appContext, R.layout.table_sizes_extended_product_info, null);
+          llTableExtendedProductInfo = (TableRow) View.inflate(appContext, resources.getIdentifier("table_sizes_extended_product_info", "layout", package_name), null);
         }
 
-        LinearLayout llColumnExtendedProductInfo = (LinearLayout) View.inflate(appContext, R.layout.column_sizes_extended_product_info, null);
+        LinearLayout llColumnExtendedProductInfo = (LinearLayout) View.inflate(appContext, resources.getIdentifier("column_sizes_extended_product_info", "layout", package_name), null);
         String priceSize = "0";
         if (size.getPrice() != null) {
           Price price = size.getPrice();
@@ -266,9 +265,9 @@ public class MatrixProductInfo extends Activity {
             priceSize = price.getPriceOriginal();
           }
         }
-        ((TextView)llColumnExtendedProductInfo.findViewById(R.id.tvExtendedInfoSize)).setText(size.getName());
-        ((TextView)llColumnExtendedProductInfo.findViewById(R.id.tvExtendedInfoStock)).setText(String.valueOf(size.getStock()));
-        ((TextView)llColumnExtendedProductInfo.findViewById(R.id.tvExtendedInfoPrice)).setText(priceSize);
+        ((TextView)llColumnExtendedProductInfo.findViewById(resources.getIdentifier("tvExtendedInfoSize", "id", package_name))).setText(size.getName());
+        ((TextView)llColumnExtendedProductInfo.findViewById(resources.getIdentifier("tvExtendedInfoStock", "id", package_name))).setText(String.valueOf(size.getStock()));
+        ((TextView)llColumnExtendedProductInfo.findViewById(resources.getIdentifier("tvExtendedInfoPrice", "id", package_name))).setText(priceSize);
 
         llTableExtendedProductInfo.addView(llColumnExtendedProductInfo);
 
