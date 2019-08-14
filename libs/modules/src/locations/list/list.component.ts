@@ -494,7 +494,7 @@ export class ListComponent implements OnInit {
   }
 
   warehouseChange(event) {
-    this.warehouseService.idWarehouseMain = event.detail.value;
+    this.warehouseService.idWarehouseMain = this.warehouseSelected;
     this.initHalls();
   }
 

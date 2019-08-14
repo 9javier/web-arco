@@ -294,12 +294,8 @@ export class ProductsComponent implements OnInit {
    */
   getFilters():void{
     this.intermediaryService.presentLoading();
-    // TODO confirm to Marcelo about remove getMain
-    // this.warehousesService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => { 
-      const warehouse = {
-        id: this.warehouseService.idWarehouseMain
-      } 
-      
+
+    this.warehousesService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
       this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
         this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
         this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
@@ -319,9 +315,9 @@ export class ProductsComponent implements OnInit {
       },()=>{
         this.intermediaryService.dismissLoading();
       });
-    // },()=>{
-    //   this.intermediaryService.dismissLoading();
-    // });
+    },()=>{
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   private updateFilterSourceColors(colors: FiltersModel.Color[]) {

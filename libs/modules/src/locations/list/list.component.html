@@ -4,21 +4,30 @@
     </suite-breadcrumb>
     <suite-breadcrumb *ngIf="warehouseSelected && isMainWarehouseManagementSection()" [post]="warehouse?.name">
     </suite-breadcrumb>
-
-    <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection()"
-      (click)="openModalMoveProducts()">
-      Mover contenido
-    </ion-button>
-
-    
   </h1>
-  <ion-item *ngIf="isMainWarehouseManagementSection() && existWarehouses">
-    <ion-select (ionChange)="warehouseChange($event)" placeholder="Location warehouse">
-      <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
 </ion-text>
+
+<div class="main-buttons">
+    <h1>
+        <ion-button class="btn-move-products" slot="end" color="primary" *ngIf="isMainWarehouseManagementSection()"
+        (click)="openModalMoveProducts()">
+        Mover contenido
+      </ion-button>
+    </h1>
+</div>
+
+<div class="warehouse-select">
+  <ion-item slot="start" *ngIf="isMainWarehouseManagementSection() && existWarehouses">
+      <ion-label lines="none" no-padding>
+          Seleccione un Almacen
+      </ion-label>  
+      <ion-select (ionChange)="warehouseChange($event)" [(ngModel)]="warehouseSelected" placeholder="Location warehouse">
+      <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}
+        </ion-select-option>
+      </ion-select>
+  </ion-item>
+</div>
+
 <div class="enable-lock-container" *ngIf="!isMainWarehouseManagementSection()">
   <div>
     <ion-button slot="end" color="primary" (click)="openEnableLockContainer()">Desactivar/bloquear ubicaciones

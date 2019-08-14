@@ -9,6 +9,8 @@ table {
     right: 3rem;
 }
 
+
+
 .enable-lock-container {
     clear: both;
     width: 100%;
@@ -16,6 +18,23 @@ table {
         display: inline-block;
         float: right;
     }
+}
+
+.main-buttons {
+    overflow: auto;
+    width: 100%;
+    position: relative;
+
+    h1 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+.warehouse-select {
+    margin-top: 5px;
+    overflow: auto;
+    width: 100%;
+    position: relative;
 }
 
 .example-container {
