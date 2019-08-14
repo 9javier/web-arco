@@ -38,6 +38,7 @@ export * from './lib/endpoint/groups/groups.service';
 
 /** Warehouse */
 export * from './models/endpoints/Warehouse';
+export * from './lib/endpoint/warehouse/warehouse.service';
 export * from './lib/endpoint/warehouses/warehouses.service';
 
 /** Roles */
