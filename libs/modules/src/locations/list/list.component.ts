@@ -74,6 +74,9 @@ export class ListComponent implements OnInit {
   paramsReceived;
   warehouseSelected: number;
 
+  // warehouse list
+  warehouses:Array<WarehouseModel.Warehouse> = [];
+
 
   dd(event,row){
     event.preventDefault();
@@ -135,6 +138,8 @@ export class ListComponent implements OnInit {
     if (this.isMainWarehouseManagementSection()) {
       this.setIntervalForReload(1);
     }
+
+    this.getWarehouses();
   }
 
   /**
@@ -168,7 +173,6 @@ export class ListComponent implements OnInit {
 
     this.warehouseService.getShow(this.warehouseSelected).subscribe(warehouse=>{
       this.warehouse = warehouse
-      console.log(warehouse);
     });
 
     this.hallsService
@@ -479,5 +483,22 @@ export class ListComponent implements OnInit {
     this.intervalReload = null;
 
     return await modal.present();
+  }
+
+  getWarehouses(){
+    this.warehouseService.getIndex().then(observable=>{
+      observable.subscribe(response=>{
+        this.warehouses = (<any>response.body).data;
+      })
+    })
+  }
+
+  warehouseChange(event) {
+    this.warehouseService.idWarehouseMain = event.detail.value;
+    this.initHalls();
+  }
+
+  existWarehouses() {
+    return this.warehouse > 0;
   }
 }
