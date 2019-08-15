@@ -44,17 +44,17 @@ export class LoginComponent implements OnInit {
   ) { }
 
   hide() {
-    
+    if (!this.plt.is('mobile')) {
       let logo: HTMLElement = document.getElementById('logo');
-      logo.setAttribute("style", "display: none; transition: 1s;");
-    
+      logo.setAttribute("style", "display: none;");
+    }
   }
 
   recover() {
-    
+    if (!this.plt.is('mobile')) {
       let logo: HTMLElement = document.getElementById('logo');
-      logo.setAttribute("style", "display: flex; transition: 1s;");
-    
+      logo.setAttribute("style", "display: flex;");
+    }
   }
 
   ngOnInit() {
