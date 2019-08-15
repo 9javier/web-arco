@@ -11,9 +11,9 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import {ToastController, AlertController, LoadingController} from '@ionic/angular';
+import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { AppInfo } from 'config/base';
-
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -39,8 +39,23 @@ export class LoginComponent implements OnInit {
     public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
-    private intermediaryService: IntermediaryService
-  ) {}
+    private intermediaryService: IntermediaryService,
+    public plt: Platform
+  ) { }
+
+  hide() {
+    
+      let logo: HTMLElement = document.getElementById('logo');
+      logo.setAttribute("style", "display: none; transition: 1s;");
+    
+  }
+
+  recover() {
+    
+      let logo: HTMLElement = document.getElementById('logo');
+      logo.setAttribute("style", "display: flex; transition: 1s;");
+    
+  }
 
   ngOnInit() {
     this.user.username = '';
@@ -60,8 +75,8 @@ export class LoginComponent implements OnInit {
   /**
    * Get the last username thats been logged in the system
    */
-  getLastUsername():void{
-    this.authenticationService.getUsername().subscribe(username=>{
+  getLastUsername(): void {
+    this.authenticationService.getUsername().subscribe(username => {
       this.user.username = username;
     });
   }
@@ -77,7 +92,7 @@ export class LoginComponent implements OnInit {
           }
           const response: ResponseLogin = data.body;
           console.log(response);
-          this.authenticationService.login(data.body.data.access_token, data.body.data.user,data.body.data.accessPermitionsDictionary,data.body.data.refresh_token);
+          this.authenticationService.login(data.body.data.access_token, data.body.data.user, data.body.data.accessPermitionsDictionary, data.body.data.refresh_token);
           this.router.navigate(['/home']);
         },
         (errorResponse: HttpErrorResponse) => {
