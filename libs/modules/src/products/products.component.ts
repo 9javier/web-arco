@@ -374,10 +374,12 @@ export class ProductsComponent implements OnInit {
   private updateFilterSourceWarehouses(warehouses: FiltersModel.Warehouse[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
-    this.warehouses = warehouses.map(warehouse => {
-      warehouse.name = warehouse.reference + " - " + warehouse.name;
-      return warehouse;
-    });
+    this.warehouseService.getWarehouses().subscribe((warehouses: FiltersModel.Warehouse) => {
+      this.warehouses = warehouses.map(warehouse => {
+          warehouse.name = warehouse.reference + " - " + warehouse.name;
+          return warehouse;
+      });
+    })
     if (value && value.length) {
       this.form.get("warehouses").patchValue(value, {emitEvent: false});
     }

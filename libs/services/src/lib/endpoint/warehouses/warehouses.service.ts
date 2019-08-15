@@ -37,6 +37,19 @@ export class WarehousesService {
     });
   }
 
+  /**
+   * Get user's warehouses
+   */
+
+  getWarehouses(): Observable<WarehouseModel.Warehouse> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<WarehouseModel.ResponseShow>(this.postStoreUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
     /**
    * Get enum of packing
    */
