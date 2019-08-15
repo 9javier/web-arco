@@ -40,22 +40,8 @@ export class LoginComponent implements OnInit {
     public alertController: AlertController,
     private loadingController: LoadingController,
     private intermediaryService: IntermediaryService,
-    public plt: Platform
+    public platform: Platform
   ) { }
-
-  hide() {
-    if (!this.plt.is('mobile')) {
-      let logo: HTMLElement = document.getElementById('logo');
-      logo.setAttribute("style", "display: none;");
-    }
-  }
-
-  recover() {
-    if (!this.plt.is('mobile')) {
-      let logo: HTMLElement = document.getElementById('logo');
-      logo.setAttribute("style", "display: flex;");
-    }
-  }
 
   ngOnInit() {
     this.user.username = '';
@@ -133,5 +119,19 @@ export class LoginComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  hide() {
+    if (!this.platform.is('mobile')) {
+      let logo: HTMLElement = document.getElementById('logo');
+      logo.setAttribute("style", "display: none;");
+    }
+  }
+
+  recover() {
+    if (!this.platform.is('mobile')) {
+      let logo: HTMLElement = document.getElementById('logo');
+      logo.setAttribute("style", "display: flex;");
+    }
   }
 }
