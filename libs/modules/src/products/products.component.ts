@@ -295,7 +295,7 @@ export class ProductsComponent implements OnInit {
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
         this.warehouses = (<any>response.body).data;
-        let warehouseMain = this.warehouses.filter(item => item.is_main)
+        let warehouseMain = (<any>response.body).data.filter(item => item.is_main)
         let warehouse = this.warehouses[0];
         if(warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
