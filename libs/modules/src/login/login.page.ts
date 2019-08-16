@@ -122,16 +122,12 @@ export class LoginComponent implements OnInit {
   }
 
   hide() {
-    if (!this.platform.is('mobile')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: none;");
-    }
   }
 
   recover() {
-    if (!this.platform.is('mobile')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: flex;");
-    }
   }
 }
