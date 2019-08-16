@@ -22,6 +22,8 @@
                                 <ion-icon color="medium" *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
                                 <ion-icon color="medium" *ngIf="!input.icon" name="person"></ion-icon>
                             </div>
+                            <!-- Input de Label -->
+                            <ion-label position="floating">{{input.label}}</ion-label>
                             <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="{{input.type}}" [formControl]="f[input.name]"></ion-input>
                         </ion-item>
@@ -35,6 +37,8 @@
                                 <ion-icon color="medium" *ngIf="input.icon && input.icon.type == 'ionic'" [name]="input.icon.name"></ion-icon>
                                 <ion-icon color="medium" *ngIf="!input.icon" name="person"></ion-icon>
                             </div>
+                            <!-- Input de Label -->
+                            <ion-label position="floating">{{input.label}}</ion-label>
                             <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="{{input.type}}" number max="{{input.max}}" min="{{input.min}}" [formControl]="f[input.name]"></ion-input>
                         </ion-item>
@@ -44,6 +48,9 @@
                             <div slot="start" class="slot-start-icon">
                                 <ion-icon color="medium" name="mail"></ion-icon>
                             </div>
+                            <!-- Input de Label -->
+                            <ion-label position="floating">{{input.label}}</ion-label>
+                            <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="{{input.type}}" email [formControl]="f[input.name]"></ion-input>
                         </ion-item>
                     </div>
@@ -93,6 +100,9 @@
                             <div slot="start" class="slot-start-icon">
                                 <ion-icon color="medium" name="lock"></ion-icon>
                             </div>
+                            <!-- Input de Label -->
+                            <ion-label position="floating">{{input.label}}</ion-label>
+                            <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="{{input.type}}" [formControl]="f[input.name]" #passwordInput>
 
                                 <ion-icon class="icon-show-password" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
@@ -109,6 +119,9 @@
                             <div slot="start" class="slot-start-icon">
                                 <ion-icon color="medium" name="lock"></ion-icon>
                             </div>
+                            <!-- Input de Label -->
+                            <ion-label position="floating">{{input.label}}</ion-label>
+                            <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="{{input.type}}" [formControl]="f[input.name]" #repeatPasswordInput>
                                 <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                       repeatPasswordInput.type === 'password'
@@ -124,6 +137,9 @@
                             <div slot="start" class="slot-start-icon">
                                 <ion-icon color="medium" name="barcode"></ion-icon>
                             </div>
+                            <!-- Input de Label -->
+                            <ion-label position="floating">{{input.label}}</ion-label>
+                            <!-- Input de texto -->
                             <ion-input placeholder="{{input.label}}" class="ion-margin-horizontal" type="text" [formControl]="f[input.name]" #referencePasswordInput>
                             </ion-input>
                         </ion-item>

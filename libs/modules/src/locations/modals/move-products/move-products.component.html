@@ -19,6 +19,7 @@
           <ion-row>
             <ion-col>
               <ion-item lines="none">
+                <ion-label position="floating">Mover de</ion-label>
                 <div class="field">
                   <ion-select class="ion-margin-horizontal" placeholder="Mover de" interface="popover" [(ngModel)]="possibleMovementSelectedOrigin" (ngModelChange)="possibleMovementChange()">
                     <ion-select-option *ngFor="let possibleMovement of listPossibleMovements" [value]="possibleMovement.value">{{possibleMovement.name}}</ion-select-option>
@@ -31,6 +32,7 @@
           <ion-row *ngIf="possibleMovementSelectedOrigin == 1">
             <ion-col>
               <ion-item lines="none">
+                <ion-label position="floating">Almacén</ion-label>
                 <div slot="start" class="icon-field">
                   <ion-icon name="home"></ion-icon>
                 </div>
@@ -172,6 +174,7 @@
             <ion-row>
               <ion-col>
                 <ion-item lines="none">
+                  <ion-label position="floating">Almacén</ion-label>
                   <div slot="start" class="icon-field">
                     <ion-icon name="home"></ion-icon>
                   </div>
