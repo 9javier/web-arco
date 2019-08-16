@@ -292,28 +292,37 @@ export class ProductsComponent implements OnInit {
    */
   getFilters():void{
     this.intermediaryService.presentLoading();
-    this.warehouseService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
-      this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
-        this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-        this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-        this.updateFilterSourceModels(searchsInContainer.data.filters.models);
-        this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
-        this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-        this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
-        setTimeout(() => {
-          this.pauseListenFormChange = true;
-          this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
-          this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
+    this.warehouseService.getIndex().then(observable=>{
+      observable.subscribe(response=>{
+        this.warehouses = (<any>response.body).data;
+        let warehouseMain = (<any>response.body).data.filter(item => item.is_main)
+        let warehouse = this.warehouses[0];
+        if(warehouseMain.length > 0) {
+          warehouse = warehouseMain[0];
+        }
+        this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+          this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+          this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+          this.updateFilterSourceModels(searchsInContainer.data.filters.models);
+          this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+          this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
           setTimeout(() => {
             this.pauseListenFormChange = false;
-            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+-            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+            this.pauseListenFormChange = true;
+            this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
+            this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
+            setTimeout(() => {
+              this.pauseListenFormChange = false;
+              this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+            }, 0);
           }, 0);
-        }, 0);
+        },()=>{
+          this.intermediaryService.dismissLoading();
+        });
       },()=>{
         this.intermediaryService.dismissLoading();
       });
-    },()=>{
-      this.intermediaryService.dismissLoading();
     });
   }
 
@@ -375,8 +384,8 @@ export class ProductsComponent implements OnInit {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
     this.warehouses = warehouses.map(warehouse => {
-      warehouse.name = warehouse.reference + " - " + warehouse.name;
-      return warehouse;
+        warehouse.name = warehouse.reference + " - " + warehouse.name;
+        return warehouse;
     });
     if (value && value.length) {
       this.form.get("warehouses").patchValue(value, {emitEvent: false});
