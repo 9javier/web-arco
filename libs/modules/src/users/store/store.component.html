@@ -20,23 +20,27 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="person"></ion-icon>
                     </div>
-                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text"
+                        text></ion-input>
                 </ion-item>
                 <!--Email-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="finger-print"></ion-icon>
                     </div>
-                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
+                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text">
+                    </ion-input>
                 </ion-item>
                 <!--Password-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
+                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password"
+                        type="password" #passwordInput>
 
-                        <ion-icon class="icon-show-password" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                        <ion-icon class="icon-show-password" color="medium"
+                            [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                       passwordInput.type === 'password'
                         ? (passwordInput.type = 'text')
                         : (passwordInput.type = 'password')
@@ -49,23 +53,58 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
-                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal"
+                        formControlName="confirmPassword" type="password" #repeatPasswordInput>
+                        <ion-icon class="icon-show-password" color="medium"
+                            [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                     repeatPasswordInput.type === 'password'
                         ? (repeatPasswordInput.type = 'text')
                         : (repeatPasswordInput.type = 'password')
                     "></ion-icon>
                     </ion-input>
                 </ion-item>
-
+                <!--Direction-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="home"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address"
+                        type="text" text></ion-input>
+                </ion-item>
+                <!--Employee Id-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal"
+                        formControlName="employedId" type="number" number></ion-input>
+                </ion-item>
+                 <!--Tiene tienda-->
+                 <ion-item class="inner-item">
+                    <ion-label>
+                        Empleado de tienda
+                    </ion-label>
+                    <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
+                </ion-item>
+                <!--Tienda-->
+                <ion-item *ngIf="createForm.value.hasWarehouse" class="inner-item">
+                    <ion-select placeholder="Tienda" formControlName="warehouseId">
+                        <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+                            {{warehouse.name}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
                 <!--Warehouses permissions-->
                 <div class="container-permits">
                     Permisos:
-                    <div [class.error]="createForm['controls'].permits.touched" class="advise" *ngIf="createForm['controls'].permits.invalid">
+                    <div [class.error]="createForm['controls'].permits.touched" class="advise"
+                        *ngIf="createForm['controls'].permits.invalid">
                         Se necesita al menos un almacén, con al menos un rol
                     </div>
-                    <div [formGroup]="control" *ngFor="let control of createForm['controls'].permits['controls'];let i = index" (click)="createForm['controls'].permits.touched = true">
-                        <ion-item [class.invalid]="!createForm['controls']?.permits?.valid && createForm['controls'].permits.touched">
+                    <div [formGroup]="control"
+                        *ngFor="let control of createForm['controls'].permits['controls'];let i = index"
+                        (click)="createForm['controls'].permits.touched = true">
+                        <ion-item
+                            [class.invalid]="!createForm['controls']?.permits?.valid && createForm['controls'].permits.touched">
                             <mat-accordion multi="false">
                                 <mat-expansion-panel>
                                     <mat-expansion-panel-header>
@@ -76,15 +115,18 @@
                                                     <mat-panel-title> {{control.controls.name.value}} </mat-panel-title>
                                                 </ion-col>
                                                 <ion-col size="1">
-                                                    <ion-badge color="danger" (click)="deletePermision($event,i)">-</ion-badge>
+                                                    <ion-badge color="danger" (click)="deletePermision($event,i)">-
+                                                    </ion-badge>
                                                 </ion-col>
                                             </ion-row>
                                         </ion-grid>
                                     </mat-expansion-panel-header>
                                     <div>
-                                        <ion-item *ngFor="let control of control['controls'].roles['controls'];let i = index">
+                                        <ion-item
+                                            *ngFor="let control of control['controls'].roles['controls'];let i = index">
                                             <ion-label>{{roles[i].name}}</ion-label>
-                                            <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
+                                            <ion-checkbox value="{{roles[i].id}}" [formControl]="control">
+                                            </ion-checkbox>
                                         </ion-item>
                                     </div>
                                     <mat-list style="display: flex; justify-content:center;"></mat-list>
@@ -93,38 +135,9 @@
                         </ion-item>
                     </div>
                     <div>
-
-                        <ion-button (click)="selectNewWarehouse(addWarehouseToUser)">Agregar permiso +</ion-button>
+                        <ion-button (click)="selectNewWarehouse(addWarehouseToUser)" *ngIf="!createForm.value.hasWarehouse && !pass">Agregar permiso +</ion-button>
                     </div>
-
                 </div>
-                <!--Direction-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="home"></ion-icon>
-                    </div>
-                    <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address" type="text" text></ion-input>
-                </ion-item>
-                <!--Employee Id-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="lock"></ion-icon>
-                    </div>
-                    <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal" formControlName="employedId" type="number" number></ion-input>
-                </ion-item>
-                <!--Tiene tienda-->
-                <ion-item class="inner-item">
-                    <ion-label>
-                        Empleado de tienda
-                    </ion-label>
-                    <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
-                </ion-item>
-                <!--Tienda-->
-                <ion-item *ngIf="createForm.value.hasWarehouse" class="inner-item">
-                    <ion-select placeholder="Tienda" formControlName="warehouseId">
-                        <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}</ion-select-option>
-                    </ion-select>
-                </ion-item>
             </ion-row>
         </ion-grid>
     </form>

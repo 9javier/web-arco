@@ -15,7 +15,7 @@ import { validators } from '../../utils/validators';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
-    
+  index: any;
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
 
@@ -58,14 +58,19 @@ export class StoreComponent implements OnInit {
     this.createForm.get("hasWarehouse").valueChanges.subscribe(status=>{
       let warehouseControl = this.createForm.get("warehouseId");
       warehouseControl.setValue("");
+      
       if(status){
         warehouseControl.setValidators([Validators.required]);
-        warehouseControl.updateValueAndValidity()
+        warehouseControl.updateValueAndValidity();
+        for(let index in <FormArray>this.createForm.get("permits")){
+          (<FormArray>this.createForm.get("permits")).removeAt(this.index);
+        }
       }
       else{
         warehouseControl.clearValidators();
         warehouseControl.updateValueAndValidity();
       }
+      console.log(this.roles);
     });
   }
 
