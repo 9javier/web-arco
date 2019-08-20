@@ -86,6 +86,7 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
           return new Observable(observer=>observer.error(err));
         }));
       }else{
+        this.intermediaryService.dismissLoading();
         return next.handle(request);
       }
     }));
