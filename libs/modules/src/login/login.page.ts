@@ -85,7 +85,11 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.intermediaryService.presentToastError("Error en usuario o contraseña");
+          if(errorResponse.status == 0) {
+            this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor");
+          } else {
+            this.intermediaryService.presentToastError("Error en usuario o contraseña");
+          }
           console.log(errorResponse);
         }
       );
