@@ -122,14 +122,20 @@ export class LoginComponent implements OnInit {
   }
 
   hide() {
-    if (this.platform.is('mobile')) {
+    if (window.location.port === '8100') {
+			return false;
+		}
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: none;");
     }
   }
 
   recover() {
-    if (this.platform.is('mobile')) {
+    if (window.location.port === '8100') {
+			return false;
+		}
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: flex;");
     }
