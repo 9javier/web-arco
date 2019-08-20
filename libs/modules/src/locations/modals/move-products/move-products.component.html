@@ -67,6 +67,7 @@
                   <div slot="start" class="icon-field">
                     <i class="material-icons">view_module</i>
                   </div>
+                  <ion-label position="floating">Pasillo</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin" (ngModelChange)="changeLocation(2)">
                       <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
@@ -81,6 +82,7 @@
                   <div slot="start" class="icon-field">
                     <i class="material-icons">view_column</i>
                   </div>
+                  <ion-label position="floating">Columna</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelectedOrigin" (ngModelChange)="changeLocation(3)">
                       <ion-select-option *ngFor="let column of listColumns" [value]="column.value">{{column.value}}</ion-select-option>
@@ -95,6 +97,7 @@
                   <div slot="start" class="icon-field">
                     <i class="material-icons">view_stream</i>
                   </div>
+                  <ion-label position="floating">Altura</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Altura" interface="popover" [(ngModel)]="rowSelectedOrigin" (ngModelChange)="changeLocation(4)">
                       <ion-select-option *ngFor="let row of listRows" [value]="row.value">{{row.value}}</ion-select-option>
@@ -111,6 +114,7 @@
                 <div slot="start" class="icon-field">
                   <i class="material-icons">view_module</i>
                 </div>
+                <ion-label position="floating">Pasillo</ion-label>
                 <div class="field">
                   <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedOrigin">
                     <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
@@ -174,10 +178,10 @@
             <ion-row>
               <ion-col>
                 <ion-item lines="none">
-                  <ion-label position="floating">Almacén</ion-label>
                   <div slot="start" class="icon-field">
                     <ion-icon name="home"></ion-icon>
                   </div>
+                  <ion-label position="floating">Almacén</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelectedDestiny" (ngModelChange)="changeDestiny(1)">
                       <ion-select-option *ngFor="let warehouse of listWarehousesDestiny" [value]="warehouse">{{warehouse.value}}</ion-select-option>
@@ -208,6 +212,7 @@
                   <div slot="start" class="icon-field">
                     <i class="material-icons">view_module</i>
                   </div>
+                  <ion-label position="floating">Pasillo</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelectedDestiny" (ngModelChange)="changeDestiny(3)">
                       <ion-select-option *ngFor="let hall of listHallsDestiny" [value]="hall.id">{{hall.value}}</ion-select-option>
@@ -222,6 +227,7 @@
                   <div slot="start" class="icon-field">
                     <i class="material-icons">view_column</i>
                   </div>
+                  <ion-label position="floating">Columna</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelectedDestiny" (ngModelChange)="changeDestiny(4)">
                       <ion-select-option *ngFor="let column of listColumnsDestiny" [value]="column.value">{{column.value}}</ion-select-option>
@@ -236,6 +242,7 @@
                   <div slot="start" class="icon-field">
                     <i class="material-icons">view_stream</i>
                   </div>
+                  <ion-label position="floating">Altura</ion-label>
                   <div class="field">
                     <ion-select class="ion-margin-horizontal" placeholder="Altura" interface="popover" [(ngModel)]="rowSelectedDestiny" (ngModelChange)="changeDestiny(5)">
                       <ion-select-option *ngFor="let row of listRowsDestiny" [value]="row.value">{{row.value}}</ion-select-option>
