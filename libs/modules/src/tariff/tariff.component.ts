@@ -154,8 +154,10 @@ export class TariffComponent implements OnInit {
    */
   getTariffs(page:number,limit:number,id:number=51):void{
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit,id).subscribe(tariffs=>{
+    this.tariffService.getIndex(page, limit, id).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
+      console.log('getTari ', tariffs);
+      
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
         result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
