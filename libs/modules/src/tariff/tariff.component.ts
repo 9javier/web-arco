@@ -33,7 +33,7 @@ export class TariffComponent implements OnInit {
     /**Arrays to be shown */
     tariffs:Array<any> = [];
 
-    filters:FormGroup = this.formBuilder.group({
+    filters: FormGroup = this.formBuilder.group({
       warehouseId:51
     })
 
@@ -114,10 +114,10 @@ export class TariffComponent implements OnInit {
    * filter the tariff by warehouse
    * @param event 
    */
-  // filterByWarehouse(event){
-  //   this.warehouseId = event.detail.value;
-  //   this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
-  // }
+  filterByWarehouse(event){
+    this.warehouseId = event.detail.value;
+    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+  }
 
   listenChanges():void{
     let previousPageSize = this.limit
