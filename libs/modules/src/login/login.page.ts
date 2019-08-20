@@ -11,7 +11,7 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import {ToastController, AlertController, LoadingController} from '@ionic/angular';
+import {ToastController, AlertController, LoadingController, ModalController} from '@ionic/angular';
 import { AppInfo } from 'config/base';
 
 @Component({
@@ -39,7 +39,8 @@ export class LoginComponent implements OnInit {
     public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
   ) {}
 
   ngOnInit() {
@@ -118,5 +119,9 @@ export class LoginComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  ionViewWillEnter() {
+    this.modalController.dismiss();
   }
 }
