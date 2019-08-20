@@ -70,6 +70,7 @@ export class WorkwavesService {
 
 
   private _lastWorkwaveEdited: any = null;
+  private _lastWorkwaveRebuildEdited: any = null;
   private _lastWorkwaveHistoryQueried: any = null;
 
   constructor(
@@ -182,6 +183,14 @@ export class WorkwavesService {
 
   set lastWorkwaveEdited(value: any) {
     this._lastWorkwaveEdited = value;
+  }
+
+  get lastWorkwaveRebuildEdited(): any {
+    return this._lastWorkwaveRebuildEdited;
+  }
+
+  set lastWorkwaveRebuildEdited(value: any) {
+    this._lastWorkwaveRebuildEdited = value;
   }
 
   get lastWorkwaveHistoryQueried(): any {

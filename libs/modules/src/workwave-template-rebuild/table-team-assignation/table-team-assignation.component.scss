@@ -1,0 +1,52 @@
+div.main-element {
+  height: 100%;
+
+  h2.title-table {
+    text-align: center;
+    font-size: 16px;
+    line-height: 20px;
+    margin-bottom: 10px;
+  }
+
+  .scroll-list {
+    height: calc(30vh - 30px); // 30px from table title
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+    border-top: 1px solid var(--ion-color-secondary);
+  }
+  .scroll-list::-webkit-scrollbar {
+    width: 0 !important
+  }
+
+  .left-value {
+    justify-content: start !important;
+    width: 100%;
+  }
+
+  .right-value {
+    justify-content: end !important;
+    width: 100%;
+    text-align: end;
+  }
+
+  mat-grid-list.team-assignations-line {
+    border-bottom: 1px solid var(--ion-color-secondary);
+    mat-grid-tile.employee {
+      background-color: #E5E5E5;
+      border-right: 1px solid var(--ion-color-secondary);
+      border-bottom: 1px solid var(--ion-color-secondary);
+    }
+    mat-grid-tile.assignation {
+      background-color: #E5E5E5;
+      border-right: 1px solid var(--ion-color-secondary);
+      border-bottom: 1px solid var(--ion-color-secondary);
+      color: var(--ion-color-dark);
+    }
+    mat-grid-tile.assignation.fixed {
+      background-color: #ffffff;
+      color: var(--ion-color-secondary);
+    }
+  }
+
+}

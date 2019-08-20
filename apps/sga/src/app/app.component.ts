@@ -53,14 +53,9 @@ export class AppComponent implements OnInit {
       open: true,
       children: [
         {
-          title: 'Programadas',
+          title: 'Listado',
           url: '/workwaves-scheduled',
           icon: 'code'
-        },
-        {
-          title: 'Plantillas',
-          url: '/workwaves-templates',
-          icon: 'code-working'
         },
         {
           title: 'Historial',

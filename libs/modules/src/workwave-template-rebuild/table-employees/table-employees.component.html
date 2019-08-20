@@ -1,0 +1,41 @@
+<div class="main-element">
+  <mat-grid-list class="title-line" cols="12" rowHeight="48px">
+    <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
+      <div class="tile-value"></div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="name" colspan="5">
+      <div class="tile-value left-value">Miembros del Equipo</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="active" colspan="2">
+      <div class="tile-value right-value">Activo</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="start-time" colspan="4">
+      <div class="tile-value">H. Entrada</div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div class="scroll-list">
+    <mat-grid-list *ngFor="let employee of listEmployees; let i = index" class="employee-line" cols="12" rowHeight="48px">
+      <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
+        <ion-checkbox></ion-checkbox>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="name" colspan="5">
+        <div class="tile-value left-value">{{employee.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="active" colspan="2">
+        <div class="tile-value right-value">
+          <i class="material-icons" [ngClass]="employee.active ? 'active' : 'inactive'">{{employee.active ? 'check' : 'close'}}</i>
+        </div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="start-time" colspan="4">
+        <div class="tile-value">{{employee.start_time}}</div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>

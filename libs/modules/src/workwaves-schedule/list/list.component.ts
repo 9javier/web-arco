@@ -61,7 +61,7 @@ export class ListWorkwavesScheduleComponent implements OnInit {
       }
     };
 
-    this.router.navigate(['workwave-template'], navigationExtras);
+    this.router.navigate(['workwave-template-rebuild'], navigationExtras);
   }
 
   editWorkwave(workwave) {
@@ -73,7 +73,7 @@ export class ListWorkwavesScheduleComponent implements OnInit {
       }
     };
 
-    this.router.navigate(['workwave-template'], navigationExtras);
+    this.router.navigate(['workwave-template-rebuild'], navigationExtras);
   }
 
   selectAll() {

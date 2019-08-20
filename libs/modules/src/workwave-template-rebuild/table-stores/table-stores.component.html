@@ -1,0 +1,35 @@
+<div class="main-element">
+  <mat-grid-list class="title-line" cols="12" rowHeight="48px">
+    <mat-grid-tile class="radio" colspan="1" rowspan="1">
+      <div class="tile-value"></div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="name" colspan="7">
+      <div class="tile-value left-value">Grupos de Tiendas</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="consolidation" colspan="4">
+      <div class="tile-value">Consolidado</div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div class="scroll-list">
+    <mat-grid-list *ngFor="let group of listGroupWarehouses; let i = index" class="store-line" cols="12" rowHeight="48px">
+      <mat-grid-tile class="radio" colspan="1" rowspan="1">
+        <mat-radio-group [name]="'store'+warehouseId">
+          <mat-radio-button [value]="group.id" [checked]="i == 0"></mat-radio-button>
+        </mat-radio-group>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="name" colspan="7">
+        <div class="tile-value left-value"><b>{{group.reference}}</b> {{group.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="consolidation" colspan="4">
+        <div>
+          <input class="input-quantities" placeholder="-" type="number">
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>

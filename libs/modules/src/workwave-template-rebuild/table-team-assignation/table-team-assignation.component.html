@@ -1,0 +1,14 @@
+<div class="main-element">
+  <h2 class="title-table">Asignacionas del Equipo</h2>
+
+  <div class="scroll-list">
+    <mat-grid-list *ngFor="let teamAssignation of listTeamAssignations; let i = index" class="team-assignations-line" [cols]="maxSizeForCols" rowHeight="48px">
+      <mat-grid-tile class="employee" [colspan]="maxSizeForNameCol">
+        <div class="tile-value">{{teamAssignation.user.name}}</div>
+      </mat-grid-tile>
+      <mat-grid-tile class="assignation" *ngFor="let assignation of teamAssignation.pickingShoes" [ngClass]="assignation.Temporal ? 'temporal' : 'fixed'" [colspan]="assignation.quantityShoes">
+        <div class="tile-value">{{assignation.quantityShoes}}</div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>
