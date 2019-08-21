@@ -39,6 +39,7 @@
                                     <div slot="start" class="icon-field">
                                         <ion-icon name="home"></ion-icon>
                                     </div>
+                                    <ion-label position="floating">Almacén</ion-label>
                                     <div class="field">
                                         <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
                                             <ion-select-option *ngFor="let warehouse of listWarehouses" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
@@ -53,6 +54,7 @@
                                     <div slot="start" class="icon-field">
                                         <i class="material-icons">view_module</i>
                                     </div>
+                                    <ion-label position="floating">Pasillo</ion-label>
                                     <div class="field">
                                         <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelected" *ngIf="checkFieldIsEnabled(2)" (ngModelChange)="changeSelect(2)">
                                             <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
@@ -67,6 +69,7 @@
                                     <div slot="start" class="icon-field">
                                         <i class="material-icons">view_stream</i>
                                     </div>
+                                    <ion-label position="floating">Fila</ion-label>
                                     <div class="field">
                                         <ion-select class="ion-margin-horizontal" placeholder="Fila" interface="popover" [(ngModel)]="rowSelected" *ngIf="checkFieldIsEnabled(3)" (ngModelChange)="changeSelect(3)">
                                             <ion-select-option *ngFor="let row of listRows" [value]="row.row">{{row.row}}</ion-select-option>
@@ -81,6 +84,7 @@
                                     <div slot="start" class="icon-field">
                                         <i class="material-icons">view_column</i>
                                     </div>
+                                    <ion-label position="floating">Columna</ion-label>
                                     <div class="field">
                                         <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelected" *ngIf="checkFieldIsEnabled(4)" (ngModelChange)="changeSelect(4)">
                                             <ion-select-option *ngFor="let column of listColumns" [value]="column.column">{{column.column}}</ion-select-option>
