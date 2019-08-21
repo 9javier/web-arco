@@ -115,7 +115,7 @@
                                                     <mat-panel-title> {{control.controls.name.value}} </mat-panel-title>
                                                 </ion-col>
                                                 <ion-col size="1">
-                                                    <ion-badge color="danger" (click)="deletePermision($event,i)">-
+                                                    <ion-badge color="danger" *ngIf="!createForm.value.hasWarehouse" (click)="deletePermision($event,i)">-
                                                     </ion-badge>
                                                 </ion-col>
                                             </ion-row>
@@ -135,7 +135,7 @@
                         </ion-item>
                     </div>
                     <div>
-                        <ion-button (click)="selectNewWarehouse(addWarehouseToUser)" *ngIf="!createForm.value.hasWarehouse && !pass">Agregar permiso +</ion-button>
+                        <ion-button (click)="selectNewWarehouse(addWarehouseToUser)" *ngIf="!createForm.value.hasWarehouse">Agregar permiso +</ion-button>
                     </div>
                 </div>
             </ion-row>
