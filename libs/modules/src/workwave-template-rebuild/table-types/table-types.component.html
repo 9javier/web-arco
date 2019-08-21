@@ -8,8 +8,8 @@
   <div class="scroll-list">
     <mat-grid-list class="content-line" cols="12" rowHeight="48px">
       <mat-grid-tile>
-        <ion-item class="tile-value">
-          <ion-checkbox></ion-checkbox>
+        <ion-item class="tile-value" (click)="selectType()">
+          <ion-checkbox [(ngModel)]="receptionSelected"></ion-checkbox>
           <ion-label>Reposición</ion-label>
         </ion-item>
       </mat-grid-tile>
@@ -17,8 +17,8 @@
 
     <mat-grid-list class="content-line" cols="12" rowHeight="48px">
       <mat-grid-tile>
-        <ion-item class="tile-value">
-          <ion-checkbox></ion-checkbox>
+        <ion-item class="tile-value" (click)="selectType()">
+          <ion-checkbox [(ngModel)]="distributionSelected"></ion-checkbox>
           <ion-label>Distribución</ion-label>
         </ion-item>
       </mat-grid-tile>

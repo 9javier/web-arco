@@ -8,11 +8,14 @@ div.main-element {
     margin-bottom: 10px;
   }
 
-  .loader {
+  .loader, .empty-list {
     height: calc(100% - 48px - 30px); // 48px from table header - 30px from table title
     width: 100%;
     display: table;
-    div.spinner {
+    p {
+      font-size: 14px;
+    }
+    div.spinner, p.message-empty {
       width: auto;
       height: auto;
       display: table-cell;
@@ -20,7 +23,6 @@ div.main-element {
       text-align: center;
       p {
         margin-bottom: 8px;
-        font-size: 14px;
       }
     }
   }

@@ -10,6 +10,11 @@ export namespace GroupWarehousePickingModel{
         warehouses:Array<WarehouseModel.Warehouse>
     }
 
+    export interface GroupWarehousesSelected {
+      groupsWarehousePickingId: number,
+      thresholdConsolidated: number
+    }
+
     export interface ResponseGroupWarehousePicking extends Request.Success{
         data:Array<GroupWarehousePicking>
     }

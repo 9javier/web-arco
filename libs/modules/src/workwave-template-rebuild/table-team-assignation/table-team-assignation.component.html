@@ -3,9 +3,13 @@
 
   <div class="loader" *ngIf="pickingParametrizationProvider.loadingListTeamAssignations">
     <div class="spinner">
-      <p>Cargando asignaciones del equipo</p>
+      <p class="message">Cargando asignaciones del equipo</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
+  </div>
+
+  <div class="empty-list" *ngIf="!pickingParametrizationProvider.loadingListTeamAssignations && listTeamAssignations.length < 1">
+    <p class="message-empty">No hay asignaciones del equipo cargadas</p>
   </div>
 
   <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListTeamAssignations">

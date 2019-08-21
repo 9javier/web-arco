@@ -33,16 +33,20 @@
 
   <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders">
     <div class="spinner">
-      <p>Cargando operaciones de envío</p>
+      <p class="message">Cargando operaciones de envío</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
+  </div>
+
+  <div class="empty-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders && listRequestOrders.length < 1">
+    <p class="message-empty">No hay operaciones de envío cargadas</p>
   </div>
 
   <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders">
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox checked></ion-checkbox>
+          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.id]" (ngModelChange)="selectRequestOrder()"></ion-checkbox>
         </div>
       </mat-grid-tile>
 

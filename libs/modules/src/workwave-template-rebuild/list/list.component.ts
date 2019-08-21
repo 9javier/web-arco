@@ -28,6 +28,11 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   template: any;
   disableEdition: boolean = false;
 
+  listTypesToUpdate: Array<number> = new Array<number>();
+  listGroupsWarehousesToUpdate: Array<GroupWarehousePickingModel.GroupWarehousesSelected> = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>();
+  listEmployeesToUpdate: Array<number> = new Array<number>();
+  listRequestOrdersToUpdate: Array<number> = new Array<number>();
+
   constructor(
     private location: Location,
     private events: Events,
@@ -69,8 +74,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       .getIndex()
       .subscribe((res: Array<GroupWarehousePickingModel.GroupWarehousePicking>) => {
         this.pickingParametrizationProvider.listGroupsWarehouses = res.filter(groupWarehouse => groupWarehouse.warehouses.length > 0);
-        this.pickingParametrizationProvider.loadingListGroupsWarehouses = false;
         this.events.publish(this.GROUPS_WAREHOUSES_LOADED);
+        this.pickingParametrizationProvider.loadingListGroupsWarehouses = false;
       }, (error) => {
         console.error('Error::Subscribe:groupWarehousePickingService::getIndex::', error);
         this.pickingParametrizationProvider.loadingListGroupsWarehouses = false;
@@ -83,8 +88,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       .getListUsersRegister()
       .subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
         this.pickingParametrizationProvider.listEmployees = res;
-        this.pickingParametrizationProvider.loadingListEmployees = false;
         this.events.publish(this.EMPLOYEES_LOADED);
+        this.pickingParametrizationProvider.loadingListEmployees = false;
       }, (error) => {
         console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
         this.pickingParametrizationProvider.loadingListEmployees = false;
@@ -92,37 +97,45 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   private loadRequestOrders() {
-    this.pickingParametrizationProvider.loadingListRequestOrders = true;
-    this.workwavesService
-      .postMatchLineRequest({
-        groupsWarehousePicking: [],
-        typesShippingOrders: []
-      })
-      .subscribe((res: Array<WorkwaveModel.MatchLineRequest>) => {
-        this.pickingParametrizationProvider.listRequestOrders = res;
-        this.pickingParametrizationProvider.loadingListRequestOrders = false;
-        this.events.publish(this.REQUEST_ORDERS_LOADED);
-      }, (error) => {
-        console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
-        this.pickingParametrizationProvider.loadingListRequestOrders = false;
-      });
+    if (this.listTypesToUpdate.length > 0 && this.listGroupsWarehousesToUpdate.length > 0) {
+      this.pickingParametrizationProvider.loadingListRequestOrders = true;
+      this.workwavesService
+        .postMatchLineRequest({
+          groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
+          typesShippingOrders: this.listTypesToUpdate
+        })
+        .subscribe((res: Array<WorkwaveModel.MatchLineRequest>) => {
+          this.pickingParametrizationProvider.listRequestOrders = res;
+          this.events.publish(this.REQUEST_ORDERS_LOADED);
+          this.pickingParametrizationProvider.loadingListRequestOrders = false;
+        }, (error) => {
+          console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
+          this.pickingParametrizationProvider.loadingListRequestOrders = false;
+        });
+    } else {
+      this.pickingParametrizationProvider.loadingListRequestOrders = false;
+    }
   }
 
   private loadTeamAssignations() {
-    this.pickingParametrizationProvider.loadingListTeamAssignations = true;
-    this.workwavesService
-      .postAssignUserToMatchLineRequest({
-        requestIds: [1, 2],
-        userIds: [1, 3, 4]
-      })
-      .subscribe((res: Array<WorkwaveModel.TeamAssignations>) => {
-        this.pickingParametrizationProvider.listTeamAssignations = res;
-        this.pickingParametrizationProvider.loadingListTeamAssignations = false;
-        this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
-      }, (error) => {
-        console.error('Error::Subscribe:workwavesService::postAssignUserToMatchLineRequest::', error);
-        this.pickingParametrizationProvider.loadingListTeamAssignations = false;
-      });
+    if (this.listEmployeesToUpdate.length > 0 && this.listRequestOrdersToUpdate.length > 0) {
+      this.pickingParametrizationProvider.loadingListTeamAssignations = true;
+      this.workwavesService
+        .postAssignUserToMatchLineRequest({
+          requestIds: this.listRequestOrdersToUpdate,
+          userIds: this.listEmployeesToUpdate
+        })
+        .subscribe((res: Array<WorkwaveModel.TeamAssignations>) => {
+          this.pickingParametrizationProvider.listTeamAssignations = res;
+          this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
+          this.pickingParametrizationProvider.loadingListTeamAssignations = false;
+        }, (error) => {
+          console.error('Error::Subscribe:workwavesService::postAssignUserToMatchLineRequest::', error);
+          this.pickingParametrizationProvider.loadingListTeamAssignations = false;
+        });
+    } else {
+      this.pickingParametrizationProvider.loadingListRequestOrders = false;
+    }
   }
 
   saveWorkWave() {
@@ -131,6 +144,27 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   goPreviousPage () {
     this.location.back();
+  }
+
+  // Response from table components
+  typeChanged(data) {
+    this.listTypesToUpdate = data;
+    this.loadRequestOrders();
+  }
+
+  groupWarehousesChanged(data) {
+    this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data);
+    this.loadRequestOrders();
+  }
+
+  employeeChanged(data) {
+    this.listEmployeesToUpdate = data;
+    this.loadTeamAssignations();
+  }
+
+  requestOrderChanged(data) {
+    this.listRequestOrdersToUpdate = data;
+    this.loadTeamAssignations();
   }
 
 }

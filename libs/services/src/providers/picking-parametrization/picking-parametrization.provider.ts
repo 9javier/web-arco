@@ -8,7 +8,7 @@ import {WorkwaveModel} from "../../models/endpoints/Workwaves";
 })
 export class PickingParametrizationProvider {
 
-  private _loadingListGroupsWarehouses: boolean = true;
+  private _loadingListGroupsWarehouses: boolean = false;
   get loadingListGroupsWarehouses(): boolean {
     return this._loadingListGroupsWarehouses;
   }
@@ -24,7 +24,7 @@ export class PickingParametrizationProvider {
     this._listGroupsWarehouses = value;
   }
 
-  private _loadingListEmployees: boolean = true;
+  private _loadingListEmployees: boolean = false;
   get loadingListEmployees(): boolean {
     return this._loadingListEmployees;
   }
@@ -40,7 +40,7 @@ export class PickingParametrizationProvider {
     this._listEmployees = value;
   }
 
-  private _loadingListRequestOrders: boolean = true;
+  private _loadingListRequestOrders: boolean = false;
   get loadingListRequestOrders(): boolean {
     return this._loadingListRequestOrders;
   }
@@ -56,7 +56,7 @@ export class PickingParametrizationProvider {
     this._listRequestOrders = value;
   }
 
-  private _loadingListTeamAssignations: boolean = true;
+  private _loadingListTeamAssignations: boolean = false;
   get loadingListTeamAssignations(): boolean {
     return this._loadingListTeamAssignations;
   }
