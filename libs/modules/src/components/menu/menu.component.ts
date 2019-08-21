@@ -140,7 +140,7 @@ export class MenuComponent implements OnInit {
       icon: 'cart',
       children: [
         {
-          title: 'Calendario Picking',
+          title: 'Calendario',
           id:'calendar',
           url: '/calendar',
           icon: 'md-calendar'

@@ -18,6 +18,9 @@
             <div slot="start" class="slot-start-icon">
                 <i color="medium" class="material-icons">title</i>
             </div>
+            <!-- Input Label -->
+            <ion-label position="floating">Nombre</ion-label>
+            <!-- Input Text -->
             <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
         </ion-item>
         <!--Descripción del almacen-->
@@ -25,6 +28,9 @@
             <div slot="start" class="slot-start-icon">
                 <i color="medium" class="material-icons">description</i>
             </div>
+            <!-- Input Label -->
+            <ion-label position="floating">Descripción</ion-label>
+            <!-- Input Text -->
             <ion-input placeholder="Descripción" class="ion-margin-horizontal" formControlName="description" type="text" text></ion-input>
         </ion-item>
         <!--Manage agency-->
@@ -32,7 +38,10 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
-            <ion-select placeholder="Manage agency" formControlName="manageAgencyId">
+            <!-- Input Label -->
+            <ion-label position="floating">Gestion de agencias</ion-label>
+            <!-- Input Select -->
+            <ion-select placeholder="Gestion de agencias" formControlName="manageAgencyId">
                 <ion-select-option *ngFor="let agency of agencies" [value]="agency.id">{{agency.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -41,8 +50,10 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
-            <ion-select placeholder="Packing type" formControlName="TypePackingId">
-
+            <!-- Input Label -->
+            <ion-label position="floating">Tipo de embalaje</ion-label>
+            <!-- Input Select -->
+            <ion-select placeholder="Tipo de embalaje" formControlName="TypePackingId">
                 <ion-select-option *ngFor="let packingType of packingTypes" [value]="packingType.id">{{packingType.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -51,6 +62,9 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
+            <!-- Input Label -->
+            <ion-label position="floating">Máximo de envíos</ion-label>
+            <!-- Input Text -->
             <ion-input style="text-transform: uppercase" (keypress)="onlyNumbers($event)" placeholder="Máximo de envíos" class="ion-margin-horizontal" formControlName="thresholdShippingStore" type="text" text></ion-input>
         </ion-item>
 
@@ -59,6 +73,9 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
+            <!-- Input Label -->
+            <ion-label position="floating">Prefijo, Ej: ABCD</ion-label>
+            <!-- Input Text -->
             <ion-input style="text-transform: uppercase" (keypress)="onlyUpperLetters($event)" placeholder="Prefijo, Ej: ABCD" class="ion-margin-horizontal" formControlName="prefix_container" type="text" text></ion-input>
         </ion-item>
         <!--Referencia-->
@@ -66,6 +83,9 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
+            <!-- Input Label -->
+            <ion-label position="floating">Referencia, Ej: 001</ion-label>
+            <!-- Input Text -->
             <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
         </ion-item>
         <!--Group warehouse picking-->
@@ -73,7 +93,10 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name="barcode"></ion-icon>
             </div>
-            <ion-select placeholder="Group warehouse picking" formControlName="groupsWarehousePicking" multiple="true">
+            <!-- Input Label -->
+            <ion-label position="floating">Grupos de almacenes para picking</ion-label>
+            <!-- Input Select -->
+            <ion-select placeholder="Grupos de almacenes para picking" formControlName="groupsWarehousePicking" multiple="true">
                 <ion-select-option *ngFor="let group of groupWarehousesPicking" [value]="group.id">{{group.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -82,7 +105,7 @@
             <ion-label lines="none" no-padding>
                 <div inset lines="none">
                     <ion-item no-padding>
-                        <mat-checkbox formControlName="hasBuilding">posee building</mat-checkbox>
+                        <mat-checkbox formControlName="hasBuilding">posee edificio</mat-checkbox>
                     </ion-item>
                 </div>
             </ion-label>
@@ -92,7 +115,10 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name=""></ion-icon>
             </div>
-            <ion-select placeholder="Building" formControlName="buildingId" okText="Ok" cancelText="Cancelar">
+            <!-- Input Label -->
+            <ion-label position="floating">Edificio</ion-label>
+            <!-- Input Select -->
+            <ion-select placeholder="Edificio" formControlName="buildingId" okText="Ok" cancelText="Cancelar">
                 <ion-select-option *ngFor="let building of buildings" [value]="building.id">{{building.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -111,6 +137,9 @@
             <div slot="start" class="slot-start-icon">
                 <ion-icon color="medium" name=""></ion-icon>
             </div>
+            <!-- Input Label -->
+                <ion-label position="floating">Grupo</ion-label>
+            <!-- Input Select -->
             <ion-select placeholder="Grupo" formControlName="groupId" okText="Ok" cancelText="Cancelar">
                 <ion-select-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</ion-select-option>
             </ion-select>
@@ -152,6 +181,9 @@
                 <div slot="start" class="slot-start-icon">
                     <i class="material-icons">view_module</i>
                 </div>
+                <!-- Input Label -->
+                    <ion-label position="floating">Pasillos</ion-label>
+                <!-- Input Text -->
                 <ion-input placeholder="Pasillos" class="ion-margin-horizontal" formControlName="halls" type="number" number></ion-input>
             </ion-item>
             <!--Altura-->
@@ -159,6 +191,9 @@
                 <div slot="start" class="slot-start-icon">
                     <i class="material-icons">view_stream</i>
                 </div>
+                <!-- Input Label -->
+                    <ion-label position="floating">Alturas</ion-label>
+                <!-- Input Text -->
                 <ion-input placeholder="Alturas" class="ion-margin-horizontal" formControlName="rows" type="number" number></ion-input>
             </ion-item>
             <!--Columna-->
@@ -166,6 +201,9 @@
                 <div slot="start" class="slot-start-icon">
                     <i class="material-icons">view_column</i>
                 </div>
+                <!-- Input Label -->
+                <ion-label position="floating">Columnas</ion-label>
+                <!-- Input Text -->
                 <ion-input placeholder="Columnas" class="ion-margin-horizontal" formControlName="columns" type="number" number></ion-input>
             </ion-item>
         </ion-item-group>

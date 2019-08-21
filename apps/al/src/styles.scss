@@ -52,3 +52,10 @@ body {
 .display-none {
     display: none !important;
 }
+
+ion-item.item-label-floating {
+    ion-label{
+        font-size: 16px !important;
+        font-weight: bold;
+    }
+}
