@@ -10,6 +10,7 @@ import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import {CommonUiCrudModule} from '@suite/common/ui/crud';
 import { DataModule } from './data/data.module';
+import { BreadcrumbModule } from '../../../modules/src/components/breadcrumb/breadcrumb.module';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { DataModule } from './data/data.module';
     MatPaginatorModule,
     MatListModule,
     FormsModule,
+    BreadcrumbModule
   ], entryComponents: [
     StoreComponent
   ]
