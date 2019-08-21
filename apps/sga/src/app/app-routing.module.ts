@@ -25,7 +25,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/calendar-picking//calendar-picking.module#CalendarPickingModule',
     data:{
-      name: 'Calendar'
+      name: 'Calendario'
     }
   },
   {
@@ -41,7 +41,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule',
     data:{
-      name:'Asignnar grupos de tiendas'
+      name:'Asignar grupos de tiendas'
     }
   },
   {
@@ -82,7 +82,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-warehouse-picking/group-warehouse-picking.module#GroupWarehousePickingModule',
     data:{
-      name:'Group warehouse picking'
+      name:'Grupos de almacenes para picking'
     }
   },
   {
@@ -90,7 +90,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',
     data:{
-      name:'Jails'
+      name:'Jaulas'
     }
   },
   {
@@ -98,7 +98,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
     data:{
-      name:'Pallets'
+      name:'Paletas'
     }
   },
   {
@@ -271,7 +271,7 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
     data:{
-      name:'Building'
+      name:'Edificios'
     }
   }
 ];

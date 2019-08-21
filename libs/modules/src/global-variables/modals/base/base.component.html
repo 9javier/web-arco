@@ -3,6 +3,9 @@
         <div slot="start" class="slot-start-icon">
             <i color="medium" class="material-icons">T</i>
         </div>
+        <!-- Input de Label -->
+        <ion-label position="floating">Tipo</ion-label>
+        <!-- Select input -->
         <ion-select placeholder="Tipo" formControlName="type">
             <ion-select-option [value]="type.id" *ngFor="let type of types">
                 {{ type.name }}
@@ -13,6 +16,9 @@
         <div slot="start" class="slot-start-icon">
             <i color="medium" class="material-icons">V</i>
         </div>
+        <!-- Input de Label -->
+        <ion-label position="floating">Valor</ion-label>
+        <!-- Text input -->
         <ion-input placeholder="Valor" class="ion-margin-horizontal" formControlName="value" type="text" text></ion-input>
     </ion-item>
 </form>
