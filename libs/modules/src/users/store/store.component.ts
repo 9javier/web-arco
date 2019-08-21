@@ -56,6 +56,7 @@ export class StoreComponent implements OnInit {
   listenChanges(): void {
     this.createForm.get("hasWarehouse").valueChanges.subscribe(status => {
       let warehouseControl = this.createForm.get("warehouseId");
+      let store: HTMLElement = document.getElementById('store');
       warehouseControl.setValue("");
       if (status) {
         warehouseControl.setValidators([Validators.required]);
@@ -66,10 +67,12 @@ export class StoreComponent implements OnInit {
         for (let index in <FormArray>this.createForm.get("permits")) {
           (<FormArray>this.createForm.get("permits")).removeAt(1);
         }
+          store.setAttribute("style", "display: none;");
       }
       else {
         warehouseControl.clearValidators();
         warehouseControl.updateValueAndValidity();
+        store.setAttribute("style", "display: block;");
       }
       console.log(this.roles);
     });
