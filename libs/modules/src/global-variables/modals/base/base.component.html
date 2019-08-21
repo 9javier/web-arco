@@ -1,18 +1,25 @@
 <form [formGroup]="form">
-    <ion-item>
-        <div slot="start" class="slot-start-icon">
-            <i color="medium" class="material-icons">T</i>
-        </div>
-        <ion-select placeholder="Tipo" formControlName="type">
-            <ion-select-option [value]="type.id" *ngFor="let type of types">
-                {{ type.name }}
-            </ion-select-option>
-        </ion-select>
-    </ion-item>
-    <ion-item>
-        <div slot="start" class="slot-start-icon">
-            <i color="medium" class="material-icons">V</i>
-        </div>
-        <ion-input placeholder="Valor" class="ion-margin-horizontal" formControlName="value" type="text" text></ion-input>
-    </ion-item>
+    <div *ngFor="let type of types">
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <i color="medium" class="material-icons">T</i>
+            </div>
+            <ion-input  formControlName="type" disabled><label>{{type.name}}</label></ion-input>
+            <!-- 
+            <ion-select placeholder="Tipo" formControlName="type">
+                <ion-select-option [value]="type.id" *ngFor="let type of types">
+                    {{ type.name }}
+                </ion-select-option>
+            </ion-select>
+        -->
+        </ion-item>
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <i color="medium" class="material-icons">V</i>
+            </div>
+            <ion-input placeholder="Valor" class="ion-margin-horizontal" formControlName="value" type="text" text>
+            </ion-input>
+        </ion-item>
+        <br>
+    </div>
 </form>

@@ -16,11 +16,11 @@ export class BaseComponent implements OnInit {
     }
   }
 
-  types:{id:number;name:string}[] = [];
+  types:{id:number;name:string;}[] = [];
 
   form:FormGroup = this.formBuilder.group({
     type:['',Validators.required],
-    value:['',Validators.required]
+    value:['',Validators.required],
   });
 
   constructor(
@@ -29,6 +29,7 @@ export class BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getTypes();
+    console.log('type 1');
   }
 
   getTypes(){
