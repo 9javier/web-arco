@@ -8,6 +8,8 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { StoreModule } from './modals/store/store.module';
 import { UpdateModule } from './modals/update/update.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 const routes:Routes = [
   {
@@ -27,7 +29,9 @@ const routes:Routes = [
     BreadcrumbModule,
     StoreModule,
     UpdateModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
   ]
 })
 export class GroupWarehousePickingModule { }
