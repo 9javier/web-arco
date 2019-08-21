@@ -102,7 +102,8 @@ export namespace WorkwaveModel {
     typeGeneration: number,
     status: number,
     originWarehouse: WarehouseModel.Warehouse,
-    destinyShop: number,
+    destinyWarehouse: WarehouseModel.Warehouse,
+    destinyShop?: number,
     packingType: number,
     packingId: number,
     requestNotifyAvelon: string,
@@ -114,7 +115,15 @@ export namespace WorkwaveModel {
     avelonNotificationAttemptFinished: boolean,
     quantityMatchWarehouse: number,
     quantityOrder: string,
-    requestId: number
+    request: {
+      id: number,
+      requestId: number
+    },
+    preparationLinesTypes: {
+      id: number,
+      name: string,
+      priority: number
+    }
   }
 
   export interface ResponseMatchLineRequest {
@@ -129,7 +138,7 @@ export namespace WorkwaveModel {
   interface ShoesAssignation {
     pickingId: number,
     quantityShoes: string,
-    Temporal: boolean
+    temporary: boolean
   }
 
   export interface TeamAssignations {

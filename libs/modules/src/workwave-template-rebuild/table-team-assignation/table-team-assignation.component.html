@@ -17,7 +17,7 @@
       <mat-grid-tile class="employee" [colspan]="maxSizeForNameCol">
         <div class="tile-value">{{teamAssignation.user.name}}</div>
       </mat-grid-tile>
-      <mat-grid-tile class="assignation" *ngFor="let assignation of teamAssignation.pickingShoes" [ngClass]="assignation.Temporal ? 'temporal' : 'fixed'" [colspan]="stringToInt(assignation.quantityShoes)">
+      <mat-grid-tile class="assignation" *ngFor="let assignation of teamAssignation.pickingShoes" [ngClass]="assignation.temporary ? 'temporal' : 'fixed'" [colspan]="stringToInt(assignation.quantityShoes)">
         <div class="tile-value">{{assignation.quantityShoes}}</div>
       </mat-grid-tile>
     </mat-grid-list>

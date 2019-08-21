@@ -27,7 +27,7 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
       this.listRequestOrders = this.pickingParametrizationProvider.listRequestOrders;
       for (let request of this.listRequestOrders) {
-        this.requestOrdersSelection[request.id] = true;
+        this.requestOrdersSelection[request.request.id] = true;
       }
       this.selectRequestOrder();
     });
@@ -45,21 +45,6 @@ export class TableRequestsOrdersComponent implements OnInit {
       }
     }
     this.changeRequestOrder.next(this.listRequestOrdersSelected);
-  }
-
-  typeRequestString(typeRequestId: number): string {
-    switch (typeRequestId) {
-      case 1:
-        return 'Online';
-      case 2:
-        return 'Tienda';
-      case 3:
-        return 'Distribución';
-      case 4:
-        return 'Reposición';
-      default:
-        return '-'
-    }
   }
 
 }

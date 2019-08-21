@@ -46,12 +46,12 @@
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.id]" (ngModelChange)="selectRequestOrder()"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder()"></ion-checkbox>
         </div>
       </mat-grid-tile>
 
       <mat-grid-tile class="reference border-right" colspan="3">
-        <div class="tile-value">{{requestOrder.requestId}}</div>
+        <div class="tile-value">{{requestOrder.request.requestId}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="origin border-right" colspan="4">
@@ -59,11 +59,11 @@
       </mat-grid-tile>
 
       <mat-grid-tile class="destiny border-right" colspan="4">
-        <div class="tile-value">{{requestOrder.destinyShop}}</div>
+        <div class="tile-value">{{requestOrder.destinyWarehouse.reference}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="type border-right" colspan="4">
-        <div class="tile-value">{{typeRequestString(0)}}</div>
+        <div class="tile-value">{{requestOrder.preparationLinesTypes.name}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="quantity border-right" colspan="4">
