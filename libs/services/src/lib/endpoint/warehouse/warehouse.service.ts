@@ -40,10 +40,14 @@ export class WarehouseService {
   async init() {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({Authorization: currentToken});
+        
     return this.http.get(this.warehouseMainUrl, {
       headers: headers,
       observe: 'response'
     });
+
+    
+    
   }
 
   /**
