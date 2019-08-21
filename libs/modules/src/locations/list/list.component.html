@@ -19,7 +19,7 @@
 <div class="warehouse-select">
   <ion-item slot="start" *ngIf="isMainWarehouseManagementSection() && existWarehouses">
       <ion-label lines="none" no-padding>
-          Seleccione un Almacen
+          Seleccione un almacén
       </ion-label>  
       <ion-select (ionChange)="warehouseChange($event)" [(ngModel)]="warehouseSelected" placeholder="Location warehouse">
       <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}

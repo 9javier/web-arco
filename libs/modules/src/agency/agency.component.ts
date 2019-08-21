@@ -125,9 +125,11 @@ export class AgencyComponent implements OnInit {
   }
 
   getAgencies():void{
+    this.intermediaryService.presentLoading();
     this.agencyService.getAll().subscribe(agencies=>{
       this.dataSource = new MatTableDataSource(agencies);
       this.initSelectForm(agencies);
+      this.intermediaryService.dismissLoading();
     });
   }
 }

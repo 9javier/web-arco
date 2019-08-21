@@ -33,11 +33,13 @@ ion-item {
 ion-select {
     max-width: 100%;
     width: 100%;
-    margin: 0px 16px;
+    // margin: 0px 0px;
 }
 
 .slot-start-icon {
     margin-inline-end: 0px;
+    margin-top: 10px;
+    margin-right: 10px;
 }
 
 .slot-end-icon {

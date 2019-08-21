@@ -39,7 +39,11 @@ export class UpdateComponent implements OnInit {
   packingTypes:Array<any> = [];
   private currentHasRacks;
   buildings:Array<BuildingModel.Building> = [];
-  groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
+  groups:Array<WarehouseGroupModel.WarehouseGroup>=[];
+
+  /**wrapper for common ionic component methods like loading */
+  @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
+
   constructor(private modalCtrl:ModalController,
     private formBuilder:FormBuilder,
     private agencyService:AgencyService,
@@ -129,6 +133,8 @@ export class UpdateComponent implements OnInit {
         return group.id
       });
       this.updateForm.patchValue(warehouseToPatch);
+    }, ()=> {
+      this.utilsComponent.dismissLoading();
     })
   }
 
@@ -200,6 +206,7 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.utilsComponent.presentLoading();
     this.getWharehousesGroup();
     this.getBuildings();
     this.getAgencies();

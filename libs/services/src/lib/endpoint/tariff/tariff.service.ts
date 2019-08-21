@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 export class TariffService {
 
   /**urls for tariff service */
-  private getIndexUrl:string = environment.apiBase+"/filter/prices";
+  private getIndexUrl:string = environment.apiBase+"/tariffs";
 
   constructor(private http:HttpClient) { }
 

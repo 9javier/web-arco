@@ -151,6 +151,7 @@ export class UpdateComponent implements OnInit {
         this.updateForm.patchValue(user);     
         console.log(user);
         /**call here to handle the async */
+        this.utilsComponent.dismissLoading();
       });
     })
   }
@@ -258,6 +259,7 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.utilsComponent.presentLoading();
     this.initFormBuilder();
     this.listenChanges();
     this.getWarehouses();
