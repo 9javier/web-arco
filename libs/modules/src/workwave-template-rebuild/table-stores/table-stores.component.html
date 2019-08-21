@@ -13,16 +13,23 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="scroll-list">
-    <mat-grid-list *ngFor="let group of listGroupWarehouses; let i = index" class="store-line" cols="12" rowHeight="48px">
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListGroupsWarehouses">
+    <div class="spinner">
+      <p>Cargando grupos de tiendas</p>
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListGroupsWarehouses">
+    <mat-grid-list *ngFor="let group of listGroupsWarehouses; let i = index" class="store-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="radio" colspan="1" rowspan="1">
         <mat-radio-group [name]="'store'+warehouseId">
-          <mat-radio-button [value]="group.id" [checked]="i == 0"></mat-radio-button>
+          <mat-radio-button [value]="group.id"></mat-radio-button>
         </mat-radio-group>
       </mat-grid-tile>
 
       <mat-grid-tile class="name" colspan="7">
-        <div class="tile-value left-value"><b>{{group.reference}}</b> {{group.name}}</div>
+        <div class="tile-value left-value">{{group.name}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="consolidation" colspan="4">

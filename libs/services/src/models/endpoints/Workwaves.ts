@@ -1,4 +1,5 @@
 import {FormControl} from "@angular/forms";
+import {UserModel, WarehouseModel} from "@suite/services";
 
 export namespace WorkwaveModel {
   export interface Workwave {
@@ -83,6 +84,61 @@ export namespace WorkwaveModel {
     message: string;
     code: number;
     errors: any;
+  }
+
+  interface GroupsWarehousesTreshold {
+    groupsWarehousePickingId: number,
+    thresholdConsolidated: number
+  }
+
+  export interface ParamsMatchLineRequest {
+    groupsWarehousePicking: Array<GroupsWarehousesTreshold>,
+    typesShippingOrders: Array<number>
+  }
+
+  export interface MatchLineRequest {
+    workwave: Workwave,
+    typePicking: number,
+    typeGeneration: number,
+    status: number,
+    originWarehouse: WarehouseModel.Warehouse,
+    destinyShop: number,
+    packingType: number,
+    packingId: number,
+    requestNotifyAvelon: string,
+    resultTextNotifyAvelon: string,
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    resultNotifyAvelon: boolean,
+    avelonNotificationAttemptFinished: boolean,
+    quantityMatchWarehouse: number,
+    quantityOrder: string,
+    requestId: number
+  }
+
+  export interface ResponseMatchLineRequest {
+    data: Array<MatchLineRequest>
+  }
+
+  export interface ParamsAssignUserToMatchLineRequest {
+    requestIds: Array<number>,
+    userIds: Array<number>
+  }
+
+  interface ShoesAssignation {
+    pickingId: number,
+    quantityShoes: string,
+    Temporal: boolean
+  }
+
+  export interface TeamAssignations {
+    user: UserModel.User,
+    pickingShoes: Array<ShoesAssignation>
+  }
+
+  export interface ResponseAssignUserToMatchLineRequest {
+    data: Array<TeamAssignations>
   }
 
   export interface ErrorResponse {

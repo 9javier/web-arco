@@ -31,36 +31,43 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="scroll-list">
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders">
+    <div class="spinner">
+      <p>Cargando operaciones de envío</p>
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders">
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox></ion-checkbox>
+          <ion-checkbox checked></ion-checkbox>
         </div>
       </mat-grid-tile>
 
       <mat-grid-tile class="reference border-right" colspan="3">
-        <div class="tile-value">00125890</div>
+        <div class="tile-value">{{requestOrder.requestId}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="origin border-right" colspan="4">
-        <div class="tile-value">001</div>
+        <div class="tile-value">{{requestOrder.originWarehouse.reference}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="destiny border-right" colspan="4">
-        <div class="tile-value">005</div>
+        <div class="tile-value">{{requestOrder.destinyShop}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="type border-right" colspan="4">
-        <div class="tile-value">Online</div>
+        <div class="tile-value">{{typeRequestString(0)}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="quantity border-right" colspan="4">
-        <div class="tile-value">8</div>
+        <div class="tile-value">{{requestOrder.quantityOrder}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="quantity-launch" colspan="4">
-        <div class="tile-value">5</div>
+        <div class="tile-value">{{requestOrder.quantityMatchWarehouse}}</div>
       </mat-grid-tile>
     </mat-grid-list>
   </div>

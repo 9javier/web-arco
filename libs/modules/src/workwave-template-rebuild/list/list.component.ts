@@ -1,8 +1,15 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Location} from "@angular/common";
-import {AlertController, ModalController} from "@ionic/angular";
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {Router} from "@angular/router";
+import {
+  GroupWarehousePickingModel,
+  GroupWarehousePickingService,
+  UserTimeModel,
+  UserTimeService
+} from "@suite/services";
+import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -11,41 +18,26 @@ import {Router} from "@angular/router";
 })
 export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
+  private GROUPS_WAREHOUSES_LOADED = "groups-warehouses-loaded";
+  private EMPLOYEES_LOADED = "employees-loaded";
+  private REQUEST_ORDERS_LOADED = "request-orders-loaded";
+  private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded";
+
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
-  listStoresTemplates: any[];
-  listStoresTemplatesHighlighted: any[];
-  listStoresTemplatesHidden: any[];
-  lastStoreTemplateEdited: any;
   template: any;
   disableEdition: boolean = false;
 
-  public RUN_NOW_TASK_ID = 1;
-
   constructor(
     private location: Location,
-    private router: Router,
-    private modalController: ModalController,
-    private alertController: AlertController,
-    private warehouseService: WarehouseService
+    private events: Events,
+    private groupWarehousePickingService: GroupWarehousePickingService,
+    private userTimeService: UserTimeService,
+    private workwavesService: WorkwavesService,
+    private pickingParametrizationProvider: PickingParametrizationProvider,
   ) {}
 
   ngOnInit() {
-    this.listStoresTemplates = this.warehouseService.warehousesWithRacks.map((warehouse) => {
-      return {
-        checked: false,
-        warehouseId: warehouse.id,
-        name: warehouse.reference+' '+warehouse.name,
-        thresholdConsolidated: 0,
-        thresholdShippingStore: 0,
-        replace: '',
-        allocate: '',
-        typeGeneration: '',
-        typePacking: '',
-        typeShippingOrder: 0
-      }
-    });
-
     if (this.templateToEdit) {
       if (this.templateToEdit.type == 1) {
         this.disableEdition = true;
@@ -54,163 +46,91 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         name: this.templateToEdit.name || 'Ola de trabajo // '+this.templateToEdit.id,
         id: this.templateToEdit.id
       };
-      this.initializeStoresListWithEditTemplate();
-      this.listStoresTemplatesHighlighted = this.listStoresTemplates.filter(store => store.checked);
-      this.listStoresTemplatesHidden = this.listStoresTemplates.filter(store => !store.checked);
     } else {
       this.template = {
-        name: 'Nueva ' + (this.typeWorkwave == 3 ? 'Plantilla' : 'Ola de trabajo'),
+        name: 'Nueva Ola de trabajo',
         id: null
       };
-      this.listStoresTemplatesHighlighted = this.listStoresTemplates;
-      this.listStoresTemplatesHidden = [];
     }
+
+    this.loadDefaultWorkWaveData()
   }
 
-  initializeStoresListWithEditTemplate() {
-    for (let warehouse of this.templateToEdit.warehouses) {
-      for (let store of this.listStoresTemplates) {
-        if (warehouse.warehouse.id == store.warehouseId) {
-          store.thresholdConsolidated = warehouse.thresholdConsolidated;
-          store.thresholdShippingStore = warehouse.thresholdShippingStore;
-          store.typePacking = ''+warehouse.typePacking;
-          store.typeGeneration = ''+warehouse.typeGeneration;
-          store.typeShippingOrder = warehouse.typeShippingOrder;
-          store.thresholdConsolidated = warehouse.thresholdConsolidated;
-          store.checked = true;
-          store.errorTypeShippingOrder = false;
-          store.errorThresholdConsolidated = false;
-          store.errorThresholdShippingStore = false;
-          store.errorTypeGeneration = false;
-          store.errorTypePacking = false;
-          switch (store.typeShippingOrder) {
-            case 1:
-              store.replace = '1';
-              break;
-            case 2:
-              store.allocate = '1';
-              break;
-            case 3:
-              store.replace = '2';
-              store.allocate = '2';
-              break;
-            case 4:
-              store.replace = '1';
-              store.allocate = '2';
-              break;
-            case 5:
-              store.replace = '2';
-              store.allocate = '1';
-              break;
-          }
-        }
-      }
-    }
+  private loadDefaultWorkWaveData() {
+    this.loadGroupsWarehouses();
+    this.loadEmployees();
+    this.loadRequestOrders();
+    this.loadTeamAssignations();
   }
 
-  async saveWorkWave(typeWorkwave) {
+  private loadGroupsWarehouses() {
+    this.pickingParametrizationProvider.loadingListGroupsWarehouses = true;
+    this.groupWarehousePickingService
+      .getIndex()
+      .subscribe((res: Array<GroupWarehousePickingModel.GroupWarehousePicking>) => {
+        this.pickingParametrizationProvider.listGroupsWarehouses = res.filter(groupWarehouse => groupWarehouse.warehouses.length > 0);
+        this.pickingParametrizationProvider.loadingListGroupsWarehouses = false;
+        this.events.publish(this.GROUPS_WAREHOUSES_LOADED);
+      }, (error) => {
+        console.error('Error::Subscribe:groupWarehousePickingService::getIndex::', error);
+        this.pickingParametrizationProvider.loadingListGroupsWarehouses = false;
+      });
+  }
+
+  private loadEmployees() {
+    this.pickingParametrizationProvider.loadingListEmployees = true;
+    this.userTimeService
+      .getListUsersRegister()
+      .subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
+        this.pickingParametrizationProvider.listEmployees = res;
+        this.pickingParametrizationProvider.loadingListEmployees = false;
+        this.events.publish(this.EMPLOYEES_LOADED);
+      }, (error) => {
+        console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
+        this.pickingParametrizationProvider.loadingListEmployees = false;
+      });
+  }
+
+  private loadRequestOrders() {
+    this.pickingParametrizationProvider.loadingListRequestOrders = true;
+    this.workwavesService
+      .postMatchLineRequest({
+        groupsWarehousePicking: [],
+        typesShippingOrders: []
+      })
+      .subscribe((res: Array<WorkwaveModel.MatchLineRequest>) => {
+        this.pickingParametrizationProvider.listRequestOrders = res;
+        this.pickingParametrizationProvider.loadingListRequestOrders = false;
+        this.events.publish(this.REQUEST_ORDERS_LOADED);
+      }, (error) => {
+        console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
+        this.pickingParametrizationProvider.loadingListRequestOrders = false;
+      });
+  }
+
+  private loadTeamAssignations() {
+    this.pickingParametrizationProvider.loadingListTeamAssignations = true;
+    this.workwavesService
+      .postAssignUserToMatchLineRequest({
+        requestIds: [1, 2],
+        userIds: [1, 3, 4]
+      })
+      .subscribe((res: Array<WorkwaveModel.TeamAssignations>) => {
+        this.pickingParametrizationProvider.listTeamAssignations = res;
+        this.pickingParametrizationProvider.loadingListTeamAssignations = false;
+        this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
+      }, (error) => {
+        console.error('Error::Subscribe:workwavesService::postAssignUserToMatchLineRequest::', error);
+        this.pickingParametrizationProvider.loadingListTeamAssignations = false;
+      });
+  }
+
+  saveWorkWave() {
     return null;
   }
 
   goPreviousPage () {
     this.location.back();
-  }
-
-  changeStoreTemplate(data) {
-    if (data.field == 'replace' && data.store.replace == '1' && data.store.allocate == '1') {
-      data.store.allocate = '2';
-    }
-    if (data.field == 'allocate' && data.store.allocate == '1' && data.store.replace == '1') {
-      data.store.replace = '2';
-    }
-
-    if (data.field == 'replace' || data.field == 'allocate') {
-      if (data.store.replace && !data.store.allocate) {
-        data.store.typeShippingOrder = 1;
-      } else if (data.store.allocate && !data.store.replace) {
-        data.store.typeShippingOrder = 2;
-      } else if (data.store.replace == '2' && data.store.allocate == '2') {
-        data.store.typeShippingOrder = 3;
-      } else if (data.store.replace == '1' && data.store.allocate == '2') {
-        data.store.typeShippingOrder = 4;
-      } else if (data.store.replace == '2' && data.store.allocate == '1') {
-        data.store.typeShippingOrder = 5;
-      }
-      delete data.store.errorTypeShippingOrder;
-    }
-
-    if (data.field == 'consolidated' && data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) {
-      delete data.store.errorThresholdConsolidated;
-    }
-    if (data.field == 'shipping' && data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) {
-      delete data.store.errorThresholdShippingStore;
-    }
-    if (data.field == 'selection') {
-      delete data.store.errorTypeGeneration;
-    }
-    if (data.field == 'packing') {
-      delete data.store.errorTypePacking;
-    }
-    if (data.field == 'check' && !data.store.checked) {
-      data.store.thresholdConsolidated = 0;
-      data.store.thresholdShippingStore = 0;
-      data.store.replace = '';
-      data.store.allocate = '';
-      data.store.typeGeneration = '';
-      data.store.typePacking = '';
-      data.store.typeShippingOrder = 0;
-      delete data.store.errorTypeShippingOrder;
-      delete data.store.errorThresholdConsolidated;
-      delete data.store.errorThresholdShippingStore;
-      delete data.store.errorTypeGeneration;
-      delete data.store.errorTypePacking;
-    } else if (data.field != 'check'
-      && (data.store.replace || data.store.allocate || (data.store.thresholdConsolidated && data.store.thresholdConsolidated != 0) || (data.store.thresholdShippingStore && data.store.thresholdShippingStore != 0) || data.store.typeGeneration || data.store.typePacking)) {
-      data.store.checked = true;
-    }
-    if (data.field != 'check') {
-      this.lastStoreTemplateEdited = data.store;
-    }
-  }
-
-  copyTemplateFromLatestEdited(data) {
-    if (!this.lastStoreTemplateEdited) {
-      return;
-    }
-    data.store.checked = true;
-    data.store.thresholdConsolidated = this.lastStoreTemplateEdited.thresholdConsolidated;
-    data.store.thresholdShippingStore = this.lastStoreTemplateEdited.thresholdShippingStore;
-    data.store.replace = this.lastStoreTemplateEdited.replace;
-    data.store.allocate = this.lastStoreTemplateEdited.allocate;
-    data.store.typeGeneration = this.lastStoreTemplateEdited.typeGeneration;
-    data.store.typePacking = this.lastStoreTemplateEdited.typePacking;
-    data.store.typeShippingOrder = this.lastStoreTemplateEdited.typeShippingOrder;
-  }
-
-  resetForm() {
-    if (this.templateToEdit) {
-      this.initializeStoresListWithEditTemplate();
-    } else {
-      this.clearAllFields();
-    }
-  }
-
-  clearAllFields() {
-    for (let store of this.listStoresTemplates) {
-      store.checked = false;
-      store.thresholdConsolidated = 0;
-      store.thresholdShippingStore = 0;
-      store.replace = '';
-      store.allocate = '';
-      store.typeGeneration = '';
-      store.typePacking = '';
-      store.typeShippingOrder = 0;
-      delete store.errorTypeShippingOrder;
-      delete store.errorThresholdConsolidated;
-      delete store.errorThresholdShippingStore;
-      delete store.errorTypeGeneration;
-      delete store.errorTypePacking;
-    }
   }
 
 }

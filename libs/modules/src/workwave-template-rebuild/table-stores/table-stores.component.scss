@@ -1,6 +1,23 @@
 div.main-element {
   height: 100%;
 
+  .loader {
+    height: calc(100% - 48px); // 48px from table header
+    width: 100%;
+    display: table;
+    div.spinner {
+      width: auto;
+      height: auto;
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+      p {
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+    }
+  }
+
   .scroll-list {
     height: calc(100% - 48px); // 48px from table header
     overflow: auto;

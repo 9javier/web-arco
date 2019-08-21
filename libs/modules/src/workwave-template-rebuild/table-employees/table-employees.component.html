@@ -17,8 +17,15 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="scroll-list">
-    <mat-grid-list *ngFor="let employee of listEmployees; let i = index" class="employee-line" cols="12" rowHeight="48px">
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListEmployees">
+    <div class="spinner">
+      <p>Cargando miembros del equipo</p>
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListEmployees">
+    <mat-grid-list *ngFor="let employee of listEmployees.usersActive; let iActive = index" class="employee-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
         <ion-checkbox></ion-checkbox>
       </mat-grid-tile>
@@ -29,12 +36,32 @@
 
       <mat-grid-tile class="active" colspan="2">
         <div class="tile-value right-value">
-          <i class="material-icons" [ngClass]="employee.active ? 'active' : 'inactive'">{{employee.active ? 'check' : 'close'}}</i>
+          <i class="material-icons active">check</i>
         </div>
       </mat-grid-tile>
 
       <mat-grid-tile class="start-time" colspan="4">
-        <div class="tile-value">{{employee.start_time}}</div>
+        <div class="tile-value">{{employee.start_time || '10:00'}}</div>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <mat-grid-list *ngFor="let employee of listEmployees.usersInactive; let iInactive = index" class="employee-line" cols="12" rowHeight="48px">
+      <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
+        <ion-checkbox></ion-checkbox>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="name" colspan="5">
+        <div class="tile-value left-value">{{employee.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="active" colspan="2">
+        <div class="tile-value right-value">
+          <i class="material-icons inactive">close</i>
+        </div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="start-time" colspan="4">
+        <div class="tile-value">-</div>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
