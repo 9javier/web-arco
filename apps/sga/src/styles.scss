@@ -70,3 +70,10 @@ body {
     background-color: darkgrey;
     outline: 1px solid slategrey;
 }
+
+ion-item.item-label-floating {
+    ion-label{
+        font-size: 16px !important;
+        font-weight: bold;
+    }
+}
