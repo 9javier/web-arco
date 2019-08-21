@@ -17,6 +17,7 @@ export class PriceService {
   private postPricesByProductsReferencesUrl: string = environment.apiBase + "/filter/prices/references-products";
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
   private postPricesByModelUrl: string = environment.apiBase + "/filter/prices/model";
+  private getPricesByModelUrl: string = environment.apiBase + "/filter/prices/model";
 
   constructor(private http:HttpClient) { }
 

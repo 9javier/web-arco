@@ -1,13 +1,15 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatTableDataSource, MatPaginator} from '@angular/material';
 
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 import {
   IntermediaryService,
   LabelsService,
   PriceModel,
   PriceService,
-  WarehousesService
+  WarehousesService,
+  ProductsService
 
 } from '@suite/services';
 
@@ -30,7 +32,7 @@ export class PricesComponent implements OnInit {
 
 
   filterTypes:Array<PriceModel.StatusType> = [];
-  status:number;
+  // status:number;
 
   warehouses:Array<any> = [];
   pagerValues:Array<number> = [50, 100, 500];
@@ -40,6 +42,32 @@ export class PricesComponent implements OnInit {
   limit:number = this.pagerValues[0];
 
   selectAllBinding;
+
+    // modelo, marca , temporada y color
+  // models, brand, season color
+  form:FormGroup = this.formBuilder.group({
+    containers: [],
+    models: [],
+    brands: [],
+    seasons: [],
+    colors: [],
+    warehouses:[],
+    status: 0,
+    pagination: this.formBuilder.group({
+        page: 1,
+        limit: this.pagerValues[0]
+    }),
+    orderby:this.formBuilder.group( {
+        type: '',
+        order: "asc"
+    })
+  });
+
+  /**Filters */
+  models:Array<TagsInputOption> = [];
+  brands:Array<TagsInputOption> = [];
+  seasons:Array<TagsInputOption> = [];
+  colors:Array<TagsInputOption> = [];
 
   changeValue(event){
     //this.status = parseInt(event.detail.value);
@@ -87,7 +115,8 @@ export class PricesComponent implements OnInit {
     private intermediaryService:IntermediaryService,
     private formBuilder:FormBuilder,
     private route:ActivatedRoute,
-    private warehousesService:WarehousesService
+    private warehousesService:WarehousesService,
+    private productsService:ProductsService,
   ) {
 
   }
@@ -161,8 +190,8 @@ export class PricesComponent implements OnInit {
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
-  printPrices(items,warehouseId:number=51):void{
-    let prices = this.selectedForm.value.toSelect.map((price,i)=>{
+  printPrices(items,warehouseId:number=51):void {
+    let prices = this.selectedForm.value.toSelect.map((price,i)=> {
       console.log(items[i]);
       let object = {
         warehouseId:warehouseId,
@@ -187,6 +216,7 @@ export class PricesComponent implements OnInit {
 
   ngOnInit() {
     this.getWarehouses();
+    this.getFilters();
     this.priceService.getStatusEnum().subscribe(status=>{
       this.filterTypes = status;
       this.status = this.filterTypes.find((status)=>{
@@ -246,5 +276,34 @@ export class PricesComponent implements OnInit {
     },()=>{
       this.intermediaryService.dismissLoading();
     });
+  }
+
+  /**
+   * get all filters to fill the selects
+   */
+  getFilters():void{
+    this.productsService.getColors().subscribe(colors => {
+      this.colors = colors;
+    });
+
+    this.productsService.getBrands().subscribe(drands => {
+      this.brands = drands;
+    });
+
+    this.productsService.getSeasons().subscribe(seasons => {
+      this.seasons = seasons;
+    });
+
+    // this.productsService.getModels().subscribe(models => {
+    //   this.models = models;
+    // });
+  }
+
+  get status() {
+    return this.form.get('status').value
+  }
+
+  set status(id) {
+    this.form.get('status').setValue(id);
   }
 }
