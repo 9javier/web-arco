@@ -362,18 +362,20 @@ export class CalendarPickingComponent implements OnInit {
     let warehouses = template.warehouses;
     //this.initTemplateBase(this.templateBase);
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+        destinationControl.get("selected").setValue(false);
+      })
+    });
+
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
         if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
           templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
               if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
                 destinationControl.get("selected").setValue(true);
-              } 
+              }
             })
-          })
-        } else {
-          (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-              destinationControl.get("selected").setValue(false);
           })
         }
       })
