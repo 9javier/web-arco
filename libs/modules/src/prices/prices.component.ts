@@ -309,9 +309,9 @@ export class PricesComponent implements OnInit {
       this.seasons = seasons;
     });
 
-    this.productsService.getModels().subscribe(models => {
-      this.models = models;
-    });
+    // this.productsService.getModels().subscribe(models => {
+    //   this.models = models;
+    // });
   }
 
   /**
