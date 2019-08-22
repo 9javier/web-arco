@@ -20,6 +20,11 @@ export class ProductsService {
   private getInfoUrl: string = environment.apiBase + '/products/info/';
   private postRelabelUrl: string = environment.apiBase + '/products/relabel';
   private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
+  
+  private getModelsColorUrl: string = environment.apiBase + '/products/models/color';
+  private getModelsBrandUrl: string = environment.apiBase + '/products/models/brand';
+  private getModelsSeasonUrl: string = environment.apiBase + '/products/models/seasson';
+  private getModelsUrl: string = environment.apiBase + '/products/models';
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -65,4 +70,45 @@ export class ProductsService {
       return this.http.get<ProductModel.ResponseExtendedInfo>(this.getExtendedInfoUrl + reference, { headers });
     }));
   }
+
+  /**
+   * Get the colors list
+   */
+  getColors():Observable<any>{
+    return this.http.get(this.getModelsColorUrl).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
+  /**
+   * Get the brands list
+   */
+  getBrands():Observable<any>{
+    return this.http.get(this.getModelsBrandUrl).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
+  /**
+   * Get the seasons list
+   */
+  getSeasons():Observable<any>{
+    return this.http.get(this.getModelsSeasonUrl).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
+  /**
+   * Get the models list
+   */
+  getModels():Observable<any>{
+    return this.http.get(this.getModelsUrl).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
+  // private getModelsColorUrl: string = environment.apiBase + '/products/models/color';
+  // private getModelsBrandUrl: string = environment.apiBase + '/products/models/brand';
+  // private getModelsSeasonUrl: string = environment.apiBase + '/products/models/seasson';
+  // private getModelsUrl: string = environment.apiBase + '/products/models';
 }

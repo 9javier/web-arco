@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {SettingsService} from "../../../services/src/lib/storage/settings/settings.service";
 import {ToastController} from "@ionic/angular";
+import {PrinterConnectionService} from "../../../services/src/lib/printer-connection/printer-connection.service";
 
 @Component({
   selector: 'app-settings',
@@ -19,6 +20,7 @@ export class SettingsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private settingsService: SettingsService,
     private toastController: ToastController,
+    private printerConnectionService: PrinterConnectionService,
   ) {
   }
 
@@ -34,7 +36,11 @@ export class SettingsComponent implements OnInit {
    */
   submit(): void {
     this.settingsService.saveDeviceSettings(this.form.value)
-      .then(() => { this.presentToast("Ajustes guardados", "success") });
+      .then(() => {
+        this.presentToast("Ajustes guardados", "success");
+        this.printerConnectionService.disconnect();
+        this.printerConnectionService.connect();
+      });
   }
 
   async presentToast(msg, color) {
