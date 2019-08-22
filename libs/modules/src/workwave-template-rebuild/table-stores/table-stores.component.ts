@@ -16,7 +16,7 @@ export class TableStoresComponent implements OnInit {
   @Output() changeGroupWarehouses = new EventEmitter();
 
   listGroupsWarehouses: Array<GroupWarehousePickingModel.GroupWarehousePicking> = new Array<GroupWarehousePickingModel.GroupWarehousePicking>();
-  groupWarehousesSelected: GroupWarehousePickingModel.GroupWarehousesSelected = { groupsWarehousePickingId: 0, thresholdConsolidated: 0 };
+  groupWarehousesSelected: GroupWarehousesSelected = { groupsWarehousePickingId: 0, thresholdConsolidated: {} };
 
   constructor(
     private events: Events,
@@ -28,7 +28,7 @@ export class TableStoresComponent implements OnInit {
       this.listGroupsWarehouses = this.pickingParametrizationProvider.listGroupsWarehouses;
       if (this.listGroupsWarehouses.length > 0) {
         this.groupWarehousesSelected.groupsWarehousePickingId = this.listGroupsWarehouses[0].id;
-        this.groupWarehousesSelected.thresholdConsolidated = this.DEFAULT_THRESHOLD_CONSOLIDATED;
+        this.groupWarehousesSelected.thresholdConsolidated[this.listGroupsWarehouses[0].id] = this.DEFAULT_THRESHOLD_CONSOLIDATED;
         this.selectGroupWarehouses();
       }
     });
@@ -39,25 +39,44 @@ export class TableStoresComponent implements OnInit {
   }
 
   selectGroupWarehouses(idGroupWarehouse?: number) {
-    if (!this.groupWarehousesSelected.thresholdConsolidated) {
-      this.groupWarehousesSelected.thresholdConsolidated = 0;
+    if (idGroupWarehouse) {
+      if (!this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse]) {
+        this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse] = 0;
+      }
+
+      if (this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse] < 0) {
+        this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse] = 0;
+      }
+    } else {
+      this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId] = 0;
     }
 
-    if (this.groupWarehousesSelected.thresholdConsolidated < 0) {
-      this.groupWarehousesSelected.thresholdConsolidated = 0;
-    }
-
-    if (this.groupWarehousesSelected.groupsWarehousePickingId == 0 && idGroupWarehouse && this.groupWarehousesSelected.thresholdConsolidated != 0) {
+    if (idGroupWarehouse && this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse] != 0) {
       this.groupWarehousesSelected.groupsWarehousePickingId = idGroupWarehouse;
     }
 
-    if (this.groupWarehousesSelected.groupsWarehousePickingId != 0 && this.groupWarehousesSelected.thresholdConsolidated != 0) {
-      this.changeGroupWarehouses.next(this.groupWarehousesSelected);
+    for (let iGroupWarehouseThreshold in this.groupWarehousesSelected.thresholdConsolidated) {
+      if (parseInt(iGroupWarehouseThreshold) != this.groupWarehousesSelected.groupsWarehousePickingId) {
+        this.groupWarehousesSelected.thresholdConsolidated[iGroupWarehouseThreshold] = null;
+      }
+    }
+
+    if (this.groupWarehousesSelected.groupsWarehousePickingId != 0 && this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId] >= 0) {
+      let localGroupWarehousesSelected: GroupWarehousePickingModel.GroupWarehousesSelected = {
+        groupsWarehousePickingId: this.groupWarehousesSelected.groupsWarehousePickingId,
+        thresholdConsolidated: this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId]
+      };
+      this.changeGroupWarehouses.next(localGroupWarehousesSelected);
     } else {
-      if (this.groupWarehousesSelected.thresholdConsolidated == 0) {
+      if (this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId] == 0) {
 
       }
     }
   }
 
+}
+
+interface GroupWarehousesSelected {
+  groupsWarehousePickingId: number,
+  thresholdConsolidated: any
 }

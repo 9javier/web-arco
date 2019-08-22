@@ -38,7 +38,7 @@
 
       <mat-grid-tile class="consolidation" colspan="4">
         <div>
-          <input class="input-quantities" placeholder="-" type="number" [(ngModel)]="groupWarehousesSelected.thresholdConsolidated" (focusout)="selectGroupWarehouses(group.id)">
+          <input class="input-quantities" placeholder="-" type="number" [(ngModel)]="groupWarehousesSelected.thresholdConsolidated[group.id]" (focusout)="selectGroupWarehouses(group.id)">
         </div>
       </mat-grid-tile>
     </mat-grid-list>
