@@ -132,6 +132,7 @@ export class PermissionToRolComponent implements OnInit {
   }
 
   getRoles(){
+    this.intermediaryService.presentLoading();
     Promise.all([
       this.permissionService.getIndex(),
       this.rolesService.getIndex()
@@ -141,6 +142,7 @@ export class PermissionToRolComponent implements OnInit {
           (res: HttpResponse<PermissionsModel.ResponseIndex>) => {
             this.permissions = res.body.data;
             console.log(this.permissions);
+            this.intermediaryService.dismissLoading();
           }
         );
         data[1].subscribe((res: HttpResponse<RolModel.ResponseIndex>) => {
@@ -149,9 +151,11 @@ export class PermissionToRolComponent implements OnInit {
           this.form.addControl("toDelete",this.formBuilder.array(this.roles.map(toDelete=>new FormControl(false))));
           this.rolepermissionsSelected = this.roles;
           console.log(this.roles);
+          this.intermediaryService.dismissLoading();
         });
       },
       err => {
+        this.intermediaryService.dismissLoading();
         console.log(err);
       }
     );

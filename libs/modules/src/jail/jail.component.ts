@@ -112,8 +112,10 @@ export class JailComponent implements OnInit {
   }
 
   getTypePacking(){
+    this.intermediaryService.presentLoading();
     this.carrierService.getPackingTypes().subscribe(types=>{
       this.types = types;
+      this.intermediaryService.dismissLoading();
     })
   }
   delete(){
@@ -136,6 +138,7 @@ export class JailComponent implements OnInit {
   }
 
   getCarriers():void{
+    this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers=>{
       this.carriers = carriers;
       this.toDelete.removeControl("jails");
@@ -147,6 +150,7 @@ export class JailComponent implements OnInit {
       })))
       this.dataSource = new MatTableDataSource(carriers)
       console.log(this.toDelete);
+      this.intermediaryService.dismissLoading();
     })
   }
 
@@ -196,9 +200,11 @@ export class JailComponent implements OnInit {
   }
 
   getWarehouses(){
+    this.intermediaryService.presentLoading();
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
         this.warehouses = (<any>response.body).data;
+        this.intermediaryService.dismissLoading();
       });
     })
   }
