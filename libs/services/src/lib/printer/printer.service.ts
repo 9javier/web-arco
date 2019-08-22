@@ -30,6 +30,102 @@ export class PrinterService {
   constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService,private priceService:PriceService) {
   }
 
+  public async openConnection(showAlert: boolean = false) {
+    this.address = await this.getConfiguredAddress();
+    console.debug("PRINT::openConnection 1 [" + new Date().toJSON() + "]", this.address);
+    return new Promise((resolve, reject) => {
+      if(this.address){
+        if (cordova.plugins.zbtprinter) {
+          cordova.plugins.zbtprinter.openConnection(this.address,
+            (result) => {
+                if(showAlert){
+                  this.presentToast('Conectado a la impresora', 'success');
+                }
+                console.debug("PRINT::openConnection 2 [" + new Date().toJSON() + "]", result);
+                resolve();
+            }, (error) => {
+              if(showAlert) {
+                this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+              }
+              console.debug("PRINT::openConnection 3 [" + new Date().toJSON() + "]", error);
+              reject();
+            });
+        } else {
+          if(showAlert) {
+            this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+          }
+          console.debug("PRINT::openConnection 4 [" + new Date().toJSON() + "]");
+          reject();
+        }
+      } else {
+        if(showAlert) {
+          this.presentToast('No está configurada la impresora', 'danger');
+        }
+        console.debug("PRINT::openConnection 5 [" + new Date().toJSON() + "]");
+        reject();
+      }
+    });
+  }
+
+  public async closeConnection() {
+    return new Promise((resolve, reject) => {
+      if (cordova.plugins.zbtprinter) {
+        cordova.plugins.zbtprinter.closeConnection(
+          (result) => {
+            console.debug("PRINT::closeConnection 1 [" + new Date().toJSON() + "]", result);
+            resolve();
+          }, (error) => {
+            console.debug("PRINT::closeConnection 2 [" + new Date().toJSON() + "]", error);
+            reject();
+          });
+      } else {
+        console.debug("PRINT::closeConnection 3 [" + new Date().toJSON() + "]");
+        reject();
+      }
+    });
+  }
+
+  public async checkConnection() {
+    return new Promise((resolve, reject) => {
+      if (cordova.plugins.zbtprinter) {
+        cordova.plugins.zbtprinter.checkConnection(
+          (result) => {
+            console.debug("PRINT::checkConnection 1 [" + new Date().toJSON() + "]", result);
+            resolve(result);
+          }, (error) => {
+            console.debug("PRINT::checkConnection 2 [" + new Date().toJSON() + "]", error);
+            reject();
+          });
+      } else {
+        console.debug("PRINT::checkConnection 3 [" + new Date().toJSON() + "]");
+        reject();
+      }
+    });
+  }
+
+  public async reConnect() {
+    console.debug("PRINT::reConnect 1 [" + new Date().toJSON() + "]");
+    return new Promise((resolve, reject) => {
+      if (cordova.plugins.zbtprinter) {
+        cordova.plugins.zbtprinter.checkConnection(
+          (result) => {
+            console.debug("PRINT::reConnect 2 [" + new Date().toJSON() + "]", result);
+            if(result == "connect"){
+              resolve(result);
+            } else {
+              resolve(this.openConnection());
+            }
+          }, (error) => {
+            console.debug("PRINT::reConnect 3 [" + new Date().toJSON() + "]", error);
+            resolve(this.openConnection());
+          });
+      } else {
+        console.debug("PRINT::reConnect 4 [" + new Date().toJSON() + "]");
+        reject();
+      }
+    });
+  }
+
   private async getConfiguredAddress(): Promise<string> {
     console.debug("PRINT::getConfiguredAddress 1 [" + new Date().toJSON() + "]");
     return <Promise<string>>(this.settingsService.getDeviceSettings()
@@ -186,7 +282,7 @@ export class PrinterService {
         let dataToPrint = this.processProductToPrintTagPrice(prices);
         console.debug("PRINT::printPrices 4 [" + new Date().toJSON() + "]", prices);
         innerObservable = innerObservable.pipe(flatMap(product=>{
-            return from(this.tailManagement(dataToPrint.valuePrint).catch((_=>{})));
+            return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_=>{})));
         })).pipe(flatMap(response=>{
           console.debug("PRINT::printPrices 5 [" + new Date().toJSON() + "]", response);
           return this.printNotify(dataToPrint.options.map(option=>option.price.id));
@@ -232,7 +328,7 @@ export class PrinterService {
         let dataToPrint = this.processProductToPrintTagBarcode(products);
 
         innerObservable = innerObservable.pipe(flatMap(product => {
-          return from(this.tailManagement(dataToPrint));
+          return from(this.toPrintFromString(dataToPrint));
         }));
         console.debug("PRINT::printTagBarcode 3 [" + new Date().toJSON() + "]", listReferences);
         return innerObservable;
@@ -247,7 +343,7 @@ export class PrinterService {
      let dataToPrint = this.processProductToPrintTagBarcode(product);
     console.debug("PRINT::printTagBarcodeUsingProduct 2 [" + new Date().toJSON() + "]", dataToPrint);
      if (dataToPrint) {
-       this.tailManagement(dataToPrint);
+       this.toPrintFromString(dataToPrint);
      }
   }
 
@@ -324,7 +420,7 @@ export class PrinterService {
         let dataToPrint = this.processProductToPrintTagPrice(prices);
         console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices);
         innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.tailManagement(dataToPrint.valuePrint).catch((_=>{})));
+          return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_=>{})));
         })).pipe(flatMap(response=>{
           return this.printNotify(dataToPrint.options.map(option=>option.price.id));
         }));
@@ -340,7 +436,7 @@ export class PrinterService {
     let dataToPrint = this.processProductToPrintTagPrice(price);
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
-      this.tailManagement(dataToPrint.valuePrint);
+      this.toPrintFromString(dataToPrint.valuePrint);
     }
   }
 
@@ -431,71 +527,6 @@ export class PrinterService {
   tailStr:string="";
   printInterval;
   failed = false;
-  /**
-   * Add string to tail of prints and launch the printer
-   * @param str - the string to add to the tail
-   */
-  async tailManagement(str?:string){
-    /**añadimos un string a la cola de impresión */
-    console.debug("PRINT::tailManagement 1 [" + new Date().toJSON() + "]", str);
-    if(str){
-      this.tail.push(str);
-    }
-    /**si no hay un instervalo activo creamos uno */
-    console.debug("PRINT::tailManagement 2 [" + new Date().toJSON() + "]", !this.printInterval);
-    if(!this.printInterval){
-      /**crea un intervalo que intentará imprimir */
-      this.printInterval = setInterval(()=>{
-        /**esto funciona como bandera, si hay un texto quiere decir que hay algo imprimiendose, si no, no */
-        console.debug("PRINT::tailManagement 3 [" + new Date().toJSON() + "]", !this.tailStr);
-        if(!this.tailStr){
-          /**añadimos los elementos de la cola a un string único para imprimir */
-          for(let i = 0;i<this.tail.length;i++){
-            this.tailStr+=this.tail[i];
-          }
-          console.debug("PRINT::tailManagement 4 [" + new Date().toJSON() + "]", this.tailStr);
-          /**vaciamos por completo el array, ya que acabamos de mandar a imprimir todo, y aunque fallara, lo tenemos almacenado en tailStr*/
-          this.tail = [];
-          /**intentamos imprimir */
-          this.toPrintFromString(this.tailStr).then(success=>{
-            console.debug("PRINT::tailManagement 5 [" + new Date().toJSON() + "]", this.tailStr);
-            /**Si se imprime borramos el texto de cola y vaciamos la bandera lo cual permitirá mandar la orden de imprimir nuevamente */
-            this.tailStr = "";
-            /**Si no hay más nada para imprimir matamos el intervalo */
-            console.debug("PRINT::tailManagement 6 [" + new Date().toJSON() + "]", !this.tail.length);
-            if(!this.tail.length){
-              clearInterval(this.printInterval);
-              this.printInterval = null;
-              console.debug("PRINT::tailManagement 7 [" + new Date().toJSON() + "]");
-            }
-          /**si la solicitud falla activamos la bandera failed para que la próxima vez que entre al intervalo lo vuelva a intentar*/
-          }).catch(error=>{
-            console.debug("PRINT::tailManagement 8 [" + new Date().toJSON() + "]", error);
-            this.failed = true;
-          });
-        /**Si hay un tailStr quiere decir que algo se est[a imprimiendo, a menos que la bandera failed se haya activado, en ese caso volvemos a mandar la misma solicitud*/
-        }else if(this.failed){
-          console.debug("PRINT::tailManagement 9 [" + new Date().toJSON() + "]", this.failed);
-          /**colocamos la bandera nuevamente como falsa ya que si habia fallado lo volveremos a intentar y la respuesta la obtendremos luego */
-          this.failed = false;
-          this.toPrintFromString(this.tailStr).then(success=>{
-            console.debug("PRINT::tailManagement 10 [" + new Date().toJSON() + "]", this.tailStr);
-            /**Allow the new errors to be printed */
-            this.tailStr = "";
-            /**Si no hay nada para imprimir matamos el intervalo*/
-            console.debug("PRINT::tailManagement 11 [" + new Date().toJSON() + "]", !this.tail.length);
-            if(!this.tail.length){
-              clearInterval(this.printInterval);
-              this.printInterval = null;
-              console.debug("PRINT::tailManagement 12 [" + new Date().toJSON() + "]");
-            }
-          }).catch(error=>{
-            this.failed = true;
-          });
-        }
-      },500);
-    }
-  }
 
 
   /**
@@ -530,7 +561,7 @@ export class PrinterService {
           let tryToPrintFn = () => {
             printAttempts++;
             console.debug("PRINT::toPrintFromString 9 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
-            cordova.plugins.zbtprinter.print(this.address, textToPrint,
+            cordova.plugins.zbtprinter.printWithConnection(this.address, textToPrint,
               (success) => {
                 console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
@@ -572,7 +603,7 @@ export class PrinterService {
           let tryToPrintFn = () => {
             printAttempts++;
             console.debug("PRINT::toPrint 3 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts});
-            cordova.plugins.zbtprinter.print(this.address, textToPrint,
+            cordova.plugins.zbtprinter.printWithConnection(this.address, textToPrint,
               (success) => {
                 console.debug("PRINT::toPrint 4 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts, success});
                 resolve();
