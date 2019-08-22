@@ -141,19 +141,25 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   saveWorkWave() {
-    this.workwavesService
-      .postConfirmMatchLineRequest({
-        type: this.TYPE_EXECUTION_ID,
-        requestIds: this.listRequestOrdersToUpdate,
-        userIds: this.listEmployeesToUpdate,
-        groupsWarehousePicking: this.listGroupsWarehousesToUpdate
-      })
-      .subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
-        this.presentToast("Tareas de picking generadas correctamente", "success");
-        this.goPreviousPage();
-      }, (error) => {
-        console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
-      });
+    if (this.listEmployeesToUpdate.length < 1) {
+      this.presentToast("Seleccione almenos un usuario para generar las tareas de picking.", "danger");
+    } else if (this.listRequestOrdersToUpdate.length < 1) {
+      this.presentToast("Seleccione almenos una operación de envío para generar las tareas de picking.", "danger");
+    } else {
+      this.workwavesService
+        .postConfirmMatchLineRequest({
+          type: this.TYPE_EXECUTION_ID,
+          requestIds: this.listRequestOrdersToUpdate,
+          userIds: this.listEmployeesToUpdate,
+          groupsWarehousePicking: this.listGroupsWarehousesToUpdate
+        })
+        .subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
+          this.presentToast("Tareas de picking generadas correctamente", "success");
+          this.goPreviousPage();
+        }, (error) => {
+          console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
+        });
+    }
   }
 
   goPreviousPage () {
