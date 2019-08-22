@@ -8,6 +8,7 @@ import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { Observable,merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { WarehousesService, WarehouseModel } from '@suite/services';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'suite-group-warehouse-picking',
@@ -135,8 +136,18 @@ export class GroupWarehousePickingComponent implements OnInit {
   }
 
   assignToGroupWarehousePicking(warehouse, group) {
-    console.log(warehouse)
-    console.log(group)
+    this.warehousesService
+    .toGroupWarehousePicking(Number(warehouse.id), Number(group.id))
+    .then((data: Observable<HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>>) => {
+      data.subscribe(
+        (res: HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>) => {
+          console.log('warehouse añadido al grupo')
+        },
+        (errorResponse: HttpErrorResponse) => {
+          console.log('error al añadir')
+        }
+      );
+    });
   }
 
   /**
