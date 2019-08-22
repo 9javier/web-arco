@@ -190,3 +190,7 @@ export * from './print-received-product/print-received-product.module';
 /**Agency */
 export * from './agency/agency.component';
 export * from './agency/agency.module';
+
+/**Global variables */
+export * from './global-variables/global-variables.component';
+export * from './global-variables/global-variables.module';

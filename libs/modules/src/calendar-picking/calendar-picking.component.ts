@@ -27,10 +27,14 @@ export class CalendarPickingComponent implements OnInit {
   dates;
   date:{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any};
   selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
-    date:'all',
+    date:'todas las fechas seleccionadas',
     warehouses:[],
     value:null
   }];
+
+  openeds:Array<boolean> = [];
+
+  modelDate;
 
   template:FormGroup = this.formBuilder.group({
     template:''
@@ -55,6 +59,11 @@ export class CalendarPickingComponent implements OnInit {
     private changeDetectorRef:ChangeDetectorRef
   ) { }
   loadingDates:boolean = false;
+
+  compareDate(obj1,obj2){
+    return obj1.date == obj2.date;
+  }
+
   ngOnInit() {
     this.getBase();
     this.getCalendarDates();
@@ -71,12 +80,14 @@ export class CalendarPickingComponent implements OnInit {
       this.getCalendarDates();
     })
   
+
+
     this.datePicker.onSelect.subscribe((changes)=>{
       let selectDates = this.dates.map(_=>{
         return _.format("YYYY-MM-DD");
       });
       let auxDates = [{
-        date:'all',
+        date:'todas las fechas seleccionadas',
         warehouses:[],
         value:null
       }];
@@ -110,6 +121,8 @@ export class CalendarPickingComponent implements OnInit {
             }
           });
         });
+        this.modelDate = auxDates[0];
+        this.date = this.modelDate;
         this.manageSelectedClass();
       },()=>{
         setTimeout(()=>{this.loadingDates = false},10);
@@ -131,6 +144,15 @@ export class CalendarPickingComponent implements OnInit {
       this.initTemplateBase(warehouses);
     },()=>{
       this.intermediaryService.dismissLoading();
+    })
+  }
+
+  clearData(){
+    this.form.patchValue(this.initialValue,{emitEvent:false});
+    this.selectDates.forEach(date=>{
+      if(this.date.date == date.date || this.date.date == 'todas las fechas seleccionadas')
+        date.value = this.initialValue;
+      this.manageSelectedClass();
     })
   }
 
@@ -176,8 +198,7 @@ export class CalendarPickingComponent implements OnInit {
       setTimeout(()=>{
         if(this.date){
           this.selectDates.forEach(date=>{
-            if(date.date == this.date.date){
-              
+            if(date.date == this.date.date || this.date.date == 'todas las fechas seleccionadas'){
               date.value = JSON.parse(JSON.stringify(this.form.value));
               console.log(this.formatValue(date.value).warehouses.length);
             }
@@ -225,7 +246,7 @@ export class CalendarPickingComponent implements OnInit {
       if(i==0)
         return false;
       let value;
-      if(this.date.date != 'all')
+      if(this.date.date != 'todas las fechas seleccionadas')
         value = this.formatValue((date.value));
       else
         value = this.formatValue(this.form.value);
@@ -279,6 +300,7 @@ export class CalendarPickingComponent implements OnInit {
               this.clear();
               this.getCalendarDates();
               this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
+              this.getTemplates();
               this.intermediaryService.dismissLoading();
             },()=>{
               this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
@@ -320,7 +342,7 @@ export class CalendarPickingComponent implements OnInit {
    */
   validToStore(){
     let flag = true;
-    if(this.date.date == 'all' && this.formatValue(this.form.value).warehouses.length )
+    if(this.date.date == 'todas las fechas seleccionadas' && this.formatValue(this.form.value).warehouses.length )
       return true;
     this.selectDates.forEach((date,i)=>{
       if(!i)
@@ -337,19 +359,22 @@ export class CalendarPickingComponent implements OnInit {
    */
   selectTemplate(template:CalendarModel.Template,value=null,date=null){
     this.date = date; 
-    if(value){
-      this.form.patchValue(value,{emitEvent:false});
-      return false;
-    }
     let warehouses = template.warehouses;
-    this.initTemplateBase(this.templateBase);
+    //this.initTemplateBase(this.templateBase);
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+        destinationControl.get("selected").setValue(false);
+      })
+    });
+
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
         if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
           templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id)
+              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
                 destinationControl.get("selected").setValue(true);
+              }
             })
           })
         }
@@ -369,10 +394,11 @@ export class CalendarPickingComponent implements OnInit {
     this.form = this.formBuilder.group({
       warehouses: new FormArray([])
     });
+    this.openeds = [];
     warehouses.forEach(warehouse=>{
+      this.openeds.push(false);
       (<FormArray>this.form.get("warehouses")).push(
         this.formBuilder.group({
-          opened:false,
           originWarehouse:this.formBuilder.group({
             id:warehouse.originWarehouse.id,
             name:warehouse.originWarehouse.name
@@ -398,7 +424,7 @@ export class CalendarPickingComponent implements OnInit {
 
   clearCalendar(){
     this.selectDates = [{
-      date:'all',
+      date:'todas las fechas seleccionadas',
       warehouses:[],
       value:null
     }];
@@ -408,7 +434,7 @@ export class CalendarPickingComponent implements OnInit {
   clear(){
     this.template.get("template").patchValue('',{emitEvent:false});
     this.selectDates = [{
-      date:'all',
+      date:'todas las fechas seleccionadas',
       warehouses:[],
       value:null
     }];

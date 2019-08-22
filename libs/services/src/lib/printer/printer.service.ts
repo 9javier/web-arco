@@ -23,7 +23,7 @@ export class PrinterService {
 
   /**urls for printer service */
   private getProductsByReferenceUrl:string = environment.apiBase+"/products/references";
-  private printNotifyUrl:string = environment.apiBase+"/filter/prices/printReferences";
+  private printNotifyUrl:string = environment.apiBase+"/tariffs/printReferences";
 
   private address: string;
 
