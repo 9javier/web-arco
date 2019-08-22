@@ -110,9 +110,14 @@ export class GroupWarehousePickingComponent implements OnInit {
    * Get a list of all group warehouse pickings
    */
   getGroupWarehousePicking():void{
+    this.intermediaryService.presentLoading();
     this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
       this.groupsWarehousePicking = groupWarehousePickings
       console.log(this.groupsWarehousePicking)
+    }, (e) => {
+      console.log(e)
+    }, () => {
+      this.intermediaryService.dismissLoading();
     });
   }
 
@@ -161,9 +166,9 @@ export class GroupWarehousePickingComponent implements OnInit {
       }))
     })
 
-    console.log(deletions)
-
+    this.groupsToDelete = [];
     this.intermediaryService.presentLoading();
+
     deletions.subscribe(()=>{
       this.intermediaryService.dismissLoading();
       this.getGroupWarehousePicking();
@@ -174,5 +179,4 @@ export class GroupWarehousePickingComponent implements OnInit {
       this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los grupos");
     });
    }
-
 }
