@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 export class GroupWarehousePickingService {
 
   /**Urls for group warehouse picking service */
-  private groupWarehousePickingUrl:string = environment.apiBase+"/groups-warehouse-picking/";
+  private groupWarehousePickingUrl:string = environment.apiBase+"/warehouses/groups/picking/";
   private singleGroupWarehousePickingUrl:string = environment.apiBase+"/warehouses/groups/picking/{{id}}";
 
   displayedColumns: string[] = ['name'];
