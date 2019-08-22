@@ -142,9 +142,11 @@ export class GroupWarehousePickingComponent implements OnInit {
       data.subscribe(
         (res: HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>) => {
           console.log('warehouse añadido al grupo')
+          this.intermediaryService.presentToastSuccess("Warehouse añadido al GroupPicking");
         },
         (errorResponse: HttpErrorResponse) => {
-          console.log('error al añadir')
+          this.intermediaryService.presentToastError("Error al añadir el warehouse");
+          console.log(errorResponse)
         }
       );
     });

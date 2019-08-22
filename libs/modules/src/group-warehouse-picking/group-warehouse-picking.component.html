@@ -24,8 +24,8 @@
 												let warehouse of warehouses;
 											">
 
-												<mat-list-option *ngIf="!warehouse.group || warehouse.group.id != group.id; else checked" [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
-														<p>{{ warehouse.name }}</p>
+												<mat-list-option [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
+													<p>{{ warehouse.name }}</p>
 												</mat-list-option>
 
 											</mat-selection-list>
