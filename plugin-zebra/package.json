@@ -1,0 +1,63 @@
+{
+  "_from": "cordova-plugin-zebra-printer@^2.0.1",
+  "_id": "cordova-plugin-zebra-printer@2.0.1",
+  "_inBundle": false,
+  "_integrity": "sha1-0fKjON7PI+pRdtEHwK+XHLt8V9Y=",
+  "_location": "/cordova-plugin-zebra-printer",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "cordova-plugin-zebra-printer@^2.0.1",
+    "name": "cordova-plugin-zebra-printer",
+    "escapedName": "cordova-plugin-zebra-printer",
+    "rawSpec": "^2.0.1",
+    "saveSpec": null,
+    "fetchSpec": "^2.0.1"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-zebra-printer/-/cordova-plugin-zebra-printer-2.0.1.tgz",
+  "_shasum": "d1f2a338decf23ea5176d107c0af971cbb7c57d6",
+  "_spec": "cordova-plugin-zebra-printer@^2.0.1",
+  "_where": "C:\\l\\IdeaProjects\\Krack2020\\sga-app-logistica-krack",
+  "bugs": {
+    "url": "https://github.com/diegorquera/zbtprinter/issues"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-plugin-android-idfa",
+    "platforms": [
+      "android",
+      "browser"
+    ]
+  },
+  "deprecated": false,
+  "description": "A Cordova/Phonegap driver for Zebra bluetooth printers",
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.0.0"
+    }
+  ],
+  "homepage": "https://github.com/diegorquera/zbtprinter#readme",
+  "keywords": [
+    "cordova",
+    "zebra",
+    "printer",
+    "bluetooth",
+    "print",
+    "android",
+    "install",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "name": "cordova-plugin-zebra-printer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diegorquera/zbtprinter.git"
+  },
+  "version": "2.0.1"
+}
