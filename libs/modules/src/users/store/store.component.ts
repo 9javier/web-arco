@@ -54,20 +54,22 @@ export class StoreComponent implements OnInit {
    * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
    */
   listenChanges(): void {
-    this.createForm.get("hasWarehouse").valueChanges.subscribe(status => {
+    this.createForm.get("hasWarehouse").valueChanges.subscribe(async status => {
       let warehouseControl = this.createForm.get("warehouseId");
       warehouseControl.setValue("");
       if (status) {
         warehouseControl.setValidators([Validators.required]);
         warehouseControl.updateValueAndValidity();
         if (this.formBuilderDataInputs.permits.length == 0) {
-          this.addWarehouseToUser(3);
+         await this.selectNewWarehouse(this.addWarehouseToUser);
+          warehouseControl.setValue(this.formBuilderDataInputs.warehouseId);
         }
         for (let index in <FormArray>this.createForm.get("permits")) {
           (<FormArray>this.createForm.get("permits")).removeAt(1);
         }
       }
       else {
+        warehouseControl.setValue("");
         warehouseControl.clearValidators();
         warehouseControl.updateValueAndValidity();
       }
