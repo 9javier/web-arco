@@ -7,6 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import { UpdateComponent } from './modals/update/update.component';
+import { WarehousesService, WarehouseModel } from '@suite/services';
 
 type select = {
   id:number;
@@ -20,22 +21,32 @@ type select = {
 })
 export class AgencyComponent implements OnInit {
 
-  public displayedColumns: string[] = ['name', 'address', 'phone','select'];
+  public displayedColumns: string[] = ['select','name', 'address', 'phone'];
 
   dataSource:MatTableDataSource<AgencyModel.Agency>;
   selectForm:FormGroup = this.formBuilder.group({
     selecteds: new FormArray([])
   });
+  agencies: AgencyModel.Agency[] = [];
+  warehouses: WarehouseModel.Warehouse[] = [];
+  toDeleteAgency: boolean = false;
+  agenciesToDelete: number[] = [];
 
   constructor(
     private agencyService:AgencyService,
     private formBuilder:FormBuilder,
     private intermediaryService:IntermediaryService,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private warehousesService: WarehousesService
   ) { }
 
   ngOnInit() {
-    this.getAgencies()
+    this.getAgencies();
+    this.warehousesService.getIndex().then(observable=>{
+      observable.subscribe(warehouses=>{
+        this.warehouses = warehouses.body.data;
+      });
+    });
   }
 
   /**
@@ -127,9 +138,26 @@ export class AgencyComponent implements OnInit {
   getAgencies():void{
     this.intermediaryService.presentLoading();
     this.agencyService.getAll().subscribe(agencies=>{
-      this.dataSource = new MatTableDataSource(agencies);
-      this.initSelectForm(agencies);
+      this.agencies = agencies;
+     // this.dataSource = new MatTableDataSource(agencies);
+    // this.initSelectForm(agencies);
       this.intermediaryService.dismissLoading();
     });
+  }
+
+   /**
+   * Activate delete button
+   */
+  activateDelete(id: number) {
+    this.toDeleteAgency = true;
+    let exits: boolean = this.agenciesToDelete.some(agencyId => agencyId == id);
+    if(!exits) {
+      this.agenciesToDelete.push(id);
+    } else {
+      this.agenciesToDelete.splice( this.agenciesToDelete.indexOf(id), 1 );
+    }
+    if(this.agenciesToDelete.length == 0) {
+      this.toDeleteAgency = false;
+    }
   }
 }

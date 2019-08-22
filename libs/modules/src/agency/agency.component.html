@@ -5,44 +5,29 @@
     <ion-grid>
         <ion-row>
             <ion-col size="12">
-                <div class="mat-table-wrapper-overflow-x">
-                    <table mat-table [dataSource]="dataSource">
+							<mat-accordion multi="false">
+								<mat-expansion-panel *ngFor="let agency of agencies">
+										<mat-expansion-panel-header>
+											<mat-panel-title> 
+													<ion-checkbox 
+															style="margin-right: 5px"
+															(click)="activateDelete(agency.id)"
+													>
+													</ion-checkbox> 
+														{{ agency.name }} 
+												</mat-panel-title>
+											<mat-panel-description></mat-panel-description>
+										</mat-expansion-panel-header>
+											<span (click)="update(agency)" class="edit"><b class="edit">Editar agencia</b></span>
+											<h2 class="example-h2"> Warehouses </h2>
+											<mat-selection-list #warehousesSelection *ngFor="let warehouse of warehouses;">
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-
-                        <tr mat-row (click)="update(row)" *matRowDef="let row; columns: displayedColumns"></tr>
-
-                        <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef>Nombre</th>
-                            <td mat-cell *matCellDef="let agency">
-                                {{ agency.name }}
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="address">
-                            <th mat-header-cell *matHeaderCellDef>Dirección</th>
-                            <td mat-cell *matCellDef="let agency">
-                                {{ agency.address }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="phone">
-                            <th mat-header-cell *matHeaderCellDef>Teléfono</th>
-                            <td mat-cell *matCellDef="let agency">
-                                {{ agency.phone }}
-                            </td>
-                        </ng-container>
-                        <ng-container matColumnDef="select" [formGroup]="selectForm">
-                            <th mat-header-cell *matHeaderCellDef>
-                                <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
-                            </th>
-                            <td mat-cell *matCellDef="let agencies;let i = index" (click)="prevent($event)">
-                                <ng-template [ngIf]="selectForm['controls']?.selecteds">
-                                    <ion-checkbox [formControl]="selectForm['controls']?.selecteds['controls'][i]['controls']?.selected"></ion-checkbox>
-                                </ng-template>
-                            </td>
-                        </ng-container>
-                    </table>
-                </div>
+											<mat-list-option [selected]="false" [value]="warehouse.name">
+												<p>{{ warehouse.name }}</p>
+											</mat-list-option>
+										</mat-selection-list>
+										</mat-expansion-panel>
+									</mat-accordion>
             </ion-col>
         </ion-row>
     </ion-grid>
@@ -52,7 +37,7 @@
         <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <div style="height: 5px"></div>
-    <ion-fab-button (click)="delete(selecteds(selectForm.value.selecteds))" color="danger" *ngIf="selecteds(selectForm.value.selecteds)">
+    <ion-fab-button *ngIf="toDeleteAgency" (click)="delete(selecteds(selectForm.value.selecteds))" color="danger">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
 </ion-fab>
