@@ -300,6 +300,7 @@ export class CalendarPickingComponent implements OnInit {
               this.clear();
               this.getCalendarDates();
               this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
+              this.getTemplates();
               this.intermediaryService.dismissLoading();
             },()=>{
               this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
@@ -358,27 +359,27 @@ export class CalendarPickingComponent implements OnInit {
    */
   selectTemplate(template:CalendarModel.Template,value=null,date=null){
     this.date = date; 
-    if(value){
-      this.form.patchValue(value,{emitEvent:false});
-      return false;
-    }else{
-      this.form.patchValue(this.initialValue,{emitEvent:false});
-      return false;
-    }
-    /*let warehouses = template.warehouses;
+    let warehouses = template.warehouses;
     //this.initTemplateBase(this.templateBase);
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+        destinationControl.get("selected").setValue(false);
+      })
+    });
+
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
         if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
           templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id)
+              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
                 destinationControl.get("selected").setValue(true);
+              }
             })
           })
         }
       })
-    });*/
+    });
   }
 
   /**

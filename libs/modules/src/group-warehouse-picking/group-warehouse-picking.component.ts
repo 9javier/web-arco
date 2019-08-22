@@ -7,6 +7,7 @@ import { UpdateComponent } from './modals/update/update.component';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
 import { Observable,merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { WarehousesService, WarehouseModel } from '@suite/services';
 
 @Component({
   selector: 'suite-group-warehouse-picking',
@@ -17,8 +18,10 @@ export class GroupWarehousePickingComponent implements OnInit {
 
 
 
-  displayedColumns: string[] = ['name','initDate','endDate','delete'];
+  displayedColumns: string[] = ['delete','name','initDate','endDate'];
   dataSource: MatTableDataSource<GroupWarehousePickingModel.GroupWarehousePicking>;
+  groupsWarehousePicking;
+  warehouses: WarehouseModel.Warehouse[] = [];
 
   toDelete:FormGroup = this.formBuilder.group({
     groups:(new FormArray([]))
@@ -30,10 +33,20 @@ export class GroupWarehousePickingComponent implements OnInit {
     private modalController:ModalController,
     private formBuilder:FormBuilder,
     private intermediaryService:IntermediaryService,
+    private warehousesService: WarehousesService,
     ) { }
 
   ngOnInit() {
     this.getGroupWarehousePicking();
+    this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
+      this.groupsWarehousePicking = groupWarehousePickings
+      console.log(this.groupsWarehousePicking)
+    });
+    this.warehousesService.getIndex().then(observable=>{
+      observable.subscribe(warehouses=>{
+        this.warehouses = warehouses.body.data;
+      });
+    })
   }
 
   /**
@@ -124,4 +137,8 @@ export class GroupWarehousePickingComponent implements OnInit {
     modal.present();
   }
 
+  assignToGroupWarehousePicking(warehouse, group) {
+    console.log(warehouse)
+    console.log(group)
+  }
 }
