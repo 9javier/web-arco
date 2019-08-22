@@ -20,8 +20,10 @@ export class GroupWarehousePickingComponent implements OnInit {
 
   displayedColumns: string[] = ['delete','name','initDate','endDate'];
   dataSource: MatTableDataSource<GroupWarehousePickingModel.GroupWarehousePicking>;
-  groupsWarehousePicking;
+  groupsWarehousePicking: GroupWarehousePickingModel.GroupWarehousePicking[];
   warehouses: WarehouseModel.Warehouse[] = [];
+  toDeleteGroup: boolean = false;
+  groupsToDelete: number[] = [];
 
   toDelete:FormGroup = this.formBuilder.group({
     groups:(new FormArray([]))
@@ -38,10 +40,6 @@ export class GroupWarehousePickingComponent implements OnInit {
 
   ngOnInit() {
     this.getGroupWarehousePicking();
-    this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
-      this.groupsWarehousePicking = groupWarehousePickings
-      console.log(this.groupsWarehousePicking)
-    });
     this.warehousesService.getIndex().then(observable=>{
       observable.subscribe(warehouses=>{
         this.warehouses = warehouses.body.data;
@@ -113,14 +111,8 @@ export class GroupWarehousePickingComponent implements OnInit {
    */
   getGroupWarehousePicking():void{
     this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
-      this.groupWarehousePickings = groupWarehousePickings;
-      this.groupWarehousePickings.forEach(groupWarehousePicking=>{
-        (<FormArray>this.toDelete.get("groups")).push(this.formBuilder.group({
-          id:groupWarehousePicking.id,
-          selected:false
-        }));
-      });
-      this.dataSource = new MatTableDataSource<any>(this.groupWarehousePickings);
+      this.groupsWarehousePicking = groupWarehousePickings
+      console.log(this.groupsWarehousePicking)
     });
   }
 
@@ -141,4 +133,46 @@ export class GroupWarehousePickingComponent implements OnInit {
     console.log(warehouse)
     console.log(group)
   }
+
+  /**
+   * Activate delete button
+   */
+  activateDelete(id: number) {
+    this.toDeleteGroup = true;
+    let exits: boolean = this.groupsToDelete.some(groupId => groupId == id);
+    if(!exits) {
+      this.groupsToDelete.push(id);
+    } else {
+      this.groupsToDelete.splice( this.groupsToDelete.indexOf(id), 1 );
+    }
+    if(this.groupsToDelete.length == 0) {
+      this.toDeleteGroup = false;
+    }
+  }
+
+  /**
+   * Delete group
+   */
+   deleteGroup() {
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    this.groupsToDelete.forEach(groupId => {
+      deletions = deletions.pipe(switchMap(() => { 
+        return (this.groupWarehousePickingService.delete(groupId))
+      }))
+    })
+
+    console.log(deletions)
+
+    this.intermediaryService.presentLoading();
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getGroupWarehousePicking();
+      this.intermediaryService.presentToastSuccess("Grupos eliminados con exito");
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.getGroupWarehousePicking();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los grupos");
+    });
+   }
+
 }
