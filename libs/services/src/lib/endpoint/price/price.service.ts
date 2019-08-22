@@ -12,12 +12,11 @@ import { Enum } from 'libs/services/src/models/enum.model';
 export class PriceService {
 
   /**urls of for the price service */
-  private getIndexUrl:string = environment.apiBase+"/filter/prices/tariff";
-  private getIndexByModelTariffUrl:string = environment.apiBase+"/filter/prices/references";
-  private postPricesByProductsReferencesUrl: string = environment.apiBase + "/filter/prices/references-products";
+  private getIndexUrl:string = environment.apiBase+"/tariffs/tariff";
+  private getIndexByModelTariffUrl:string = environment.apiBase+"/tariffs/references";
+  private postPricesByProductsReferencesUrl: string = environment.apiBase + "/tariffs/references-products";
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
-  private postPricesByModelUrl: string = environment.apiBase + "/filter/prices/model";
-  private getPricesByModelUrl: string = environment.apiBase + "/filter/prices/model";
+  private postPricesByModelUrl: string = environment.apiBase + "/tariffs/model";
 
   constructor(private http:HttpClient) { }
 

@@ -133,7 +133,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = "Registro horario";
+  currentRoute: string = "Productos";
   deploySidebarSmallDevices = false;
 
 

@@ -38,6 +38,7 @@ export class StoreComponent implements OnInit {
   groupWarehousesPicking:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
   agencies:AgencyModel.Agency[] = [];
   packingTypes:Array<{id:number;name:string}> = [];
+  isLoading = false;
 
   constructor(
     private agencyService:AgencyService,
@@ -167,17 +168,20 @@ export class StoreComponent implements OnInit {
    * Save the new warehouse
    */
   submit(){
+    this.intermediaryService.presentLoading();
     this.warehousesService.postStore(this.sanitize(this.createForm.value)).subscribe(data=>{
       this.utils.presentAlert("Éxito","Nuevo almacén creado con éxito");
       this.close();
+      this.intermediaryService.dismissLoading();
     },(error)=>{
       /**We obtain the error message */
+      this.intermediaryService.dismissLoading();
       let errorMessage:string = error.error.errors;
       /**Check if it is an reference error */
       if(errorMessage.includes("Duplicate entry"))
         this.intermediaryService.presentToastError("La referencia ya está siendo usada");
       else if(errorMessage.includes("Already exist a main"))
-      this.intermediaryService.presentToastError("Ya existe un almacén principal");
+        this.intermediaryService.presentToastError("Ya existe un almacén principal");
     });
   }
 

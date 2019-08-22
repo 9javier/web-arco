@@ -107,6 +107,7 @@ export class ListComponent implements OnInit {
   parentPage: string = null;
 
   ngOnInit() {
+    this.presentLoading();
     this.route.paramMap.subscribe((params: any) => {
       this.paramsReceived = params;
     });
@@ -123,6 +124,7 @@ export class ListComponent implements OnInit {
       this.initHalls();
       this.parentPage = 'Almacenes';
     }
+    this.dismissLoading();
   }
 
   initHalls() {
