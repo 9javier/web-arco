@@ -8,6 +8,7 @@ import { ModalController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import { UpdateComponent } from './modals/update/update.component';
 import { WarehousesService, WarehouseModel } from '@suite/services';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 
 type select = {
   id:number;
@@ -107,26 +108,6 @@ export class AgencyComponent implements OnInit {
   }
 
   /**
-   * Delete all agencies with id match with the ids in array
-   * @param ids - ids of agencies
-   */
-  delete(ids:Array<number>){
-    let observable = new Observable(observer=>observer.next());
-    ids.forEach(id=>{
-      observable = observable.pipe(switchMap(ressponse=>{
-        return this.agencyService.delete(id);
-      }))
-    });
-    this.intermediaryService.presentLoading();
-    observable.subscribe(()=>{
-      this.getAgencies();
-      this.intermediaryService.dismissLoading();
-    },error=>{
-      this.intermediaryService.dismissLoading();
-    }); 
-  }
-
-  /**
    * Stop the usual behaviour of an event and stop it propagation
    * @param event 
    */
@@ -145,6 +126,22 @@ export class AgencyComponent implements OnInit {
     });
   }
 
+  assignToAgency(warehouse, agency) {
+    this.warehousesService
+    .toAgency(Number(warehouse.id), Number(agency.id))
+    .then((data: Observable<HttpResponse<AgencyModel.Agency>>) => {
+      data.subscribe(
+        (res: HttpResponse<AgencyModel.Agency>) => {
+          this.intermediaryService.presentToastSuccess("Warehouse añadido a la Agencia");
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.intermediaryService.presentToastError("Error al añadir el warehouse");
+          console.log(errorResponse)
+        }
+      );
+    });
+  }
+
    /**
    * Activate delete button
    */
@@ -160,4 +157,28 @@ export class AgencyComponent implements OnInit {
       this.toDeleteAgency = false;
     }
   }
+    /**
+   * Delete agency
+   */
+  deleteAgency() {
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    this.agenciesToDelete.forEach(groupId => {
+      deletions = deletions.pipe(switchMap(() => { 
+        return (this.agencyService.delete(groupId))
+      }))
+    })
+
+    this.agenciesToDelete = [];
+    this.intermediaryService.presentLoading();
+
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getAgencies();
+      this.intermediaryService.presentToastSuccess("Agencias eliminadas con exito");
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.getAgencies();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las agencias");
+    });
+   }
 }

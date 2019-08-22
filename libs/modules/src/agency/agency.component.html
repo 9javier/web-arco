@@ -22,7 +22,7 @@
 											<h2 class="example-h2"> Warehouses </h2>
 											<mat-selection-list #warehousesSelection *ngFor="let warehouse of warehouses;">
 
-											<mat-list-option [selected]="false" [value]="warehouse.name">
+											<mat-list-option [selected]="false" [value]="warehouse.name" (click)="assignToAgency(warehouse, agency)">
 												<p>{{ warehouse.name }}</p>
 											</mat-list-option>
 										</mat-selection-list>
@@ -37,7 +37,7 @@
         <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <div style="height: 5px"></div>
-    <ion-fab-button *ngIf="toDeleteAgency" (click)="delete(selecteds(selectForm.value.selecteds))" color="danger">
+    <ion-fab-button *ngIf="toDeleteAgency" (click)="deleteAgency()" color="danger">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
 </ion-fab>

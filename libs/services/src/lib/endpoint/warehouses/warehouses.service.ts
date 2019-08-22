@@ -11,6 +11,7 @@ import { from } from 'rxjs';
 import { switchMap,map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { GroupWarehousePickingModel } from '../../../models/endpoints/group-warehouse-model';
+import { AgencyModel } from '../../../models/endpoints/agency.model';
 
 const PATH_BASE: string = URL + '/api/';
 @Injectable({
@@ -24,6 +25,7 @@ export class WarehousesService {
   private getMainUrl = this.apiBase+"/warehouses/main";
   private updateUrl = this.getShowUrl;
   private toGroupWarehousePickingUrl = this.apiBase+"/warehouses/{{id}}/group/{{groupId}}";
+  private toAgencyUrl = this.apiBase+"/warehouses/{{id}}/agency/{{agencyId}}";
   private postAssignGroupToCategoryUrl:string = this.apiBase+"/warehouses/{{warehouseId}}/groups/{{groupId}}";
   private deleteGroupToWarehouseUrl:string = this.postAssignGroupToCategoryUrl;
   private enumPackingUrl:string = environment.apiBase+"/types/packing";
@@ -146,4 +148,25 @@ export class WarehousesService {
       }
     )
    }
+
+   /**
+   * Add Warehouse to Agency
+   */
+
+  async toAgency(
+    warehouseId: number,
+    agencyId: number
+   ): Promise<Observable<HttpResponse<AgencyModel.Agency>>>  {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.post<AgencyModel.Agency>(
+      this.toAgencyUrl.replace("{{id}}",String(warehouseId)).replace("{{agencyId}}",String(agencyId)),
+      {},
+      {
+        headers: headers,
+        observe: 'response'
+      }
+    )
+   }
+
 }
