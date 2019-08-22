@@ -11,9 +11,9 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import {ToastController, AlertController, LoadingController} from '@ionic/angular';
+import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { AppInfo } from 'config/base';
-
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
     private loadingController: LoadingController,
     private intermediaryService: IntermediaryService,
     public platform: Platform
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.user.username = '';
