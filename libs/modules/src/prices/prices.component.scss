@@ -10,3 +10,21 @@ table {
 .mat-header-cell {
     padding: 10px 10px 10px 0;
 }
+
+ion-label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.check-print {
+    ion-checkbox {
+        margin-top: 10px;
+    }
+}
+
+.header-mobile {
+    padding: 0 24px;
+    .check-all {
+        margin-top: 20px;
+    }
+}

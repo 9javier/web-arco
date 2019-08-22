@@ -7,6 +7,7 @@ import { MatListModule, MatTableModule, MatPaginatorModule, MatExpansionModule, 
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { RouterModule,Routes } from '@angular/router';
 import { ResponsiveLayoutModule } from '../components/responsive-layout/responsive-layout.module';
+import { TagsInputModule } from '../components/tags-input/tags-input.module';
 
 const routes: Routes = [
   {
@@ -29,7 +30,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     ResponsiveLayoutModule,
     MatExpansionModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    TagsInputModule
   ]
 })
 export class PricesModule { }
