@@ -12,7 +12,7 @@ export namespace GroupWarehousePickingModel{
 
     export interface GroupWarehousesSelected {
       groupsWarehousePickingId: number,
-      thresholdConsolidated: number
+      thresholdConsolidated?: number
     }
 
     export interface ResponseGroupWarehousePicking extends Request.Success{

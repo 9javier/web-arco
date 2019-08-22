@@ -9,7 +9,7 @@ import {
 import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
-import {Events} from "@ionic/angular";
+import {Events, ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -22,6 +22,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   private EMPLOYEES_LOADED = "employees-loaded";
   private REQUEST_ORDERS_LOADED = "request-orders-loaded";
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded";
+  private TYPE_EXECUTION_ID = 1;
 
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
@@ -36,6 +37,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   constructor(
     private location: Location,
     private events: Events,
+    private toastController: ToastController,
     private groupWarehousePickingService: GroupWarehousePickingService,
     private userTimeService: UserTimeService,
     private workwavesService: WorkwavesService,
@@ -139,7 +141,19 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   saveWorkWave() {
-    return null;
+    this.workwavesService
+      .postConfirmMatchLineRequest({
+        type: this.TYPE_EXECUTION_ID,
+        requestIds: this.listRequestOrdersToUpdate,
+        userIds: this.listEmployeesToUpdate,
+        groupsWarehousePicking: this.listGroupsWarehousesToUpdate
+      })
+      .subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
+        this.presentToast("Tareas de picking generadas correctamente", "success");
+        this.goPreviousPage();
+      }, (error) => {
+        console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
+      });
   }
 
   goPreviousPage () {
@@ -167,4 +181,13 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     this.loadTeamAssignations();
   }
 
+  async presentToast(msg, color) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 3750,
+      color: color || "primary"
+    });
+    toast.present();
+  }
 }

@@ -71,6 +71,7 @@ export class WorkwavesService {
 
   private postMatchLineRequestUrl: string = environment.apiBase + "/workwaves/matchlinerequest/";
   private postAssignUserToMatchLineRequestUrl: string = environment.apiBase + "/workwaves/assign/matchlinerequest/";
+  private postConfirmMatchLineRequestUrl: string = environment.apiBase + "/workwaves/confirm/matchlinerequest/";
 
   private _lastWorkwaveEdited: any = null;
   private _lastWorkwaveRebuildEdited: any = null;
@@ -188,6 +189,12 @@ export class WorkwavesService {
 
   postAssignUserToMatchLineRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequest): Observable<Array<WorkwaveModel.TeamAssignations>> {
     return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequest>(this.postAssignUserToMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postConfirmMatchLineRequest(params: WorkwaveModel.ParamsConfirmMatchLineRequest): Observable<WorkwaveModel.DataConfirmMatchLineRequest> {
+    return this.http.post<WorkwaveModel.ResponseConfirmMatchLineRequest>(this.postConfirmMatchLineRequestUrl, params).pipe(map(response => {
       return response.data;
     }));
   }

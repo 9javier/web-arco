@@ -1,5 +1,5 @@
 import {FormControl} from "@angular/forms";
-import {UserModel, WarehouseModel} from "@suite/services";
+import {GroupWarehousePickingModel, UserModel, WarehouseModel} from "@suite/services";
 
 export namespace WorkwaveModel {
   export interface Workwave {
@@ -86,13 +86,8 @@ export namespace WorkwaveModel {
     errors: any;
   }
 
-  interface GroupsWarehousesTreshold {
-    groupsWarehousePickingId: number,
-    thresholdConsolidated: number
-  }
-
   export interface ParamsMatchLineRequest {
-    groupsWarehousePicking: Array<GroupsWarehousesTreshold>,
+    groupsWarehousePicking: Array<GroupWarehousePickingModel.GroupWarehousesSelected>,
     typesShippingOrders: Array<number>
   }
 
@@ -148,6 +143,54 @@ export namespace WorkwaveModel {
 
   export interface ResponseAssignUserToMatchLineRequest {
     data: Array<TeamAssignations>
+  }
+
+  export interface ParamsConfirmMatchLineRequest {
+    type: number,
+    groupsWarehousePicking: Array<GroupWarehousePickingModel.GroupWarehousesSelected>,
+    requestIds: Array<number>,
+    userIds: Array<number>
+  }
+
+  interface PickingMatchLineRequest {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    typePicking: number,
+    typeGeneration: number,
+    status: number,
+    packingId: number,
+    packingType: number,
+    resultNotifyAvelon: boolean,
+    avelonNotificationAttemptFinished: boolean,
+    requestNotifyAvelon?: null,
+    resultTextNotifyAvelon?: string,
+    workwave: any,
+    user: number,
+    originWarehouse: WarehouseModel.Warehouse,
+    quantityMatchWarehouse: number
+  }
+
+  export interface DataConfirmMatchLineRequest {
+    id: number,
+    type: number,
+    typeExecution: number,
+    releaseDate: string,
+    name: string,
+    description: string,
+    executed: boolean,
+    executedDate: string,
+    everyday: boolean,
+    weeklyPlan?: any,
+    active?: any,
+    date: string,
+    time: string,
+    warehouses: Array<WarehouseModel.Warehouse>,
+    pickings: Array<PickingMatchLineRequest>
+  }
+
+  export interface ResponseConfirmMatchLineRequest {
+    data: DataConfirmMatchLineRequest
   }
 
   export interface ErrorResponse {
