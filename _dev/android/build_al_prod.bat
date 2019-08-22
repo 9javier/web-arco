@@ -2,6 +2,8 @@ pushd %~dp0\..\..
 
 call ionic cordova plugin remove com.mirasense.scanditsdk.plugin
 call ionic cordova plugin add scandit\
+call ionic cordova plugin remove cordova-plugin-zebra-printer
+call ionic cordova plugin add plugin-zebra\
 
 copy /Y apps\al\src\environments\environment.prod.ts apps\al\src\environments\environment.ts
 copy /Y libs\services\src\environments\environment.prod.al.ts libs\services\src\environments\environment.ts

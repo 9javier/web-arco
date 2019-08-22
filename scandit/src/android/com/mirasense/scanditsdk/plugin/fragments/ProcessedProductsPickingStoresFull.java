@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.galvintec.prestaappkrack.tiendas.R;
+import com.mirasense.scanditsdk.plugin.ScanditSDK;
 import com.mirasense.scanditsdk.plugin.adapters.PickingStoresAdapter;
 import com.mirasense.scanditsdk.plugin.adapters.ProcessedPickingStoresAdapter;
 
@@ -76,7 +76,7 @@ public class ProcessedProductsPickingStoresFull extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    mainView = inflater.inflate(R.layout.fragment_processed_products_picking_stores_full, container, false);
+    mainView = inflater.inflate(ScanditSDK.resources.getIdentifier("fragment_processed_products_picking_stores_full", "layout", ScanditSDK.packageName), container, false);
 
     return mainView;
   }
