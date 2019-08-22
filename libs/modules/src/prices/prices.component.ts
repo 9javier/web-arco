@@ -297,21 +297,12 @@ export class PricesComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters():void{
-    this.productsService.getColors().subscribe(colors => {
-      this.colors = colors;
+    this.productsService.getAllFilters().subscribe(filters => {
+      this.colors = filters.colors;
+      this.brands = filters.brands;
+      this.seasons = filters.seasons;
+      this.models = filters.models;
     });
-
-    this.productsService.getBrands().subscribe(drands => {
-      this.brands = drands;
-    });
-
-    this.productsService.getSeasons().subscribe(seasons => {
-      this.seasons = seasons;
-    });
-
-    // this.productsService.getModels().subscribe(models => {
-    //   this.models = models;
-    // });
   }
 
   /**
