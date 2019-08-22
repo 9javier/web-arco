@@ -52,7 +52,7 @@ export class PricesComponent implements OnInit {
     brands: [],
     seasons: [],
     colors: [],
-    // warehouseId: 49,
+    warehouseId: 49,
     status: 0,
     tariffId: 0,
     pagination: this.formBuilder.group({
@@ -222,7 +222,7 @@ export class PricesComponent implements OnInit {
 
   ngOnInit() {
     this.getWarehouses();
-    this.getFilters();
+    
 
     this.priceService.getStatusEnum().subscribe(status=>{
       this.filterTypes = status;
@@ -231,6 +231,7 @@ export class PricesComponent implements OnInit {
       }).id;
       this.route.paramMap.subscribe(params => {
         this.tariffId = Number(params.get("tariffId"));
+        this.getFilters();
       });
     });    
 
@@ -297,7 +298,7 @@ export class PricesComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters():void{
-    this.productsService.getAllFilters().subscribe(filters => {
+    this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
       this.colors = filters.colors;
       this.brands = filters.brands;
       this.seasons = filters.seasons;
@@ -331,13 +332,13 @@ export class PricesComponent implements OnInit {
 
 
   // GET & SET SECTION
-  // get warehouseId() {
-  //   return this.form.get('warehouseId').value
-  // }
+  get warehouseId() {
+    return this.form.get('warehouseId').value
+  }
 
-  // set warehouseId(id) {
-  //   this.form.patchValue({status: id});
-  // }
+  set warehouseId(id) {
+    this.form.patchValue({status: id});
+  }
 
   get status() {
     return this.form.get('status').value
