@@ -32,7 +32,6 @@ export class PricesComponent implements OnInit {
 
 
   filterTypes:Array<PriceModel.StatusType> = [];
-  // status:number;
 
   warehouses:Array<any> = [];
   pagerValues:Array<number> = [50, 100, 500];
@@ -53,7 +52,7 @@ export class PricesComponent implements OnInit {
     brands: [],
     seasons: [],
     colors: [],
-    warehouseId: 49,
+    // warehouseId: 49,
     status: 0,
     tariffId: 0,
     pagination: this.formBuilder.group({
@@ -71,18 +70,10 @@ export class PricesComponent implements OnInit {
   brands:Array<TagsInputOption> = [];
   seasons:Array<TagsInputOption> = [];
   colors:Array<TagsInputOption> = [];
+  groups:Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
   searchsInContainer:Array<PriceModel.Price> = [];
-
-  // changeValue(event){
-  //   //this.status = parseInt(event.detail.value);
-  //   this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
-  // }
-
-  // reSearch(){
-  //   this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
-  // }
 
   getWarehouses():void{
     this.warehousesService.getIndex().then(observable=>{
@@ -98,10 +89,6 @@ export class PricesComponent implements OnInit {
   /**List of prices */
   prices:Array<PriceModel.Price> = [];
 
-  // filters:FormGroup = this.formBuilder.group({
-  //   warehouseId:51
-  // });
-
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({
     selector:false
@@ -113,7 +100,6 @@ export class PricesComponent implements OnInit {
 
   displayedColumns: string[] = ['impress','model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
   dataSource: any;
-  // tariffId:number;
 
   constructor(
     private printerService:PrinterService,
@@ -129,7 +115,7 @@ export class PricesComponent implements OnInit {
 
   
 
-    /**
+  /**
    * clear empty values of objecto to sanitize it
    * @param object Object to sanitize
    * @return the sanitized object
@@ -167,12 +153,10 @@ export class PricesComponent implements OnInit {
   }
 
 
-    /**
+  /**
    * Listen changes in form to resend the request for search
    */
   listenChanges():void{
-    console.log('listenChanges ');
-    
     let previousPageSize = this.limit
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page=>{
@@ -181,8 +165,6 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      // if(this.status === 0 || this.status) 
-      //   this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
     });
   }
 
@@ -212,26 +194,29 @@ export class PricesComponent implements OnInit {
    */
   printPrices(items,warehouseId:number=51):void {
     let prices = this.selectedForm.value.toSelect.map((price,i)=> {
-      console.log(items[i]);
-      let object = {
-        warehouseId:warehouseId,
-        tariffId:items[i].tariff.id,
-        modelId:items[i].model.id,
-        numRange: items[i].numRange
+      if (items[i].status != 3) {
+        console.log(items[i]);
+        let object = {
+          warehouseId:warehouseId,
+          tariffId:items[i].tariff.id,
+          modelId:items[i].model.id,
+          numRange: items[i].numRange
+        }
+        return price?object:false
       }
-      return price?object:false})
-      .filter(price=>price);
-      console.log(prices);
-      this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
-      this.printerService.printPrices({references:prices}).subscribe(result=>{
-        console.log("result of impressions",result);
-        this.intermediaryService.dismissLoading();
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-        // this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
-      },error=>{
-        this.intermediaryService.dismissLoading();
-        console.log(error);
-      });
+    })
+    .filter(price=>price);
+
+    console.log(prices);
+    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    this.printerService.printPrices({references:prices}).subscribe(result=>{
+      console.log("result of impressions",result);
+      this.intermediaryService.dismissLoading();
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+    },error=>{
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    });
 
   }
 
@@ -246,31 +231,18 @@ export class PricesComponent implements OnInit {
       }).id;
       this.route.paramMap.subscribe(params => {
         this.tariffId = Number(params.get("tariffId"));
-        // this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
       });
     });    
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
       if (this.pauseListenFormChange) return;
-      ///**format the reference */
-      //this.form.controls.productReferencePattern.patchValue(this.buildReference(this.form.value.productReferencePattern),{emitEvent:false});
       /**cant send a request in every keypress of reference, then cancel the previous request */
-      clearTimeout(this.requestTimeout)
-      /**it the change of the form is in reference launch new timeout with request in it */
-      // if(this.form.value.productReferencePattern != this.previousProductReferencePattern){
-        /**Just need check the vality if the change happens in the reference */
-        // if(this.form.valid)
-        //   this.requestTimeout = setTimeout(()=>{
-        //     this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-        // },1000);
-      // }else{
-        /**reset the paginator to the 0 page */
-        this.paginator.pageIndex = 0;
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-      // }
-      /**assign the current reference to the previous reference */
-      // this.previousProductReferencePattern = this.form.value.productReferencePattern;
+      clearTimeout(this.requestTimeout);
+      this.paginator.pageIndex = 0;
+      this.requestTimeout = setTimeout(()=>{
+          this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      },100);
     });
   }
 
@@ -299,7 +271,7 @@ export class PricesComponent implements OnInit {
     this.selectedForm.addControl("toSelect",this.formBuilder.array(items.map(prices=>new FormControl(false))));
   }
 
-
+  // TODO REMOVE AS SOON AS POSIBLE
   /**
    * Get the tarif associatest to a tariff
    * @param tariffId - the id of the tariff
@@ -337,9 +309,9 @@ export class PricesComponent implements OnInit {
       this.seasons = seasons;
     });
 
-    // this.productsService.getModels().subscribe(models => {
-    //   this.models = models;
-    // });
+    this.productsService.getModels().subscribe(models => {
+      this.models = models;
+    });
   }
 
   /**
@@ -349,13 +321,14 @@ export class PricesComponent implements OnInit {
   searchInContainer(parameters):void{
     this.intermediaryService.presentLoading();
     this.priceService.getIndex(parameters).subscribe(prices => {
-      this.intermediaryService.dismissLoading();
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
       let paginator = prices.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
+      this.groups = prices.filters.ordertypes;
+      this.intermediaryService.dismissLoading();
     },()=>{
       this.intermediaryService.dismissLoading();
     });
@@ -367,13 +340,13 @@ export class PricesComponent implements OnInit {
 
 
   // GET & SET SECTION
-  get warehouseId() {
-    return this.form.get('warehouseId').value
-  }
+  // get warehouseId() {
+  //   return this.form.get('warehouseId').value
+  // }
 
-  set warehouseId(id) {
-    this.form.patchValue({status: id});
-  }
+  // set warehouseId(id) {
+  //   this.form.patchValue({status: id});
+  // }
 
   get status() {
     return this.form.get('status').value
