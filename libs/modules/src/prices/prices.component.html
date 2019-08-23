@@ -5,10 +5,10 @@
     <form [formGroup]="form">
         <ion-grid>
             <ion-row>
-                <!-- <ion-col size="2" size-xs="12" size-md="3">
+                <ion-col size="2" size-xs="12" size-md="3">
                     <ion-label>Modelo:</ion-label>
                     <suite-tags-input placeholder="Modelo" [options]="models" formControlName="models" multiple="true"></suite-tags-input>  
-                </ion-col> -->
+                </ion-col>
                 <ion-col size="2" size-xs="12" size-md="3">
                     <ion-label>Marca:</ion-label>
                     <suite-tags-input placeholder="Marca" [options]="brands" formControlName="brands" multiple="true"></suite-tags-input>
@@ -33,7 +33,7 @@
                     </ion-item>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="3">
-                    <ion-label>Status:</ion-label>
+                    <ion-label>Estatus:</ion-label>
                     <ion-item>
                         <ion-label> </ion-label>
                         <ion-select formControlName="status" placeholder="Filtrar">
