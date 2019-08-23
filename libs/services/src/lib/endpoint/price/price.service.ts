@@ -54,7 +54,9 @@ export class PriceService {
    * @param object object for search
    */
   getIndexByModelTariff(object):Observable<Array<Array<PriceModel.PriceByModelTariff>>>{
+    console.debug("PRINT::getIndexByModelTariff 1 [" + new Date().toJSON() + "]", object);
     return this.http.post<PriceModel.ResponsePriceByModelTariff>(this.getIndexByModelTariffUrl,object).pipe(map(response=>{
+      console.debug("PRINT::getIndexByModelTariff 2 [" + new Date().toJSON() + "]", response);
       return response.data;
     }));
   }
@@ -64,7 +66,9 @@ export class PriceService {
    * @param parameters object for search
    */
   postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Observable<PriceModel.PriceByModelTariff[]> {
+    console.debug("PRINT::postPricesByProductsReferences 1 [" + new Date().toJSON() + "]", parameters);
     return this.http.post<PriceModel.ResponsePricesByProductsReferences>(this.postPricesByProductsReferencesUrl, parameters).pipe(map(response => {
+      console.debug("PRINT::postPricesByProductsReferences 2 [" + new Date().toJSON() + "]", response);
       return response.data;
     }));
   }
