@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StoreComponent } from './store.component';
+import { TitlePickingHistoryComponent } from './title.component';
 
-describe('StoreComponent', () => {
-  let component: StoreComponent;
-  let fixture: ComponentFixture<StoreComponent>;
+describe('TitlePickingHistoryComponent', () => {
+  let component: TitlePickingHistoryComponent;
+  let fixture: ComponentFixture<TitlePickingHistoryComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StoreComponent ]
+      declarations: [ TitlePickingHistoryComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(StoreComponent);
+    fixture = TestBed.createComponent(TitlePickingHistoryComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

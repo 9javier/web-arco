@@ -1,0 +1,37 @@
+div.scroll-list {
+  overflow-y: scroll;
+  height: calc(85vh - 54px) // 54px from title element height;
+}
+
+h2.workwave-title {
+  font-size: 20px;
+  margin-bottom: 18px;
+  span.return-workwaves {
+    padding: 0 0 20px 20px;
+    cursor: pointer;
+    color: var(--ion-color-secondary);
+  }
+  div.change-user {
+    width: auto;
+    float: right;
+    margin-right: 16px;
+  }
+}
+
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  .horizontal-fab {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    ion-fab-button {
+      margin-left: 16px;
+    }
+  }
+}
+
+.footer-products:before {
+  background: none;
+}

@@ -1,0 +1,21 @@
+<h2 class="workwave-title">
+  <span (click)="goPreviousPage()" class="return-workwaves">← {{previousPage}}</span>
+  <div class="change-user">
+    <ion-button (click)="changeUser()" [disabled]="usersNoSelected">
+      Cambiar usuario
+    </ion-button>
+  </div>
+</h2>
+
+<title-picking></title-picking>
+<div class="scroll-list">
+  <picking *ngFor="let picking of listPickings" [picking]="picking" (pickingSelection)="pickingSelected($event)"></picking>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button *ngIf="!usersNoSelected">
+      <i class="material-icons">delete</i>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

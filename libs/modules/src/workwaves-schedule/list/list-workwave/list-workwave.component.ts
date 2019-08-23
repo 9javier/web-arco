@@ -13,7 +13,7 @@ import {Router} from "@angular/router";
 })
 export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
 
-  @Input() workwaveScheduled: any;
+  @Input() workWave: any;
 
   constructor(
     private router: Router,
@@ -25,29 +25,45 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
   ngOnInit() {}
 
   processTitleWorkwave() : string {
-    return this.workwaveScheduled.warehouses.map((warehouse) => {
+    return this.workWave.warehouses.map((warehouse) => {
       return warehouse.warehouse.reference+' '+warehouse.warehouse.name;
     }).join(', ');
   }
 
+  getTypeShippingOrderString(line: number) : string {
+    let type = this.workWave.typeShippingOrder;
+    if (line == 1) {
+      if (type == 1) {
+        return "Reposición";
+      } else if (type == 2) {
+        return "Distribución";
+      } else {
+        return "Reposición";
+      }
+    } else {
+      if (type == 1 || type == 2) {
+        return "";
+      } else {
+        return "Distribución";
+      }
+    }
+  }
+
   dateCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveScheduled.releaseDate).format('ddd, DD/MM/YYYY');
+    return moment(this.workWave.releaseDate).format('ddd, DD/MM/YYYY');
   }
 
   timeCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveScheduled.releaseDate).format('LT');
+    return moment(this.workWave.releaseDate).format('LT');
   }
 
-  checkboxClick(event) {
-    event.stopPropagation();
-  }
+  showPickings(event) {
+    this.router.navigate(['workwaves-scheduled/pickings']);
+    this.workwavesService.lastWorkwaveEdited = {};
 
-  showProducts(event) {
-    event.stopPropagation();
-
-    this.workwavesService.lastWorkwaveEdited = this.workwaveScheduled;
+    /*this.workwavesService.lastWorkwaveEdited = this.workWave;
     this.workwavesService.lastWorkwaveHistoryQueried = null;
     this.pickingProvider.listPickingsHistory = null;
 
@@ -60,7 +76,7 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
         }
       }, error => {
         console.warn("Error Subscribe::Load Pickings for Workwave ", this.workwavesService.lastWorkwaveEdited.id);
-      });
+      });*/
   }
 
 }
