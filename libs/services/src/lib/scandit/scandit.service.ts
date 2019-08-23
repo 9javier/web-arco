@@ -103,11 +103,11 @@ export class ScanditService {
           //Container
           if(containerReference != code){
             positionsScanning = [];
-            containerReference = code;
             this.positioningLog(2, "1.3.1", "positioning start!");
             ScanditMatrixSimple.setText(`Inicio de posicionamiento en ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
             this.hideTextMessage(2000);
           }
+          containerReference = code;
         } else if (code.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
