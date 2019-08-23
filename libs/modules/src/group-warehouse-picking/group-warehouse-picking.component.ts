@@ -167,7 +167,7 @@ export class GroupWarehousePickingComponent implements OnInit {
     });
    }
 
-   selectCheck(warehouseId: number, groupId: number) {
+   selectCheck(warehouseId: number, groupId: number): boolean {
     let checkValue: boolean = false;
 
     this.groupsWarehousePicking.forEach(group => {

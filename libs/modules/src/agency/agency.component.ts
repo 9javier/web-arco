@@ -180,7 +180,7 @@ export class AgencyComponent implements OnInit {
     });
    }
 
-   selectCheck(warehouseId: number, agencyId: number) {
+   selectCheck(warehouseId: number, agencyId: number): boolean {
      let checkValue: boolean = false;
 
     this.agencies.forEach(agency => {

@@ -28,9 +28,9 @@
 													<p>{{ warehouse.name }}</p>
 												</mat-list-option>
 	
-												<mat-list-item *ngIf="selectCheck(warehouse.id, group.id)">
-														<p>{{ warehouse.name }}</p>
-												</mat-list-item>
+												<mat-list-option *ngIf="selectCheck(warehouse.id, group.id)" [selected]="true" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
+													<p>{{ warehouse.name }}</p>
+												</mat-list-option>
 		
 											</mat-selection-list>
 										</mat-expansion-panel>

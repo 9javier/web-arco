@@ -26,9 +26,9 @@
 												<p>{{ warehouse.name }}</p>
 											</mat-list-option>
 
-											<mat-list-item *ngIf="selectCheck(warehouse.id, agency.id)">
-													<p>{{ warehouse.name }}</p>
-											</mat-list-item>
+											<mat-list-option *ngIf="selectCheck(warehouse.id, agency.id)" [selected]="true" [value]="warehouse.name" (click)="assignToAgency(warehouse, agency)">
+												<p>{{ warehouse.name }}</p>
+											</mat-list-option>
 
 										</mat-selection-list>
 										</mat-expansion-panel>
