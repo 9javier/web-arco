@@ -121,6 +121,26 @@ export class GroupWarehousePickingComponent implements OnInit {
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al añadir el warehouse");
           console.log(errorResponse)
+        }, () =>{
+          this.getGroupWarehousePicking();
+        }
+      );
+    });
+  }
+
+  remoToGroupWarehousePicking(warehouse, group) {
+    this.warehousesService
+    .removeOfGroupWarehousePicking(Number(warehouse.id), Number(group.id))
+    .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
+      data.subscribe(
+        (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
+          this.intermediaryService.presentToastSuccess("Warehouse removido del GroupPicking");
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.intermediaryService.presentToastError("Error al remover el warehouse");
+          console.log(errorResponse)
+        }, () =>{
+          this.getGroupWarehousePicking();
         }
       );
     });
