@@ -15,6 +15,7 @@ import { validators } from '../../utils/validators';
   styleUrls: ['./store.component.scss']
 })
 export class StoreComponent implements OnInit {
+  warehouseControl: any;
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent: UtilsComponent;
 
@@ -33,6 +34,7 @@ export class StoreComponent implements OnInit {
     warehouseId: [''],
     permits: new FormArray([])
   };
+
 
   /**the allowed roles of the user */
   private roles: Array<any> = [];
@@ -53,27 +55,30 @@ export class StoreComponent implements OnInit {
   /**
    * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
    */
+  test(){
+    console.log("change" + this.formBuilderDataInputs.permits.value);
+    console.log(this.formBuilderDataInputs);
+    
+  }
   listenChanges(): void {
-    this.createForm.get("hasWarehouse").valueChanges.subscribe(async status => {
-      let warehouseControl = this.createForm.get("warehouseId");
-      warehouseControl.setValue("");
+    this.createForm.get("hasWarehouse").valueChanges.subscribe(status => {
+       this.warehouseControl = this.createForm.get("warehouseId");
       if (status) {
-        warehouseControl.setValidators([Validators.required]);
-        warehouseControl.updateValueAndValidity();
+        this.warehouseControl.setValidators([Validators.required]);
+        this.warehouseControl.updateValueAndValidity();
         if (this.formBuilderDataInputs.permits.length == 0) {
-         await this.selectNewWarehouse(this.addWarehouseToUser);
-          warehouseControl.setValue(this.formBuilderDataInputs.warehouseId);
+           this.selectNewWarehouse(this.addWarehouseToUser);  
         }
         for (let index in <FormArray>this.createForm.get("permits")) {
           (<FormArray>this.createForm.get("permits")).removeAt(1);
         }
       }
       else {
-        warehouseControl.setValue("");
-        warehouseControl.clearValidators();
-        warehouseControl.updateValueAndValidity();
+        this.warehouseControl.clearValidators();
+        this.warehouseControl.updateValueAndValidity();
       }
     });
+    console.log(this.formBuilderDataInputs);
   }
 
   /**
@@ -125,7 +130,7 @@ export class StoreComponent implements OnInit {
       name: this.warehouses.find(warehouse => warehouse.id == warehouseId).name,
       warehouse: warehouseId,
       roles: (new FormArray(this.roles.map(rol => new FormControl(false))))
-    }));
+    }));    
     console.log("this is the warehouse id", warehouseId);
   }
 
