@@ -8,7 +8,7 @@ export namespace AgencyModel{
         name:string;
         address:string;
         phone:number;
-        warehouses: WarehouseModel.Warehouse;
+        warehouses: WarehouseModel.Warehouse[];
         
     }
 
