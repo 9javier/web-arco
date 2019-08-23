@@ -12,6 +12,7 @@ export class TariffService {
 
   /**urls for tariff service */
   private getIndexUrl:string = environment.apiBase+"/tariffs";
+  private postUpdateEnabledUrl:string = environment.apiBase+"/tariffs/status";
 
   constructor(private http:HttpClient) { }
 
@@ -21,15 +22,21 @@ export class TariffService {
    * @param limit
    * @returns observable with the tariff
    */
-  getIndex(page:number = 1, limit:number =1,id:number = 51):Observable<TariffModel.ResponseTariffPaginator>{
+  getIndex(page:number = 1, limit:number =1,id:number = 49):Observable<TariffModel.ResponseTariffPaginator>{
     return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl,{
-      //warehouseId:id,
+      warehouseId:49,
       pagination: {
         page: page,
         limit: limit
       }
     }).pipe(map(response=>{
       return response.data;
+    }));
+  }
+
+  updateEnabled(list: any) {
+    return this.http.post(this.postUpdateEnabledUrl,list).pipe(map(response=>{
+      return response;
     }));
   }
 }
