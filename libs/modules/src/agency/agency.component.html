@@ -21,10 +21,15 @@
 											<span (click)="update(agency)" class="edit"><b class="edit">Editar agencia</b></span>
 											<h2 class="example-h2"> Warehouses </h2>
 											<mat-selection-list #warehousesSelection *ngFor="let warehouse of warehouses;">
-
-											<mat-list-option [selected]="false" [value]="warehouse.name" (click)="assignToAgency(warehouse, agency)">
+												
+											<mat-list-option *ngIf="!selectCheck(warehouse.id, agency.id)" [selected]="false" [value]="warehouse.name" (click)="assignToAgency(warehouse, agency)">
 												<p>{{ warehouse.name }}</p>
 											</mat-list-option>
+
+											<mat-list-item *ngIf="selectCheck(warehouse.id, agency.id)">
+													<p>{{ warehouse.name }}</p>
+											</mat-list-item>
+
 										</mat-selection-list>
 										</mat-expansion-panel>
 									</mat-accordion>

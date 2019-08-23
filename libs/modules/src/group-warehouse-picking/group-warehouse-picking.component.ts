@@ -49,31 +49,6 @@ export class GroupWarehousePickingComponent implements OnInit {
   }
 
   /**
-   * Delete all warehouses
-   */
-  delete():void{
-    let deletions:Observable<any> =new Observable(observer=>observer.next());
-    (<[{id:number,selected:boolean}]>this.toDelete.value.groups).forEach(group=>{
-      if(group.selected){
-        deletions = deletions.pipe(switchMap(()=>{
-            return (this.groupWarehousePickingService.delete(group.id))
-          }))
-        }
-    });
-
-    this.intermediaryService.presentLoading();
-    deletions.subscribe(()=>{
-      this.intermediaryService.dismissLoading();
-      this.getGroupWarehousePicking();
-      this.intermediaryService.presentToastSuccess("Grupos eliminados con exito");
-    },()=>{
-      this.intermediaryService.dismissLoading();
-      this.getGroupWarehousePicking();
-      this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los grupos");
-    });
-  }
-
-  /**
    * Prevent default
    * @param event 
    */
@@ -141,7 +116,6 @@ export class GroupWarehousePickingComponent implements OnInit {
     .then((data: Observable<HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>>) => {
       data.subscribe(
         (res: HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>) => {
-          console.log('warehouse añadido al grupo')
           this.intermediaryService.presentToastSuccess("Warehouse añadido al GroupPicking");
         },
         (errorResponse: HttpErrorResponse) => {
@@ -192,4 +166,17 @@ export class GroupWarehousePickingComponent implements OnInit {
       this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los grupos");
     });
    }
+
+   selectCheck(warehouseId: number, groupId: number) {
+    let checkValue: boolean = false;
+
+    this.groupsWarehousePicking.forEach(group => {
+        group.warehouses.forEach(warehosue => {
+        if(warehouseId == warehosue.id && groupId == group.id){
+          checkValue = true;
+        }
+      })
+    })
+    return checkValue;
+  }
 }

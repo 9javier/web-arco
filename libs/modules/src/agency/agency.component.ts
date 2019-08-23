@@ -120,8 +120,6 @@ export class AgencyComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.agencyService.getAll().subscribe(agencies=>{
       this.agencies = agencies;
-     // this.dataSource = new MatTableDataSource(agencies);
-    // this.initSelectForm(agencies);
       this.intermediaryService.dismissLoading();
     });
   }
@@ -180,5 +178,18 @@ export class AgencyComponent implements OnInit {
       this.getAgencies();
       this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las agencias");
     });
+   }
+
+   selectCheck(warehouseId: number, agencyId: number) {
+     let checkValue: boolean = false;
+
+    this.agencies.forEach(agency => {
+      agency.warehouses.forEach(warehosue => {
+        if(warehouseId == warehosue.id && agency.id == agencyId){
+          checkValue = true;
+        }
+      })
+    })
+     return checkValue;
    }
 }

@@ -23,11 +23,15 @@
 											<mat-selection-list #warehousesSelection *ngFor="
 												let warehouse of warehouses;
 											">
-
-												<mat-list-option [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
+											
+												<mat-list-option *ngIf="!selectCheck(warehouse.id, group.id)" [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
 													<p>{{ warehouse.name }}</p>
 												</mat-list-option>
-
+	
+												<mat-list-item *ngIf="selectCheck(warehouse.id, group.id)">
+														<p>{{ warehouse.name }}</p>
+												</mat-list-item>
+		
 											</mat-selection-list>
 										</mat-expansion-panel>
 								</mat-accordion>
