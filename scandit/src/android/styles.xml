@@ -14,7 +14,7 @@
     <item name="android:windowSoftInputMode">adjustResize|stateHidden</item>
   </style>
 
-  <style name="DarkAlert.EditText" parent="Material.Widget.EditText">
+  <style name="DarkAlert.EditText">
     <item name="android:textColor">@color/transparentWhite</item>
     <item name="android:textColorHint">@color/transparentWhite</item>
   </style>

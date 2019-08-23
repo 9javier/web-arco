@@ -130,6 +130,9 @@ public class ScanditSDK extends CordovaPlugin {
   private String lastColorTextMatrixSimple;
   private String lastBackgroundMatrixSimple;
 
+  public static String packageName = "";
+  public static Resources resources = null;
+
   static class Command {
     Command(String action, JSONArray args, CallbackContext callbackContext) {
       this.action = action;
@@ -148,6 +151,8 @@ public class ScanditSDK extends CordovaPlugin {
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
     Log.d("CORDOVA_MATRIX", "execute action:" + action);
+    packageName = cordova.getActivity().getApplication().getPackageName();
+    resources = cordova.getActivity().getApplication().getResources();
     return this.executeCommand(action, args, callbackContext, false);
   }
 
@@ -238,9 +243,6 @@ public class ScanditSDK extends CordovaPlugin {
       this.cordova.startActivityForResult(this, intent, 4);
     } else if (action.equals("setBarcode")) {
 
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
-
       Long id = 0L;
       String barcodeData = "";
       int stock = 0;
@@ -277,8 +279,8 @@ public class ScanditSDK extends CordovaPlugin {
             @Override
             public void run() {
               View view = value.getViewUse();
-              if (view != null && view.findViewById(resources.getIdentifier("stock_value", "id", package_name)) != null) {
-                ((TextView) view.findViewById(resources.getIdentifier("stock_value", "id", package_name))).setText("" + stockTextView);
+              if (view != null && view.findViewById(resources.getIdentifier("stock_value", "id", packageName)) != null) {
+                ((TextView) view.findViewById(resources.getIdentifier("stock_value", "id", packageName))).setText("" + stockTextView);
               }
             }
           });
@@ -290,9 +292,6 @@ public class ScanditSDK extends CordovaPlugin {
 
 
     } else if (action.equals("setBarcodeName")) {
-
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Long id = 0L;
       String barcodeData = "";
@@ -324,8 +323,8 @@ public class ScanditSDK extends CordovaPlugin {
             @Override
             public void run() {
               View view = value.getViewUse();
-              if (view != null && view.findViewById(resources.getIdentifier("name_value", "id", package_name)) != null) {
-                ((TextView) view.findViewById(resources.getIdentifier("name_value", "id", package_name))).setText(nameTextView);
+              if (view != null && view.findViewById(resources.getIdentifier("name_value", "id", packageName)) != null) {
+                ((TextView) view.findViewById(resources.getIdentifier("name_value", "id", packageName))).setText(nameTextView);
               }
             }
           });
@@ -337,9 +336,6 @@ public class ScanditSDK extends CordovaPlugin {
       //exec(null, null, PLUGIN_NAME, "setDataReference", [id, data, name, stock, price, location, id_reference]);
 
       Log.d("CORDOVA_MATRIX","setDataReference");
-
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Long id = 0L;
       String barcodeData = "";
@@ -429,12 +425,12 @@ public class ScanditSDK extends CordovaPlugin {
           TableLayout tlStocks;
           RelativeLayout rlLoader;
           if (viewProductDataFinal != null) {
-            llProductData = viewProductDataFinal.findViewById(resources.getIdentifier("llProductData", "id", package_name));
-            tvReference = viewProductDataFinal.findViewById(resources.getIdentifier("tvReference", "id", package_name));
-            tvPrice = viewProductDataFinal.findViewById(resources.getIdentifier("tvPrice", "id", package_name));
-            tvNoStocks = viewProductDataFinal.findViewById(resources.getIdentifier("tvNoStocks", "id", package_name));
-            tlStocks = viewProductDataFinal.findViewById(resources.getIdentifier("tlStocks", "id", package_name));
-            rlLoader = viewProductDataFinal.findViewById(resources.getIdentifier("rlLoader", "id", package_name));
+            llProductData = viewProductDataFinal.findViewById(resources.getIdentifier("llProductData", "id", packageName));
+            tvReference = viewProductDataFinal.findViewById(resources.getIdentifier("tvReference", "id", packageName));
+            tvPrice = viewProductDataFinal.findViewById(resources.getIdentifier("tvPrice", "id", packageName));
+            tvNoStocks = viewProductDataFinal.findViewById(resources.getIdentifier("tvNoStocks", "id", packageName));
+            tlStocks = viewProductDataFinal.findViewById(resources.getIdentifier("tlStocks", "id", packageName));
+            rlLoader = viewProductDataFinal.findViewById(resources.getIdentifier("rlLoader", "id", packageName));
             if(llProductData != null && llProductData.getVisibility() == View.GONE) {
               llProductData.setVisibility(View.VISIBLE);
             }
@@ -491,9 +487,6 @@ public class ScanditSDK extends CordovaPlugin {
       //exec(null, null, PLUGIN_NAME, "setLocationsReference", [id, data, locations]);
 
       Log.d("CORDOVA_MATRIX","setLocationsReference");
-
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Long id = 0L;
       String barcodeData = "";
@@ -619,9 +612,6 @@ public class ScanditSDK extends CordovaPlugin {
       this.cordova.startActivityForResult(this, intent, 6);
     } else if(action.equals(SET_MATRIX_SIMPLE_TEXT)){
 
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
-
       String text = "";
       String background = "#2F9E5A";
       String color = "#FFFFFF";
@@ -648,9 +638,9 @@ public class ScanditSDK extends CordovaPlugin {
           TextView tvScanInfo;
           RelativeLayout rlLoader;
           if (viewDataMatrixSimpleFinal != null) {
-            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", package_name));
-            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", package_name));
-            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlLoader", "id", package_name));
+            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", packageName));
+            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", packageName));
+            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlLoader", "id", packageName));
             if (llScanInfo != null) {
               llScanInfo.setBackgroundColor(Color.parseColor(fBackground));
               llScanInfo.setVisibility(View.VISIBLE);
@@ -670,8 +660,6 @@ public class ScanditSDK extends CordovaPlugin {
     } else if(action.equals(MATRIX_SIMPLE_FINISH)){
       MatrixSimpleActivity.matrixSimple.finish();
     } else if(action.equals(SHOW_MATRIX_SIMPLE_TEXT)){
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
       boolean show = false;
       try {
         show = args.getBoolean(0);
@@ -688,9 +676,9 @@ public class ScanditSDK extends CordovaPlugin {
           TextView tvScanInfo;
           RelativeLayout rlLoader;
           if (viewDataMatrixSimpleFinal != null) {
-            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", package_name));
-            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", package_name));
-            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlLoader", "id", package_name));
+            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", packageName));
+            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", packageName));
+            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlLoader", "id", packageName));
             if (llScanInfo != null) {
               llScanInfo.setVisibility(View.VISIBLE);
               if(fShow){
@@ -720,8 +708,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if(action.equals(SHOW_MATRIX_SIMPLE_TEXT_LOADER)){
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
       boolean show = false;
       try {
         show = args.getBoolean(0);
@@ -738,9 +724,9 @@ public class ScanditSDK extends CordovaPlugin {
           TextView tvScanInfo;
           RelativeLayout rlLoader;
           if (viewDataMatrixSimpleFinal != null) {
-            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", package_name));
-            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", package_name));
-            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlScanInfoLoader", "id", package_name));
+            llScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llScanInfo", "id", packageName));
+            tvScanInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvScanInfo", "id", packageName));
+            rlLoader = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlScanInfoLoader", "id", packageName));
             if (llScanInfo != null) {
               if (fShow && background != null) {
                 llScanInfo.setBackgroundColor(COLOR_TRANSPARENT);
@@ -819,8 +805,6 @@ public class ScanditSDK extends CordovaPlugin {
         builderWarningProductUnexpected.show();
       }
     } else if (action.equals(SET_MATRIX_SIMPLE_NET_PRODUCT_TO_SCAN)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       JSONObject product = null;
       String background = "#2F9E5A";
@@ -840,16 +824,16 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
-          TextView tvLocationText = rlInfoProduct.findViewById(resources.getIdentifier("tvLocationText", "id", package_name));
-          TextView tvLocation = rlInfoProduct.findViewById(resources.getIdentifier("tvLocation", "id", package_name));
-          TextView tvManufacturerText = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturerText", "id", package_name));
-          TextView tvManufacturer = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturer", "id", package_name));
-          TextView tvModelText = rlInfoProduct.findViewById(resources.getIdentifier("tvModelText", "id", package_name));
-          TextView tvModel = rlInfoProduct.findViewById(resources.getIdentifier("tvModel", "id", package_name));
-          TextView tvSizeText = rlInfoProduct.findViewById(resources.getIdentifier("tvSizeText", "id", package_name));
-          TextView tvSize = rlInfoProduct.findViewById(resources.getIdentifier("tvSize", "id", package_name));
-          Button btnNotFound = rlInfoProduct.findViewById(resources.getIdentifier("btnNotFound", "id", package_name));
+          LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
+          TextView tvLocationText = rlInfoProduct.findViewById(resources.getIdentifier("tvLocationText", "id", packageName));
+          TextView tvLocation = rlInfoProduct.findViewById(resources.getIdentifier("tvLocation", "id", packageName));
+          TextView tvManufacturerText = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturerText", "id", packageName));
+          TextView tvManufacturer = rlInfoProduct.findViewById(resources.getIdentifier("tvManufacturer", "id", packageName));
+          TextView tvModelText = rlInfoProduct.findViewById(resources.getIdentifier("tvModelText", "id", packageName));
+          TextView tvModel = rlInfoProduct.findViewById(resources.getIdentifier("tvModel", "id", packageName));
+          TextView tvSizeText = rlInfoProduct.findViewById(resources.getIdentifier("tvSizeText", "id", packageName));
+          TextView tvSize = rlInfoProduct.findViewById(resources.getIdentifier("tvSize", "id", packageName));
+          Button btnNotFound = rlInfoProduct.findViewById(resources.getIdentifier("btnNotFound", "id", packageName));
 
           if (actionBarMatrixSimple != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             actionBarMatrixSimple.setElevation(0);
@@ -944,8 +928,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if (action.equals(SHOW_MATRIX_SIMPLE_NEXT_PRODUCT_TO_SCAN)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
       try {
@@ -959,7 +941,7 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+          LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
           if (fShow) {
             rlInfoProduct.setVisibility(View.VISIBLE);
           } else {
@@ -968,8 +950,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_START_SCAN_PACKING)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
       int packingType = 0;
@@ -989,11 +969,11 @@ public class ScanditSDK extends CordovaPlugin {
       final String fPackingReference = packingReference;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
 
           if (fShow) {
             String startScan;
-            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
 
             rlInfoProduct.setVisibility(View.GONE);
             tvPackingStart.setVisibility(View.VISIBLE);
@@ -1019,8 +999,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if (action.equals(MATRIX_SIMPLE_SHOW_TEXT_END_SCAN_PACKING)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
       int packingType = 0;
@@ -1040,11 +1018,11 @@ public class ScanditSDK extends CordovaPlugin {
       final String fPackingReference = packingReference;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          TextView tvPackingEnd = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingEnd", "id", package_name));
+          TextView tvPackingEnd = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingEnd", "id", packageName));
 
           if (fShow) {
             String endScan;
-            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", package_name));
+            LinearLayout rlInfoProduct = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("rlInfoProduct", "id", packageName));
 
             rlInfoProduct.setVisibility(View.GONE);
             tvPackingEnd.setVisibility(View.VISIBLE);
@@ -1062,8 +1040,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if (action.equals(MATRIX_SIMPLE_SHOW_FIXED_TEXT_BOTTOM)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
       String text = "";
@@ -1080,7 +1056,7 @@ public class ScanditSDK extends CordovaPlugin {
       final String fText = text;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          TextView tvBottomText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvBottomText", "id", package_name));
+          TextView tvBottomText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvBottomText", "id", packageName));
 
           if (fShow) {
             tvBottomText.setText(fText);
@@ -1092,8 +1068,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if (action.equals(MATRIX_PICKING_STORES_LOAD_PRODUCTS)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       JSONArray products = null;
       JSONArray productsProcessed = null;
@@ -1132,13 +1106,11 @@ public class ScanditSDK extends CordovaPlugin {
       final ArrayList<JSONObject> fProductsProcessed = listProductsProcessed;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          MatrixPickingStores.loadProductsPending(cordova.getActivity(), resources, package_name, fProductsPending);
-          MatrixPickingStores.loadProductsProcessed(cordova.getActivity(), resources, package_name, fProductsProcessed);
+          MatrixPickingStores.loadProductsPending(cordova.getActivity(), resources, packageName, fProductsPending);
+          MatrixPickingStores.loadProductsProcessed(cordova.getActivity(), resources, packageName, fProductsProcessed);
         }
       });
     } else if (action.equals(MATRIX_PICKING_STORES_SET_TEXT)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Boolean show = true;
       String text = null;
@@ -1156,8 +1128,8 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
-          TextView tvPackingStartFull = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStartFull", "id", package_name));
+          TextView tvPackingStart = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStart", "id", packageName));
+          TextView tvPackingStartFull = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvPackingStartFull", "id", packageName));
           if (fShow) {
             tvPackingStart.setText(fText);
             tvPackingStartFull.setText(fText);
@@ -1174,8 +1146,6 @@ public class ScanditSDK extends CordovaPlugin {
     } else if(action.equals(MATRIX_PICKING_STORES_FINISH)) {
       MatrixPickingStores.matrixPickingStores.finish();
     } else if (action.equals(MATRIX_PICKING_STORES_SHOW_BUTTON_FINISH)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
       try {
@@ -1188,15 +1158,13 @@ public class ScanditSDK extends CordovaPlugin {
       final boolean fShow = show;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          Button btnFinishPickingStore = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
+          Button btnFinishPickingStore = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishPickingStore", "id", packageName));
           if(btnFinishPickingStore != null){
             btnFinishPickingStore.setVisibility(fShow ? View.VISIBLE : View.GONE);
           }
         }
       });
     } else if (action.equals(MATRIX_PICKING_STORES_SHOW_BUTTON_PACKING)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       boolean show = false;
       try {
@@ -1209,15 +1177,13 @@ public class ScanditSDK extends CordovaPlugin {
       final boolean fShow = show;
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          Button btnPackingPickingStore = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
+          Button btnPackingPickingStore = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnPackingPickingStore", "id", packageName));
           if(btnPackingPickingStore != null){
             btnPackingPickingStore.setVisibility(fShow ? View.VISIBLE : View.GONE);
           }
         }
       });
     } else if (action.equals(MATRIX_SIMPLE_SHOW_BUTTON_FINISH_RECEPTION)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Boolean show = true;
       try {
@@ -1232,7 +1198,7 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          Button btnFinishReception = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishReception", "id", package_name));
+          Button btnFinishReception = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("btnFinishReception", "id", packageName));
           if (fShow) {
             btnFinishReception.setVisibility(View.VISIBLE);
 
@@ -1254,8 +1220,6 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if (action.equals(MATRIX_SIMPLE_SHOW_WARNING)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Boolean show = true;
       String text = "Ha ocurrido un problema que requiere de su intervención.";
@@ -1314,8 +1278,6 @@ public class ScanditSDK extends CordovaPlugin {
         builder.show();
       }
     } else if (action.equals(MATRIX_SIMPLE_ALERT_SELECT_SIZE_TO_PRINT)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       String title = "Selecciona talla a usar";
       JSONArray listItems = null;
@@ -1384,8 +1346,6 @@ public class ScanditSDK extends CordovaPlugin {
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
     } else if (action.equals(MATRIX_PRODUCT_INFO_SHOW_EXTENDED)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
       Context appContext = cordova.getActivity().getApplicationContext();
 
       Boolean show = true;
@@ -1410,22 +1370,20 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          LinearLayout llExtendedProductInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llExtendedProductInfo", "id", package_name));
-          LinearLayout llPBExtendedProductInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llPBExtendedProductInfo", "id", package_name));
+          LinearLayout llExtendedProductInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llExtendedProductInfo", "id", packageName));
+          LinearLayout llPBExtendedProductInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llPBExtendedProductInfo", "id", packageName));
           if (fShow && fProductModel != null) {
             if (llPBExtendedProductInfo.getVisibility() == View.VISIBLE) {
               llPBExtendedProductInfo.setVisibility(View.GONE);
             }
             llExtendedProductInfo.setVisibility(View.VISIBLE);
-            MatrixProductInfo.loadProductExtendedInfo(llExtendedProductInfo, fProductModel, resources, package_name, appContext);
+            MatrixProductInfo.loadProductExtendedInfo(llExtendedProductInfo, fProductModel, resources, packageName, appContext);
           } else {
             llExtendedProductInfo.setVisibility(View.GONE);
           }
         }
       });
     } else if (action.equals(MATRIX_SHOW_PROGRESS_BAR_PRODUCT_EXTENDED_INFO)) {
-      String package_name = cordova.getActivity().getApplication().getPackageName();
-      Resources resources = cordova.getActivity().getApplication().getResources();
 
       Boolean show = true;
       try {
@@ -1440,7 +1398,7 @@ public class ScanditSDK extends CordovaPlugin {
 
       cordova.getActivity().runOnUiThread(() -> {
         if (viewDataMatrixSimpleFinal != null) {
-          LinearLayout llPBExtendedProductInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llPBExtendedProductInfo", "id", package_name));
+          LinearLayout llPBExtendedProductInfo = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llPBExtendedProductInfo", "id", packageName));
           if (fShow) {
             llPBExtendedProductInfo.setVisibility(View.VISIBLE);
           } else {
