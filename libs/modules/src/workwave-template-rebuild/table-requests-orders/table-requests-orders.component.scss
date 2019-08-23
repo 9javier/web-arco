@@ -1,0 +1,67 @@
+div.main-element {
+  height: 100%;
+
+  h2.title-table {
+    text-align: center;
+    font-size: 16px;
+    line-height: 20px;
+    margin-bottom: 10px;
+  }
+
+  .loader, .empty-list {
+    height: calc(100% - 48px - 30px); // 48px from table header - 30px from table title
+    width: 100%;
+    display: table;
+    p {
+      font-size: 14px;
+    }
+    div.spinner, p.message-empty {
+      width: auto;
+      height: auto;
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+      p {
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  .scroll-list {
+    height: calc(100% - 48px - 30px); // 48px from table header - 30px from table title
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+  }
+  .scroll-list::-webkit-scrollbar {
+    width: 0 !important
+  }
+
+  .left-value {
+    justify-content: start !important;
+    width: 100%;
+  }
+
+  .right-value {
+    justify-content: end !important;
+    width: 100%;
+    text-align: end;
+  }
+
+  mat-grid-list.title-line, mat-grid-list.requests-orders-line {
+    border-bottom: 1px solid var(--ion-color-secondary);
+    .border-right {
+      border-right: 1px solid var(--ion-color-secondary);
+    }
+  }
+  mat-grid-list.title-line {
+    font-weight: 500;
+    border-top: 1px solid var(--ion-color-secondary);
+  }
+  mat-grid-list.requests-orders-line {
+    mat-grid-tile.checkbox {
+      left: 16px !important;
+    }
+  }
+
+}
