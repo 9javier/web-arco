@@ -14,6 +14,7 @@ import {environment} from "../environments/environment";
 import {Observable} from "rxjs";
 import {app} from "@suite/services";
 import {DateAdapter} from "@angular/material";
+import {PrinterConnectionService} from "../../../../libs/services/src/lib/printer-connection/printer-connection.service";
 
 interface MenuItem {
   title: string;
@@ -107,7 +108,8 @@ export class AppComponent implements OnInit {
     private warehouseService: WarehouseService,
     private scannerConfigurationService: ScannerConfigurationService,
     private scanditService: ScanditService,
-    private typesService: TypesService
+    private typesService: TypesService,
+    private printerConnectionService: PrinterConnectionService,
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -150,7 +152,7 @@ export class AppComponent implements OnInit {
         if (state) {
           // Load in arrays and objects all the warehouses data (warehouses with racks with rows and columns)
           this.warehouseService.loadWarehousesData();
- 
+
           this.warehouseService
             .init()
             .then((data: Observable<HttpResponse<any>>) =>
@@ -169,6 +171,7 @@ export class AppComponent implements OnInit {
                 this.menu.enable(true, 'sidebar');
                 if (this.platform.is('android')) {
                   this.scanditService.setApiKey(environment.scandit_api_key);
+                  this.printerConnectionService.taskConnection();
                 }
               })
           );

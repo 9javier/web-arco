@@ -21,10 +21,7 @@ export class ProductsService {
   private postRelabelUrl: string = environment.apiBase + '/products/relabel';
   private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
   
-  private getModelsColorUrl: string = environment.apiBase + '/products/models/color';
-  private getModelsBrandUrl: string = environment.apiBase + '/products/models/brand';
-  private getModelsSeasonUrl: string = environment.apiBase + '/products/models/seasson';
-  private getModelsUrl: string = environment.apiBase + '/products/models';
+  private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -72,43 +69,11 @@ export class ProductsService {
   }
 
   /**
-   * Get the colors list
-   */
-  getColors():Observable<any>{
-    return this.http.get(this.getModelsColorUrl).pipe(map((response:any)=>{
-      return response.data;
-    }));
-  }
-
-  /**
-   * Get the brands list
-   */
-  getBrands():Observable<any>{
-    return this.http.get(this.getModelsBrandUrl).pipe(map((response:any)=>{
-      return response.data;
-    }));
-  }
-
-  /**
-   * Get the seasons list
-   */
-  getSeasons():Observable<any>{
-    return this.http.get(this.getModelsSeasonUrl).pipe(map((response:any)=>{
-      return response.data;
-    }));
-  }
-
-  /**
    * Get the models list
    */
-  getModels():Observable<any>{
-    return this.http.get(this.getModelsUrl).pipe(map((response:any)=>{
+  getAllFilters(form: any):Observable<any>{
+    return this.http.post(this.getAllFiltersUrl, form).pipe(map((response:any)=>{
       return response.data;
     }));
   }
-
-  // private getModelsColorUrl: string = environment.apiBase + '/products/models/color';
-  // private getModelsBrandUrl: string = environment.apiBase + '/products/models/brand';
-  // private getModelsSeasonUrl: string = environment.apiBase + '/products/models/seasson';
-  // private getModelsUrl: string = environment.apiBase + '/products/models';
 }

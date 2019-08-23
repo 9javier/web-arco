@@ -1,11 +1,11 @@
-import { Component, OnInit,Input } from '@angular/core';
-import { GroupWarehousePickingService,GroupWarehousePickingModel, IntermediaryService } from '@suite/services';
+import { Component, OnInit, Input } from '@angular/core';
+import { GroupWarehousePickingService, GroupWarehousePickingModel, IntermediaryService } from '@suite/services';
 import { MatTableDataSource } from '@angular/material';
 import { ModalController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import { UpdateComponent } from './modals/update/update.component';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import { Observable,merge } from 'rxjs';
+import { Observable, merge } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { WarehousesService, WarehouseModel } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
@@ -17,27 +17,27 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 })
 export class GroupWarehousePickingComponent implements OnInit {
 
+  // aqui
 
-
-  displayedColumns: string[] = ['delete','name','initDate','endDate'];
+  displayedColumns: string[] = ['delete', 'name', 'initDate', 'endDate'];
   dataSource: MatTableDataSource<GroupWarehousePickingModel.GroupWarehousePicking>;
   groupsWarehousePicking: GroupWarehousePickingModel.GroupWarehousePicking[];
   warehouses: WarehouseModel.Warehouse[] = [];
   toDeleteGroup: boolean = false;
   groupsToDelete: number[] = [];
 
-  toDelete:FormGroup = this.formBuilder.group({
-    groups:(new FormArray([]))
+  toDelete: FormGroup = this.formBuilder.group({
+    groups: (new FormArray([]))
   })
 
-  groupWarehousePickings:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
+  groupWarehousePickings: Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
   constructor(
-    private groupWarehousePickingService:GroupWarehousePickingService,
-    private modalController:ModalController,
-    private formBuilder:FormBuilder,
-    private intermediaryService:IntermediaryService,
+    private groupWarehousePickingService: GroupWarehousePickingService,
+    private modalController: ModalController,
+    private formBuilder: FormBuilder,
+    private intermediaryService: IntermediaryService,
     private warehousesService: WarehousesService,
-    ) { }
+  ) { }
 
   ngOnInit() {
     this.getGroupWarehousePicking();
@@ -52,31 +52,31 @@ export class GroupWarehousePickingComponent implements OnInit {
    * Prevent default
    * @param event 
    */
-  prevent(event){
+  prevent(event) {
     event.preventDefault();
     event.stopPropagation();
   }
 
-  haveToDelete(groups):boolean{
-    let group = groups.find(group=>{
+  haveToDelete(groups): boolean {
+    let group = groups.find(group => {
       return group.selected;
     })
     return !!group;
   }
-  
+
 
   /**
    * Show details of group for update
    * @param group group to inspect
    */
-  async goGroup(group:GroupWarehousePickingModel.GroupWarehousePicking){
+  async goGroup(group: GroupWarehousePickingModel.GroupWarehousePicking) {
     let modal = await this.modalController.create({
-      component:UpdateComponent,
-      componentProps:{
-        group:group
+      component: UpdateComponent,
+      componentProps: {
+        group: group
       }
     });
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.getGroupWarehousePicking();
     });
     modal.present();
@@ -100,11 +100,11 @@ export class GroupWarehousePickingComponent implements OnInit {
   /**
    * Open store modal
    */
-  async store(){
+  async store() {
     let modal = (await this.modalController.create({
-      component:StoreComponent
+      component: StoreComponent
     }));
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.getGroupWarehousePicking();
     });
     modal.present();

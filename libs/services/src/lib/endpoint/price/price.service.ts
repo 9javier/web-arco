@@ -76,7 +76,6 @@ export class PriceService {
    * @param parameters object for search
    */
   postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Observable<PriceModel.PriceByModelTariff[]> {
-
     return this.http.post<PriceModel.ResponsePricesByProductsReferences>(this.postPricesByProductsReferencesUrl, parameters).pipe(map(response => {
       return response.data;
     }));
