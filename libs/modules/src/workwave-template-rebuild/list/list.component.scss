@@ -1,0 +1,83 @@
+h2.workwave-title {
+  font-size: 20px;
+
+  span.return-workwaves {
+    padding: 0 0 20px 20px;
+    cursor: pointer;
+    color: var(--ion-color-secondary);
+  }
+}
+
+p.error-edit-text {
+  padding: 0 0 5px 20px;
+  font-size: 14px;
+  color: var(--ion-color-secondary);
+}
+
+div.list-workwave {
+
+}
+
+div.list-workwave-error-edit {
+  overflow-y: scroll;
+  height: 80vh;
+}
+
+div.stores-employees {
+  height: 25vh;
+  margin-top: 18px;
+
+  ion-row {
+    height: 100%;
+
+    ion-col.types, ion-col.stores, ion-col.employees {
+      height: 100%;
+      padding: 0;
+      border-bottom: 2px solid var(--ion-color-dark);
+    }
+
+    ion-col.types {
+      border-right: 1px solid var(--ion-color-dark);
+    }
+
+    ion-col.stores {
+      border-left: 1px solid var(--ion-color-dark);
+      border-right: 1px solid var(--ion-color-dark);
+    }
+
+    ion-col.employees {
+      border-left: 1px solid var(--ion-color-dark);
+    }
+  }
+}
+
+div.requests-orders {
+  height: 25vh;
+  border-bottom: 2px solid var(--ion-color-dark);
+}
+
+div.team-assignation {
+  height: auto;
+  max-height: 35vh;
+  border-bottom: 2px solid var(--ion-color-dark);
+}
+
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+
+.footer-products:before {
+  background: none;
+}
+
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}

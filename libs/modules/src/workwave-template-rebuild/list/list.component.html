@@ -1,0 +1,34 @@
+<h2 class="workwave-title">
+    <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
+</h2>
+<p *ngIf="disableEdition" class="error-edit-text"><i>Ola de trabajo en ejecución. Imposible editar.</i></p>
+
+<div [ngClass]="disableEdition ? 'list-workwave-error-edit' : 'list-workwave'">
+  <div class="stores-employees">
+    <ion-row>
+      <ion-col size="2" class="types">
+        <table-types (changeType)="typeChanged($event)"></table-types>
+      </ion-col>
+      <ion-col size="5" class="stores">
+        <table-stores (changeGroupWarehouses)="groupWarehousesChanged($event)"></table-stores>
+      </ion-col>
+      <ion-col size="5" class="employees">
+        <table-employees (changeEmployee)="employeeChanged($event)"></table-employees>
+      </ion-col>
+    </ion-row>
+  </div>
+  <div class="requests-orders">
+    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)"></table-requests-orders>
+  </div>
+  <div class="team-assignation">
+    <table-team-assignation></table-team-assignation>
+  </div>
+</div>
+
+<ion-footer class="footer-products">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
+            <i class="material-icons">play_arrow</i>
+        </ion-fab-button>
+    </ion-fab>
+</ion-footer>
