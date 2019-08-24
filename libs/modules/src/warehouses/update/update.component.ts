@@ -203,9 +203,14 @@ export class UpdateComponent implements OnInit {
   * Save the new warehouse
   */
   submit(){
+    this.intermediaryService.presentLoading();
     this.warehousesService.put(this.sanitize(this.updateForm.value)).subscribe(data=>{
+      this.intermediaryService.dismissLoading();
       this.utils.presentAlert("Éxito","Almacén editado con éxito");
       this.close();
+    }, (err) => {
+      console.log(err);
+      this.intermediaryService.dismissLoading();
     });
   }
 
