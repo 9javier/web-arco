@@ -2,33 +2,15 @@
     <ion-text color="primary">
         <suite-breadcrumb></suite-breadcrumb>
     </ion-text>
-
-    <form [formGroup]="form">
-        <ion-grid>
-            <ion-row>
-                <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-label>Referecias:</ion-label>
-                    <suite-tags-input placeholder="Referencia" [options]="models" formControlName="productReferencePattern"></suite-tags-input>
-                </ion-col>
-                <ion-col size="2" size-xs="12" size-md="4">
-                    <ion-label>
-                        Colores:
-                    </ion-label>
-                    <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
-                </ion-col>
-            </ion-row>
-            
-        </ion-grid>
-    </form>
-    <!-- <ion-row>
+    <ion-row>
         <ion-col size="4" [formGroup]="filters">
-            <ion-select formControlName="warehouseId" (ionChange)="filterByWarehouse($event)">
+            <!--<ion-select formControlName="warehouseId" (ionChange)="filterByWarehouse($event)">
                 <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
                     {{warehouse.name}}
                 </ion-select-option>
-            </ion-select>
+            </ion-select>-->
         </ion-col>
-    </ion-row> -->
+    </ion-row>
     <table mat-table [dataSource]="dataSource">
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
