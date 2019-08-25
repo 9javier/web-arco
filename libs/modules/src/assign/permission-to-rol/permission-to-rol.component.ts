@@ -49,7 +49,6 @@ export class PermissionToRolComponent implements OnInit {
   showDeleteButton = false;
 
 
-
   constructor(
     private intermediaryService:IntermediaryService,
     private formBuilder:FormBuilder,
@@ -78,7 +77,6 @@ export class PermissionToRolComponent implements OnInit {
       this.getRoles();
     })
   }
-
 
   /**
    * show modal to confirm the deletion of selecteds roles
@@ -310,7 +308,6 @@ export class PermissionToRolComponent implements OnInit {
   }
 
   async goToUpdate(row) {
-
     const modal = await this.modalController.create({
       component: UpdateComponent,
       componentProps: { id: row.id, row: row, routePath: '/roles' }

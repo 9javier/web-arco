@@ -107,7 +107,6 @@ export class ListComponent implements OnInit {
   parentPage: string = null;
 
   ngOnInit() {
-    this.presentLoading();
     this.route.paramMap.subscribe((params: any) => {
       this.paramsReceived = params;
     });
@@ -124,10 +123,10 @@ export class ListComponent implements OnInit {
       this.initHalls();
       this.parentPage = 'Almacenes';
     }
-    this.dismissLoading();
   }
 
   initHalls() {
+    this.presentLoading();
     this.hallsService
       .getIndex(this.warehouseSelected)
       .then(
@@ -143,6 +142,11 @@ export class ListComponent implements OnInit {
               >
             ) => {
               this.dataSource = res.body.data;
+            },
+            (err) => {
+              console.log(err)
+            }, () => {
+              this.dismissLoading();
             }
           );
         }
@@ -155,6 +159,7 @@ export class ListComponent implements OnInit {
   }
 
   initUsers() {
+    this.presentLoading();
     this.crudService
       .getIndex(this.apiEndpoint)
       .then(
@@ -171,6 +176,11 @@ export class ListComponent implements OnInit {
             ) => {
               this.dataSource = res.body.data;
               console.log(this.dataSource);
+            },
+            (err) => {
+              console.log(err)
+            }, () => {
+              this.dismissLoading();
             }
           );
         }
