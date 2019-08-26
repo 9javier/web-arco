@@ -88,8 +88,8 @@
                 </ion-item>
                 <!--Tienda-->
                 
-                <ion-item class="inner-item">
-                    <ion-select placeholder="Tienda" formControlName="warehouseId">
+                <ion-item class="inner-item" style="z-index: -1">
+                    <ion-select placeholder="Tienda" formControlName="warehouseId" [value]="warehouse_id">
                         <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
                             {{warehouse.name}}</ion-select-option>
                     </ion-select>

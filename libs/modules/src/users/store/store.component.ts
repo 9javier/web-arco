@@ -16,6 +16,7 @@ import { validators } from '../../utils/validators';
 })
 export class StoreComponent implements OnInit {
   warehouseControl: any;
+  warehouse_id: number;
   /**wrapper for common ionic component methods like loading */
   @ViewChild(UtilsComponent) utilsComponent: UtilsComponent;
 
@@ -49,17 +50,18 @@ export class StoreComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UsersService,
     private modalController: ModalController,
-    private warehouseService: WarehousesService
+    private warehouseService: WarehousesService,
   ) { }
 
+  test(){
+    console.log("change" + this.formBuilderDataInputs.permits.value);
+    console.log("change" + this.formBuilderDataInputs.permits.value);
+    console.log(this.warehouse_id + "este es mi valor");
+    
+  }
   /**
    * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
    */
-  test(){
-    console.log("change" + this.formBuilderDataInputs.permits.value);
-    console.log(this.formBuilderDataInputs);
-    
-  }
   listenChanges(): void {
     this.createForm.get("hasWarehouse").valueChanges.subscribe(status => {
        this.warehouseControl = this.createForm.get("warehouseId");
@@ -67,7 +69,7 @@ export class StoreComponent implements OnInit {
         this.warehouseControl.setValidators([Validators.required]);
         this.warehouseControl.updateValueAndValidity();
         if (this.formBuilderDataInputs.permits.length == 0) {
-           this.selectNewWarehouse(this.addWarehouseToUser);  
+           this.selectNewWarehouse(this.addWarehouseToUser);    
         }
         for (let index in <FormArray>this.createForm.get("permits")) {
           (<FormArray>this.createForm.get("permits")).removeAt(1);
@@ -132,6 +134,7 @@ export class StoreComponent implements OnInit {
       roles: (new FormArray(this.roles.map(rol => new FormControl(false))))
     }));    
     console.log("this is the warehouse id", warehouseId);
+    this.warehouse_id = warehouseId;
   }
 
   /**
