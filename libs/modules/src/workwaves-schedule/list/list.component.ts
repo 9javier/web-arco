@@ -64,18 +64,6 @@ export class ListWorkwavesScheduleComponent implements OnInit {
     this.router.navigate(['workwave-template-rebuild'], navigationExtras);
   }
 
-  editWorkwave(workwave) {
-    this.workwavesService.lastWorkwaveEdited = workwave;
-    this.workwavesService.lastWorkwaveHistoryQueried = null;
-    let navigationExtras: NavigationExtras = {
-      queryParams: {
-        type: workwave.type == 4 ? 2 : workwave.type
-      }
-    };
-
-    this.router.navigate(['workwave-template-rebuild'], navigationExtras);
-  }
-
   selectAll() {
     if (this.allSelected) {
       for (let workwave of this.workwavesScheduled) {

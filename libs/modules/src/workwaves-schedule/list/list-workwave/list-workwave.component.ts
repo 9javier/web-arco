@@ -40,13 +40,7 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
     return moment(this.workwaveScheduled.releaseDate).format('LT');
   }
 
-  checkboxClick(event) {
-    event.stopPropagation();
-  }
-
-  showProducts(event) {
-    event.stopPropagation();
-
+  showProducts() {
     this.workwavesService.lastWorkwaveEdited = this.workwaveScheduled;
     this.workwavesService.lastWorkwaveHistoryQueried = null;
     this.pickingProvider.listPickingsHistory = null;
