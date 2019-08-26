@@ -59,24 +59,9 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
     return moment(this.workWave.releaseDate).format('LT');
   }
 
-  showPickings(event) {
+  showPickings() {
+    this.workwavesService.lastWorkwaveRebuildEdited = { id: this.workWave.id };
     this.router.navigate(['workwaves-scheduled/pickings']);
-    this.workwavesService.lastWorkwaveEdited = {};
-
-    /*this.workwavesService.lastWorkwaveEdited = this.workWave;
-    this.workwavesService.lastWorkwaveHistoryQueried = null;
-    this.pickingProvider.listPickingsHistory = null;
-
-    this.pickingService
-      .getShow(this.workwavesService.lastWorkwaveEdited.id)
-      .subscribe((res: PickingModel.ResponseShow) => {
-        if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
-          this.pickingProvider.listPickingsHistory = res.data;
-          this.router.navigate(['workwaves-scheduled/pickings']);
-        }
-      }, error => {
-        console.warn("Error Subscribe::Load Pickings for Workwave ", this.workwavesService.lastWorkwaveEdited.id);
-      });*/
   }
 
 }

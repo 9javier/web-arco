@@ -11,5 +11,16 @@ mat-grid-list {
       text-align: start;
       padding: 10px;
     }
+    div.tile-title.right-value {
+      width: 100%;
+      text-align: end;
+    }
+  }
+  mat-grid-tile.active {
+    color: var(--ion-color-secondary);
+    font-weight: normal;
+    div.tile-title {
+      color: var(--ion-color-tertiary);
+    }
   }
 }

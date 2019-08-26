@@ -1,6 +1,25 @@
 div.scroll-list {
   overflow-y: scroll;
-  height: calc(85vh - 54px) // 54px from title element height;
+  height: calc(85vh - 54px); // 54px from title element height;
+}
+
+.loader, .empty-list {
+  height: calc(85vh - 54px); // 54px from title element height;
+  width: 100%;
+  display: table;
+  p {
+    font-size: 14px;
+  }
+  div.spinner, p.message-empty {
+    width: auto;
+    height: auto;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    p {
+      margin-bottom: 8px;
+    }
+  }
 }
 
 h2.workwave-title {
@@ -16,6 +35,10 @@ h2.workwave-title {
     float: right;
     margin-right: 16px;
   }
+}
+
+title-picking {
+  padding-right: 17px;
 }
 
 .footer-products {
