@@ -22,6 +22,8 @@ export class ListPickingRebuildComponent implements OnInit {
   private quantityPickingsSelectedAndInitiated: number = 0;
   private loading: HTMLIonLoadingElement = null;
 
+  public deleteOptionEnabled: boolean = false;
+
   constructor(
     private location: Location,
     private router: Router,

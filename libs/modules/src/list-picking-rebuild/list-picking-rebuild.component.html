@@ -26,7 +26,7 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button *ngIf="!usersNoSelectedToDelete" (click)="deletePickingsSelected()">
+    <ion-fab-button *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
       <i class="material-icons">delete</i>
     </ion-fab-button>
   </ion-fab>
