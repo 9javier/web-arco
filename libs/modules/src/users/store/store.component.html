@@ -88,7 +88,7 @@
                 </ion-item>
                 <!--Tienda-->
                 
-                <ion-item class="inner-item" style="z-index: -1">
+                <ion-item class="inner-item" style="display: none;">
                     <ion-select placeholder="Tienda" formControlName="warehouseId" [value]="warehouse_id">
                         <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
                             {{warehouse.name}}</ion-select-option>
@@ -126,7 +126,7 @@
                                         <ion-item
                                             *ngFor="let control of control['controls'].roles['controls'];let i = index">
                                             <ion-label>{{roles[i].name}}</ion-label>
-                                            <ion-checkbox value="{{roles[i].id}}" [formControl]="control" (ionChange)="test()">
+                                            <ion-checkbox value="{{roles[i].id}}" [formControl]="control">
                                             </ion-checkbox>
                                         </ion-item>
                                     </div>
