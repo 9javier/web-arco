@@ -20,6 +20,8 @@ export class ProductsService {
   private getInfoUrl: string = environment.apiBase + '/products/info/';
   private postRelabelUrl: string = environment.apiBase + '/products/relabel';
   private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
+  
+  private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -63,6 +65,15 @@ export class ProductsService {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
 
       return this.http.get<ProductModel.ResponseExtendedInfo>(this.getExtendedInfoUrl + reference, { headers });
+    }));
+  }
+
+  /**
+   * Get the models list
+   */
+  getAllFilters(form: any):Observable<any>{
+    return this.http.post(this.getAllFiltersUrl, form).pipe(map((response:any)=>{
+      return response.data;
     }));
   }
 }

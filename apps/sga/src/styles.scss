@@ -40,6 +40,7 @@ $sga-theme: mat-light-theme($sga-primary, $sga-accent, $sga-warn);
 @import './theme/variables.scss';
 @import './theme/custom/crud-component.scss';
 @import './theme/custom/popover.scss';
+@import './theme/custom/alert-select-user.scss';
 html,
 body {
     height: 100%;
@@ -69,4 +70,11 @@ body {
 .alert-checkbox-group::-webkit-scrollbar-thumb {
     background-color: darkgrey;
     outline: 1px solid slategrey;
+}
+
+ion-item.item-label-floating {
+    ion-label{
+        font-size: 16px !important;
+        font-weight: bold;
+    }
 }

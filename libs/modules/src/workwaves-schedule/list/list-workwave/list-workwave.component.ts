@@ -13,7 +13,7 @@ import {Router} from "@angular/router";
 })
 export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
 
-  @Input() workwaveScheduled: any;
+  @Input() workWave: any;
 
   constructor(
     private router: Router,
@@ -25,42 +25,43 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
   ngOnInit() {}
 
   processTitleWorkwave() : string {
-    return this.workwaveScheduled.warehouses.map((warehouse) => {
+    return this.workWave.warehouses.map((warehouse) => {
       return warehouse.warehouse.reference+' '+warehouse.warehouse.name;
     }).join(', ');
   }
 
+  getTypeShippingOrderString(line: number) : string {
+    let type = this.workWave.typeShippingOrder;
+    if (line == 1) {
+      if (type == 1) {
+        return "Reposición";
+      } else if (type == 2) {
+        return "Distribución";
+      } else {
+        return "Reposición";
+      }
+    } else {
+      if (type == 1 || type == 2) {
+        return "";
+      } else {
+        return "Distribución";
+      }
+    }
+  }
+
   dateCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveScheduled.releaseDate).format('ddd, DD/MM/YYYY');
+    return moment(this.workWave.releaseDate).format('ddd, DD/MM/YYYY');
   }
 
   timeCreatedParsed() : string {
     moment.locale('es');
-    return moment(this.workwaveScheduled.releaseDate).format('LT');
+    return moment(this.workWave.releaseDate).format('LT');
   }
 
-  checkboxClick(event) {
-    event.stopPropagation();
-  }
-
-  showProducts(event) {
-    event.stopPropagation();
-
-    this.workwavesService.lastWorkwaveEdited = this.workwaveScheduled;
-    this.workwavesService.lastWorkwaveHistoryQueried = null;
-    this.pickingProvider.listPickingsHistory = null;
-
-    this.pickingService
-      .getShow(this.workwavesService.lastWorkwaveEdited.id)
-      .subscribe((res: PickingModel.ResponseShow) => {
-        if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
-          this.pickingProvider.listPickingsHistory = res.data;
-          this.router.navigate(['workwaves-scheduled/pickings']);
-        }
-      }, error => {
-        console.warn("Error Subscribe::Load Pickings for Workwave ", this.workwavesService.lastWorkwaveEdited.id);
-      });
+  showPickings() {
+    this.workwavesService.lastWorkwaveRebuildEdited = { id: this.workWave.id };
+    this.router.navigate(['workwaves-scheduled/pickings']);
   }
 
 }

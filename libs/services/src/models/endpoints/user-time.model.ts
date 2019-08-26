@@ -14,6 +14,15 @@ export namespace UserTimeModel{
       updatedAt: string;
     }
 
+    export interface ListUsersRegisterTimeActiveInactive {
+      usersActive: Array<User>,
+      usersInactive: Array<User>
+    }
+
+    export interface ListUsersRegisterResponse extends Request.Success {
+      data: ListUsersRegisterTimeActiveInactive
+    }
+
     export interface UserRegisterTimeResponse extends Request.Success {
       data: UserRegisterTime
     }
@@ -22,18 +31,21 @@ export namespace UserTimeModel{
         data:UserTime
     }
 
+    export interface User {
+      id: number,
+      email: string,
+      name: string,
+      address: string,
+      phone: string,
+      employedId: number,
+      hasWarehouse: boolean,
+      permits: Array<any>,
+      warehouse: WarehouseModel.Warehouse,
+      start_time?: string
+    }
+
     export interface UserTime{
-        user: {
-            id: number;
-            email: string;
-            name: string;
-            address: string;
-            phone: string;
-            employedId: number;
-            hasWarehouse: boolean;
-            permits: Array<any>;
-            warehouse: WarehouseModel.Warehouse;
-        },
+        user: User,
         inputDate: string;
         outputDate: string;
         createdAt: string;

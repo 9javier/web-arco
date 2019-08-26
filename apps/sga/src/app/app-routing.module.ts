@@ -25,7 +25,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/calendar-picking//calendar-picking.module#CalendarPickingModule',
     data:{
-      name: 'Calendar'
+      name: 'Calendario'
     }
   },
   {
@@ -41,7 +41,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule',
     data:{
-      name:'Asignnar grupos de tiendas'
+      name:'Asignar grupos de tiendas'
     }
   },
   {
@@ -82,7 +82,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-warehouse-picking/group-warehouse-picking.module#GroupWarehousePickingModule',
     data:{
-      name:'Group warehouse picking'
+      name:'Grupos de almacenes para picking'
     }
   },
   {
@@ -90,7 +90,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',
     data:{
-      name:'Jails'
+      name:'Jaulas'
     }
   },
   {
@@ -98,7 +98,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
     data:{
-      name:'Pallets'
+      name:'Paletas'
     }
   },
   {
@@ -174,14 +174,6 @@ const routes: Routes = [
     }
   },
   {
-    path: 'workwaves-scheduled',
-    canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
-    data:{
-      name:'Programadas'
-    }
-  },
-  {
     path: 'manage-agencies',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/agency/agency.module#AgencyModule',
@@ -198,17 +190,17 @@ const routes: Routes = [
     }
   },
   {
-    path: 'workwaves-templates',
+    path: 'workwaves-scheduled',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwaves-templates/workwaves-templates.module#WorkwavesTemplatesModule',
+    loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
     data:{
-      name:'Plantillas'
+      name:'Programadas'
     }
   },
   {
-    path: 'workwave-template',
+    path: 'workwave-template-rebuild',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwave-template/workwave-template.module#WorkwaveTemplateModule',
+    loadChildren: '../../../../libs/modules/src/workwave-template-rebuild/workwave-template-rebuild.module#WorkwaveTemplateRebuildModule',
     data:{
       name:'Plantilla'
     }
@@ -271,7 +263,7 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
     data:{
-      name:'Building'
+      name:'Edificios'
     }
   }
 ];

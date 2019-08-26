@@ -126,6 +126,7 @@ export class ListComponent implements OnInit {
   }
 
   initHalls() {
+    this.presentLoading();
     this.hallsService
       .getIndex(this.warehouseSelected)
       .then(
@@ -141,6 +142,11 @@ export class ListComponent implements OnInit {
               >
             ) => {
               this.dataSource = res.body.data;
+            },
+            (err) => {
+              console.log(err)
+            }, () => {
+              this.dismissLoading();
             }
           );
         }
@@ -153,6 +159,7 @@ export class ListComponent implements OnInit {
   }
 
   initUsers() {
+    this.presentLoading();
     this.crudService
       .getIndex(this.apiEndpoint)
       .then(
@@ -169,6 +176,11 @@ export class ListComponent implements OnInit {
             ) => {
               this.dataSource = res.body.data;
               console.log(this.dataSource);
+            },
+            (err) => {
+              console.log(err)
+            }, () => {
+              this.dismissLoading();
             }
           );
         }

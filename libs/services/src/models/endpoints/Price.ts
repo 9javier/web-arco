@@ -43,6 +43,12 @@ export namespace PriceModel{
             limit: number,
             totalResults: number
         }
+        filters: {
+            ordertypes: Array<{
+                id: number,
+                name: string
+            }> 
+        }
     }
 
     export interface ResponsePricesByProductsReferences {

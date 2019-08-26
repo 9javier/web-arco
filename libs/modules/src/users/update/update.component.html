@@ -19,6 +19,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="person"></ion-icon>
                     </div>
+                    <ion-label position="floating">Nombre</ion-label>
                     <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" [class.ion-invalid]="updateForm.get('name').valid" type="text" text></ion-input>
                 </ion-item>
                 <!--Email-->
@@ -26,6 +27,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="finger-print"></ion-icon>
                     </div>
+                    <ion-label position="floating">Usuario</ion-label>
                     <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
                 </ion-item>
                 <!--Password-->
@@ -33,6 +35,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
+                    <ion-label position="floating">Nueva contraseña</ion-label>
                     <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
 
                         <ion-icon class="icon-show-password" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
@@ -48,6 +51,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
+                    <ion-label position="floating">Repetir contraseña</ion-label>
                     <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
                         <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                     repeatPasswordInput.type === 'password'
@@ -100,6 +104,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="home"></ion-icon>
                     </div>
+                    <ion-label position="floating">Dirección</ion-label>
                     <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address" type="text" text></ion-input>
                 </ion-item>
                 <!--Employee Id-->
@@ -107,6 +112,7 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
+                    <ion-label position="floating">Id empleado Avelon</ion-label>
                     <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal" formControlName="employedId" type="number" number></ion-input>
                 </ion-item>
                 <!--Tiene tienda-->

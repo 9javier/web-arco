@@ -7,6 +7,7 @@ import {PATH} from "../../../../../../config/base";
 import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 
 import { environment } from '../../../environments/environment';
+import {map} from "rxjs/operators";
 
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
@@ -68,8 +69,12 @@ export class WorkwavesService {
   private deleteDestroyTaskUrl:string = environment.apiBase+"/workwaves/tasks/{{id}}";
   private deleteDestroyTemplateUrl:string = environment.apiBase+"/workwaves/templates/{{id}}";
 
+  private postMatchLineRequestUrl: string = environment.apiBase + "/workwaves/matchlinerequest/";
+  private postAssignUserToMatchLineRequestUrl: string = environment.apiBase + "/workwaves/assign/matchlinerequest/";
+  private postConfirmMatchLineRequestUrl: string = environment.apiBase + "/workwaves/confirm/matchlinerequest/";
 
   private _lastWorkwaveEdited: any = null;
+  private _lastWorkwaveRebuildEdited: any = null;
   private _lastWorkwaveHistoryQueried: any = null;
 
   constructor(
@@ -176,12 +181,44 @@ export class WorkwavesService {
       });
   }
 
+  postMatchLineRequest(params: WorkwaveModel.ParamsMatchLineRequest): Observable<Array<WorkwaveModel.MatchLineRequest>> {
+    return this.http.post<WorkwaveModel.ResponseMatchLineRequest>(this.postMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postAssignUserToMatchLineRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequest): Observable<Array<WorkwaveModel.TeamAssignations>> {
+    return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequest>(this.postAssignUserToMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postConfirmMatchLineRequest(params: WorkwaveModel.ParamsConfirmMatchLineRequest): Observable<WorkwaveModel.DataConfirmMatchLineRequest> {
+    return this.http.post<WorkwaveModel.ResponseConfirmMatchLineRequest>(this.postConfirmMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  deleteDeletePickings(params: WorkwaveModel.ParamsDeletePickings): Observable<WorkwaveModel.DeletedPickings> {
+    return this.http.post<WorkwaveModel.ResponseDeletePickings>(this.postConfirmMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
   get lastWorkwaveEdited(): any {
     return this._lastWorkwaveEdited;
   }
 
   set lastWorkwaveEdited(value: any) {
     this._lastWorkwaveEdited = value;
+  }
+
+  get lastWorkwaveRebuildEdited(): any {
+    return this._lastWorkwaveRebuildEdited;
+  }
+
+  set lastWorkwaveRebuildEdited(value: any) {
+    this._lastWorkwaveRebuildEdited = value;
   }
 
   get lastWorkwaveHistoryQueried(): any {

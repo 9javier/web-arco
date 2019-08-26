@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormGroup, Validators,FormBuilder } from '@angular/forms';
 import { ModalController, NavParams } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel, AgencyService, AgencyModel } from '@suite/services';
+import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel, AgencyService, AgencyModel, IntermediaryService } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 
 
@@ -39,7 +39,11 @@ export class UpdateComponent implements OnInit {
   packingTypes:Array<any> = [];
   private currentHasRacks;
   buildings:Array<BuildingModel.Building> = [];
-  groups:Array<WarehouseGroupModel.WarehouseGroup>=[]
+  groups:Array<WarehouseGroupModel.WarehouseGroup>=[];
+
+  /**wrapper for common ionic component methods like loading */
+  @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
+
   constructor(private modalCtrl:ModalController,
     private formBuilder:FormBuilder,
     private agencyService:AgencyService,
@@ -48,6 +52,7 @@ export class UpdateComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private navParams:NavParams,
     private buildingService:BuildingService,
+    private intermediaryService: IntermediaryService,
     private groupWarehousePickingService:GroupWarehousePickingService
     ) {
       this.warehouseId = this.navParams.data.id;
@@ -70,14 +75,14 @@ export class UpdateComponent implements OnInit {
 
     
 
-        /**Listen for changes on hasBuilding control */
-        this.updateForm.get("hasBuilding").valueChanges.subscribe((hasBuilding)=>{
-          let buildingId = this.updateForm.get("buildingId")
-          buildingId.clearValidators();
-          buildingId.setValue("");
-          buildingId.setValidators(hasBuilding?[Validators.required]:[])
-          this.cd.detectChanges();
-        });
+    /**Listen for changes on hasBuilding control */
+    this.updateForm.get("hasBuilding").valueChanges.subscribe((hasBuilding)=>{
+      let buildingId = this.updateForm.get("buildingId")
+      buildingId.clearValidators();
+      buildingId.setValue("");
+      buildingId.setValidators(hasBuilding?[Validators.required]:[])
+      this.cd.detectChanges();
+    });
 
     /**Listen for changes in has_racks control */
     this.updateForm.get("has_racks").valueChanges.subscribe((hasRacks)=>{
@@ -115,6 +120,7 @@ export class UpdateComponent implements OnInit {
    * @param id the id of warehouse
    */
   getWarehouse(id:number):void{
+    this.intermediaryService.presentLoading();
     this.warehousesService.getShow(id).subscribe(warehouse=>{
       /**the models in backend differs then the model is useless */
       this.currentHasRacks = warehouse.has_racks;
@@ -129,7 +135,11 @@ export class UpdateComponent implements OnInit {
         return group.id
       });
       this.updateForm.patchValue(warehouseToPatch);
-    })
+    }, (err) => {
+      console.log(err)
+    }, () => {
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   getGroupWarehousePicking():void{
@@ -193,13 +203,19 @@ export class UpdateComponent implements OnInit {
   * Save the new warehouse
   */
   submit(){
+    this.intermediaryService.presentLoading();
     this.warehousesService.put(this.sanitize(this.updateForm.value)).subscribe(data=>{
+      this.intermediaryService.dismissLoading();
       this.utils.presentAlert("Éxito","Almacén editado con éxito");
       this.close();
+    }, (err) => {
+      console.log(err);
+      this.intermediaryService.dismissLoading();
     });
   }
 
   ngOnInit() {
+    
     this.getWharehousesGroup();
     this.getBuildings();
     this.getAgencies();

@@ -121,6 +121,4 @@ export class TariffComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     })
   }
-
-
 }

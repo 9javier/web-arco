@@ -20,24 +20,24 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="person"></ion-icon>
                     </div>
-                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text"
-                        text></ion-input>
+                    <ion-label position="floating">Nombre</ion-label>
+                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
                 </ion-item>
                 <!--Email-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="finger-print"></ion-icon>
                     </div>
-                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text">
-                    </ion-input>
+                    <ion-label position="floating">Usuario</ion-label>
+                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
                 </ion-item>
                 <!--Password-->
                 <ion-item>
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password"
-                        type="password" #passwordInput>
+                    <ion-label position="floating">Nueva contraseña</ion-label>
+                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
 
                         <ion-icon class="icon-show-password" color="medium"
                             [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
@@ -53,10 +53,9 @@
                     <div slot="start" class="slot-start-icon">
                         <ion-icon color="medium" name="lock"></ion-icon>
                     </div>
-                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal"
-                        formControlName="confirmPassword" type="password" #repeatPasswordInput>
-                        <ion-icon class="icon-show-password" color="medium"
-                            [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                    <ion-label position="floating">Repetir contraseña</ion-label>
+                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
+                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                     repeatPasswordInput.type === 'password'
                         ? (repeatPasswordInput.type = 'text')
                         : (repeatPasswordInput.type = 'password')

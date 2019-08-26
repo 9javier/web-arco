@@ -88,16 +88,10 @@ export class MenuComponent implements OnInit {
       icon: 'hammer',
       children: [
         {
-          title: 'Programadas',
+          title: 'Listado',
           id:'workwaves-scheduled',
           url: '/workwaves-scheduled',
           icon: 'code'
-        },
-        {
-          title: 'Plantillas',
-          id:'workwaves-templates',
-          url: '/workwaves-templates',
-          icon: 'code-working'
         },
         {
           title: 'Historial',
@@ -140,7 +134,7 @@ export class MenuComponent implements OnInit {
       icon: 'cart',
       children: [
         {
-          title: 'Calendario Picking',
+          title: 'Calendario',
           id:'calendar',
           url: '/calendar',
           icon: 'md-calendar'

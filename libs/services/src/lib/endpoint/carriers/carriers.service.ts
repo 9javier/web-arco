@@ -12,11 +12,11 @@ import {CarrierModel} from "../../../models/endpoints/Carrier";
 })
 export class CarriersService {
 
-  private postGenerateUrl: string = environment.apiBase + "/carriers/generate";
-  private postSealUrl: string = environment.apiBase + "/carriers/seal";
+  private postGenerateUrl: string = environment.apiBase + "/packing/generate";
+  private postSealUrl: string = environment.apiBase + "/packing/seal";
 
   // Relabel
-  private postListByWarehouseUrl: string = environment.apiBase + "/carriers/warehouses/show";
+  private postListByWarehouseUrl: string = environment.apiBase + "/packing/show";
 
   constructor(
     private http: HttpClient,

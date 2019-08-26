@@ -11,9 +11,9 @@ import { Observable } from 'rxjs';
 export class CarrierService {
 
   /**Private urls for Carrier service */
-  private carrierUrl:string = environment.apiBase+"/carriers";
-  private singleCarrierUrl:string = environment.apiBase+"/carriers/{{id}}";
-  private warehouseDestination:string = environment.apiBase+"/carriers/warehouse/{{id}}";
+  private carrierUrl:string = environment.apiBase+"/packing";
+  private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
+  private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private packingUrl:string = environment.apiBase+"/types/packing";
 
   constructor(private http:HttpClient) { }

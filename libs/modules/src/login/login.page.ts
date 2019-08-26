@@ -11,9 +11,9 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import {ToastController, AlertController, LoadingController} from '@ionic/angular';
+import {ToastController, AlertController, LoadingController, ModalController} from '@ionic/angular';
 import { AppInfo } from 'config/base';
-
+import { Platform } from '@ionic/angular';
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -39,7 +39,9 @@ export class LoginComponent implements OnInit {
     public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
+    public platform: Platform
   ) {}
 
   ngOnInit() {
@@ -85,7 +87,11 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.intermediaryService.presentToastError("Error en usuario o contraseña");
+          if(errorResponse.status == 0) {
+            this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor");
+          } else {
+            this.intermediaryService.presentToastError("Error en usuario o contraseña");
+          }
           console.log(errorResponse);
         }
       );
@@ -118,5 +124,28 @@ export class LoginComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  ionViewWillEnter() {
+    this.modalController.dismiss();
+  }
+  hide() {
+    if (window.location.port === '8100') {
+			return false;
+		}
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
+      let logo: HTMLElement = document.getElementById('logo');
+      logo.setAttribute("style", "display: none;");
+    }
+  }
+
+  recover() {
+    if (window.location.port === '8100') {
+			return false;
+		}
+    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
+      let logo: HTMLElement = document.getElementById('logo');
+      logo.setAttribute("style", "display: flex;");
+    }
   }
 }

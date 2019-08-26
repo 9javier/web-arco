@@ -13,6 +13,7 @@ export class UserTimeService {
   /**Urls for user time service */
   private registerTimeUrl:string = environment.apiBase+"/users-register-time/";
   private userRegisterTimeUrl:string = environment.apiBase+"/users-register-time/user";
+  private getListUsersRegisterUrl: string = environment.apiBase + "/users-register-time/";
 
   constructor(
     private http:HttpClient
@@ -34,6 +35,15 @@ export class UserTimeService {
    */
   userRegisterTime():Observable<UserTimeModel.UserRegisterTime>{
     return this.http.get<UserTimeModel.UserRegisterTimeResponse>(this.userRegisterTimeUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  /**
+   * List employees and if they are active or inactive
+   */
+  getListUsersRegister():Observable<UserTimeModel.ListUsersRegisterTimeActiveInactive>{
+    return this.http.get<UserTimeModel.ListUsersRegisterResponse>(this.getListUsersRegisterUrl).pipe(map(response=>{
       return response.data;
     }));
   }

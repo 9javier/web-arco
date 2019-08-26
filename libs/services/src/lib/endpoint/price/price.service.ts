@@ -12,11 +12,11 @@ import { Enum } from 'libs/services/src/models/enum.model';
 export class PriceService {
 
   /**urls of for the price service */
-  private getIndexUrl:string = environment.apiBase+"/filter/prices/tariff";
-  private getIndexByModelTariffUrl:string = environment.apiBase+"/filter/prices/references";
-  private postPricesByProductsReferencesUrl: string = environment.apiBase + "/filter/prices/references-products";
+  private getIndexUrl:string = environment.apiBase+"/tariffs/tariff";
+  private getIndexByModelTariffUrl:string = environment.apiBase+"/tariffs/references";
+  private postPricesByProductsReferencesUrl: string = environment.apiBase + "/tariffs/references-products";
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
-  private postPricesByModelUrl: string = environment.apiBase + "/filter/prices/model";
+  private postPricesByModelUrl: string = environment.apiBase + "/tariffs/model";
 
   constructor(private http:HttpClient) { }
 
@@ -26,16 +26,28 @@ export class PriceService {
    * @param page
    * @param limit
    */
-  getIndex(tariffId:number,page:number,limit:number,status:number,warehouseId:number):Observable<PriceModel.ResponsePricePaginated>{
-    return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
-     // warehouseId:warehouseId,
-      tariffId:tariffId,
-      status:status,
-      pagination:{
-        page:page,
-        limit:limit
-      }
-    }).pipe(map(response=>{
+  // getIndex(tariffId:number,page:number,limit:number,status:number,warehouseId:number):Observable<PriceModel.ResponsePricePaginated>{
+  //   return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
+  //    // warehouseId:warehouseId,
+  //     tariffId:tariffId,
+  //     status:status,
+  //     pagination:{
+  //       page:page,
+  //       limit:limit
+  //     }
+  //   }).pipe(map(response=>{
+  //     return response.data;
+  //   }));
+  // }
+
+  /**
+   * Get the prices relateds with a tariff
+   * @param tariffId - the tariff id related to price
+   * @param page
+   * @param limit
+   */
+  getIndex(parameters):Observable<PriceModel.ResponsePricePaginated>{
+    return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,parameters).pipe(map(response=>{
       return response.data;
     }));
   }
@@ -64,7 +76,6 @@ export class PriceService {
    * @param parameters object for search
    */
   postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Observable<PriceModel.PriceByModelTariff[]> {
-
     return this.http.post<PriceModel.ResponsePricesByProductsReferences>(this.postPricesByProductsReferencesUrl, parameters).pipe(map(response => {
       return response.data;
     }));

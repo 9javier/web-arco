@@ -53,14 +53,9 @@ export class AppComponent implements OnInit {
       open: true,
       children: [
         {
-          title: 'Programadas',
+          title: 'Listado',
           url: '/workwaves-scheduled',
           icon: 'code'
-        },
-        {
-          title: 'Plantillas',
-          url: '/workwaves-templates',
-          icon: 'code-working'
         },
         {
           title: 'Historial',
@@ -133,7 +128,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   displaySmallSidebar = false;
   iconsDirection = 'start';
-  currentRoute: string = "Registro horario";
+  currentRoute: string = "Productos";
   deploySidebarSmallDevices = false;
 
 
