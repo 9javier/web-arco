@@ -29,5 +29,8 @@
     <ion-fab-button *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
       <i class="material-icons">delete</i>
     </ion-fab-button>
+    <ion-fab-button *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
+      <i class="material-icons">select_all</i>
+    </ion-fab-button>
   </ion-fab>
 </ion-footer>

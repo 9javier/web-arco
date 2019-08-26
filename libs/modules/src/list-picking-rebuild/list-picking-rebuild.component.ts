@@ -13,6 +13,8 @@ import {AlertController, LoadingController, ToastController} from "@ionic/angula
 })
 export class ListPickingRebuildComponent implements OnInit {
 
+  public STATUS_PICKING_INITIATED: number = 2;
+
   public listPickings: Array<PickingModel.PendingPickingByWorkWaveSelected> = new Array<PickingModel.PendingPickingByWorkWaveSelected>();
   public isLoadingPickings: boolean = false;
   public previousPage: string = '';
@@ -80,6 +82,33 @@ export class ListPickingRebuildComponent implements OnInit {
       }
       if (!data.delete) {
         this.quantityPickingsSelectedAndInitiated--;
+      }
+    }
+  }
+
+  selectAllPickings() {
+    if (this.listIdsPickingsSelected.length == this.listPickings.length) {
+      this.usersNoSelectedToChangeUser = true;
+      this.usersNoSelectedToDelete = true;
+      this.quantityPickingsSelectedAndInitiated = 0;
+
+      for (let picking of this.listPickings) {
+        picking.selected = false;
+      }
+
+      this.listIdsPickingsSelected = new Array<number>();
+    } else {
+      this.usersNoSelectedToChangeUser = false;
+      this.usersNoSelectedToDelete = false;
+      this.quantityPickingsSelectedAndInitiated = 0;
+
+      this.listIdsPickingsSelected = new Array<number>();
+      for (let picking of this.listPickings) {
+        picking.selected = true;
+        this.listIdsPickingsSelected.push(picking.id);
+        if (picking.status == this.STATUS_PICKING_INITIATED) {
+          this.quantityPickingsSelectedAndInitiated++;
+        }
       }
     }
   }
