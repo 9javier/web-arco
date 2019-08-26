@@ -52,13 +52,6 @@ export class StoreComponent implements OnInit {
     private modalController: ModalController,
     private warehouseService: WarehousesService,
   ) { }
-
-  test(){
-    console.log("change" + this.formBuilderDataInputs.permits.value);
-    console.log("change" + this.formBuilderDataInputs.permits.value);
-    console.log(this.warehouse_id + "este es mi valor");
-    
-  }
   /**
    * Listen for changes in createForm for add and remove validator on warehouse depend it have or not
    */
