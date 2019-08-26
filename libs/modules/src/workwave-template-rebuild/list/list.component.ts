@@ -136,7 +136,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.pickingParametrizationProvider.loadingListTeamAssignations = false;
         });
     } else {
-      this.pickingParametrizationProvider.loadingListRequestOrders = false;
+      this.pickingParametrizationProvider.loadingListTeamAssignations = false;
     }
   }
 
