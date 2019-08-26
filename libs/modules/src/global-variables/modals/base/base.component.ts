@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { GlobalVariableModel, GlobalVariableService } from '@suite/services';
+import { GlobalVariableModel, GlobalVariableService, IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-base',
@@ -25,15 +25,21 @@ export class BaseComponent implements OnInit {
 
   constructor(
     private formBuilder:FormBuilder,
-    private globalVariableService:GlobalVariableService) { }
+    private globalVariableService:GlobalVariableService,
+    private intermediaryService:IntermediaryService,) { }
 
   ngOnInit() {
     this.getTypes();
   }
 
   getTypes(){
+    this.intermediaryService.presentLoading();
     this.globalVariableService.getTypes().subscribe(types=>{
       this.types = types;
+    }, (err) => {
+      console.log(err)
+    }, () => {
+      this.intermediaryService.dismissLoading();
     });
   }
 

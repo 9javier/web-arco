@@ -3,7 +3,8 @@ import {
   GroupsService,
   GroupModel,
   WarehousesService,
-  WarehouseModel
+  WarehouseModel,
+  IntermediaryService
 } from '@suite/services';
 import { Observable } from 'rxjs';
 import {HttpResponse, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
@@ -25,7 +26,8 @@ export class GroupToWarehouseComponent implements OnInit {
   constructor(
     private groupsService: GroupsService,
     private warehousesService: WarehousesService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private intermediaryService:IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -33,6 +35,7 @@ export class GroupToWarehouseComponent implements OnInit {
   }
 
   initGroups(){
+    this.intermediaryService.presentLoading();
     Promise.all([
       this.groupsService.getIndex(),
       this.warehousesService.getIndex(),
@@ -42,11 +45,23 @@ export class GroupToWarehouseComponent implements OnInit {
           (res: HttpResponse<GroupModel.ResponseIndex>) => {
             this.groups = res.body.data;
             console.log(this.groups);
+          },
+          err => {
+            console.log(err);
+          },
+          () => {
+            this.intermediaryService.dismissLoading();
           });
         data[1].subscribe(
           (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
             this.warehouses = res.body.data;
             console.log(this.warehouses);
+          },
+          err => {
+            console.log(err);
+          },
+          () => {
+            this.intermediaryService.dismissLoading();
           });
       },
       err => {
