@@ -190,3 +190,7 @@ export * from './agency/agency.module';
 /**Global variables */
 export * from './global-variables/global-variables.component';
 export * from './global-variables/global-variables.module';
+
+/** List Pickings with Products Rebuild */
+export * from './list-picking-rebuild/list-picking-rebuild.component';
+export * from './list-picking-rebuild/list-picking-rebuild.module';
