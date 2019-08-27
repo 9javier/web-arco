@@ -1,3 +1,8 @@
+ion-select {
+  max-width: 100%;
+  width: 100%;
+}
+
 table {
     width: 100%;
 }
@@ -17,14 +22,66 @@ ion-label {
 }
 
 .check-print {
+  padding: 0;
     ion-checkbox {
-        margin-top: 10px;
+        margin-top: 7px;
     }
 }
 
 .header-mobile {
-    padding: 0 24px;
+  padding: 0 11px 0 16px;
     .check-all {
-        margin-top: 20px;
+      padding: 0;
+        margin-top: 21px;
     }
+}
+
+mat-expansion-panel-header.custom-panel-header {
+  padding: 0 11px 0 16px;
+  height: 60px !important;
+  color: black;
+}
+
+ion-col.content-prices-header {
+  padding: 0;
+  ion-row.row-title-prices {
+    width: 100%;
+    ion-col {
+      padding: 0;
+    }
+    ion-col.status {
+      width: 100%;
+      text-align: end;
+    }
+  }
+  ion-row.row-sizes-prices {
+    width: 100%;
+    ion-col {
+      padding: 0;
+    }
+    ion-col.sizes {
+      color: #979797;
+    }
+    ion-col.prices {
+      width: 100%;
+      text-align: end;
+      p.final-price {
+        color: black;
+        margin: 0;
+        span.final-price {
+          font-weight: 500;
+        }
+        span.discount-price {
+          font-size: 11px;
+          padding: 2px 4px;
+          margin: 0 2px;
+          color: white;
+          background: red;
+        }
+        span.original-price {
+          text-decoration: line-through;
+        }
+      }
+    }
+  }
 }
