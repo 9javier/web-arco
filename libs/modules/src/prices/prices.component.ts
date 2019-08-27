@@ -101,6 +101,8 @@ export class PricesComponent implements OnInit {
   displayedColumns: string[] = ['impress','model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
   dataSource: any;
 
+  public disableExpansionPanel: boolean = true;
+
   constructor(
     private printerService:PrinterService,
     private priceService:PriceService,
@@ -330,6 +332,44 @@ export class PricesComponent implements OnInit {
     return JSON.parse(JSON.stringify(this.form.value || {}));
   }
 
+  processProductSizesRange(price): string {
+    let sizesRange = '';
+
+    if (price.rangesNumbers) {
+      if (price.rangesNumbers.sizeRangeNumberMin && price.rangesNumbers.sizeRangeNumberMax && price.rangesNumbers.sizeRangeNumberMin == price.rangesNumbers.sizeRangeNumberMax) {
+        sizesRange = price.rangesNumbers.sizeRangeNumberMin;
+      } else {
+        sizesRange = price.rangesNumbers.sizeRangeNumberMin + '-' + price.rangesNumbers.sizeRangeNumberMax;
+      }
+    } else {
+      sizesRange = '';
+    }
+
+    return sizesRange;
+  }
+
+  getFinalPrice(priceObj): string {
+    if (priceObj.priceOriginal) {
+      if (priceObj.priceDiscountOutlet && priceObj.priceDiscountOutlet != '0.00' && priceObj.priceDiscountOutlet != '0,00' && priceObj.priceOriginal != priceObj.priceDiscountOutlet) {
+        return priceObj.priceDiscountOutlet;
+      } else if (priceObj.priceDiscount && priceObj.priceDiscount != '0.00' && priceObj.priceDiscount != '0,00' && priceObj.priceOriginal != priceObj.priceDiscount) {
+        return priceObj.priceDiscount;
+      } else {
+        return priceObj.priceOriginal;
+      }
+    }
+
+    return '';
+  }
+
+  getFinalDiscountPercent(priceObj): string {
+    if (priceObj.percentOutlet && priceObj.percentOutlet != 0) {
+      return priceObj.percentOutlet;
+    } else if (priceObj.percent && priceObj.percent != 0) {
+      return priceObj.percent;
+    }
+    return null;
+  }
 
   // GET & SET SECTION
   get warehouseId() {

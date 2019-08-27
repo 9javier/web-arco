@@ -199,6 +199,12 @@ export class WorkwavesService {
     }));
   }
 
+  deleteDeletePickings(params: WorkwaveModel.ParamsDeletePickings): Observable<WorkwaveModel.DeletedPickings> {
+    return this.http.post<WorkwaveModel.ResponseDeletePickings>(this.postConfirmMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
   get lastWorkwaveEdited(): any {
     return this._lastWorkwaveEdited;
   }

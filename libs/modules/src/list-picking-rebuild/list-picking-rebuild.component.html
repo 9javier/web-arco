@@ -1,0 +1,36 @@
+<h2 class="workwave-title">
+  <span (click)="goPreviousPage()" class="return-workwaves">← {{previousPage}}</span>
+  <div class="change-user">
+    <ion-button (click)="changeUserSelected()" [disabled]="usersNoSelectedToChangeUser">
+      Cambiar usuario
+    </ion-button>
+  </div>
+</h2>
+
+<title-picking></title-picking>
+
+<div class="loader" *ngIf="isLoadingPickings">
+  <div class="spinner">
+    <p class="message">Cargando pickings de la ola de trabajo</p>
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+</div>
+
+<div class="empty-list" *ngIf="!isLoadingPickings && listPickings.length <= 0">
+  <p class="message-empty">No hay pickings para la ola de trabajo</p>
+</div>
+
+<div class="scroll-list" *ngIf="!isLoadingPickings && listPickings.length > 0">
+  <picking *ngFor="let picking of listPickings" [picking]="picking" (pickingSelection)="pickingSelected($event)"></picking>
+</div>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
+      <i class="material-icons">delete</i>
+    </ion-fab-button>
+    <ion-fab-button *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
+      <i class="material-icons">select_all</i>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>

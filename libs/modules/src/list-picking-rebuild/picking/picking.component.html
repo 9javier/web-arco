@@ -1,0 +1,39 @@
+<mat-grid-list cols="12" rowHeight="64px">
+  <mat-grid-tile colspan="1">
+    <div class="tile-value center-align">
+      <ion-checkbox [(ngModel)]="picking.selected" (ngModelChange)="selectPicking()"></ion-checkbox>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1">
+    <div class="tile-value">
+      {{ picking.id }}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3">
+    <div class="tile-value">
+      {{ picking.originWarehouse.name }}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3">
+    <div class="tile-value">
+      {{ picking.destinyWarehouse.name }}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="1">
+    <div class="tile-value">
+      {{ picking.quantity }}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="2">
+    <div class="tile-value">
+      {{ picking.user ? picking.user.name : 'No asignado' }}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile class="active" colspan="1">
+    <div class="tile-value right-value">
+      <i class="material-icons active" *ngIf="picking.status == STATUS_PICKING_INITIATED">check</i>
+      <i class="material-icons inactive" *ngIf="picking.status != STATUS_PICKING_INITIATED">close</i>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
+
