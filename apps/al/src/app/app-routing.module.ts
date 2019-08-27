@@ -192,6 +192,14 @@ const routes: Routes = [
     data:{
       name: 'Recibidos'
     }
+  },
+  {
+    path: 'packing/transfer',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transfer-packing/transfer-packing.module#TransferPackingModule',
+    data: {
+      name: 'Traspaso'
+    }
   }
 ];
 

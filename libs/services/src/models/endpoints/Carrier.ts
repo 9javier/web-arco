@@ -44,4 +44,14 @@ export namespace CarrierModel {
     code: number
   }
 
+  export interface ParamsTransferAmongPackings {
+    destiny: string,
+    origin: string
+  }
+
+  export interface ResponseTransferAmongPackings {
+    message: string,
+    code: number
+  }
+
 }

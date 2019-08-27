@@ -1,0 +1,5 @@
+<div class="content-ta">
+  <p class="destiny" *ngIf="packingReferenceDestiny">Destino: <b>{{ packingReferenceDestiny }}</b></p>
+  <p class="error-positioning">{{ msgTop }}</p>
+  <input id="input-ta" class="ta-positioning" [placeholder]="placeholderDataToWrite" (keyup)="keyUpInput($event)" [(ngModel)]="codeWrote">
+</div>

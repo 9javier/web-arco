@@ -355,7 +355,8 @@ export class MenuComponent implements OnInit {
           id: 'print-packing',
           url: '/print/packing',
           icon: 'grid'
-        },{
+        },
+        {
           title: 'Precintar embalaje',
           id: 'packing-seal',
           url: 'packing/seal',
@@ -366,6 +367,12 @@ export class MenuComponent implements OnInit {
           id: 'packing-seal-manual',
           url: '/packing/seal/manual',
           icon: 'paper-plane'
+        },
+        {
+          title: 'Traspaso embalaje',
+          id: 'packing-transfer',
+          url: '/packing/transfer',
+          icon: 'redo'
         }
       ]
     },
