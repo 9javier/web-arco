@@ -7,9 +7,33 @@ dp-date-picker {
     margin: auto;
 }
 
-.legend {
-    margin-top: 40px;
+.legend-card {
+    margin-top: 96px;
+    margin-left: auto;
+    margin-right: auto;
     text-align: left;
+    max-width: 354px;
+}
+
+.legend-card-text {
+    margin: 1em 0;
+    padding: 0 2em;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    color: #000000;
+}
+
+.legend-card-color {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+.clean-button {
+    margin-top: 3em;
 }
 
 ion-footer {
