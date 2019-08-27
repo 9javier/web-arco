@@ -114,7 +114,7 @@
                             Tallas
                         </ion-col>
                         <ion-col class="align-right">
-                          {{ price.rangesNumbers ? price.rangesNumbers.sizeRangeNumberMin && price.rangesNumbers?.sizeRangeNumberMax && price.rangesNumbers.sizeRangeNumberMin == price.rangesNumbers.sizeRangeNumberMax ? price.rangesNumbers.sizeRangeNumberMin : price.rangesNumbers.sizeRangeNumberMin + '-' + price.rangesNumbers.sizeRangeNumberMax : '' }}
+                            {{ processProductSizesRange(price) }}
                         </ion-col>
                     </ion-row>
                     <ion-row>
@@ -130,7 +130,7 @@
                             Desc
                         </ion-col>
                         <ion-col class="align-right">
-                            {{ price?.percent }}%
+                            {{ getFinalDiscountPercent(price) }}%
                         </ion-col>
                     </ion-row>
                     <ion-row>
@@ -138,12 +138,12 @@
                             € Final
                         </ion-col>
                         <ion-col class="align-right">
-                            {{ price?.priceDiscount }}€
+                            {{ getFinalPrice(price) }}€
                         </ion-col>
                     </ion-row>
                     <ion-row>
                         <ion-col>
-                            Estatus
+                            Estado
                         </ion-col>
                         <ion-col class="align-right">
                             <ion-icon name="print" *ngIf="getNameOfStatus(price.status) == 'Impresos'"></ion-icon>
@@ -175,7 +175,7 @@
 
                 <ng-container matColumnDef="impress">
                     <th mat-header-cell *matHeaderCellDef>
-                        Estatus
+                        Estado
                     </th>
                     <td mat-cell *matCellDef="let price">
                         <ion-icon name="print" *ngIf="getNameOfStatus(price.status) == 'Impresos'"></ion-icon>
@@ -206,7 +206,7 @@
                         Tallas
                     </th>
                     <td mat-cell *matCellDef="let price">
-                      {{ price.rangesNumbers ? price.rangesNumbers.sizeRangeNumberMin && price.rangesNumbers?.sizeRangeNumberMax && price.rangesNumbers.sizeRangeNumberMin == price.rangesNumbers.sizeRangeNumberMax ? price.rangesNumbers.sizeRangeNumberMin : price.rangesNumbers.sizeRangeNumberMin + '-' + price.rangesNumbers.sizeRangeNumberMax : '' }}
+                        {{ processProductSizesRange(price) }}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="price">
@@ -220,7 +220,7 @@
                 <ng-container matColumnDef="percentage">
                     <th mat-header-cell *matHeaderCellDef>Desc.</th>
                     <td mat-cell *matCellDef="let price">
-                        {{ price?.percent }}%
+                        {{ getFinalDiscountPercent(price) }}%
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="discount">
@@ -228,7 +228,7 @@
                         € final
                     </th>
                     <td mat-cell *matCellDef="let price">
-                        {{ price?.priceDiscount }}€
+                        {{ getFinalPrice(price) }}€
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="select" [formGroup]="selectedForm">
