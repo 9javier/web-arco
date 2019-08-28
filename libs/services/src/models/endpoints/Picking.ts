@@ -69,7 +69,7 @@ export namespace PickingModel {
     errors: any;
   }
 
-  export interface PendingPickingByWorkWave {
+  export interface PendingPickings {
     createdAt: string,
     updatedAt: string,
     id: number,
@@ -87,15 +87,17 @@ export namespace PickingModel {
     originWarehouse: WarehouseModel.Warehouse,
     user: UserModel.User,
     users: Array<UserModel.User>,
-    quantity: number
+    quantity: number,
+    quantityPending: number,
+    quantityScanned: number
   }
 
-  export interface PendingPickingByWorkWaveSelected extends PendingPickingByWorkWave {
+  export interface PendingPickingsSelected extends PendingPickings {
     selected?: boolean
   }
 
-  export interface ResponseListPendingPickingByWorkWave {
-    data: Array<PendingPickingByWorkWave>
+  export interface ResponseListPendingPickings {
+    data: Array<PendingPickings>
   }
 
   export interface ErrorResponse {

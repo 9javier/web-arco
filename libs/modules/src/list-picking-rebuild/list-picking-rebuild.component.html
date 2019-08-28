@@ -1,5 +1,5 @@
 <h2 class="workwave-title">
-  <span (click)="goPreviousPage()" class="return-workwaves">← {{previousPage}}</span>
+  <span (click)="goPreviousPage()" class="return-workwaves" *ngIf="previousPage">← {{previousPage}}</span>
   <div class="change-user">
     <ion-button (click)="changeUserSelected()" [disabled]="usersNoSelectedToChangeUser">
       Cambiar usuario
@@ -11,13 +11,13 @@
 
 <div class="loader" *ngIf="isLoadingPickings">
   <div class="spinner">
-    <p class="message">Cargando pickings de la ola de trabajo</p>
+    <p class="message">Cargando pickings {{ idWorkwave ? 'de la ola de trabajo' : '' }}</p>
     <ion-spinner name="dots"></ion-spinner>
   </div>
 </div>
 
 <div class="empty-list" *ngIf="!isLoadingPickings && listPickings.length <= 0">
-  <p class="message-empty">No hay pickings para la ola de trabajo</p>
+  <p class="message-empty">No hay pickings {{ idWorkwave ? 'para la ola de trabajo' : '' }}</p>
 </div>
 
 <div class="scroll-list" *ngIf="!isLoadingPickings && listPickings.length > 0">

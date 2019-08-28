@@ -8,30 +8,27 @@
     <ion-title>{{ title }}</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-list>
-    <ion-item lines="inset" class="header-list-products">
-      <ion-label>
-        Referencia
-      </ion-label>
-      <ion-label>
-        Modelo
-      </ion-label>
-      <ion-label>
-        Color
-      </ion-label>
-      <ion-label>
-        Talla
-      </ion-label>
-      <ion-label>
-        Ubicación
-      </ion-label>
-    </ion-item>
+<ion-content scrollX="false" scrollY="false">
+  <ion-item lines="none" class="header-list-products">
+    <ion-label>
+      Modelo
+    </ion-label>
+    <ion-label>
+      Color
+    </ion-label>
+    <ion-label>
+      Talla
+    </ion-label>
+    <ion-label>
+      Ubicación
+    </ion-label>
+    <ion-label class="last-item-header">
+      Estado
+    </ion-label>
+  </ion-item>
 
-    <ion-item lines="inset" *ngFor="let product of listProducts">
-      <ion-label>
-        {{product?.product?.reference}}
-      </ion-label>
+  <div class="scroll-list">
+    <ion-item lines="none" *ngFor="let product of listProducts">
       <ion-label>
         {{product?.product?.model?.reference}}
       </ion-label>
@@ -44,6 +41,9 @@
       <ion-label>
         {{product?.inventory?.container?.reference}}
       </ion-label>
+      <ion-label>
+        {{getProductStatusName(product)}}
+      </ion-label>
     </ion-item>
-  </ion-list>
+  </div>
 </ion-content>
