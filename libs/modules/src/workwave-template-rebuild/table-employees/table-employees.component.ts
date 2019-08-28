@@ -26,11 +26,15 @@ export class TableEmployeesComponent implements OnInit {
   ngOnInit() {
     this.events.subscribe(this.EMPLOYEES_LOADED, () => {
       this.listEmployees = this.pickingParametrizationProvider.listEmployees;
-      for (let employee of this.listEmployees.usersActive) {
-        this.employeesSelection[employee.id] = true;
-      }
-      for (let employee of this.listEmployees.usersInactive) {
-        this.employeesSelection[employee.id] = false;
+      if (this.listEmployees.usersActive.length > 0 || this.listEmployees.usersInactive.length > 0) {
+        for (let employee of this.listEmployees.usersActive) {
+          this.employeesSelection[employee.id] = true;
+        }
+        for (let employee of this.listEmployees.usersInactive) {
+          this.employeesSelection[employee.id] = false;
+        }
+      } else {
+        this.employeesSelection = {};
       }
       this.selectEmployee();
     });

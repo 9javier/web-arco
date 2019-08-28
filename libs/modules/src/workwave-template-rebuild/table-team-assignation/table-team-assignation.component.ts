@@ -27,18 +27,23 @@ export class TableTeamAssignationComponent implements OnInit {
    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
        this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
 
-       for (let teamAssignation of this.listTeamAssignations) {
-         let tempMaxCount = 0;
-         for (let assignation of teamAssignation.pickingShoes) {
-           tempMaxCount += parseInt(assignation.quantityShoes);
+       if (this.listTeamAssignations.length > 0) {
+         for (let teamAssignation of this.listTeamAssignations) {
+           let tempMaxCount = 0;
+           for (let assignation of teamAssignation.pickingShoes) {
+             tempMaxCount += parseInt(assignation.quantityShoes);
+           }
+           if (tempMaxCount > this.maxQuantityAssignations) {
+             this.maxQuantityAssignations = tempMaxCount;
+           }
          }
-         if (tempMaxCount > this.maxQuantityAssignations) {
-           this.maxQuantityAssignations = tempMaxCount;
-         }
-       }
 
-       this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
-       this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
+         this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
+         this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
+       } else {
+         this.maxSizeForCols = 12;
+         this.maxSizeForNameCol = 2;
+       }
      }
    );
   }

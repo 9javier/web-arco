@@ -20,11 +20,11 @@
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="!pickingParametrizationProvider.loadingListGroupsWarehouses && listGroupsWarehouses.length < 1">
+  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListGroupsWarehouses || pickingParametrizationProvider.loadingListGroupsWarehouses < 1) && listGroupsWarehouses.length < 1">
     <p class="message-empty">No hay grupos de tiendas cargados</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListGroupsWarehouses">
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListGroupsWarehouses || pickingParametrizationProvider.loadingListGroupsWarehouses < 1">
     <mat-grid-list *ngFor="let group of listGroupsWarehouses; let i = index" class="store-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="radio" colspan="1" rowspan="1">
         <mat-radio-group name="stores" [(ngModel)]="groupWarehousesSelected.groupsWarehousePickingId" (ngModelChange)="selectGroupWarehouses()">

@@ -31,22 +31,22 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders">
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders && pickingParametrizationProvider.loadingListRequestOrders > 0">
     <div class="spinner">
       <p class="message">Cargando operaciones de envío</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders && listRequestOrders.length < 1">
+  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1) && listRequestOrders.length < 1">
     <p class="message-empty">No hay operaciones de envío cargadas</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders">
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1">
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder()"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
         </div>
       </mat-grid-tile>
 

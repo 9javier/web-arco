@@ -26,10 +26,15 @@ export class TableRequestsOrdersComponent implements OnInit {
   ngOnInit() {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
       this.listRequestOrders = this.pickingParametrizationProvider.listRequestOrders;
-      for (let request of this.listRequestOrders) {
-        this.requestOrdersSelection[request.request.id] = true;
+
+      if (this.listRequestOrders.length > 0) {
+        for (let request of this.listRequestOrders) {
+          this.requestOrdersSelection[request.request.id] = true;
+        }
+      } else {
+        this.requestOrdersSelection = {};
       }
-      this.selectRequestOrder();
+      this.selectRequestOrder(false);
     });
   }
 
@@ -37,7 +42,10 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.events.unsubscribe(this.REQUEST_ORDERS_LOADED);
   }
 
-  selectRequestOrder() {
+  selectRequestOrder(incrementTeamCounter: boolean) {
+    if (incrementTeamCounter) {
+      this.pickingParametrizationProvider.loadingListTeamAssignations++;
+    }
     this.listRequestOrdersSelected = new Array<number>();
     for (let iRequest in this.requestOrdersSelection) {
       if (this.requestOrdersSelection[iRequest]) {

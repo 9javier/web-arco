@@ -8,11 +8,14 @@ import {WorkwaveModel} from "../../models/endpoints/Workwaves";
 })
 export class PickingParametrizationProvider {
 
-  private _loadingListGroupsWarehouses: boolean = false;
-  get loadingListGroupsWarehouses(): boolean {
+  private _loadingListGroupsWarehouses: number = 0;
+  get loadingListGroupsWarehouses(): number {
     return this._loadingListGroupsWarehouses;
   }
-  set loadingListGroupsWarehouses(value: boolean) {
+  set loadingListGroupsWarehouses(value: number) {
+    if (value < 0) {
+      value = 0;
+    }
     this._loadingListGroupsWarehouses = value;
   }
 
@@ -24,11 +27,14 @@ export class PickingParametrizationProvider {
     this._listGroupsWarehouses = value;
   }
 
-  private _loadingListEmployees: boolean = false;
-  get loadingListEmployees(): boolean {
+  private _loadingListEmployees: number = 0;
+  get loadingListEmployees(): number {
     return this._loadingListEmployees;
   }
-  set loadingListEmployees(value: boolean) {
+  set loadingListEmployees(value: number) {
+    if (value < 0) {
+      value = 0;
+    }
     this._loadingListEmployees = value;
   }
 
@@ -40,11 +46,14 @@ export class PickingParametrizationProvider {
     this._listEmployees = value;
   }
 
-  private _loadingListRequestOrders: boolean = false;
-  get loadingListRequestOrders(): boolean {
+  private _loadingListRequestOrders: number = 0;
+  get loadingListRequestOrders(): number {
     return this._loadingListRequestOrders;
   }
-  set loadingListRequestOrders(value: boolean) {
+  set loadingListRequestOrders(value: number) {
+    if (value < 0) {
+      value = 0;
+    }
     this._loadingListRequestOrders = value;
   }
 
@@ -56,11 +65,14 @@ export class PickingParametrizationProvider {
     this._listRequestOrders = value;
   }
 
-  private _loadingListTeamAssignations: boolean = false;
-  get loadingListTeamAssignations(): boolean {
+  private _loadingListTeamAssignations: number = 0;
+  get loadingListTeamAssignations(): number {
     return this._loadingListTeamAssignations;
   }
-  set loadingListTeamAssignations(value: boolean) {
+  set loadingListTeamAssignations(value: number) {
+    if (value < 0) {
+      value = 0;
+    }
     this._loadingListTeamAssignations = value;
   }
 
