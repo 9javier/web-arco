@@ -28,7 +28,7 @@ export class ListPickingRebuildComponent implements OnInit {
   private loading: HTMLIonLoadingElement = null;
   private listEmployeesToChange: UserTimeModel.ListUsersRegisterTimeActiveInactive = { usersActive: [], usersInactive: [] };
 
-  public deleteOptionEnabled: boolean = false;
+  public deleteOptionEnabled: boolean = true;
 
   constructor(
     private location: Location,
