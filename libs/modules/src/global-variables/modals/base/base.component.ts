@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { GlobalVariableModel, GlobalVariableService, IntermediaryService } from '@suite/services';
+import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'suite-base',
@@ -16,12 +16,16 @@ export class BaseComponent implements OnInit {
     }
   }
 
-  types:{id:number;name:string}[] = [];
-
+  types:{id:number;name:string;}[] = [];
+  repeat: number;
+  form: FormGroup;
+  items: FormArray;
+  /*
   form:FormGroup = this.formBuilder.group({
     type:['',Validators.required],
-    value:['',Validators.required]
+    value:['',Validators.required],
   });
+  */
 
   constructor(
     private formBuilder:FormBuilder,
@@ -30,6 +34,8 @@ export class BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getTypes();
+   // this.items = new FormArray([])
+    console.log('type 1');
   }
 
   getTypes(){
@@ -40,11 +46,43 @@ export class BaseComponent implements OnInit {
       console.log(err)
     }, () => {
       this.intermediaryService.dismissLoading();
+      this.form = this.formBuilder.group({
+        items: this.formBuilder.array([])
+      });
+      for (let i = 0; i < this.types.length; i++) {
+          this.items = this.form.get('items') as FormArray;
+
+          this.items.push(
+    
+            this.formBuilder.group({
+              type: this.types[i].id,
+              value: ['', Validators.required]
+            })
+    
+          );
+      }
     });
   }
 
-  getValue():GlobalVariableModel.GlobalVariable{
-    return this.form.value;
+  addItem(): void {
+    this.items = this.form.get('items') as FormArray;
+    this.items.push(this.createItem());
   }
 
+  createItem(): FormGroup {
+    return this.formBuilder.group({
+      type:['',Validators.required],
+      value:['',Validators.required],
+    });
+  }
+
+  getValue():GlobalVariableModel.GlobalVariable[]{
+
+      for(var i=0;i<this.items.length;i++){
+
+        let array=this.form.controls.items as FormArray
+        let group=array.at(i) as FormGroup
+        return array.value;
+    }
+  }
 }
