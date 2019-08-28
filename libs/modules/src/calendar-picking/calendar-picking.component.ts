@@ -1,9 +1,10 @@
 import { Component, OnInit,ViewChild, Sanitizer, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { DatePickerComponent,IDatePickerConfig } from 'ng2-date-picker';
 import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
-import { FormBuilder, FormGroup, FormArray, Form } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Form } from '@angular/forms';
 import { WarehouseModel,CalendarModel,CalendarService, IntermediaryService } from '@suite/services';
 import { AlertController, IonSelect } from '@ionic/angular';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 @Component({
   selector: 'suite-calendar-picking',
@@ -41,11 +42,14 @@ export class CalendarPickingComponent implements OnInit {
   });
 
   form:FormGroup = this.formBuilder.group({
-    warehouses: new FormArray([])
+    warehouses: new FormArray([]),
+    warehousesInput: new FormArray([])
   });
 
   warehouses:Array<WarehouseModel.Warehouse> = [];
   templates:Array<CalendarModel.Template> = [];
+  updateTemplate: CalendarModel.Template;
+  warehousesInput:Array<WarehouseModel.Warehouse> = [];
 
   @ViewChild(DatePickerComponent) datePicker:DatePickerComponent;
 
@@ -65,6 +69,7 @@ export class CalendarPickingComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.form)
     this.getBase();
     this.getCalendarDates();
 
@@ -322,7 +327,7 @@ export class CalendarPickingComponent implements OnInit {
   getWarehouses():void{
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
-        console.log(response);
+        console.log(response)
       })
     })
   }
@@ -360,12 +365,12 @@ export class CalendarPickingComponent implements OnInit {
   selectTemplate(template:CalendarModel.Template,value=null,date=null){
     this.date = date; 
     let warehouses = template.warehouses;
-    //this.initTemplateBase(this.templateBase);
-    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+    this.updateTemplate = template;
+    /*(<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
         destinationControl.get("selected").setValue(false);
       })
-    });
+    });*/
 
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
@@ -392,7 +397,8 @@ export class CalendarPickingComponent implements OnInit {
       return false;
     }
     this.form = this.formBuilder.group({
-      warehouses: new FormArray([])
+      warehouses: new FormArray([]),
+      warehousesInput: []
     });
     this.openeds = [];
     warehouses.forEach(warehouse=>{
@@ -405,6 +411,7 @@ export class CalendarPickingComponent implements OnInit {
           }),
           destinationsWarehouses:(this.formBuilder.array(
             warehouse.destinationsWarehouses.map(warehouse=>{
+              this.warehouses.push(warehouse.destinationWarehouse);
               let group = (this.formBuilder.group({
                 id:warehouse.destinationWarehouse.id,
                 name:warehouse.destinationWarehouse.name,
@@ -481,6 +488,28 @@ export class CalendarPickingComponent implements OnInit {
       });
       this.getTemplates();
     });
+  }
+
+  deletedWarehouseOfTemplate(id: number, warehouseId: number) {
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+        if(destinationControl.get("id").value == id && destinationControl.get("selected").value
+        && warehouseControl.get("originWarehouse").value.id == warehouseId){          
+          destinationControl.get("selected").setValue(false);
+        }
+      });
+    });
+    
+    /*console.log(this.form.get("warehousesInput"))
+    console.log(this.updateTemplate)
+    this.warehousesInput = this.form.get("warehousesInput").value;
+    this.form.get("warehousesInput").setValue([]);*/
+
+    /*(<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+        
+      })
+    })*/
   }
 
   ngAfterViewInit(): void {

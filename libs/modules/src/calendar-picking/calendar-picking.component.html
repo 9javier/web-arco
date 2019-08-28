@@ -12,7 +12,8 @@
                     </ion-label>
                     <ion-select formControlName="template" (ionChange)="selectTemplate(templates[$event.detail.value],null)">
                         <ion-select-option *ngFor="let template of templates;let i = index" [value]="i">
-                            {{template.name}}</ion-select-option>
+														{{template.name}}
+												</ion-select-option>
                     </ion-select>
                 </ion-item>
 
@@ -75,15 +76,18 @@
                             </mat-expansion-panel-header>
 
                             <div *ngIf="openeds[i]">
-                                <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
-                                    <mat-checkbox formControlName="selected"></mat-checkbox>
-                                    <ion-label>{{destination.value.name}}</ion-label>
-                                    <mat-checkbox formControlName="radio"></mat-checkbox>
-                                </ion-item>
-                                <!--<ion-item *ngFor="let control of createForm['controls'].roles['controls'];let i = index">
-                                                    <ion-label>{{roles[i].name}}</ion-label>
-                                                    <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
-                                                </ion-item>-->
+                                <ion-col size="2" size-xs="12" size-md="4">
+																	<ion-label>
+																			Almacenes
+																	</ion-label>
+																	<suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehousesInput" multiple="false"></suite-tags-input>
+																</ion-col>
+																<div [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
+																		<ion-item *ngIf="destination.value.selected">
+																			<ion-label *ngIf="destination.value.selected" slot="end" class="deleteWarehouse" (click)="deletedWarehouseOfTemplate(destination.value.id, warehouse.value.originWarehouse.id)">X</ion-label>
+																			<ion-label *ngIf="destination.value.selected">{{destination.value.name}}</ion-label>
+																		</ion-item>
+																</div>
                             </div>
                             <mat-list style="display: flex; justify-content:center;"></mat-list>
                         </mat-expansion-panel>
