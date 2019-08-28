@@ -17,6 +17,7 @@ export class BaseComponent implements OnInit {
   }
 
   types:{id:number;name:string;}[] = [];
+  repeat: number;
   form: FormGroup;
   items: FormArray;
   /*
@@ -69,21 +70,18 @@ export class BaseComponent implements OnInit {
     });
   }
 
-  getValue():GlobalVariableModel.GlobalVariable{
+  getValue():GlobalVariableModel.GlobalVariable[]{
 
-    for(var i=0;i<this.items.length;i++){
+      for(var i=0;i<this.items.length;i++){
 
-      let array=this.form.controls.items as FormArray
-      let group=array.at(i) as FormGroup
-      /*
-      console.log(group.controls['type'].value)
-      console.log(group.controls['value'].value)
-      console.log(array.value);
-      */
-      return array.value;
+        let array=this.form.controls.items as FormArray
+        let group=array.at(i) as FormGroup
+        /*
+        console.log(group.controls['type'].value)
+        console.log(group.controls['value'].value)
+        console.log(array.value);
+        */
+        return array.value;
+    }
   }
-  
-      
-  }
-
 }
