@@ -15,8 +15,10 @@ export class PickingService {
   private getShowUrl = environment.apiBase+"/processes/picking-main/order/{{id}}";
   private getListByUserUrl = environment.apiBase+"/processes/picking-main/order/{{id}}/user";
   private putUpdateUrl = environment.apiBase+"/processes/picking-main";
+  private putUpdateByPickingsUrl = environment.apiBase+"/processes/picking-main/pickings";
   private postVerifyPackingUrl = environment.apiBase+"/processes/picking-main/packing";
   private getListPendingPickingByWorkWaveUrl = environment.apiBase + "/processes/picking-main/order/pending/";
+  private getListAllPendingPickingUrl = environment.apiBase + "/processes/picking-main/order/pending";
 
   private _pickingAssignments: PickingModel.Picking[] = [];
 
@@ -59,6 +61,25 @@ export class PickingService {
     }));
   }
 
+  putUpdateByPickings(pickings: Array<PickingModel.Picking>) : Observable<PickingModel.ResponseUpdate> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+
+      let pickingsUpdate: PickingModel.PickingUpdate[] = pickings.map((picking: PickingModel.Picking) => {
+        return {
+          userId: picking.user.id,
+          pikingId: picking.id
+        }
+      });
+
+      let paramsPickingUpdate = {
+        pikings: pickingsUpdate
+      };
+
+      return this.http.put<PickingModel.ResponseUpdate>(this.putUpdateByPickingsUrl, paramsPickingUpdate, { headers });
+    }));
+  }
+
   postVerifyPacking(packing) : Observable<PickingModel.ResponseUpdate> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
@@ -66,8 +87,14 @@ export class PickingService {
     }));
   }
 
-  getListPendingPickingByWorkwave(idWorkWave: number): Observable<Array<PickingModel.PendingPickingByWorkWave>> {
-    return this.http.get<PickingModel.ResponseListPendingPickingByWorkWave>(this.getListPendingPickingByWorkWaveUrl + idWorkWave).pipe(map(response => {
+  getListPendingPickingByWorkwave(idWorkWave: number): Observable<Array<PickingModel.PendingPickings>> {
+    return this.http.get<PickingModel.ResponseListPendingPickings>(this.getListPendingPickingByWorkWaveUrl + idWorkWave).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  getListAllPendingPicking(): Observable<Array<PickingModel.PendingPickings>> {
+    return this.http.get<PickingModel.ResponseListPendingPickings>(this.getListAllPendingPickingUrl).pipe(map(response => {
       return response.data;
     }));
   }

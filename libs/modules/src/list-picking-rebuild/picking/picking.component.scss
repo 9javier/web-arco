@@ -13,6 +13,9 @@ mat-grid-list {
       .store-ref {
         font-weight: 500;
       }
+      div.tile-date {
+        color: var(--ion-color-secondary);
+      }
     }
     div.tile-value.center-align {
       text-align: center;
@@ -21,6 +24,11 @@ mat-grid-list {
     div.tile-value.right-value {
       width: 100%;
       text-align: end;
+    }
+    div.btn-see {
+      color: #008aff;
+      text-decoration: underline;
+      cursor: pointer;
     }
   }
 

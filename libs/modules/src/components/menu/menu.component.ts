@@ -98,6 +98,12 @@ export class MenuComponent implements OnInit {
           id:'workwaves-history',
           url: '/workwaves-history',
           icon: 'code-download'
+        },
+        {
+          title: 'Pickings en curso',
+          id: 'pickings-execution',
+          url: '/workwaves-scheduled/pickings',
+          icon: 'code-working'
         }
       ]
     },
