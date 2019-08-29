@@ -227,7 +227,7 @@ export class ListPickingRebuildComponent implements OnInit {
 
   private deletePickings() {
     this.workwavesService
-      .deleteDeletePickings({ pickingIds: this.listIdsPickingsSelected })
+      .postDeletePickings({ pickingsIds: this.listIdsPickingsSelected })
       .subscribe((res: any) => {
         if (this.loading) {
           this.loading.dismiss();
