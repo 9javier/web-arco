@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {SettingsService} from "../../../services/src/lib/storage/settings/settings.service";
 import {TransferPackingScanditService} from "../../../services/src/lib/scandit/transfer-packing/transfer-packing.service";
-import {AlertController} from "@ionic/angular";
+import {AlertController, Events} from "@ionic/angular";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-transfer-packing',
@@ -11,11 +12,15 @@ import {AlertController} from "@ionic/angular";
 
 export class TransferPackingComponent implements OnInit {
 
+  private EXIT_FROM_SCANDIT: string = 'exit_from_scandit';
+
   private lastMethod: string = 'manual';
 
-  private disableScanditScanner: boolean = true;
+  private disableScanditScanner: boolean = false;
 
   constructor(
+    private events: Events,
+    private location: Location,
     private alertController: AlertController,
     private settingsService: SettingsService,
     private transferPackingScanditService: TransferPackingScanditService
@@ -36,6 +41,16 @@ export class TransferPackingComponent implements OnInit {
           }
         });
       });
+
+    this.events.subscribe(this.EXIT_FROM_SCANDIT, () => {
+      if (this.lastMethod == 'scandit') {
+        this.goPreviousPage();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.events.unsubscribe(this.EXIT_FROM_SCANDIT);
   }
 
   public useScanditMode() {
@@ -48,6 +63,10 @@ export class TransferPackingComponent implements OnInit {
     } else {
       console.warn("DEBUG::Scandit is not available to test in browser");
     }
+  }
+
+  private goPreviousPage () {
+    this.location.back();
   }
 
   private async presentWarningAlert(title: string, message: string) {

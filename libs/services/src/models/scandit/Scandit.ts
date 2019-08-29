@@ -30,6 +30,10 @@ export namespace ScanditModel {
     action?: string
   }
 
+  export interface ResponseSwitchToIonic extends Response {
+    action?: string
+  }
+
   interface Filters {
     id: number,
     name: string,

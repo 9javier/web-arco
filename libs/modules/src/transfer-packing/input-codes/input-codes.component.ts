@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {LoadingController, ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
+import {SettingsService} from "../../../../services/src/lib/storage/settings/settings.service";
 
 @Component({
   selector: 'suite-input-codes',
@@ -13,10 +14,10 @@ export class InputCodesComponent implements OnInit {
   placeholderDataToWrite: string = 'EMBALAJE';
   codeWrote: string = null;
   lastCodeScanned: string = 'start';
-  msgTop: string = 'Escanea el embalaje de destino';
+  msgTop: string = 'Escanea el embalaje de origen';
 
   private isProcessStarted: boolean = false;
-  private packingReferenceDestiny: string = null;
+  public packingReferenceOrigin: string = null;
   private loading: HTMLIonLoadingElement = null;
 
   private disableTransferProductByProduct: boolean = true;
@@ -24,6 +25,7 @@ export class InputCodesComponent implements OnInit {
   constructor(
     private loadingController: LoadingController,
     private toastController: ToastController,
+    private settingsService: SettingsService,
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
   ) {
@@ -40,6 +42,8 @@ export class InputCodesComponent implements OnInit {
     let dataWrote = (this.codeWrote || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
+      this.settingsService.saveDeviceSettings({ transferPackingLastMethod: 'laser' });
+
       this.codeWrote = null;
       if (dataWrote === this.lastCodeScanned) {
         return;
@@ -52,8 +56,8 @@ export class InputCodesComponent implements OnInit {
           this.transferAmongPackings(dataWrote);
         } else {
           this.isProcessStarted = true;
-          this.packingReferenceDestiny = dataWrote;
-          this.msgTop = this.disableTransferProductByProduct ? 'Escanea el embalaje de origen' : 'Escanea los productos a traspasar';
+          this.packingReferenceOrigin = dataWrote;
+          this.msgTop = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
           this.placeholderDataToWrite = this.disableTransferProductByProduct ? 'EMBALAJE' : 'PRODUCTO';
         }
       } else if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT
@@ -71,16 +75,16 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-  private transferAmongPackings(originPacking) {
+  private transferAmongPackings(destinyPacking) {
     this.showLoading('Traspasando productos...').then(() => {
       this.carriersService
-        .postTransferAmongPackings({ destiny: this.packingReferenceDestiny, origin: originPacking })
+        .postTransferAmongPackings({ origin: this.packingReferenceOrigin, destiny: destinyPacking })
         .subscribe(() => {
           this.hideLoading();
           this.presentToast('Traspaso de productos entre embalajes realizado.', 'success');
-          this.packingReferenceDestiny = null;
+          this.packingReferenceOrigin = null;
           this.isProcessStarted = false;
-          this.msgTop = "Escanea el embalaje de destino";
+          this.msgTop = "Escanea el embalaje de origen";
           this.placeholderDataToWrite = "EMBALAJE";
           this.lastCodeScanned = null;
         }, (error) => {
