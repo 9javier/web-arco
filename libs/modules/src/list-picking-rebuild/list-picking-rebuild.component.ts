@@ -47,7 +47,6 @@ export class ListPickingRebuildComponent implements OnInit {
 
     if (this.idWorkwave && this.workwavesService.lastWorkwaveRebuildEdited) {
       this.previousPage = 'Olas de Trabajo';
-      this.loadPickingsList();
     } else if (this.idWorkwave && this.workwavesService.lastWorkwaveHistoryQueried) {
       this.previousPage = 'Historial';
     } else {
@@ -66,6 +65,7 @@ export class ListPickingRebuildComponent implements OnInit {
     };
     let subscribeErrorListPickings = (error) => {
       console.error('Error::Subscribe:pickingService::getListAllPendingPicking::', error);
+      this.listPickings = new Array<PickingModel.PendingPickingsSelected>();
       this.isLoadingPickings = false;
     };
 
@@ -87,6 +87,7 @@ export class ListPickingRebuildComponent implements OnInit {
         this.listEmployeesToChange = res;
       }, (error) => {
         console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
+        this.listEmployeesToChange = { usersActive: [], usersInactive: [] };
       });
   }
 
@@ -234,6 +235,9 @@ export class ListPickingRebuildComponent implements OnInit {
           this.loading = null;
         }
         this.presentToast('Tareas de picking eliminadas correctamente.', 'success');
+
+        this.loadPickingsList();
+        this.loadEmployees();
       }, (error) => {
         console.error('Error::Subscribe:workwavesService::deleteDeletePickings::', error);
         if (this.loading) {
