@@ -6,15 +6,19 @@
       <div class="tile-value"></div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="reference border-right" colspan="3">
+    <mat-grid-tile class="reference border-right" colspan="2">
       <div class="tile-value">Referencia</div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="origin border-right" colspan="4">
+    <mat-grid-tile class="date border-right" colspan="3">
+      <div class="tile-value">Fecha</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="origin border-right" colspan="5">
       <div class="tile-value">Origen</div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="destiny border-right" colspan="4">
+    <mat-grid-tile class="destiny border-right" colspan="5">
       <div class="tile-value">Destino</div>
     </mat-grid-tile>
 
@@ -22,11 +26,11 @@
       <div class="tile-value">Tipo</div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="quantity border-right" colspan="4">
+    <mat-grid-tile class="quantity border-right" colspan="2">
       <div class="tile-value">Pares</div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="quantity-launch" colspan="4">
+    <mat-grid-tile class="quantity-launch" colspan="2">
       <div class="tile-value">Pares Lanzar</div>
     </mat-grid-tile>
   </mat-grid-list>
@@ -50,15 +54,22 @@
         </div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="reference border-right" colspan="3">
+      <mat-grid-tile class="reference border-right" colspan="2">
         <div class="tile-value">{{requestOrder.request.requestId}}</div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="origin border-right" colspan="4">
+      <mat-grid-tile class="date border-right" colspan="3">
+        <div class="tile-value">
+          <div class="tile-date">{{dateCreatedParsed(requestOrder)}}</div>
+          <div>{{timeCreatedParsed(requestOrder)}}</div>
+        </div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="origin border-right" colspan="5">
         <div class="tile-value">{{requestOrder.originWarehouse.name}}</div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="destiny border-right" colspan="4">
+      <mat-grid-tile class="destiny border-right" colspan="5">
         <div class="tile-value">{{requestOrder.destinyWarehouse.name}}</div>
       </mat-grid-tile>
 
@@ -66,11 +77,11 @@
         <div class="tile-value">{{requestOrder.preparationLinesTypes.name}}</div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="quantity border-right" colspan="4">
+      <mat-grid-tile class="quantity border-right" colspan="2">
         <div class="tile-value">{{requestOrder.quantityOrder}}</div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="quantity-launch" colspan="4">
+      <mat-grid-tile class="quantity-launch" colspan="2">
         <div class="tile-value">{{requestOrder.quantityMatchWarehouse}}</div>
       </mat-grid-tile>
     </mat-grid-list>

@@ -53,6 +53,9 @@ div.main-element {
     .border-right {
       border-right: 1px solid var(--ion-color-secondary);
     }
+    div.tile-date {
+      color: var(--ion-color-secondary);
+    }
   }
   mat-grid-list.title-line {
     font-weight: 500;

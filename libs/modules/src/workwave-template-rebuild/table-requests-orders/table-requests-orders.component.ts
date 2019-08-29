@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import {Events} from "@ionic/angular";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import * as moment from 'moment';
 
 @Component({
   selector: 'table-requests-orders',
@@ -53,6 +54,16 @@ export class TableRequestsOrdersComponent implements OnInit {
       }
     }
     this.changeRequestOrder.next(this.listRequestOrdersSelected);
+  }
+
+  dateCreatedParsed(requestOrder) : string {
+    moment.locale('es');
+    return moment(requestOrder.request.date).format('ddd, DD/MM/YYYY');
+  }
+
+  timeCreatedParsed(requestOrder) : string {
+    moment.locale('es');
+    return moment(requestOrder.request.date).format('LT');
   }
 
 }
