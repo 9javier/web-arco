@@ -14,12 +14,16 @@
       <div class="tile-value">Fecha</div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="origin border-right" colspan="5">
+    <mat-grid-tile class="origin border-right" colspan="4">
       <div class="tile-value">Origen</div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="destiny border-right" colspan="5">
+    <mat-grid-tile class="destiny" colspan="4">
       <div class="tile-value">Destino</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="destiny-max border-right" colspan="2">
+      <div class="tile-value right-value">Máximo</div>
     </mat-grid-tile>
 
     <mat-grid-tile class="type border-right" colspan="4">
@@ -65,12 +69,18 @@
         </div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="origin border-right" colspan="5">
+      <mat-grid-tile class="origin border-right" colspan="4">
         <div class="tile-value">{{requestOrder.originWarehouse.name}}</div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="destiny border-right" colspan="5">
+      <mat-grid-tile class="destiny" colspan="4">
         <div class="tile-value">{{requestOrder.destinyWarehouse.name}}</div>
+      </mat-grid-tile>
+
+        <mat-grid-tile class="destiny-max border-right" colspan="2">
+        <div class="tile-value right-value">
+          {{requestOrder.destinyWarehouse.thresholdShippingStore ? '['+requestOrder.destinyWarehouse.thresholdShippingStore+']' : '-'}}
+        </div>
       </mat-grid-tile>
 
       <mat-grid-tile class="type border-right" colspan="4">

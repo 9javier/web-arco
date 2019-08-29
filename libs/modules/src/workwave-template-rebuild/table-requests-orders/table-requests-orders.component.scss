@@ -56,10 +56,18 @@ div.main-element {
     div.tile-date {
       color: var(--ion-color-secondary);
     }
+    mat-grid-tile.destiny-max {
+      div.tile-value {
+        padding-right: 8px;
+      }
+    }
   }
   mat-grid-list.title-line {
     font-weight: 500;
     border-top: 1px solid var(--ion-color-secondary);
+    mat-grid-tile.destiny-max {
+      color: var(--ion-color-secondary);
+    }
   }
   mat-grid-list.requests-orders-line {
     mat-grid-tile.checkbox {
