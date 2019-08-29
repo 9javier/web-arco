@@ -84,7 +84,7 @@
                     <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
                 </ion-item>
                 <!--Tienda-->
-                <ion-item class="inner-item" style="display: block;">
+                <ion-item class="inner-item" style="display: none;">
                     <ion-select placeholder="Tienda" formControlName="warehouseId" [value]="warehouse_id">
                         <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}</ion-select-option>
                     </ion-select>
