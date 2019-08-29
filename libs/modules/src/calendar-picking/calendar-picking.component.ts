@@ -43,7 +43,7 @@ export class CalendarPickingComponent implements OnInit {
 
   form:FormGroup = this.formBuilder.group({
     warehouses: new FormArray([]),
-    warehousesInput: new FormArray([])
+    warehousesInput: []
   });
 
   warehouses:Array<WarehouseModel.Warehouse> = [];
@@ -366,11 +366,11 @@ export class CalendarPickingComponent implements OnInit {
     this.date = date; 
     let warehouses = template.warehouses;
     this.updateTemplate = template;
-    /*(<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
         destinationControl.get("selected").setValue(false);
       })
-    });*/
+    });
 
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
@@ -461,7 +461,8 @@ export class CalendarPickingComponent implements OnInit {
    */
   initForm():void{
     this.form = this.formBuilder.group({
-      warehouses: new FormArray([])
+      warehouses: new FormArray([]),
+      warehousesInput: []
     });
     this.calendarService.getBase().subscribe(base=>{
       base.warehouses.forEach(warehouse=>{
@@ -490,6 +491,23 @@ export class CalendarPickingComponent implements OnInit {
     });
   }
 
+  addWarehouse(warehouseId: number) {
+    let value = this.form.get("warehousesInput").value;
+    console.log(value)
+    console.log(warehouseId)
+    if(Array.isArray(value)) {
+      (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+        (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+          if(destinationControl.get("id").value == value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id == warehouseId){          
+            console.log(destinationControl)
+            destinationControl.get("selected").setValue(true);
+            this.form.get("warehousesInput").setValue([]);
+          }
+        });
+      });
+    }
+  }
+  
   deletedWarehouseOfTemplate(id: number, warehouseId: number) {
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
@@ -499,17 +517,6 @@ export class CalendarPickingComponent implements OnInit {
         }
       });
     });
-    
-    /*console.log(this.form.get("warehousesInput"))
-    console.log(this.updateTemplate)
-    this.warehousesInput = this.form.get("warehousesInput").value;
-    this.form.get("warehousesInput").setValue([]);*/
-
-    /*(<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
-      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-        
-      })
-    })*/
   }
 
   ngAfterViewInit(): void {
