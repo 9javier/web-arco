@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {Events} from "@ionic/angular";
-import {UserTimeModel} from "@suite/services";
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { Events } from "@ionic/angular";
+import { UserTimeModel } from "@suite/services";
 
 @Component({
   selector: 'table-employees',
@@ -14,14 +14,14 @@ export class TableEmployeesComponent implements OnInit {
 
   @Output() changeEmployee = new EventEmitter();
 
-  listEmployees: UserTimeModel.ListUsersRegisterTimeActiveInactive = {usersActive: [], usersInactive: []};
+  listEmployees: UserTimeModel.ListUsersRegisterTimeActiveInactive = { usersActive: [], usersInactive: [] };
   employeesSelection: any = {};
   listEmployeesSelected: number[] = [];
 
   constructor(
-    private events: Events,
-    private pickingParametrizationProvider: PickingParametrizationProvider
-  ) {}
+    public events: Events,
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) { }
 
   ngOnInit() {
     this.events.subscribe(this.EMPLOYEES_LOADED, () => {

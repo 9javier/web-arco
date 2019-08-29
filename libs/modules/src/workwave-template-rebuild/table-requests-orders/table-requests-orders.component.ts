@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {Events} from "@ionic/angular";
-import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { Events } from "@ionic/angular";
+import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
 
 @Component({
   selector: 'table-requests-orders',
@@ -19,9 +19,9 @@ export class TableRequestsOrdersComponent implements OnInit {
   listRequestOrdersSelected: Array<number> = new Array<number>();
 
   constructor(
-    private events: Events,
-    private pickingParametrizationProvider: PickingParametrizationProvider
-  ) {}
+    public events: Events,
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) { }
 
   ngOnInit() {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {

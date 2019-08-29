@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {Events} from "@ionic/angular";
-import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import { Component, OnInit } from '@angular/core';
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { Events } from "@ionic/angular";
+import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
 
 @Component({
   selector: 'table-team-assignation',
@@ -19,33 +19,33 @@ export class TableTeamAssignationComponent implements OnInit {
   maxSizeForNameCol: number = 2;
 
   constructor(
-    private events: Events,
-    private pickingParametrizationProvider: PickingParametrizationProvider
-  ) {}
+    public events: Events,
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) { }
 
   ngOnInit() {
-   this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
-       this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
+    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
+      this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
 
-       if (this.listTeamAssignations.length > 0) {
-         for (let teamAssignation of this.listTeamAssignations) {
-           let tempMaxCount = 0;
-           for (let assignation of teamAssignation.pickingShoes) {
-             tempMaxCount += parseInt(assignation.quantityShoes);
-           }
-           if (tempMaxCount > this.maxQuantityAssignations) {
-             this.maxQuantityAssignations = tempMaxCount;
-           }
-         }
+      if (this.listTeamAssignations.length > 0) {
+        for (let teamAssignation of this.listTeamAssignations) {
+          let tempMaxCount = 0;
+          for (let assignation of teamAssignation.pickingShoes) {
+            tempMaxCount += parseInt(assignation.quantityShoes);
+          }
+          if (tempMaxCount > this.maxQuantityAssignations) {
+            this.maxQuantityAssignations = tempMaxCount;
+          }
+        }
 
-         this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
-         this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
-       } else {
-         this.maxSizeForCols = 12;
-         this.maxSizeForNameCol = 2;
-       }
-     }
-   );
+        this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
+        this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
+      } else {
+        this.maxSizeForCols = 12;
+        this.maxSizeForNameCol = 2;
+      }
+    }
+    );
   }
 
   ngOnDestroy() {
