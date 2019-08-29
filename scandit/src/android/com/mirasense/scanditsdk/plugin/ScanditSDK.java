@@ -14,7 +14,9 @@ package com.mirasense.scanditsdk.plugin;
 
 import android.Manifest;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -113,6 +115,11 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_SIMPLE_ALERT_SELECT_SIZE_TO_PRINT = "matrixSimpleAlertSelectSizeToPrint";
   private static final String MATRIX_PRODUCT_INFO_SHOW_EXTENDED = "matrixProductInfoShowExtended";
   private static final String MATRIX_SHOW_PROGRESS_BAR_PRODUCT_EXTENDED_INFO = "matrixShowProgressBarProductExtendedInfo";
+  private static final String SWITCH_TO_IONIC = "switchToIonic";
+  private static final String SWITCH_TO_IONIC_SET_MAIN_TEXT = "switchToIonicSetMainText";
+  private static final String SWITCH_TO_IONIC_SET_ORIGIN_TEXT = "switchToIonicSetOriginText";
+  private static final String SHOW_LOADING_DIALOG = "showLoadingDialog";
+  private static final String HIDE_LOADING_DIALOG = "hideLoadingDialog";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -147,6 +154,8 @@ public class ScanditSDK extends CordovaPlugin {
 
   private ArrayList<Command> mQueuedCommands = new ArrayList<Command>();
 
+  private static Activity activityStarted = null;
+  private ProgressDialog loadingDialog = null;
 
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -1406,6 +1415,99 @@ public class ScanditSDK extends CordovaPlugin {
           }
         }
       });
+    } else if (action.equals(SWITCH_TO_IONIC)) {
+      mCallbackContextMatrixSimple = callbackContext;
+
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
+      Intent intent = new Intent(this.cordova.getActivity(), SwitchToIonicActivity.class);
+      intent.putExtras(b);
+      this.cordova.startActivityForResult(this, intent, 6);
+    } else if (action.equals(SWITCH_TO_IONIC_SET_MAIN_TEXT)) {
+      boolean show = false;
+      String text = "";
+
+      try {
+        show = args.getBoolean(0);
+        text = args.getString(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final boolean fShow = show;
+      final String fText = text;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        TextView tvMainText;
+        if (viewDataMatrixSimpleFinal != null) {
+          tvMainText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvMainText", "id", packageName));
+
+          if (fShow) {
+            tvMainText.setVisibility(View.VISIBLE);
+            tvMainText.setText(fText);
+          } else {
+            tvMainText.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(SWITCH_TO_IONIC_SET_ORIGIN_TEXT)) {
+      boolean show = false;
+      String origin = "";
+
+      try {
+        show = args.getBoolean(0);
+        origin = args.getString(1);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+
+      final boolean fShow = show;
+      final String fOrigin = origin;
+
+      cordova.getActivity().runOnUiThread(() -> {
+        LinearLayout llOriginText;
+        TextView tvOriginText;
+        if (viewDataMatrixSimpleFinal != null) {
+          llOriginText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("llOriginText", "id", packageName));
+          tvOriginText = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("tvOriginText", "id", packageName));
+
+          if (fShow) {
+            llOriginText.setVisibility(View.VISIBLE);
+            tvOriginText.setText(fOrigin);
+          } else {
+            llOriginText.setVisibility(View.GONE);
+          }
+        }
+      });
+    } else if (action.equals(SHOW_LOADING_DIALOG)) {
+      String message = "";
+
+      try {
+        message = args.getString(0);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      loadingDialog = ProgressDialog.show(activityStarted, "", message, true);
+    } else if (action.equals(HIDE_LOADING_DIALOG)) {
+      loadingDialog.dismiss();
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;
@@ -1706,6 +1808,10 @@ public class ScanditSDK extends CordovaPlugin {
     PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
     pResult.setKeepCallback(true);
     mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  public static void setActivityStarted(Activity activity) {
+    activityStarted = activity;
   }
 
   public static void setActionBar(ActionBar actionBar) {

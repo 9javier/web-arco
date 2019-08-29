@@ -47,6 +47,16 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initSwitchToIonic: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "switchToIonic", [title, titleBackground, titleColor]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color
@@ -199,6 +209,35 @@ var ScanditMatrixSimple = {
    */
   showProgressBarProductExtendedInfo: function (show) {
     exec(null, null, PLUGIN_NAME, "matrixShowProgressBarProductExtendedInfo", [show]);
+  },
+  /**
+   *
+   * @param show
+   * @param text
+   */
+  setMainTextSwitchToIonic: function (show, text) {
+    exec(null, null, PLUGIN_NAME, "switchToIonicSetMainText", [show, text]);
+  },
+  /**
+   *
+   * @param show
+   * @param origin
+   */
+  setOriginTextSwitchToIonic: function (show, origin) {
+    exec(null, null, PLUGIN_NAME, "switchToIonicSetOriginText", [show, origin]);
+  },
+  /**
+   *
+   * @param message
+   */
+  showLoadingDialog: function (message) {
+    exec(null, null, PLUGIN_NAME, "showLoadingDialog", [message]);
+  },
+  /**
+   *
+   */
+  hideLoadingDialog: function () {
+    exec(null, null, PLUGIN_NAME, "hideLoadingDialog", []);
   }
 }
 
