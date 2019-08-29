@@ -48,6 +48,8 @@ export class ProductDetailsComponent implements OnInit {
   columnSelected: number;
   referenceContainer: string = '';
 
+  public isProductRelocationEnabled: boolean = false;
+
   constructor(
     private typeService: TypesService,
     private productService: ProductsService,
