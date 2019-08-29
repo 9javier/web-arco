@@ -1,0 +1,26 @@
+mat-grid-list {
+  border-style: solid;
+  border-color: var(--ion-color-lines);
+  border-width: 0 0 1px 0;
+  mat-grid-tile.mat-grid-tile {
+    font-size: 16px;
+    line-height: 20px;
+    div.tile-title {
+      color: var(--ion-color-tertiary);
+      width: 100%;
+      text-align: start;
+      padding: 10px;
+    }
+    div.tile-title.right-value {
+      width: 100%;
+      text-align: end;
+    }
+  }
+  mat-grid-tile.active {
+    color: var(--ion-color-secondary);
+    font-weight: normal;
+    div.tile-title {
+      color: var(--ion-color-tertiary);
+    }
+  }
+}

@@ -1,18 +1,20 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import { MatTableDataSource, MatPaginator} from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
 
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 import {
   IntermediaryService,
   LabelsService,
   PriceModel,
   PriceService,
-  WarehousesService
+  WarehousesService,
+  ProductsService
 
 } from '@suite/services';
 
 
-import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
@@ -29,111 +31,142 @@ export class PricesComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
-  filterTypes:Array<PriceModel.StatusType> = [];
-  status:number;
+  filterTypes: Array<PriceModel.StatusType> = [];
 
-  warehouses:Array<any> = [];
-  pagerValues:Array<number> = [50, 100, 500];
+  warehouses: Array<any> = [];
+  pagerValues: Array<number> = [50, 100, 500];
 
-  page:number = 0;
+  page: number = 0;
 
-  limit:number = this.pagerValues[0];
+  limit: number = this.pagerValues[0];
 
   selectAllBinding;
 
-  changeValue(event){
-    //this.status = parseInt(event.detail.value);
-    this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
-  }
+  /**timeout for send request */
+  requestTimeout;
+  /**previous reference to detect changes */
+  pauseListenFormChange = false;
 
-  reSearch(){
-    this.getPrices(this.tariffId,0,this.limit,this.status,this.filters.value.warehouseId);
-  }
+  form: FormGroup = this.formBuilder.group({
+    models: [],
+    brands: [],
+    seasons: [],
+    colors: [],
+    warehouseId: 49,
+    status: 0,
+    tariffId: 0,
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: this.pagerValues[0]
+    }),
+    orderby: this.formBuilder.group({
+      type: '',
+      order: "asc"
+    })
+  });
 
-  getWarehouses():void{
-    this.warehousesService.getIndex().then(observable=>{
-      observable.subscribe(warehouses=>{
+  /**Filters */
+  models: Array<TagsInputOption> = [];
+  brands: Array<TagsInputOption> = [];
+  seasons: Array<TagsInputOption> = [];
+  colors: Array<TagsInputOption> = [];
+  groups: Array<TagsInputOption> = [];
+
+  /**List of SearchInContainer */
+  searchsInContainer: Array<PriceModel.Price> = [];
+
+  getWarehouses(): void {
+    this.warehousesService.getIndex().then(observable => {
+      observable.subscribe(warehouses => {
         this.warehouses = warehouses.body.data;
       });
     })
   }
 
   /**Arrays to be shown */
-  labels:Array<any> = [];
+  labels: Array<any> = [];
 
   /**List of prices */
-  prices:Array<PriceModel.Price> = [];
-
-  filters:FormGroup = this.formBuilder.group({
-    warehouseId:51
-  });
+  prices: Array<PriceModel.Price> = [];
 
   /**form to select elements to print or for anything */
-  selectedForm:FormGroup = this.formBuilder.group({
-    selector:false
-  },{
-    validators:validators.haveItems("toSelect")
-  });
+  selectedForm: FormGroup = this.formBuilder.group({
+    selector: false
+  }, {
+      validators: validators.haveItems("toSelect")
+    });
 
 
 
-  displayedColumns: string[] = ['impress','model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
+  displayedColumns: string[] = ['impress', 'model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
   dataSource: any;
-  tariffId:number;
+
+  public disableExpansionPanel: boolean = true;
 
   constructor(
-    private printerService:PrinterService,
-    private priceService:PriceService,
-    private intermediaryService:IntermediaryService,
-    private formBuilder:FormBuilder,
-    private route:ActivatedRoute,
-    private warehousesService:WarehousesService
+    private printerService: PrinterService,
+    private priceService: PriceService,
+    private intermediaryService: IntermediaryService,
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private warehousesService: WarehousesService,
+    private productsService: ProductsService,
   ) {
 
   }
 
-  
 
-    /**
+
+  /**
    * clear empty values of objecto to sanitize it
    * @param object Object to sanitize
    * @return the sanitized object
    */
-  sanitize(object){
+  sanitize(object) {
     /**mejorable */
     object = JSON.parse(JSON.stringify(object));
-    Object.keys(object).forEach(key=>{
-      if(object[key] instanceof Array){
-        for(let i = 0;i<object[key].length;i++)
-          if(object[key][i] === null || object[key][i] === "")
-            object[key].splice(i,1);
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = parseInt(object.orderby.type);
+    }
+    if (!object.orderby.order)
+      delete object.orderby.order;
+    if (object.productReferencePattern) {
+      object.productReferencePattern = "%" + object.productReferencePattern + "%";
+    }
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
       }
-      if(!object.orderby.type){
-        delete object.orderby.type;
-      }else{
-        object.orderby.type = parseInt(object.orderby.type);
+      if (object[key] === null || object[key] === "") {
+        delete object[key];
       }
-      if(!object.orderby.order)
-        delete object.orderby.order;
     });
     return object;
   }
 
 
-    /**
+  /**
    * Listen changes in form to resend the request for search
    */
-  listenChanges():void{
+  listenChanges(): void {
     let previousPageSize = this.limit
     /**detect changes in the paginator */
-    this.paginator.page.subscribe(page=>{
+    this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag?page.pageIndex+1:1;
-      if(this.status === 0 || this.status) 
-        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
+      this.page = flag ? page.pageIndex + 1 : 1;
     });
   }
 
@@ -141,9 +174,9 @@ export class PricesComponent implements OnInit {
    * Select or unselect all visible labels
    * @param event to check the status
    */
-  selectAll(event):void{
+  selectAll(event): void {
     let value = event.detail.checked;
-    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control=>{
+    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
     });
   }
@@ -152,8 +185,8 @@ export class PricesComponent implements OnInit {
    * Get the name of status based on id
    * @param id - the id of the status
    */
-  getNameOfStatus(id:number):string{
-    return this.filterTypes.find(status=>{
+  getNameOfStatus(id: number): string {
+    return this.filterTypes.find(status => {
       return status.id == id
     }).name;
   }
@@ -161,44 +194,59 @@ export class PricesComponent implements OnInit {
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
-  printPrices(items,warehouseId:number=51):void{
-    let prices = this.selectedForm.value.toSelect.map((price,i)=>{
-      console.log(items[i]);
-      let object = {
-        warehouseId:warehouseId,
-        tariffId:items[i].tariff.id,
-        modelId:items[i].model.id,
-        numRange: items[i].numRange
+  printPrices(items, warehouseId: number = 51): void {
+    let prices = this.selectedForm.value.toSelect.map((price, i) => {
+      if (items[i].status != 3) {
+        console.log(items[i]);
+        let object = {
+          warehouseId: warehouseId,
+          tariffId: items[i].tariff.id,
+          modelId: items[i].model.id,
+          numRange: items[i].numRange
+        }
+        return price ? object : false
       }
-      return price?object:false})
-      .filter(price=>price);
-      console.log(prices);
-      this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
-      this.printerService.printPrices({references:prices}).subscribe(result=>{
-        console.log("result of impressions",result);
-        this.intermediaryService.dismissLoading();
-        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
-      },error=>{
-        this.intermediaryService.dismissLoading();
-        console.log(error);
-      });
+    })
+      .filter(price => price);
+
+    console.log(prices);
+    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    this.printerService.printPrices({ references: prices }).subscribe(result => {
+      console.log("result of impressions", result);
+      this.intermediaryService.dismissLoading();
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+    }, error => {
+      this.intermediaryService.dismissLoading();
+      console.log(error);
+    });
 
   }
 
   ngOnInit() {
     this.getWarehouses();
-    this.priceService.getStatusEnum().subscribe(status=>{
+
+
+    this.priceService.getStatusEnum().subscribe(status => {
       this.filterTypes = status;
-      this.status = this.filterTypes.find((status)=>{
+      this.status = this.filterTypes.find((status) => {
         return status.name.toLowerCase() == "todos";
       }).id;
       this.route.paramMap.subscribe(params => {
-        console.log("here");
         this.tariffId = Number(params.get("tariffId"));
-        console.log(this.tariffId);
-        this.getPrices(this.tariffId,this.page,this.limit,this.status,this.filters.value.warehouseId);
+        this.getFilters();
       });
-    });    
+    });
+
+    /**detect changes in the form */
+    this.form.statusChanges.subscribe(change => {
+      if (this.pauseListenFormChange) return;
+      /**cant send a request in every keypress of reference, then cancel the previous request */
+      clearTimeout(this.requestTimeout);
+      this.paginator.pageIndex = 0;
+      this.requestTimeout = setTimeout(() => {
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      }, 100);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -212,7 +260,7 @@ export class PricesComponent implements OnInit {
    * Cancel event and stop it propagation
    * @params e - the event to cancel
    */
-  prevent(e):void{
+  prevent(e): void {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -221,31 +269,67 @@ export class PricesComponent implements OnInit {
    * Init selectForm controls
    * @param items - reference items for create the formControls
    */
-  initSelectForm(items):void{  
+  initSelectForm(items): void {
     this.selectedForm.removeControl("toSelect");
-    this.selectedForm.addControl("toSelect",this.formBuilder.array(items.map(prices=>new FormControl(false))));
+    this.selectedForm.addControl("toSelect", this.formBuilder.array(items.map(prices => new FormControl(false))));
   }
 
-
+  // TODO REMOVE AS SOON AS POSIBLE
   /**
    * Get the tarif associatest to a tariff
    * @param tariffId - the id of the tariff
    * @param page
    * @param limit
    */
-  getPrices(tariffId:number,page:number,limit:number, status:number,warehouseId:number):void{
+  // getPrices(tariffId:number,page:number,limit:number, status:number,warehouseId:number):void{
+  //   this.intermediaryService.presentLoading();
+  //   this.priceService.getIndex(tariffId, page, limit, status,warehouseId).subscribe(prices=>{
+  //     this.intermediaryService.dismissLoading();
+  //     this.prices = prices.results;
+  //     this.initSelectForm(this.prices);
+  //     this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+  //     let paginator = prices.pagination;
+  //     this.paginator.length = paginator.totalResults;
+  //     this.paginator.pageIndex = paginator.page - 1;
+  //   },()=>{
+  //     this.intermediaryService.dismissLoading();
+  //   });
+  // }
+
+  /**
+   * get all filters to fill the selects
+   */
+  getFilters(): void {
+    this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
+      this.colors = filters.colors;
+      this.brands = filters.brands;
+      this.seasons = filters.seasons;
+      this.models = filters.models;
+    });
+  }
+
+  /**
+   * search products in container by criteria
+   * @param parameters - parameters to search
+   */
+  searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
-    this.priceService.getIndex(tariffId, page, limit, status,warehouseId).subscribe(prices=>{
-      this.intermediaryService.dismissLoading();
+    this.priceService.getIndex(parameters).subscribe(prices => {
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
       let paginator = prices.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
-    },()=>{
+      this.groups = prices.filters.ordertypes;
+      this.intermediaryService.dismissLoading();
+    }, () => {
       this.intermediaryService.dismissLoading();
     });
+  }
+
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
   }
 
   processProductSizesRange(price): string {
@@ -287,4 +371,28 @@ export class PricesComponent implements OnInit {
     return null;
   }
 
+  // GET & SET SECTION
+  get warehouseId() {
+    return this.form.get('warehouseId').value
+  }
+
+  set warehouseId(id) {
+    this.form.patchValue({ status: id });
+  }
+
+  get status() {
+    return this.form.get('status').value
+  }
+
+  set status(id) {
+    this.form.patchValue({ status: id });
+  }
+
+  get tariffId() {
+    return this.form.get('tariffId').value;
+  }
+
+  set tariffId(id) {
+    this.form.patchValue({ tariffId: id });
+  }
 }

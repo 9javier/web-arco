@@ -26,16 +26,28 @@ export class PriceService {
    * @param page
    * @param limit
    */
-  getIndex(tariffId:number,page:number,limit:number,status:number,warehouseId:number):Observable<PriceModel.ResponsePricePaginated>{
-    return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
-     // warehouseId:warehouseId,
-      tariffId:tariffId,
-      status:status,
-      pagination:{
-        page:page,
-        limit:limit
-      }
-    }).pipe(map(response=>{
+  // getIndex(tariffId:number,page:number,limit:number,status:number,warehouseId:number):Observable<PriceModel.ResponsePricePaginated>{
+  //   return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
+  //    // warehouseId:warehouseId,
+  //     tariffId:tariffId,
+  //     status:status,
+  //     pagination:{
+  //       page:page,
+  //       limit:limit
+  //     }
+  //   }).pipe(map(response=>{
+  //     return response.data;
+  //   }));
+  // }
+
+  /**
+   * Get the prices relateds with a tariff
+   * @param tariffId - the tariff id related to price
+   * @param page
+   * @param limit
+   */
+  getIndex(parameters):Observable<PriceModel.ResponsePricePaginated>{
+    return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,parameters).pipe(map(response=>{
       return response.data;
     }));
   }

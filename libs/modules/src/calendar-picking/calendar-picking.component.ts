@@ -19,7 +19,8 @@ export class CalendarPickingComponent implements OnInit {
     allowMultiSelect:true,
     hideOnOutsideClick:false,
     appendTo:'.append',
-    drops:'down'
+    drops:'down',
+    firstDayOfWeek: 'mo'
   } 
   currentTemplate;
   initialValue = null;

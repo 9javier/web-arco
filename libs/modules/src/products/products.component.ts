@@ -100,7 +100,7 @@ export class ProductsComponent implements OnInit {
     private printerService:PrinterService
   ) {}
 
-    /**
+  /**
    * clear empty values of objecto to sanitize it
    * @param object Object to sanitize
    * @return the sanitized object

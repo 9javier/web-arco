@@ -1,0 +1,72 @@
+div.main-element {
+  height: 100%;
+
+  .loader, .empty-list {
+    height: calc(100% - 48px); // 48px from table header
+    width: 100%;
+    display: table;
+    p {
+      font-size: 14px;
+    }
+    div.spinner, p.message-empty {
+      width: auto;
+      height: auto;
+      display: table-cell;
+      vertical-align: middle;
+      text-align: center;
+      p {
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  .scroll-list {
+    height: calc(100% - 48px); // 48px from table header
+    overflow: auto;
+    overflow: -moz-scrollbars-none;
+    -ms-overflow-style: none;
+  }
+  .scroll-list::-webkit-scrollbar {
+    width: 0 !important
+  }
+
+  .left-value {
+    justify-content: start !important;
+    width: 100%;
+  }
+
+  .input-quantities {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 5px;
+    text-align: center;
+  }
+  .input-quantities::-webkit-inner-spin-button,
+  .input-quantities::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  mat-grid-list.title-line, mat-grid-list.store-line {
+    border-bottom: 1px solid var(--ion-color-secondary);
+    mat-grid-tile.name {
+      border-right: 1px solid var(--ion-color-secondary);
+    }
+    mat-grid-tile.radio {
+      mat-radio-group {
+        padding-left: 8px;
+      }
+    }
+  }
+  mat-grid-list.title-line {
+    font-weight: 500;
+  }
+  mat-grid-list.store-line {
+    mat-grid-tile.consolidation div {
+      height: 100%;
+      padding: 1px 0;
+    }
+  }
+
+}

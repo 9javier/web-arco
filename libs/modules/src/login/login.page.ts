@@ -11,7 +11,7 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import { ToastController, AlertController, LoadingController } from '@ionic/angular';
+import {ToastController, AlertController, LoadingController, ModalController} from '@ionic/angular';
 import { AppInfo } from 'config/base';
 import { Platform } from '@ionic/angular';
 @Component({
@@ -40,8 +40,9 @@ export class LoginComponent implements OnInit {
     public alertController: AlertController,
     private loadingController: LoadingController,
     private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
     public platform: Platform
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.user.username = '';
@@ -125,6 +126,9 @@ export class LoginComponent implements OnInit {
     await alert.present();
   }
 
+  ionViewWillEnter() {
+    this.modalController.dismiss();
+  }
   hide() {
     if (window.location.port === '8100') {
 			return false;

@@ -1,4 +1,4 @@
-import {JailModel, TypeModel, UserProcessesModel, WarehouseModel} from "@suite/services";
+import {JailModel, TypeModel, UserModel, UserProcessesModel, WarehouseModel} from "@suite/services";
 import {WorkwaveModel} from "./Workwaves";
 
 export namespace PickingModel {
@@ -6,7 +6,7 @@ export namespace PickingModel {
     createdAt: string;
     updatedAt: string;
     id: number;
-    warehouse: WarehouseModel.Warehouse;
+    warehouse?: WarehouseModel.Warehouse;
   }
 
   export interface Picking {
@@ -67,6 +67,37 @@ export namespace PickingModel {
     message: string;
     code: number;
     errors: any;
+  }
+
+  export interface PendingPickings {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    typeGeneration: number,
+    status: number,
+    packingId: number,
+    packingType: number,
+    resultNotifyAvelon: boolean,
+    avelonNotificationAttemptFinished: boolean,
+    resultTextNotifyAvelon: string,
+    orderHall: number,
+    workwave: WorkwaveModel.Workwave,
+    workWavesOrderWarehouses: Array<WorkwaveOrderWarehouse>,
+    destinyWarehouse: WarehouseModel.Warehouse,
+    originWarehouse: WarehouseModel.Warehouse,
+    user: UserModel.User,
+    users: Array<UserModel.User>,
+    quantity: number,
+    quantityPending: number,
+    quantityScanned: number
+  }
+
+  export interface PendingPickingsSelected extends PendingPickings {
+    selected?: boolean
+  }
+
+  export interface ResponseListPendingPickings {
+    data: Array<PendingPickings>
   }
 
   export interface ErrorResponse {
