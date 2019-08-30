@@ -19,6 +19,9 @@ export class TableRequestsOrdersComponent implements OnInit {
   requestOrdersSelection: any = {};
   listRequestOrdersSelected: Array<number> = new Array<number>();
 
+  private listWarehousesThresholdAndSelectedQty: any = {};
+  private listRequestIdWarehouseId: any = {};
+
   constructor(
     private events: Events,
     private pickingParametrizationProvider: PickingParametrizationProvider
@@ -31,6 +34,10 @@ export class TableRequestsOrdersComponent implements OnInit {
       if (this.listRequestOrders.length > 0) {
         for (let request of this.listRequestOrders) {
           this.requestOrdersSelection[request.request.id] = true;
+          if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
+            this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = {max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name};
+          }
+          this.listRequestIdWarehouseId[request.request.id] = {warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse};
         }
       } else {
         this.requestOrdersSelection = {};
@@ -47,13 +54,21 @@ export class TableRequestsOrdersComponent implements OnInit {
     if (incrementTeamCounter) {
       this.pickingParametrizationProvider.loadingListTeamAssignations++;
     }
+
+    for (let iObj in this.listWarehousesThresholdAndSelectedQty) {
+      this.listWarehousesThresholdAndSelectedQty[iObj].selected = 0;
+    }
     this.listRequestOrdersSelected = new Array<number>();
     for (let iRequest in this.requestOrdersSelection) {
+      let warehouseId = this.listRequestIdWarehouseId[iRequest].warehouse;
+      let qty = this.listRequestIdWarehouseId[iRequest].qty;
+      let selection = this.listWarehousesThresholdAndSelectedQty[warehouseId].selected;
       if (this.requestOrdersSelection[iRequest]) {
         this.listRequestOrdersSelected.push(parseInt(iRequest));
+        this.listWarehousesThresholdAndSelectedQty[warehouseId].selected = selection + qty;
       }
     }
-    this.changeRequestOrder.next(this.listRequestOrdersSelected);
+    this.changeRequestOrder.next({listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty});
   }
 
   dateCreatedParsed(requestOrder) : string {
