@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 
+import * as _ from 'lodash';
+
 import {
   IntermediaryService,
   LabelsService,
@@ -22,6 +24,7 @@ import { Router } from '@angular/router';
 export class TariffComponent implements OnInit {
   /**Arrays to be shown */
   tariffs: Array<any> = [];
+  tariffsUpdate: Array<any> = [];
 
   filters: FormGroup = this.formBuilder.group({
     warehouseId: 51
@@ -141,27 +144,58 @@ export class TariffComponent implements OnInit {
     e.stopPropagation();
   }
 
+  // changeCheckBox(i) {
+  //   console.log('Position ', i);
+  //   console.log('this.selectedForm.value.toSelect[i] ', this.selectedForm.value.toSelect[i]);
+    
+  // }
+
+  onChecked(i, event) {
+    console.log('On Change Check ',i , event);
+    let tariff: any = this.tariffs[i];
+
+    let exist = _.find(this.tariffsUpdate, {'position': i});
+
+    if(exist) {
+      _.remove(this.tariffsUpdate, function(n) {
+        return n.position == i;
+      });
+    } else {
+      if(tariff.enabled != event) {
+        let object = {
+          position: i,
+          warehouseId: tariff.warehouseId,
+          tariffId: tariff.tariffId,
+          enabled: event
+        }
+        this.tariffsUpdate.push(object);
+      }
+    }
+
+    console.log('this.tariffsUpdate after push', this.tariffsUpdate);
+  }
+
   /**
    * Update Enabled/Disabled the selected labels
    * @param items - Reference items to extract he ids
    */
-  updateEnabled(items,warehouseId:number=49):void {
-    let list = this.tariffs.map((item, i) => {
-      let enabled = this.selectedForm.value.toSelect[i];
+  updateEnabled(warehouseId:number=49):void {
+    // let list = this.tariffs.map((item, i) => {
+    //   let enabled = this.selectedForm.value.toSelect[i];
       
-      let object = {
-        warehouseId: items[i].warehouseId,
-        tariffId: items[i].tariffId,
-        enabled
-      }
+    //   let object = {
+    //     warehouseId: items[i].warehouseId,
+    //     tariffId: items[i].tariffId,
+    //     enabled
+    //   }
 
-      return object;
+    //   return object;
 
-    });
+    // });
 
-    console.log(list);
+    // console.log(list);
     this.intermediaryService.presentLoading("Modificando los seleccionados");
-    this.tariffService.updateEnabled({elements:list}).subscribe(result => {
+    this.tariffService.updateEnabled({elements:this.tariffsUpdate}).subscribe(result => {
         this.intermediaryService.dismissLoading();
         this.listenChanges();
     },error=>{
@@ -177,7 +211,7 @@ export class TariffComponent implements OnInit {
    */
   selectAll(event):void{
     let value = event.detail.checked;
-    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control=>{
+    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach((control, i)=>{
       control.setValue(value);
     });
   }
@@ -195,5 +229,9 @@ export class TariffComponent implements OnInit {
 
     console.log('Init ', this.selectedForm.value);
     
+  }
+
+  get existTariffsToUpdate() {
+    return this.tariffsUpdate.length > 0;
   }
 }
