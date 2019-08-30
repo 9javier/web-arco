@@ -24,7 +24,7 @@ export class WarehousesService {
   private getShowUrl = this.apiBase+"/warehouses/{id}";
   private getMainUrl = this.apiBase+"/warehouses/main";
   private updateUrl = this.getShowUrl;
-  private toGroupWarehousePickingUrl = this.apiBase+"/warehouses/{{id}}/group/{{groupId}}";
+  private toGroupWarehousePickingUrl = this.apiBase+"/warehouses/groups/picking/{{id}}/group/{{groupId}}";
   private removeGroupWarehousePickingUrl = this.toGroupWarehousePickingUrl;
   private toAgencyUrl = this.apiBase+"/warehouses/{{id}}/agency/{{agencyId}}";
   private removeOfAgencyUrl = this.toAgencyUrl;

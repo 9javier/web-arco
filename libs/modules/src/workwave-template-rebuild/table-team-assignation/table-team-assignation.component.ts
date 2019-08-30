@@ -19,26 +19,33 @@ export class TableTeamAssignationComponent implements OnInit {
   maxSizeForNameCol: number = 2;
 
   constructor(
-    private events: Events,
-    private pickingParametrizationProvider: PickingParametrizationProvider
-  ) {}
+    public events: Events,
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) { }
 
   ngOnInit() {
    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
        this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
 
-       for (let teamAssignation of this.listTeamAssignations) {
-         let tempMaxCount = 0;
-         for (let assignation of teamAssignation.pickingShoes) {
-           tempMaxCount += parseInt(assignation.quantityShoes);
-         }
-         if (tempMaxCount > this.maxQuantityAssignations) {
-           this.maxQuantityAssignations = tempMaxCount;
-         }
-       }
+     this.maxQuantityAssignations = 0;
 
-       this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
-       this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
+       if (this.listTeamAssignations.length > 0) {
+         for (let teamAssignation of this.listTeamAssignations) {
+           let tempMaxCount = 0;
+           for (let assignation of teamAssignation.pickingShoes) {
+             tempMaxCount += parseInt(assignation.quantityShoes);
+           }
+           if (tempMaxCount > this.maxQuantityAssignations) {
+             this.maxQuantityAssignations = tempMaxCount;
+           }
+         }
+
+         this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
+         this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
+       } else {
+         this.maxSizeForCols = 12;
+         this.maxSizeForNameCol = 2;
+       }
      }
    );
   }

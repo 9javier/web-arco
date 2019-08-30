@@ -72,6 +72,7 @@ export class WorkwavesService {
   private postMatchLineRequestUrl: string = environment.apiBase + "/workwaves/matchlinerequest/";
   private postAssignUserToMatchLineRequestUrl: string = environment.apiBase + "/workwaves/assign/matchlinerequest/";
   private postConfirmMatchLineRequestUrl: string = environment.apiBase + "/workwaves/confirm/matchlinerequest/";
+  private postDeleteMatchLineRequestUrl: string = environment.apiBase + "/workwaves/matchlinerequest/delete";
 
   private _lastWorkwaveEdited: any = null;
   private _lastWorkwaveRebuildEdited: any = null;
@@ -195,6 +196,12 @@ export class WorkwavesService {
 
   postConfirmMatchLineRequest(params: WorkwaveModel.ParamsConfirmMatchLineRequest): Observable<WorkwaveModel.DataConfirmMatchLineRequest> {
     return this.http.post<WorkwaveModel.ResponseConfirmMatchLineRequest>(this.postConfirmMatchLineRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postDeletePickings(params: WorkwaveModel.ParamsDeletePickings): Observable<WorkwaveModel.DeletedPickings> {
+    return this.http.post<WorkwaveModel.ResponseDeletePickings>(this.postDeleteMatchLineRequestUrl, params).pipe(map(response => {
       return response.data;
     }));
   }

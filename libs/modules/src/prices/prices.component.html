@@ -5,37 +5,35 @@
     <form [formGroup]="form">
         <ion-grid>
             <ion-row>
-                <ion-col size="2" size-xs="12" size-md="3">
+                <ion-col size="2" size-xs="6" size-md="3">
                     <ion-label>Modelo:</ion-label>
                     <suite-tags-input placeholder="Modelo" [options]="models" formControlName="models" multiple="true"></suite-tags-input>  
                 </ion-col>
-                <ion-col size="2" size-xs="12" size-md="3">
+                <ion-col size="2" size-xs="6" size-md="3">
                     <ion-label>Marca:</ion-label>
                     <suite-tags-input placeholder="Marca" [options]="brands" formControlName="brands" multiple="true"></suite-tags-input>
                 </ion-col>
-                <ion-col size="2" size-xs="12" size-md="3">
+                <ion-col size="2" size-xs="6" size-md="3">
                     <ion-label>Temporada:</ion-label>
                     <suite-tags-input placeholder="Temporada" [options]="seasons" formControlName="seasons" multiple="true"></suite-tags-input>
                 </ion-col>
-                <ion-col size="2" size-xs="12" size-md="3">
+                <ion-col size="2" size-xs="6" size-md="3">
                     <ion-label>Color:</ion-label>
                     <suite-tags-input placeholder="Color" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
                 </ion-col>
             </ion-row>
             <ion-row>
-                <ion-col size="2" size-xs="12" size-md="3">
+                <ion-col size="2" size-xs="6" size-md="3">
                     <ion-label>Ordenar:</ion-label>
                     <ion-item formGroupName="orderby">
-                        <ion-label> </ion-label>
                         <ion-select formControlName="type" interface="popover">
                             <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}</ion-select-option>
                         </ion-select>
                     </ion-item>
                 </ion-col>
-                <ion-col size="2" size-xs="12" size-md="3">
-                    <ion-label>Estatus:</ion-label>
+                <ion-col size="2" size-xs="6" size-md="3">
+                    <ion-label>Estado:</ion-label>
                     <ion-item>
-                        <ion-label> </ion-label>
                         <ion-select formControlName="status" placeholder="Filtrar">
                             <ion-select-option *ngFor="let filterType of filterTypes; let i = index" [value]="filterType.id" [attr.selected]="!i">
                                 {{ filterType.name }}
@@ -43,15 +41,6 @@
                         </ion-select>
                     </ion-item>
                 </ion-col>
-                <!-- <ion-col size="4" [formGroup]="filters"> -->
-                    <!--<ion-item>
-                        <ion-select formControlName="warehouseId" placeholder="Almacenes" (ionChange)="reSearch()">
-                            <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-                                {{warehouse.name}}
-                            </ion-select-option>
-                        </ion-select>
-                    </ion-item>-->
-                <!-- </ion-col> -->
             </ion-row>
         </ion-grid>
     </form>
@@ -59,110 +48,118 @@
         <div portrait>
             <ion-grid>
                     <ion-row class="header-mobile">
-                        <ion-col [formGroup]="selectedForm" size="2" class="check-all">
+                        <ion-col [formGroup]="selectedForm" size="1" class="check-all">
                             <ion-checkbox 
                                 formControlName="selector" 
                                 (ionChange)="selectAll($event)"
                                 *ngIf="status != 3"></ion-checkbox>
                         </ion-col>
-                        <ion-col size="10">
+                        <ion-col size="11">
                             <h5>Información</h5>
                         </ion-col>
                     </ion-row>
             </ion-grid>    
             <mat-accordion multi="false" *ngFor="let price of prices;let i = index">
-                <mat-expansion-panel>
-                    <mat-expansion-panel-header>
+                <mat-expansion-panel [hideToggle]="disableExpansionPanel" [disabled]="disableExpansionPanel">
+                    <mat-expansion-panel-header class="custom-panel-header">
                         <ion-grid>
-                            <ion-row>
-                                <ion-col size="2" class="check-print">
-                                    <ion-checkbox *ngIf="price.status != 3"
-                                        [formControl]="selectedForm['controls']?.toSelect['controls'][i]" 
-                                        (click)="$event.stopPropagation();">
-                                    </ion-checkbox>
-                                </ion-col>
-                                <ion-col size="10">
-                                    <mat-panel-title>
-                                        <ion-icon name="print" *ngIf="price?.impress"></ion-icon> 
-                                        {{price?.model?.reference}} ({{getNameOfStatus(price.status)}})
-                                    </mat-panel-title>
-                                    <mat-panel-description>
-                                        {{ price?.model?.brand?.name }} 
-                                    </mat-panel-description>
-                                </ion-col>
-                            </ion-row>
-                            <!-- <ion-row>
-                                <ion-col>
-                                    Imprimir
-                                </ion-col>
-                                <ion-col class="align-right">
-                                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
-                                </ion-col>
-                            </ion-row> -->
+                          <ion-row>
+                            <ion-col size="1" class="check-print">
+                              <ion-checkbox *ngIf="price.status != 3" [formControl]="selectedForm['controls']?.toSelect['controls'][i]" (click)="$event.stopPropagation();"></ion-checkbox>
+                            </ion-col>
+                            <ion-col size="11" class="content-prices-header">
+                              <mat-panel-title>
+                                <ion-row class="row-title-prices">
+                                  <ion-col class="product" size="8">
+                                    {{price?.model?.reference}} - {{ price?.model?.brand?.name }}
+                                  </ion-col>
+                                  <ion-col class="status" size="4">
+                                    ({{getNameOfStatus(price.status)}})
+                                  </ion-col>
+                                </ion-row>
+                              </mat-panel-title>
+                              <mat-panel-description>
+                                <ion-row class="row-sizes-prices">
+                                  <ion-col class="sizes" size="4">
+                                    {{ processProductSizesRange(price) }}
+                                  </ion-col>
+                                  <ion-col class="prices" size="8">
+                                    <p class="final-price">
+                                      <span class="final-price">{{getFinalPrice(price)}}€</span>
+                                      <span class="discount-price" *ngIf="getFinalDiscountPercent(price)">{{getFinalDiscountPercent(price)}}%</span>
+                                      <span class="original-price" *ngIf="(price.priceDiscountOutlet && price.priceOriginal != price.priceDiscountOutlet) || (price.priceDiscountOutlet && price.priceOriginal != price.priceDiscountOutlet)">{{price.priceOriginal}}€</span>
+                                    </p>
+                                  </ion-col>
+                                </ion-row>
+                              </mat-panel-description>
+                            </ion-col>
+                          </ion-row>
                         </ion-grid>
                     </mat-expansion-panel-header>
+                  <div *ngIf="!disableExpansionPanel">
                     <ion-row>
-                        <ion-col>
-                            Marca
-                        </ion-col>
-                        <ion-col class="align-right">
-                            {{ price?.model?.brand?.name }}
-                        </ion-col>
+                      <ion-col>
+                        Marca
+                      </ion-col>
+                      <ion-col class="align-right">
+                        {{ price?.model?.brand?.name }}
+                      </ion-col>
                     </ion-row>
                     <ion-row>
-                        <ion-col>
-                            Tallas
-                        </ion-col>
-                        <ion-col class="align-right">
-                            {{ processProductSizesRange(price) }}
-                        </ion-col>
+                      <ion-col>
+                        Tallas
+                      </ion-col>
+                      <ion-col class="align-right">
+                        {{ processProductSizesRange(price) }}
+                      </ion-col>
                     </ion-row>
                     <ion-row>
-                        <ion-col>
-                            €
-                        </ion-col>
-                        <ion-col class="align-right">
-                            {{ price?.priceOriginal }}€
-                        </ion-col>
+                      <ion-col>
+                        €
+                      </ion-col>
+                      <ion-col class="align-right">
+                        {{ price?.priceOriginal }}€
+                      </ion-col>
                     </ion-row>
                     <ion-row>
-                        <ion-col>
-                            Desc
-                        </ion-col>
-                        <ion-col class="align-right">
-                            {{ getFinalDiscountPercent(price) }}%
-                        </ion-col>
+                      <ion-col>
+                        Desc
+                      </ion-col>
+                      <ion-col class="align-right">
+                        {{ getFinalDiscountPercent(price) }}%
+                      </ion-col>
                     </ion-row>
                     <ion-row>
-                        <ion-col>
-                            € Final
-                        </ion-col>
-                        <ion-col class="align-right">
-                            {{ getFinalPrice(price) }}€
-                        </ion-col>
+                      <ion-col>
+                        € Final
+                      </ion-col>
+                      <ion-col class="align-right">
+                        {{ getFinalPrice(price) }}€
+                      </ion-col>
                     </ion-row>
                     <ion-row>
-                        <ion-col>
-                            Estado
-                        </ion-col>
-                        <ion-col class="align-right">
-                            <ion-icon name="print" *ngIf="getNameOfStatus(price.status) == 'Impresos'"></ion-icon>
-                            {{getNameOfStatus(price.status)}}
-                        </ion-col>
+                      <ion-col>
+                        Estado
+                      </ion-col>
+                      <ion-col class="align-right">
+                        <ion-icon name="print" *ngIf="getNameOfStatus(price.status) == 'Impresos'"></ion-icon>
+                        {{getNameOfStatus(price.status)}}
+                      </ion-col>
                     </ion-row>
 
                     <ion-row *ngIf="price.status != 3">
-                        <ion-col>
-                            Imprimir
-                        </ion-col>
-                        <ion-col class="align-right">
-                            <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
-                        </ion-col>
+                      <ion-col>
+                        Imprimir
+                      </ion-col>
+                      <ion-col class="align-right">
+                        <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                      </ion-col>
                     </ion-row>
                     <div>
 
                     </div>
                     <mat-list style="display: flex; justify-content:center;"></mat-list>
+                  </div>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
@@ -206,7 +203,7 @@
                         Tallas
                     </th>
                     <td mat-cell *matCellDef="let price">
-                        {{ processProductSizesRange(price) }}
+                      {{ processProductSizesRange(price) }}
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="price">
@@ -220,7 +217,7 @@
                 <ng-container matColumnDef="percentage">
                     <th mat-header-cell *matHeaderCellDef>Desc.</th>
                     <td mat-cell *matCellDef="let price">
-                        {{ getFinalDiscountPercent(price) }}%
+                        {{ getFinalDiscountPercent(price) || '' }}%
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="discount">
@@ -251,7 +248,7 @@
     <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="printPrices(prices)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+    <ion-fab-button (click)="printPrices(prices, null)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
         <ion-icon name="print"></ion-icon>
     </ion-fab-button>
 </ion-fab>
