@@ -27,6 +27,8 @@ export class TableTeamAssignationComponent implements OnInit {
    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
        this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
 
+     this.maxQuantityAssignations = 0;
+
        if (this.listTeamAssignations.length > 0) {
          for (let teamAssignation of this.listTeamAssignations) {
            let tempMaxCount = 0;
