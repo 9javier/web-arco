@@ -14,6 +14,9 @@ import { validators } from '../../utils/validators';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
+  warehouse_id: number;
+  firstPass: boolean;
+  check:number;
   /**the inputs of form */
   formBuilderDataInputs = {
     employedId:[''],
@@ -64,6 +67,8 @@ export class UpdateComponent implements OnInit {
       roles:(new FormArray(this.roles.map(rol=>new FormControl(false))))
     }));
     console.log("this is the warehouse id", warehouseId);
+      this.warehouse_id = warehouseId * this.check;
+    console.log('my warehouse' + this.warehouse_id);
   }
 
     /**
@@ -110,15 +115,47 @@ export class UpdateComponent implements OnInit {
     this.updateForm.get("hasWarehouse").valueChanges.subscribe(status=>{
       let warehouseControl = this.updateForm.get("warehouseId");
       warehouseControl.setValue("");
-      if(status){
+      if(status) {
+        this.check = 1;
         warehouseControl.setValidators([Validators.required]);
-        warehouseControl.updateValueAndValidity()
+        warehouseControl.updateValueAndValidity();
+        /**
+         *validate when permits is count is empty and ask a new one.  
+         */
+        if (this.formBuilderDataInputs.permits.length == 0 && this.firstPass == true) {
+          this.selectNewWarehouse(this.addWarehouseToUser);    
+       }
+       /**
+        * Erase all permits and ask a new one when store employee is seleted.
+        */
+       else {
+        for (let index in <FormArray>this.updateForm.get("permits")) {
+          (<FormArray>this.updateForm.get("permits")).removeAt(0);
+        }
+        console.log(this.check);
+        console.log(this.firstPass);
+        if(!this.updateForm.value.permits[0] && this.check == 1 && this.firstPass == true) {
+         this.selectNewWarehouse(this.addWarehouseToUser);
+        }
+        
+       }
+       
       }
+      /**
+       * When store employee is not seleted this will erase store input value.
+       */
       else{
+        this.check = 0;
         warehouseControl.clearValidators();
         warehouseControl.updateValueAndValidity();
       }
+      /**
+       * 
+       */
+      this.firstPass = true;
+
     });
+    
   }
 
   /**
@@ -219,7 +256,7 @@ export class UpdateComponent implements OnInit {
  */
   submit():void{
     let roles = [];
-    let user = this.updateForm.value;
+    var user = this.updateForm.value;
     /**change the trues to ids and the false for nulls then remove the null values, to send only the ids of true roles */
     //user.roles = user.roles.map((flag,i)=>flag?{id:this.roles[i].id}:null).filter(rolId=>rolId);
     user.permits = user.permits.map((permit,i)=>{
@@ -239,7 +276,7 @@ export class UpdateComponent implements OnInit {
       observable.subscribe(user=>{
         this.utilsComponent.dismissLoading();
         console.log(user);
-        this.close()
+        this.close();
       });
     });
   }
@@ -259,6 +296,8 @@ export class UpdateComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.firstPass = false;
+    this.check = 0;
     this.utilsComponent.presentLoading();
     this.initFormBuilder();
     this.listenChanges();
