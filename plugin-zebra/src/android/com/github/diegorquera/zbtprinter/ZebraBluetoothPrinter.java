@@ -138,26 +138,39 @@ public class ZebraBluetoothPrinter extends CordovaPlugin {
       @Override
       public void run() {
         try {
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 1");
           closeConnection(callbackContext);
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 2");
           thePrinterConnection = new BluetoothConnectionInsecure(mac);
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 3");
           thePrinterConnection.open();
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 4");
           ZebraPrinter printer = ZebraPrinterFactory.getInstance(thePrinterConnection);
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 5");
           PrinterStatus printerStatus = printer.getCurrentStatus();
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 6");
           if (printerStatus.isReadyToPrint) {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 7");
             readyToPrint = true;
             macConnection = mac;
             callbackContext.success("connect");
           } else if (printerStatus.isPaused) {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 8");
             callbackContext.error("printer_paused");
           } else if (printerStatus.isHeadOpen) {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 9");
             callbackContext.error("door_is_open");
           } else if (printerStatus.isPaperOut) {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 10");
             callbackContext.error("paper_is_out");
           } else {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 11");
             callbackContext.error("cannot_print");
           }
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 12");
 
         } catch (Exception e) {
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] openConnection 13");
           // Handle communications error here.
           callbackContext.error(e.getMessage());
         }
@@ -167,12 +180,15 @@ public class ZebraBluetoothPrinter extends CordovaPlugin {
 
   static void closeConnection(final CallbackContext callbackContext) {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] closeConnection 1");
     try {
       if (thePrinterConnection != null) {
+        Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] closeConnection 2");
         thePrinterConnection.close();
         thePrinterConnection = null;
       }
     } catch (Exception e) {
+      Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] closeConnection 3");
       // Handle communications error here.
       callbackContext.error(e.getMessage());
     }
@@ -184,26 +200,38 @@ public class ZebraBluetoothPrinter extends CordovaPlugin {
       @Override
       public void run() {
         try {
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 1");
           if (thePrinterConnection != null) {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 2");
             ZebraPrinter printer = ZebraPrinterFactory.getInstance(thePrinterConnection);
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 3");
             PrinterStatus printerStatus = printer.getCurrentStatus();
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 4");
             if (printerStatus.isReadyToPrint) {
+              Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 5");
               readyToPrint = true;
               callbackContext.success("connect");
             } else if (printerStatus.isPaused) {
+              Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 6");
               callbackContext.error("printer_paused");
             } else if (printerStatus.isHeadOpen) {
+              Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 7");
               callbackContext.error("door_is_open");
             } else if (printerStatus.isPaperOut) {
+              Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 8");
               callbackContext.error("paper_is_out");
             } else {
+              Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 9");
               callbackContext.error("cannot_print");
             }
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 10");
           } else {
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 11");
             callbackContext.error("not_connected");
           }
 
         } catch (Exception e) {
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] checkConnection 12 " + e.getMessage());
           // Handle communications error here.
           callbackContext.error("not_connected");
         }
@@ -219,17 +247,23 @@ public class ZebraBluetoothPrinter extends CordovaPlugin {
         public void run() {
           try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] printDataWithConnection 1");
             Looper.prepare();
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] printDataWithConnection 2");
             SGD.SET("device.languages", "zpl", fThePrinterConnection);
             fThePrinterConnection.write(msg.getBytes());
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] printDataWithConnection 3");
             Looper.myLooper().quit();
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] printDataWithConnection 4");
             callbackContext.success("Done");
 
           } catch (Exception e) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+            Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] printDataWithConnection 5");
             try {
               sendData(callbackContext, mac, msg);
             } catch (IOException eIO) {
+              Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] printDataWithConnection 6");
               callbackContext.error(eIO.getMessage());
             }
           }
@@ -248,21 +282,28 @@ public class ZebraBluetoothPrinter extends CordovaPlugin {
         try {
 
           SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 1");
           // Instantiate insecure connection for given Bluetooth MAC Address.
           Connection thePrinterConn = new BluetoothConnectionInsecure(mac);
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 2");
 
           // Initialize
           Looper.prepare();
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 3");
           // Open the connection - physical connection is established here.
           thePrinterConn.open();
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 4");
 
           SGD.SET("device.languages", "zpl", thePrinterConn);
           thePrinterConn.write(msg.getBytes());
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 5");
 
           // Close the insecure connection to release resources.
           thePrinterConn.close();
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 6");
 
           Looper.myLooper().quit();
+          Log.d(LOG_TAG, "[" + sdf.format(new Date()) + "] sendData 7");
           callbackContext.success("Done");
 
         } catch (Exception e) {
