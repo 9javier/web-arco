@@ -9,7 +9,7 @@ import {
   PriceModel,
   PriceService,
   WarehousesService,
-  ProductsService
+  ProductsService, AuthenticationService
 
 } from '@suite/services';
 
@@ -111,6 +111,7 @@ export class PricesComponent implements OnInit {
     private route: ActivatedRoute,
     private warehousesService: WarehousesService,
     private productsService: ProductsService,
+    private authenticationService: AuthenticationService
   ) {
 
   }
@@ -194,7 +195,11 @@ export class PricesComponent implements OnInit {
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
-  printPrices(items, warehouseId: number = 51): void {
+  async printPrices(items, warehouseId: number) {
+    if (!warehouseId) {
+      warehouseId = (await this.authenticationService.getWarehouseCurrentUser()).id;
+    }
+
     let prices = this.selectedForm.value.toSelect.map((price, i) => {
       if (items[i].status != 3) {
         console.log(items[i]);
@@ -209,7 +214,6 @@ export class PricesComponent implements OnInit {
     })
       .filter(price => price);
 
-    console.log(prices);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       console.log("result of impressions", result);
