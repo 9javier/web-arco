@@ -112,7 +112,6 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     //this.selectedOption = option;
     this.optionPointerIndex = 0;
     /**Obtenemos el nodo que se está editando actualmente */
-    
     let node;
     if(!click)
       node = window.getSelection().anchorNode;
@@ -462,7 +461,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
         type:"text"
       }
 
-    if(!node){
+    
+    if(!node || typeof node === 'object'){
       node = document.createElement("span");
       this.inputElement.nativeElement.appendChild(node);
     }

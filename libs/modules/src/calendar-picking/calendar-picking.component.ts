@@ -493,13 +493,10 @@ export class CalendarPickingComponent implements OnInit {
 
   addWarehouse(warehouseId: number) {
     let value = this.form.get("warehousesInput").value;
-    console.log(value)
-    console.log(warehouseId)
-    if(Array.isArray(value)) {
+    if(value) {
       (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
         (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-          if(destinationControl.get("id").value == value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id == warehouseId){          
-            console.log(destinationControl)
+          if(destinationControl.get("id").value == value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id == warehouseId){
             destinationControl.get("selected").setValue(true);
             this.form.get("warehousesInput").setValue([]);
           }
