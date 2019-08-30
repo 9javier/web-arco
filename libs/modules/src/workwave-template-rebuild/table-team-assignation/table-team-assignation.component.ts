@@ -19,9 +19,9 @@ export class TableTeamAssignationComponent implements OnInit {
   maxSizeForNameCol: number = 2;
 
   constructor(
-    private events: Events,
-    private pickingParametrizationProvider: PickingParametrizationProvider
-  ) {}
+    public events: Events,
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) { }
 
   ngOnInit() {
    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {

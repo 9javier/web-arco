@@ -10,32 +10,32 @@ import { BaseComponent } from '../base/base.component';
 })
 export class UpdateComponent implements OnInit {
 
-  @ViewChild(BaseComponent) base:BaseComponent;
-  
-  variable:GlobalVariableModel.GlobalVariable;
+  @ViewChild(BaseComponent) base: BaseComponent;
+
+  public variable: GlobalVariableModel.GlobalVariable;
 
   constructor(
-    private modalController:ModalController,
-    private navParams:NavParams,
-    private globalVaribleService:GlobalVariableService,
-    private intermediaryService:IntermediaryService
+    private modalController: ModalController,
+    private navParams: NavParams,
+    public globalVaribleService: GlobalVariableService,
+    private intermediaryService: IntermediaryService
   ) {
     this.variable = navParams.get("variable");
-   }
+  }
 
   ngOnInit() {
   }
 
-  close(){
+  close() {
     this.modalController.dismiss();
   }
 
-  submit(variable:GlobalVariableModel.GlobalVariable){
+  submit(variable: GlobalVariableModel.GlobalVariable) {
     this.intermediaryService.presentLoading();
-    this.globalVaribleService.update(variable.id,variable).subscribe(()=>{
+    this.globalVaribleService.update(variable.id, variable).subscribe(() => {
       this.close();
       this.intermediaryService.presentToastSuccess("Variable global actualizada con éxito")
-    }, (err)=>{
+    }, (err) => {
       console.log(err)
       this.intermediaryService.presentToastError("No se pudo actualizar la variable global");
     }, () => {

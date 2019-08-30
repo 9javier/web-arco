@@ -23,9 +23,9 @@ export class TableRequestsOrdersComponent implements OnInit {
   private listRequestIdWarehouseId: any = {};
 
   constructor(
-    private events: Events,
-    private pickingParametrizationProvider: PickingParametrizationProvider
-  ) {}
+    public events: Events,
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) { }
 
   ngOnInit() {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
