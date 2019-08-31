@@ -503,6 +503,7 @@ export class CalendarPickingComponent implements OnInit {
         });
       });
     }
+    this.form.get("warehousesInput").setValue([]);
   }
   
   deletedWarehouseOfTemplate(id: number, warehouseId: number) {
