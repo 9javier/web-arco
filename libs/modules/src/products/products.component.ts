@@ -303,6 +303,7 @@ export class ProductsComponent implements OnInit {
           warehouse = warehouseMain[0];
         }
         this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+          this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
           this.updateFilterSourceModels(searchsInContainer.data.filters.models);
