@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, FormArray, FormControl, Form } from '@angular/f
 import { WarehouseModel,CalendarModel,CalendarService, IntermediaryService } from '@suite/services';
 import { AlertController, IonSelect } from '@ionic/angular';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'suite-calendar-picking',
@@ -126,6 +127,35 @@ export class CalendarPickingComponent implements OnInit {
             }
           });
         });
+        let equals = true;
+        for(let i = 1; i < this.selectDates.length; i++) {
+          for(let j = 0; j < this.selectDates[i].warehouses.length; j++) {
+            if(i+1 <= this.selectDates.length && this.selectDates[i+1]) {
+              if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
+                let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
+                let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
+                if(currentWarehouses.length == nextWarehouses.length) {
+                  for(let k = 0; k < currentWarehouses.length; k++) {
+                    if(!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
+                      equals = false;
+                    }
+                  }
+                } else {
+                  equals = false;
+                }
+              } else {
+                equals = false;
+              }
+            }
+          }
+        }
+        
+        console.log(equals)
+        if(equals) {
+          this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
+        } else {
+          this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
+        }
         this.modelDate = auxDates[0];
         this.date = this.modelDate;
         this.manageSelectedClass();
@@ -137,6 +167,35 @@ export class CalendarPickingComponent implements OnInit {
     })
   }
 
+  /**
+   * Set warehouses by date
+   */
+
+  setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      selectDateWarehouses.forEach(templateWarehouse=>{
+        if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
+          templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
+            (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
+                if(valueDate) {
+                  destinationControl.get("selected").setValue(true);
+                  warehouseControl.get("openModal").setValue(true);
+                } else {
+                  destinationControl.get("selected").setValue(false);
+                  warehouseControl.get("openModal").setValue(false);
+                }
+              }
+            })
+          })
+        }
+      })
+    });
+  }
+
+  openModalDate() {
+
+  }
   /**
    * Get the base template skeleton to show
    */
@@ -234,7 +293,8 @@ export class CalendarPickingComponent implements OnInit {
     value.warehouses = (<Array<any>>rawValue.warehouses.map(value=>{
       return ({
         originWarehouseId:value.originWarehouse.id,
-        destinationWarehouseIds:(value.destinationsWarehouses.map(warehouse=>warehouse.selected?warehouse.id:false)).filter(value=>value)
+        destinationWarehouseIds:(value.destinationsWarehouses.map(warehouse=>warehouse.selected?warehouse.id:false)).filter(value=>value),
+        openModal: false
       })
     })).filter(object=>(object.destinationWarehouseIds.length > 0));
     return value;
@@ -421,7 +481,8 @@ export class CalendarPickingComponent implements OnInit {
               this.startListener(group)
               return group;
             })
-          ))     
+          )),
+          openModal: false    
         })
       )
     });
@@ -483,7 +544,8 @@ export class CalendarPickingComponent implements OnInit {
                 this.startListener(group)
                 return group;
               })
-            ))     
+            )),
+            openModal: false    
           })
         )
       });
