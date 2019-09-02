@@ -131,7 +131,8 @@ export class CalendarPickingComponent implements OnInit {
         let equals = true;
         for(let i = 1; i < this.selectDates.length; i++) {
           for(let j = 0; j < this.selectDates[i].warehouses.length; j++) {
-            if(i+1 <= this.selectDates.length && this.selectDates[i+1]) {
+            if(i+1 <= this.selectDates.length && this.selectDates[i+1] &&
+              this.selectDates[i].warehouses[j].originWarehouse && this.selectDates[i+1].warehouses[j].originWarehouse) {
               if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
                 let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
                 let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
