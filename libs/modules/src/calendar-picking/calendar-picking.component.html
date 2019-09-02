@@ -2,9 +2,29 @@
     <suite-breadcrumb></suite-breadcrumb>
     <ion-grid>
         <ion-row>
-            <ion-col size="6">
-                <ion-button color="danger" *ngIf="selectDates.length > 1" (click)="clear()">clear</ion-button>
+            <ion-col size="6" class="ion-datepicker">
+                <div class="append">
+                    <dp-date-picker [(ngModel)]="dates" [config]="calendarConfiguration" theme="dp-material"></dp-date-picker>
+                </div>
+                <ion-card class="legend-card">                    
+                    <ion-card-content>
+                        <p class="legend-card-text">
+                            Datos almacenados
+                            <span class="legend-card-color" style="background-color: #2196f3"></span>
+                        </p>
+                        <p class="legend-card-text">
+                            Hay información
+                            <span class="legend-card-color" style="background-color: #008000"></span>
+                        </p>
+                        <p class="legend-card-text">
+                            No hay información
+                            <span class="legend-card-color" style="background-color: #ea5348"></span>
+                        </p>            
+                    </ion-card-content>
+                </ion-card>
+                <ion-button class="clean-button" color="danger" *ngIf="selectDates.length > 1" (click)="clear()">Limpiar calendario</ion-button>
             </ion-col>
+
             <ion-col size="6" [formGroup]="template">
                 <ion-item>
                     <ion-label>
@@ -17,26 +37,6 @@
                     </ion-select>
                 </ion-item>
 
-            </ion-col>
-            <ion-col size="6" class="ion-datepicker">
-                <div class="append">
-                    <dp-date-picker [(ngModel)]="dates" [config]="calendarConfiguration"></dp-date-picker>
-                </div>
-                <div class="legend">
-                    <span style="color:#2196f3">
-                        Datos almacenados
-                    </span>,
-                    <span style="color:#008000">
-                        Hay información
-                    </span>,
-                    <span style="color:#ea5348">
-                        No hay información
-                    </span>
-
-
-                </div>
-            </ion-col>
-            <ion-col size="6">
                 <div *ngIf="!formatValue(form.value).warehouses.length" class="error">
                     Debe seleccionar al menos un destino
                 </div>

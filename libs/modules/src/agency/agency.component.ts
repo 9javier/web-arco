@@ -131,6 +131,8 @@ export class AgencyComponent implements OnInit {
       data.subscribe(
         (res: HttpResponse<AgencyModel.Agency>) => {
           this.intermediaryService.presentToastSuccess("Warehouse añadido a la Agencia");
+          let warehouseToUpdate = (<any>res.body).data;
+          this.updateAgency(warehouseToUpdate, true);
         },
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al añadir el warehouse");
@@ -138,6 +140,37 @@ export class AgencyComponent implements OnInit {
         }
       );
     });
+  }
+
+  removeToAgency(warehouse, agency) {
+    this.warehousesService
+    .removeOfAgency(Number(warehouse.id), Number(agency.id))
+    .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
+      data.subscribe(
+        (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
+          this.intermediaryService.presentToastSuccess("Warehouse removido a la Agencia");
+          let warehouseToUpdate = (<any>res.body).data;
+          this.updateAgency(warehouseToUpdate, false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.intermediaryService.presentToastError("Error al remover el warehouse");
+          console.log(errorResponse)
+        }
+      );
+    });
+  }
+
+  updateAgency(warehouseToUpdate, action: boolean): void {
+    this.agencies.forEach(agency => {
+      if(action) {
+        if(warehouseToUpdate.manageAgencyId.id == agency.id) {
+          agency.warehouses.push(warehouseToUpdate);
+        }
+      } else {
+        let warehosuesAgency = agency.warehouses.filter(warehouse => warehouse.id != warehouseToUpdate.id);
+        agency.warehouses = warehosuesAgency;
+      }
+    })
   }
 
    /**

@@ -31,13 +31,15 @@ export class UpdateComponent implements OnInit {
   }
 
   submit(variable:GlobalVariableModel.GlobalVariable){
+    this.intermediaryService.presentLoading();
     this.globalVaribleService.update(variable.id,variable).subscribe(()=>{
-      this.intermediaryService.dismissLoading();
       this.close();
       this.intermediaryService.presentToastSuccess("Variable global actualizada con éxito")
-    },()=>{
-      this.intermediaryService.dismissLoading();
+    }, (err)=>{
+      console.log(err)
       this.intermediaryService.presentToastError("No se pudo actualizar la variable global");
+    }, () => {
+      this.intermediaryService.dismissLoading();
     })
   }
 

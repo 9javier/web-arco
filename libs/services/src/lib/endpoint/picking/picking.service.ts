@@ -3,7 +3,7 @@ import {from, Observable} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {PickingModel} from "../../../models/endpoints/Picking";
-import {switchMap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
 
 @Injectable({
@@ -16,6 +16,7 @@ export class PickingService {
   private getListByUserUrl = environment.apiBase+"/processes/picking-main/order/{{id}}/user";
   private putUpdateUrl = environment.apiBase+"/processes/picking-main";
   private postVerifyPackingUrl = environment.apiBase+"/processes/picking-main/packing";
+  private getListPendingPickingByWorkWaveUrl = environment.apiBase + "/processes/picking-main/order/pending/";
 
   private _pickingAssignments: PickingModel.Picking[] = [];
 
@@ -62,6 +63,12 @@ export class PickingService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
       return this.http.post<PickingModel.ResponseUpdate>(this.postVerifyPackingUrl, packing, { headers });
+    }));
+  }
+
+  getListPendingPickingByWorkwave(idWorkWave: number): Observable<Array<PickingModel.PendingPickingByWorkWave>> {
+    return this.http.get<PickingModel.ResponseListPendingPickingByWorkWave>(this.getListPendingPickingByWorkWaveUrl + idWorkWave).pipe(map(response => {
+      return response.data;
     }));
   }
 

@@ -9,7 +9,7 @@ import {
 import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
-import {Events, ToastController} from "@ionic/angular";
+import {AlertController, Events, LoadingController, ToastController} from "@ionic/angular";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -34,10 +34,14 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   listEmployeesToUpdate: Array<number> = new Array<number>();
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
 
+  private loading: HTMLIonLoadingElement = null;
+
   constructor(
     private location: Location,
     private events: Events,
     private toastController: ToastController,
+    private alertController: AlertController,
+    private loadingController: LoadingController,
     private groupWarehousePickingService: GroupWarehousePickingService,
     private userTimeService: UserTimeService,
     private workwavesService: WorkwavesService,
@@ -136,7 +140,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.pickingParametrizationProvider.loadingListTeamAssignations = false;
         });
     } else {
-      this.pickingParametrizationProvider.loadingListRequestOrders = false;
+      this.pickingParametrizationProvider.loadingListTeamAssignations = false;
     }
   }
 
@@ -146,19 +150,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     } else if (this.listRequestOrdersToUpdate.length < 1) {
       this.presentToast("Seleccione almenos una operación de envío para generar las tareas de picking.", "danger");
     } else {
-      this.workwavesService
-        .postConfirmMatchLineRequest({
-          type: this.TYPE_EXECUTION_ID,
-          requestIds: this.listRequestOrdersToUpdate,
-          userIds: this.listEmployeesToUpdate,
-          groupsWarehousePicking: this.listGroupsWarehousesToUpdate
-        })
-        .subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
-          this.presentToast("Tareas de picking generadas correctamente", "success");
-          this.goPreviousPage();
-        }, (error) => {
-          console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
-        });
+      this.presentAlertConfirmPickings();
     }
   }
 
@@ -185,6 +177,58 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   requestOrderChanged(data) {
     this.listRequestOrdersToUpdate = data;
     this.loadTeamAssignations();
+  }
+
+  private generateWorkWave() {
+    this.workwavesService
+      .postConfirmMatchLineRequest({
+        type: this.TYPE_EXECUTION_ID,
+        requestIds: this.listRequestOrdersToUpdate,
+        userIds: this.listEmployeesToUpdate,
+        groupsWarehousePicking: this.listGroupsWarehousesToUpdate
+      })
+      .subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
+        if (this.loading) {
+          this.loading.dismiss();
+          this.loading = null;
+        }
+        this.presentToast("Tareas de picking generadas correctamente", "success");
+        this.goPreviousPage();
+      }, (error) => {
+        console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
+        if (this.loading) {
+          this.loading.dismiss();
+          this.loading = null;
+        }
+      });
+  }
+
+  async presentAlertConfirmPickings() {
+    const alert = await this.alertController.create({
+      backdropDismiss: false,
+      message: 'Se generará y ejecutará la ola de trabajo con las especificaciones indicadas. ¿Continuar con la creación?',
+      buttons: [
+        {
+          text: 'Cancelar'
+        },
+        {
+          text: 'Aceptar',
+          handler: () => {
+            this.showLoading('Lanzando ola de trabajo...').then(() => this.generateWorkWave());
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async showLoading(message: string) {
+    this.loading = await this.loadingController.create({
+      message: message,
+      translucent: true,
+    });
+    return await this.loading.present();
   }
 
   async presentToast(msg, color) {

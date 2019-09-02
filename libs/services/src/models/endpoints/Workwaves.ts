@@ -193,6 +193,19 @@ export namespace WorkwaveModel {
     data: DataConfirmMatchLineRequest
   }
 
+  export interface ParamsDeletePickings {
+    pickingIds: Array<number>
+  }
+
+  export interface DeletedPickings {
+    type: number,
+    ids: Array<number>
+  }
+
+  export interface ResponseDeletePickings {
+    data: DeletedPickings
+  }
+
   export interface ErrorResponse {
     errors: string;
     message: string;

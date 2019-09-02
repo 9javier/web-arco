@@ -28,7 +28,7 @@
 													<p>{{ warehouse.name }}</p>
 												</mat-list-option>
 	
-												<mat-list-option *ngIf="selectCheck(warehouse.id, group.id)" [selected]="true" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
+												<mat-list-option *ngIf="selectCheck(warehouse.id, group.id)" [selected]="true" [value]="warehouse.name" (click)="remoToGroupWarehousePicking(warehouse, group)">
 													<p>{{ warehouse.name }}</p>
 												</mat-list-option>
 		

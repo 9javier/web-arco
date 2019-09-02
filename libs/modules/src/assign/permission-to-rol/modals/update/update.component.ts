@@ -34,6 +34,9 @@ export class UpdateComponent implements OnInit {
     this.rolService.putUpdate(modifiedRol).then(observable=>{
       observable.subscribe(data=>{
         this.close();
+      }, (err) => {
+        console.log(err)
+      }, () => {
         this.dismissLoading();
       })
     })

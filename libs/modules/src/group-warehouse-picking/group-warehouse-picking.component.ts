@@ -88,8 +88,7 @@ export class GroupWarehousePickingComponent implements OnInit {
   getGroupWarehousePicking():void{
     this.intermediaryService.presentLoading();
     this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
-      this.groupsWarehousePicking = groupWarehousePickings
-      console.log(this.groupsWarehousePicking)
+      this.groupsWarehousePicking = groupWarehousePickings;
     }, (e) => {
       console.log(e)
     }, () => {
@@ -117,6 +116,8 @@ export class GroupWarehousePickingComponent implements OnInit {
       data.subscribe(
         (res: HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>) => {
           this.intermediaryService.presentToastSuccess("Warehouse añadido al GroupPicking");
+          let groupUpdated = (<any>res.body).data;
+          this.updateGroup(groupUpdated);
         },
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al añadir el warehouse");
@@ -124,6 +125,33 @@ export class GroupWarehousePickingComponent implements OnInit {
         }
       );
     });
+  }
+
+  remoToGroupWarehousePicking(warehouse, group) {
+    this.warehousesService
+    .removeOfGroupWarehousePicking(Number(warehouse.id), Number(group.id))
+    .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
+      data.subscribe(
+        (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
+          this.intermediaryService.presentToastSuccess("Warehouse removido del GroupPicking");
+          let groupUpdated = (<any>res.body).data;
+          this.updateGroup(groupUpdated);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.intermediaryService.presentToastError("Error al remover el warehouse");
+          console.log(errorResponse)
+        }
+      );
+    });
+  }
+
+
+  updateGroup(groupUpdated): void {
+    this.groupsWarehousePicking.forEach(group => {
+      if(group.id == groupUpdated.id) {
+        group.warehouses = groupUpdated.warehouses;
+      }
+    })
   }
 
   /**
