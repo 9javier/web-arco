@@ -255,8 +255,7 @@ export class MenuComponent implements OnInit {
           url: '/print-tag/manual/box',
           icon: 'barcode'
         },
-        // TODO When enable Relabel of Products, decompose the next two sections
-        /*{
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
@@ -267,7 +266,7 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
-        }*/
+        }
       ]
     },
     {
