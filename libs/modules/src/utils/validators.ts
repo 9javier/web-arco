@@ -30,7 +30,6 @@ MustMatch:function (controlName: string, matchingControlName: string) {
       
       let controlsR = control["controls"];
       for(let i=0; i<controlsR.length;i++){
-        console.log("the f controlR",controlsR[i]);
         let controlR = controlsR[i]['controls']['roles'];
         if(!(controlR.value.indexOf(true) - -1))
           control.setErrors({ havePermits: true });

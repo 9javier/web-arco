@@ -11,6 +11,7 @@
 													<mat-panel-title> 
 														<ion-checkbox 
 															style="margin-right: 5px"
+															(click)="activateDelete(group.id)"
 														>
 														</ion-checkbox> 
 														{{ group.name }} 
@@ -22,11 +23,15 @@
 											<mat-selection-list #warehousesSelection *ngFor="
 												let warehouse of warehouses;
 											">
-
-												<mat-list-option *ngIf="!warehouse.group || warehouse.group.id != group.id; else checked" [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
-														<p>{{ warehouse.name }}</p>
+											
+												<mat-list-option *ngIf="!selectCheck(warehouse.id, group.id)" [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
+													<p>{{ warehouse.name }}</p>
 												</mat-list-option>
-
+	
+												<mat-list-option *ngIf="selectCheck(warehouse.id, group.id)" [selected]="true" [value]="warehouse.name" (click)="remoToGroupWarehousePicking(warehouse, group)">
+													<p>{{ warehouse.name }}</p>
+												</mat-list-option>
+		
 											</mat-selection-list>
 										</mat-expansion-panel>
 								</mat-accordion>
@@ -35,7 +40,7 @@
     </ion-grid>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="haveToDelete(toDelete.value.groups)" (click)="delete()" color="danger">
+    <ion-fab-button *ngIf="toDeleteGroup" (click)="deleteGroup()" color="danger">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
     <ion-fab-button (click)="store()">

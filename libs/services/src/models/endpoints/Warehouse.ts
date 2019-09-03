@@ -1,6 +1,7 @@
 import { GroupModel } from './Group';
 import {WarehouseModel} from "@suite/services";
 import { Request } from './request';
+import { AgencyModel } from './agency.model';
 export namespace WarehouseModel {
   export interface Warehouse {
     id?: number;
@@ -11,8 +12,10 @@ export namespace WarehouseModel {
     is_main?: boolean;
     has_racks?: boolean;
     group?: Array<GroupModel.Group> | GroupModel.Group;
+    manageAgency?: AgencyModel.Agency;
     is_outlet?: boolean;
     prefix_container?: string;
+    thresholdShippingStore?: number;
   }
 
   export interface ResponseSingle extends Request.Success{

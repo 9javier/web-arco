@@ -55,15 +55,12 @@ export class TextareaComponent implements OnInit {
 
       this.processInitiated = true;
       if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
-        if (dataWrited != this.containerReference) {
-          this.containerReference = dataWrited;
-          this.dataToWrite = 'PRODUCTO / CONTENEDOR';
-          this.inputPositioning = null;
-          this.errorMessage = null;
-
-          this.presentToast(`Inicio de posicionamiento en ${dataWrited}`, 2000, 'success');
-          this.processInitiated = false;
-        }
+        this.presentToast(`Inicio de posicionamiento en ${dataWrited}`, 2000, 'success');
+        this.containerReference = dataWrited;
+        this.dataToWrite = 'PRODUCTO / CONTENEDOR';
+        this.inputPositioning = null;
+        this.errorMessage = null;
+        this.processInitiated = false;
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
         let params: any = {
           productReference: dataWrited,

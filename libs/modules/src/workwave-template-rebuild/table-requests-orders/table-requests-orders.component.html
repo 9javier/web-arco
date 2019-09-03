@@ -1,0 +1,99 @@
+<div class="main-element">
+  <h2 class="title-table">Operaciones de Envío</h2>
+
+  <mat-grid-list class="title-line" cols="24" rowHeight="48px">
+    <mat-grid-tile class="checkbox" colspan="1">
+      <div class="tile-value"></div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="reference border-right" colspan="2">
+      <div class="tile-value">Referencia</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="date border-right" colspan="3">
+      <div class="tile-value">Fecha</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="origin border-right" colspan="4">
+      <div class="tile-value">Origen</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="destiny" colspan="4">
+      <div class="tile-value">Destino</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="destiny-max border-right" colspan="2">
+      <div class="tile-value right-value">Máximo</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="type border-right" colspan="4">
+      <div class="tile-value">Tipo</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="quantity border-right" colspan="2">
+      <div class="tile-value">Pares</div>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="quantity-launch" colspan="2">
+      <div class="tile-value">Pares Lanzar</div>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders && pickingParametrizationProvider.loadingListRequestOrders > 0">
+    <div class="spinner">
+      <p class="message">Cargando operaciones de envío</p>
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
+  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1) && listRequestOrders.length < 1">
+    <p class="message-empty">No hay operaciones de envío cargadas</p>
+  </div>
+
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1">
+    <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
+      <mat-grid-tile class="checkbox" colspan="1">
+        <div class="tile-value left-value">
+          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
+        </div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="reference border-right" colspan="2">
+        <div class="tile-value">{{requestOrder.request.requestId}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="date border-right" colspan="3">
+        <div class="tile-value">
+          <div class="tile-date">{{dateCreatedParsed(requestOrder)}}</div>
+          <div>{{timeCreatedParsed(requestOrder)}}</div>
+        </div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="origin border-right" colspan="4">
+        <div class="tile-value">{{requestOrder.originWarehouse.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="destiny" colspan="4">
+        <div class="tile-value">{{requestOrder.destinyWarehouse.name}}</div>
+      </mat-grid-tile>
+
+        <mat-grid-tile class="destiny-max border-right" colspan="2">
+        <div class="tile-value right-value">
+          {{requestOrder.destinyWarehouse.thresholdShippingStore ? '['+requestOrder.destinyWarehouse.thresholdShippingStore+']' : '-'}}
+        </div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="type border-right" colspan="4">
+        <div class="tile-value">{{requestOrder.preparationLinesTypes.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="quantity border-right" colspan="2">
+        <div class="tile-value">{{requestOrder.quantityOrder}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile class="quantity-launch" colspan="2">
+        <div class="tile-value">{{requestOrder.quantityMatchWarehouse}}</div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>
