@@ -47,6 +47,12 @@ div.popover-filters.main-element {
     border-top: 1px solid var(--ion-item-border-color,var(--ion-border-color,var(--ion-color-step-150,rgba(0,0,0,0.13))));
     height: 40px;
     text-align: end;
+    ion-checkbox {
+      float: left;
+      height: 18px;
+      width: 18px;
+      margin: 11px 0 0 16px;
+    }
     ion-button {
       margin: 6px;
     }

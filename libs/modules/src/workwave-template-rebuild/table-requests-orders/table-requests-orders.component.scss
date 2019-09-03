@@ -56,11 +56,6 @@ div.main-element {
     div.tile-date {
       color: var(--ion-color-secondary);
     }
-    mat-grid-tile.destiny-max {
-      div.tile-value {
-        padding-right: 8px;
-      }
-    }
     mat-grid-tile.checkbox {
       left: 16px !important;
     }
@@ -87,10 +82,6 @@ div.main-element {
           display: table-cell;
         }
       }
-    }
-    mat-grid-tile.destiny-max {
-      color: var(--ion-color-secondary);
-      font-size: 14px;
     }
   }
 

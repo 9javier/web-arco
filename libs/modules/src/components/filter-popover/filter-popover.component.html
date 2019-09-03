@@ -5,13 +5,16 @@
   </mat-form-field>
 
   <div class="scroll-list">
-    <ion-item lines="none" *ngFor="let item of listItems">
-        <ion-checkbox [(ngModel)]="item.checked"></ion-checkbox>
-      <ion-label>{{item.value}}</ion-label>
-    </ion-item>
+    <div *ngFor="let item of listItems">
+      <ion-item lines="none" *ngIf="!item.hide">
+        <ion-checkbox [(ngModel)]="item.checked" (ngModelChange)="checkAllSelected()"></ion-checkbox>
+        <ion-label>{{item.value}}</ion-label>
+      </ion-item>
+    </div>
   </div>
 
   <div class="apply">
+    <ion-checkbox [(ngModel)]="allSelected" (ngModelChange)="selectAll()"></ion-checkbox>
     <ion-button size="small" class="reset" (click)="resetFilters()">Reiniciar</ion-button>
     <ion-button size="small" (click)="applyFilters()">Aplicar</ion-button>
   </div>

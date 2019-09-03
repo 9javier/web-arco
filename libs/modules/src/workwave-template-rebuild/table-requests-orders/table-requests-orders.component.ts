@@ -74,7 +74,8 @@ export class TableRequestsOrdersComponent implements OnInit {
           checked: true,
           value: item.request.requestId,
           id: item.request.id,
-          type: this.FILTER_REQUEST_ID
+          type: this.FILTER_REQUEST_ID,
+          hide: false
         };
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
@@ -89,7 +90,8 @@ export class TableRequestsOrdersComponent implements OnInit {
           checked: true,
           value: `${this.dateCreatedParsed(item)} ${this.timeCreatedParsed(item)}`,
           id: item.id,
-          type: this.FILTER_DATE
+          type: this.FILTER_DATE,
+          hide: false
         };
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
@@ -104,7 +106,8 @@ export class TableRequestsOrdersComponent implements OnInit {
           checked: true,
           value: item.originWarehouse.name,
           id: item.originWarehouse.id,
-          type: this.FILTER_ORIGIN
+          type: this.FILTER_ORIGIN,
+          hide: false
         };
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
@@ -119,7 +122,8 @@ export class TableRequestsOrdersComponent implements OnInit {
           checked: true,
           value: item.destinyWarehouse.name,
           id: item.destinyWarehouse.id,
-          type: this.FILTER_DESTINY
+          type: this.FILTER_DESTINY,
+          hide: false
         };
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
@@ -134,7 +138,8 @@ export class TableRequestsOrdersComponent implements OnInit {
           checked: true,
           value: item.preparationLinesTypes.name,
           id: item.preparationLinesTypes.id,
-          type: this.FILTER_TYPE
+          type: this.FILTER_TYPE,
+          hide: false
         };
       }).reduce((tempArray, currentItem) => {
         const x = tempArray.find(item => item.value === currentItem.value);
@@ -189,6 +194,10 @@ export class TableRequestsOrdersComponent implements OnInit {
   }
 
   applyFilters(data: any) {
+    for (let iFilter in data) {
+      data[iFilter].hide = false;
+    }
+
     if (data[0].type == this.FILTER_REQUEST_ID) {
       this.listRequestsFilters = data;
     } else if (data[0].type == this.FILTER_DATE) {
