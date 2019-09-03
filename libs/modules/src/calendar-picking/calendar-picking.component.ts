@@ -45,10 +45,12 @@ export class CalendarPickingComponent implements OnInit {
 
   form:FormGroup = this.formBuilder.group({
     warehouses: new FormArray([]),
-    warehousesInput: []
+    warehousesInput: [],
+    warehousesList: []
   });
 
   warehouses:Array<WarehouseModel.Warehouse> = [];
+  warehousesList:Array<WarehouseModel.Warehouse> = [];
   templates:Array<CalendarModel.Template> = [];
   updateTemplate: CalendarModel.Template;
   warehousesInput:Array<WarehouseModel.Warehouse> = [];
@@ -71,7 +73,6 @@ export class CalendarPickingComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.form)
     this.getBase();
     this.getCalendarDates();
 
@@ -131,28 +132,24 @@ export class CalendarPickingComponent implements OnInit {
         let equals = true;
         for(let i = 1; i < this.selectDates.length; i++) {
           for(let j = 0; j < this.selectDates[i].warehouses.length; j++) {
-            if(i+1 <= this.selectDates.length && this.selectDates[i+1] &&
-              this.selectDates[i].warehouses[j].originWarehouse && this.selectDates[i+1].warehouses[j].originWarehouse) {
-              if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
-                let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
-                let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
-                if(currentWarehouses.length == nextWarehouses.length) {
-                  for(let k = 0; k < currentWarehouses.length; k++) {
-                    if(!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
-                      equals = false;
+            if(i+1 <= this.selectDates.length && this.selectDates[i+1]) {
+              if(this.selectDates[i].warehouses.length == this.selectDates[i+1].warehouses.length){
+                if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
+                  let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
+                  let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
+                  if(currentWarehouses.length == nextWarehouses.length) {
+                    for(let k = 0; k < currentWarehouses.length; k++) {
+                      if(!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
+                        equals = false;
+                      }
                     }
-                  }
-                } else {
-                  equals = false;
-                }
-              } else {
-                equals = false;
-              }
+                  } else { equals = false; }
+                } else { equals = false; }
+              } else {equals = false; }
             }
           }
         }
         
-        console.log(equals)
         if(equals) {
           this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
         } else {
@@ -195,9 +192,6 @@ export class CalendarPickingComponent implements OnInit {
     });
   }
 
-  openModalDate() {
-
-  }
   /**
    * Get the base template skeleton to show
    */
@@ -207,6 +201,9 @@ export class CalendarPickingComponent implements OnInit {
       console.log(warehouses);
       this.intermediaryService.dismissLoading();
       this.templateBase = warehouses;
+      warehouses[0].destinationsWarehouses.forEach(destination => {
+        this.warehousesList.push(destination.destinationWarehouse);
+      })
       this.initTemplateBase(warehouses);
     },()=>{
       this.intermediaryService.dismissLoading();
@@ -228,7 +225,6 @@ export class CalendarPickingComponent implements OnInit {
       let day = days[i];
       this.selectDates.forEach(date=>{
         if(date.date.split("-").reverse().join("-") == day.dataset.date){
-          console.log(date.warehouses.length, date.value?this.formatValue(date.value).warehouses.length:0);
           if((date.warehouses.length) || (date.value && this.formatValue(date.value).warehouses.length)){
             day.className+= ' tselected'; 
           }else{
@@ -266,7 +262,6 @@ export class CalendarPickingComponent implements OnInit {
           this.selectDates.forEach(date=>{
             if(date.date == this.date.date || this.date.date == 'todas las fechas seleccionadas'){
               date.value = JSON.parse(JSON.stringify(this.form.value));
-              console.log(this.formatValue(date.value).warehouses.length);
             }
           })
         }
@@ -460,7 +455,8 @@ export class CalendarPickingComponent implements OnInit {
     }
     this.form = this.formBuilder.group({
       warehouses: new FormArray([]),
-      warehousesInput: []
+      warehousesInput: [],
+      warehousesList: this.warehousesList
     });
     this.openeds = [];
     warehouses.forEach(warehouse=>{
@@ -525,7 +521,8 @@ export class CalendarPickingComponent implements OnInit {
   initForm():void{
     this.form = this.formBuilder.group({
       warehouses: new FormArray([]),
-      warehousesInput: []
+      warehousesInput: [],
+      warehousesList: this.warehousesList
     });
     this.calendarService.getBase().subscribe(base=>{
       base.warehouses.forEach(warehouse=>{

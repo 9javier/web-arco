@@ -75,7 +75,7 @@
 																	<ion-label>
 																			Almacenes
 																	</ion-label>
-																	<suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehousesInput" multiple="false" (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
+																	<suite-tags-input placeholder="Almacenes" [options]="warehousesList" formControlName="warehousesInput" multiple="false" (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
 																</ion-col>
 																<div [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
 																		<ion-item *ngIf="destination.value.selected">
