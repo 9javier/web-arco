@@ -18,6 +18,7 @@ export class TableRequestsOrdersComponent implements OnInit {
   listRequestOrders: Array<WorkwaveModel.MatchLineRequest> = new Array<WorkwaveModel.MatchLineRequest>();
   requestOrdersSelection: any = {};
   listRequestOrdersSelected: Array<number> = new Array<number>();
+  allRequestOrdersSelected: boolean = false;
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
@@ -39,6 +40,7 @@ export class TableRequestsOrdersComponent implements OnInit {
           }
           this.listRequestIdWarehouseId[request.request.id] = {warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse};
         }
+        this.allRequestOrdersSelected = true;
       } else {
         this.requestOrdersSelection = {};
       }
@@ -48,6 +50,13 @@ export class TableRequestsOrdersComponent implements OnInit {
 
   ngOnDestroy() {
     this.events.unsubscribe(this.REQUEST_ORDERS_LOADED);
+  }
+
+  selectAllRequestOrder() {
+    for (let iRequest in this.requestOrdersSelection) {
+      this.requestOrdersSelection[iRequest] = this.allRequestOrdersSelected;
+    }
+    this.selectRequestOrder(true);
   }
 
   selectRequestOrder(incrementTeamCounter: boolean) {
@@ -68,6 +77,9 @@ export class TableRequestsOrdersComponent implements OnInit {
         this.listWarehousesThresholdAndSelectedQty[warehouseId].selected = selection + qty;
       }
     }
+
+    this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
+
     this.changeRequestOrder.next({listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty});
   }
 

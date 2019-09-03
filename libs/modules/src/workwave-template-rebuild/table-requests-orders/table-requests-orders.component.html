@@ -3,7 +3,9 @@
 
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
     <mat-grid-tile class="checkbox" colspan="1">
-      <div class="tile-value"></div>
+      <div class="tile-value left-value">
+        <ion-checkbox [(ngModel)]="allRequestOrdersSelected" (ngModelChange)="selectAllRequestOrder()"></ion-checkbox>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="reference border-right" colspan="2">
