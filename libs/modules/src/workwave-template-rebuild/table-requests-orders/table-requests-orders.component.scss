@@ -61,17 +61,45 @@ div.main-element {
         padding-right: 8px;
       }
     }
+    mat-grid-tile.checkbox {
+      left: 16px !important;
+    }
   }
   mat-grid-list.title-line {
     font-weight: 500;
     border-top: 1px solid var(--ion-color-secondary);
+    div.tile-value {
+      font-size: 14px;
+    }
+    mat-grid-tile.reference, mat-grid-tile.date, mat-grid-tile.origin, mat-grid-tile.destiny, mat-grid-tile.type {
+      div.tile-value {
+        width: 100%;
+        font-size: 14px;
+        span.title {
+          width: 100%;
+          text-align: center;
+          display: table-cell;
+          vertical-align: middle;
+        }
+        suite-filter-button.filter {
+          text-align: end;
+          padding-right: 8px;
+          display: table-cell;
+        }
+      }
+    }
     mat-grid-tile.destiny-max {
       color: var(--ion-color-secondary);
+      font-size: 14px;
     }
   }
+
   mat-grid-list.requests-orders-line {
-    mat-grid-tile.checkbox {
-      left: 16px !important;
+    mat-grid-tile.origin, mat-grid-tile.destiny {
+      div.tile-value {
+        width: 100%;
+        text-align: center;
+      }
     }
   }
 

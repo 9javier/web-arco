@@ -1,0 +1,18 @@
+<div class="popover-filters main-element">
+  <mat-form-field appearance="outline" class="search">
+    <mat-label>{{title}}</mat-label>
+    <input matInput placeholder="Buscar..." [(ngModel)]="typedFilter" (ngModelChange)="searchInFilterList($event)">
+  </mat-form-field>
+
+  <div class="scroll-list">
+    <ion-item lines="none" *ngFor="let item of listItems">
+        <ion-checkbox [(ngModel)]="item.checked"></ion-checkbox>
+      <ion-label>{{item.value}}</ion-label>
+    </ion-item>
+  </div>
+
+  <div class="apply">
+    <ion-button size="small" class="reset" (click)="resetFilters()">Reiniciar</ion-button>
+    <ion-button size="small" (click)="applyFilters()">Aplicar</ion-button>
+  </div>
+</div>
