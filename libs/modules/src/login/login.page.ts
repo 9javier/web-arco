@@ -130,20 +130,16 @@ export class LoginComponent implements OnInit {
     this.modalController.dismiss();
   }
   hide() {
-    if (window.location.port === '8100') {
-			return false;
-		}
-    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
+    console.log('hide')
+    if (this.platform.is('android') || this.platform.is('ios')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: none;");
     }
   }
 
   recover() {
-    if (window.location.port === '8100') {
-			return false;
-		}
-    if (this.platform.is('android') || this.platform.is('ios') || this.platform.is('cordova')) {
+    console.log('recover')
+    if (this.platform.is('android') || this.platform.is('ios')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: flex;");
     }
