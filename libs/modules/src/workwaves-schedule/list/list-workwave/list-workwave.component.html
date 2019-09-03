@@ -1,26 +1,30 @@
-<mat-grid-list cols="12" rowHeight="64px">
+<mat-grid-list cols="24" rowHeight="64px">
   <mat-grid-tile colspan="1" rowspan="1">
-    <mat-checkbox [(ngModel)]="workwaveScheduled.checked" (click)="checkboxClick($event)"></mat-checkbox>
+
   </mat-grid-tile>
-  <mat-grid-tile colspan="3" rowspan="1">
+  <mat-grid-tile colspan="10" rowspan="1">
     <div class="tile-title tile-description">
       {{processTitleWorkwave()}}
     </div>
   </mat-grid-tile>
-  <mat-grid-tile colspan="2" rowspan="1">
+  <mat-grid-tile colspan="6" rowspan="1">
+    <div class="tile-title">
+      <div>{{getTypeShippingOrderString(1)}}</div>
+      <div>{{getTypeShippingOrderString(2)}}</div>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="4" rowspan="1">
     <div class="tile-title">
       <div class="tile-date">{{dateCreatedParsed()}}</div>
       <div>{{timeCreatedParsed()}}</div>
     </div>
   </mat-grid-tile>
-  <mat-grid-tile colspan="5" rowspan="1">
-    <div class="tile-title tile-description">
-      {{workwaveScheduled.description || 'Descripción de la ola '+workwaveScheduled.id}}
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div class="btn-see" (click)="showPickings()">
+      Ver
     </div>
   </mat-grid-tile>
   <mat-grid-tile colspan="1" rowspan="1">
-    <div class="btn-see" (click)="showProducts($event)">
-      Ver
-    </div>
+
   </mat-grid-tile>
 </mat-grid-list>

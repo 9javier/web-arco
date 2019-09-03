@@ -6,6 +6,7 @@ export namespace UserModel {
     password?: string;
     address?: string;
     employeId?:number;
+    hasWarehouse?: boolean
   }
   export interface ResponseIndex {
     data: User[];

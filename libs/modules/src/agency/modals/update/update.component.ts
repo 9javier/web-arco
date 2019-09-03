@@ -38,13 +38,13 @@ export class UpdateComponent implements OnInit {
   submit(agency:AgencyModel.Agency):void{
     this.intermediaryService.presentLoading();
     this.agencyService.update(agency.id,(<any>agency)).subscribe((response)=>{
-      this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess("Agencia actualizada con éxito");
       this.close();
     },(error)=>{
-      this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastError("No se pudo actualizar la agencia");
       this.close();
+    }, () => {
+      this.intermediaryService.dismissLoading();
     });
   }
 

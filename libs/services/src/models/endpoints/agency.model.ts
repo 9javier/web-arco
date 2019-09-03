@@ -1,4 +1,5 @@
 import { Request } from './request';
+import { WarehouseModel } from './Warehouse';
 
 export namespace AgencyModel{
 
@@ -7,6 +8,7 @@ export namespace AgencyModel{
         name:string;
         address:string;
         phone:number;
+        warehouses: WarehouseModel.Warehouse[];
         
     }
 
@@ -22,6 +24,7 @@ export namespace AgencyModel{
         name:string;
         address:string;
         phone:string;
+        warehouses: WarehouseModel.Warehouse;
     }
 
 }
