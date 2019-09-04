@@ -375,6 +375,20 @@ export class PricesComponent implements OnInit {
     return null;
   }
 
+  getPhotoUrl(priceObj: PriceModel.Price): string|boolean {
+    let isPhotoTestUrl: boolean = true;
+
+    if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
+      if (isPhotoTestUrl) {
+        return 'https://ccc1.krackonline.com/131612-thickbox_default/krack-core-sallye.jpg';
+      }
+
+      return priceObj.model.photos[0].urn;
+    }
+
+    return false;
+  }
+
   // GET & SET SECTION
   get warehouseId() {
     return this.form.get('warehouseId').value

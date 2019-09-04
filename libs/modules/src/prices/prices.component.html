@@ -58,9 +58,9 @@
                             <h5>Información</h5>
                         </ion-col>
                     </ion-row>
-            </ion-grid>    
+            </ion-grid>
             <mat-accordion multi="false" *ngFor="let price of prices;let i = index">
-                <mat-expansion-panel [hideToggle]="disableExpansionPanel" [disabled]="disableExpansionPanel">
+                <mat-expansion-panel [hideToggle]="!getPhotoUrl(price)" [disabled]="!getPhotoUrl(price)">
                     <mat-expansion-panel-header class="custom-panel-header">
                         <ion-grid>
                           <ion-row>
@@ -96,69 +96,8 @@
                           </ion-row>
                         </ion-grid>
                     </mat-expansion-panel-header>
-                  <div *ngIf="!disableExpansionPanel">
-                    <ion-row>
-                      <ion-col>
-                        Marca
-                      </ion-col>
-                      <ion-col class="align-right">
-                        {{ price?.model?.brand?.name }}
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        Tallas
-                      </ion-col>
-                      <ion-col class="align-right">
-                        {{ processProductSizesRange(price) }}
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        €
-                      </ion-col>
-                      <ion-col class="align-right">
-                        {{ price?.priceOriginal }}€
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        Desc
-                      </ion-col>
-                      <ion-col class="align-right">
-                        {{ getFinalDiscountPercent(price) }}%
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        € Final
-                      </ion-col>
-                      <ion-col class="align-right">
-                        {{ getFinalPrice(price) }}€
-                      </ion-col>
-                    </ion-row>
-                    <ion-row>
-                      <ion-col>
-                        Estado
-                      </ion-col>
-                      <ion-col class="align-right">
-                        <ion-icon name="print" *ngIf="getNameOfStatus(price.status) == 'Impresos'"></ion-icon>
-                        {{getNameOfStatus(price.status)}}
-                      </ion-col>
-                    </ion-row>
-
-                    <ion-row *ngIf="price.status != 3">
-                      <ion-col>
-                        Imprimir
-                      </ion-col>
-                      <ion-col class="align-right">
-                        <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
-                      </ion-col>
-                    </ion-row>
-                    <div>
-
-                    </div>
-                    <mat-list style="display: flex; justify-content:center;"></mat-list>
+                  <div class="my-expansion-panel-body" *ngIf="getPhotoUrl(price)">
+                    <img class="img-product-mobile" [src]="getPhotoUrl(price)">
                   </div>
                 </mat-expansion-panel>
             </mat-accordion>
