@@ -20,6 +20,7 @@ export class SendComponent implements OnInit {
   redirectTo = '/jails/list';
   jail;
   warehouses:Array<WarehouseModel.Warehouse> = [];
+  warehouse: WarehouseModel.Warehouse;
 
   constructor(
     private navParams:NavParams,
@@ -27,7 +28,6 @@ export class SendComponent implements OnInit {
     private warehousesService:WarehousesService
   ) { 
     this.jail = this.navParams.get("jail");
-    console.log("jail",this.jail);
   }
 
   
@@ -46,7 +46,12 @@ export class SendComponent implements OnInit {
   }
 
   selectDestiny(event: MatSelectChange) {
-    console.log(event.value)
+    this.warehouse = event.value;
+  }
+
+  submit(jail) {
+    console.log(jail);
+    console.log(this.warehouse);
   }
 
 }

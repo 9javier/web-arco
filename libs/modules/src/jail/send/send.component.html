@@ -12,7 +12,7 @@
     <ion-item>
       {{jail.reference}}
     </ion-item>
-    <mat-form-field>
+    <mat-form-field style="margin-top: 3%; width: 100%">
         <mat-label>Send to</mat-label>
         <mat-select (selectionChange)="selectDestiny($event)">
           <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse">
@@ -24,7 +24,7 @@
 <ion-footer>
     <ion-toolbar>
         <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-        <ion-button *ngIf="jail.carrierWarehousesDestiny.length == 0" slot="end" color="primary" (click)="submit(data.getValue())">Enviar</ion-button>
+        <ion-button *ngIf="jail.carrierWarehousesDestiny.length == 0" slot="end" color="primary" (click)="submit(jail)">Enviar</ion-button>
         <ion-button *ngIf="jail.carrierWarehousesDestiny.length > 0" slot="end" [disabled]="true">Enviar</ion-button>
     </ion-toolbar>
 </ion-footer>
