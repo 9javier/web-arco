@@ -54,7 +54,7 @@ export class CalendarPickingComponent implements OnInit {
   templates:Array<CalendarModel.Template> = [];
   updateTemplate: CalendarModel.Template;
   warehousesInput:Array<WarehouseModel.Warehouse> = [];
-  
+
   @ViewChild(DatePickerComponent) datePicker:DatePickerComponent;
 
   constructor(
@@ -444,6 +444,10 @@ export class CalendarPickingComponent implements OnInit {
           })
         }
       })
+    });
+
+    (<FormArray>this.form.get("warehouses")).controls.sort((current, next) => {
+      return next.get("openModal").value - current.get("openModal").value
     });
   }
 
