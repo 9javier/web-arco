@@ -27,6 +27,7 @@ export class InventoryService {
   private postPickingUrl:string = environment.apiBase+"/processes/picking-main/direct";
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
+  private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -38,6 +39,18 @@ export class InventoryService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.post<InventoryModel.ResponseSearchInContainer>(this.searchInContainerUrl,parameters, {headers});
+    }));
+  }
+
+  /**
+   * Seach filters in the inventory
+   * @param parameters filters
+   */
+  searchFilters(parameters):Observable<InventoryModel.ResponseFilters>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      // return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
+      return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,{}, {headers});
     }));
   }
 
