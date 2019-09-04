@@ -376,7 +376,7 @@ export class PricesComponent implements OnInit {
   }
 
   getPhotoUrl(priceObj: PriceModel.Price): string|boolean {
-    let isPhotoTestUrl: boolean = true;
+    let isPhotoTestUrl: boolean = false;
 
     if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
       if (isPhotoTestUrl) {
