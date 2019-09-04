@@ -40,6 +40,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   flagEmmit = false;
   values:Array<any> = [];
   prevLength;
+  activeClass: boolean = false;
 
   lastNode;
 
@@ -48,6 +49,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
   /**If this is true return an array */
   @Input() multiple:boolean;
+
+  /**If this inside an acordeon element */
+  @Input() notShow:boolean;
 
   /**Options to be selected*/
   _options:Array<TagsInputOption> = [];
@@ -119,6 +123,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       node = this.lastNode;
     this.flagEmmit = true;
     this.insertTag(option.id,(node!=this.inputElement.nativeElement)?node:null);
+    if(this.notShow) {
+      this.activeClass = !this.activeClass;
+    }
   }
 
   /**
@@ -126,6 +133,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @param event 
    */
   clickEditable(event):void{
+    if(this.notShow) {
+      this.activeClass = !this.activeClass;
+    }
     let target = event.target;
     let node = window.getSelection().anchorNode;
     this.filteredOptions = this.filterOptions(this._options,node.textContent);
@@ -468,8 +478,12 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     }
      
     let tagSpan:HTMLElement = this.renderer.createElement('span');
-    this.renderer.addClass(tagSpan,"input-tag")
-    tagSpan.innerHTML = option.name;
+    if(this.notShow) {
+      tagSpan.innerHTML = '';
+    } else {
+      this.renderer.addClass(tagSpan,"input-tag")
+      tagSpan.innerHTML = option.name;
+    }
     tagSpan.dataset.id = <string>option.id;
     tagSpan.dataset.type = option.type;
     /**reemplazamos el nodo anterior con el nuevo */

@@ -51,7 +51,7 @@
                 </ion-item>
                 <div class="overAuto" [formGroup]="form">
                     <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls'];let i = index">
-                        <mat-expansion-panel [expanded]="warehouse.value.openModal" (opened)="openeds[i] = true || warehouse.value.openModal" (closed)="openeds[i] = false">
+                        <mat-expansion-panel [expanded]="warehouse.value.openModal" (opened)="openeds[i] = true" (closed)="openeds[i] = false>
                             <mat-expansion-panel-header>
                                 <ion-grid>
                                     <ion-row>
@@ -75,11 +75,11 @@
 																	<ion-label>
 																			Almacenes
 																	</ion-label>
-																	<suite-tags-input placeholder="Almacenes" [options]="warehousesList" formControlName="warehousesInput" multiple="false" (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
+																	<suite-tags-input placeholder="Almacenes" [options]="warehousesList" formControlName="warehousesInput" notShow="true" multiple="false" (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
 																</ion-col>
-																<div [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
+																<div [formGroup]="destination" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
 																		<ion-item *ngIf="destination.value.selected">
-																			<ion-label *ngIf="destination.value.selected" slot="end" class="deleteWarehouse" (click)="deletedWarehouseOfTemplate(destination.value.id, warehouse.value.originWarehouse.id)">X</ion-label>
+																			<i *ngIf="destination.value.selected" slot="end" class="deleteWarehouse material-icons" (click)="deletedWarehouseOfTemplate(destination.value.id, warehouse.value.originWarehouse.id)">delete</i>
 																			<ion-label *ngIf="destination.value.selected">{{destination.value.name}}</ion-label>
 																		</ion-item>
 																</div>

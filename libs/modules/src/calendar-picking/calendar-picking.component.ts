@@ -54,7 +54,7 @@ export class CalendarPickingComponent implements OnInit {
   templates:Array<CalendarModel.Template> = [];
   updateTemplate: CalendarModel.Template;
   warehousesInput:Array<WarehouseModel.Warehouse> = [];
-
+  
   @ViewChild(DatePickerComponent) datePicker:DatePickerComponent;
 
   constructor(
@@ -212,6 +212,7 @@ export class CalendarPickingComponent implements OnInit {
 
   clearData(){
     this.form.patchValue(this.initialValue,{emitEvent:false});
+    this.resetAcordeons();
     this.selectDates.forEach(date=>{
       if(this.date.date == date.date || this.date.date == 'todas las fechas seleccionadas')
         date.value = this.initialValue;
@@ -426,6 +427,7 @@ export class CalendarPickingComponent implements OnInit {
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
         destinationControl.get("selected").setValue(false);
+        warehouseControl.get("openModal").setValue(false);
       })
     });
 
@@ -436,6 +438,7 @@ export class CalendarPickingComponent implements OnInit {
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
               if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
                 destinationControl.get("selected").setValue(true);
+                warehouseControl.get("openModal").setValue(true);
               }
             })
           })
@@ -560,6 +563,7 @@ export class CalendarPickingComponent implements OnInit {
           if(destinationControl.get("id").value == value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id == warehouseId){
             destinationControl.get("selected").setValue(true);
             this.form.get("warehousesInput").setValue([]);
+            warehouseControl.get("openModal").setValue(true);
           }
         });
       });
@@ -575,6 +579,12 @@ export class CalendarPickingComponent implements OnInit {
           destinationControl.get("selected").setValue(false);
         }
       });
+    });
+  }
+
+  resetAcordeons() {
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+        warehouseControl.get("openModal").setValue(false);
     });
   }
 
