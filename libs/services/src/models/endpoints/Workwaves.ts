@@ -112,7 +112,8 @@ export namespace WorkwaveModel {
     quantityOrder: string,
     request: {
       id: number,
-      requestId: number
+      requestId: number,
+      date: string
     },
     preparationLinesTypes: {
       id: number,
@@ -194,7 +195,7 @@ export namespace WorkwaveModel {
   }
 
   export interface ParamsDeletePickings {
-    pickingIds: Array<number>
+    pickingsIds: Array<number>
   }
 
   export interface DeletedPickings {

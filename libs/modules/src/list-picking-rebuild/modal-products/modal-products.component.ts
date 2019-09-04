@@ -26,4 +26,20 @@ export class ListProductsComponent implements OnInit {
     this.modalController.dismiss();
   }
 
+  getProductStatusName(product: ShoesPickingModel.ShoesPicking): string {
+    if (product && product.status) {
+      switch (product.status) {
+        case 1:
+          return 'PENDIENTE';
+        case 2:
+          return 'ESCANEADO';
+        default:
+          return 'error';
+      }
+    }
+
+    return '';
+  }
+
+
 }

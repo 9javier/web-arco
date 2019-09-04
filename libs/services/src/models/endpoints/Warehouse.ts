@@ -15,6 +15,7 @@ export namespace WarehouseModel {
     manageAgency?: AgencyModel.Agency;
     is_outlet?: boolean;
     prefix_container?: string;
+    thresholdShippingStore?: number;
   }
 
   export interface ResponseSingle extends Request.Success{

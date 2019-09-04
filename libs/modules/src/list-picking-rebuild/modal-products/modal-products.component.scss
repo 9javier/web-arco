@@ -1,6 +1,10 @@
-ion-list {
-  padding: 0;
-  ion-item.header-list-products {
-    font-weight: 500;
+ion-item.header-list-products {
+  font-weight: 500;
+  ion-label.last-item-header {
+    margin-right: 17px;
   }
+}
+.scroll-list {
+  overflow-y: scroll;
+  height: calc(100vh - 6rem - 56px - 50px); // 56px from modal header - 50px from table header
 }

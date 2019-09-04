@@ -17,18 +17,18 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListEmployees">
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListEmployees && pickingParametrizationProvider.loadingListEmployees > 0">
     <div class="spinner">
       <p class="message">Cargando miembros del equipo</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="!pickingParametrizationProvider.loadingListEmployees && listEmployees.usersActive.length < 1 && listEmployees.usersInactive.length < 1">
+  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListEmployees || pickingParametrizationProvider.loadingListEmployees < 1) && listEmployees.usersActive.length < 1 && listEmployees.usersInactive.length < 1">
     <p class="message-empty">No hay miembros del equipo cargados</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListEmployees">
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListEmployees || pickingParametrizationProvider.loadingListEmployees < 1">
     <mat-grid-list *ngFor="let employee of listEmployees.usersActive; let iActive = index" class="employee-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
         <ion-checkbox [(ngModel)]="employeesSelection[employee.id]" (ngModelChange)="selectEmployee()"></ion-checkbox>

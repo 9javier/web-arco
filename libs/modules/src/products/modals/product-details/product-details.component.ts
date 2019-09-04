@@ -7,6 +7,7 @@ import { WarehouseService } from "../../../../../services/src/lib/endpoint/wareh
 import { AlertController, LoadingController, ModalController, NavParams, ToastController } from "@ionic/angular";
 import { InventoryService } from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
 import { Observable } from "rxjs";
+import * as moment from 'moment';
 import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { DateTimeParserService } from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
 
@@ -23,7 +24,7 @@ export class ProductDetailsComponent implements OnInit {
 
   product: InventoryModel.SearchInContainer;
   productHistorical;
-
+  date: any;
   container = null;
   warehouseId: number;
 
@@ -47,6 +48,10 @@ export class ProductDetailsComponent implements OnInit {
   rowSelected: number;
   columnSelected: number;
   referenceContainer: string = '';
+  dates: any[] = [];
+  hours: any[] = [];
+
+  public isProductRelocationEnabled: boolean = false;
 
   constructor(
     private typeService: TypesService,
@@ -97,6 +102,11 @@ export class ProductDetailsComponent implements OnInit {
   getProductHistorical(): void {
     this.productService.getHistorical(this.product.productShoeUnit.id).subscribe(historical => {
       this.productHistorical = historical;
+
+      for (let i = 0; i < historical.length; i++) {
+        this.dates[i] = moment(historical[i].updatedAt).format('L');
+        this.hours[i] = moment(historical[i].updatedAt).format('h:mm:ss a');
+      }
     });
   }
 

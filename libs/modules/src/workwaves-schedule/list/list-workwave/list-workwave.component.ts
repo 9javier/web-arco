@@ -61,7 +61,7 @@ export class WorkwaveListWorkwavesScheduleComponent implements OnInit {
 
   showPickings() {
     this.workwavesService.lastWorkwaveRebuildEdited = { id: this.workWave.id };
-    this.router.navigate(['workwaves-scheduled/pickings']);
+    this.router.navigate(['workwaves-scheduled/pickings', this.workWave.id]);
   }
 
 }

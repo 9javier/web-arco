@@ -26,11 +26,14 @@ export class TableStoresComponent implements OnInit {
   ngOnInit() {
     this.events.subscribe(this.GROUPS_WAREHOUSES_LOADED, () => {
       this.listGroupsWarehouses = this.pickingParametrizationProvider.listGroupsWarehouses;
+
       if (this.listGroupsWarehouses.length > 0) {
         this.groupWarehousesSelected.groupsWarehousePickingId = this.listGroupsWarehouses[0].id;
         this.groupWarehousesSelected.thresholdConsolidated[this.listGroupsWarehouses[0].id] = this.DEFAULT_THRESHOLD_CONSOLIDATED;
-        this.selectGroupWarehouses();
+      } else {
+        this.groupWarehousesSelected = { groupsWarehousePickingId: 0, thresholdConsolidated: {} };
       }
+      this.selectGroupWarehouses();
     });
   }
 

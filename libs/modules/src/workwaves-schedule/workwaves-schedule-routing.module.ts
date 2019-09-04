@@ -19,6 +19,10 @@ const routes: Routes = [
   {
     path: 'pickings',
     component: ListPickingRebuildComponent
+  },
+  {
+    path: 'pickings/:id',
+    component: ListPickingRebuildComponent
   }
 ];
 

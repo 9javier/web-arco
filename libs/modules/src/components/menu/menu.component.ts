@@ -98,6 +98,12 @@ export class MenuComponent implements OnInit {
           id:'workwaves-history',
           url: '/workwaves-history',
           icon: 'code-download'
+        },
+        {
+          title: 'Pickings en curso',
+          id: 'pickings-execution',
+          url: '/workwaves-scheduled/pickings',
+          icon: 'code-working'
         }
       ]
     },
@@ -249,8 +255,7 @@ export class MenuComponent implements OnInit {
           url: '/print-tag/manual/box',
           icon: 'barcode'
         },
-        // TODO When enable Relabel of Products, decompose the next two sections
-        /*{
+        {
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
@@ -261,7 +266,7 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
-        }*/
+        }
       ]
     },
     {

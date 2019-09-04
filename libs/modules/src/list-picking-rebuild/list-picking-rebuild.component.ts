@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {Location} from "@angular/common";
 import {PickingModel} from "../../../services/src/models/endpoints/Picking";
 import {WorkwavesService} from "../../../services/src/lib/endpoint/workwaves/workwaves.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {PickingService} from "../../../services/src/lib/endpoint/picking/picking.service";
 import {AlertController, LoadingController, ToastController} from "@ionic/angular";
 import {UserTimeModel, UserTimeService} from "@suite/services";
@@ -18,7 +18,7 @@ export class ListPickingRebuildComponent implements OnInit {
 
   private idWorkwave: number = null;
 
-  public listPickings: Array<PickingModel.PendingPickingByWorkWaveSelected> = new Array<PickingModel.PendingPickingByWorkWaveSelected>();
+  public listPickings: Array<PickingModel.PendingPickingsSelected> = new Array<PickingModel.PendingPickingsSelected>();
   public isLoadingPickings: boolean = false;
   public previousPage: string = '';
   public usersNoSelectedToChangeUser: boolean = true;
@@ -28,11 +28,12 @@ export class ListPickingRebuildComponent implements OnInit {
   private loading: HTMLIonLoadingElement = null;
   private listEmployeesToChange: UserTimeModel.ListUsersRegisterTimeActiveInactive = { usersActive: [], usersInactive: [] };
 
-  public deleteOptionEnabled: boolean = false;
+  public deleteOptionEnabled: boolean = true;
 
   constructor(
     private location: Location,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private toastController: ToastController,
@@ -42,27 +43,41 @@ export class ListPickingRebuildComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.workwavesService.lastWorkwaveRebuildEdited) {
+    this.idWorkwave = this.activatedRoute.snapshot.paramMap.get('id') ? parseInt(this.activatedRoute.snapshot.paramMap.get('id')) : null;
+
+    if (this.idWorkwave && this.workwavesService.lastWorkwaveRebuildEdited) {
       this.previousPage = 'Olas de Trabajo';
-      this.idWorkwave = this.workwavesService.lastWorkwaveRebuildEdited.id;
-      this.loadPickingsList();
-      this.loadEmployees();
-    } else if (this.workwavesService.lastWorkwaveHistoryQueried) {
+    } else if (this.idWorkwave && this.workwavesService.lastWorkwaveHistoryQueried) {
       this.previousPage = 'Historial';
+    } else {
+      this.previousPage = null;
     }
+    this.loadPickingsList();
+    this.loadEmployees();
   }
 
   private loadPickingsList() {
     this.isLoadingPickings = true;
-    this.pickingService
-      .getListPendingPickingByWorkwave(this.idWorkwave)
-      .subscribe((res: Array<PickingModel.PendingPickingByWorkWaveSelected>) => {
-        this.listPickings = res;
-        this.isLoadingPickings = false;
-      }, (error) => {
-        console.error('Error::Subscribe:pickingService::getListPendingPickingByWorkwave::', error);
-        this.isLoadingPickings = false;
-      });
+
+    let subscribeResponseListPickings = (res: Array<PickingModel.PendingPickings>) => {
+      this.listPickings = res;
+      this.isLoadingPickings = false;
+    };
+    let subscribeErrorListPickings = (error) => {
+      console.error('Error::Subscribe:pickingService::getListAllPendingPicking::', error);
+      this.listPickings = new Array<PickingModel.PendingPickingsSelected>();
+      this.isLoadingPickings = false;
+    };
+
+    if (this.idWorkwave) {
+      this.pickingService
+        .getListPendingPickingByWorkwave(this.idWorkwave)
+        .subscribe(subscribeResponseListPickings, subscribeErrorListPickings);
+    } else {
+      this.pickingService
+        .getListAllPendingPicking()
+        .subscribe(subscribeResponseListPickings, subscribeErrorListPickings);
+    }
   }
 
   private loadEmployees() {
@@ -72,6 +87,7 @@ export class ListPickingRebuildComponent implements OnInit {
         this.listEmployeesToChange = res;
       }, (error) => {
         console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
+        this.listEmployeesToChange = { usersActive: [], usersInactive: [] };
       });
   }
 
@@ -126,24 +142,33 @@ export class ListPickingRebuildComponent implements OnInit {
   }
 
   private changeUser(listUsersPickings: any[]) {
-    this.pickingService
-      .putUpdate(this.idWorkwave, listUsersPickings)
-      .subscribe((res: PickingModel.ResponseUpdate) => {
-        if (this.loading) {
-          this.loading.dismiss();
-          this.loading = null;
-        }
-        this.presentToast('Usuarios actualizados correctamente.', 'success');
-        this.listIdsPickingsSelected = new Array<number>();
-        this.loadPickingsList();
-      }, (error) => {
-        console.error('Error::Subscribe:pickingService::putUpdate::', error);
-        if (this.loading) {
-          this.loading.dismiss();
-          this.loading = null;
-        }
-        this.presentToast('Ha ocurrido un error al intentar actualizar los usuarios de los picking.', 'danger');
-      });
+    let subscribeResponseChangeEmployees = (res) => {
+      if (this.loading) {
+        this.loading.dismiss();
+        this.loading = null;
+      }
+      this.presentToast('Usuarios actualizados correctamente.', 'success');
+      this.listIdsPickingsSelected = new Array<number>();
+      this.loadPickingsList();
+    };
+    let subscribeErrorChangeEmployees = (error) => {
+      console.error('Error::Subscribe:pickingService::putUpdate::', error);
+      if (this.loading) {
+        this.loading.dismiss();
+        this.loading = null;
+      }
+      this.presentToast('Ha ocurrido un error al intentar actualizar los usuarios de los picking.', 'danger');
+    };
+
+    if (this.idWorkwave) {
+      this.pickingService
+        .putUpdate(this.idWorkwave, listUsersPickings)
+        .subscribe(subscribeResponseChangeEmployees, subscribeErrorChangeEmployees);
+    } else {
+      this.pickingService
+        .putUpdateByPickings(listUsersPickings)
+        .subscribe(subscribeResponseChangeEmployees, subscribeErrorChangeEmployees);
+    }
   }
 
   pickingSelected(data) {
@@ -203,13 +228,16 @@ export class ListPickingRebuildComponent implements OnInit {
 
   private deletePickings() {
     this.workwavesService
-      .deleteDeletePickings({ pickingIds: this.listIdsPickingsSelected })
+      .postDeletePickings({ pickingsIds: this.listIdsPickingsSelected })
       .subscribe((res: any) => {
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
         }
         this.presentToast('Tareas de picking eliminadas correctamente.', 'success');
+
+        this.loadPickingsList();
+        this.loadEmployees();
       }, (error) => {
         console.error('Error::Subscribe:workwavesService::deleteDeletePickings::', error);
         if (this.loading) {

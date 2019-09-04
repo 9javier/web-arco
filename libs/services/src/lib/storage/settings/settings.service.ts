@@ -18,8 +18,10 @@ export class SettingsService {
    * @return types to make an orderby
    */
   async getDeviceSettings(): Promise<Observable<AppSettingsModel.AppSettings>>{
+    console.debug("PRINT::getDeviceSettings 1 [" + new Date().toJSON() + "]");
     return new Promise((resolve, reject) => {
       resolve(Observable.create((obs) => {
+        console.debug("PRINT::getDeviceSettings 2 [" + new Date().toJSON() + "]");
         obs.next({
           printerBluetoothMacAddress: localStorage.getItem(SettingsService.STORAGE_KEY_PRINTER_BLUETOOTH_MAC_ADDRESS)
         });
