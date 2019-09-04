@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef,ViewChildren, QueryList, Query,Renderer2 } from '@angular/core';
+import { Component, OnInit, Input, forwardRef, ViewChild, ElementRef,ViewChildren, QueryList, Query,Renderer2, HostListener } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR  } from '@angular/forms';
 import { TagsInputOption } from './models/tags-input-option.model';
 
@@ -74,6 +74,14 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   selectedsOptions:Array<TagsInputOption> = [];
 
   ids:Array<any> = []; 
+
+
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if(!this.eRef.nativeElement.contains(event.target)) {
+      this.activeClass = false;
+    }
+  }
 
   filterOptions(options:Array<TagsInputOption>,text:string):Array<TagsInputOption>{    
     return options.filter(option=>option.name.toLowerCase().includes(text.trim().toLowerCase()));
@@ -229,7 +237,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
     return this._value;
   }
 
-  constructor(private renderer:Renderer2) { }
+  constructor(private renderer:Renderer2, private eRef: ElementRef) { }
 
   ngOnInit() {
   }
