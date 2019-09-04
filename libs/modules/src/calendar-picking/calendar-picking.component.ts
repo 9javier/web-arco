@@ -190,6 +190,8 @@ export class CalendarPickingComponent implements OnInit {
         }
       })
     });
+
+    this.orderAcordeons();
   }
 
   /**
@@ -446,9 +448,7 @@ export class CalendarPickingComponent implements OnInit {
       })
     });
 
-    (<FormArray>this.form.get("warehouses")).controls.sort((current, next) => {
-      return next.get("openModal").value - current.get("openModal").value
-    });
+    this.orderAcordeons();
   }
 
   /**
@@ -559,6 +559,10 @@ export class CalendarPickingComponent implements OnInit {
     });
   }
 
+  /**
+   * Add warehouse to an acordeon
+   * @param warehouseId 
+   */
   addWarehouse(warehouseId: number) {
     let value = this.form.get("warehousesInput").value;
     if(value) {
@@ -574,6 +578,11 @@ export class CalendarPickingComponent implements OnInit {
     }
     this.form.get("warehousesInput").setValue([]);
   }
+
+  /**
+   * Remove warehouse to an acordeon
+   * @param warehouseId 
+   */
   
   deletedWarehouseOfTemplate(id: number, warehouseId: number) {
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
@@ -586,9 +595,21 @@ export class CalendarPickingComponent implements OnInit {
     });
   }
 
+  /**
+   * Reset all acordeons to a original state
+   */
   resetAcordeons() {
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
         warehouseControl.get("openModal").setValue(false);
+    });
+  }
+
+  /**
+   * Order acordeons if have warehouses
+   */
+  orderAcordeons() {
+    (<FormArray>this.form.get("warehouses")).controls.sort((current, next) => {
+      return next.get("openModal").value - current.get("openModal").value
     });
   }
 

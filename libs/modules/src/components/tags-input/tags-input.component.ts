@@ -202,6 +202,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @param event -the keypress event
    */
   onKeyUp(event){
+    if(this.filteredOptions.length > 0) { 
+      this.activeClass = true;
+    }
     let key = event.key;
     if(key == 'Enter'){
       this.selectOption(this.filteredOptions[this.optionPointerIndex]);
@@ -326,7 +329,6 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @summary this function is not an angular way for dataBinding
    */
   onInput(event):void{
-    
     /**nodo sobre el cual se está escribiendo*/
     let node = window.getSelection().anchorNode;
     this.lastNode = node;
@@ -342,8 +344,10 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       }
       this.filteredOptions = [this.currentTextOption].concat(this.filteredOptions);
     }
-
-    console.log("longitud",this.inputElement.nativeElement.childNodes.length);
+    
+    if(this.inputElement.nativeElement.childNodes.length == 1) {
+      this.activeClass = false;
+    }
     ////console.log("testes")
     /**Get the text of the div */
     /*let text:string = this.inputElement.nativeElement.innerText;
