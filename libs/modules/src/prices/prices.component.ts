@@ -98,7 +98,7 @@ export class PricesComponent implements OnInit {
 
 
 
-  displayedColumns: string[] = ['impress', 'model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
+  displayedColumns: string[] = ['image', 'impress', 'model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
   dataSource: any;
 
   public disableExpansionPanel: boolean = true;
@@ -387,6 +387,17 @@ export class PricesComponent implements OnInit {
     }
 
     return false;
+  }
+
+  getPhotoUrlDesktop(price: PriceModel.Price): string {
+    let photoUrl = this.getPhotoUrl(price);
+    console.debug('any');
+
+    if (!photoUrl) {
+      return '../assets/img/placeholder-product.jpg';
+    }
+
+    return photoUrl.toString();
   }
 
   // GET & SET SECTION
