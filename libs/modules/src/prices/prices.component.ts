@@ -391,7 +391,6 @@ export class PricesComponent implements OnInit {
 
   getPhotoUrlDesktop(price: PriceModel.Price): string {
     let photoUrl = this.getPhotoUrl(price);
-    console.debug('any');
 
     if (!photoUrl) {
       return '../assets/img/placeholder-product.jpg';
