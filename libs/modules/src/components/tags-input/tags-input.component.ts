@@ -202,8 +202,10 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @param event -the keypress event
    */
   onKeyUp(event){
-    if(this.filteredOptions.length > 0) { 
+    if(this.filteredOptions.length > 2) { 
       this.activeClass = true;
+    } else {
+      this.activeClass = false;
     }
     let key = event.key;
     if(key == 'Enter'){
@@ -345,7 +347,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       this.filteredOptions = [this.currentTextOption].concat(this.filteredOptions);
     }
     
-    if(this.inputElement.nativeElement.childNodes.length == 1) {
+    if(this.inputElement.nativeElement.childNodes.length == 1 && this.filteredOptions.length > 0) {
       this.activeClass = false;
     }
     ////console.log("testes")
