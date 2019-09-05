@@ -44,12 +44,12 @@
                     Debe seleccionar al menos una fecha para almacenar
                 </div>
 
-                <ion-item *ngIf="selectDates.length">
+                <div *ngIf="selectDates.length">
                     <ion-label>
-                        Fechas
+                       Almacenes
                     </ion-label>
-                </ion-item>
-                <div class="overAuto" [formGroup]="form">
+                </div>
+                <div class="overAuto" [formGroup]="form" style="margin-top: 3%">
                     <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls'];let i = index">
                         <mat-expansion-panel [expanded]="warehouse.value.openModal" (opened)="openeds[i] = true" (closed)="openeds[i] = false">
                             <mat-expansion-panel-header>
