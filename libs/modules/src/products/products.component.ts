@@ -302,7 +302,29 @@ export class ProductsComponent implements OnInit {
         if(warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
         }
-        this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+        
+//         this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+//           this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+//           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+//           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+//           this.updateFilterSourceModels(searchsInContainer.data.filters.models);
+//           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+//           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+//           setTimeout(() => {
+//             this.pauseListenFormChange = false;
+// -            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+//             this.pauseListenFormChange = true;
+//             this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
+//             this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
+//             setTimeout(() => {
+//               this.pauseListenFormChange = false;
+//               this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+//             }, 0);
+//           }, 0);
+//         },
+
+        this.inventoryServices.searchFilters({}).subscribe(searchsInContainer=>{
+          this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
           this.updateFilterSourceModels(searchsInContainer.data.filters.models);

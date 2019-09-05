@@ -11,7 +11,7 @@
         </div>
       </ion-col>
     </ion-row>
-    <ion-row class="logo-wrapper">
+    <ion-row class="logo-wrapper" id="logo">
       <ion-col>
         <div>
           <img
@@ -27,6 +27,8 @@
           <ion-item lines="full">
             <ion-icon name="person"></ion-icon
             ><ion-input
+              (ionFocus)="hide()"
+              (ionBlur)="recover()"
               placeholder="Nombre"
               class="ion-margin-horizontal"
               [(ngModel)]="user.username"
@@ -41,6 +43,8 @@
           <ion-item>
             <ion-icon name="lock"></ion-icon>
             <ion-input
+            (ionFocus)="hide()"
+              (ionBlur)="recover()"
               placeholder="Contraseña"
               class="ion-margin-horizontal"
               [(ngModel)]="user.password"

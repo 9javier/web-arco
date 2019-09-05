@@ -248,7 +248,7 @@
     <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="printPrices(prices)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+    <ion-fab-button (click)="printPrices(prices, null)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
         <ion-icon name="print"></ion-icon>
     </ion-fab-button>
 </ion-fab>

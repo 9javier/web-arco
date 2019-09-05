@@ -33,6 +33,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   listGroupsWarehousesToUpdate: Array<GroupWarehousePickingModel.GroupWarehousesSelected> = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>();
   listEmployeesToUpdate: Array<number> = new Array<number>();
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
+  private listWarehousesThresholdAndSelectedQty: any = {};
 
   private loading: HTMLIonLoadingElement = null;
 
@@ -166,7 +167,20 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     } else if (this.listRequestOrdersToUpdate.length < 1) {
       this.presentToast("Seleccione almenos una operación de envío para generar las tareas de picking.", "danger");
     } else {
-      this.presentAlertConfirmPickings();
+      let listWarehousesOverThreshold = [];
+
+      for (let iWarehouse in this.listWarehousesThresholdAndSelectedQty) {
+        let warehouseThreshold = this.listWarehousesThresholdAndSelectedQty[iWarehouse];
+        if (typeof warehouseThreshold.max != 'undefined' && warehouseThreshold.max != null && warehouseThreshold.max > 0 && warehouseThreshold.selected > warehouseThreshold.max) {
+          listWarehousesOverThreshold.push(warehouseThreshold.warehouse);
+        }
+      }
+
+      if (listWarehousesOverThreshold.length > 0) {
+        this.presentAlertWarningOverThreshold(listWarehousesOverThreshold);
+      } else {
+        this.presentAlertConfirmPickings();
+      }
     }
   }
 
@@ -194,7 +208,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   requestOrderChanged(data) {
-    this.listRequestOrdersToUpdate = data;
+    this.listWarehousesThresholdAndSelectedQty = data.listThreshold;
+    this.listRequestOrdersToUpdate = data.listSelected;
     this.loadTeamAssignations();
   }
   //endregion
@@ -221,6 +236,24 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.loading = null;
         }
       });
+  }
+
+  async presentAlertWarningOverThreshold(listWarehousesOverThreshold: Array<string>) {
+    let msg = '';
+    if (listWarehousesOverThreshold.length == 1) {
+      msg = `Se ha superado el umbral máximo de envío a la tienda <b>${listWarehousesOverThreshold[0]}</b>. Ajuste las órdenes seleccionadas al máximo de la tienda.`
+    } else {
+      let warehousesOverThreshold = listWarehousesOverThreshold.join(', ');
+      msg = `Se ha superado el umbral máximo de envío a las tienda <b>${warehousesOverThreshold}</b>. Ajuste las órdenes seleccionadas al máximo de cada tienda.`
+    }
+
+    const alert = await this.alertController.create({
+      header: '¡Umbral máximo superado!',
+      message: msg,
+      buttons: [ 'Cerrar' ]
+    });
+
+    await alert.present();
   }
 
   async presentAlertConfirmPickings() {
