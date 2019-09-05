@@ -35,7 +35,7 @@ export class InputCodesComponent implements OnInit {
 
   }
 
-  keyUpInput(event) {
+  async keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -48,7 +48,12 @@ export class InputCodesComponent implements OnInit {
       this.inputProduct = null;
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
         case this.scanditProvider.codeValue.PRODUCT:
-          this.printerService.printTagBarcode([dataWrote]);
+          let warehouseId = await this.getWarehouseId();
+          if (warehouseId) {
+            this.postRelabelProduct(dataWrote);
+          } else {
+            this.printerService.printTagBarcode([dataWrote]);
+          }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           this.getSizeListByReference(dataWrote);
@@ -70,7 +75,7 @@ export class InputCodesComponent implements OnInit {
             if (responseSizeAndModel.sizes.length == 1) {
               let warehouseId = await this.getWarehouseId();
               if (warehouseId) {
-                this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+                this.postRelabelProduct(this.lastCodeScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               } else {
                 this.presentAlertInput(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               }
@@ -97,13 +102,20 @@ export class InputCodesComponent implements OnInit {
       });
   }
 
-  private async postRelabelProduct(modelId: number, sizeId: number, locationReference?: string) {
+  private async postRelabelProduct(productReference: string, modelId?: number, sizeId?: number, locationReference?: string) {
     let warehouseId = await this.getWarehouseId();
     let paramsRelabel: ProductModel.ParamsRelabel = {
-      modelId,
-      sizeId,
+      productReference,
       warehouseId
     };
+
+    if (modelId) {
+      paramsRelabel.modelId = modelId;
+    }
+
+    if (sizeId) {
+      paramsRelabel.sizeId = sizeId;
+    }
 
     if (locationReference) {
       paramsRelabel.locationReference = locationReference;
@@ -162,7 +174,7 @@ export class InputCodesComponent implements OnInit {
             let sizeId = listProductsSizes.sizes[data].id;
             let warehouseId = await this.getWarehouseId();
             if (warehouseId) {
-              this.postRelabelProduct(modelId, sizeId);
+              this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId);
             } else {
               this.presentAlertInput(modelId, sizeId);
             }
@@ -189,7 +201,7 @@ export class InputCodesComponent implements OnInit {
           text: 'Continuar',
           handler: (data) => {
             let reference = data.reference.trim();
-            this.postRelabelProduct(modelId, sizeId, reference);
+            this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId, reference);
           }
         }
       ]

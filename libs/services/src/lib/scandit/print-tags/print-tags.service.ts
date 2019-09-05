@@ -25,6 +25,7 @@ export class PrintTagsScanditService {
 
   private listProductsPrices: any[];
   private productRelabel: ProductModel.SizesAndModel;
+  private lastCodeScanned: string = 'start';
 
   constructor(
     private printerService: PrinterService,
@@ -57,12 +58,12 @@ export class PrintTagsScanditService {
 
   private initPrintTags() {
     let scannedPaused: boolean = false;
-    let lastCodeScanned: string = 'start';
+    this.lastCodeScanned = 'start';
     let codeScanned: string = null;
-    ScanditMatrixSimple.initPrintTags((response: ScanditModel.ResponsePrintTags) => {
+    ScanditMatrixSimple.initPrintTags(async (response: ScanditModel.ResponsePrintTags) => {
       if (response && response.result) {
         // Lock scan same code two times
-        if (response.barcode && response.barcode.data != lastCodeScanned) {
+        if (response.barcode && response.barcode.data != this.lastCodeScanned) {
 
         // Lock scan in less than two seconds
         /*if (!scannedPaused) {
@@ -70,7 +71,7 @@ export class PrintTagsScanditService {
           setTimeout(() => scannedPaused = false, 2 * 1000);*/
 
           codeScanned = response.barcode.data;
-          lastCodeScanned = codeScanned;
+          this.lastCodeScanned = codeScanned;
 
           switch (this.scanditProvider.checkCodeValue(codeScanned)) {
             case this.scanditProvider.codeValue.PRODUCT:
@@ -96,12 +97,17 @@ export class PrintTagsScanditService {
                   this.getCarrierOfProductAndPrint(codeScanned);
                   break;
                 case 4:
-                  this.printerService.printTagBarcode([codeScanned])
-                    .subscribe((res) => {
-                      console.log('Printed product tag ... ', res);
-                    }, (error) => {
-                      console.warn('Error to print tag ... ', error);
-                    });
+                  let warehouseUser = await this.authService.getWarehouseCurrentUser();
+                  if (warehouseUser) {
+                    this.postRelabelProduct(this.lastCodeScanned);
+                  } else {
+                    this.printerService.printTagBarcode([codeScanned])
+                      .subscribe((res) => {
+                        console.log('Printed product tag ... ', res);
+                      }, (error) => {
+                        console.warn('Error to print tag ... ', error);
+                      });
+                  }
                   break;
                 default:
                   ScanditMatrixSimple.setText(
@@ -137,7 +143,7 @@ export class PrintTagsScanditService {
                       }
                     }, (error) => {
                       // Reset last-code-scanned to can scan another time the same code
-                      lastCodeScanned = 'start';
+                      this.lastCodeScanned = 'start';
                       ScanditMatrixSimple.setText(
                         'Ha ocurrido un error al consultar los precios del artículo escaneado.',
                         this.scanditProvider.colorsMessage.error.color,
@@ -186,7 +192,7 @@ export class PrintTagsScanditService {
           } else if (this.typeTags == 4) {
             let modelId = this.productRelabel.model.id;
             let sizeId = this.productRelabel.sizes[sizeSelected].id;
-            this.postRelabelProduct(modelId, sizeId);
+            this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId);
           }
         }
       }
@@ -201,7 +207,7 @@ export class PrintTagsScanditService {
           let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
-              this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+              this.postRelabelProduct(code, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
             } else {
               let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
               this.productRelabel = responseSizeAndModel;
@@ -236,19 +242,28 @@ export class PrintTagsScanditService {
       });
   }
 
-  private async postRelabelProduct(modelId: number, sizeId: number) {
+  private async postRelabelProduct(productReference: string, modelId?: number, sizeId?: number) {
     let warehouseUser = await this.authService.getWarehouseCurrentUser();
     let warehouseId = null;
     if (warehouseUser) {
       warehouseId = warehouseUser.id;
     }
 
+    let paramsRelabel: ProductModel.ParamsRelabel = {
+      productReference,
+      warehouseId
+    };
+
+    if (modelId) {
+      paramsRelabel.modelId = modelId;
+    }
+
+    if (sizeId) {
+      paramsRelabel.sizeId = sizeId;
+    }
+
     this.productsService
-      .postRelabel({
-        modelId,
-        sizeId,
-        warehouseId
-      })
+      .postRelabel(paramsRelabel)
       .subscribe((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // Do product print
