@@ -26,7 +26,8 @@ export namespace PriceModel{
         tariffFuture: number,
         tariffName: string,
         tariffId: number,
-        model: ModelModel.Model
+        model: ModelModel.Model,
+        status?: number
     }
 
     export interface StatusType{
