@@ -20,6 +20,7 @@ import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
+import {environment} from "../../../services/src/environments/environment";
 
 @Component({
   selector: 'suite-prices',
@@ -383,7 +384,7 @@ export class PricesComponent implements OnInit {
         return 'https://ccc1.krackonline.com/131612-thickbox_default/krack-core-sallye.jpg';
       }
 
-      return priceObj.model.photos[0].urn;
+      return environment.urlBase + priceObj.model.photos[0].urn;
     }
 
     return false;
