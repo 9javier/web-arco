@@ -96,12 +96,13 @@ export class PricesComponent implements OnInit {
       validators: validators.haveItems("toSelect")
     });
 
-
-
-  displayedColumns: string[] = ['image', 'impress', 'model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
+  displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
   public disableExpansionPanel: boolean = true;
+
+  public mobileVersionTypeList: 'list'|'table' = 'list';
+  public showFiltersMobileVersion: boolean = false;
 
   constructor(
     private printerService: PrinterService,
@@ -397,6 +398,10 @@ export class PricesComponent implements OnInit {
     }
 
     return photoUrl.toString();
+  }
+
+  openFiltersMobile() {
+    this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
   }
 
   // GET & SET SECTION
