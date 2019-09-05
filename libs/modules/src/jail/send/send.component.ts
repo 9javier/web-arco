@@ -5,6 +5,7 @@ import { NavParams, ModalController } from '@ionic/angular';
 import { DataComponent } from '../data/data.component';
 import { WarehousesService, WarehouseModel } from '@suite/services';
 import { MatSelectChange } from '@angular/material';
+import { CarrierService, IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-send',
@@ -25,7 +26,9 @@ export class SendComponent implements OnInit {
   constructor(
     private navParams:NavParams,
     private modalController:ModalController,
-    private warehousesService:WarehousesService
+    private warehousesService:WarehousesService,
+    private carrierService:CarrierService,
+    private intermediaryService:IntermediaryService
   ) { 
     this.jail = this.navParams.get("jail");
   }
@@ -52,6 +55,7 @@ export class SendComponent implements OnInit {
   submit(jail) {
     console.log(jail);
     console.log(this.warehouse);
+    this.close();
   }
 
 }
