@@ -150,10 +150,15 @@ export class CalendarPickingComponent implements OnInit {
           }
         }
         
-        if(equals) {
+        if(equals && this.selectDates.length != 1) {
+
           this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
-        } else {
+
+        } else if(this.selectDates.length != 1){
           this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
+        }
+        else{
+          this.resetAcordeons();
         }
         this.modelDate = auxDates[0];
         this.date = this.modelDate;
@@ -164,6 +169,7 @@ export class CalendarPickingComponent implements OnInit {
       })
       console.log(this.selectDates);
     })
+  
   }
 
   /**
