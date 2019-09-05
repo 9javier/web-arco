@@ -194,3 +194,11 @@ export * from './global-variables/global-variables.module';
 /** List Pickings with Products Rebuild */
 export * from './list-picking-rebuild/list-picking-rebuild.component';
 export * from './list-picking-rebuild/list-picking-rebuild.module';
+
+/** Button to open popover filters */
+export * from './components/filter-button/filter-button.component';
+export * from './components/filter-button/filter-button.module';
+
+/** Popover for filters */
+export * from './components/filter-popover/filter-popover.component';
+export * from './components/filter-popover/filter-popover.module';

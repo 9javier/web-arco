@@ -21,6 +21,7 @@ import {TableEmployeesComponent} from "./table-employees/table-employees.compone
 import {TableRequestsOrdersComponent} from "./table-requests-orders/table-requests-orders.component";
 import {TableTeamAssignationComponent} from "./table-team-assignation/table-team-assignation.component";
 import {TableTypesComponent} from "./table-types/table-types.component";
+import {FilterButtonModule} from "../components/filter-button/filter-button.module";
 
 @NgModule({
   declarations: [WorkwaveTemplateRebuildComponent, ListWorkwaveTemplateRebuildComponent, TableTypesComponent, TableStoresComponent, TableEmployeesComponent, TableRequestsOrdersComponent, TableTeamAssignationComponent],
@@ -38,7 +39,8 @@ import {TableTypesComponent} from "./table-types/table-types.component";
     MatRadioModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    NgxMaterialTimepickerModule
+    NgxMaterialTimepickerModule,
+    FilterButtonModule
   ],
   providers: [
     { provide: DateAdapter, useClass: MondayStartingDateAdapterService },
