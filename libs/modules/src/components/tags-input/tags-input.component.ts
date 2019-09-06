@@ -486,7 +486,8 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       }
 
     
-    if(!node || typeof node === 'object'){
+    // if(!node || typeof node === 'object'){
+    if(!node){
       node = document.createElement("span");
       this.inputElement.nativeElement.appendChild(node);
     }
