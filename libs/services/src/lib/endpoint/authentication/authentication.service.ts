@@ -140,4 +140,8 @@ export class AuthenticationService {
       }
     });
   }
+
+  async isStoreUser(): Promise<boolean> {
+    return (await this.getCurrentUser()).hasWarehouse;
+  }
 }
