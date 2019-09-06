@@ -169,6 +169,11 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag ? page.pageIndex + 1 : 1;
+
+      this.form.value.pagination.page = this.page;
+      this.form.value.pagination.limit = this.limit;
+
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
 
