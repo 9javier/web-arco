@@ -18,7 +18,9 @@ export class TextareaComponent implements OnInit {
   errorMessage: string = null;
   processInitiated: boolean;
   lastCodeScanned: string = 'start';
-  private userWarehouse: WarehouseModel.Warehouse;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
 
   constructor(
     private alertController: AlertController,
@@ -33,16 +35,20 @@ export class TextareaComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.processInitiated = false;
-    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
 
-    if (this.userWarehouse && !this.userWarehouse.has_racks) {
+    this.processInitiated = false;
+
+    if (this.isStoreUser) {
       this.dataToWrite = 'PRODUCTO';
     }
   }
 
   keyUpInput(event) {
-    let warehouseId = this.userWarehouse ? this.userWarehouse.id : this.warehouseService.idWarehouseMain;
+    let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
@@ -54,7 +60,7 @@ export class TextareaComponent implements OnInit {
       this.lastCodeScanned = dataWrited;
 
       this.processInitiated = true;
-      if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+      if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
         this.presentToast(`Inicio de posicionamiento en ${dataWrited}`, 2000, 'success');
         this.containerReference = dataWrited;
         this.dataToWrite = 'PRODUCTO / CONTENEDOR';
@@ -75,13 +81,13 @@ export class TextareaComponent implements OnInit {
 
         this.inputPositioning = null;
         this.errorMessage = null;
-      } else if ((!this.userWarehouse && !this.containerReference) || (this.userWarehouse && this.userWarehouse.has_racks && !this.containerReference)) {
+      } else if (!this.isStoreUser && !this.containerReference) {
         this.inputPositioning = null;
         this.errorMessage = '¡Referencia del contenedor errónea!';
         this.processInitiated = false;
       } else {
         this.inputPositioning = null;
-        if (this.userWarehouse && !this.userWarehouse.has_racks) {
+        if (this.isStoreUser) {
           this.errorMessage = '¡Referencia del producto errónea!';
         } else {
           this.errorMessage = '¡Referencia del producto/contenedor errónea!';

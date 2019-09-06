@@ -37,9 +37,11 @@ export class ScanditService {
   private putProductNotFoundUrl = environment.apiBase+"/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
-  private userWarehouse: WarehouseModel.Warehouse;
   private scanContainerToNotFound: string = null;
   private intervalCleanLastCodeScanned = null;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
 
   constructor(
     private http: HttpClient,
@@ -58,12 +60,15 @@ export class ScanditService {
   }
 
   async positioning() {
-    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
 
     let lastCodeScanned: string = "start";
     let positionsScanning = [];
     let containerReference = '';
-    let warehouseId = this.userWarehouse ? this.userWarehouse.id : this.warehouseService.idWarehouseMain;
+    let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
@@ -98,7 +103,7 @@ export class ScanditService {
         if (code === lastCodeScanned) return;
         lastCodeScanned = code;
 
-        if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+        if (!this.isStoreUser && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
           //Container
           positionsScanning = [];
@@ -110,7 +115,7 @@ export class ScanditService {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
           let productReference = code;
-          if ((!this.userWarehouse && !containerReference) || (this.userWarehouse && this.userWarehouse.has_racks && !containerReference)) {
+          if (!this.isStoreUser && !containerReference) {
             this.positioningLog(3, "1.4.1", "no container!");
             ScanditMatrixSimple.setText(`Debe escanear una posición para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
@@ -146,8 +151,8 @@ export class ScanditService {
                 this.positioningLog(3, "1.4.2.2.2", "product located, saving scan hisotry and storing product (server)");
                 positionsScanning.push({product: productReference, position: containerReference, warehouse: warehouseId});
                 let msgSetText = '';
-                if (this.userWarehouse && !this.userWarehouse.has_racks) {
-                  msgSetText = `Escaneado ${productReference} para ubicar en el almacén ${this.userWarehouse.name}`;
+                if (this.isStoreUser) {
+                  msgSetText = `Escaneado ${productReference} para ubicar en la tienda ${this.storeUserObj.name}`;
                 } else {
                   msgSetText = `Escaneado ${productReference} para posicionar en ${containerReference}`;
                 }
@@ -175,8 +180,8 @@ export class ScanditService {
           if (res.body.code == 200 || res.body.code == 201) {
             this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
             let msgSetText = '';
-            if (this.userWarehouse && !this.userWarehouse.has_racks) {
-              msgSetText = `Producto ${params.productReference} añadido al almacén ${this.userWarehouse.name}`;
+            if (this.isStoreUser) {
+              msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
             } else {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }

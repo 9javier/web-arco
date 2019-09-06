@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AlertController, ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {AuthenticationService, PriceService, ProductModel, ProductsService} from "@suite/services";
+import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
 
 @Component({
   selector: 'suite-input-codes',
@@ -14,6 +14,9 @@ export class InputCodesComponent implements OnInit {
   dataToWrite: string = 'PRODUCTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
 
   public typeTagsBoolean: boolean = false;
 
@@ -31,8 +34,11 @@ export class InputCodesComponent implements OnInit {
     },800);
   }
 
-  ngOnInit() {
-
+  async ngOnInit() {
+    this.isStoreUser = await this.authService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authService.getStoreCurrentUser();
+    }
   }
 
   keyUpInput(event) {
@@ -68,8 +74,7 @@ export class InputCodesComponent implements OnInit {
           let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
-              let warehouseId = await this.getWarehouseId();
-              if (warehouseId) {
+              if (this.isStoreUser) {
                 this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               } else {
                 this.presentAlertInput(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
@@ -98,12 +103,14 @@ export class InputCodesComponent implements OnInit {
   }
 
   private async postRelabelProduct(modelId: number, sizeId: number, locationReference?: string) {
-    let warehouseId = await this.getWarehouseId();
     let paramsRelabel: ProductModel.ParamsRelabel = {
       modelId,
-      sizeId,
-      warehouseId
+      sizeId
     };
+
+    if (this.isStoreUser){
+      paramsRelabel.warehouseId = this.storeUserObj.id;
+    }
 
     if (locationReference) {
       paramsRelabel.locationReference = locationReference;
@@ -160,8 +167,7 @@ export class InputCodesComponent implements OnInit {
 
             let modelId = listProductsSizes.model.id;
             let sizeId = listProductsSizes.sizes[data].id;
-            let warehouseId = await this.getWarehouseId();
-            if (warehouseId) {
+            if (this.isStoreUser) {
               this.postRelabelProduct(modelId, sizeId);
             } else {
               this.presentAlertInput(modelId, sizeId);
@@ -196,16 +202,6 @@ export class InputCodesComponent implements OnInit {
     });
 
     await alert.present();
-  }
-
-  private async getWarehouseId() {
-    let warehouseUser = await this.authService.getWarehouseCurrentUser();
-    let warehouseId = null;
-    if (warehouseUser) {
-      warehouseId = warehouseUser.id;
-    }
-
-    return warehouseId;
   }
 
 }

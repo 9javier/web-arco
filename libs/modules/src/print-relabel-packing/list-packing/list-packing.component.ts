@@ -4,7 +4,7 @@ import {ActionSheetController, LoadingController, ToastController} from "@ionic/
 import {Router} from "@angular/router";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
-import {AuthenticationService, TypeModel, TypesService} from "@suite/services";
+import {AuthenticationService, TypeModel, TypesService, WarehouseModel} from "@suite/services";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 
 @Component({
@@ -17,6 +17,9 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
   public listCarriers: CarrierModel.Carrier[];
   public isLoadingData: boolean = true;
   private loading: any;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
 
   private carriersTypes: TypeModel.Type[] = [];
 
@@ -32,7 +35,12 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
     private typesService: TypesService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
     this.carriersTypes = this.typesService.listPacking;
     this.loadCarriers();
   }
@@ -40,10 +48,9 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
   private async loadCarriers() {
     this.isLoadingData = true;
 
-    let warehouse = await this.authenticationService.getWarehouseCurrentUser();
     let warehouseId = null;
-    if (warehouse) {
-      warehouseId = warehouse.id;
+    if (this.storeUserObj) {
+      warehouseId = this.storeUserObj.id;
     }
 
     this.carriersService
@@ -58,7 +65,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
         } else if (res.code != 204) {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let warehouseTypeName = 'de la tienda';
-          if (warehouse.has_racks) {
+          if (!this.isStoreUser) {
             warehouseTypeName = 'del almacén';
           }
           this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
@@ -70,7 +77,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
 
         if (error.error.code != 204) {
           let warehouseTypeName = 'de la tienda';
-          if (warehouse.has_racks) {
+          if (!this.isStoreUser) {
             warehouseTypeName = 'del almacén';
           }
           this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');

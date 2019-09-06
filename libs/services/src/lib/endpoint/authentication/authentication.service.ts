@@ -122,18 +122,18 @@ export class AuthenticationService {
     });
   }
 
-  getWarehouseCurrentUser(): Promise<WarehouseModel.Warehouse> {
+  getStoreCurrentUser(): Promise<WarehouseModel.Warehouse> {
     return this.storage.get(USER_KEY).then(res => {
       if (res) {
         let warehouse = null;
         if(JSON.parse(res)){
           let user = JSON.parse(res);
-          if (user.permits.length == 1) {
-            //Get the first warehouse of user
-            warehouse = user.permits[0].warehouse;
-          } else if (user.hasWarehouse && user.warehouse) {
-            // Get User Warehouse
-            warehouse = user.warehouse;
+          if (user.hasWarehouse) {
+            if (user.warehouse) {
+              warehouse = user.warehouse;
+            } else if (user.permits.length == 1) {
+              warehouse = user.permits[0].warehouse;
+            }
           }
         }
         return warehouse;

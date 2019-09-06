@@ -19,9 +19,11 @@ export class ReceptionScanditService {
 
   private timeoutHideText;
   private scannerPaused: boolean = false;
-  private userWarehouse: WarehouseModel.Warehouse;
   private lastCodeScanned: string;
   private typeReception: number = 1;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
 
   constructor(
     private router: Router,
@@ -37,7 +39,11 @@ export class ReceptionScanditService {
   ) {}
 
   async reception(typeReception: number) {
-    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
     this.lastCodeScanned = 'start';
     this.receptionProvider.resumeProcessStarted = false;
     this.typeReception = typeReception;

@@ -9,7 +9,8 @@ import {
   PriceModel,
   PriceService,
   WarehousesService,
-  ProductsService, AuthenticationService
+  WarehouseService,
+  ProductsService, AuthenticationService, WarehouseModel
 
 } from '@suite/services';
 
@@ -103,6 +104,9 @@ export class PricesComponent implements OnInit {
 
   public disableExpansionPanel: boolean = true;
 
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
+
   constructor(
     private printerService: PrinterService,
     private priceService: PriceService,
@@ -110,6 +114,7 @@ export class PricesComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private warehousesService: WarehousesService,
+    private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService
   ) {
@@ -197,7 +202,11 @@ export class PricesComponent implements OnInit {
    */
   async printPrices(items, warehouseId: number) {
     if (!warehouseId) {
-      warehouseId = (await this.authenticationService.getWarehouseCurrentUser()).id;
+      if (this.isStoreUser) {
+        warehouseId = this.storeUserObj.id;
+      } else {
+        warehouseId = this.warehouseService.idWarehouseMain;
+      }
     }
 
     let prices = this.selectedForm.value.toSelect.map((price, i) => {
@@ -226,7 +235,12 @@ export class PricesComponent implements OnInit {
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
     this.getWarehouses();
 
 

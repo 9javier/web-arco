@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {PrinterService} from "../../printer/printer.service";
-import {AuthenticationService, PriceService, ProductModel, ProductsService} from "@suite/services";
+import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
 import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
 import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
 
@@ -25,6 +25,9 @@ export class PrintTagsScanditService {
 
   private listProductsPrices: any[];
   private productRelabel: ProductModel.SizesAndModel;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
 
   constructor(
     private printerService: PrinterService,
@@ -55,7 +58,12 @@ export class PrintTagsScanditService {
     this.initPrintTags();
   }
 
-  private initPrintTags() {
+  private async initPrintTags() {
+    this.isStoreUser = await this.authService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authService.getStoreCurrentUser();
+    }
+
     let scannedPaused: boolean = false;
     let lastCodeScanned: string = 'start';
     let codeScanned: string = null;
@@ -237,18 +245,17 @@ export class PrintTagsScanditService {
   }
 
   private async postRelabelProduct(modelId: number, sizeId: number) {
-    let warehouseUser = await this.authService.getWarehouseCurrentUser();
-    let warehouseId = null;
-    if (warehouseUser) {
-      warehouseId = warehouseUser.id;
+    let paramsRelabel: ProductModel.ParamsRelabel = {
+      modelId,
+      sizeId
+    };
+
+    if (this.isStoreUser) {
+      paramsRelabel.warehouseId = this.storeUserObj.id;
     }
 
     this.productsService
-      .postRelabel({
-        modelId,
-        sizeId,
-        warehouseId
-      })
+      .postRelabel(paramsRelabel)
       .subscribe((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // Do product print
