@@ -53,7 +53,6 @@ export class PricesComponent implements OnInit {
     brands: [],
     seasons: [],
     colors: [],
-    warehouseId: 49,
     status: 0,
     tariffId: 0,
     pagination: this.formBuilder.group({
