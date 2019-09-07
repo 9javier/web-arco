@@ -13,7 +13,8 @@ export class TariffService {
   /**urls for tariff service */
   private getIndexUrl:string = environment.apiBase+"/tariffs";
   private postUpdateEnabledUrl:string = environment.apiBase+"/tariffs/status";
-
+  private updateTariffStatusSGA : string = environment.apiBase+"/tariffs2/updateTariffsState";// enable = 1/0
+  private getTariffIfSoftdeleteSGA : string = environment.apiBase+"/tariffs2/tariffsIfSoftdeleted";
   constructor(private http:HttpClient) { }
 
   /**
@@ -39,4 +40,19 @@ export class TariffService {
       return response;
     }));
   }
+
+  getTariffIfSoftdelete() {
+    return this.http.get<{
+      data:{
+        name: string;
+        activeFrom: string;
+        activeTill: string;
+      }[]
+    }>(this.getTariffIfSoftdeleteSGA,{}).pipe(map(response=>{
+      return response;
+    })).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
 }

@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
   templateUrl: './tariff.component.html',
   styleUrls: ['./tariff.component.scss']
 })
-export class TariffComponent implements OnInit {
+export class TariffSGAComponent implements OnInit {
   /**Arrays to be shown */
   tariffs: Array<any> = [];
   tariffsUpdate: Array<any> = [];
@@ -111,20 +111,22 @@ export class TariffComponent implements OnInit {
    */
   getTariffs(page: number, limit: number, id: number = 49): void {
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit, id).subscribe(
+    this.tariffService.getTariffIfSoftdelete().subscribe(
       tariffs => {
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
-        this.tariffs = tariffs.results.map(result => {
+        console.log('##################################################')
+        console.log(tariffs)
+        this.tariffs = tariffs.map(result => {
           result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
           result.activeTill = new Date(result.activeTill).toLocaleDateString();
           return result;
         });
         this.initSelectForm(this.tariffs);
-        this.dataSource = new MatTableDataSource<any>(this.tariffs);
-        let paginator = tariffs.pagination;
-        this.paginator.length = paginator.totalResults;
-        this.paginator.pageIndex = paginator.page - 1;
+       this.dataSource = new MatTableDataSource<any>(this.tariffs);
+        let paginator = 1;
+        this.paginator.length = 2;
+        this.paginator.pageIndex = 0;
       },
       () => {
         this.intermediaryService.dismissLoading();
