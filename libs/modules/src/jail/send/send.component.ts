@@ -53,8 +53,15 @@ export class SendComponent implements OnInit {
   }
 
   submit(jail) {
-    console.log(jail);
-    console.log(this.warehouse);
+    this.intermediaryService.presentLoading();
+    this.carrierService.sendPackingToWareouse(jail.id, this.warehouse.id).subscribe(() => {
+        this.intermediaryService.presentToastSuccess("Jaula enviado con exito");  
+    }, (err)=> {
+      this.intermediaryService.presentToastSuccess("Error al enviar la jaula");  
+      console.log(err);
+    }, () => {
+      this.intermediaryService.dismissLoading();
+    })
     this.close();
   }
 
