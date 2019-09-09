@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
+
 import * as _ from 'lodash';
 
 import {
@@ -11,7 +12,7 @@ import {
 } from '@suite/services';
 
 import { validators } from '../utils/validators';
- 
+
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -24,11 +25,13 @@ export class TariffComponent implements OnInit {
   /**Arrays to be shown */
   tariffs: Array<any> = [];
   tariffsUpdate: Array<any> = [];
+
   filters: FormGroup = this.formBuilder.group({
     warehouseId: 51
   });
 
   warehouses: Array<any> = [];
+
   /**Quantity of items for show in any page */
   pagerValues = [50, 100, 500];
 
@@ -148,47 +151,25 @@ export class TariffComponent implements OnInit {
   // }
 
   onChecked(i, event) {
-    var state = event;
-    console.log(state);
     console.log('On Change Check ',i , event);
     let tariff: any = this.tariffs[i];
-    
+
     let exist = _.find(this.tariffsUpdate, {'position': i});
 
     if(exist) {
       _.remove(this.tariffsUpdate, function(n) {
         return n.position == i;
       });
-    } 
-    else {
+    } else {
       if(tariff.enabled != event) {
         let object = {
-          //position: i,
-          //warehouseId: tariff.warehouseId,
+          position: i,
+          warehouseId: tariff.warehouseId,
           tariffId: tariff.tariffId,
-          enabled: state
+          enabled: event
         }
-        console.log('push');
         this.tariffsUpdate.push(object);
-        console.log(this.tariffsUpdate + 'cuando es falso');
       }
-      else {
-        let object = {
-          //position: i,
-          //warehouseId: tariff.warehouseId,
-          tariffId: tariff.tariffId,
-          enabled: state
-        }
-        for (let i = 0; i < this.tariffsUpdate.length; i++) {
-          const element = this.tariffsUpdate[i];
-          if(this.tariffsUpdate[i].tariffId == object.tariffId && object.enabled == true){
-            this.tariffsUpdate.splice(i);
-            console.log(this.tariffsUpdate.length + "luego de eliminar");
-            return false;
-          }
-        }
-      }
-      console.log(this.tariffsUpdate);
     }
 
     console.log('this.tariffsUpdate after push', this.tariffsUpdate);
