@@ -53,6 +53,8 @@ export class PricesComponent implements OnInit {
     brands: [],
     seasons: [],
     colors: [],
+    families: [],
+    lifestyles: [],
     status: 0,
     tariffId: 0,
     pagination: this.formBuilder.group({
@@ -70,6 +72,8 @@ export class PricesComponent implements OnInit {
   brands: Array<TagsInputOption> = [];
   seasons: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
+  families: Array<TagsInputOption> = [];
+  lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
@@ -315,6 +319,8 @@ export class PricesComponent implements OnInit {
       this.brands = filters.brands;
       this.seasons = filters.seasons;
       this.models = filters.models;
+      this.families = filters.families;
+      this.lifestyles = filters.lifestyles;
     });
   }
 
@@ -325,6 +331,7 @@ export class PricesComponent implements OnInit {
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
     this.priceService.getIndex(parameters).subscribe(prices => {
+      this.showFiltersMobileVersion = false;
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
