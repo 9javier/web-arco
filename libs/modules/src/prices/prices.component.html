@@ -186,6 +186,18 @@
                         </ion-item>
                       </ion-col>
                     </ion-row>
+                    <ion-row>
+                      <ion-col class="btn-remove" size="6">
+                        <ion-button (click)="clearFilters()">
+                          Borra Filtros
+                        </ion-button>
+                      </ion-col>
+                      <ion-col class="btn-apply" size="6">
+                        <ion-button (click)="applyFilters()">
+                          Aplicar Filtros
+                        </ion-button>
+                      </ion-col>
+                    </ion-row>
                   </ion-grid>
                 </form>
               </ion-grid>
