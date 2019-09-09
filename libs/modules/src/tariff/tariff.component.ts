@@ -14,6 +14,7 @@ import {
 
 import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
+import {SortModel} from "../../../services/src/models/endpoints/Sort";
 
 
 @Component({
@@ -38,11 +39,12 @@ export class TariffComponent implements OnInit {
 
     private page:number = 0;
     private limit:number = this.pagerValues[0];
+    private sortValues: SortModel.Sort = { field: null, type: null };
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
-    displayedColumns: string[] = ['name', 'initDate', 'endDate'];
+    displayedColumns: string[] = ['name', 'initDate', 'endDate', 'quantity'];
     dataSource: any;
 
     warehouseId:number = 51;
@@ -58,7 +60,7 @@ export class TariffComponent implements OnInit {
     console.log(this.filters);
     this.filters.patchValue({warehouseId:1});
     this.getWarehouses();
-    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+    this.getTariffs(this.page, this.limit, this.sortValues);
     this.listenChanges();
   }
   /**
@@ -67,7 +69,7 @@ export class TariffComponent implements OnInit {
    */
   filterByWarehouse(event){
     this.warehouseId = event.detail.value;
-    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+    this.getTariffs(this.page, this.limit, this.sortValues);
   }
 
   listenChanges():void{
@@ -79,7 +81,7 @@ export class TariffComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+      this.getTariffs(this.page, this.limit, this.sortValues);
     });
   }
 
@@ -103,9 +105,9 @@ export class TariffComponent implements OnInit {
   /**
    * Get labels to show
    */
-  getTariffs(page:number,limit:number,id:number=51):void{
+  getTariffs(page: number, limit: number, sort: SortModel.Sort) {
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit,id).subscribe(tariffs=>{
+    this.tariffService.getIndex(page, limit, sort).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
@@ -120,5 +122,14 @@ export class TariffComponent implements OnInit {
     },()=>{
       this.intermediaryService.dismissLoading();
     })
+  }
+
+  sortData(event) {
+    if (event.direction == '') {
+      this.sortValues = { field: null, type: null };
+    } else {
+      this.sortValues = { field: event.active.toLowerCase(), type: event.direction.toLowerCase() };
+    }
+    this.getTariffs(this.page,this.limit, this.sortValues);
   }
 }

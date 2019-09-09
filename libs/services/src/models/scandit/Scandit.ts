@@ -23,7 +23,8 @@ export namespace ScanditModel {
   export interface ResponsePrintTags extends Response {
     action: ActionsPrintTags,
     type_tags?: 1|2,
-    size_selected?: number
+    size_selected?: number,
+    response: boolean
   }
 
   export interface ResponseProductInfo extends Response {
@@ -58,7 +59,8 @@ export namespace ScanditModel {
 
   enum ActionsPrintTags {
     change_type = 'change_tag_type',
-    select_size = 'select_size'
+    select_size = 'select_size',
+    print_pvp_label = 'print_pvp_label'
   }
 
 }

@@ -4,7 +4,7 @@ import { TariffComponent } from './tariff.component';
 import { RouterModule, Routes } from "@angular/router";
 import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
+import {MatListModule, MatTableModule, MatPaginatorModule, MatSortModule} from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 
@@ -27,7 +27,8 @@ const routes:Routes = [
     MatPaginatorModule,
     BreadcrumbModule,
     RouterModule.forChild(routes),
-    TagsInputModule
+    TagsInputModule,
+    MatSortModule
   ]
 })
 export class TariffModule { }

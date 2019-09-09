@@ -21,6 +21,7 @@ import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
+import {environment} from "../../../services/src/environments/environment";
 
 @Component({
   selector: 'suite-prices',
@@ -53,7 +54,8 @@ export class PricesComponent implements OnInit {
     brands: [],
     seasons: [],
     colors: [],
-    warehouseId: 49,
+    families: [],
+    lifestyles: [],
     status: 0,
     tariffId: 0,
     pagination: this.formBuilder.group({
@@ -71,6 +73,8 @@ export class PricesComponent implements OnInit {
   brands: Array<TagsInputOption> = [];
   seasons: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
+  families: Array<TagsInputOption> = [];
+  lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
@@ -97,12 +101,13 @@ export class PricesComponent implements OnInit {
       validators: validators.haveItems("toSelect")
     });
 
-
-
-  displayedColumns: string[] = ['impress', 'model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
+  displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
   public disableExpansionPanel: boolean = true;
+
+  public mobileVersionTypeList: 'list'|'table' = 'list';
+  public showFiltersMobileVersion: boolean = false;
 
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
@@ -173,6 +178,11 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag ? page.pageIndex + 1 : 1;
+
+      this.form.value.pagination.page = this.page;
+      this.form.value.pagination.limit = this.limit;
+
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
 
@@ -323,6 +333,8 @@ export class PricesComponent implements OnInit {
       this.brands = filters.brands;
       this.seasons = filters.seasons;
       this.models = filters.models;
+      this.families = filters.families;
+      this.lifestyles = filters.lifestyles;
     });
   }
 
@@ -333,6 +345,7 @@ export class PricesComponent implements OnInit {
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
     this.priceService.getIndex(parameters).subscribe(prices => {
+      this.showFiltersMobileVersion = false;
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
@@ -387,6 +400,45 @@ export class PricesComponent implements OnInit {
       return priceObj.percent;
     }
     return null;
+  }
+
+  getPhotoUrl(priceObj: PriceModel.Price): string|boolean {
+    let isPhotoTestUrl: boolean = false;
+
+    if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
+      if (isPhotoTestUrl) {
+        return 'https://ccc1.krackonline.com/131612-thickbox_default/krack-core-sallye.jpg';
+      }
+
+      return environment.urlBase + priceObj.model.photos[0].urn;
+    }
+
+    return false;
+  }
+
+  getPhotoUrlDesktop(price: PriceModel.Price): string {
+    let photoUrl = this.getPhotoUrl(price);
+
+    if (!photoUrl) {
+      return '../assets/img/placeholder-product.jpg';
+    }
+
+    return photoUrl.toString();
+  }
+
+  openFiltersMobile() {
+    this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
+  }
+
+  getFamilyAndLifestyle(priceObj: PriceModel.Price): string {
+    let familyLifestyle: string[] = [];
+    if (priceObj.model.family) {
+      familyLifestyle.push(priceObj.model.family.name);
+    }
+    if (priceObj.model.lifestyle) {
+      familyLifestyle.push(priceObj.model.lifestyle.name);
+    }
+    return familyLifestyle.join(' - ');
   }
 
   // GET & SET SECTION

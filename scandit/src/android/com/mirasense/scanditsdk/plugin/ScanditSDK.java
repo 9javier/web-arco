@@ -1248,7 +1248,7 @@ public class ScanditSDK extends CordovaPlugin {
       if (show) {
         String fActionWarning = actionWarning;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityStarted);
         builder
           .setTitle("Atención")
           .setMessage(text)

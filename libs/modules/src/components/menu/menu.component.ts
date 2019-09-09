@@ -242,21 +242,7 @@ export class MenuComponent implements OnInit {
           url: '/print/product/received',
           icon: 'archive'
         },
-        // TODO When enable Relabel of Products, remove the next two sections
         {
-          title: 'Código Caja',
-          id: 'print-ref-tag',
-          url: 'print/tag/ref',
-          icon: 'barcode'
-        },
-        {
-          title: 'Código Caja Manual',
-          id: 'print-ref-tag-manual',
-          url: '/print-tag/manual/box',
-          icon: 'barcode'
-        },
-        // TODO When enable Relabel of Products, decompose the next two sections
-        /*{
           title: 'Reetiquetado productos',
           id: 'print-product',
           url: 'print/product/relabel',
@@ -267,7 +253,7 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
-        }*/
+        }
       ]
     },
     {
