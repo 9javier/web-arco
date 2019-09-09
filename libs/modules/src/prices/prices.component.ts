@@ -409,6 +409,17 @@ export class PricesComponent implements OnInit {
     this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
   }
 
+  getFamilyAndLifestyle(priceObj: PriceModel.Price): string {
+    let familyLifestyle: string[] = [];
+    if (priceObj.model.family) {
+      familyLifestyle.push(priceObj.model.family.name);
+    }
+    if (priceObj.model.lifestyle) {
+      familyLifestyle.push(priceObj.model.lifestyle.name);
+    }
+    return familyLifestyle.join(' - ');
+  }
+
   // GET & SET SECTION
   get warehouseId() {
     return this.form.get('warehouseId').value

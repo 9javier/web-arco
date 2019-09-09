@@ -208,7 +208,7 @@
                           <ion-row class="row-family-lifestyle-size">
                             <ion-col class="family-lifestyle" size="9">
                               <p>
-                                <!-- TODO Load family and lifestyle '{{family}} - {{lifestyle}}'-->
+                                {{getFamilyAndLifestyle(price)}}
                               </p>
                             </ion-col>
                             <ion-col class="size" size="3">
@@ -223,7 +223,7 @@
                             </ion-col>
                             <ion-col class="stock" size="6">
                               <p>
-                                <!-- TODO Load stock unities '{{stock}} Uds.' -->
+                                {{ price.stockStore ? price.stockStore.cantidad : 0 }}
                               </p>
                             </ion-col>
                           </ion-row>
@@ -342,7 +342,7 @@
                   familia
                 </th>
                 <td mat-cell *matCellDef="let price">
-
+                  {{ price.model.family ? price.model.family.name : '' }}
                 </td>
               </ng-container>
 
@@ -351,7 +351,7 @@
                   lifestyle
                 </th>
                 <td mat-cell *matCellDef="let price">
-                  {{ price?.priceOriginal }}€
+                  {{ price.model.lifestyle ? price.model.lifestyle.name : '' }}
                 </td>
               </ng-container>
 
@@ -369,7 +369,7 @@
                       Stock disponible
                     </th>
                     <td mat-cell *matCellDef="let price">
-                        0
+                      {{ price.stockStore ? price.stockStore.cantidad : 0 }}
                     </td>
                 </ng-container>
 
