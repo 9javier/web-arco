@@ -204,7 +204,7 @@ export class InputCodesComponent implements OnInit {
           }
         },
         {
-          text: 'Si',
+          text: 'Sí',
           handler: () => {
             price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
             this.printerService.printTagPriceUsingPrice(price);

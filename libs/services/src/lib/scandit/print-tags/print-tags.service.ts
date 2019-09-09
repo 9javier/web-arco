@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {PrinterService} from "../../printer/printer.service";
-import {AuthenticationService, PriceService, ProductModel, ProductsService} from "@suite/services";
+import {AuthenticationService, PriceModel, PriceService, ProductModel, ProductsService} from "@suite/services";
 import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
 import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
+import {PrintModel} from "../../../models/endpoints/Print";
 
 declare let Scandit;
 declare let GScandit;
@@ -26,6 +27,9 @@ export class PrintTagsScanditService {
   private listProductsPrices: any[];
   private productRelabel: ProductModel.SizesAndModel;
   private lastCodeScanned: string = 'start';
+  private scannedPaused: boolean = false;
+
+  private productToPrintPvpLabel: PriceModel.PriceByModelTariff = null;
 
   constructor(
     private printerService: PrinterService,
@@ -57,13 +61,12 @@ export class PrintTagsScanditService {
   }
 
   private initPrintTags() {
-    let scannedPaused: boolean = false;
     this.lastCodeScanned = 'start';
     let codeScanned: string = null;
     ScanditMatrixSimple.initPrintTags(async (response: ScanditModel.ResponsePrintTags) => {
       if (response && response.result) {
         // Lock scan same code two times
-        if (response.barcode && response.barcode.data != this.lastCodeScanned) {
+        if (response.barcode && response.barcode.data != this.lastCodeScanned && !this.scannedPaused) {
 
         // Lock scan in less than two seconds
         /*if (!scannedPaused) {
@@ -85,11 +88,17 @@ export class PrintTagsScanditService {
                     });
                   break;
                 case 2:
-                  this.printerService.printTagPrices([codeScanned])
-                    .subscribe((res) => {
-                      console.log('Printed price tag ... ', res);
-                    }, (error) => {
-                      console.warn('Error to print tag ... ', error);
+                  this.priceService
+                    .postPricesByProductsReferences({ references: [codeScanned] })
+                    .subscribe((prices) => {
+                      let price = prices[0];
+                      if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                        this.scannedPaused = true;
+                        this.productToPrintPvpLabel = price;
+                        ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                      } else {
+                        this.printerService.printTagPriceUsingPrice(price);
+                      }
                     });
                   break;
                 case 3:
@@ -135,6 +144,14 @@ export class PrintTagsScanditService {
                     .postPricesByModel(codeScanned)
                     .subscribe((response) => {
                       if (response && response.length == 1) {
+                        let price = response[0];
+                        if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                          this.scannedPaused = true;
+                          this.productToPrintPvpLabel = price;
+                          ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                        } else {
+                          this.printerService.printTagPriceUsingPrice(price);
+                        }
                         this.printerService.printTagPriceUsingPrice(response[0]);
                       } else if (response && response.length > 1) {
                         this.listProductsPrices = response;
@@ -188,11 +205,27 @@ export class PrintTagsScanditService {
         } else if (response.action == 'select_size') {
           let sizeSelected: number = response.size_selected;
           if (this.typeTags == 2) {
-            this.printerService.printTagPriceUsingPrice(this.listProductsPrices[sizeSelected]);
+            let price = this.listProductsPrices[sizeSelected];
+            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+              this.scannedPaused = true;
+              this.productToPrintPvpLabel = price;
+              ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+            } else {
+              this.printerService.printTagPriceUsingPrice(price);
+            }
           } else if (this.typeTags == 4) {
             let modelId = this.productRelabel.model.id;
             let sizeId = this.productRelabel.sizes[sizeSelected].id;
             this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId);
+          }
+        } else if (response.action == 'print_pvp_label') {
+          this.scannedPaused = false;
+          if (response.response) {
+            this.productToPrintPvpLabel.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+            this.printerService.printTagPriceUsingPrice(this.productToPrintPvpLabel);
+          } else {
+            this.lastCodeScanned = 'start';
+            this.productToPrintPvpLabel = null;
           }
         }
       }

@@ -14,6 +14,7 @@ package com.mirasense.scanditsdk.plugin;
 
 import android.Manifest;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -147,6 +148,7 @@ public class ScanditSDK extends CordovaPlugin {
 
   private ArrayList<Command> mQueuedCommands = new ArrayList<Command>();
 
+  private static Activity activityStarted = null;
 
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -1239,7 +1241,7 @@ public class ScanditSDK extends CordovaPlugin {
       if (show) {
         String fActionWarning = actionWarning;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(MatrixSimpleActivity.matrixSimple);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityStarted);
         builder
           .setTitle("Atención")
           .setMessage(text)
@@ -1706,6 +1708,10 @@ public class ScanditSDK extends CordovaPlugin {
     PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
     pResult.setKeepCallback(true);
     mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  public static void setActivityStarted(Activity activity) {
+    activityStarted = activity;
   }
 
   public static void setActionBar(ActionBar actionBar) {
