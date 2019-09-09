@@ -2,7 +2,8 @@ import {Component, Input, OnInit} from '@angular/core';
 import {AlertController, ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {PriceService} from "@suite/services";
+import {PriceModel, PriceService} from "@suite/services";
+import {PrintModel} from "../../../../services/src/models/endpoints/Print";
 
 @Component({
   selector: 'suite-input-codes',
@@ -63,11 +64,15 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             case 2:
-              this.printerService.printTagPrices([dataWrote])
-                .subscribe((res) => {
-                  console.log('Printed price tag ... ', res);
-                }, (error) => {
-                  console.warn('Error to print tag ... ', error);
+              this.priceService
+                .postPricesByProductsReferences({ references: [dataWrote] })
+                .subscribe((prices) => {
+                  let price = prices[0];
+                  if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                    this.presentAlertWarningPriceWithoutTariff(price);
+                  } else {
+                    this.printerService.printTagPriceUsingPrice(price);
+                  }
                 });
               break;
             default:
@@ -85,9 +90,13 @@ export class InputCodesComponent implements OnInit {
               this.priceService
                 .postPricesByModel(dataWrote)
                 .subscribe((response) => {
-                  console.debug('Test::Response -> ', response);
                   if (response && response.length == 1) {
-                    this.printerService.printTagPriceUsingPrice(response[0]);
+                    let price = response[0];
+                    if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                      this.presentAlertWarningPriceWithoutTariff(price);
+                    } else {
+                      this.printerService.printTagPriceUsingPrice(price);
+                    }
                   } else if (response && response.length > 1) {
                     // Request user select size to print
                     let listItems = response.map((productPrice, iProductPrice) => {
@@ -166,7 +175,39 @@ export class InputCodesComponent implements OnInit {
               return false;
             }
 
-            this.printerService.printTagPriceUsingPrice(listProductPrices[data]);
+            let price = listProductPrices[data];
+            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+              this.presentAlertWarningPriceWithoutTariff(price);
+            } else {
+              this.printerService.printTagPriceUsingPrice(price);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async presentAlertWarningPriceWithoutTariff(price: PriceModel.PriceByModelTariff) {
+    const alert = await this.alertController.create({
+      header: '¡Precio sin tarifa!',
+      message: 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?',
+      buttons: [
+        {
+          text: 'No',
+          handler: () => {
+            this.lastCodeScanned = 'start';
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          }
+        },
+        {
+          text: 'Si',
+          handler: () => {
+            price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+            this.printerService.printTagPriceUsingPrice(price);
           }
         }
       ]
