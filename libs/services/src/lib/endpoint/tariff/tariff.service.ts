@@ -15,6 +15,7 @@ export class TariffService {
   private postUpdateEnabledUrl:string = environment.apiBase+"/tariffs/status";
   private updateTariffStatusSGA : string = environment.apiBase+"/tariffs2/updateTariffsState";// enable = 1/0
   private getTariffIfSoftdeleteSGA : string = environment.apiBase+"/tariffs2/tariffsIfSoftdeleted";
+  private putTariffEnabledUrl: string = environment.apiBase+"/tariffs2/updateTariffsState";
   constructor(private http:HttpClient) { }
 
   /**
@@ -36,7 +37,7 @@ export class TariffService {
   }
 
   updateEnabled(list: any) {
-    return this.http.post(this.postUpdateEnabledUrl,list).pipe(map(response=>{
+    return this.http.put(this.putTariffEnabledUrl,list).pipe(map(response=>{
       return response;
     }));
   }

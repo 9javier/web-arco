@@ -151,8 +151,6 @@ export class TariffSGAComponent implements OnInit {
 
   onChecked(i, event) {
     var state = event;
-    console.log(state);
-    console.log('On Change Check ',i , event);
     let tariff: any = this.tariffs[i];
     
     let exist = _.find(this.tariffsUpdate, {'position': i});
@@ -163,37 +161,32 @@ export class TariffSGAComponent implements OnInit {
       });
     } 
     else {
-      if(tariff.enabled != event) {
+      if(!tariff.enabled === event) {
         let object = {
           //position: i,
           //warehouseId: tariff.warehouseId,
-          tariffId: tariff.tariffId,
+          id: tariff.id,
           enabled: state
         }
-        console.log('push');
         this.tariffsUpdate.push(object);
-        console.log(this.tariffsUpdate + 'cuando es falso');
       }
       else {
         let object = {
           //position: i,
           //warehouseId: tariff.warehouseId,
-          tariffId: tariff.tariffId,
+          id: tariff.id,
           enabled: state
         }
         for (let i = 0; i < this.tariffsUpdate.length; i++) {
           const element = this.tariffsUpdate[i];
-          if(this.tariffsUpdate[i].tariffId == object.tariffId && object.enabled == true){
+          if(this.tariffsUpdate[i].id == object.id){
             this.tariffsUpdate.splice(i);
-            console.log(this.tariffsUpdate.length + "luego de eliminar");
             return false;
           }
         }
       }
-      console.log(this.tariffsUpdate);
+      
     }
-
-    console.log('this.tariffsUpdate after push', this.tariffsUpdate);
   }
 
   /**
@@ -216,12 +209,15 @@ export class TariffSGAComponent implements OnInit {
 
     // console.log(list);
     this.intermediaryService.presentLoading("Modificando los seleccionados");
-    this.tariffService.updateEnabled({elements:this.tariffsUpdate}).subscribe(result => {
+    this.tariffService.updateEnabled(this.tariffsUpdate).subscribe(result => {
         this.intermediaryService.dismissLoading();
         this.listenChanges();
     },error=>{
       this.intermediaryService.dismissLoading();
       console.log(error);
+    }, () => {
+      this.tariffsUpdate = [];
+      this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     });
 
   }
