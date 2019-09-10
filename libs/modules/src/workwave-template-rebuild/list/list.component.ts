@@ -34,6 +34,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   listEmployeesToUpdate: Array<number> = new Array<number>();
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
   private listWarehousesThresholdAndSelectedQty: any = {};
+  private checkRequestsSelectedIsOverThreshold: boolean = false;
 
   private loading: HTMLIonLoadingElement = null;
 
@@ -176,7 +177,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         }
       }
 
-      if (listWarehousesOverThreshold.length > 0) {
+      if (this.checkRequestsSelectedIsOverThreshold && listWarehousesOverThreshold.length > 0) {
         this.presentAlertWarningOverThreshold(listWarehousesOverThreshold);
       } else {
         this.presentAlertConfirmPickings();
