@@ -198,4 +198,12 @@ export class PickingProvider {
   getPickingStatusText(status: number): string {
     return this._listStatus[status];
   }
+
+  private _pickingSelectedToStart: PickingModel.Picking = null;
+  get pickingSelectedToStart(): PickingModel.Picking {
+    return this._pickingSelectedToStart;
+  }
+  set pickingSelectedToStart(value: PickingModel.Picking) {
+    this._pickingSelectedToStart = value;
+  }
 }

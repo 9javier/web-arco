@@ -1,6 +1,13 @@
 div.scroll-list {
   overflow-y: scroll;
   height: 92vh;
+
+  p.msg-empty-pickings {
+    height: 64px;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+  }
 }
 mat-grid-list {
   border-bottom: 1px solid #c3c3c3;
@@ -15,7 +22,9 @@ mat-grid-list {
       font-weight: 500;
     }
     div.tile-title-right {
-      justify-content: end !important;
+      padding-right: 24px;
+      width: 100%;
+      text-align: right !important;
       font-weight: 500;
     }
   }

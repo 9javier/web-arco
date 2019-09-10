@@ -1,6 +1,7 @@
 <div class="scroll-list">
   <mat-grid-list cols="12" rowHeight="54px">
-    <mat-grid-tile colspan="6" rowspan="1">
+    <mat-grid-tile colspan="1" rowspan="1"></mat-grid-tile>
+    <mat-grid-tile colspan="5" rowspan="1">
       <div class="tile-title">Tienda</div>
     </mat-grid-tile>
     <mat-grid-tile colspan="3" rowspan="1">
@@ -11,12 +12,20 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <picking-task-template *ngFor="let pickingAssignment of pickingService.pickingAssignments" [pickingAssignment]="pickingAssignment"></picking-task-template>
+  <ion-progress-bar type="indeterminate" *ngIf="isLoadingPickings"></ion-progress-bar>
+
+  <div *ngIf="!isLoadingPickings && hasPickingsLoaded">
+    <picking-task-template *ngFor="let pickingAssignment of pickingService.pickingAssignments" [pickingAssignment]="pickingAssignment"></picking-task-template>
+  </div>
+
+  <div *ngIf="!isLoadingPickings && !hasPickingsLoaded">
+    <p class="msg-empty-pickings">No hay pickings pendientes para el usuario</p>
+  </div>
 </div>
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button (click)="initPicking()" *ngIf="pickingService.pickingAssignments.length > 0">
+    <ion-fab-button (click)="initPicking()" *ngIf="hasPickingsLoaded">
       <i class="material-icons">play_arrow</i>
     </ion-fab-button>
   </ion-fab>

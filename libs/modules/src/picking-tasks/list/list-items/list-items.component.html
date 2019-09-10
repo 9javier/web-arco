@@ -1,5 +1,11 @@
-<mat-grid-list cols="12" rowHeight="64px" [ngClass]="pickingAssignment.status != 2 ? 'separator-list' : ''">
-  <mat-grid-tile colspan="6" rowspan="1">
+<mat-grid-list cols="12" rowHeight="64px" [ngClass]="pickingAssignment.status != 2 ? 'separator-list' : ''" (click)="selectPicking()">
+  <mat-grid-tile colspan="1" rowspan="1">
+    <mat-radio-group name="pickingWarehouse" [(ngModel)]="pickingProvider.pickingSelectedToStart.id" (ngModelChange)="selectPicking()">
+      <mat-radio-button [value]="pickingAssignment.id"></mat-radio-button>
+    </mat-radio-group>
+  </mat-grid-tile>
+
+  <mat-grid-tile colspan="5" rowspan="1">
     <div class="tile-value">
       <span class="store-ref">
         {{pickingAssignment.workWavesOrderWarehouses[0].warehouse.reference}}&nbsp;
