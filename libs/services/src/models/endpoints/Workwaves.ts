@@ -131,8 +131,14 @@ export namespace WorkwaveModel {
     userIds: Array<number>
   }
 
+  interface PickingType {
+    id: number,
+    name: string
+  }
+
   interface ShoesAssignation {
     pickingId: number,
+    pickingTypeId?: PickingType,
     quantityShoes: string,
     temporary: boolean
   }
