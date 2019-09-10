@@ -290,6 +290,7 @@ public class MatrixBubblesActivity extends Activity {
 
     });
 
+    ScanditSDK.setActivityStarted(this);
   }
 
 

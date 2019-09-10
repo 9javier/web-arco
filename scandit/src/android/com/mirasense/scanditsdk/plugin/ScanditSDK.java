@@ -667,7 +667,9 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if(action.equals(MATRIX_SIMPLE_FINISH)){
-      MatrixSimpleActivity.matrixSimple.finish();
+      if(activityStarted != null){
+        activityStarted.finish();
+      }
     } else if(action.equals(SHOW_MATRIX_SIMPLE_TEXT)){
       boolean show = false;
       try {
@@ -1153,7 +1155,9 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if(action.equals(MATRIX_PICKING_STORES_FINISH)) {
-      MatrixPickingStores.matrixPickingStores.finish();
+      if(MatrixPickingStores.matrixPickingStores != null) {
+        MatrixPickingStores.matrixPickingStores.finish();
+      }
     } else if (action.equals(MATRIX_PICKING_STORES_SHOW_BUTTON_FINISH)) {
 
       boolean show = false;

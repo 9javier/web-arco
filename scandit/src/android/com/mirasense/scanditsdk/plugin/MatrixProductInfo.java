@@ -173,6 +173,7 @@ public class MatrixProductInfo extends Activity {
     //endregion
 
     matrixProductInfo = this;
+    ScanditSDK.setActivityStarted(matrixProductInfo);
   }
 
   public void searchProduct(EditText etReferenceToSearch, Resources resources, String package_name) {

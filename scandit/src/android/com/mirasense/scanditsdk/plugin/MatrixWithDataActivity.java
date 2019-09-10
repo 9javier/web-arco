@@ -98,6 +98,7 @@ public class MatrixWithDataActivity extends Activity {
 
 //    setContentView(mPicker);
 
+    ScanditSDK.setActivityStarted(this);
   }
 
 
