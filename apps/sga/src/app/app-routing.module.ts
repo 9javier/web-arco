@@ -265,6 +265,13 @@ const routes: Routes = [
     data:{
       name:'Edificios'
     }
+  },{
+    path: 'sorter',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
+    data:{
+      name:'sorter'
+    }
   }
 ];
 

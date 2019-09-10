@@ -147,6 +147,10 @@ export * from './components/tags-input/tags-input.module';
 export * from './building/building.component';
 export * from './building/building.module';
 
+/**Sorter */
+export * from './sorter/sorter.component';
+export * from './sorter/sorter.module';
+
 /**Calendar picking */
 export * from './calendar-picking/calendar-picking.component';
 export * from './calendar-picking/calendar-picking.module';

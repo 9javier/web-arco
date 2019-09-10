@@ -209,6 +209,12 @@ export class MenuComponent implements OnInit {
       url:'/tariff',
       icon:'logo-usd'
     },
+    {
+      title:'Sorter',
+      id:'sorter-sga',
+      url:'/sorter',
+      icon:'logo-usd'
+    },
   ];
 
   alPages: MenuItemList = [
@@ -266,6 +272,32 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
+        }
+      ]
+    },
+    {
+      title: 'Sorter',
+      open: false,
+      type: 'wrapper',
+      icon: 'logo-usd',
+      children: [
+        {
+          title: 'Sorter',
+          id: 'sorter-al',
+          url: '/sorter',
+          icon: 'logo-usd'
+        },
+        {
+          title: 'Código exposición',
+          id: 'print-price-tag',
+          url: 'print/tag/price',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Código exposición manual',
+          id: 'print-price-tag-manual',
+          url: '/print-tag/manual/price',
+          icon: 'pricetags'
         }
       ]
     },
