@@ -373,11 +373,6 @@ export class MenuComponent implements OnInit {
           id: 'settings',
           url: '/settings',
           icon: 'cog'
-        },{
-          title: 'Variables globales',
-          id: 'global-variables',
-          url: '/global-variables',
-          icon: 'cog'
         }
       ]
     },
