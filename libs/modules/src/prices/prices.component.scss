@@ -1,3 +1,8 @@
+ion-select {
+  max-width: 100%;
+  width: 100%;
+}
+
 table {
     width: 100%;
 }
@@ -16,15 +21,158 @@ ion-label {
     font-weight: bold;
 }
 
-.check-print {
-    ion-checkbox {
-        margin-top: 10px;
+div.list-header-filters-mobile {
+  ion-grid {
+    .header-mobile {
+      padding: 0 0 0 16px;
+      height: 56px;
+
+      ion-col {
+        height: 56px;
+      }
+
+      ion-col.check-all, ion-col.information, ion-col.filters-mobile {
+        padding: 0;
+        div.check-all, div.information, div.filters-mobile {
+          display: table;
+          height: 56px;
+          ion-checkbox, h5, i {
+            display: table-cell;
+            vertical-align: middle;
+            margin: 0;
+          }
+        }
+        div.information {
+          width: 100%;
+        }
+        div.filters-mobile {
+          margin: auto;
+          text-align: center;
+          width: 32px;
+          i {
+            width: 32px;
+            height: 32px;
+          }
+        }
+        div.filters-mobile.filters-opened {
+          padding: 12px 0;
+          i {
+            background-color: black;
+            color: white;
+            border-radius: 50%;
+          }
+        }
+      }
     }
+
+    form {
+      position: absolute;
+      background: white;
+      z-index: 3;
+      width: 100vw;
+      left: 0;
+      border: 1px solid #eee;
+    }
+  }
 }
 
-.header-mobile {
-    padding: 0 24px;
-    .check-all {
-        margin-top: 20px;
+div.list-items-mobile {
+  height: calc(100vh - 56px - 66px - 64px); // 56px from header - 66 from list header - 64px from paginator
+  overflow: auto;
+
+  mat-expansion-panel-header.custom-panel-header {
+    padding: 0 11px 0 16px;
+    height: auto !important;
+    color: black;
+
+    ion-row.custom-panel-header {
+      padding: 5px 0;
+
+      ion-col.check-print {
+        padding: 0;
+      }
+
+      ion-col.content-prices-header {
+        padding: 0;
+        ion-row.row-title-prices {
+          width: 100%;
+          ion-col {
+            padding: 0;
+          }
+          ion-col.status {
+            width: 100%;
+            text-align: end;
+          }
+        }
+
+        mat-panel-description.panel-description {
+          display: block;
+          ion-row.row-family-lifestyle-size, ion-row.row-price-stock {
+            width: 100%;
+            margin-top: 8px;
+            ion-col {
+              padding: 0;
+              p {
+                margin: 0;
+              }
+            }
+            ion-col.size {
+              color: #979797;
+              text-align: end;
+            }
+            ion-col.price {
+              p.final-price {
+                color: black;
+                font-weight: 500;
+              }
+            }
+            ion-col.stock {
+              width: 100%;
+              text-align: end;
+            }
+          }
+        }
+      }
     }
+  }
+
+  div.my-expansion-panel-body {
+    padding-top: 8px;
+    img.img-product-mobile {
+      width: 100%;
+      height: 410px;
+      object-fit: cover;
+    }
+  }
+}
+
+div.portrait-section {
+  height: 100vh;
+  div.filters-mobile {
+    height: 56px;
+  }
+  div.container-table-mobile {
+    width: 100vw;
+    overflow: auto;
+    height: calc(100vh - 56px - 56px); // 56px from header - 56 from filters text
+    table {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+td.column-img-product-desktop {
+  width: 94px;
+  padding: 5px 16px 5px 10px;
+  height: 56px;
+  img.img-product-desktop {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+mat-paginator {
+  height: 64px;
 }

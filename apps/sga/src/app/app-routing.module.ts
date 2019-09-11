@@ -174,14 +174,6 @@ const routes: Routes = [
     }
   },
   {
-    path: 'workwaves-scheduled',
-    canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
-    data:{
-      name:'Programadas'
-    }
-  },
-  {
     path: 'manage-agencies',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/agency/agency.module#AgencyModule',
@@ -198,17 +190,17 @@ const routes: Routes = [
     }
   },
   {
-    path: 'workwaves-templates',
+    path: 'workwaves-scheduled',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwaves-templates/workwaves-templates.module#WorkwavesTemplatesModule',
+    loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
     data:{
-      name:'Plantillas'
+      name:'Programadas'
     }
   },
   {
-    path: 'workwave-template',
+    path: 'workwave-template-rebuild',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/workwave-template/workwave-template.module#WorkwaveTemplateModule',
+    loadChildren: '../../../../libs/modules/src/workwave-template-rebuild/workwave-template-rebuild.module#WorkwaveTemplateRebuildModule',
     data:{
       name:'Plantilla'
     }
@@ -239,7 +231,7 @@ const routes: Routes = [
   },{
     path: 'tariff',
     canActivate:[AuthGuard],
-    loadChildren:'../../../../libs/modules//src/tariff/tariff.module#TariffModule',
+    loadChildren:'../../../../libs/modules/src/tariffSGA/tariffSGA.module#TariffSGAModule',
     data:{
       name:'Tarifas'
     }

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { WorkwavesScheduleComponent } from "./workwaves-schedule.component";
-import {ListPickingComponent} from "../list-picking/list-picking.component";
+import {ListPickingRebuildComponent} from "../list-picking-rebuild/list-picking-rebuild.component";
 
 const routes: Routes = [
   {
@@ -18,7 +18,11 @@ const routes: Routes = [
   },
   {
     path: 'pickings',
-    component: ListPickingComponent
+    component: ListPickingRebuildComponent
+  },
+  {
+    path: 'pickings/:id',
+    component: ListPickingRebuildComponent
   }
 ];
 

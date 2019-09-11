@@ -15,6 +15,7 @@ export class CarrierService {
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private packingUrl:string = environment.apiBase+"/types/packing";
+  private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
 
   constructor(private http:HttpClient) { }
 
@@ -73,6 +74,15 @@ export class CarrierService {
    */
   update(id,carrier){
     return this.http.put<CarrierModel.SingleCarrierResponse>(this.singleCarrierUrl.replace("{{id}}",String(id)),carrier).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+   /**
+   * Send Packing to Warehouse
+   */
+  sendPackingToWareouse(id: number, warehouseId: number):Observable<CarrierModel.CarrierWarehouseDestiny>{
+    return this.http.post<CarrierModel.CarrierWarehouseDestinyResponse>(this.sendPackingToWarehouse.replace("{{id}}",String(id)).replace("{{warehouseId}}",String(warehouseId)), {}).pipe(map(response=>{
       return response.data;
     }));
   }

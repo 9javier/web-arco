@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder,FormGroup, Validators, FormControl } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
-import { BuildingModel, AgencyModel, AgencyService } from '@suite/services';
+import { BuildingModel, AgencyModel, AgencyService, IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-information',
@@ -35,7 +35,8 @@ export class InformationComponent implements OnInit {
   constructor(
     private agencyService:AgencyService,
     private formBuilder:FormBuilder,
-    private modalController:ModalController) { }
+    private modalController:ModalController,
+    private intermediaryService:IntermediaryService) { }
 
   ngOnInit() {
     this.getAgencies();
@@ -43,8 +44,13 @@ export class InformationComponent implements OnInit {
 
 
   getAgencies(){
+    this.intermediaryService.presentLoading();
     this.agencyService.getAll().subscribe(agencies=>{
       this.agencies = agencies;
+    }, (err) => {
+      // console.log(err)
+    }, () => {
+      this.intermediaryService.dismissLoading();
     })
   }
 

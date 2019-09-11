@@ -1,8 +1,14 @@
 :root {
-  .popover-incidences {
+  .popover-incidences, .popover-filter {
     div.popover-content {
       width: auto;
       max-width: 30vw;
+    }
+  }
+  .popover-filter {
+    div.popover-content {
+      min-width: 25vw;
+      height: 48vh;
     }
   }
 }

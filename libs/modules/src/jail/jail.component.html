@@ -8,84 +8,89 @@
   [printable]="true"
 ></suite-ui-crud-list>
 -->
-<div class="jail-content">
-    <suite-breadcrumb></suite-breadcrumb>
-    <ion-content padding="true">
-        <div class="table-container">
-            <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
-                <ng-container matColumnDef="select">
-                    <th mat-header-cell *matHeaderCellDef></th>
-                    <td mat-cell *matCellDef="let element;let i = dataIndex" [formGroup]="toDelete" (click)="prevent($event)">
-                        <ion-checkbox [formControl]="toDelete['controls']?.jails['controls'][i]['controls']?.selected"></ion-checkbox>
-                    </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="reference">
-                    <th mat-header-cell *matHeaderCellDef> Referencia </th>
-                    <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="packing">
-                    <th mat-header-cell *matHeaderCellDef> Packing </th>
-                    <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
-                </ng-container>
-                <ng-container matColumnDef="warehouse">
-                    <th mat-header-cell *matHeaderCellDef> Warehouse </th>
-                    <td mat-cell *matCellDef="let element"> {{element?.warehouse?.name}}
-                        <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
-                    </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="update">
-                    <th mat-header-cell *matHeaderCellDef> Actualizar</th>
-                    <td mat-cell *matCellDef="let element">
-                        <ion-icon (click)="toUpdate($event,element)" name="create"></ion-icon>
-                    </td>
-                </ng-container>
-                <ng-container matColumnDef="buttons-print">
-                    <th mat-header-cell *matHeaderCellDef> Imprimir</th>
-                    <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons">print</i> </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="expandedDetail">
-                    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
-                        <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                            <ion-grid>
-                                <ion-row *ngIf="element.carrierWarehousesDestiny.length">
-                                    <ion-col size="12">
-                                        Destinos asociados a esta jaula:
-                                    </ion-col>
-                                    <ion-col size="12">
-                                        <ion-item *ngFor="let carrier of element.carrierWarehousesDestiny">
-    
-                                            <ion-select (ionChange)="updateDestination(carrier.id,$event.detail.value)">
-                                                <ion-select-option *ngFor="let warehouse of warehouses" [selected]="warehouse.id == carrier.warehouse.id" [value]="warehouse.id">
-                                                    {{warehouse.name}}
-                                                </ion-select-option>
-                                            </ion-select>
-                                        </ion-item>
-                                    </ion-col>
-                                </ion-row>
-                            </ion-grid>
-                        </div>
-                    </td>
-                </ng-container>
-    
-                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
-                </tr>
-                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
-            </table>
-        </div>
-    </ion-content>
-    
-    <ion-fab vertical="bottom" horizontal="end">
-        <ion-fab-button *ngIf="hasToDelete()" color="danger" (click)="delete()">
-            <ion-icon name="trash"></ion-icon>
-        </ion-fab-button>
-        <br>
-        <ion-fab-button (click)="toStore()">
-            <ion-icon name="add"></ion-icon>
-        </ion-fab-button>
-    </ion-fab>
-</div>
+
+<ion-content padding="true">
+    <ion-text color="primary" class="title">
+        <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+    <div class="table-container">
+        <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element;let i = dataIndex" [formGroup]="toDelete" (click)="prevent($event)">
+                    <ion-checkbox [formControl]="toDelete['controls']?.jails['controls'][i]['controls']?.selected"></ion-checkbox>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reference">
+                <th mat-header-cell *matHeaderCellDef> Referencia </th>
+                <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="packing">
+                <th mat-header-cell *matHeaderCellDef> Packing </th>
+                <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="warehouse">
+                <th mat-header-cell *matHeaderCellDef> Warehouse </th>
+                <td mat-cell *matCellDef="let element"> {{element?.warehouse?.name}}
+                    <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="update">
+                <th mat-header-cell *matHeaderCellDef> Actualizar</th>
+                <td mat-cell *matCellDef="let element">
+                    <ion-icon (click)="toUpdate($event,element)" name="create"></ion-icon>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="buttons-print">
+                <th mat-header-cell *matHeaderCellDef> Imprimir</th>
+                <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons">print</i> </td>
+            </ng-container>
+            <ng-container matColumnDef="sendPacking">
+                    <th mat-header-cell *matHeaderCellDef> Enviar</th>
+                    <td mat-cell *matCellDef="let element"><i  (click)="send($event,element)" class="material-icons">send</i> </td>
+            </ng-container>
+
+            <ng-container matColumnDef="expandedDetail">
+                <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
+                    <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        <ion-grid>
+                            <ion-row *ngIf="element.carrierWarehousesDestiny.length">
+                                <ion-col size="12">
+                                    Destinos asociados a esta jaula:
+                                </ion-col>
+                                <ion-col size="12">
+                                    <ion-item *ngFor="let carrier of element.carrierWarehousesDestiny">
+
+                                        <ion-select (ionChange)="updateDestination(carrier.id,$event.detail.value)">
+                                            <ion-select-option *ngFor="let warehouse of warehouses" [selected]="warehouse.id == carrier.warehouse.id" [value]="warehouse.id">
+                                                {{warehouse.name}}
+                                            </ion-select-option>
+                                        </ion-select>
+                                    </ion-item>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
+            </tr>
+            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
+        </table>
+    </div>
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button *ngIf="hasToDelete()" color="danger" (click)="delete()">
+        <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <br>
+    <ion-fab-button (click)="toStore()">
+        <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+</ion-fab>

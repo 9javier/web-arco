@@ -110,9 +110,14 @@ export class BuildingComponent implements OnInit {
    * Get all buildings and add it to datasource
    */
   getBuildings():void{
+    this.intermediaryService.presentLoading();
     this.buildingService.getIndex().subscribe(buildings=>{
       this.initSelectForm(buildings);
       this.dataSource = new MatTableDataSource<BuildingModel.Building>(buildings);
+    }, (err) => {
+      // console.log(err)
+    }, () => {
+      this.intermediaryService.dismissLoading();
     });
   }
 

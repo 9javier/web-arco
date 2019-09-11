@@ -7,6 +7,8 @@ import { switchMap } from 'rxjs/operators';
 import { ModalController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import { UpdateComponent } from './modals/update/update.component';
+import { WarehousesService, WarehouseModel } from '@suite/services';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 
 type select = {
   id:number;
@@ -20,22 +22,32 @@ type select = {
 })
 export class AgencyComponent implements OnInit {
 
-  public displayedColumns: string[] = ['name', 'address', 'phone','select'];
+  public displayedColumns: string[] = ['select','name', 'address', 'phone'];
 
   dataSource:MatTableDataSource<AgencyModel.Agency>;
   selectForm:FormGroup = this.formBuilder.group({
     selecteds: new FormArray([])
   });
+  agencies: AgencyModel.Agency[] = [];
+  warehouses: WarehouseModel.Warehouse[] = [];
+  toDeleteAgency: boolean = false;
+  agenciesToDelete: number[] = [];
 
   constructor(
     private agencyService:AgencyService,
     private formBuilder:FormBuilder,
     private intermediaryService:IntermediaryService,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private warehousesService: WarehousesService
   ) { }
 
   ngOnInit() {
-    this.getAgencies()
+    this.getAgencies();
+    this.warehousesService.getIndex().then(observable=>{
+      observable.subscribe(warehouses=>{
+        this.warehouses = warehouses.body.data;
+      });
+    });
   }
 
   /**
@@ -96,26 +108,6 @@ export class AgencyComponent implements OnInit {
   }
 
   /**
-   * Delete all agencies with id match with the ids in array
-   * @param ids - ids of agencies
-   */
-  delete(ids:Array<number>){
-    let observable = new Observable(observer=>observer.next());
-    ids.forEach(id=>{
-      observable = observable.pipe(switchMap(ressponse=>{
-        return this.agencyService.delete(id);
-      }))
-    });
-    this.intermediaryService.presentLoading();
-    observable.subscribe(()=>{
-      this.getAgencies();
-      this.intermediaryService.dismissLoading();
-    },error=>{
-      this.intermediaryService.dismissLoading();
-    }); 
-  }
-
-  /**
    * Stop the usual behaviour of an event and stop it propagation
    * @param event 
    */
@@ -127,9 +119,110 @@ export class AgencyComponent implements OnInit {
   getAgencies():void{
     this.intermediaryService.presentLoading();
     this.agencyService.getAll().subscribe(agencies=>{
-      this.dataSource = new MatTableDataSource(agencies);
-      this.initSelectForm(agencies);
+      this.agencies = agencies;
       this.intermediaryService.dismissLoading();
     });
   }
+
+  assignToAgency(warehouse, agency) {
+    this.warehousesService
+    .toAgency(Number(warehouse.id), Number(agency.id))
+    .then((data: Observable<HttpResponse<AgencyModel.Agency>>) => {
+      data.subscribe(
+        (res: HttpResponse<AgencyModel.Agency>) => {
+          this.intermediaryService.presentToastSuccess("Warehouse añadido a la Agencia");
+          let warehouseToUpdate = (<any>res.body).data;
+          this.updateAgency(warehouseToUpdate, true);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.intermediaryService.presentToastError("Error al añadir el warehouse");
+          // console.log(errorResponse)
+        }
+      );
+    });
+  }
+
+  removeToAgency(warehouse, agency) {
+    this.warehousesService
+    .removeOfAgency(Number(warehouse.id), Number(agency.id))
+    .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
+      data.subscribe(
+        (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
+          this.intermediaryService.presentToastSuccess("Warehouse removido a la Agencia");
+          let warehouseToUpdate = (<any>res.body).data;
+          this.updateAgency(warehouseToUpdate, false);
+        },
+        (errorResponse: HttpErrorResponse) => {
+          this.intermediaryService.presentToastError("Error al remover el warehouse");
+          // console.log(errorResponse)
+        }
+      );
+    });
+  }
+
+  updateAgency(warehouseToUpdate, action: boolean): void {
+    this.agencies.forEach(agency => {
+      if(action) {
+        if(warehouseToUpdate.manageAgencyId.id == agency.id) {
+          agency.warehouses.push(warehouseToUpdate);
+        }
+      } else {
+        let warehosuesAgency = agency.warehouses.filter(warehouse => warehouse.id != warehouseToUpdate.id);
+        agency.warehouses = warehosuesAgency;
+      }
+    })
+  }
+
+   /**
+   * Activate delete button
+   */
+  activateDelete(id: number) {
+    this.toDeleteAgency = true;
+    let exits: boolean = this.agenciesToDelete.some(agencyId => agencyId == id);
+    if(!exits) {
+      this.agenciesToDelete.push(id);
+    } else {
+      this.agenciesToDelete.splice( this.agenciesToDelete.indexOf(id), 1 );
+    }
+    if(this.agenciesToDelete.length == 0) {
+      this.toDeleteAgency = false;
+    }
+  }
+    /**
+   * Delete agency
+   */
+  deleteAgency() {
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    this.agenciesToDelete.forEach(groupId => {
+      deletions = deletions.pipe(switchMap(() => { 
+        return (this.agencyService.delete(groupId))
+      }))
+    })
+
+    this.agenciesToDelete = [];
+    this.intermediaryService.presentLoading();
+
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getAgencies();
+      this.intermediaryService.presentToastSuccess("Agencias eliminadas con exito");
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.getAgencies();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las agencias");
+    });
+   }
+
+   selectCheck(warehouseId: number, agencyId: number): boolean {
+     let checkValue: boolean = false;
+
+    this.agencies.forEach(agency => {
+      agency.warehouses.forEach(warehosue => {
+        if(warehouseId == warehosue.id && agency.id == agencyId){
+          checkValue = true;
+        }
+      })
+    })
+     return checkValue;
+   }
 }

@@ -1,9 +1,11 @@
 import { Component, OnInit,ViewChild, Sanitizer, ViewChildren, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { DatePickerComponent,IDatePickerConfig } from 'ng2-date-picker';
 import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
-import { FormBuilder, FormGroup, FormArray, Form } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Form } from '@angular/forms';
 import { WarehouseModel,CalendarModel,CalendarService, IntermediaryService } from '@suite/services';
 import { AlertController, IonSelect } from '@ionic/angular';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'suite-calendar-picking',
@@ -19,7 +21,8 @@ export class CalendarPickingComponent implements OnInit {
     allowMultiSelect:true,
     hideOnOutsideClick:false,
     appendTo:'.append',
-    drops:'down'
+    drops:'down',
+    firstDayOfWeek: 'mo'
   } 
   currentTemplate;
   initialValue = null;
@@ -41,11 +44,16 @@ export class CalendarPickingComponent implements OnInit {
   });
 
   form:FormGroup = this.formBuilder.group({
-    warehouses: new FormArray([])
+    warehouses: new FormArray([]),
+    warehousesInput: [],
+    warehousesList: []
   });
 
   warehouses:Array<WarehouseModel.Warehouse> = [];
+  warehousesList:Array<WarehouseModel.Warehouse> = [];
   templates:Array<CalendarModel.Template> = [];
+  updateTemplate: CalendarModel.Template;
+  warehousesInput:Array<WarehouseModel.Warehouse> = [];
 
   @ViewChild(DatePickerComponent) datePicker:DatePickerComponent;
 
@@ -121,6 +129,37 @@ export class CalendarPickingComponent implements OnInit {
             }
           });
         });
+        let equals = true;
+        for(let i = 1; i < this.selectDates.length; i++) {
+          for(let j = 0; j < this.selectDates[i].warehouses.length; j++) {
+            if(i+1 <= this.selectDates.length && this.selectDates[i+1]) {
+              if(this.selectDates[i].warehouses.length == this.selectDates[i+1].warehouses.length){
+                if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
+                  let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
+                  let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
+                  if(currentWarehouses.length == nextWarehouses.length) {
+                    for(let k = 0; k < currentWarehouses.length; k++) {
+                      if(!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
+                        equals = false;
+                      }
+                    }
+                  } else { equals = false; }
+                } else { equals = false; }
+              } else {equals = false; }
+            }
+          }
+        }
+        
+        if(equals && this.selectDates.length != 1) {
+
+          this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
+
+        } else if(this.selectDates.length != 1){
+          this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
+        }
+        else{
+          this.resetAcordeons();
+        }
         this.modelDate = auxDates[0];
         this.date = this.modelDate;
         this.manageSelectedClass();
@@ -128,8 +167,37 @@ export class CalendarPickingComponent implements OnInit {
         setTimeout(()=>{this.loadingDates = false},10);
         this.intermediaryService.dismissLoading();
       })
-      console.log(this.selectDates);
+      // console.log(this.selectDates);
     })
+  
+  }
+
+  /**
+   * Set warehouses by date
+   */
+
+  setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      selectDateWarehouses.forEach(templateWarehouse=>{
+        if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
+          templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
+            (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
+                if(valueDate) {
+                  destinationControl.get("selected").setValue(true);
+                  warehouseControl.get("openModal").setValue(true);
+                } else {
+                  destinationControl.get("selected").setValue(false);
+                  warehouseControl.get("openModal").setValue(false);
+                }
+              }
+            })
+          })
+        }
+      })
+    });
+
+    this.orderAcordeons();
   }
 
   /**
@@ -138,9 +206,12 @@ export class CalendarPickingComponent implements OnInit {
   getBase():void{
     this.intermediaryService.presentLoading();
     this.calendarService.getBaseBad().subscribe(warehouses=>{
-      console.log(warehouses);
+      // console.log(warehouses);
       this.intermediaryService.dismissLoading();
       this.templateBase = warehouses;
+      warehouses[0].destinationsWarehouses.forEach(destination => {
+        this.warehousesList.push(destination.destinationWarehouse);
+      })
       this.initTemplateBase(warehouses);
     },()=>{
       this.intermediaryService.dismissLoading();
@@ -149,6 +220,7 @@ export class CalendarPickingComponent implements OnInit {
 
   clearData(){
     this.form.patchValue(this.initialValue,{emitEvent:false});
+    this.resetAcordeons();
     this.selectDates.forEach(date=>{
       if(this.date.date == date.date || this.date.date == 'todas las fechas seleccionadas')
         date.value = this.initialValue;
@@ -162,11 +234,10 @@ export class CalendarPickingComponent implements OnInit {
       let day = days[i];
       this.selectDates.forEach(date=>{
         if(date.date.split("-").reverse().join("-") == day.dataset.date){
-          console.log(date.warehouses.length, date.value?this.formatValue(date.value).warehouses.length:0);
           if((date.warehouses.length) || (date.value && this.formatValue(date.value).warehouses.length)){
             day.className+= ' tselected'; 
           }else{
-            console.log("borrando")
+            // console.log("borrando")
             day.className = day.className.replace(/tselected/g, "");
             
           }
@@ -200,7 +271,6 @@ export class CalendarPickingComponent implements OnInit {
           this.selectDates.forEach(date=>{
             if(date.date == this.date.date || this.date.date == 'todas las fechas seleccionadas'){
               date.value = JSON.parse(JSON.stringify(this.form.value));
-              console.log(this.formatValue(date.value).warehouses.length);
             }
           })
         }
@@ -229,7 +299,8 @@ export class CalendarPickingComponent implements OnInit {
     value.warehouses = (<Array<any>>rawValue.warehouses.map(value=>{
       return ({
         originWarehouseId:value.originWarehouse.id,
-        destinationWarehouseIds:(value.destinationsWarehouses.map(warehouse=>warehouse.selected?warehouse.id:false)).filter(value=>value)
+        destinationWarehouseIds:(value.destinationsWarehouses.map(warehouse=>warehouse.selected?warehouse.id:false)).filter(value=>value),
+        openModal: false
       })
     })).filter(object=>(object.destinationWarehouseIds.length > 0));
     return value;
@@ -265,7 +336,7 @@ export class CalendarPickingComponent implements OnInit {
       this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
       this.intermediaryService.dismissLoading();
     });
-    console.log(globalValues);
+    // console.log(globalValues);
   }
 
   /**
@@ -289,7 +360,7 @@ export class CalendarPickingComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+            // console.log('Confirm Cancel');
           }
         }, {
           text: 'Ok',
@@ -322,7 +393,7 @@ export class CalendarPickingComponent implements OnInit {
   getWarehouses():void{
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
-        console.log(response);
+        // console.log(response)
       })
     })
   }
@@ -360,10 +431,11 @@ export class CalendarPickingComponent implements OnInit {
   selectTemplate(template:CalendarModel.Template,value=null,date=null){
     this.date = date; 
     let warehouses = template.warehouses;
-    //this.initTemplateBase(this.templateBase);
+    this.updateTemplate = template;
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
         destinationControl.get("selected").setValue(false);
+        warehouseControl.get("openModal").setValue(false);
       })
     });
 
@@ -374,12 +446,15 @@ export class CalendarPickingComponent implements OnInit {
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
               if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
                 destinationControl.get("selected").setValue(true);
+                warehouseControl.get("openModal").setValue(true);
               }
             })
           })
         }
       })
     });
+
+    this.orderAcordeons();
   }
 
   /**
@@ -392,7 +467,9 @@ export class CalendarPickingComponent implements OnInit {
       return false;
     }
     this.form = this.formBuilder.group({
-      warehouses: new FormArray([])
+      warehouses: new FormArray([]),
+      warehousesInput: [],
+      warehousesList: this.warehousesList
     });
     this.openeds = [];
     warehouses.forEach(warehouse=>{
@@ -405,6 +482,7 @@ export class CalendarPickingComponent implements OnInit {
           }),
           destinationsWarehouses:(this.formBuilder.array(
             warehouse.destinationsWarehouses.map(warehouse=>{
+              this.warehouses.push(warehouse.destinationWarehouse);
               let group = (this.formBuilder.group({
                 id:warehouse.destinationWarehouse.id,
                 name:warehouse.destinationWarehouse.name,
@@ -414,7 +492,8 @@ export class CalendarPickingComponent implements OnInit {
               this.startListener(group)
               return group;
             })
-          ))     
+          )),
+          openModal: false    
         })
       )
     });
@@ -454,7 +533,9 @@ export class CalendarPickingComponent implements OnInit {
    */
   initForm():void{
     this.form = this.formBuilder.group({
-      warehouses: new FormArray([])
+      warehouses: new FormArray([]),
+      warehousesInput: [],
+      warehousesList: this.warehousesList
     });
     this.calendarService.getBase().subscribe(base=>{
       base.warehouses.forEach(warehouse=>{
@@ -475,7 +556,8 @@ export class CalendarPickingComponent implements OnInit {
                 this.startListener(group)
                 return group;
               })
-            ))     
+            )),
+            openModal: false    
           })
         )
       });
@@ -483,11 +565,65 @@ export class CalendarPickingComponent implements OnInit {
     });
   }
 
+  /**
+   * Add warehouse to an acordeon
+   * @param warehouseId 
+   */
+  addWarehouse(warehouseId: number) {
+    let value = this.form.get("warehousesInput").value;
+    if(value) {
+      (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+        (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+          if(destinationControl.get("id").value == value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id == warehouseId){
+            destinationControl.get("selected").setValue(true);
+            this.form.get("warehousesInput").setValue([]);
+            warehouseControl.get("openModal").setValue(true);
+          }
+        });
+      });
+    }
+    this.form.get("warehousesInput").setValue([]);
+  }
+
+  /**
+   * Remove warehouse to an acordeon
+   * @param warehouseId 
+   */
+  
+  deletedWarehouseOfTemplate(id: number, warehouseId: number) {
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+      (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
+        if(destinationControl.get("id").value == id && destinationControl.get("selected").value
+        && warehouseControl.get("originWarehouse").value.id == warehouseId){          
+          destinationControl.get("selected").setValue(false);
+        }
+      });
+    });
+  }
+
+  /**
+   * Reset all acordeons to a original state
+   */
+  resetAcordeons() {
+    (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
+        warehouseControl.get("openModal").setValue(false);
+    });
+  }
+
+  /**
+   * Order acordeons if have warehouses
+   */
+  orderAcordeons() {
+    (<FormArray>this.form.get("warehouses")).controls.sort((current, next) => {
+      return next.get("openModal").value - current.get("openModal").value
+    });
+  }
+
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
     this.datePicker.api.open();
-    console.log(this.datePicker);
+    // console.log(this.datePicker);
   }
 
 }

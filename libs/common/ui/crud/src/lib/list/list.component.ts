@@ -30,19 +30,19 @@ import { StoreComponent as storeHall } from "../../../../../../modules/src/halls
 import { StoreComponent as storeWarehouse } from "../../../../../../modules/src/warehouses/store/store.component";
 import { StoreComponent as storeJail } from "../../../../../../modules/src/jail/store/store.component";
 import { StoreComponent as storePallet } from "../../../../../../modules/src/pallets/store/store.component";
-import {StoreComponent as storeGroup} from "../../../../../../modules/src/groups/store/store.component";
+import { StoreComponent as storeGroup } from "../../../../../../modules/src/groups/store/store.component";
 //import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import { UpdateComponent as updateRol } from "../../../../../../modules/src/roles/update/update.component";
 import { UpdateComponent as updateHall } from "../../../../../../modules/src/halls/update/update.component";
 import { UpdateComponent as updateWarehouse } from "../../../../../../modules/src/warehouses/update/update.component";
 import { UpdateComponent as updateJail } from "../../../../../../modules/src/jail/update/update.component";
 import { UpdateComponent as updatePallet } from "../../../../../../modules/src/pallets/update/update.component";
-import {UpdateComponent as updateGroup} from "../../../../../../modules/src/groups/update/update.component";
+import { UpdateComponent as updateGroup } from "../../../../../../modules/src/groups/update/update.component";
 import { HallsService } from "../../../../../../services/src/lib/endpoint/halls/halls.service";
 import { HallModel } from "../../../../../../services/src/models/endpoints/Hall";
-import {WarehouseService} from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {PrinterService} from "../../../../../../services/src/lib/printer/printer.service";
-import {PdfGeneratorService} from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
+import { WarehouseService } from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { PrinterService } from "../../../../../../services/src/lib/printer/printer.service";
+import { PdfGeneratorService } from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
 
 
 @Component({
@@ -77,8 +77,7 @@ export class ListComponent implements OnInit {
     private printerService: PrinterService,
     private pdfGeneratorService: PdfGeneratorService
   ) {
-    console.log(this.dataSource);
-    console.log('LIST COMPONENT');
+
     // Create a new Observable that publishes only the NavigationStart event
     this.navStart = router.events.pipe(
       filter(evt => evt instanceof NavigationStart)
@@ -107,7 +106,6 @@ export class ListComponent implements OnInit {
   parentPage: string = null;
 
   ngOnInit() {
-    this.presentLoading();
     this.route.paramMap.subscribe((params: any) => {
       this.paramsReceived = params;
     });
@@ -124,10 +122,10 @@ export class ListComponent implements OnInit {
       this.initHalls();
       this.parentPage = 'Almacenes';
     }
-    this.dismissLoading();
   }
 
   initHalls() {
+    this.presentLoading();
     this.hallsService
       .getIndex(this.warehouseSelected)
       .then(
@@ -143,6 +141,11 @@ export class ListComponent implements OnInit {
               >
             ) => {
               this.dataSource = res.body.data;
+            },
+            (err) => {
+              // console.log(err)
+            }, () => {
+              this.dismissLoading();
             }
           );
         }
@@ -155,6 +158,7 @@ export class ListComponent implements OnInit {
   }
 
   initUsers() {
+    this.presentLoading();
     this.crudService
       .getIndex(this.apiEndpoint)
       .then(
@@ -170,7 +174,12 @@ export class ListComponent implements OnInit {
               >
             ) => {
               this.dataSource = res.body.data;
-              console.log(this.dataSource);
+
+            },
+            (err) => {
+
+            }, () => {
+              this.dismissLoading();
             }
           );
         }
@@ -203,7 +212,7 @@ export class ListComponent implements OnInit {
       storeComponent = storeJail;
     } else if (this.routePath == '/groups') {
       storeComponent = storeGroup;
-    }  else if (this.routePath == '/pallets') {
+    } else if (this.routePath == '/pallets') {
       storeComponent = storePallet;
     }
 
@@ -235,7 +244,7 @@ export class ListComponent implements OnInit {
       updateComponent = updateWarehouse;
     } else if (this.routePath == '/jails') {
       updateComponent = updateJail;
-    } else if (this.routePath == '/pallets'){
+    } else if (this.routePath == '/pallets') {
       updateComponent = updatePallet;
     } else if (this.routePath == '/groups') {
       updateComponent = updateGroup;
@@ -246,7 +255,7 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
-      console.log("test",{ id: row.id, row: row, routePath: this.routePath });
+      // console.log("test", { id: row.id, row: row, routePath: this.routePath });
       modal.onDidDismiss()
         .then(() => {
           this.loadData();
@@ -316,7 +325,7 @@ export class ListComponent implements OnInit {
           this.presentUsertDeleteAlert(this.selection);
       }
     }
-    console.log('confirmDelete', this.selection.selected);
+    // console.log('confirmDelete', this.selection.selected);
   }
 
   changeWarehouse(event) {
@@ -334,7 +343,7 @@ export class ListComponent implements OnInit {
     this.router.navigate([`/warehouses/locations/${row.id}`]);
   }
 
-  async print(event, row){
+  async print(event, row) {
     event.stopPropagation();
     if ((row && row.reference) || this.selection.selected.length > 0) {
       let listReferences: string[] = null;
@@ -347,7 +356,7 @@ export class ListComponent implements OnInit {
       }
 
       if ((<any>window).cordova) {
-        this.printerService.print({text: listReferences, type: 0});
+        this.printerService.print({ text: listReferences, type: 0 });
       } else {
         return await this.printerService.printBarcodesOnBrowser(listReferences);
       }
@@ -388,13 +397,11 @@ export class ListComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: blah => {
-            console.log('Confirm Cancel: blah');
           }
         },
         {
           text: 'Vale',
           handler: () => {
-            console.log('Confirm Okay');
             this.presentLoading();
             this.crudService
               .deleteDestroy(this.selection.selected, this.apiEndpoint)
@@ -410,18 +417,18 @@ export class ListComponent implements OnInit {
                     ) => {
                       response$.subscribe(
                         (response: HttpResponse<UserModel.ResponseDestroy>) => {
-                          console.log(
-                            `${response.body.data} - ${response.body.code} - ${
-                            response.body.message
-                            }`
-                          );
+                          // // console.log(
+                          // `${response.body.data} - ${response.body.code} - ${
+                          //   response.body.message
+                          //   }`
+                          // );
                           this.presentToast(successMsg);
                           this.initUsers();
                           this.dismissLoading();
                         },
                         (errorResponse: HttpErrorResponse) => {
                           this.presentToast(errorResponse.message);
-                          console.log(errorResponse);
+                          // console.log(errorResponse);
                           this.dismissLoading();
                           this.initUsers();
                         }
@@ -473,13 +480,13 @@ export class ListComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: blah => {
-            console.log('Confirm Cancel: blah');
+            // console.log('Confirm Cancel: blah');
           }
         },
         {
           text: 'Vale',
           handler: () => {
-            console.log('Confirm Okay');
+            // console.log('Confirm Okay');
             this.presentLoading();
             this.crudService
               .deleteDestroy(this.selection.selected, this.apiEndpoint)
@@ -491,22 +498,23 @@ export class ListComponent implements OnInit {
                     (
                       response$: Observable<
                         HttpResponse<JailModel.ResponseDestroy>
-                        >
+                      >
                     ) => {
                       response$.subscribe(
                         (response: HttpResponse<JailModel.ResponseDestroy>) => {
-                          console.log(
-                            `${response.body.data} - ${response.body.code} - ${
-                              response.body.message
-                              }`
-                          );
+
+                          // console.log(
+                          //   `${response.body.data} - ${response.body.code} - ${
+                          //   response.body.message
+                          //   }`
+                          // );
                           this.presentToast(successMsg);
                           this.initUsers();
                           this.dismissLoading();
                         },
                         (errorResponse: HttpErrorResponse) => {
                           this.presentToast(errorResponse.message);
-                          console.log(errorResponse);
+                          // console.log(errorResponse);
                           this.dismissLoading();
                           this.initUsers();
                         }
@@ -540,9 +548,8 @@ export class ListComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          console.log('presented');
           if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
+            a.dismiss().then(() => { });
           }
         });
       });
@@ -552,6 +559,6 @@ export class ListComponent implements OnInit {
     this.isLoading = false;
     return await this.loadingController
       .dismiss()
-      .then(() => console.log('dismissed'));
+      .then(() => { });
   }
 }

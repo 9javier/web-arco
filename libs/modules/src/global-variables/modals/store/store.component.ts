@@ -25,7 +25,7 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  submit(variable:GlobalVariableModel.GlobalVariable){
+  submit(variable:GlobalVariableModel.GlobalVariable[]){
     this.intermediaryService.presentLoading();
     this.globalVariableService.store(variable).subscribe(()=>{
       this.intermediaryService.dismissLoading();

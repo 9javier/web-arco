@@ -1,26 +1,21 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import { MatTableDataSource, MatPaginator} from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
 
-import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-
+import * as _ from 'lodash';
 
 import {
   IntermediaryService,
   LabelsService,
   TariffService,
   TariffModel,
-  WarehousesService,
-  InventoryService,
-  InventoryModel,
-  FiltersModel,
-  TypesService
+  WarehousesService
 } from '@suite/services';
 
 import { validators } from '../utils/validators';
 
-import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import {SortModel} from "../../../services/src/models/endpoints/Sort";
 
 @Component({
   selector: 'suite-tariff',
@@ -28,107 +23,75 @@ import { Router } from '@angular/router';
   styleUrls: ['./tariff.component.scss']
 })
 export class TariffComponent implements OnInit {
+  /**Arrays to be shown */
+  tariffs: Array<any> = [];
+  tariffsUpdate: Array<any> = [];
 
+  filters: FormGroup = this.formBuilder.group({
+    warehouseId: 51
+  });
 
-    /**Arrays to be shown */
-    tariffs:Array<any> = [];
+  warehouses: Array<any> = [];
 
-    filters: FormGroup = this.formBuilder.group({
-      warehouseId:51
-    })
-
-    warehouses:Array<any> = [];
-
-    /**Quantity of items for show in any page */
-    pagerValues = [50, 100, 500];
+  /**Quantity of items for show in any page */
+  pagerValues = [50, 100, 500];
 
     private page:number = 0;
     private limit:number = this.pagerValues[0];
+    private sortValues: SortModel.Sort = { field: null, type: null };
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
 
-    displayedColumns: string[] = ['name', 'initDate', 'endDate'];
+    displayedColumns: string[] = ['name', 'initDate', 'endDate', 'quantity', 'select'];
     dataSource: any;
 
-    warehouseId:number = 51;
+  warehouseId: number = 49;
 
-    /**timeout for send request */
-    requestTimeout;
-    /**previous reference to detect changes */
-    previousProductReferencePattern = '';
-    pauseListenFormChange = false;
+  /**form to select elements to print or for anything */
+  selectedForm: FormGroup = this.formBuilder.group(
+    {
+      selector: false
+    },
+    {
+      validators: validators.haveItems('toSelect')
+    }
+  );
 
-    form:FormGroup = this.formBuilder.group({
-      models: [],
-      colors: [],
-      productReferencePattern:'',
-      pagination: this.formBuilder.group({
-          page: 1,
-          limit: this.pagerValues[0]
-      }),
-      orderby:this.formBuilder.group( {
-          type: '',
-          order: "asc"
-      })
-    });
-
-    /**form to select elements to print or for anything */
-    selectedForm:FormGroup = this.formBuilder.group({},{
-      validators:validators.haveItems("toSelect")
-    });
-
-    /**Filters */
-    models:Array<TagsInputOption> = [];
-    colors:Array<TagsInputOption> = [];
-
-    /**List of SearchInContainer */
-    searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
-    
-
-  constructor(    
-    private intermediaryService:IntermediaryService,
-    private formBuilder:FormBuilder,
-    private tariffService:TariffService,
-    private router:Router,
-    private warehousesService:WarehousesService,
-    private inventoryServices:InventoryService) { }
+  constructor(
+    private intermediaryService: IntermediaryService,
+    private formBuilder: FormBuilder,
+    private tariffService: TariffService,
+    private router: Router,
+    private warehousesService: WarehousesService
+  ) {}
 
   ngOnInit() {
-    console.log(this.filters);
-    this.filters.patchValue({warehouseId:1});
+    // console.log(this.filters);
+    this.filters.patchValue({ warehouseId: 1 });
     this.getWarehouses();
-    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+    this.getTariffs(this.page, this.limit, this.sortValues);
     this.listenChanges();
   }
-
-  /**
-   * init selectForm controls
-   */
-  initSelectForm():void{  
-    this.selectedForm.removeControl("toSelect");
-    this.selectedForm.addControl("toSelect",this.formBuilder.array(this.searchsInContainer.map(product=>new FormControl(false))));
-  }
-
   /**
    * filter the tariff by warehouse
-   * @param event 
+   * @param event
    */
-  filterByWarehouse(event){
+  filterByWarehouse(event) {
     this.warehouseId = event.detail.value;
-    this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+    this.getTariffs(this.page, this.limit, this.sortValues);
   }
 
-  listenChanges():void{
-    let previousPageSize = this.limit
+  listenChanges(): void {
+    let previousPageSize = this.limit;
     /**detect changes in the paginator */
-    this.paginator.page.subscribe(page=>{
+    this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag?page.pageIndex+1:1;
-      this.getTariffs(this.page,this.limit,this.filters.value.warehouseId);
+      this.getTariffs(this.page, this.limit, this.sortValues);
     });
   }
 
@@ -136,28 +99,26 @@ export class TariffComponent implements OnInit {
    * Go to product view
    * @param id - the id of the selected tariff
    */
-  goPrices(id:number):void{
-    let a:TariffModel.Tariff;
-    this.router.navigate(['prices',id]);
+  goPrices(id: number): void {
+    let a: TariffModel.Tariff;
+    this.router.navigate(['prices', id]);
   }
 
-  getWarehouses():void{
-    this.warehousesService.getIndex().then(observable=>{
-      observable.subscribe(warehouses=>{
+  getWarehouses(): void {
+    this.warehousesService.getIndex().then(observable => {
+      observable.subscribe(warehouses => {
         this.warehouses = warehouses.body.data;
       });
-    })
+    });
   }
 
   /**
    * Get labels to show
    */
-  getTariffs(page:number,limit:number,id:number=51):void{
+  getTariffs(page: number, limit: number, sort: SortModel.Sort) {
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit, id).subscribe(tariffs=>{
+    this.tariffService.getIndex(page, limit, sort).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
-      console.log('getTari ', tariffs);
-      
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
         result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
@@ -173,125 +134,112 @@ export class TariffComponent implements OnInit {
     })
   }
 
-  /**
-   * get all filters to fill the selects
-   */
-  getFilters():void{
-    this.intermediaryService.presentLoading();
+  sortData(event) {
+    if (event.direction == '') {
+      this.sortValues = { field: null, type: null };
+    } else {
+      this.sortValues = { field: event.active.toLowerCase(), type: event.direction.toLowerCase() };
+    }
+    this.getTariffs(this.page,this.limit, this.sortValues);
+  }
 
-    this.warehousesService.getMain().subscribe((warehouse: FiltersModel.Warehouse) => {      
-      this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
-        this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-        // this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-        this.updateFilterSourceModels(searchsInContainer.data.filters.models);
-        // this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
-        // this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-        // this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
-        setTimeout(() => {
-          this.pauseListenFormChange = true;
-          this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
-          this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});
-          setTimeout(() => {
-            this.pauseListenFormChange = false;
-            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-          }, 0);
-        }, 0);
-      },()=>{
-        this.intermediaryService.dismissLoading();
+  /**
+   * Cancel event and stop it propagation
+   * @params e - the event to cancel
+   */
+  prevent(e):void{
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // changeCheckBox(i) {
+  //   // console.log('Position ', i);
+  //   // console.log('this.selectedForm.value.toSelect[i] ', this.selectedForm.value.toSelect[i]);
+
+  // }
+
+  onChecked(i, event) {
+    // console.log('On Change Check ',i , event);
+    let tariff: any = this.tariffs[i];
+
+    let exist = _.find(this.tariffsUpdate, {'position': i});
+
+    if(exist) {
+      _.remove(this.tariffsUpdate, function(n) {
+        return n.position == i;
       });
-    },()=>{
-      this.intermediaryService.dismissLoading();
-    });
-  }
-
-  private updateFilterSourceColors(colors: FiltersModel.Color[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("colors").value;
-    this.colors = colors;
-    if (value && value.length) {
-      this.form.get("colors").patchValue(value, {emitEvent: false});
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-
-  private updateFilterSourceModels(models: FiltersModel.Model[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("productReferencePattern").value;
-    this.models = models.map(model => {
-      model.id = <number>(<unknown>model.reference);
-      model.name = model.reference;
-      return model;
-    });
-    if (value && value.length) {
-      this.form.get("productReferencePattern").patchValue(value, {emitEvent: false});
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-
-  private getFormValueCopy() {
-    return JSON.parse(JSON.stringify(this.form.value || {}));
-  }
-
-  /**
-   * search products in container by criteria
-   * @param parameters - parameters to search
-   */
-  searchInContainer(parameters):void{
-    this.intermediaryService.presentLoading();
-    this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
-      this.intermediaryService.dismissLoading();
-      this.searchsInContainer = searchsInContainer.data.results;
-      this.initSelectForm();
-      this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      /*this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-      this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-      this.updateFilterSourceModels(searchsInContainer.data.filters.models);
-      this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
-      this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);*/
-      let paginator = searchsInContainer.data.pagination;
-      this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.page - 1;
-    },()=>{
-      this.intermediaryService.dismissLoading();
-    });
-  }
-
-
-  /**
-   * clear empty values of objecto to sanitize it
-   * @param object Object to sanitize
-   * @return the sanitized object
-   */
-  sanitize(object){
-    /**mejorable */
-    object = JSON.parse(JSON.stringify(object));
-    if(!object.orderby.type){
-      delete object.orderby.type;
-    }else{
-      object.orderby.type = parseInt(object.orderby.type);
-    }
-    if(!object.orderby.order)
-      delete object.orderby.order;
-    if(object.productReferencePattern) {
-      object.productReferencePattern = "%" + object.productReferencePattern + "%";
-    }
-    Object.keys(object).forEach(key=>{
-      if(object[key] instanceof Array){
-        if(object[key][0] instanceof Array){
-          object[key] = object[key][0];
-        } else {
-          for(let i = 0;i<object[key].length;i++) {
-            if(object[key][i] === null || object[key][i] === "") {
-              object[key].splice(i,1);
-            }
-          }
+    } else {
+      if(tariff.enabled != event) {
+        let object = {
+          position: i,
+          warehouseId: tariff.warehouseId,
+          tariffId: tariff.tariffId,
+          enabled: event
         }
+        this.tariffsUpdate.push(object);
       }
-      if (object[key] === null || object[key] === "") {
-        delete object[key];
-      }
+    }
+
+    // console.log('this.tariffsUpdate after push', this.tariffsUpdate);
+  }
+
+  /**
+   * Update Enabled/Disabled the selected labels
+   * @param items - Reference items to extract he ids
+   */
+  updateEnabled(warehouseId:number=49):void {
+    // let list = this.tariffs.map((item, i) => {
+    //   let enabled = this.selectedForm.value.toSelect[i];
+
+    //   let object = {
+    //     warehouseId: items[i].warehouseId,
+    //     tariffId: items[i].tariffId,
+    //     enabled
+    //   }
+
+    //   return object;
+
+    // });
+
+    // // console.log(list);
+    this.intermediaryService.presentLoading("Modificando los seleccionados");
+    this.tariffService.updateEnabled({elements:this.tariffsUpdate}).subscribe(result => {
+      this.intermediaryService.dismissLoading();
+      this.listenChanges();
+    },error=>{
+      this.intermediaryService.dismissLoading();
+      // console.log(error);
     });
-    return object;
+
+  }
+
+  /**
+   * Select or unselect all visible labels
+   * @param event to check the status
+   */
+  selectAll(event):void{
+    let value = event.detail.checked;
+    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach((control, i)=>{
+      control.setValue(value);
+    });
+  }
+
+  /**
+   * Init selectForm controls
+   * @param items - reference items for create the formControls
+   */
+  initSelectForm(items):void{
+    this.selectedForm.removeControl("toSelect");
+    this.selectedForm.addControl(
+      "toSelect",
+      this.formBuilder.array(items.map(item => new FormControl(Boolean(item.enabled))))
+    );
+
+    // console.log('Init ', this.selectedForm.value);
+
+  }
+
+  get existTariffsToUpdate() {
+    return this.tariffsUpdate.length > 0;
   }
 }

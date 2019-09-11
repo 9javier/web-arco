@@ -52,7 +52,7 @@
                     {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : ''}}
                 </ion-label>
             </ion-item>
-            <div padding>
+            <div padding *ngIf="isProductRelocationEnabled">
                 <ion-label class="title-section">Reubicar</ion-label>
                 <div class="form-fields">
                     <ion-row>

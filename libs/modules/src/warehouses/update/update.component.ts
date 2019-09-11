@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { FormGroup, Validators,FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ModalController, NavParams } from "@ionic/angular";
-import { WarehousesService,WarehouseGroupService,WarehouseGroupModel,BuildingModel,BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel, AgencyService, AgencyModel } from '@suite/services';
+import { WarehousesService, WarehouseGroupService, WarehouseGroupModel, BuildingModel, BuildingService, GroupWarehousePickingService, GroupWarehousePickingModel, AgencyService, AgencyModel, IntermediaryService } from '@suite/services';
 import { UtilsComponent } from '../../components/utils/utils.component';
 
 
@@ -11,96 +11,97 @@ import { UtilsComponent } from '../../components/utils/utils.component';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
-  @ViewChild(UtilsComponent) utils:UtilsComponent;
-  updateForm:FormGroup = this.formBuilder.group({
-    id:['',[Validators.required]],
+  @ViewChild(UtilsComponent) utils: UtilsComponent;
+  updateForm: FormGroup = this.formBuilder.group({
+    id: ['', [Validators.required]],
     name: ['', [Validators.required, Validators.minLength(4)]],
     description: ['', Validators.required],
     reference: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     is_store: [false, []],
-    groupId:'',
-    groupsWarehousePicking:[''],
-    prefix_container:['',[Validators.required,Validators.minLength(1),Validators.maxLength(4)]],
-    hasBuilding: [false,[]],
-    buildingId:[''],
+    groupId: '',
+    groupsWarehousePicking: [''],
+    prefix_container: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(4)]],
+    hasBuilding: [false, []],
+    buildingId: [''],
     is_main: [false, []],
     has_racks: [false, []],
-    halls:'',
-    rows:'',
-    columns:'',
-    TypePackingId:[''],
-    thresholdShippingStore:[''],
-    manageAgencyId:'',
-    is_outlet:false
+    halls: '',
+    rows: '',
+    columns: '',
+    TypePackingId: [''],
+    thresholdShippingStore: [''],
+    manageAgencyId: '',
+    is_outlet: false
   });
-  groupWarehousesPicking:Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
+  groupWarehousesPicking: Array<GroupWarehousePickingModel.GroupWarehousePicking> = [];
   private warehouseId;
-  agencies:AgencyModel.Agency[] = [];
-  packingTypes:Array<any> = [];
+  agencies: AgencyModel.Agency[] = [];
+  packingTypes: Array<any> = [];
   private currentHasRacks;
-  buildings:Array<BuildingModel.Building> = [];
-  groups:Array<WarehouseGroupModel.WarehouseGroup>=[];
+  buildings: Array<BuildingModel.Building> = [];
+  groups: Array<WarehouseGroupModel.WarehouseGroup> = [];
 
   /**wrapper for common ionic component methods like loading */
-  @ViewChild(UtilsComponent) utilsComponent:UtilsComponent;
+  @ViewChild(UtilsComponent) utilsComponent: UtilsComponent;
 
-  constructor(private modalCtrl:ModalController,
-    private formBuilder:FormBuilder,
-    private agencyService:AgencyService,
-    private warehousesService:WarehousesService,
-    private warehouseGroupService:WarehouseGroupService,
+  constructor(private modalCtrl: ModalController,
+    private formBuilder: FormBuilder,
+    private agencyService: AgencyService,
+    private warehousesService: WarehousesService,
+    private warehouseGroupService: WarehouseGroupService,
     private cd: ChangeDetectorRef,
-    private navParams:NavParams,
-    private buildingService:BuildingService,
-    private groupWarehousePickingService:GroupWarehousePickingService
-    ) {
-      this.warehouseId = this.navParams.data.id;
-      this.getWarehouse(this.warehouseId);
-      
-    }
+    private navParams: NavParams,
+    private buildingService: BuildingService,
+    private intermediaryService: IntermediaryService,
+    private groupWarehousePickingService: GroupWarehousePickingService
+  ) {
+    this.warehouseId = this.navParams.data.id;
+    this.getWarehouse(this.warehouseId);
+
+  }
 
   /**
   * Assign and unassign validators depends of value of another validators
   */
-  changeValidatorsAndValues():void{
+  changeValidatorsAndValues(): void {
     let values = this.updateForm.value;
     /**Listen for changes on is_store control */
-    this.updateForm.get("is_store").valueChanges.subscribe((isStore)=>{
+    this.updateForm.get("is_store").valueChanges.subscribe((isStore) => {
       let store = this.updateForm.get("groupId")
       store.clearValidators();
       store.setValue("");
       this.cd.detectChanges();
     });
 
-    
 
-        /**Listen for changes on hasBuilding control */
-        this.updateForm.get("hasBuilding").valueChanges.subscribe((hasBuilding)=>{
-          let buildingId = this.updateForm.get("buildingId")
-          buildingId.clearValidators();
-          buildingId.setValue("");
-          buildingId.setValidators(hasBuilding?[Validators.required]:[])
-          this.cd.detectChanges();
-        });
+
+    /**Listen for changes on hasBuilding control */
+    this.updateForm.get("hasBuilding").valueChanges.subscribe((hasBuilding) => {
+      let buildingId = this.updateForm.get("buildingId")
+      buildingId.clearValidators();
+      buildingId.setValue("");
+      buildingId.setValidators(hasBuilding ? [Validators.required] : [])
+      this.cd.detectChanges();
+    });
 
     /**Listen for changes in has_racks control */
-    this.updateForm.get("has_racks").valueChanges.subscribe((hasRacks)=>{
+    this.updateForm.get("has_racks").valueChanges.subscribe((hasRacks) => {
       let hallways = this.updateForm.get("halls");
       let rows = this.updateForm.get("rows")
       let columns = this.updateForm.get("columns")
-      let aux = [hallways,rows,columns].forEach(control=>{
+      let aux = [hallways, rows, columns].forEach(control => {
         control.clearValidators();
         control.setValue("");
-        control.setValidators(control?[Validators.required]:[]);
+        control.setValidators(control ? [Validators.required] : []);
       });
       this.cd.detectChanges();
-    });    
+    });
   }
-    /**
-   * Get all agencies
-   */
-  getAgencies(){
-    this.agencyService.getAll().subscribe(agencies=>{
+  /**
+ * Get all agencies
+ */
+  getAgencies() {
+    this.agencyService.getAll().subscribe(agencies => {
       this.agencies = agencies;
     })
   }
@@ -108,8 +109,8 @@ export class UpdateComponent implements OnInit {
   /**
    * Get the packing types
    */
-  getPackingTypes(){
-    this.warehousesService.getTypePacking().subscribe((packingTypes)=>{
+  getPackingTypes() {
+    this.warehousesService.getTypePacking().subscribe((packingTypes) => {
       this.packingTypes = packingTypes;
     })
   }
@@ -118,28 +119,30 @@ export class UpdateComponent implements OnInit {
    * get the warehouse to edit
    * @param id the id of warehouse
    */
-  getWarehouse(id:number):void{
-    this.warehousesService.getShow(id).subscribe(warehouse=>{
+  getWarehouse(id: number): void {
+    this.intermediaryService.presentLoading();
+    this.warehousesService.getShow(id).subscribe(warehouse => {
       /**the models in backend differs then the model is useless */
       this.currentHasRacks = warehouse.has_racks;
-      let warehouseToPatch:any = warehouse;
-      if(warehouse.group)
+      let warehouseToPatch: any = warehouse;
+      if (warehouse.group)
         warehouseToPatch.groupId = warehouseToPatch.group.id;
-      if(warehouseToPatch.manageAgency)
+      if (warehouseToPatch.manageAgency)
         warehouseToPatch.manageAgencyId = warehouseToPatch.manageAgency.id;
-      if(warehouseToPatch.packingType)
+      if (warehouseToPatch.packingType)
         warehouseToPatch.TypePackingId = warehouseToPatch.packingType;
-      warehouseToPatch.groupsWarehousePicking = warehouseToPatch.groupsWarehousePicking.map(group=>{
+      warehouseToPatch.groupsWarehousePicking = warehouseToPatch.groupsWarehousePicking.map(group => {
         return group.id
       });
       this.updateForm.patchValue(warehouseToPatch);
-    }, ()=> {
-      this.utilsComponent.dismissLoading();
-    })
+    }, (err) => {
+    }, () => {
+      this.intermediaryService.dismissLoading();
+    });
   }
 
-  getGroupWarehousePicking():void{
-    this.groupWarehousePickingService.getIndex().subscribe(groups=>{
+  getGroupWarehousePicking(): void {
+    this.groupWarehousePickingService.getIndex().subscribe(groups => {
       this.groupWarehousesPicking = groups;
     });
   }
@@ -149,36 +152,36 @@ export class UpdateComponent implements OnInit {
    * Event triggered when user press a key in a field
    * @param event event triggered
    */
-  onlyUpperLetters(event){
+  onlyUpperLetters(event) {
     let key = event.key
     return /[a-zA-Z]/.test(key);
   }
 
-    /**
-   * Get all registereds buildings
-   */
-  getBuildings():void{
-    this.buildingService.getIndex().subscribe(buildings=>{
+  /**
+ * Get all registereds buildings
+ */
+  getBuildings(): void {
+    this.buildingService.getIndex().subscribe(buildings => {
       this.buildings = buildings
     });
   }
-  onlyNumbers(event){
+  onlyNumbers(event) {
     let key = event.key
     return /[0-9]/.test(key);
   }
   /**
   * delete empty values 
   */
-  sanitize(object:any):Object{
+  sanitize(object: any): Object {
     object = JSON.parse(JSON.stringify(object));
     object.prefix_container = object.prefix_container.toUpperCase();
-    if(object.manageAgencyId)
+    if (object.manageAgencyId)
       object.manageAgencyId = parseInt(object.manageAgencyId);
-    if(object.thresholdShippingStore)
+    if (object.thresholdShippingStore)
       object.thresholdShippingStore = parseInt(object.thresholdShippingStore)
-    Object.keys(object).forEach(key=>{
+    Object.keys(object).forEach(key => {
       let value = object[key];
-      if(value === "" || value === null)
+      if (value === "" || value === null)
         delete object[key];
     });
     delete object.reference;
@@ -188,25 +191,29 @@ export class UpdateComponent implements OnInit {
   /**
   * get wharehousesgroups to show in the select
   */
-  getWharehousesGroup():void{
-    this.warehouseGroupService.getIndex().subscribe(warehousesGroups=>{
-    this.groups = warehousesGroups;
-      console.log(this.groups);
+  getWharehousesGroup(): void {
+    this.warehouseGroupService.getIndex().subscribe(warehousesGroups => {
+      this.groups = warehousesGroups;
+
     });
   }
 
   /**
   * Save the new warehouse
   */
-  submit(){
-    this.warehousesService.put(this.sanitize(this.updateForm.value)).subscribe(data=>{
-      this.utils.presentAlert("Éxito","Almacén editado con éxito");
+  submit() {
+    this.intermediaryService.presentLoading();
+    this.warehousesService.put(this.sanitize(this.updateForm.value)).subscribe(data => {
+      this.intermediaryService.dismissLoading();
+      this.utils.presentAlert("Éxito", "Almacén editado con éxito");
       this.close();
+    }, (err) => {
+      this.intermediaryService.dismissLoading();
     });
   }
 
   ngOnInit() {
-    this.utilsComponent.presentLoading();
+
     this.getWharehousesGroup();
     this.getBuildings();
     this.getAgencies();
@@ -216,7 +223,7 @@ export class UpdateComponent implements OnInit {
   }
 
   /**close the current instance of the modal */
-  close():void{
-  this.modalCtrl.dismiss();
+  close(): void {
+    this.modalCtrl.dismiss();
   }
 }

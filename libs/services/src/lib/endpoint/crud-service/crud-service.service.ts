@@ -43,7 +43,7 @@ export class CrudService<responseObject=any,requestObject=any,response=any,singl
     }))
   }
 
-  store(object:requestObject):Observable<responseObject>{
+  store(object:requestObject[]):Observable<responseObject>{
     return this.http.post<singleResponse>(this.requestUrl,object).pipe(map(response=>{
       return (<any>response).data;
     }));

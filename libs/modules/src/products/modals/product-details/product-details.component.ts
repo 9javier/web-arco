@@ -51,6 +51,8 @@ export class ProductDetailsComponent implements OnInit {
   dates: any[] = [];
   hours: any[] = [];
 
+  public isProductRelocationEnabled: boolean = false;
+
   constructor(
     private typeService: TypesService,
     private productService: ProductsService,

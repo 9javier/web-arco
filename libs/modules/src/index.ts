@@ -63,13 +63,9 @@ export * from './warehouses/warehouses.module';
 export * from './workwaves-schedule/workwaves-schedule.component';
 export * from './workwaves-schedule/workwaves-schedule.module';
 
-// Workwaves Templates
-export * from './workwaves-templates/workwaves-templates.component';
-export * from './workwaves-templates/workwaves-templates.module';
-
-// Workwave Template
-export * from './workwave-template/workwave-template.component';
-export * from './workwave-template/workwave-template.module';
+// Workwave Template Rebuild
+export * from './workwave-template-rebuild/workwave-template-rebuild.component';
+export * from './workwave-template-rebuild/workwave-template-rebuild.module';
 
 // Workwaves History
 export * from './workwaves-history/workwaves-history.component';
@@ -139,6 +135,9 @@ export * from './list-picking/list-picking.module';
 export * from './tariff/tariff.component';
 export * from './tariff/tariff.module';
 
+/**TariffSGA */
+export * from './tariffSGA/tariffSGA.component';
+export * from './tariffSGA/tariffSGA.module';
 /**Prices */
 export * from './prices/prices.component';
 export * from './prices/prices.module';
@@ -194,3 +193,15 @@ export * from './agency/agency.module';
 /**Global variables */
 export * from './global-variables/global-variables.component';
 export * from './global-variables/global-variables.module';
+
+/** List Pickings with Products Rebuild */
+export * from './list-picking-rebuild/list-picking-rebuild.component';
+export * from './list-picking-rebuild/list-picking-rebuild.module';
+
+/** Button to open popover filters */
+export * from './components/filter-button/filter-button.component';
+export * from './components/filter-button/filter-button.module';
+
+/** Popover for filters */
+export * from './components/filter-popover/filter-popover.component';
+export * from './components/filter-popover/filter-popover.module';

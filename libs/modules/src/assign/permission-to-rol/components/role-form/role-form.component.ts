@@ -1,6 +1,6 @@
 import { Component, OnInit,Input } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl,Validators } from '@angular/forms';
-import { RolesService, RolModel, PermissionsService, PermissionsModel } from '@suite/services';
+import { RolesService, RolModel, PermissionsService, PermissionsModel, IntermediaryService } from '@suite/services';
 import { validators } from '../../../../utils/validators';
 
 @Component({
@@ -23,7 +23,7 @@ export class RoleFormComponent implements OnInit {
   });
 
   @Input() rol = {};
-  constructor(private permissionService:PermissionsService,private roleService:RolesService,private formBuilder:FormBuilder) {
+  constructor(private intermediaryService:IntermediaryService, private permissionService:PermissionsService,private roleService:RolesService,private formBuilder:FormBuilder) {
   }
 
   ngOnInit() {
@@ -34,16 +34,21 @@ export class RoleFormComponent implements OnInit {
    * get permissions from the server and add its to the formGroup
    */
   getPermisions():void{
+    this.intermediaryService.presentLoading();
     this.permissionService.getIndex().then(observable=>{
       observable.subscribe(permissions=>{
         this.permissions = permissions.body.data;
-        console.log(this.permissions);
-        console.log(observable);
+        // console.log(this.permissions);
+        // console.log(observable);
         this.form.addControl('groups',this.formBuilder.array(
           this.permissions.map(permission=>new FormControl(false))
         ));
-        console.log(this.toPatch(this.rol));
+        // console.log(this.toPatch(this.rol));
         this.form.patchValue(this.toPatch(this.rol));
+      }, (err) => {
+        // console.log(err)
+      }, () => {
+        this.intermediaryService.dismissLoading();
       })
     })
   }
@@ -66,7 +71,7 @@ export class RoleFormComponent implements OnInit {
    * @param object - object to sanitize
    */
   toPatch(object){
-    console.log(object,this.permissions)
+    // console.log(object,this.permissions)
     object = JSON.parse(JSON.stringify(object));
     /**convert complex group to form format*/
     if(object.groups)
