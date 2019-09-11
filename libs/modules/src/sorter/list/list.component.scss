@@ -1,0 +1,25 @@
+.main-buttons {
+    overflow: auto;
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    h1 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+.mat-column-select {
+    overflow: initial;
+}
+
+.container {
+    margin-top: 1em;
+}
+
+table {
+    td {
+        padding: 10px 30px 10px 40px;
+    }
+}

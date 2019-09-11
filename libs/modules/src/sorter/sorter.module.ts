@@ -4,8 +4,10 @@ import { SorterComponent } from './sorter.component';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { MatTableModule } from '@angular/material';
+import { CdkTableModule } from '@angular/cdk/table';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import {ListComponent} from './list/list.component';
 
 const routes:Routes = [
   {
@@ -15,13 +17,13 @@ const routes:Routes = [
 ]; 
 
 @NgModule({
-  declarations: [SorterComponent],
+  declarations: [SorterComponent, ListComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    MatExpansionModule,
+    MatTableModule,
     RouterModule.forChild(routes),
     BreadcrumbModule
   ]
