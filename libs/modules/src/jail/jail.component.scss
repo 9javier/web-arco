@@ -11,7 +11,6 @@ table {
 }
 
 div.table-container {
-    overflow: auto;
     table.table-incidences {
         width: 100%;
         tr.incidence-row:not(.incidence-expanded-row):hover {
@@ -96,4 +95,26 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .example-element-description-attribution {
     opacity: 0.5;
+}
+
+ion-icon.action-icon, i.action-icon {
+  cursor: pointer;
+}
+
+.footer-products {
+   position: fixed;
+   width: 100%;
+   bottom: 0;
+   .horizontal-fab {
+     display: flex;
+     flex: 1;
+     flex-direction: row;
+     ion-fab-button {
+       margin-left: 16px;
+     }
+   }
+ }
+
+.footer-products:before {
+  background: none;
 }

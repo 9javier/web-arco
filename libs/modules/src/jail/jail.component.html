@@ -1,18 +1,4 @@
-<!--<suite-ui-crud-list
-  padding
-  [dataColumns]="columns"
-  [title]="title"
-  [displayedColumns]="displayedColumns"
-  [apiEndpoint]="apiEndpoint"
-  [routePath]="routePath"
-  [printable]="true"
-></suite-ui-crud-list>
--->
-
-<ion-content padding="true">
-    <ion-text color="primary" class="title">
-        <suite-breadcrumb></suite-breadcrumb>
-    </ion-text>
+<ion-content>
     <div class="table-container">
         <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
             <ng-container matColumnDef="select">
@@ -23,30 +9,32 @@
             </ng-container>
 
             <ng-container matColumnDef="reference">
-                <th mat-header-cell *matHeaderCellDef> Referencia </th>
+                <th mat-header-cell *matHeaderCellDef>Referencia</th>
                 <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
             </ng-container>
 
             <ng-container matColumnDef="packing">
-                <th mat-header-cell *matHeaderCellDef> Packing </th>
+                <th mat-header-cell *matHeaderCellDef>Packing</th>
                 <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
             </ng-container>
+
             <ng-container matColumnDef="warehouse">
-                <th mat-header-cell *matHeaderCellDef> Warehouse </th>
+                <th mat-header-cell *matHeaderCellDef>Warehouse</th>
                 <td mat-cell *matCellDef="let element"> {{element?.warehouse?.name}}
                     <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="update">
-                <th mat-header-cell *matHeaderCellDef> Actualizar</th>
+                <th mat-header-cell *matHeaderCellDef>Actualizar</th>
                 <td mat-cell *matCellDef="let element">
-                    <ion-icon (click)="toUpdate($event,element)" name="create"></ion-icon>
+                    <ion-icon (click)="toUpdate($event,element)" name="create" class="action-icon"></ion-icon>
                 </td>
             </ng-container>
+
             <ng-container matColumnDef="buttons-print">
-                <th mat-header-cell *matHeaderCellDef> Imprimir</th>
-                <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons">print</i> </td>
+                <th mat-header-cell *matHeaderCellDef>Imprimir</th>
+                <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons action-icon">print</i> </td>
             </ng-container>
 
             <ng-container matColumnDef="expandedDetail">
@@ -81,12 +69,10 @@
     </div>
 </ion-content>
 
-<ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="hasToDelete()" color="danger" (click)="delete()">
-        <ion-icon name="trash"></ion-icon>
-    </ion-fab-button>
-    <br>
-    <ion-fab-button (click)="toStore()">
-        <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-</ion-fab>
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="delete()" *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
+    <ion-fab-button (click)="print($event)" *ngIf="hasToDelete()"><i class="material-icons">print</i></ion-fab-button>
+    <ion-fab-button (click)="toStore()"><i class="material-icons">add</i></ion-fab-button>
+  </ion-fab>
+</ion-footer>

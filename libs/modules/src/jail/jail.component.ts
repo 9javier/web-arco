@@ -139,16 +139,17 @@ export class JailComponent implements OnInit {
 
   getCarriers():void{
     this.intermediaryService.presentLoading();
-    this.carrierService.getIndex().subscribe(carriers=>{
+    this.carrierService.getIndex().subscribe(carriers => {
       this.carriers = carriers;
       this.toDelete.removeControl("jails");
-      this.toDelete.addControl("jails",this.formBuilder.array(carriers.map(carrier=>{
+      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
         return this.formBuilder.group({
-          id:carrier.id,
-          selected:false
+          id: carrier.id,
+          reference: carrier.reference,
+          selected: false
         });
-      })))
-      this.dataSource = new MatTableDataSource(carriers)
+      })));
+      this.dataSource = new MatTableDataSource(carriers);
       console.log(this.toDelete);
       this.intermediaryService.dismissLoading();
     })
@@ -158,27 +159,33 @@ export class JailComponent implements OnInit {
    * check if have items to delete
    */
   hasToDelete():boolean{
-    return !!this.toDelete.value.jails.find(jail=>jail.selected);
+    return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
   /**
-   * coppied function to show modal when user tap on print button
+   * copied function to show modal when user tap on print button
    * @param event 
    * @param row 
    */
-  async print(event, row){
+  async print(event, row?: CarrierModel.Carrier) {
     event.stopPropagation();
-    if ((row && row.reference)) {
-      let listReferences: string[] = null;
-      if (row && row.reference) {
-        listReferences = [row.reference];
-      }
+    let listReferences: Array<string> = null;
+    if (row && row.reference) {
+      listReferences = [ row.reference ];
+    } else if (!row) {
+      listReferences = this.toDelete.value.jails.filter(jail => jail.selected).map(jail => jail.reference);
+    }
 
-      if ((<any>window).cordova) {
-        this.printerService.print({text: listReferences, type: 0});
-      } else {
-        return await this.printerService.printBarcodesOnBrowser(listReferences);
-      }
+    if (listReferences && listReferences.length > 0) {
+      this.printReferencesList(listReferences);
+    }
+  }
+
+  private async printReferencesList(listReferences: Array<string>) {
+    if ((<any>window).cordova) {
+      this.printerService.print({ text: listReferences, type: 0 });
+    } else {
+      return await this.printerService.printBarcodesOnBrowser(listReferences);
     }
   }
 
