@@ -65,7 +65,7 @@
             </tr>
             <tr *ngFor="let row of detail.element.container | reverse; let iRow = index">
               <td class="location-resume" (click)="selectRow($event, detail, row, iRow)">
-                <div class="incidence-element-resume">{{row[0].row}}</div>
+                <div class="incidence-element-resume">{{row ? row[0].row : ''}}</div>
               </td>
               <td *ngFor="let column of row; let iColumn = index"
                 [class.location-free]="column.items == 0 && column.enabled && !column.lock"
@@ -77,7 +77,7 @@
                   [class.serious-incidence]="column.incidence == 'serious'"></div>
               </td>
               <td class="location-resume" (click)="selectRow($event, detail, row, iRow)">
-                <div class="incidence-element-resume">{{row[0].row}}</div>
+                <div class="incidence-element-resume">{{row ? row[0].row : ''}}</div>
               </td>
             </tr>
             <tr *ngIf="detail.element.container && detail.element.container.length">
