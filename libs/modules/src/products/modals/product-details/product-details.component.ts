@@ -103,7 +103,7 @@ export class ProductDetailsComponent implements OnInit {
 
       for (let i = 0; i < historical.length; i++) {
         this.dates[i] = moment(historical[i].updatedAt).format('L');
-        this.hours[i] = moment(historical[i].updatedAt).format('h:mm:ss a');
+        this.hours[i] = moment(historical[i].updatedAt).format('HH:mm:ss');
       }
     });
   }

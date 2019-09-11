@@ -154,10 +154,7 @@
                         {{ historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
                     </p>
                     <p>
-                        Fecha: {{dates[i]}}
-                    </p>
-                    <p>
-                        Hora: {{hours[i]}}
+                        Fecha: {{dates[i]}} {{hours[i]}}
                     </p>
                     <p>
                         Acción realizada: {{actionTypes[historical.typeAction]}}
