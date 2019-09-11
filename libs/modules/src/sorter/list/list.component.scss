@@ -14,12 +14,53 @@
     overflow: initial;
 }
 
+.icon-arrow {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-cell,
+.mat-header-cell {
+    padding: 10px 10px 10px 0;
+}
+
 .container {
     margin-top: 1em;
 }
 
-table {
-    td {
-        padding: 10px 30px 10px 40px;
+.row-icon-location {
+    width: 80px;
+    ion-col {
+        padding: 0;
+        .cell-resume-use {
+            width: 16px;
+            height: 16px;
+            background: rgba(33, 33, 33, 0.12);
+        }
+        .cell-resume-incidence,
+        .cell-resume-free {
+            width: 6px;
+            height: 6px;
+            background: green;
+            margin-left: 3px;
+        }
+        .cell-resume-free {
+            margin-top: 4px;
+            background: #fff;
+            outline: 2px solid #000;
+            outline-offset: -2px;
+        }
+        .cell-not-free {
+            outline: 2px solid rgba(0, 0, 0, 0.24);
+        }
+        .cell-incidence-serious {
+            background: red;
+        }
+        .cell-incidence-slight {
+            background: orange;
+        }
     }
 }

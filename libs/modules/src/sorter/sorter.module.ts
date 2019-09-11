@@ -4,7 +4,7 @@ import { SorterComponent } from './sorter.component';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatTableModule } from '@angular/material';
+import { MatTableModule, MatIconModule } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import {ListComponent} from './list/list.component';
@@ -24,6 +24,7 @@ const routes:Routes = [
     ReactiveFormsModule,
     IonicModule,
     MatTableModule,
+    MatIconModule,
     RouterModule.forChild(routes),
     BreadcrumbModule
   ]

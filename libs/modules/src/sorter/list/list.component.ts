@@ -43,7 +43,7 @@ import {PrinterService} from "../../../../services/src/lib/printer/printer.servi
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  displayedColumns: string[] = ['icon', 'down', 'Ntemplate', 'zona', 'row'];
   dataSource = [
     { icon: '', Ntemplate: 1, zona: 2 },
     { icon: '', Ntemplate: 2, zona: 2 },
@@ -62,7 +62,7 @@ export class ListComponent implements OnInit {
   ) {
   }
 
-
+  isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('down');
     
   
   
