@@ -54,4 +54,8 @@ export namespace CarrierModel {
     code: number
   }
 
+  export interface ResponseUpdateStatusInPicking {
+    data: any
+  }
+
 }

@@ -15,6 +15,7 @@ export class CarriersService {
   private postGenerateUrl: string = environment.apiBase + "/packing/generate";
   private postSealUrl: string = environment.apiBase + "/packing/seal";
   private postTransferAmongPackingsUrl: string = environment.apiBase + "/packing/transfer";
+  private getUpdatePackingStatusInPickingUrl: string = environment.apiBase + "/packing/update/";
 
   // Relabel
   private postListByWarehouseUrl: string = environment.apiBase + "/packing/show";
@@ -51,6 +52,12 @@ export class CarriersService {
   postTransferAmongPackings(params: CarrierModel.ParamsTransferAmongPackings): Observable<CarrierModel.ResponseTransferAmongPackings> {
     return this.http.post<CarrierModel.ResponseTransferAmongPackings>(this.postTransferAmongPackingsUrl, params).pipe(map(response => {
       return response;
+    }));
+  }
+
+  getUpdatePackingStatusInPicking(pickingId: number) : Observable<any> {
+    return this.http.get<CarrierModel.ResponseUpdateStatusInPicking>(`${this.getUpdatePackingStatusInPickingUrl}${pickingId}`).pipe(map(response => {
+      return response.data;
     }));
   }
 

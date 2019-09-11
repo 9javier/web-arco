@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationService} from "@suite/services";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
@@ -9,6 +9,7 @@ import {ShoesPickingModel} from "../../../../services/src/models/endpoints/Shoes
 import {Router} from "@angular/router";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {PickingScanditService} from "../../../../services/src/lib/scandit/picking/picking.service";
+import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 
 @Component({
   selector: 'list-picking-tasks-template',
@@ -25,14 +26,15 @@ export class ListPickingTasksTemplateComponent implements OnInit {
   public hasPickingsLoaded: boolean = true;
 
   constructor(
+    private events: Events,
+    private router: Router,
     private loadingController: LoadingController,
     public pickingService: PickingService,
     private scanditService: ScanditService,
     private authenticationService: AuthenticationService,
     private shoesPickingService: ShoesPickingService,
-    private events: Events,
-    private router: Router,
     private pickingScanditService: PickingScanditService,
+    private carriersService: CarriersService,
     private pickingProvider: PickingProvider
   ) {}
 
@@ -87,6 +89,14 @@ export class ListPickingTasksTemplateComponent implements OnInit {
 
   initPicking() {
     this.showLoading('Cargando productos...').then(() => {
+      this.carriersService
+        .getUpdatePackingStatusInPicking(this.pickingProvider.pickingSelectedToStart.id)
+        .subscribe((res) => {
+          console.debug('Test::carriersService::getUpdatePackingStatusInPicking::res', res);
+        }, (error) => {
+          console.debug('Test::carriersService::getUpdatePackingStatusInPicking::error', error);
+        });
+
       this.shoesPickingService
         .getPendingListByPicking(this.pickingProvider.pickingSelectedToStart.id)
         .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
