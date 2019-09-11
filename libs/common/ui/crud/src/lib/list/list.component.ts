@@ -417,148 +417,148 @@ export class ListComponent implements OnInit {
                     ) => {
                       response$.subscribe(
                         (response: HttpResponse<UserModel.ResponseDestroy>) => {
-                          // console.log(
-                          `${response.body.data} - ${response.body.code} - ${
-                            response.body.message
-                            }`
-                          );
-                      this.presentToast(successMsg);
-                      this.initUsers();
-                      this.dismissLoading();
-                    },
-                    (errorResponse: HttpErrorResponse) => {
-                      this.presentToast(errorResponse.message);
-                      // console.log(errorResponse);
-                      this.dismissLoading();
-                      this.initUsers();
+                          // // console.log(
+                          // `${response.body.data} - ${response.body.code} - ${
+                          //   response.body.message
+                          //   }`
+                          // );
+                          this.presentToast(successMsg);
+                          this.initUsers();
+                          this.dismissLoading();
+                        },
+                        (errorResponse: HttpErrorResponse) => {
+                          this.presentToast(errorResponse.message);
+                          // console.log(errorResponse);
+                          this.dismissLoading();
+                          this.initUsers();
+                        }
+                      );
                     }
                   );
                 }
-              );
-          }
-              );
-  }
-}
-      ]
-    });
-
-await alert.present();
-  }
-
-async presentJailsDeleteAlert(
-  selectedJails: SelectionModel<JailModel.Jail>
-  ) {
-  let header = '';
-  let msg = '';
-  let successMsg = '';
-
-  if(selectedJails.selected.length > 1) {
-  header = 'Eliminar referencia';
-  msg = `Estas a punto de eliminar <br>
-      <strong>${selectedJails.selected.length} referencias</strong>.<br>
-      ¿Esta seguro?`;
-  successMsg = `${selectedJails.selected.length} referencias eliminadas`;
-} else {
-  header = 'Eliminar Referencia';
-  msg = `Estas a punto de eliminar <br> 
-      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br> 
-      ¿Esta seguro? `;
-  successMsg = `Referencia ${selectedJails.selected.map(
-    value => value.reference
-  )} eliminada`;
-}
-
-
-
-
-const alert = await this.alertController.create({
-  header: header,
-  message: msg,
-  buttons: [
-    {
-      text: 'Cancelar',
-      role: 'cancel',
-      cssClass: 'secondary',
-      handler: blah => {
-        // console.log('Confirm Cancel: blah');
-      }
-    },
-    {
-      text: 'Vale',
-      handler: () => {
-        // console.log('Confirm Okay');
-        this.presentLoading();
-        this.crudService
-          .deleteDestroy(this.selection.selected, this.apiEndpoint)
-          .then(
-            (
-              data: Observable<HttpResponse<JailModel.ResponseDestroy>>[]
-            ) => {
-              data.map(
-                (
-                  response$: Observable<
-                    HttpResponse<JailModel.ResponseDestroy>
-                  >
-                ) => {
-                  response$.subscribe(
-                    (response: HttpResponse<JailModel.ResponseDestroy>) => {
-                      // console.log(
-                      `${response.body.data} - ${response.body.code} - ${
-                        response.body.message
-                        }`
-                          );
-                  this.presentToast(successMsg);
-                  this.initUsers();
-                  this.dismissLoading();
-                },
-                (errorResponse: HttpErrorResponse) => {
-                  this.presentToast(errorResponse.message);
-                  // console.log(errorResponse);
-                  this.dismissLoading();
-                  this.initUsers();
-                }
-              );
-            }
-          );
-      }
               );
           }
         }
       ]
     });
 
-await alert.present();
+    await alert.present();
   }
 
-async presentToast(msg) {
-  const toast = await this.toastController.create({
-    message: msg,
-    position: 'top',
-    duration: 2750
-  });
-  toast.present();
-}
+  async presentJailsDeleteAlert(
+    selectedJails: SelectionModel<JailModel.Jail>
+  ) {
+    let header = '';
+    let msg = '';
+    let successMsg = '';
 
-async presentLoading() {
-  this.isLoading = true;
-  return await this.loadingController
-    .create({
-      message: 'Un momento ...'
-    })
-    .then(a => {
-      a.present().then(() => {
-        // console.log('presented');
-        if (!this.isLoading) {
-          a.dismiss().then(() => // console.log('abort presenting'));
+    if (selectedJails.selected.length > 1) {
+      header = 'Eliminar referencia';
+      msg = `Estas a punto de eliminar <br>
+      <strong>${selectedJails.selected.length} referencias</strong>.<br>
+      ¿Esta seguro?`;
+      successMsg = `${selectedJails.selected.length} referencias eliminadas`;
+    } else {
+      header = 'Eliminar Referencia';
+      msg = `Estas a punto de eliminar <br> 
+      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br> 
+      ¿Esta seguro? `;
+      successMsg = `Referencia ${selectedJails.selected.map(
+        value => value.reference
+      )} eliminada`;
+    }
+
+
+
+
+    const alert = await this.alertController.create({
+      header: header,
+      message: msg,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: blah => {
+            // console.log('Confirm Cancel: blah');
           }
-      });
-    });
-}
+        },
+        {
+          text: 'Vale',
+          handler: () => {
+            // console.log('Confirm Okay');
+            this.presentLoading();
+            this.crudService
+              .deleteDestroy(this.selection.selected, this.apiEndpoint)
+              .then(
+                (
+                  data: Observable<HttpResponse<JailModel.ResponseDestroy>>[]
+                ) => {
+                  data.map(
+                    (
+                      response$: Observable<
+                        HttpResponse<JailModel.ResponseDestroy>
+                      >
+                    ) => {
+                      response$.subscribe(
+                        (response: HttpResponse<JailModel.ResponseDestroy>) => {
 
-async dismissLoading() {
-  this.isLoading = false;
-  return await this.loadingController
-    .dismiss()
-    .then(() => // console.log('dismissed'));
+                          // console.log(
+                          //   `${response.body.data} - ${response.body.code} - ${
+                          //   response.body.message
+                          //   }`
+                          // );
+                          this.presentToast(successMsg);
+                          this.initUsers();
+                          this.dismissLoading();
+                        },
+                        (errorResponse: HttpErrorResponse) => {
+                          this.presentToast(errorResponse.message);
+                          // console.log(errorResponse);
+                          this.dismissLoading();
+                          this.initUsers();
+                        }
+                      );
+                    }
+                  );
+                }
+              );
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async presentToast(msg) {
+    const toast = await this.toastController.create({
+      message: msg,
+      position: 'top',
+      duration: 2750
+    });
+    toast.present();
+  }
+
+  async presentLoading() {
+    this.isLoading = true;
+    return await this.loadingController
+      .create({
+        message: 'Un momento ...'
+      })
+      .then(a => {
+        a.present().then(() => {
+          if (!this.isLoading) {
+            a.dismiss().then(() => { });
+          }
+        });
+      });
+  }
+
+  async dismissLoading() {
+    this.isLoading = false;
+    return await this.loadingController
+      .dismiss()
+      .then(() => { });
   }
 }

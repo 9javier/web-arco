@@ -9,18 +9,18 @@ import { HttpResponse } from '@angular/common/http';
   styleUrls: ['./permissions.page.scss']
 })
 export class PermissionsPage implements OnInit {
-  constructor(private permissionService: PermissionsService) {}
+  constructor(private permissionService: PermissionsService) { }
 
   ngOnInit() {
     this.permissionService.getShow().then(
       (data: Observable<HttpResponse<PermissionsModel.ResponseShow[]>>) => {
         data.subscribe(
           (perList: HttpResponse<PermissionsModel.ResponseShow[]>) => {
-            // console.log(perList);
+
           }
         );
       },
-      error => // console.log(error)
+      error => { }
     );
   }
 }
