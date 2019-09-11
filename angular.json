@@ -82,6 +82,15 @@
                                 "replace": "libs/services/src/environments/environment.ts",
                                 "with": "libs/services/src/environments/environment.staging.ts"
                             }]
+                        },
+                        "dev": {
+                          "fileReplacements": [{
+                            "replace": "apps/al/src/environments/environment.ts",
+                            "with": "apps/al/src/environments/environment.dev.ts"
+                          }, {
+                            "replace": "libs/services/src/environments/environment.ts",
+                            "with": "libs/services/src/environments/environment.dev.ts"
+                          }]
                         }
                     }
                 },
@@ -254,6 +263,15 @@
                                 "replace": "libs/services/src/environments/environment.ts",
                                 "with": "libs/services/src/environments/environment.staging.ts"
                             }]
+                        },
+                        "dev": {
+                          "fileReplacements": [{
+                            "replace": "apps/al/src/environments/environment.ts",
+                            "with": "apps/al/src/environments/environment.dev.ts"
+                          }, {
+                            "replace": "libs/services/src/environments/environment.ts",
+                            "with": "libs/services/src/environments/environment.dev.ts"
+                          }]
                         }
                     }
                 },
