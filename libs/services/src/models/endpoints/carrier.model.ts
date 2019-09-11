@@ -28,4 +28,8 @@ export namespace CarrierModel{
     export interface SingleCarrierResponse extends Request.Success{
         data:Carrier
     }
+
+    export interface CarrierWarehouseDestinyResponse extends Request.Success{
+        data:CarrierWarehouseDestiny
+    }
 }

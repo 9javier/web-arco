@@ -73,7 +73,7 @@ export class StoreComponent implements OnInit {
         this.warehouseControl.updateValueAndValidity();
       }
     });
-    console.log(this.formBuilderDataInputs);
+    // console.log(this.formBuilderDataInputs);
   }
 
   /**
@@ -120,13 +120,13 @@ export class StoreComponent implements OnInit {
    * @param warehouseId - id of warehouse to add
    */
   addWarehouseToUser(warehouseId: number): void {
-    console.log(this.createForm);
+    // console.log(this.createForm);
     (<FormArray>this.createForm.get("permits")).push(this.formBuilder.group({
       name: this.warehouses.find(warehouse => warehouse.id == warehouseId).name,
       warehouse: warehouseId,
       roles: (new FormArray(this.roles.map(rol => new FormControl(false))))
     }));    
-    console.log("this is the warehouse id", warehouseId);
+    // console.log("this is the warehouse id", warehouseId);
     this.warehouse_id = warehouseId;
   }
 
@@ -209,7 +209,7 @@ export class StoreComponent implements OnInit {
     this.userService.postStore(this.sanitize(user)).then(observable => {
       observable.subscribe(user => {
         this.utilsComponent.dismissLoading();
-        console.log(user);
+        // console.log(user);
         this.close()
       });
     });

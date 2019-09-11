@@ -1,4 +1,6 @@
 import {BrandModel} from "./Brand";
+import {PhotoModel} from "./Photo";
+import {SeasonModel} from "./Season";
 
 export namespace ModelModel {
   export interface Model{
@@ -10,7 +12,11 @@ export namespace ModelModel {
     updatedAt?: string,
     hash?: string,
     avelonInternalBrandId?: number,
-    brand?: BrandModel.Brand
+    brand?: BrandModel.Brand,
+    photos?: Array<PhotoModel.Photo>,
+    domainSize?: any
+    has_photos?: boolean
+    season?: SeasonModel.Season
   }
 
   export interface ResponseIndex {

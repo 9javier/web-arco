@@ -36,7 +36,7 @@ export class UpdateComponent implements OnInit {
       this.close();
       this.intermediaryService.presentToastSuccess("Variable global actualizada con éxito")
     }, (err) => {
-      console.log(err)
+      // console.log(err)
       this.intermediaryService.presentToastError("No se pudo actualizar la variable global");
     }, () => {
       this.intermediaryService.dismissLoading();

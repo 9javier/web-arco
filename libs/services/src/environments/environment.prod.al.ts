@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   apiBase: 'http://conexion1.globalretail.es:57354/api',
+  urlBase: 'http://conexion1.globalretail.es:57354',
   sga:{
     client_id:"krack-client-sga",
     client_secret:"fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"

@@ -26,7 +26,7 @@ export class EnableLockContainerComponent implements OnInit {
 
   ngOnInit() {
     this.initFormBuilder();
-    console.log(this.form);
+    // console.log(this.form);
   }
 
   initFormBuilder():void{
@@ -85,7 +85,7 @@ export class EnableLockContainerComponent implements OnInit {
       });
       this.utils.dismissLoading();
       this.utils.presentAlert("Éxito","Configuración actualizada con éxito");
-      console.log(response);
+      // console.log(response);
     }, (errorResponse: HttpErrorResponse) => {
       this.close({
         reload: true
@@ -93,6 +93,6 @@ export class EnableLockContainerComponent implements OnInit {
       this.utils.dismissLoading();
       this.utils.presentAlert("Error",errorResponse.error.errors);
     });
-    console.log(values);
+    // console.log(values);
   }
 }

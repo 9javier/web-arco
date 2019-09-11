@@ -136,7 +136,7 @@ export class AgencyComponent implements OnInit {
         },
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al añadir el warehouse");
-          console.log(errorResponse)
+          // console.log(errorResponse)
         }
       );
     });
@@ -154,7 +154,7 @@ export class AgencyComponent implements OnInit {
         },
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al remover el warehouse");
-          console.log(errorResponse)
+          // console.log(errorResponse)
         }
       );
     });
