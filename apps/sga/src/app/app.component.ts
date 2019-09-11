@@ -117,6 +117,12 @@ export class AppComponent implements OnInit {
       ]
     },
     {
+      title:'Sorter',
+      id:'sorter-sga',
+      url:'/sorter',
+      icon:'logo-usd'
+    },
+    {
       title: 'Cerrar sesión',
       url: 'logout',
       icon: 'log-out'
