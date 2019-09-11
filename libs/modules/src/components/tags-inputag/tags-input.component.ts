@@ -40,6 +40,7 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   flagEmmit = false;
   values:Array<any> = [];
   prevLength;
+  activeClass: boolean = false;
 
   lastNode;
 
@@ -48,6 +49,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
 
   /**If this is true return an array */
   @Input() multiple:boolean;
+
+  /**If this inside an acordeon element */
+  @Input() notShow:boolean;
 
   /**Options to be selected*/
   _options:Array<TagsInputOption> = [];
@@ -70,6 +74,14 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
   selectedsOptions:Array<TagsInputOption> = [];
 
   ids:Array<any> = []; 
+
+
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if(!this.eRef.nativeElement.contains(event.target)) {
+      this.activeClass = false;
+    }
+  }
 
   filterOptions(options:Array<TagsInputOption>,text:string):Array<TagsInputOption>{    
     return options.filter(option=>option.name.toLowerCase().includes(text.trim().toLowerCase()));
@@ -119,6 +131,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       node = this.lastNode;
     this.flagEmmit = true;
     this.insertTag(option.id,(node!=this.inputElement.nativeElement)?node:null);
+    if(this.notShow) {
+      this.activeClass = !this.activeClass;
+    }
   }
 
   /**
@@ -126,6 +141,9 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @param event 
    */
   clickEditable(event):void{
+    if(this.notShow) {
+      this.activeClass = !this.activeClass;
+    }
     let target = event.target;
     let node = window.getSelection().anchorNode;
     this.filteredOptions = this.filterOptions(this._options,node.textContent);
@@ -184,6 +202,11 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
    * @param event -the keypress event
    */
   onKeyUp(event){
+    if(this.filteredOptions.length > 2) { 
+      this.activeClass = true;
+    } else {
+      this.activeClass = false;
+    }
     let key = event.key;
     if(key == 'Enter'){
       this.selectOption(this.filteredOptions[this.optionPointerIndex]);
@@ -323,7 +346,10 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       }
       this.filteredOptions = [this.currentTextOption].concat(this.filteredOptions);
     }
-
+    
+    if(this.inputElement.nativeElement.childNodes.length == 1 && this.filteredOptions.length > 0) {
+      this.activeClass = false;
+    }
     ////console.log("testes")
     /**Get the text of the div */
     /*let text:string = this.inputElement.nativeElement.innerText;
@@ -460,14 +486,18 @@ export class TagsInputComponent implements OnInit,ControlValueAccessor {
       }
 
     
-    if(!node){
+    if(!node || typeof node === 'object'){
       node = document.createElement("span");
       this.inputElement.nativeElement.appendChild(node);
     }
      
     let tagSpan:HTMLElement = this.renderer.createElement('span');
-    this.renderer.addClass(tagSpan,"input-tag")
-    tagSpan.innerHTML = option.name;
+    if(this.notShow) {
+      tagSpan.innerHTML = '';
+    } else {
+      this.renderer.addClass(tagSpan,"input-tag")
+      tagSpan.innerHTML = option.name;
+    }
     tagSpan.dataset.id = <string>option.id;
     tagSpan.dataset.type = option.type;
     /**reemplazamos el nodo anterior con el nuevo */
