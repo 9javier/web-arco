@@ -351,11 +351,22 @@ export class ListComponent implements OnInit {
   }
 
   async printReferencesLocations() {
-    for (let idLocation in this.locationsSelected) {
-      let container = this.locationsSelected[idLocation].column;
-      await this.printerService.print({text: [container.reference], type: 0})
-      // stop errors and attempt to print next tag
-        .catch(reason => {});
+    if (window.cordova) {
+      for (let idLocation in this.locationsSelected) {
+        let container = this.locationsSelected[idLocation].column;
+        await this.printerService.print({text: [container.reference], type: 0})
+        // stop errors and attempt to print next tag
+          .catch(reason => {});
+      }
+    } else {
+      let referencesToPrint: Array<string> = [];
+      for (let idLocation in this.locationsSelected) {
+        let container = this.locationsSelected[idLocation].column;
+        referencesToPrint.push(container.reference);
+      }
+      if (referencesToPrint.length > 0) {
+        await this.printerService.printBarcodesOnBrowser(referencesToPrint);
+      }
     }
   }
 

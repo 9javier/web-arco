@@ -141,8 +141,12 @@ export class UpdateComponent implements OnInit {
   }
 
   async printBarcode() {
-    if(this.container && this.container.reference){
-      await this.printerService.print({text: [this.container.reference], type: 0});
+    if(this.container && this.container.reference) {
+      if (window.cordova) {
+        await this.printerService.print({ text: [ this.container.reference ], type: 0 });
+      } else {
+        await this.printerService.printBarcodesOnBrowser([ this.container.reference ]);
+      }
     } else {
       // Reference not found
     }
