@@ -9,7 +9,7 @@ mat-grid-list {
       justify-content: start !important;
       width: 100%;
       color: var(--ion-color-tertiary);
-      padding: 16px;
+      padding-left: 16px;
       .store-ref {
         font-weight: 500;
       }
@@ -41,6 +41,24 @@ mat-grid-list {
         position: absolute;
         top: 0;
         left: 10px;
+      }
+    }
+  }
+}
+mat-grid-list.quantities-shoes {
+  mat-grid-tile.quantity {
+    width: auto;
+    div.quantities-shoes {
+      width: 100%;
+      div.quantity {
+        margin-left: 16px;
+        display: inline-block;
+        width: auto;
+        font-size: 14px;
+        color: #979797;
+        span {
+          color: black;
+        }
       }
     }
   }

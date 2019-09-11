@@ -1,6 +1,9 @@
+div.main-element-list-pickings {
+  height: 100vh;
+}
 div.scroll-list {
   overflow-y: scroll;
-  height: 92vh;
+  height: calc(100vh - 54px);
 
   p.msg-empty-pickings {
     height: 64px;
@@ -14,6 +17,7 @@ mat-grid-list {
   mat-grid-tile.mat-grid-tile {
     font-size: 16px;
     line-height: 20px;
+    height: 24px;
     div.tile-title {
       color: var(--ion-color-tertiary);
       justify-content: start !important;

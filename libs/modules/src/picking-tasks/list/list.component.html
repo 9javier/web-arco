@@ -1,26 +1,17 @@
-<div class="scroll-list">
-  <mat-grid-list cols="36" rowHeight="54px">
-    <mat-grid-tile colspan="3" rowspan="1"></mat-grid-tile>
-    <mat-grid-tile colspan="15" rowspan="1">
+<div class="main-element-list-pickings">
+  <mat-grid-list cols="12" rowHeight="54px">
+    <mat-grid-tile colspan="1" rowspan="1"></mat-grid-tile>
+    <mat-grid-tile colspan="7" rowspan="1">
       <div class="tile-title">Tienda</div>
     </mat-grid-tile>
-    <mat-grid-tile colspan="6" rowspan="1">
-      <div class="tile-title">Tipo</div>
-    </mat-grid-tile>
-    <mat-grid-tile colspan="6" rowspan="1">
-      <div class="tile-title-right">Total</div>
-    </mat-grid-tile>
-    <mat-grid-tile colspan="3" rowspan="1">
-      <div class="tile-title-right">P</div>
-    </mat-grid-tile>
-    <mat-grid-tile colspan="3" rowspan="1">
-      <div class="tile-title-right">E</div>
+    <mat-grid-tile colspan="4" rowspan="1">
+      <div class="tile-title tile-title-right">Tipo</div>
     </mat-grid-tile>
   </mat-grid-list>
 
   <ion-progress-bar type="indeterminate" *ngIf="isLoadingPickings"></ion-progress-bar>
 
-  <div *ngIf="!isLoadingPickings && hasPickingsLoaded">
+  <div *ngIf="!isLoadingPickings && hasPickingsLoaded" class="scroll-list">
     <picking-task-template *ngFor="let pickingAssignment of pickingService.pickingAssignments" [pickingAssignment]="pickingAssignment"></picking-task-template>
   </div>
 
