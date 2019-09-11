@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {from, Observable} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {AuthenticationService, environment, InventoryModel, InventoryService} from "@suite/services";
+import {AuthenticationService, environment, InventoryModel, InventoryService, IntermediaryService} from "@suite/services";
 import {AlertController, Events, ToastController} from "@ionic/angular";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
@@ -53,7 +53,8 @@ export class TextareaComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private pickingProvider: PickingProvider,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private intermediaryService: IntermediaryService
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
