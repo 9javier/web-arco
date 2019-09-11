@@ -26,9 +26,9 @@ export class UtilsComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          console.log('presented');
+          // console.log('presented');
           if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
+            a.dismiss().then(() => // console.log('abort presenting'));
           }
         });
       });
@@ -47,7 +47,7 @@ export class UtilsComponent implements OnInit {
     this.isLoading = false;
     return await this.loadingController
       .dismiss()
-      .then(() => console.log('dismissed'));
+      .then(() => // console.log('dismissed'));
   }
 
 }

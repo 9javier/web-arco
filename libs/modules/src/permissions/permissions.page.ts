@@ -16,11 +16,11 @@ export class PermissionsPage implements OnInit {
       (data: Observable<HttpResponse<PermissionsModel.ResponseShow[]>>) => {
         data.subscribe(
           (perList: HttpResponse<PermissionsModel.ResponseShow[]>) => {
-            console.log(perList);
+            // console.log(perList);
           }
         );
       },
-      error => console.log(error)
+      error => // console.log(error)
     );
   }
 }

@@ -142,7 +142,7 @@ export class JailComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers=>{
       this.carriers = carriers;
-      console.log(this.carriers)
+      // console.log(this.carriers)
       this.toDelete.removeControl("jails");
       this.toDelete.addControl("jails",this.formBuilder.array(carriers.map(carrier=>{
         return this.formBuilder.group({
@@ -151,7 +151,7 @@ export class JailComponent implements OnInit {
         });
       })))
       this.dataSource = new MatTableDataSource(carriers)
-      console.log(this.toDelete);
+      // console.log(this.toDelete);
       this.intermediaryService.dismissLoading();
     })
   }

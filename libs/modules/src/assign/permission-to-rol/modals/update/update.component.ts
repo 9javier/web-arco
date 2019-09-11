@@ -35,7 +35,7 @@ export class UpdateComponent implements OnInit {
       observable.subscribe(data=>{
         this.close();
       }, (err) => {
-        console.log(err)
+        // console.log(err)
       }, () => {
         this.dismissLoading();
       })
@@ -50,9 +50,9 @@ export class UpdateComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          console.log('presented');
+          // console.log('presented');
           if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
+            a.dismiss().then(() => // console.log('abort presenting'));
           }
         });
       });
@@ -62,6 +62,6 @@ export class UpdateComponent implements OnInit {
     this.isLoading = false;
     return await this.loadingController
       .dismiss()
-      .then(() => console.log('dismissed'));
+      .then(() => // console.log('dismissed'));
   }
 }

@@ -78,7 +78,7 @@ export class GlobalVariablesComponent implements OnInit {
       this.initForm(globalVariables);
       this.dataSource = new MatTableDataSource(globalVariables);
     }, (err) => {
-      console.log(err)
+      // console.log(err)
     }, () => {
       this.intermediaryService.dismissLoading();
     });

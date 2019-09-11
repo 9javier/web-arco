@@ -83,7 +83,7 @@ export class LabelsComponent implements OnInit {
     let labels = this.selectedForm.value.toSelect.map((label,i)=>label?items[i].reference:false).filter(label=>label);
     this.intermediaryService.presentLoading("Imprimiendo las etiquetas seleccionadas");
     setTimeout( ()=>this.intermediaryService.dismissLoading(),1000);
-    console.log(labels);
+    // console.log(labels);
 
   }
 
@@ -117,7 +117,7 @@ export class LabelsComponent implements OnInit {
   getLabels():void{
     this.labelService.getIndex().subscribe(labels=>{
       this.labels = labels;
-      console.log(labels);
+      // console.log(labels);
       this.initSelectForm(this.labels);
       this.dataSource = new MatTableDataSource<any>(this.labels);
     })

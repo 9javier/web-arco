@@ -92,7 +92,7 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
-      console.log("test",{ id: row.id, row: {
+      // console.log("test",{ id: row.id, row: {
         hall:row.hall,
         id:row.id,
         columns:row.columns,

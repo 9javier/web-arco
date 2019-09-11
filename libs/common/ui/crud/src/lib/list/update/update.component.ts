@@ -4,7 +4,7 @@ import { UserModel, RolModel } from '@suite/services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, from } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import {ToastController, LoadingController, NavParams, ModalController} from '@ionic/angular';
+import { ToastController, LoadingController, NavParams, ModalController } from '@ionic/angular';
 import {
   Router,
   ActivatedRoute,
@@ -15,8 +15,8 @@ import {
 
 import { CrudService } from '../../service/crud.service';
 import { switchMap, filter } from 'rxjs/operators';
-import {HallsService} from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
-import {HallModel} from "../../../../../../../services/src/models/endpoints/Hall";
+import { HallsService } from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
+import { HallModel } from "../../../../../../../services/src/models/endpoints/Hall";
 
 interface FormBuilderInputs {
   string: [string, Validators[]];
@@ -47,9 +47,9 @@ export class UpdateComponent implements OnInit {
     name: string;
     params: any[];
   } = {
-    name: '',
-    params: []
-  };
+      name: '',
+      params: []
+    };
 
   paramId: string | number;
   validator = {};
@@ -72,7 +72,7 @@ export class UpdateComponent implements OnInit {
     private navParams: NavParams,
     private modalController: ModalController,
     private hallsService: HallsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initCustomValidators();
@@ -88,7 +88,7 @@ export class UpdateComponent implements OnInit {
     } else if (this.routePath == '/halls' || this.routePath == "/locations") {
       this.getHalls(row);
     }
-    //console.log(this.updateForm);
+
   }
 
   // convenience getter for easy access to form fields
@@ -115,7 +115,7 @@ export class UpdateComponent implements OnInit {
 
 
   isSelected = (o1, o2) => {
-    if(o1 === o2 || o2.id === o1 ) {  
+    if (o1 === o2 || o2.id === o1) {
       return true;
     } else {
       return false;
@@ -150,7 +150,7 @@ export class UpdateComponent implements OnInit {
                   }
                 }
 
-                console.log('updateFormValue', updateFormValue);
+
 
                 this.updateForm.patchValue(updateFormValue);
               },
@@ -166,7 +166,6 @@ export class UpdateComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    console.log('submitted');
 
     // stop here if form is invalid
     if (this.updateForm.invalid) {
@@ -175,13 +174,13 @@ export class UpdateComponent implements OnInit {
 
     this.formBuilderTemplateInputs.map((input, i) => {
       if (input.type === 'checkbox') {
-        console.log(input.name, this.updateForm.get(input.name));
+        // console.log(input.name, this.updateForm.get(input.name));
       }
     });
 
     const dataToUpdate = { ...this.updateForm.value, id: this.paramId };
 
-    console.log('dataToUpdate', this.updateForm.value);
+    // console.log('dataToUpdate', this.updateForm.value);
 
     this.presentLoading();
 
@@ -199,7 +198,7 @@ export class UpdateComponent implements OnInit {
         (
           data: Observable<
             HttpResponse<HallModel.ResponseStore>
-            >
+          >
         ) => {
           data.subscribe(
             (
@@ -225,7 +224,7 @@ export class UpdateComponent implements OnInit {
         (
           data: Observable<
             HttpResponse<UserModel.ResponseStore | RolModel.ResponseShow>
-            >
+          >
         ) => {
           data.subscribe(
             (
@@ -261,9 +260,9 @@ export class UpdateComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          console.log('presented');
+          // console.log('presented');
           if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
+            a.dismiss().then(() => // console.log('abort presenting'));
           }
         });
       });
@@ -273,7 +272,7 @@ export class UpdateComponent implements OnInit {
     this.isLoading = false;
     return await this.loadingController
       .dismiss()
-      .then(() => console.log('dismissed'));
+      .then(() => // console.log('dismissed'));
   }
 
   toggleGroup(group) {
@@ -288,7 +287,7 @@ export class UpdateComponent implements OnInit {
     return this.shownGroup[group] === group;
   };
 
-  addValueArray(name, child){
+  addValueArray(name, child) {
     this.f[name].value.push(child.id);
   }
 }
