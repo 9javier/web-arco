@@ -11,10 +11,12 @@ import { UpdateComponent } from './update/update.component';
 import {CommonUiCrudModule} from '@suite/common/ui/crud';
 import { DataModule } from './data/data.module';
 import { BreadcrumbModule } from '../../../modules/src/components/breadcrumb/breadcrumb.module';
-
+import { SendComponent } from './send/send.component';
+import { MatFormFieldModule } from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
-  declarations: [JailComponent, StoreComponent, UpdateComponent],
+  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -28,9 +30,12 @@ import { BreadcrumbModule } from '../../../modules/src/components/breadcrumb/bre
     MatPaginatorModule,
     MatListModule,
     FormsModule,
-    BreadcrumbModule
+    BreadcrumbModule,
+    MatFormFieldModule,
+    MatSelectModule
   ], entryComponents: [
-    StoreComponent
+    StoreComponent,
+    SendComponent
   ]
 })
 export class JailModule { }

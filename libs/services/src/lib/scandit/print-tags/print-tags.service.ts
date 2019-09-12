@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
-import {ScanditModel} from "../../../models/scandit/Scandit";
-import {PrinterService} from "../../printer/printer.service";
-import {AuthenticationService, PriceService, ProductModel, ProductsService} from "@suite/services";
-import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
-import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
+import { Injectable } from '@angular/core';
+import { ScanditProvider } from "../../../providers/scandit/scandit.provider";
+import { ScanditModel } from "../../../models/scandit/Scandit";
+import { PrinterService } from "../../printer/printer.service";
+import { AuthenticationService, PriceService, ProductModel, ProductsService } from "@suite/services";
+import { PackingInventoryService } from "../../endpoint/packing-inventory/packing-inventory.service";
+import { PackingInventoryModel } from "../../../models/endpoints/PackingInventory";
 
 declare let Scandit;
 declare let GScandit;
@@ -20,7 +20,7 @@ export class PrintTagsScanditService {
    * 2 - Price Tag
    * 3 - Packing Tag
    */
-  private typeTags: 1|2|3|4 = 1;
+  private typeTags: 1 | 2 | 3 | 4 = 1;
   private timeoutHideText;
 
   private listProductsPrices: any[];
@@ -33,7 +33,7 @@ export class PrintTagsScanditService {
     private productsService: ProductsService,
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider
-  ) {}
+  ) { }
 
   printTagsReferences() {
     this.typeTags = 1;
@@ -64,10 +64,10 @@ export class PrintTagsScanditService {
         // Lock scan same code two times
         if (response.barcode && response.barcode.data != lastCodeScanned) {
 
-        // Lock scan in less than two seconds
-        /*if (!scannedPaused) {
-          scannedPaused = true;
-          setTimeout(() => scannedPaused = false, 2 * 1000);*/
+          // Lock scan in less than two seconds
+          /*if (!scannedPaused) {
+            scannedPaused = true;
+            setTimeout(() => scannedPaused = false, 2 * 1000);*/
 
           codeScanned = response.barcode.data;
           lastCodeScanned = codeScanned;
@@ -78,7 +78,6 @@ export class PrintTagsScanditService {
                 case 1:
                   this.printerService.printTagBarcode([codeScanned])
                     .subscribe((res) => {
-                      console.log('Printed product tag ... ', res);
                     }, (error) => {
                       console.warn('Error to print tag ... ', error);
                     });
@@ -86,7 +85,6 @@ export class PrintTagsScanditService {
                 case 2:
                   this.printerService.printTagPrices([codeScanned])
                     .subscribe((res) => {
-                      console.log('Printed price tag ... ', res);
                     }, (error) => {
                       console.warn('Error to print tag ... ', error);
                     });
@@ -98,7 +96,6 @@ export class PrintTagsScanditService {
                 case 4:
                   this.printerService.printTagBarcode([codeScanned])
                     .subscribe((res) => {
-                      console.log('Printed product tag ... ', res);
                     }, (error) => {
                       console.warn('Error to print tag ... ', error);
                     });
@@ -277,7 +274,7 @@ export class PrintTagsScanditService {
       .getCarrierOfProduct(codeScanned)
       .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
         if (res.code == 200) {
-          this.printerService.print({text: [res.data.reference], type: 0})
+          this.printerService.print({ text: [res.data.reference], type: 0 })
         } else {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
@@ -314,8 +311,8 @@ export class PrintTagsScanditService {
       });
   }
 
-  private hideTextMessage(delay: number){
-    if(this.timeoutHideText){
+  private hideTextMessage(delay: number) {
+    if (this.timeoutHideText) {
       clearTimeout(this.timeoutHideText);
     }
     this.timeoutHideText = setTimeout(() => {

@@ -15,6 +15,7 @@ import { validators } from '../utils/validators';
 
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
+import {SortModel} from "../../../services/src/models/endpoints/Sort";
 
 @Component({
   selector: 'suite-tariff',
@@ -35,13 +36,15 @@ export class TariffComponent implements OnInit {
   /**Quantity of items for show in any page */
   pagerValues = [50, 100, 500];
 
-  private page: number = 0;
-  private limit: number = this.pagerValues[0];
+    private page:number = 0;
+    private limit:number = this.pagerValues[0];
+    private sortValues: SortModel.Sort = { field: null, type: null };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  displayedColumns: string[] = ['name', 'initDate', 'endDate', 'select'];
-  dataSource: any;
+
+    displayedColumns: string[] = ['name', 'initDate', 'endDate', 'quantity', 'select'];
+    dataSource: any;
 
   warehouseId: number = 49;
 
@@ -64,10 +67,10 @@ export class TariffComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.filters);
+    // console.log(this.filters);
     this.filters.patchValue({ warehouseId: 1 });
     this.getWarehouses();
-    this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+    this.getTariffs(this.page, this.limit, this.sortValues);
     this.listenChanges();
   }
   /**
@@ -76,7 +79,7 @@ export class TariffComponent implements OnInit {
    */
   filterByWarehouse(event) {
     this.warehouseId = event.detail.value;
-    this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+    this.getTariffs(this.page, this.limit, this.sortValues);
   }
 
   listenChanges(): void {
@@ -87,8 +90,8 @@ export class TariffComponent implements OnInit {
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag ? page.pageIndex + 1 : 1;
-      this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+      this.page = flag?page.pageIndex+1:1;
+      this.getTariffs(this.page, this.limit, this.sortValues);
     });
   }
 
@@ -112,30 +115,35 @@ export class TariffComponent implements OnInit {
   /**
    * Get labels to show
    */
-  getTariffs(page: number, limit: number, id: number = 49): void {
+  getTariffs(page: number, limit: number, sort: SortModel.Sort) {
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit, id).subscribe(
-      tariffs => {
-        this.intermediaryService.dismissLoading();
-        /**save the data and format the dates */
-        this.tariffs = tariffs.results.map(result => {
-          result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
-          result.activeTill = new Date(result.activeTill).toLocaleDateString();
-          return result;
-        });
-        this.initSelectForm(this.tariffs);
-        this.dataSource = new MatTableDataSource<any>(this.tariffs);
-        let paginator = tariffs.pagination;
-        this.paginator.length = paginator.totalResults;
-        this.paginator.pageIndex = paginator.page - 1;
-      },
-      () => {
-        this.intermediaryService.dismissLoading();
-      }
-    );
+    this.tariffService.getIndex(page, limit, sort).subscribe(tariffs=>{
+      this.intermediaryService.dismissLoading();
+      /**save the data and format the dates */
+      this.tariffs = tariffs.results.map(result=>{
+        result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
+        result.activeTill = new Date(result.activeTill).toLocaleDateString();
+        return result;
+      });
+      this.dataSource = new MatTableDataSource<any>(this.tariffs);
+      let paginator = tariffs.pagination;
+      this.paginator.length = paginator.totalResults;
+      this.paginator.pageIndex = paginator.page - 1;
+    },()=>{
+      this.intermediaryService.dismissLoading();
+    })
   }
 
-    /**
+  sortData(event) {
+    if (event.direction == '') {
+      this.sortValues = { field: null, type: null };
+    } else {
+      this.sortValues = { field: event.active.toLowerCase(), type: event.direction.toLowerCase() };
+    }
+    this.getTariffs(this.page,this.limit, this.sortValues);
+  }
+
+  /**
    * Cancel event and stop it propagation
    * @params e - the event to cancel
    */
@@ -145,13 +153,13 @@ export class TariffComponent implements OnInit {
   }
 
   // changeCheckBox(i) {
-  //   console.log('Position ', i);
-  //   console.log('this.selectedForm.value.toSelect[i] ', this.selectedForm.value.toSelect[i]);
-    
+  //   // console.log('Position ', i);
+  //   // console.log('this.selectedForm.value.toSelect[i] ', this.selectedForm.value.toSelect[i]);
+
   // }
 
   onChecked(i, event) {
-    console.log('On Change Check ',i , event);
+    // console.log('On Change Check ',i , event);
     let tariff: any = this.tariffs[i];
 
     let exist = _.find(this.tariffsUpdate, {'position': i});
@@ -172,7 +180,7 @@ export class TariffComponent implements OnInit {
       }
     }
 
-    console.log('this.tariffsUpdate after push', this.tariffsUpdate);
+    // console.log('this.tariffsUpdate after push', this.tariffsUpdate);
   }
 
   /**
@@ -182,7 +190,7 @@ export class TariffComponent implements OnInit {
   updateEnabled(warehouseId:number=49):void {
     // let list = this.tariffs.map((item, i) => {
     //   let enabled = this.selectedForm.value.toSelect[i];
-      
+
     //   let object = {
     //     warehouseId: items[i].warehouseId,
     //     tariffId: items[i].tariffId,
@@ -193,14 +201,14 @@ export class TariffComponent implements OnInit {
 
     // });
 
-    // console.log(list);
+    // // console.log(list);
     this.intermediaryService.presentLoading("Modificando los seleccionados");
     this.tariffService.updateEnabled({elements:this.tariffsUpdate}).subscribe(result => {
-        this.intermediaryService.dismissLoading();
-        this.listenChanges();
+      this.intermediaryService.dismissLoading();
+      this.listenChanges();
     },error=>{
       this.intermediaryService.dismissLoading();
-      console.log(error);
+      // console.log(error);
     });
 
   }
@@ -220,15 +228,15 @@ export class TariffComponent implements OnInit {
    * Init selectForm controls
    * @param items - reference items for create the formControls
    */
-  initSelectForm(items):void{  
+  initSelectForm(items):void{
     this.selectedForm.removeControl("toSelect");
     this.selectedForm.addControl(
-      "toSelect", 
+      "toSelect",
       this.formBuilder.array(items.map(item => new FormControl(Boolean(item.enabled))))
     );
 
-    console.log('Init ', this.selectedForm.value);
-    
+    // console.log('Init ', this.selectedForm.value);
+
   }
 
   get existTariffsToUpdate() {

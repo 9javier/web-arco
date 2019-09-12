@@ -57,7 +57,7 @@ export class InputCodesComponent implements OnInit {
             case 1:
               this.printerService.printTagBarcode([dataWrote])
                 .subscribe((res) => {
-                  console.log('Printed product tag ... ', res);
+                  // console.log('Printed product tag ... ', res);
                 }, (error) => {
                   console.warn('Error to print tag ... ', error);
                 });
@@ -65,7 +65,7 @@ export class InputCodesComponent implements OnInit {
             case 2:
               this.printerService.printTagPrices([dataWrote])
                 .subscribe((res) => {
-                  console.log('Printed price tag ... ', res);
+                  // console.log('Printed price tag ... ', res);
                 }, (error) => {
                   console.warn('Error to print tag ... ', error);
                 });
@@ -155,12 +155,12 @@ export class InputCodesComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancelar');
+            // console.log('Confirm Cancelar');
           }
         }, {
           text: 'Seleccionar',
           handler: (data) => {
-            console.log('Confirm Seleccionar -> ', data);
+            // console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;

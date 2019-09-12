@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { BehaviorSubject, Observable, from } from 'rxjs';
-import {WarehouseModel} from "@suite/services";
+import { WarehouseModel } from "@suite/services";
 
 const TOKEN_KEY = 'access_token';
 const USER_ID_KEY = 'user_id';
@@ -17,16 +17,14 @@ export class AuthenticationService {
   dictionaryAcessState = new BehaviorSubject(null);
 
   constructor(private storage: Storage) {
-    console.log(storage);
-    console.log("dictionaryManagement", "AuthenticationService: constructor, before getDictionaryAccess");
     this.getDictionaryAccess();
   }
 
-    /**
-   * Get the last sucessfull login username
-   * @returns the last username loged from this terminal
-   */
-  getUsername():Observable<string>{
+  /**
+ * Get the last sucessfull login username
+ * @returns the last username loged from this terminal
+ */
+  getUsername(): Observable<string> {
     return from(this.storage.get("username"));
   }
 
@@ -44,27 +42,22 @@ export class AuthenticationService {
     });
   }
 
-  async getDictionaryAccess(){
-    console.log("set dictionary access");
-    console.log("dictionaryManagement", "AuthenticationService: getDictionaryAccess, before storage.get");
-    return await this.storage.get("dictionaryAcess").then(access=>{
-      console.log("set dictionary access",access);
-      console.log("dictionaryManagement", "AuthenticationService: getDictionaryAccess, storage.get callback", JSON.stringify(access));
+  async getDictionaryAccess() {
+
+    return await this.storage.get("dictionaryAcess").then(access => {
       this.dictionaryAcessState.next(access);
     });
   }
 
-  async login(accessToken: string, user?: any, dictionary?, refreshToken?:string) {
+  async login(accessToken: string, user?: any, dictionary?, refreshToken?: string) {
     if (user) {
       await this.storage.set(USER_ID_KEY, user.id);
       await this.storage.set(USER_KEY, JSON.stringify(user));
     }
-    if(refreshToken)
-      await this.storage.set("refreshToken",refreshToken);
-    if(dictionary) {
-      console.log("dictionaryManagement", "AuthenticationService: login, before storage.set", JSON.stringify(dictionary));
-      await this.storage.set("dictionaryAcess",dictionary).then(()=> {
-        console.log("dictionaryManagement", "AuthenticationService: login, storage.set callback");
+    if (refreshToken)
+      await this.storage.set("refreshToken", refreshToken);
+    if (dictionary) {
+      await this.storage.set("dictionaryAcess", dictionary).then(() => {
         return this.getDictionaryAccess();
       });
     }
@@ -78,7 +71,7 @@ export class AuthenticationService {
     this.storage.remove(USER_KEY);
 
     return this.storage.remove(TOKEN_KEY).then((data) => {
-      if(this.authenticationState.value) {
+      if (this.authenticationState.value) {
         this.authenticationState.next(false);
       }
     });
@@ -99,9 +92,9 @@ export class AuthenticationService {
   /**
    * @returns the stored refresh token
    */
-  getCurrentRefreshToken():Promise<string>{
-    return this.storage.get("refreshToken").then(res=>{
-      if(res)
+  getCurrentRefreshToken(): Promise<string> {
+    return this.storage.get("refreshToken").then(res => {
+      if (res)
         return res;
     });
   }
@@ -126,7 +119,7 @@ export class AuthenticationService {
     return this.storage.get(USER_KEY).then(res => {
       if (res) {
         let warehouse = null;
-        if(JSON.parse(res)){
+        if (JSON.parse(res)) {
           let user = JSON.parse(res);
           if (user.permits.length == 1) {
             //Get the first warehouse of user
