@@ -64,16 +64,24 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
     this.pickingStoreService
       .getLineRequests()
       .subscribe((res: PickingStoreModel.ResponseLineRequests) => {
-        if (res.code == 200 || res.code == 201) {
+        if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
           this.lineRequestsByStores = res.data;
           this.stores = [];
           this.lineRequests = [];
           this.isLoadingData = false;
           this.isPickingInitiated = false;
         } else {
+          this.lineRequestsByStores = [];
+          this.stores = [];
+          this.lineRequests = [];
+          this.isLoadingData = false;
           console.error('Error Subscribe::List line-requests by store::', res);
         }
       }, (error) => {
+        this.lineRequestsByStores = [];
+        this.stores = [];
+        this.lineRequests = [];
+        this.isLoadingData = false;
         console.error('Error Subscribe::List line-requests by store::', error);
       });
   }
