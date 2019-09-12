@@ -16,7 +16,7 @@ export class TariffService {
   private postUpdateEnabledUrl:string = environment.apiBase+"/tariffs/status";
   private updateTariffStatusSGA : string = environment.apiBase+"/tariffs/updateState";// enable = 1/0
   private getTariffIfSoftdeleteSGA : string = environment.apiBase+"/tariffs/";
-  private putTariffEnabledUrl: string = environment.apiBase+"/tariffs/updateTariffsState";
+  private putTariffEnabledUrl: string = environment.apiBase+"/tariffs/updateState";
   constructor(private http:HttpClient) { }
 
   /**
