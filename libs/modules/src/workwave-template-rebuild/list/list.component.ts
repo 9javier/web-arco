@@ -143,7 +143,9 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       this.workwavesService
         .postAssignUserToMatchLineRequest({
           requestIds: this.listRequestOrdersToUpdate,
-          userIds: this.listEmployeesToUpdate
+          userIds: this.listEmployeesToUpdate,
+          groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
+          typesShippingOrders: this.listTypesToUpdate
         })
         .subscribe((res: Array<WorkwaveModel.TeamAssignations>) => {
           this.pickingParametrizationProvider.listTeamAssignations = res;

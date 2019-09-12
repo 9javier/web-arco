@@ -128,7 +128,9 @@ export namespace WorkwaveModel {
 
   export interface ParamsAssignUserToMatchLineRequest {
     requestIds: Array<number>,
-    userIds: Array<number>
+    userIds: Array<number>,
+    groupsWarehousePicking: Array<GroupWarehousePickingModel.GroupWarehousesSelected>,
+    typesShippingOrders: Array<number>
   }
 
   interface PickingType {
