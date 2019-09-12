@@ -12,7 +12,7 @@
 
   <ion-progress-bar type="indeterminate" *ngIf="isLoadingData"></ion-progress-bar>
 
-  <div class="scroll-list" *ngIf="!isLoadingData && (lineRequestsByStores.length > 0 || (stores.length > 0 && lineRequests.length > 0))">
+  <div class="scroll-list" [ngClass]="!lineRequestsByStores.length ? 'initiated-picking' : ''" *ngIf="!isLoadingData && (lineRequestsByStores.length > 0 || (stores.length > 0 && lineRequests.length > 0))">
     <stores-picking-task-template *ngFor="let lineRequestByStore of lineRequestsByStores" [lineRequestByStore]="lineRequestByStore" (selectStore)="selectStore($event)"></stores-picking-task-template>
 
     <stores-picking-task-initiated-template *ngIf="stores.length > 0 && lineRequests.length > 0" [stores]="stores" [lineRequests]="lineRequests"></stores-picking-task-initiated-template>
