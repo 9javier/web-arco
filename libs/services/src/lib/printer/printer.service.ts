@@ -872,6 +872,7 @@ export class PrinterService {
         @media print {
             @page { margin: 0; }
             body { margin: 1.6cm; }
+            img { width: 20%; height: auto; margin-right: 0.6cm; margin-top: 20px; }
         }
     </style>
 </head>
@@ -885,7 +886,6 @@ export class PrinterService {
         barcodesPopupWindow.focus(); // necessary for IE >= 10*/
 
         barcodesPopupWindow.print();
-        barcodesPopupWindow.close();
 
         resolve();
       }));
