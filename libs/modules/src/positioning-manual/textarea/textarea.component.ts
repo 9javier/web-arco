@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel} from "@suite/services";
+import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
 import {AlertController, ToastController} from "@ionic/angular";
 
 @Component({
@@ -25,7 +25,8 @@ export class TextareaComponent implements OnInit {
     private toastController: ToastController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private intermediaryService: IntermediaryService
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
@@ -92,6 +93,7 @@ export class TextareaComponent implements OnInit {
   }
 
   private storeProductInContainer(params) {
+    this.intermediaryService.presentLoading();
     this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
           if (res.body.code == 200 || res.body.code == 201) {
@@ -116,6 +118,8 @@ export class TextareaComponent implements OnInit {
             this.presentToast(error.error.errors, 1500, 'danger');
             this.processInitiated = false;
           }
+        }, () => {
+          this.intermediaryService.dismissLoading();
         }
       );
     }, (error: HttpErrorResponse) => {
@@ -125,7 +129,9 @@ export class TextareaComponent implements OnInit {
         this.presentToast(error.message, 1500, 'danger');
         this.processInitiated = false;
       }
-    });
+    }), () => {
+      this.intermediaryService.dismissLoading();
+    };
   }
 
   private async showWarningToForce(params) {

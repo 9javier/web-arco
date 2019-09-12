@@ -7,7 +7,8 @@
             <ion-row>
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-label>Referecias:</ion-label>
-                    <suite-tags-input placeholder="Referencia" [options]="models" formControlName="productReferencePattern"></suite-tags-input>
+                    <suite-tags-input placeholder="Referencia" [options]="models"
+                        formControlName="productReferencePattern"></suite-tags-input>
                 </ion-col>
                 <!--<ion-col size="2" size-xs="12" size-md="4">
                     <ion-item>
@@ -23,13 +24,15 @@
                     <ion-label>
                         Colores:
                     </ion-label>
-                    <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true">
+                    </suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-label>
                         Tallas
                     </ion-label>
-                    <suite-tags-input [literal]="true" placeholder="Tallas" [options]="sizes" formControlName="sizes" multiple="true"></suite-tags-input>
+                    <suite-tags-input [literal]="true" placeholder="Tallas" [options]="sizes" formControlName="sizes"
+                        multiple="true"></suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
                     <!--Warehouse multiple behaviour is not compatible ad all with the suite-tags-input control-->
@@ -46,14 +49,16 @@
                     <ion-label>
                         Almacenes
                     </ion-label>
-                    <suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehouses" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Almacenes" [options]="warehouses" formControlName="warehouses"
+                        multiple="true"></suite-tags-input>
 
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-label>
                         Ubicaciones
                     </ion-label>
-                    <suite-tags-input placeholder="Ubicaciones" [options]="containers" formControlName="containers" multiple="true"></suite-tags-input>
+                    <suite-tags-input placeholder="Ubicaciones" [options]="containers" [literalmixed]="true"
+                        formControlName="containers" multiple="true"></suite-tags-input>
                 </ion-col>
                 <ion-col size="2" size-xs="12" size-md="4">
                     <ion-label>
@@ -64,7 +69,8 @@
                             Ordenar
                         </ion-label>
                         <ion-select formControlName="type" interface="popover">
-                            <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}</ion-select-option>
+                            <ion-select-option value="{{group.id}}" *ngFor="let group of groups">{{group.name}}
+                            </ion-select-option>
                         </ion-select>
                     </ion-item>
                 </ion-col>
