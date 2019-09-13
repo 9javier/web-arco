@@ -53,6 +53,7 @@ export class InputCodesComponent implements OnInit {
             reference: dataWrote
           })
           .subscribe((res: CarrierModel.ResponseSeal) => {
+            this.intermediaryService.dismissLoading();
             if (res.code == 200) {
               let msgOk = 'El recipiente';
               if (res.data.packingType == 1) {
@@ -66,6 +67,7 @@ export class InputCodesComponent implements OnInit {
               this.presentToast('Ha ocurrido un error al intentar precintar el recipiente.', 'danger');
             }
           }, (error) => {
+            this.intermediaryService.dismissLoading();
             this.presentToast('Ha ocurrido un error al intentar precintar el recipiente.', 'danger');
           }, () => {
             this.intermediaryService.dismissLoading();

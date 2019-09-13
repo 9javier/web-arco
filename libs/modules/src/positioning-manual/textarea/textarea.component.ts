@@ -96,6 +96,7 @@ export class TextareaComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+        this.intermediaryService.dismissLoading();
           if (res.body.code == 200 || res.body.code == 201) {
             this.presentToast(`Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`, 2000, 'success');
             this.processInitiated = false;
@@ -112,6 +113,7 @@ export class TextareaComponent implements OnInit {
             this.processInitiated = false;
           }
         }, (error) => {
+          this.intermediaryService.dismissLoading();
           if (error.error.code == 428) {
             this.showWarningToForce(params);
           } else {
@@ -123,6 +125,7 @@ export class TextareaComponent implements OnInit {
         }
       );
     }, (error: HttpErrorResponse) => {
+      this.intermediaryService.dismissLoading();
       if (error.error.code == 428) {
         this.showWarningToForce(params);
       } else {
