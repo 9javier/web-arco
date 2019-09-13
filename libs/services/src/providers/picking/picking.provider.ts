@@ -214,4 +214,12 @@ export class PickingProvider {
   set pickingSelectedToStart(value: PickingModel.Picking) {
     this._pickingSelectedToStart = value;
   }
+
+  private _listStoresToPopoverList: Array<PickingModel.WorkwaveOrderWarehouse> = new Array<PickingModel.WorkwaveOrderWarehouse>();
+  get listStoresToPopoverList(): Array<PickingModel.WorkwaveOrderWarehouse> {
+    return this._listStoresToPopoverList;
+  }
+  set listStoresToPopoverList(value: Array<PickingModel.WorkwaveOrderWarehouse>) {
+    this._listStoresToPopoverList = value;
+  }
 }

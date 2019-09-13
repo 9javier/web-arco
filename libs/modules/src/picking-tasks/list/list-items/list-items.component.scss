@@ -19,6 +19,12 @@ mat-grid-list {
           font-weight: 500;
         }
       }
+      p.show-stores-list {
+        width: 100%;
+        color: var(--ion-color-link-button);
+        font-size: 15px;
+        cursor: pointer;
+      }
     }
     div.tile-value-right {
       padding-right: 24px;
