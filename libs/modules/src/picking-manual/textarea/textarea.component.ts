@@ -27,6 +27,7 @@ export class TextareaComponent implements OnInit {
   pickingId: number;
   listProducts: ShoesPickingModel.ShoesPicking[];
   typePacking: number;
+  typePicking: number;
   packingReference: string = null;
   processInitiated: boolean = false;
   jailReference: string = null;
@@ -64,6 +65,7 @@ export class TextareaComponent implements OnInit {
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
     this.typePacking = this.pickingProvider.typePacking;
+    this.typePicking = this.pickingProvider.typePicking;
     this.packingReference = this.pickingProvider.packingReference;
     this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
 
@@ -110,7 +112,7 @@ export class TextareaComponent implements OnInit {
           if ((this.packingReference && this.packingReference == dataWrited) || !this.packingReference) {
             this.timeLastCodeScanned = new Date().getTime();
             this.lastCarrierScanned = dataWrited;
-            if (typePackingScanned == this.typePacking) {
+            if ((this.typePacking && typePackingScanned == this.typePacking) || !this.typePacking) {
               this.postVerifyPacking({
                 status: 2,
                 pickingId: this.pickingId,
@@ -220,47 +222,26 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.inventoryService
-              .postPicking(picking)
-              .subscribe((res: InventoryModel.ResponsePicking) => {
-                if (res.code == 200 || res.code == 201) {
-                  this.listProducts = res.data.shoePickingPending;
-                  this.productsScanned.push(dataWrited);
-                  this.inputPicking = null;
-                  this.presentToast(`Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`, 2000, this.pickingProvider.colorsMessage.info.name);
-                  if (this.listProducts.length > 0) {
-                    this.setNexProductToScan(this.listProducts[0]);
-                  } else {
-                    this.showNexProductToScan(false);
-                    setTimeout(() => {
-                      this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                      this.dataToWrite = 'CONTENEDOR';
-                      this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
-                    }, 2 * 1000);
-                  }
-                } else {
-                  this.inputPicking = null;
-                  this.presentToast(res.message, 2000, this.pickingProvider.colorsMessage.error.name);
-                  this.getPendingListByPicking(this.pickingId)
-                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                      if (res.code == 200 || res.code == 201) {
-                        this.listProducts = res.data;
-                        if (this.listProducts.length > 0) {
-                          this.setNexProductToScan(this.listProducts[0]);
-                        } else {
-                          this.showNexProductToScan(false);
-                          setTimeout(() => {
-                            this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                            this.dataToWrite = 'CONTENEDOR';
-                            this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
-                          }, 2 * 1000);
-                        }
-                      }
-                    });
-                }
-              }, (error) => {
+
+            let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
+              if (res.code == 200 || res.code == 201) {
+                this.listProducts = res.data.shoePickingPending;
+                this.productsScanned.push(dataWrited);
                 this.inputPicking = null;
-                this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+                this.presentToast(`Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`, 2000, this.pickingProvider.colorsMessage.info.name);
+                if (this.listProducts.length > 0) {
+                  this.setNexProductToScan(this.listProducts[0]);
+                } else {
+                  this.showNexProductToScan(false);
+                  setTimeout(() => {
+                    this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                    this.dataToWrite = 'CONTENEDOR';
+                    this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
+                  }, 2 * 1000);
+                }
+              } else {
+                this.inputPicking = null;
+                this.presentToast(res.message, 2000, this.pickingProvider.colorsMessage.error.name);
                 this.getPendingListByPicking(this.pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
                     if (res.code == 200 || res.code == 201) {
@@ -277,7 +258,34 @@ export class TextareaComponent implements OnInit {
                       }
                     }
                   });
-              });
+              }
+            };
+            let subscribeError = (error) => {
+              this.inputPicking = null;
+              this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+              this.getPendingListByPicking(this.pickingId)
+                .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                  if (res.code == 200 || res.code == 201) {
+                    this.listProducts = res.data;
+                    if (this.listProducts.length > 0) {
+                      this.setNexProductToScan(this.listProducts[0]);
+                    } else {
+                      this.showNexProductToScan(false);
+                      setTimeout(() => {
+                        this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                        this.dataToWrite = 'CONTENEDOR';
+                        this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
+                      }, 2 * 1000);
+                    }
+                  }
+                });
+            };
+
+            if (this.typePicking == 1) {
+              this.inventoryService.postPickingDirect(picking).subscribe(subscribeResponse, subscribeError);
+            } else {
+              this.inventoryService.postPickingConsolidated(picking).subscribe(subscribeResponse, subscribeError);
+            }
           } else {
             this.inputPicking = null;
             this.showNexProductToScan(false);

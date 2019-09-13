@@ -124,6 +124,14 @@ export class PickingProvider {
     this._typePacking = value;
   }
 
+  private _typePicking: number;
+  get typePicking(): number {
+    return this._typePicking;
+  }
+  set typePicking(value: number) {
+    this._typePicking = value;
+  }
+
   private _packingReference: string = null;
   get packingReference(): string {
     return this._packingReference;

@@ -78,6 +78,9 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           }
         }
         this.pickingService.pickingAssignments = tempPickingsList;
+        if (tempPickingsList.length > 0) {
+          this.pickingProvider.pickingSelectedToStart = tempPickingsList[0];
+        }
         this.removePickingFinished = false;
       }
     });
@@ -110,11 +113,12 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           this.pickingProvider.pickingId = this.pickingProvider.pickingSelectedToStart.id;
           this.pickingProvider.listProducts = listProducts;
           this.pickingProvider.typePacking = this.pickingProvider.pickingSelectedToStart.packingType;
+          this.pickingProvider.typePicking = this.pickingProvider.pickingSelectedToStart.typePicking.id;
           this.pickingProvider.packingReference = this.pickingProvider.pickingSelectedToStart.packingRef;
           if (this.pickingProvider.method == 'manual') {
             this.router.navigate(['picking/manual']);
           } else {
-            this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, listProducts, this.pickingProvider.pickingSelectedToStart.packingType);
+            this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking);
           }
         }, (error) => {
           if (this.loading) {

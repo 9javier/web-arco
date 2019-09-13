@@ -3,7 +3,7 @@ div.main-element-list-pickings {
 }
 div.scroll-list {
   overflow-y: scroll;
-  height: calc(100vh - 54px);
+  height: calc(100vh - 54px - 56px);
 
   p.msg-empty-pickings {
     height: 64px;

@@ -10,8 +10,14 @@ mat-grid-list {
       width: 100%;
       color: var(--ion-color-tertiary);
       padding-left: 16px;
-      .store-ref {
-        font-weight: 500;
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
+        .store-ref {
+          font-weight: 500;
+        }
       }
     }
     div.tile-value-right {
@@ -44,6 +50,10 @@ mat-grid-list {
       }
     }
   }
+}
+mat-grid-list.destiny-type {
+  min-height: 56px;
+  height: auto;
 }
 mat-grid-list.quantities-shoes {
   mat-grid-tile.quantity {

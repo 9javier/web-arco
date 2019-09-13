@@ -258,7 +258,7 @@ export class ScanditService {
     });
   }
 
-  picking(pickingId: number, listProducts: ShoesPickingModel.ShoesPicking[], typePacking: number) {
+  picking(pickingId: number, listProducts: ShoesPickingModel.ShoesPicking[], typePacking: number, typePicking: number) {
     let processInitiated: boolean = false;
     let jailReference: string = '';
     let lastCarrierScanned: string = '';
@@ -495,82 +495,88 @@ export class ScanditService {
               pikingId: pickingId,
               productReference: code
             };
-            this.inventoryService
-              .postPicking(picking)
-              .subscribe((res: InventoryModel.ResponsePicking) => {
-                this.pickingLog(2, "31", ".subscribe((res: InventoryModel.ResponsePicking) => {");
-                if (res.code == 200 || res.code == 201) {
-                  this.pickingLog(2, "32", "if (res.code == 200 || res.code == 201) {");
-                  productsToScan = res.data.shoePickingPending;
-                  productsScanned.push(code);
-                  ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido ${literalsJailPallet[typePacking].toThe}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
-                  this.hideTextMessage(2000);
-                  if (productsToScan.length > 0) {
-                    this.pickingLog(2, "33", "if (productsToScan.length > 0) {");
-                    ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                  } else {
-                    this.pickingLog(2, "34", "} else {");
-                    ScanditMatrixSimple.showNexProductToScan(false);
-                    setTimeout(() => {
-                      this.pickingLog(2, "35", "setTimeout(() => {");
-                      ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
-                      ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
-                      this.hideTextMessage(1500);
-                    }, 2 * 1000);
-                  }
+
+            let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
+              this.pickingLog(2, "31", ".subscribe((res: InventoryModel.ResponsePicking) => {");
+              if (res.code == 200 || res.code == 201) {
+                this.pickingLog(2, "32", "if (res.code == 200 || res.code == 201) {");
+                productsToScan = res.data.shoePickingPending;
+                productsScanned.push(code);
+                ScanditMatrixSimple.setText(`Producto ${code} escaneado y añadido ${literalsJailPallet[typePacking].toThe}.`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
+                this.hideTextMessage(2000);
+                if (productsToScan.length > 0) {
+                  this.pickingLog(2, "33", "if (productsToScan.length > 0) {");
+                  ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                 } else {
-                  this.pickingLog(2, "36", "} else {");
-                  ScanditMatrixSimple.setText(res.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-                  this.hideTextMessage(2000);
-                  this.getPendingListByPicking(pickingId)
-                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                      this.pickingLog(2, "37", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
-                      if (res.code == 200 || res.code == 201) {
-                        this.pickingLog(2, "38", "if (res.code == 200 || res.code == 201) {");
-                        productsToScan = res.data;
-                        if (productsToScan.length > 0) {
-                          this.pickingLog(2, "39", "if (productsToScan.length > 0) {");
-                          ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
-                        } else {
-                          this.pickingLog(2, "40", "} else {");
-                          ScanditMatrixSimple.showNexProductToScan(false);
-                          setTimeout(() => {
-                            this.pickingLog(2, "41", "setTimeout(() => {");
-                            ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
-                            ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
-                            this.hideTextMessage(1500);
-                          }, 2 * 1000);
-                        }
-                      }
-                    });
+                  this.pickingLog(2, "34", "} else {");
+                  ScanditMatrixSimple.showNexProductToScan(false);
+                  setTimeout(() => {
+                    this.pickingLog(2, "35", "setTimeout(() => {");
+                    ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
+                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                    this.hideTextMessage(1500);
+                  }, 2 * 1000);
                 }
-              }, (error) => {
-                this.pickingLog(2, "42", "}, (error) => {");
-                ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+              } else {
+                this.pickingLog(2, "36", "} else {");
+                ScanditMatrixSimple.setText(res.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                 this.hideTextMessage(2000);
                 this.getPendingListByPicking(pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                    this.pickingLog(2, "43", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
+                    this.pickingLog(2, "37", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                     if (res.code == 200 || res.code == 201) {
-                      this.pickingLog(2, "44", "if (res.code == 200 || res.code == 201) {");
+                      this.pickingLog(2, "38", "if (res.code == 200 || res.code == 201) {");
                       productsToScan = res.data;
                       if (productsToScan.length > 0) {
-                        this.pickingLog(2, "45", "if (productsToScan.length > 0) {");
+                        this.pickingLog(2, "39", "if (productsToScan.length > 0) {");
                         ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
                       } else {
-                        this.pickingLog(2, "46", "} else {");
+                        this.pickingLog(2, "40", "} else {");
                         ScanditMatrixSimple.showNexProductToScan(false);
                         setTimeout(() => {
-                          this.pickingLog(2, "47", "setTimeout(() => {");
+                          this.pickingLog(2, "41", "setTimeout(() => {");
                           ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
                           ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                           this.hideTextMessage(1500);
                         }, 2 * 1000);
                       }
-
                     }
                   });
-              });
+              }
+            };
+            let subscribeError = (error) => {
+              this.pickingLog(2, "42", "}, (error) => {");
+              ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+              this.hideTextMessage(2000);
+              this.getPendingListByPicking(pickingId)
+                .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                  this.pickingLog(2, "43", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
+                  if (res.code == 200 || res.code == 201) {
+                    this.pickingLog(2, "44", "if (res.code == 200 || res.code == 201) {");
+                    productsToScan = res.data;
+                    if (productsToScan.length > 0) {
+                      this.pickingLog(2, "45", "if (productsToScan.length > 0) {");
+                      ScanditMatrixSimple.setNexProductToScan(productsToScan[0], HEADER_BACKGROUND, HEADER_COLOR);
+                    } else {
+                      this.pickingLog(2, "46", "} else {");
+                      ScanditMatrixSimple.showNexProductToScan(false);
+                      setTimeout(() => {
+                        this.pickingLog(2, "47", "setTimeout(() => {");
+                        ScanditMatrixSimple.showTextEndScanPacking(true, typePacking, jailReference ? jailReference : lastCarrierScanned);
+                        ScanditMatrixSimple.setText(literalsJailPallet[typePacking].scan_to_end, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
+                        this.hideTextMessage(1500);
+                      }, 2 * 1000);
+                    }
+
+                  }
+                });
+            };
+
+            if (typePicking == 1) {
+              this.inventoryService.postPickingDirect(picking).subscribe(subscribeResponse, subscribeError);
+            } else {
+              this.inventoryService.postPickingConsolidated(picking).subscribe(subscribeResponse, subscribeError);
+            }
           } else {
             this.pickingLog(2, "48", "} else {");
             ScanditMatrixSimple.showNexProductToScan(false);

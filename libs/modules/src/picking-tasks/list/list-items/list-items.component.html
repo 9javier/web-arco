@@ -1,16 +1,18 @@
-<mat-grid-list cols="12" rowHeight="56px" (click)="selectPicking()">
+<mat-grid-list cols="12" rowHeight="56px" (click)="selectPicking()" class="destiny-type">
   <mat-grid-tile colspan="1" rowspan="1">
     <mat-radio-group name="pickingWarehouse" [(ngModel)]="pickingProvider.pickingSelectedToStart.id" (ngModelChange)="selectPicking()">
       <mat-radio-button [value]="pickingAssignment.id"></mat-radio-button>
     </mat-radio-group>
   </mat-grid-tile>
 
-  <mat-grid-tile colspan="7" rowspan="1">
+  <mat-grid-tile colspan="7" class="destinies-list">
     <div class="tile-value">
-      <span class="store-ref">
-        {{pickingAssignment.workWavesOrderWarehouses[0].warehouse.reference}}&nbsp;
-      </span>
-      {{pickingAssignment.workWavesOrderWarehouses[0].warehouse.name}}
+      <p *ngFor="let warehouse of pickingAssignment.workWavesOrderWarehouses">
+        <span class="store-ref">
+          {{ warehouse.warehouse.reference }}&nbsp;
+        </span>
+        {{ warehouse.warehouse.name }}
+      </p>
     </div>
   </mat-grid-tile>
 
