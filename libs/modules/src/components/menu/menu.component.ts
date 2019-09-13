@@ -31,7 +31,7 @@ interface MenuSectionItem {
   styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
-
+  project_selector: any;
   @Input() set alloweds(allowed){
     this.filterPages(allowed || {logout:true});
   }
@@ -446,6 +446,9 @@ export class MenuComponent implements OnInit {
         if((<any>item).id == "logout")
           this.sgaPages[i] = logoutItem;
       });
+      this.project_selector = app.name;
+      console.log('my selector'+  this.project_selector);
+    console.log("diccionario",app,dictionary);
     // console.log("diccionario",app,dictionary);
     if(!app || !app.name) {
       return false;

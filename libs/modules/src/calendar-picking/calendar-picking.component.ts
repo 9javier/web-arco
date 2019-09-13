@@ -121,7 +121,6 @@ export class CalendarPickingComponent implements OnInit {
       this.calendarService.getTemplatesByDate(selectDates).subscribe(templates=>{
         setTimeout(()=>{this.loadingDates = false},10);
         this.intermediaryService.dismissLoading();
-        /**recorro todos los templates */
         templates.forEach(template=>{
           this.selectDates.forEach(date=>{
             if(template.date == date.date){
@@ -428,8 +427,7 @@ export class CalendarPickingComponent implements OnInit {
    * Charge template for render in page
    * @param template - the template selected
    */
-  selectTemplate(template:CalendarModel.Template,value=null,date=null){
-    this.date = date; 
+  selectTemplate(template:CalendarModel.Template,value=null){
     let warehouses = template.warehouses;
     this.updateTemplate = template;
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
