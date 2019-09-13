@@ -22,6 +22,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   private EMPLOYEES_LOADED = "employees-loaded";
   private REQUEST_ORDERS_LOADED = "request-orders-loaded";
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded";
+  private DRAW_CONSOLIDATED_MATCHES = "draw-consolidated-matches";
   private TYPE_EXECUTION_ID = 1;
 
   @Input() templateToEdit: any;
@@ -147,9 +148,12 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
           typesShippingOrders: this.listTypesToUpdate
         })
-        .subscribe((res: Array<WorkwaveModel.TeamAssignations>) => {
-          this.pickingParametrizationProvider.listTeamAssignations = res;
+        .subscribe((res: WorkwaveModel.UsersAndAssignationsQuantities) => {
+          this.pickingParametrizationProvider.listTeamAssignations = res.assignations;
           this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
+          if (res.quantities) {
+            this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, res.quantities);
+          }
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
         }, (error) => {
           console.error('Error::Subscribe:workwavesService::postAssignUserToMatchLineRequest::', error);

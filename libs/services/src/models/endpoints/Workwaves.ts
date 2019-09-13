@@ -150,8 +150,21 @@ export namespace WorkwaveModel {
     pickingShoes: Array<ShoesAssignation>
   }
 
+  export interface AssignationsByRequests {
+    pickingId: number,
+    pickingTypeId: string,
+    quantityShoes: string,
+    requestId: number,
+    requestReference: number
+  }
+
+  export interface UsersAndAssignationsQuantities {
+    assignations: Array<TeamAssignations>,
+    quantities: Array<AssignationsByRequests>
+  }
+
   export interface ResponseAssignUserToMatchLineRequest {
-    data: Array<TeamAssignations>
+    data: UsersAndAssignationsQuantities
   }
 
   export interface ParamsConfirmMatchLineRequest {
