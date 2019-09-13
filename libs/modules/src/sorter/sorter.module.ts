@@ -5,9 +5,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule, MatIconModule } from '@angular/material';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { CdkTableModule } from '@angular/cdk/table';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
-import {ListComponent} from './list/list.component';
+import { ListComponent } from './list/list.component';
 
 const routes:Routes = [
   {
@@ -25,6 +26,7 @@ const routes:Routes = [
     IonicModule,
     MatTableModule,
     MatIconModule,
+    MatGridListModule,
     RouterModule.forChild(routes),
     BreadcrumbModule
   ]

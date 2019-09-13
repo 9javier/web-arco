@@ -1,7 +1,7 @@
 import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
-import {SelectionModel} from "@angular/cdk/collections";
+import {SelectionModel, DataSource} from "@angular/cdk/collections";
 import {RolModel, UserModel, WarehouseModel} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
@@ -16,6 +16,10 @@ import { EnableLockContainerComponent } from '../modals/enable-lock-container/en
 import {LocationsComponent} from "../locations.component";
 import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { CrudService } from '../../../../common/ui/crud/src/lib/service/crud.service';
+import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
+import { validators } from '../../utils/validators';
+
 
 
 @Component({
@@ -43,36 +47,101 @@ import {PrinterService} from "../../../../services/src/lib/printer/printer.servi
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns: string[] = ['icon', 'down', 'Ntemplate', 'zona', 'row'];
-  dataSource = [
-    { icon: '', Ntemplate: 1, zona: 2 },
-    { icon: '', Ntemplate: 2, zona: 2 },
-    { icon: '', Ntemplate: 3, zona: 2 },
-  ];
+  displayedColumns = ['icon', 'Ntemplate', 'zona', 'dropdown'];
+  dataSource = new ExampleDataSource();
+  warehouses: any = [];
+  displayedColumnsWareHouse: any = ['check', 'name'];
+  selectedForm: FormGroup;
+  items: FormArray;
 
   constructor(
-    private location: Location,
-    private hallsService: HallsService,
-    private route: ActivatedRoute,
-    private toastController: ToastController,
-    private warehouseService: WarehouseService,
-    private modalController: ModalController,
-    private changeDetector:ChangeDetectorRef,
-    private printerService: PrinterService
+    private crudService: CrudService,
+    private formBuilder: FormBuilder
   ) {
+    this.selectedForm = this.formBuilder.group(
+      {
+        selector: false,
+        selects: this.formBuilder.array([ this.createSelect() ])
+      },
+      {
+        validators: validators.haveItems('selects')
+      }
+    );
+    console.log(this.selectedForm)
   }
 
-  isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('down');
-    
-  
-  
 
+  isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
+  expandedElement: any;
+  showExpasion: boolean = false;
+  
   ngOnInit() {
+    this.crudService
+      .getIndex('Warehouses')
+      .then(
+        (
+          data: Observable<
+            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
+          >
+        ) => {
+          data.subscribe(
+            (
+              res: HttpResponse<
+                UserModel.ResponseIndex | RolModel.ResponseIndex
+              >
+            ) => {
+              this.warehouses = res.body.data;
+              console.log(this.warehouses);
+              this.initSelect(this.warehouses);
+            },
+            (err) => {
+              console.log(err)
+            }, () => {
 
+            }
+          );
+        }
+      );
   }
 
-  ngOnDestroy() {
-
+  clickShowExpasion(row: any) {
+    console.log(row)
+    this.expandedElement = row;
+    this.showExpasion = !this.showExpasion;
+    row.dropdown = this.showExpasion;
   }
 
+  selectAll(event):void{
+    let value = event.detail.checked;
+    const controlArray = <FormArray> this.selectedForm.get('selects');
+    controlArray.controls.forEach((control, i) => {
+      control.setValue(value);
+    });
+  }
+
+  initSelect(items) {
+    this.selectedForm.removeControl('selects');
+    this.selectedForm.addControl('selects', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+  }
+
+  createSelect(): FormControl {
+    return new FormControl(Boolean(false));
+  }
+}
+
+export class ExampleDataSource extends DataSource<any> {
+  /** Connect function called by the table to retrieve one stream containing the data to render. */
+  data = [
+    { icon: '', Ntemplate: 1, zona: 2, dropdown: false },
+    { icon: '', Ntemplate: 2, zona: 2, dropdown: false },
+    { icon: '', Ntemplate: 3, zona: 2, dropdown: false },
+  ];
+  connect(): Observable<Element[]> {
+    const rows = [];
+    this.data.forEach(element => rows.push(element, { detailRow: true, element }));
+    console.log(rows);
+    return of(rows);
+  }
+
+  disconnect() { }
 }
