@@ -2,12 +2,13 @@ package com.mirasense.scanditsdk.plugin;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -24,13 +25,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ImageView;
 
@@ -46,6 +51,7 @@ import com.mirasense.scanditsdk.plugin.fragments.ProcessedProductsPickingStoresF
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.KeyPairBoolData;
 import com.mirasense.scanditsdk.plugin.models.LineRequestsProduct;
+import com.mirasense.scanditsdk.plugin.models.PickingStoreRejectionReason;
 import com.mirasense.scanditsdk.plugin.models.SingleFilterPickingStores;
 import com.mirasense.scanditsdk.plugin.utility.DragItemTouchHelper;
 import com.scandit.barcodepicker.BarcodePicker;
@@ -98,8 +104,13 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   private static String packageNameForLoadFull = null;
   private static ArrayList<JSONObject> productsPendingForLoadFull = null;
   private static ArrayList<JSONObject> productsProcessedForLoadFull = null;
+  private static ArrayList<PickingStoreRejectionReason> listRejectionReasons = null;
+  private static ArrayList<String> listNamesRejectionReasons = null;
 
   private static ViewGroup viewGroup;
+
+  private static String urlBase = "";
+  private static Dialog dialogInfoForProduct = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +126,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       backgroundTitle = b.getString("backgroundTitle", "#FFFFFF");
       colorTitle = b.getString("colorTitle", "#424242");
       textInit = b.getString("textInit", "");
+      urlBase = b.getString("urlBase", "");
     }
 
     String package_name = getApplication().getPackageName();
@@ -640,20 +652,98 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     }
   }
 
-  public static void showInfoForProduct(Context context, LineRequestsProduct lineRequestsProduct, Resources resources, String package_name) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(matrixPickingStores);
+  public static void loadListRejectionReasons(ArrayList<PickingStoreRejectionReason> newListRejectionReasons, ArrayList<String> newListNamesRejectionReasons) {
+    listRejectionReasons = newListRejectionReasons;
+    listNamesRejectionReasons = newListNamesRejectionReasons;
+  }
+
+  public static void showInfoForProduct(LineRequestsProduct lineRequestsProduct, Resources resources, String package_name, boolean isProcessed) {
+    final PickingStoreRejectionReason[] pickingStoreRejectionReasonSelected = { listRejectionReasons.get(0) };
 
     View customView = LayoutInflater.from(matrixPickingStores).inflate(resources.getIdentifier("product_info_picking_store", "layout", package_name), viewGroup, false);
     ImageView ivProductPickingStore = customView.findViewById(resources.getIdentifier("ivProductPickingStore", "id", package_name));
     TextView tvReferencePickingStore = customView.findViewById(resources.getIdentifier("tvReferencePickingStore", "id", package_name));
     TextView tvNamePickingStore = customView.findViewById(resources.getIdentifier("tvNamePickingStore", "id", package_name));
-    String url = "http://mga.krack.es:8080" + lineRequestsProduct.getModel().getImageUrl();
-    Glide.with(matrixPickingStores).load(url).centerCrop().into(ivProductPickingStore);
+    TextView tvSizePickingStore = customView.findViewById(resources.getIdentifier("tvSizePickingStore", "id", package_name));
+    TextView tvBrandPickingStore = customView.findViewById(resources.getIdentifier("tvBrandPickingStore", "id", package_name));
+    TextView tvColorPickingStore = customView.findViewById(resources.getIdentifier("tvColorPickingStore", "id", package_name));
+    Spinner sRejectionReasonPickingStore = customView.findViewById(resources.getIdentifier("sRejectionReasonPickingStore", "id", package_name));
+    LinearLayout llRejectionPickingStore = customView.findViewById(resources.getIdentifier("llRejectionPickingStore", "id", package_name));
+    Button btnRejectionPickingStore = customView.findViewById(resources.getIdentifier("btnRejectionPickingStore", "id", package_name));
+    View vRejectionReasonDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonDividerPickingStore", "id", package_name));
+    View vRejectionReasonNoDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonNoDividerPickingStore", "id", package_name));
+
+    if (!urlBase.isEmpty()) {
+      String url = urlBase + lineRequestsProduct.getModel().getImageUrl();
+      Glide.with(matrixPickingStores).load(url).fitCenter().into(ivProductPickingStore);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        ivProductPickingStore.setClipToOutline(true);
+      }
+    }
+
     tvReferencePickingStore.setText(lineRequestsProduct.getModel().getReference());
     tvNamePickingStore.setText(lineRequestsProduct.getModel().getName());
+    tvSizePickingStore.setText(lineRequestsProduct.getSize().getName());
+    tvBrandPickingStore.setText(lineRequestsProduct.getModel().getBrand().getName());
+    tvColorPickingStore.setText(lineRequestsProduct.getModel().getColor().getName());
 
-    builder.setView(customView);
-    builder.create().show();
+    vRejectionReasonDividerPickingStore.setVisibility(View.GONE);
+    vRejectionReasonNoDividerPickingStore.setVisibility(View.VISIBLE);
+    llRejectionPickingStore.setVisibility(View.GONE);
+    sRejectionReasonPickingStore.setVisibility(View.GONE);
+
+    if (!isProcessed) {
+      vRejectionReasonDividerPickingStore.setVisibility(View.VISIBLE);
+      vRejectionReasonNoDividerPickingStore.setVisibility(View.GONE);
+      sRejectionReasonPickingStore.setVisibility(View.VISIBLE);
+      ArrayAdapter<String> adapterRejectionReasons = new ArrayAdapter<>(matrixPickingStores, android.R.layout.simple_spinner_dropdown_item, listNamesRejectionReasons);
+      sRejectionReasonPickingStore.setAdapter(adapterRejectionReasons);
+      sRejectionReasonPickingStore.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+          if (position == 0) {
+            llRejectionPickingStore.setVisibility(View.GONE);
+          } else {
+            llRejectionPickingStore.setVisibility(View.VISIBLE);
+          }
+          pickingStoreRejectionReasonSelected[0] = listRejectionReasons.get(position);
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+      });
+
+      btnRejectionPickingStore.setOnClickListener(view -> {
+        JSONObject jsonObject = new JSONObject();
+        try {
+          jsonObject.put("result", true);
+          jsonObject.put("action", "request_reject");
+          jsonObject.put("reasonId", pickingStoreRejectionReasonSelected[0].getId());
+          jsonObject.put("requestReference", lineRequestsProduct.getReference());
+        } catch (JSONException e) {
+
+        }
+        PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+        pResult.setKeepCallback(true);
+        ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+      });
+    }
+
+    Dialog dialogProductInfoLocal = new Dialog(matrixPickingStores);
+    dialogProductInfoLocal.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    dialogProductInfoLocal.setContentView(customView);
+    dialogProductInfoLocal.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    dialogProductInfoLocal.setCancelable(true);
+    dialogProductInfoLocal.show();
+
+    dialogInfoForProduct = dialogProductInfoLocal;
+  }
+
+  public static void hideInfoForProduct() {
+    if (dialogInfoForProduct != null) {
+      dialogInfoForProduct.hide();
+    }
   }
 
   @Override

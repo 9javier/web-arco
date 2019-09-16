@@ -30,6 +30,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadRejectionReasons();
     this.loadPickingInitiated();
 
     this.events.subscribe('picking-stores:refresh', () => {
@@ -39,6 +40,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
   ngOnDestroy() {
     this.events.unsubscribe('picking-stores:refresh');
+  }
+
+  private loadRejectionReasons() {
+    this.pickingStoreService
+      .getLoadRejectionReasons()
+      .subscribe((res: Array<PickingStoreModel.RejectionReasons>) => {
+        this.pickingProvider.listRejectionReasonsToStorePickings = res;
+      }, (error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      });
   }
 
   private loadPickingInitiated() {

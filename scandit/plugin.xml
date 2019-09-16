@@ -205,7 +205,9 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/Size.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/FiltersPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/KeyPairBoolData.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
-    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/SingleFilterPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/><source-file src="src/android/com/mirasense/scanditsdk/plugin/models/LineRequestsProduct.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/SingleFilterPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/LineRequestsProduct.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/PickingStoreRejectionReason.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SearchItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SortItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
@@ -242,6 +244,9 @@
     <source-file src="src/android/drawable/bg_ripple_item_spinner.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/bg_circular_button.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/ic_laser.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_round_alert.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_round_image.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_round_layout.xml" target-dir="res/drawable"/>
     <source-file src="src/android/layout/bubble_maximised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised_data.xml" target-dir="res/layout"/>

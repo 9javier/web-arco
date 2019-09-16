@@ -58,7 +58,7 @@ public class PickingStoresAdapter extends ArrayAdapter<JSONObject> {
       e.printStackTrace();
     }
 
-    itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(context, new LineRequestsProduct(products.get(position)), resources, packageName));
+    itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, false));
 
     return itemView;
   }

@@ -148,6 +148,14 @@ export class PickingProvider {
     this._listLineRequestsToStorePickings = value;
   }
 
+  private _listRejectionReasonsToStorePickings: PickingStoreModel.RejectionReasons[] = null;
+  get listRejectionReasonsToStorePickings(): PickingStoreModel.RejectionReasons[] {
+    return this._listRejectionReasonsToStorePickings;
+  }
+  set listRejectionReasonsToStorePickings(value: PickingStoreModel.RejectionReasons[]) {
+    this._listRejectionReasonsToStorePickings = value;
+  }
+
   private _listProductsToStorePickings: StoresLineRequestsModel.LineRequests[] = null;
   get listProductsToStorePickings(): StoresLineRequestsModel.LineRequests[] {
     return this._listProductsToStorePickings;

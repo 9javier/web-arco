@@ -20,9 +20,10 @@ var ScanditMatrixSimple = {
    * @param titleBackground
    * @param titleColor
    * @param textInitInfo
+   * @param urlBase
    */
-  initPickingStores: function (successCallback, title, titleBackground, titleColor, textInitInfo) {
-    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor, textInitInfo]);
+  initPickingStores: function (successCallback, title, titleBackground, titleColor, textInitInfo, urlBase) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor, textInitInfo, urlBase]);
   },
   /**
    *
@@ -150,6 +151,13 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param rejectionReasons
+   */
+  sendPickingStoresRejectionReasons: function (rejectionReasons) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadRejectionReasons", [rejectionReasons]);
+  },
+  /**
+   *
    * @param show
    * @param text
    */
@@ -238,6 +246,12 @@ var ScanditMatrixSimple = {
    */
   hideLoadingDialog: function () {
     exec(null, null, PLUGIN_NAME, "hideLoadingDialog", []);
+  },
+  /**
+   *
+   */
+  hideInfoProductDialog: function () {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresHideInfoProductDialog", []);
   }
 }
 

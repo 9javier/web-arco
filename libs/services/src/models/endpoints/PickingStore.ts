@@ -108,6 +108,37 @@ export namespace PickingStoreModel {
     errors: any
   }
 
+  export interface RejectionReasons {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    reference: number,
+    name: string,
+    position: number,
+    visible: boolean,
+    isHeadoffice: boolean,
+    isPos: boolean
+  }
+
+  export interface ResponseLoadRejectionReasons {
+    data: Array<RejectionReasons>
+  }
+
+  export interface ParamsRejectRequest {
+    reference: string,
+    reasonRejectionId: number,
+    filters: ParamsFiltered
+  }
+
+  export interface RejectRequest {
+    pickingStoreLinesRequestReject: any,
+    linesRequestFiltered: ResponseDataLineRequestsFiltered
+  }
+
+  export interface ResponseRejectRequest {
+    data: RejectRequest
+  }
+
   export interface ResponseSendProcess {
     data: {
       inventory: any,
