@@ -11,10 +11,21 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ListComponent } from './list/list.component';
 
 const routes:Routes = [
+  {path: '', redirectTo: 'plantillas', pathMatch: 'full' },
   {
-    path: '',
-    component: SorterComponent
-  }
+    path: 'plantillas',
+    component: SorterComponent,
+    data: {
+      name: 'Plantillas'
+    }
+  },
+  {
+    path: 'plantilla/:id',
+    component: ListComponent,
+    data: {
+      name: 'Plantilla'
+    }
+  },
 ]; 
 
 @NgModule({
