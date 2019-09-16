@@ -97,3 +97,15 @@ tr.example-element-row:not(.example-expanded-row):active {
 .example-element-description-attribution {
     opacity: 0.5;
 }
+ion-modal{
+  .modal-wrapper{
+    max-height: 20rem !important;
+} 
+.modal-wrapper-md{
+    max-height: 20rem !important;
+} 
+.sc-ion-modal-md{
+    max-height: 20rem !important;
+}  
+}
+

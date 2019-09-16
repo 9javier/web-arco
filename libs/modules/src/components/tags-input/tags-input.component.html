@@ -1,4 +1,4 @@
-<div class="wrapper" [ngClass]="{wrapperAcordeon: activeClass}">
+<div class="wrapper">
     <div placeholder="placeholder" class="parent-editable" contenteditable="true" (keydown)="onKeyPress($event)" (click)="clickEditable($event);" #input (input)="onInput($event)" (focus)="onTouch()" (keyup)="onKeyUp($event)">
         <span></span>
     </div>

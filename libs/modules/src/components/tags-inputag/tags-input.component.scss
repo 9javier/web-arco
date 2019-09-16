@@ -1,0 +1,72 @@
+div.wrapper {
+    outline: none;
+    width: 100%;
+    height: 48px;
+    padding: 5px;
+    box-sizing: border-box;
+    border: 1px solid #dedede;
+    display: block;
+    align-items: center;
+    position: relative;
+    white-space: pre;
+    div.options {
+        display: none;
+        white-space: pre;
+    }
+    &:focus-within div.options {
+        display: block;
+        width: calc(100% + 2px);
+        left: -1px;
+        top: 100%;
+        position: absolute;
+        background-color: white;
+        z-index: 10000000;
+        overflow: auto;
+        max-height: 250%;
+        .option {
+            &:hover,
+            &.selected {
+                background-color: rgb(140, 140, 140);
+                color: white;
+                background-color: rgb(140, 140, 140);
+            }
+            cursor: pointer;
+            padding: 10px 5px;
+            color: black;
+        }
+    }
+    .parent-editable {
+        outline: none;
+        white-space: pre;
+    }
+    input {
+        width: 100%;
+        height: 100%;
+        outline: none;
+        border: none;
+    }
+    .input-tag {
+        outline: none;
+        //position: relative;
+        //background: rgb(140, 140, 140);
+        background: #242323;
+        padding: 2px 4px;
+        border-radius: 4px;
+        color: white;
+        //display: inline-block;
+        //padding: 9px 18px;
+        //border-radius: 5px;
+        //max-height: 100%;
+        //text-overflow: clip;
+        //word-wrap: none;
+        //word-break: normal;
+    }
+}
+
+.tag {
+    background: red!important;
+}
+
+.wrapperAcordeon {
+    margin-bottom: 25%;
+}

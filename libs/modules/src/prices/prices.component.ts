@@ -20,6 +20,7 @@ import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
+import {environment} from "../../../services/src/environments/environment";
 
 @Component({
   selector: 'suite-prices',
@@ -96,12 +97,13 @@ export class PricesComponent implements OnInit {
       validators: validators.haveItems("toSelect")
     });
 
-
-
-  displayedColumns: string[] = ['impress', 'model', 'brand', 'range', 'price', 'percentage', 'discount', 'select'];
+  displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
   public disableExpansionPanel: boolean = true;
+
+  public mobileVersionTypeList: 'list'|'table' = 'list';
+  public showFiltersMobileVersion: boolean = false;
 
   constructor(
     private printerService: PrinterService,
@@ -202,7 +204,7 @@ export class PricesComponent implements OnInit {
 
     let prices = this.selectedForm.value.toSelect.map((price, i) => {
       if (items[i].status != 3) {
-        console.log(items[i]);
+        // console.log(items[i]);
         let object = {
           warehouseId: warehouseId,
           tariffId: items[i].tariff.id,
@@ -216,12 +218,12 @@ export class PricesComponent implements OnInit {
 
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
-      console.log("result of impressions", result);
+      // console.log("result of impressions", result);
       this.intermediaryService.dismissLoading();
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
-      console.log(error);
+      // console.log(error);
     });
 
   }
@@ -373,6 +375,34 @@ export class PricesComponent implements OnInit {
       return priceObj.percent;
     }
     return null;
+  }
+
+  getPhotoUrl(priceObj: PriceModel.Price): string|boolean {
+    let isPhotoTestUrl: boolean = false;
+
+    if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
+      if (isPhotoTestUrl) {
+        return 'https://ccc1.krackonline.com/131612-thickbox_default/krack-core-sallye.jpg';
+      }
+
+      return environment.urlBase + priceObj.model.photos[0].urn;
+    }
+
+    return false;
+  }
+
+  getPhotoUrlDesktop(price: PriceModel.Price): string {
+    let photoUrl = this.getPhotoUrl(price);
+
+    if (!photoUrl) {
+      return '../assets/img/placeholder-product.jpg';
+    }
+
+    return photoUrl.toString();
+  }
+
+  openFiltersMobile() {
+    this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
   }
 
   // GET & SET SECTION

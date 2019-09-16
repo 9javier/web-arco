@@ -3,6 +3,7 @@ import {ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-input-codes',
@@ -21,6 +22,7 @@ export class InputCodesComponent implements OnInit {
     private toastController: ToastController,
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
+    private intermediaryService: IntermediaryService
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
@@ -45,11 +47,13 @@ export class InputCodesComponent implements OnInit {
 
       if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
         || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {
+        this.intermediaryService.presentLoading();
         this.carriersService
           .postSeal({
             reference: dataWrote
           })
           .subscribe((res: CarrierModel.ResponseSeal) => {
+            this.intermediaryService.dismissLoading();
             if (res.code == 200) {
               let msgOk = 'El recipiente';
               if (res.data.packingType == 1) {
@@ -63,7 +67,10 @@ export class InputCodesComponent implements OnInit {
               this.presentToast('Ha ocurrido un error al intentar precintar el recipiente.', 'danger');
             }
           }, (error) => {
+            this.intermediaryService.dismissLoading();
             this.presentToast('Ha ocurrido un error al intentar precintar el recipiente.', 'danger');
+          }, () => {
+            this.intermediaryService.dismissLoading();
           });
       } else {
         this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');

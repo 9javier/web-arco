@@ -231,7 +231,7 @@ const routes: Routes = [
   },{
     path: 'tariff',
     canActivate:[AuthGuard],
-    loadChildren:'../../../../libs/modules//src/tariff/tariff.module#TariffModule',
+    loadChildren:'../../../../libs/modules/src/tariffSGA/tariffSGA.module#TariffSGAModule',
     data:{
       name:'Tarifas'
     }

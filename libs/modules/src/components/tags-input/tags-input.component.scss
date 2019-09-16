@@ -22,7 +22,6 @@ div.wrapper {
         background-color: white;
         z-index: 10000000;
         overflow: auto;
-        max-height: 250%;
         .option {
             &:hover,
             &.selected {
@@ -65,8 +64,4 @@ div.wrapper {
 
 .tag {
     background: red!important;
-}
-
-.wrapperAcordeon {
-    margin-bottom: 25%;
 }

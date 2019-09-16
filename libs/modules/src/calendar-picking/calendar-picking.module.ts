@@ -7,7 +7,7 @@ import { DpDatePickerModule } from 'ng2-date-picker';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatExpansionModule, MatListModule, MatCheckboxModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
-import { TagsInputModule } from '../components/tags-input/tags-input.module';
+import { TagsInputModule } from '../components/tags-inputag/tags-input.module';
 
 const routes: Routes = [
   {

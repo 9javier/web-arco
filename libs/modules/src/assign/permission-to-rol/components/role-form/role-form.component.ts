@@ -38,15 +38,15 @@ export class RoleFormComponent implements OnInit {
     this.permissionService.getIndex().then(observable=>{
       observable.subscribe(permissions=>{
         this.permissions = permissions.body.data;
-        console.log(this.permissions);
-        console.log(observable);
+        // console.log(this.permissions);
+        // console.log(observable);
         this.form.addControl('groups',this.formBuilder.array(
           this.permissions.map(permission=>new FormControl(false))
         ));
-        console.log(this.toPatch(this.rol));
+        // console.log(this.toPatch(this.rol));
         this.form.patchValue(this.toPatch(this.rol));
       }, (err) => {
-        console.log(err)
+        // console.log(err)
       }, () => {
         this.intermediaryService.dismissLoading();
       })
@@ -71,7 +71,7 @@ export class RoleFormComponent implements OnInit {
    * @param object - object to sanitize
    */
   toPatch(object){
-    console.log(object,this.permissions)
+    // console.log(object,this.permissions)
     object = JSON.parse(JSON.stringify(object));
     /**convert complex group to form format*/
     if(object.groups)

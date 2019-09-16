@@ -4,12 +4,12 @@ import { UserModel, RolModel } from '@suite/services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import {ToastController, LoadingController, ModalController, NavParams} from '@ionic/angular';
+import { ToastController, LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 import { CrudService } from '../../service/crud.service';
-import {HallsService} from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
-import {HallModel} from "../../../../../../../services/src/models/endpoints/Hall";
+import { HallsService } from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
+import { HallModel } from "../../../../../../../services/src/models/endpoints/Hall";
 
 interface FormBuilderInputs {
   string: [string, Validators[]];
@@ -35,9 +35,9 @@ export class StoreComponent implements OnInit {
     name: string;
     params: any[];
   } = {
-    name: '',
-    params: []
-  };
+      name: '',
+      params: []
+    };
   @Input() apiEndpoint: string;
   @Input() redirectTo: string;
 
@@ -59,7 +59,7 @@ export class StoreComponent implements OnInit {
     private modalController: ModalController,
     private navParams: NavParams,
     private hallsService: HallsService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initCustomValidators();
@@ -67,7 +67,7 @@ export class StoreComponent implements OnInit {
       this.formBuilderDataInputs,
       this.validator
     );
-    console.log(this.f);
+    // console.log(this.f);
     this.routePath = this.navParams.data.routePath;
   }
 
@@ -89,7 +89,7 @@ export class StoreComponent implements OnInit {
   }
 
   isSelected = (o1, o2) => {
-    if(o1 === o2 || (o1[0] && o2.id === o1[0].id) ) {  
+    if (o1 === o2 || (o1[0] && o2.id === o1[0].id)) {
       return true;
     } else {
       return false;
@@ -99,7 +99,6 @@ export class StoreComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    console.log('submitted');
 
     // stop here if form is invalid
     if (this.storeForm.invalid) {
@@ -108,7 +107,7 @@ export class StoreComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/groups' || this.routePath == '/jails' || this.routePath == '/pallets' ) {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/groups' || this.routePath == '/jails' || this.routePath == '/pallets') {
       this.postStore();
     } else if (this.routePath == '/halls') {
       this.postStoreHall();
@@ -120,18 +119,18 @@ export class StoreComponent implements OnInit {
     this.hallsService
       .postStore(this.storeForm.value)
       .then((data: Observable<HttpResponse<HallModel.ResponseStore>>) => {
-      data.subscribe(
-        (res: HttpResponse<HallModel.ResponseStore>) => {
-          this.dismissLoading();
-          this.modalController.dismiss();
-          this.presentToast(`Pasillo ${res.body.data.hall} creado`);
-        },
-        (errorResponse: HttpErrorResponse) => {
-          this.dismissLoading();
-          this.presentToast('Error - Errores no estandarizados');
-        }
-      );
-    });
+        data.subscribe(
+          (res: HttpResponse<HallModel.ResponseStore>) => {
+            this.dismissLoading();
+            this.modalController.dismiss();
+            this.presentToast(`Pasillo ${res.body.data.hall} creado`);
+          },
+          (errorResponse: HttpErrorResponse) => {
+            this.dismissLoading();
+            this.presentToast('Error - Errores no estandarizados');
+          }
+        );
+      });
   }
 
   postStore() {
@@ -169,9 +168,9 @@ export class StoreComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          console.log('presented');
+          // console.log('presented');
           if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
+            a.dismiss().then(() => { });
           }
         });
       });
@@ -181,7 +180,7 @@ export class StoreComponent implements OnInit {
     this.isLoading = false;
     return await this.loadingController
       .dismiss()
-      .then(() => console.log('dismissed'));
+      .then(() => { });
   }
 
   toggleGroup(group) {
@@ -196,7 +195,7 @@ export class StoreComponent implements OnInit {
     return this.shownGroup[group] === group;
   };
 
-  addValueArray(name, child){
+  addValueArray(name, child) {
     this.f[name].value.push(child.id);
   }
 }

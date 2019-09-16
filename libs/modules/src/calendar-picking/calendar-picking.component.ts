@@ -121,7 +121,6 @@ export class CalendarPickingComponent implements OnInit {
       this.calendarService.getTemplatesByDate(selectDates).subscribe(templates=>{
         setTimeout(()=>{this.loadingDates = false},10);
         this.intermediaryService.dismissLoading();
-        /**recorro todos los templates */
         templates.forEach(template=>{
           this.selectDates.forEach(date=>{
             if(template.date == date.date){
@@ -167,7 +166,7 @@ export class CalendarPickingComponent implements OnInit {
         setTimeout(()=>{this.loadingDates = false},10);
         this.intermediaryService.dismissLoading();
       })
-      console.log(this.selectDates);
+      // console.log(this.selectDates);
     })
   
   }
@@ -206,7 +205,7 @@ export class CalendarPickingComponent implements OnInit {
   getBase():void{
     this.intermediaryService.presentLoading();
     this.calendarService.getBaseBad().subscribe(warehouses=>{
-      console.log(warehouses);
+      // console.log(warehouses);
       this.intermediaryService.dismissLoading();
       this.templateBase = warehouses;
       warehouses[0].destinationsWarehouses.forEach(destination => {
@@ -237,7 +236,7 @@ export class CalendarPickingComponent implements OnInit {
           if((date.warehouses.length) || (date.value && this.formatValue(date.value).warehouses.length)){
             day.className+= ' tselected'; 
           }else{
-            console.log("borrando")
+            // console.log("borrando")
             day.className = day.className.replace(/tselected/g, "");
             
           }
@@ -336,7 +335,7 @@ export class CalendarPickingComponent implements OnInit {
       this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
       this.intermediaryService.dismissLoading();
     });
-    console.log(globalValues);
+    // console.log(globalValues);
   }
 
   /**
@@ -360,7 +359,7 @@ export class CalendarPickingComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Cancel');
+            // console.log('Confirm Cancel');
           }
         }, {
           text: 'Ok',
@@ -393,7 +392,7 @@ export class CalendarPickingComponent implements OnInit {
   getWarehouses():void{
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
-        console.log(response)
+        // console.log(response)
       })
     })
   }
@@ -428,8 +427,7 @@ export class CalendarPickingComponent implements OnInit {
    * Charge template for render in page
    * @param template - the template selected
    */
-  selectTemplate(template:CalendarModel.Template,value=null,date=null){
-    this.date = date; 
+  selectTemplate(template:CalendarModel.Template,value=null){
     let warehouses = template.warehouses;
     this.updateTemplate = template;
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
@@ -623,7 +621,7 @@ export class CalendarPickingComponent implements OnInit {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
     //Add 'implements AfterViewInit' to the class.
     this.datePicker.api.open();
-    console.log(this.datePicker);
+    // console.log(this.datePicker);
   }
 
 }

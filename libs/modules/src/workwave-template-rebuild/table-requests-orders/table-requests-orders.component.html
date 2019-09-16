@@ -3,39 +3,90 @@
 
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
     <mat-grid-tile class="checkbox" colspan="1">
-      <div class="tile-value"></div>
+      <div class="tile-value left-value">
+        <ion-checkbox [(ngModel)]="allRequestOrdersSelected" (ngModelChange)="selectAllRequestOrder()"></ion-checkbox>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="reference border-right" colspan="2">
-      <div class="tile-value">Referencia</div>
+      <div class="tile-value">
+        <span class="title">Referencia</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Referencia'"
+          [listItems]="listRequestsFilters"
+          [isFiltering]="isFilteringRequests != this.listRequestsFilters.length"
+          (applyFilters)="applyFilters($event)">
+        </suite-filter-button>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="date border-right" colspan="3">
-      <div class="tile-value">Fecha</div>
+      <div class="tile-value">
+        <span class="title">Fecha</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Fecha'"
+          [listItems]="listDateFilters"
+          [isFiltering]="isFilteringDate != this.listDateFilters.length"
+          (applyFilters)="applyFilters($event)">
+        </suite-filter-button>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="origin border-right" colspan="4">
-      <div class="tile-value">Origen</div>
+      <div class="tile-value">
+        <span class="title">Origen</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Origen'"
+          [listItems]="listOriginFilters"
+          [isFiltering]="isFilteringOrigin != this.listOriginFilters.length"
+          (applyFilters)="applyFilters($event)">
+        </suite-filter-button>
+      </div>
     </mat-grid-tile>
 
-    <mat-grid-tile class="destiny" colspan="4">
-      <div class="tile-value">Destino</div>
+    <mat-grid-tile class="destiny border-right" colspan="4">
+      <div class="tile-value">
+        <span class="title">Destino</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Destino'"
+          [listItems]="listDestinyFilters"
+          [isFiltering]="isFilteringDestiny != this.listDestinyFilters.length"
+          (applyFilters)="applyFilters($event)">
+        </suite-filter-button>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="destiny-max border-right" colspan="2">
-      <div class="tile-value right-value">Máximo</div>
+      <div class="tile-value">Máximo</div>
     </mat-grid-tile>
 
     <mat-grid-tile class="type border-right" colspan="4">
-      <div class="tile-value">Tipo</div>
+      <div class="tile-value">
+        <span class="title">Tipo</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Tipo'"
+          [listItems]="listTypeFilters"
+          [isFiltering]="isFilteringType != this.listTypeFilters.length"
+          (applyFilters)="applyFilters($event)">
+        </suite-filter-button>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="quantity border-right" colspan="2">
-      <div class="tile-value">Pares</div>
+      <div class="tile-value">
+        Pares
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="quantity-launch" colspan="2">
-      <div class="tile-value">Pares Lanzar</div>
+      <div class="tile-value">
+        Pares Lanzar
+      </div>
     </mat-grid-tile>
   </mat-grid-list>
 
@@ -73,12 +124,12 @@
         <div class="tile-value">{{requestOrder.originWarehouse.name}}</div>
       </mat-grid-tile>
 
-      <mat-grid-tile class="destiny" colspan="4">
+      <mat-grid-tile class="destiny border-right" colspan="4">
         <div class="tile-value">{{requestOrder.destinyWarehouse.name}}</div>
       </mat-grid-tile>
 
-        <mat-grid-tile class="destiny-max border-right" colspan="2">
-        <div class="tile-value right-value">
+      <mat-grid-tile class="destiny-max border-right" colspan="2">
+        <div class="tile-value">
           {{requestOrder.destinyWarehouse.thresholdShippingStore ? '['+requestOrder.destinyWarehouse.thresholdShippingStore+']' : '-'}}
         </div>
       </mat-grid-tile>

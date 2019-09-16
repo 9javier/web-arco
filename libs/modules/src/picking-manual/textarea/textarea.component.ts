@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {from, Observable} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {AuthenticationService, environment, InventoryModel, InventoryService} from "@suite/services";
+import {AuthenticationService, environment, InventoryModel, InventoryService, IntermediaryService} from "@suite/services";
 import {AlertController, Events, ToastController} from "@ionic/angular";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
@@ -53,7 +53,8 @@ export class TextareaComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private pickingProvider: PickingProvider,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private intermediaryService: IntermediaryService
   ) {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
@@ -111,12 +112,14 @@ export class TextareaComponent implements OnInit {
             this.timeLastCodeScanned = new Date().getTime();
             this.lastCarrierScanned = dataWrited;
             if (typePackingScanned == this.typePacking) {
+              this.intermediaryService.presentLoading();
               this.postVerifyPacking({
                 status: 2,
                 pickingId: this.pickingId,
                 packingReference: dataWrited
               })
                 .subscribe((res) => {
+                  this.intermediaryService.dismissLoading();
                   if (dataWrited.match(/J([0-9]){4}/)) {
                     this.typePacking = 1;
                   } else {
@@ -166,11 +169,14 @@ export class TextareaComponent implements OnInit {
                   }
                 }, (error) => {
                   this.inputPicking = null;
+                  this.intermediaryService.dismissLoading();
                   if (error.error.code == 404) {
                     this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
                   } else {
                     this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
                   }
+                }, () => {
+                  this.intermediaryService.dismissLoading();
                 });
             } else {
               this.inputPicking = null;
@@ -184,12 +190,14 @@ export class TextareaComponent implements OnInit {
           this.inputPicking = null;
           this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
+          this.intermediaryService.presentLoading();
           this.postVerifyPacking({
             status: 3,
             pickingId: this.pickingId,
             packingReference: dataWrited
           })
             .subscribe((res) => {
+              this.intermediaryService.dismissLoading();
               this.inputPicking = null;
               this.presentToast('Proceso finalizado correctamente.', 1500, this.pickingProvider.colorsMessage.success.name);
               this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
@@ -199,6 +207,7 @@ export class TextareaComponent implements OnInit {
                 this.events.publish('picking:remove');
               }, 1.5 * 1000);
             }, (error) => {
+              this.intermediaryService.dismissLoading();
               this.inputPicking = null;
               this.clearTimeoutCleanLastCodeScanned();
               if (error.error.code == 404) {
@@ -206,6 +215,8 @@ export class TextareaComponent implements OnInit {
               } else {
                 this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
               }
+            }, () => {
+              this.intermediaryService.dismissLoading();
             });
         }
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
@@ -220,9 +231,11 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
+            this.intermediaryService.presentLoading();
             this.inventoryService
               .postPicking(picking)
               .subscribe((res: InventoryModel.ResponsePicking) => {
+                this.intermediaryService.dismissLoading();
                 if (res.code == 200 || res.code == 201) {
                   this.listProducts = res.data.shoePickingPending;
                   this.productsScanned.push(dataWrited);
@@ -259,6 +272,7 @@ export class TextareaComponent implements OnInit {
                     });
                 }
               }, (error) => {
+                this.intermediaryService.dismissLoading();
                 this.inputPicking = null;
                 this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
                 this.getPendingListByPicking(this.pickingId)
@@ -277,6 +291,8 @@ export class TextareaComponent implements OnInit {
                       }
                     }
                   });
+              }, () => {
+                this.intermediaryService.dismissLoading();
               });
           } else {
             this.inputPicking = null;
@@ -288,8 +304,10 @@ export class TextareaComponent implements OnInit {
         }
       } else if (this.scanContainerToNotFound) {
         if ((this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
+          this.intermediaryService.presentLoading();
           this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id)
             .subscribe((res: InventoryModel.ResponseCheckContainer) => {
+              this.intermediaryService.dismissLoading();
               if (res.code == 200) {
                 let productNotFoundId = this.nexProduct.product.id;
                 this.putProductNotFound(this.pickingId, productNotFoundId)
@@ -326,8 +344,11 @@ export class TextareaComponent implements OnInit {
                 this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
               }
             }, (error) => {
+              this.intermediaryService.dismissLoading();
               console.error('Error::Subscribe::CheckContainerProduct -> ', error);
               this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
+            }, () => {
+              this.intermediaryService.dismissLoading();
             });
         } else {
           this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);

@@ -1,0 +1,9 @@
+<i
+  class="material-icons filter"
+  (click)="openFilterPopover($event)"
+  matTooltipPosition="above"
+  [matTooltip]="tooltipHaveValues"
+  [matTooltipDisabled]="tooltipHaveValues == null"
+  (mouseover)="showFiltersActive()">
+  {{ isFiltering ? 'playlist_add_check' : 'reorder' }}
+</i>
