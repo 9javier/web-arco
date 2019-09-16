@@ -135,6 +135,45 @@ export class PickingScanditService {
                 18);
               this.hideTextMessage(2000);
             }
+          } else if (scanMode == 'products_disassociate') {
+            if(this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
+              ScanditMatrixSimple.showLoadingDialog('Desasociando artículo del picking actual...');
+              this.pickingStoreService
+                .postLineRequestDisassociate({
+                  filters: filtersToGetProducts,
+                  productReference: codeScanned
+                })
+                .subscribe((res: PickingStoreModel.ResponseDataLineRequestsFiltered) => {
+                  listProductsToStorePickings = res.pending;
+                  listProductsProcessed = res.processed;
+                  ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
+                  this.refreshListPickingsStores();
+
+                  ScanditMatrixSimple.hideLoadingDialog();
+                  ScanditMatrixSimple.setText(
+                    'El artículo ha sido desasociado del picking actual.',
+                    this.scanditProvider.colorsMessage.success.color,
+                    this.scanditProvider.colorText.color,
+                    16);
+                  this.hideTextMessage(1500);
+                }, (error) => {
+                  console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
+                  ScanditMatrixSimple.hideLoadingDialog();
+                  ScanditMatrixSimple.setText(
+                    'Ha ocurrido un error al intentar desasociar el artículo del picking actual.',
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    16);
+                  this.hideTextMessage(1500);
+                });
+            } else {
+              ScanditMatrixSimple.setText(
+                `Escanee un producto válido`,
+                this.scanditProvider.colorsMessage.error.color,
+                this.scanditProvider.colorText.color,
+                18);
+              this.hideTextMessage(1500);
+            }
           }
 
         } else {
@@ -167,7 +206,7 @@ export class PickingScanditService {
                 18);
               this.hideTextMessage(2000);
             } else {
-              this.finishPicking();
+              ScanditMatrixSimple.showWarning(true, '¿Le han quedado productos sin poder añadir a alguno de los embalajes escaneados? Si es así escanéelos para desasociarlos del picking actual.', 'products_out_of_packing', 'Finalizar', 'Escanear productos');
             }
           } else if (response.action == 'filters') {
             filtersToGetProducts = {
@@ -236,6 +275,13 @@ export class PickingScanditService {
                   16);
                 this.hideTextMessage(1500);
               });
+          } else if (response.action == 'products_out_of_packing') {
+            if (response.response) {
+              this.finishPicking();
+            } else {
+              ScanditMatrixSimple.setTextPickingStores(true, 'Escanee los productos a desasociar');
+              scanMode = 'products_disassociate';
+            }
           }
         }
       }

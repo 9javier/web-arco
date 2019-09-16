@@ -139,6 +139,15 @@ export namespace PickingStoreModel {
     data: RejectRequest
   }
 
+  export interface ParamsLineRequestDisassociate {
+    productReference: string,
+    filters: ParamsFiltered
+  }
+
+  export interface ResponseLineRequestDisassociate {
+    data: ResponseDataLineRequestsFiltered
+  }
+
   export interface ResponseSendProcess {
     data: {
       inventory: any,

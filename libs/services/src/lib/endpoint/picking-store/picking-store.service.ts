@@ -18,6 +18,7 @@ export class PickingStoreService {
   private postLineRequestsFilteredUrl = environment.apiBase + '/processes/picking-store/lines-request/filtered';
   private getLoadRejectionReasonsUrl = environment.apiBase + '/processes/picking-store/lines-request-reasons-reject';
   private postRejectRequestUrl = environment.apiBase + '/processes/picking-store/line-request-reject';
+  private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
 
   constructor(
     private http: HttpClient,
@@ -67,6 +68,12 @@ export class PickingStoreService {
 
   postRejectRequest(params: PickingStoreModel.ParamsRejectRequest) : Observable<PickingStoreModel.RejectRequest> {
     return this.http.post<PickingStoreModel.ResponseRejectRequest>(this.postRejectRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Observable<PickingStoreModel.ResponseDataLineRequestsFiltered> {
+    return this.http.post<PickingStoreModel.ResponseLineRequestDisassociate>(this.postLineRequestDisassociateUrl, params).pipe(map(response => {
       return response.data;
     }));
   }

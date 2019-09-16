@@ -19,7 +19,8 @@ export namespace ScanditModel {
       color: Filters[]
     },
     reasonId: number,
-    requestReference: string
+    requestReference: string,
+    response: boolean
   }
 
   export interface ResponsePrintTags extends Response {
@@ -57,7 +58,8 @@ export namespace ScanditModel {
     finish_picking = 'matrix_simple_finish_picking',
     packing = 'matrix_simple_scan_packings',
     filters = 'filters',
-    request_reject = 'request_reject'
+    request_reject = 'request_reject',
+    products_out_of_packing = 'products_out_of_packing'
   }
 
   enum ActionsPrintTags {
