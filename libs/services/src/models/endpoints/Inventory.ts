@@ -53,7 +53,8 @@ export namespace InventoryModel {
           lock: boolean,
           on_right_side: boolean,
           items: number
-      }
+      },
+      warehouse: any
   }
 
   export interface ResponseSearchInContainer extends Request.Success{
