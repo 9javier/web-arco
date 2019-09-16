@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
+import com.mirasense.scanditsdk.plugin.models.PickingStoreRejectionReason;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
 import com.scandit.barcodepicker.ScanSettings;
 import com.scandit.barcodepicker.ScanditLicense;
@@ -120,6 +121,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String SWITCH_TO_IONIC_SET_ORIGIN_TEXT = "switchToIonicSetOriginText";
   private static final String SHOW_LOADING_DIALOG = "showLoadingDialog";
   private static final String HIDE_LOADING_DIALOG = "hideLoadingDialog";
+  private static final String MATRIX_PICKING_STORES_LOAD_REJECTION_REASONS = "matrixPickingStoresLoadRejectionReasons";
+  private static final String MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG = "matrixPickingStoresHideInfoProductDialog";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
@@ -581,11 +584,13 @@ public class ScanditSDK extends CordovaPlugin {
       String backgroundTitle = "";
       String colorTitle = "";
       String textInit = "";
+      String urlBase = "";
       try {
         title = args.getString(0);
         backgroundTitle = args.getString(1);
         colorTitle = args.getString(2);
         textInit = args.getString(3);
+        urlBase = args.getString(4);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -594,6 +599,7 @@ public class ScanditSDK extends CordovaPlugin {
       b.putString("backgroundTitle", backgroundTitle);
       b.putString("colorTitle", colorTitle);
       b.putString("textInit", textInit);
+      b.putString("urlBase", urlBase);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixPickingStores.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
@@ -667,7 +673,9 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if(action.equals(MATRIX_SIMPLE_FINISH)){
-      MatrixSimpleActivity.matrixSimple.finish();
+      if(activityStarted != null){
+        activityStarted.finish();
+      }
     } else if(action.equals(SHOW_MATRIX_SIMPLE_TEXT)){
       boolean show = false;
       try {
@@ -1119,6 +1127,34 @@ public class ScanditSDK extends CordovaPlugin {
           MatrixPickingStores.loadProductsProcessed(cordova.getActivity(), resources, packageName, fProductsProcessed);
         }
       });
+    } else if (action.equals(MATRIX_PICKING_STORES_LOAD_REJECTION_REASONS)) {
+      JSONArray rejectionReasons = new JSONArray();
+
+      ArrayList<PickingStoreRejectionReason> listRejectionReason = new ArrayList<>();
+      ArrayList<String> listNamesRejectionReason = new ArrayList<>();
+      listRejectionReason.add(new PickingStoreRejectionReason(0, null, "Motivo de rechazo"));
+      listNamesRejectionReason.add(listRejectionReason.get(0).getName());
+
+      try {
+        rejectionReasons = args.getJSONArray(0);
+
+        for (int iRejection = 0; iRejection < rejectionReasons.length(); iRejection++) {
+          PickingStoreRejectionReason newRejectionReason = new PickingStoreRejectionReason();
+          newRejectionReason.fromJsonObject(rejectionReasons.getJSONObject(iRejection));
+          listRejectionReason.add(newRejectionReason);
+          listNamesRejectionReason.add(newRejectionReason.getName());
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      if (MatrixPickingStores.matrixPickingStores != null) {
+        MatrixPickingStores.loadListRejectionReasons(listRejectionReason, listNamesRejectionReason);
+      }
+    } else if (action.equals(MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG)) {
+      if (MatrixPickingStores.matrixPickingStores != null) {
+        MatrixPickingStores.hideInfoForProduct();
+      }
     } else if (action.equals(MATRIX_PICKING_STORES_SET_TEXT)) {
 
       Boolean show = true;
@@ -1153,7 +1189,9 @@ public class ScanditSDK extends CordovaPlugin {
         }
       });
     } else if(action.equals(MATRIX_PICKING_STORES_FINISH)) {
-      MatrixPickingStores.matrixPickingStores.finish();
+      if(MatrixPickingStores.matrixPickingStores != null) {
+        MatrixPickingStores.matrixPickingStores.finish();
+      }
     } else if (action.equals(MATRIX_PICKING_STORES_SHOW_BUTTON_FINISH)) {
 
       boolean show = false;

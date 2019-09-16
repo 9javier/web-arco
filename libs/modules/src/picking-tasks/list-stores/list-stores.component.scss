@@ -20,7 +20,10 @@ div.main-element-list-pickings {
 }
 div.scroll-list {
   overflow-y: scroll;
-  height: calc(100vh - 48px - 56px) // 56px from toolbar - 49px from title element with select all item;
+  height: calc(100vh - 48px - 56px) // 56px from toolbar - 48px from title element with select all item
+}
+div.scroll-list.initiated-picking {
+  height: calc(100vh - 56px) // 56px from toolbar
 }
 div.msg-empty-pickings {
   p.msg-empty-pickings {

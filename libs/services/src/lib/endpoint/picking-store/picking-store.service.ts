@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {from, Observable} from "rxjs";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {switchMap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
 import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
 
@@ -16,6 +16,9 @@ export class PickingStoreService {
   private postLineRequestsPendingUrl = environment.apiBase + '/processes/picking-store/lines-request/pending';
   private postCheckPackingUrl = environment.apiBase + '/processes/picking-store/packing';
   private postLineRequestsFilteredUrl = environment.apiBase + '/processes/picking-store/lines-request/filtered';
+  private getLoadRejectionReasonsUrl = environment.apiBase + '/processes/picking-store/lines-request-reasons-reject';
+  private postRejectRequestUrl = environment.apiBase + '/processes/picking-store/line-request-reject';
+  private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
 
   constructor(
     private http: HttpClient,
@@ -57,6 +60,23 @@ export class PickingStoreService {
     }));
   }
 
+  getLoadRejectionReasons() : Observable<Array<PickingStoreModel.RejectionReasons>> {
+    return this.http.get<PickingStoreModel.ResponseLoadRejectionReasons>(this.getLoadRejectionReasonsUrl).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postRejectRequest(params: PickingStoreModel.ParamsRejectRequest) : Observable<PickingStoreModel.RejectRequest> {
+    return this.http.post<PickingStoreModel.ResponseRejectRequest>(this.postRejectRequestUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Observable<PickingStoreModel.ResponseDataLineRequestsFiltered> {
+    return this.http.post<PickingStoreModel.ResponseLineRequestDisassociate>(this.postLineRequestDisassociateUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
 
   // Send_Process endpoints
   private postPickingStoreProcessUrl = environment.apiBase + '/processes/picking-store/process';
