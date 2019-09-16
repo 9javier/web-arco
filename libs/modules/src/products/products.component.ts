@@ -155,13 +155,10 @@ export class ProductsComponent implements OnInit {
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagBarcode(references).subscribe(result=>{
-      console.log("result of impressions",result);
       this.intermediaryService.dismissLoading();
     },error=>{
       this.intermediaryService.dismissLoading();
-      console.log(error);
     });
-    console.log(references);
   }
 
     /**
@@ -171,17 +168,13 @@ export class ProductsComponent implements OnInit {
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagPrices(references).subscribe(result=>{
-      console.log("result of impressions",result);
       this.intermediaryService.dismissLoading();
     },error=>{
       this.intermediaryService.dismissLoading();
-      console.log(error);
     });
-    console.log(references);
   }
 
   ngOnInit() {
-    console.log(this.form);
     //this.initProducts();
     this.getFilters();
     this.listenChanges();
@@ -195,7 +188,6 @@ export class ProductsComponent implements OnInit {
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page=>{
       /**true if only change the number of results */
-      console.log(page);
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
@@ -279,7 +271,6 @@ export class ProductsComponent implements OnInit {
    * @param id - the id of the product
    */
     async goDetails(product:InventoryModel.SearchInContainer){
-      console.log(product);
       return (await this.modalController.create({
         component:ProductDetailsComponent,
         componentProps:{
@@ -372,7 +363,6 @@ export class ProductsComponent implements OnInit {
     this.sizes = sizes
       .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
       .map(size => {
-        console.log("probando los id del size",size);
         size.id = <number>(<unknown>size.id);
         return size;
       })
