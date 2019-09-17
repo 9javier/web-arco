@@ -270,7 +270,7 @@ const routes: Routes = [
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
     data:{
-      name:'Sorter'
+      name:'Plantillas'
     }
   }
   ,{

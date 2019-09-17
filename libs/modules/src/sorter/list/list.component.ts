@@ -21,6 +21,7 @@ import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
 import { StoreComponent } from './modals-zone/store/store.component';
 import { UpdateComponent } from './modals-zone/update/update.component';
+import { WarehousesModalComponent } from './modals-zone/warehouses-modal/warehouses-modal.component';
 
 @Component({
   selector: 'suite-list-sorter',
@@ -47,12 +48,13 @@ import { UpdateComponent } from './modals-zone/update/update.component';
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['icon', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'dropdown'];
+  displayedColumns = ['icon', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'warehoures'];
   dataSource = new ExampleDataSource();
-  warehouses: any = [];
+  warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   items: FormArray;
+  showRails: boolean = false;
 
   constructor(
     private crudService: CrudService,
@@ -80,25 +82,14 @@ export class ListComponent implements OnInit {
     this.crudService
       .getIndex('Warehouses')
       .then(
-        (
-          data: Observable<
-            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
-          >
-        ) => {
+        (data: Observable<HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>>) => {
           data.subscribe(
-            (
-              res: HttpResponse<
-                UserModel.ResponseIndex | RolModel.ResponseIndex
-              >
-            ) => {
+            (res: HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>) => {
               this.warehouses = res.body.data;
-              console.log(this.warehouses);
               this.initSelect(this.warehouses);
             },
             (err) => {
               console.log(err)
-            }, () => {
-
             }
           );
         }
@@ -159,6 +150,24 @@ export class ListComponent implements OnInit {
   
   delete() {
     console.log('delete')
+  }
+
+  async openWarehousesModal() {
+    event.stopPropagation();
+    let modal = (await this.modalController.create({
+      component:WarehousesModalComponent,
+      componentProps:{
+        warehouses: this.warehouses
+      }
+    }));
+    modal.onDidDismiss().then(()=>{
+      //this.getAgencies();
+    })
+    modal.present();
+  }
+
+  displayRails() {
+    this.showRails = !this.showRails;
   }
 }
 
