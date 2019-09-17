@@ -13,3 +13,14 @@ h5 {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+a:link, a:visited {
+    color: black !important;
+    text-decoration: none !important;
+    cursor: pointer;
+  }
+  
+  a:link:active, a:visited:active {
+    color: black;
+    cursor: pointer;
+  }

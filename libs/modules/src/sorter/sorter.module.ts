@@ -13,9 +13,9 @@ import { ModalsModule } from './modals/modals.module';
 import { ModalsZoneModule } from './list/modals-zone/modals-zone.module';
 
 const routes:Routes = [
-  {path: '', redirectTo: 'plantillas', pathMatch: 'full' },
+ 
   {
-    path: 'plantillas',
+    path: '',
     component: SorterComponent,
     data: {
       name: 'Plantillas'
