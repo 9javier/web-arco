@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import { FormControl, FormGroup, FormArray, FormBuilder } from '@angular/forms';
-import { UpdateComponent } from './modals/update/update.component';
-import { CreateComponent } from './modals/create/create.component';
 import { DataSource } from '@angular/cdk/table';
 import { Observable, of } from 'rxjs';
 import { CrudService } from '@suite/common/ui/crud';
@@ -11,6 +9,8 @@ import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { HttpResponse } from '@angular/common/http';
 import { UserModel, RolModel } from '@suite/services';
+import { UpdateComponent } from './modals/update/update.component';
+import { CreateComponent } from './modals/create/create.component';
 
 @Component({
   selector: 'suite-sorter-create',
@@ -37,7 +37,7 @@ import { UserModel, RolModel } from '@suite/services';
 })
 export class SorterCreateComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
+  displayedColumns = ['delete', 'nombre', 'carriles', 'warehouse', 'altura', 'columna', 'colores'];
   dataSource = new SorterDataSource();
   warehouses: any = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -121,7 +121,7 @@ export class SorterCreateComponent implements OnInit {
 
   async update(row):Promise<void>{
     let modal = (await this.modalController.create({
-      component:UpdateComponent,
+      component: UpdateComponent,
       componentProps:{
         template:row
       }
@@ -134,7 +134,10 @@ export class SorterCreateComponent implements OnInit {
 
   async store(row):Promise<void>{
     let modal = (await this.modalController.create({
-      component:CreateComponent
+      component: CreateComponent,
+      componentProps: {
+        wareHouses: this.warehouses 
+      }
     }));
     modal.onDidDismiss().then(()=>{
       //this.getAgencies();
@@ -155,9 +158,8 @@ export class SorterCreateComponent implements OnInit {
 export class SorterDataSource extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   data = [
-    { icon: '', Ntemplate: 1, zona: 2, dropdown: false, nombre:'template1', carriles: 20 },
-    { icon: '', Ntemplate: 2, zona: 2, dropdown: false, nombre:'template2', carriles: 23 },
-    { icon: '', Ntemplate: 3, zona: 2, dropdown: false, nombre:'template3', carriles: 26 },
+    { nombre: 'sorter1', carriles: 25, warehouse: 'Almacen Cloud', altura: 10, columna:8, colores: ['rojo', 'verde'] },
+    { nombre: 'sorter2', carriles: 22, warehouse: 'Almacen Cloud', altura: 10, columna:8, colores: ['amarillo', 'azul']  },
   ];
   connect(): Observable<Element[]> {
     const rows = [];

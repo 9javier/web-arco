@@ -1,7 +1,7 @@
 <ion-content padding="true">
   <ion-grid>
       <ion-text color="primary">
-          <suite-breadcrumb [post]="'Plantillas'"></suite-breadcrumb>
+          <suite-breadcrumb></suite-breadcrumb>
         </ion-text>
         
         <div class="main-buttons">
@@ -20,14 +20,6 @@
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="Ntemplate">
-              <mat-header-cell *matHeaderCellDef> Plantilla </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.Ntemplate}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="zona">
-              <mat-header-cell *matHeaderCellDef>N Zona </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.zona}} </mat-cell>
-            </ng-container>
             <ng-container matColumnDef="nombre">
               <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
               <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
@@ -36,17 +28,21 @@
               <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
               <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="active">
-                <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
-                <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
+            <ng-container matColumnDef="warehouse">
+              <mat-header-cell *matHeaderCellDef>Almacenes </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.warehouse}} </mat-cell>
             </ng-container>
-            <ng-container matColumnDef="dropdown">
-              <mat-header-cell *matHeaderCellDef></mat-header-cell>
-              <mat-cell *matCellDef="let element">
-                <span>
-                  <ion-icon slot="end" name="ios-arrow-down" (click)="clickShowExpasion(element)"></ion-icon>
-                </span>
-              </mat-cell>
+            <ng-container matColumnDef="altura">
+                <mat-header-cell *matHeaderCellDef>Alturas </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.altura}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="columna">
+                  <mat-header-cell *matHeaderCellDef>Columnas </mat-header-cell>
+                  <mat-cell *matCellDef="let element"> {{element.columna}} </mat-cell>
+                </ng-container>
+            <ng-container matColumnDef="colores">
+              <mat-header-cell *matHeaderCellDef>Colores </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.colores[0]}} </mat-cell>
             </ng-container>
         
             <!-- Expanded Content Column - The detail row is made up of this one column -->

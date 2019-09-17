@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { IntermediaryService } from '@suite/services';
+import { ModalController, NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'suite-create',
@@ -7,9 +9,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CreateComponent implements OnInit {
 
-  constructor() { }
+  wareHouses: any;
+
+  constructor(
+    private intermediaryService:IntermediaryService,
+    private modalController:ModalController,
+    private navParams:NavParams
+  ) {
+    this.wareHouses = this.navParams.get("wareHouses");
+  }
 
   ngOnInit() {
   }
 
+  close():void{
+    this.modalController.dismiss();
+  }
+
+  submit(template):void{
+    console.log('submit')
+  }
 }
