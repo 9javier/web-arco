@@ -6,12 +6,6 @@
 
     <div class="main-buttons">
       <h1>
-        <ion-button class="btn-move-products" slot="end" color="primary" (click)="store()">
-          CREAR
-        </ion-button>
-        <ion-button class="btn-move-products" slot="end" color="primary" (click)="delete()">
-          ELIMINAR
-        </ion-button>
         <ion-button class="btn-move-products" slot="end" color="primary" (click)="displayRails()">
           VER CARRILES
         </ion-button>
@@ -156,4 +150,13 @@
           </mat-grid-list>
     </div>
   </ion-grid>
+  <ion-fab vertical="bottom" horizontal="end">
+      <ion-fab-button  color="danger" (click)="delete()">
+          <ion-icon name="trash"></ion-icon>
+      </ion-fab-button>
+      <br>
+      <ion-fab-button (click)="store()">
+          <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+  </ion-fab>
 </ion-content>  
