@@ -56,11 +56,15 @@ export class TransferPackingScanditService {
               if (this.isProcessStarted) {
                 this.transferAmongPackings(codeScanned);
               } else {
-                this.isProcessStarted = true;
-                this.packingReferenceOrigin = codeScanned;
-                let mainText = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
-                ScanditMatrixSimple.setMainTextSwitchToIonic(true, mainText);
-                ScanditMatrixSimple.setOriginTextSwitchToIonic(true, codeScanned);
+                ScanditMatrixSimple.showLoadingDialog('Iniciando proceso...');
+                setTimeout(() => {
+                  ScanditMatrixSimple.hideLoadingDialog();
+                  this.isProcessStarted = true;
+                  this.packingReferenceOrigin = codeScanned;
+                  let mainText = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
+                  ScanditMatrixSimple.setMainTextSwitchToIonic(true, mainText);
+                  ScanditMatrixSimple.setOriginTextSwitchToIonic(true, codeScanned);
+                }, 0.5 * 1000);
               }
             } else if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT
               || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT_MODEL) {

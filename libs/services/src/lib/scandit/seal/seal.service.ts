@@ -44,11 +44,13 @@ export class SealScanditService {
           if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
             || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
             // Seal the packing
+            ScanditMatrixSimple.showLoadingDialog('Precintando embalaje...');
             this.carriersService
               .postSeal({
                 reference: codeScanned
               })
               .subscribe((res: CarrierModel.ResponseSeal) => {
+                ScanditMatrixSimple.hideLoadingDialog();
                 if (res.code == 200) {
                   let msgOk = 'El recipiente';
                   if (res.data.packingType == 1) {
@@ -72,6 +74,7 @@ export class SealScanditService {
                   this.hideTextMessage(1500);
                 }
               }, (error) => {
+                ScanditMatrixSimple.hideLoadingDialog();
                 ScanditMatrixSimple.setText(
                   'Ha ocurrido un error al intentar precintar el recipiente.',
                   this.scanditProvider.colorsMessage.error.color,

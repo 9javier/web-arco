@@ -44,7 +44,6 @@ export class ProductInfoScanditService {
 
           if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT
             || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
-            // TODO Request product info to server
             this.productService
               .getExtendedInfo(codeScanned)
               .subscribe((res: ProductModel.ResponseExtendedInfo) => {
