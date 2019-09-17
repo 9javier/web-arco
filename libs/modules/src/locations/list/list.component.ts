@@ -344,7 +344,7 @@ export class ListComponent implements OnInit {
   }
 
   async printReferencesLocations() {
-    if (window.cordova) {
+    if ((<any>window).cordova) {
       for (let idLocation in this.locationsSelected) {
         let container = this.locationsSelected[idLocation].column;
         await this.printerService.print({text: [container.reference], type: 0})
