@@ -50,7 +50,6 @@ export class SorterComponent implements OnInit {
 
   displayedColumns = ['icon', 'delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
   dataSource = new ExampleDataSource();
-  warehouses: any = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   items: FormArray;
@@ -79,34 +78,7 @@ export class SorterComponent implements OnInit {
   expandedElement: any;
   showExpasion: boolean = false;
   
-  ngOnInit() {
-    this.crudService
-      .getIndex('Warehouses')
-      .then(
-        (
-          data: Observable<
-            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
-          >
-        ) => {
-          data.subscribe(
-            (
-              res: HttpResponse<
-                UserModel.ResponseIndex | RolModel.ResponseIndex
-              >
-            ) => {
-              this.warehouses = res.body.data;
-              console.log(this.warehouses);
-              this.initSelect(this.warehouses);
-            },
-            (err) => {
-              console.log(err)
-            }, () => {
-
-            }
-          );
-        }
-      );
-  }
+  ngOnInit() {}
 
   clickShowExpasion(row: any) {
     event.stopPropagation();
