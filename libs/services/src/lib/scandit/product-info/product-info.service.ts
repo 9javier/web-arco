@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {ProductModel, ProductsService} from "@suite/services";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -14,21 +15,32 @@ export class ProductInfoScanditService {
 
   private timeoutHideText;
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private productService: ProductsService,
     private scanditProvider: ScanditProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   async init() {
     let lastCodeScanned: string = 'start';
+    let lastProductReferenceScanned: string = 'start';
     let codeScanned: string = null;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.initProductInfo((response: ScanditModel.ResponseProductInfo) => {
-      console.debug('Test::Response -> ', response);
       if (response && response.result) {
         if (response.barcode && response.barcode.data != lastCodeScanned) {
           codeScanned = response.barcode.data;
           lastCodeScanned = codeScanned;
+          lastProductReferenceScanned = codeScanned;
+
+          if (timeoutStarted) {
+            clearTimeout(timeoutStarted);
+          }
+          timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
           if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT
             || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
@@ -68,7 +80,7 @@ export class ProductInfoScanditService {
               16);
             this.hideTextMessage(1500);
           }
-        } else if (response.barcode && response.barcode.data == lastCodeScanned) {
+        } else if (response.barcode && response.barcode.data == lastProductReferenceScanned) {
           ScanditMatrixSimple.showProgressBarProductExtendedInfo(false);
         } else {
           if (response.action == 'matrix_simple') {

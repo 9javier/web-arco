@@ -3,6 +3,7 @@ import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {CarriersService} from "../../endpoint/carriers/carriers.service";
 import {CarrierModel} from "../../../models/endpoints/Carrier";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -15,20 +16,30 @@ export class SealScanditService {
 
   private timeoutHideText;
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   async seal() {
     let lastCodeScanned: string = 'start';
     let codeScanned: string = null;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.init((response: ScanditModel.ResponseSimple) => {
       if (response && response.result) {
         if (response.barcode && response.barcode.data != lastCodeScanned) {
           codeScanned = response.barcode.data;
           lastCodeScanned = codeScanned;
+
+          if (timeoutStarted) {
+            clearTimeout(timeoutStarted);
+          }
+          timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
           if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
             || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {

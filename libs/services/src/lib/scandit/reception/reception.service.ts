@@ -9,6 +9,7 @@ import {WarehouseModel} from "@suite/services";
 import {ReceptionModel} from "../../../models/endpoints/Reception";
 import {ReceptionProvider} from "../../../providers/reception/reception.provider";
 import {Router} from "@angular/router";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let ScanditMatrixSimple;
 
@@ -25,6 +26,8 @@ export class ReceptionScanditService {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private router: Router,
     private alertController: AlertController,
@@ -36,7 +39,9 @@ export class ReceptionScanditService {
     private receptionService: ReceptionService,
     private scanditProvider: ScanditProvider,
     private receptionProvider: ReceptionProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   async reception(typeReception: number) {
     this.isStoreUser = await this.authenticationService.isStoreUser();
@@ -47,6 +52,7 @@ export class ReceptionScanditService {
     this.lastCodeScanned = 'start';
     this.receptionProvider.resumeProcessStarted = false;
     this.typeReception = typeReception;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.init((response) => {
       let code = '';
@@ -57,6 +63,12 @@ export class ReceptionScanditService {
 
           if (!this.scannerPaused && code != this.lastCodeScanned) {
             this.lastCodeScanned = code;
+
+            if (timeoutStarted) {
+              clearTimeout(timeoutStarted);
+            }
+            timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
             this.scannerPaused = true;
             switch (this.scanditProvider.checkCodeValue(code)) {
               case this.scanditProvider.codeValue.JAIL:

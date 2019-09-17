@@ -10,6 +10,7 @@ import {switchMap} from "rxjs/operators";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {Location} from "@angular/common";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-textarea',
@@ -44,6 +45,9 @@ export class TextareaComponent implements OnInit {
   private putProductNotFoundUrl = environment.apiBase+"/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService,
@@ -57,6 +61,7 @@ export class TextareaComponent implements OnInit {
     private scanditProvider: ScanditProvider,
     private intermediaryService: IntermediaryService
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -99,6 +104,11 @@ export class TextareaComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrited;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputPicking = null;
       if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {

@@ -4,6 +4,7 @@ import {SettingsService} from "../../storage/settings/settings.service";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {Events} from "@ionic/angular";
 import {CarriersService} from "../../endpoint/carriers/carriers.service";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let ScanditMatrixSimple;
 
@@ -21,14 +22,20 @@ export class TransferPackingScanditService {
 
   private disableTransferProductByProduct: boolean = true;
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private events: Events,
     private settingsService: SettingsService,
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   async transfer() {
+    let timeoutStarted = null;
+
     ScanditMatrixSimple.initSwitchToIonic((res: ScanditModel.ResponseSwitchToIonic) => {
       if (res) {
         if (res.barcode) {
@@ -38,6 +45,11 @@ export class TransferPackingScanditService {
 
           if (codeScanned != this.lastCodeScanned) {
             this.lastCodeScanned = codeScanned;
+
+            if (timeoutStarted) {
+              clearTimeout(timeoutStarted);
+            }
+            timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
             if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
               || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
