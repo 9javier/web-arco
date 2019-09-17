@@ -1,0 +1,77 @@
+.main-buttons {
+    overflow: auto;
+    width: 100%;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    h1 {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+}
+
+.mat-column-select {
+    overflow: initial;
+}
+
+.icon-arrow {
+    text-align: center;
+}
+
+mat-table {
+    width: 100%;
+}
+
+.mat-cell,
+.mat-header-cell {
+    padding: 10px 10px 10px 0;
+}
+
+.container {
+    margin-top: 1em;
+}
+
+.row-icon-location {
+    width: 80px;
+    ion-col {
+        padding: 0;
+        .cell-resume-use {
+            width: 16px;
+            height: 16px;
+            background: rgba(33, 33, 33, 0.12);
+        }
+        .cell-resume-incidence,
+        .cell-resume-free {
+            width: 6px;
+            height: 6px;
+            background: green;
+            margin-left: 3px;
+        }
+        .cell-resume-free {
+            margin-top: 4px;
+            background: #fff;
+            outline: 2px solid #000;
+            outline-offset: -2px;
+        }
+        .cell-not-free {
+            outline: 2px solid rgba(0, 0, 0, 0.24);
+        }
+        .cell-incidence-serious {
+            background: red;
+        }
+        .cell-incidence-slight {
+            background: orange;
+        }
+    }
+}
+
+mat-grid-tile {
+    border: 2px solid black;
+    font-size: 30px;
+}
+
+
+mat-grid-list {
+    width: 80%;
+    margin: 3em auto;
+}

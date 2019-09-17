@@ -273,14 +273,14 @@ const routes: Routes = [
       name:'Sorter'
     }
   }
-  /*,{
+  ,{
     path: 'sorter-new',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/sorter-create/sorter-create.module#SorterCreateModule',
     data:{
       name:'Crear Sorter'
     }
-  }*/
+  }
 ];
 
 @NgModule({
