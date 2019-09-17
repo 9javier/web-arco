@@ -38,7 +38,7 @@ import { UserModel, RolModel } from '@suite/services';
 export class SorterCreateComponent implements OnInit {
 
   displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
-  dataSource = new ExampleDataSource();
+  dataSource = new SorterDataSource();
   warehouses: any = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
@@ -152,7 +152,7 @@ export class SorterCreateComponent implements OnInit {
 
 }
 
-export class ExampleDataSource extends DataSource<any> {
+export class SorterDataSource extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   data = [
     { icon: '', Ntemplate: 1, zona: 2, dropdown: false, nombre:'template1', carriles: 20 },
