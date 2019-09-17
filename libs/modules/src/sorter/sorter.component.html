@@ -6,8 +6,11 @@
         
         <div class="main-buttons">
           <h1>
-            <ion-button class="btn-move-products" slot="end" color="primary">
-              CREAR / ELIMINAR PLANTILLA
+            <ion-button class="btn-move-products" slot="end" color="primary" (click)="store()">
+              CREAR
+            </ion-button>
+            <ion-button class="btn-move-products" slot="end" color="primary" (click)="delete()">
+              ELIMINAR
             </ion-button>
           </h1>
         </div>
@@ -30,22 +33,35 @@
                 </ion-grid>
               </mat-cell>
             </ng-container>
-        
+            <ng-container matColumnDef="delete">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="Ntemplate">
               <mat-header-cell *matHeaderCellDef> Plantilla </mat-header-cell>
               <mat-cell *matCellDef="let element"> {{element.Ntemplate}} </mat-cell>
             </ng-container>
-        
             <ng-container matColumnDef="zona">
               <mat-header-cell *matHeaderCellDef>N Zona </mat-header-cell>
               <mat-cell *matCellDef="let element"> {{element.zona}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="nombre">
+              <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="carriles">
+              <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
+              <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="active">
+                <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
+                <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
             </ng-container>
             <ng-container matColumnDef="dropdown">
               <mat-header-cell *matHeaderCellDef></mat-header-cell>
               <mat-cell *matCellDef="let element">
                 <span>
-                  <ion-icon slot="end" name="ios-arrow-down" *ngIf="!element.dropdown"></ion-icon>
-                  <ion-icon slot="end" name="ios-arrow-up" *ngIf="element.dropdown"></ion-icon>
+                  <ion-icon slot="end" name="ios-arrow-down" (click)="clickShowExpasion(element)"></ion-icon>
                 </span>
               </mat-cell>
             </ng-container>
@@ -82,7 +98,7 @@
                     matRipple 
                     class="element-row" 
                     [class.expanded]="expandedElement == row"
-                    (click)="clickShowExpasion(row)"></mat-row>
+                    (click)="update(row)"></mat-row>
             <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
                     [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
                     style="overflow: hidden"> 

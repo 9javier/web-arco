@@ -20,6 +20,8 @@ import { CrudService } from '../../../common/ui/crud/src/lib/service/crud.servic
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
 import { Router } from '@angular/router';
+import { UpdateComponent } from './modals/update/update.component';
+import { StoreComponent } from './modals/store/store.component';
 
 @Component({
   selector: 'suite-sorter',
@@ -46,7 +48,7 @@ import { Router } from '@angular/router';
 })
 export class SorterComponent implements OnInit {
 
-  displayedColumns = ['icon', 'Ntemplate', 'zona', 'dropdown'];
+  displayedColumns = ['icon', 'delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
   dataSource = new ExampleDataSource();
   warehouses: any = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -56,7 +58,8 @@ export class SorterComponent implements OnInit {
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private modalController:ModalController,
     
   ) {
     this.selectedForm = this.formBuilder.group(
@@ -106,6 +109,7 @@ export class SorterComponent implements OnInit {
   }
 
   clickShowExpasion(row: any) {
+    event.stopPropagation();
     this.router.navigate(['/sorter/plantilla/1'])
   }
 
@@ -126,14 +130,45 @@ export class SorterComponent implements OnInit {
     return new FormControl(Boolean(false));
   }
 
+  async update(row):Promise<void>{
+    let modal = (await this.modalController.create({
+      component:UpdateComponent,
+      componentProps:{
+        template:row
+      }
+    }));
+    modal.onDidDismiss().then(()=>{
+      //this.getAgencies();
+    })
+    modal.present();
+  }
+
+  async store(row):Promise<void>{
+    let modal = (await this.modalController.create({
+      component:StoreComponent
+    }));
+    modal.onDidDismiss().then(()=>{
+      //this.getAgencies();
+    })
+    modal.present();
+  }
+
+  activeDelete() {
+    event.stopPropagation();
+  }
+
+  delete() {
+    console.log('delete')
+  }
+
 }
 
 export class ExampleDataSource extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   data = [
-    { icon: '', Ntemplate: 1, zona: 2, dropdown: false },
-    { icon: '', Ntemplate: 2, zona: 2, dropdown: false },
-    { icon: '', Ntemplate: 3, zona: 2, dropdown: false },
+    { icon: '', Ntemplate: 1, zona: 2, dropdown: false, nombre:'template1', carriles: 20 },
+    { icon: '', Ntemplate: 2, zona: 2, dropdown: false, nombre:'template2', carriles: 23 },
+    { icon: '', Ntemplate: 3, zona: 2, dropdown: false, nombre:'template3', carriles: 26 },
   ];
   connect(): Observable<Element[]> {
     const rows = [];

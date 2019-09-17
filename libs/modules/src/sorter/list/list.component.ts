@@ -19,8 +19,8 @@ import {PrinterService} from "../../../../services/src/lib/printer/printer.servi
 import { CrudService } from '../../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
-
-
+import { StoreComponent } from './modals-zone/store/store.component';
+import { UpdateComponent } from './modals-zone/update/update.component';
 
 @Component({
   selector: 'suite-list-sorter',
@@ -47,7 +47,7 @@ import { validators } from '../../utils/validators';
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['icon', 'Ntemplate', 'zona', 'dropdown'];
+  displayedColumns = ['icon', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'dropdown'];
   dataSource = new ExampleDataSource();
   warehouses: any = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -56,7 +56,8 @@ export class ListComponent implements OnInit {
 
   constructor(
     private crudService: CrudService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private modalController:ModalController
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -105,6 +106,7 @@ export class ListComponent implements OnInit {
   }
 
   clickShowExpasion(row: any) {
+    event.stopPropagation();
     console.log(row)
     this.expandedElement = row;
     this.showExpasion = !this.showExpasion;
@@ -127,14 +129,45 @@ export class ListComponent implements OnInit {
   createSelect(): FormControl {
     return new FormControl(Boolean(false));
   }
+
+  async update(row):Promise<void>{
+    let modal = (await this.modalController.create({
+      component:UpdateComponent,
+      componentProps:{
+        zona:row
+      }
+    }));
+    modal.onDidDismiss().then(()=>{
+      //this.getAgencies();
+    })
+    modal.present();
+  }
+
+  async store(row):Promise<void>{
+    let modal = (await this.modalController.create({
+      component:StoreComponent
+    }));
+    modal.onDidDismiss().then(()=>{
+      //this.getAgencies();
+    })
+    modal.present();
+  }
+
+  activeDelete() {
+    event.stopPropagation();
+  }
+  
+  delete() {
+    console.log('delete')
+  }
 }
 
 export class ExampleDataSource extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   data = [
-    { icon: '', Ntemplate: 1, zona: 2, dropdown: false },
-    { icon: '', Ntemplate: 2, zona: 2, dropdown: false },
-    { icon: '', Ntemplate: 3, zona: 2, dropdown: false },
+    { icon: '', Ntemplate: 1, zona: 2, nombre: 'zone1', carriles: 25, dropdown: false },
+    { icon: '', Ntemplate: 2, zona: 2, nombre: 'zone2', carriles: 45, dropdown: false },
+    { icon: '', Ntemplate: 3, zona: 2, nombre: 'zone3', carriles: 65, dropdown: false },
   ];
   connect(): Observable<Element[]> {
     const rows = [];

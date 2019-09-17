@@ -9,6 +9,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { CdkTableModule } from '@angular/cdk/table';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ListComponent } from './list/list.component';
+import { ModalsModule } from './modals/modals.module';
+import { ModalsZoneModule } from './list/modals-zone/modals-zone.module';
 
 const routes:Routes = [
   {path: '', redirectTo: 'plantillas', pathMatch: 'full' },
@@ -38,6 +40,8 @@ const routes:Routes = [
     MatTableModule,
     MatIconModule,
     MatGridListModule,
+    ModalsModule,
+    ModalsZoneModule,
     RouterModule.forChild(routes),
     BreadcrumbModule
   ]
