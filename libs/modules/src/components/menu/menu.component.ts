@@ -216,17 +216,17 @@ export class MenuComponent implements OnInit {
       icon:'logo-usd',
       children: [
         {
+          title: 'Crear Sorter',
+          id:'sorter-sga-create',
+          url: '/sorter-new',
+          icon:'logo-usd'
+        },
+        {
         title: 'Crear Plantillas',
         id:'sorter-sga',
         url: '/sorter',
         icon:'logo-usd'
-        },
-        /*{
-          title: 'Crear Sorter',
-          id:'sorter-sga-create',
-          url: '/sorter/new',
-          icon:'logo-usd'
-        }*/
+        }
       ]
     }
   ];

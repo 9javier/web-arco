@@ -272,13 +272,13 @@ const routes: Routes = [
     data:{
       name:'Sorter'
     }
-  },
+  }
   /*,{
-    path: 'sorter/new',
+    path: 'sorter-new',
     canActivate:[AuthGuard],
-    loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
+    loadChildren: '../../../../libs/modules/src/sorter-create/sorter-create.module#SorterCreateModule',
     data:{
-      name:'Crear-Sorter'
+      name:'Crear Sorter'
     }
   }*/
 ];
