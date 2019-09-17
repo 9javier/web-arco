@@ -227,6 +227,18 @@ export class JailComponent implements OnInit {
     });
   }
 
+  setDestination(carrierId: number, current:number):void{
+    this.intermediaryService.presentLoading();
+    this.carrierService.setDestination(carrierId, current).subscribe(()=>{
+      this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
+      this.intermediaryService.dismissLoading();
+      this.getCarriers();
+    },()=>{
+      this.intermediaryService.presentToastError("Error al actualizar destino");
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
   getWarehouses(){
     this.intermediaryService.presentLoading();
     this.warehouseService.getIndex().then(observable=>{

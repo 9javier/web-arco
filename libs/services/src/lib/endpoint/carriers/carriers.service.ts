@@ -18,7 +18,7 @@ export class CarriersService {
   private getUpdatePackingStatusInPickingUrl: string = environment.apiBase + "/packing/update/";
 
   // Relabel
-  private postListByWarehouseUrl: string = environment.apiBase + "/packing/show";
+  private postListByWarehouseUrl: string = environment.apiBase + "/packing/destiny/show";
 
   constructor(
     private http: HttpClient,
