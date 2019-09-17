@@ -12,6 +12,7 @@ import {AuthenticationService} from "../endpoint/authentication/authentication.s
 import {Events} from "@ionic/angular";
 import {WarehouseModel} from "@suite/services";
 import {ScanditProvider} from "../../providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -43,6 +44,8 @@ export class ScanditService {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService,
@@ -52,7 +55,7 @@ export class ScanditService {
     private events: Events,
     private scanditProvider: ScanditProvider
   ) {
-
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
 
   async setApiKey(api_key) {
@@ -70,6 +73,7 @@ export class ScanditService {
     let containerReference = null;
     let packingReference = null;
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
@@ -103,6 +107,11 @@ export class ScanditService {
 
         if (code === lastCodeScanned) return;
         lastCodeScanned = code;
+
+        if (timeoutStarted) {
+          clearTimeout(timeoutStarted);
+        }
+        timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
         if (!this.isStoreUser && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
@@ -293,6 +302,7 @@ export class ScanditService {
     };
     let timeLastCodeScanned: number = 0;
     let packingReference: string = '';
+    let timeoutStarted = null;
 
     this.clearTimeoutCleanLastCodeScanned();
     this.intervalCleanLastCodeScanned = setInterval(() => {
@@ -328,6 +338,11 @@ export class ScanditService {
 
       if (code === lastCodeScanned) return;
       lastCodeScanned = code;
+
+      if (timeoutStarted) {
+        clearTimeout(timeoutStarted);
+      }
+      timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       //Check Jail/Pallet or product
       if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {

@@ -3,6 +3,7 @@ import {ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-input-codes',
@@ -17,11 +18,15 @@ export class InputCodesComponent implements OnInit {
 
   public typeTagsBoolean: boolean = false;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private toastController: ToastController,
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },800);
@@ -40,6 +45,11 @@ export class InputCodesComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrote;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
 
