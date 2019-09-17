@@ -167,9 +167,7 @@ export class UpdateComponent implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-            // console.log('Confirm Cancel');
-          }
+          handler: () => { }
         }, {
           text: 'Vale',
           handler: (result) => {

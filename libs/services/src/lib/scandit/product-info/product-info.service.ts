@@ -49,7 +49,6 @@ export class ProductInfoScanditService {
               .getExtendedInfo(codeScanned)
               .subscribe((res: ProductModel.ResponseExtendedInfo) => {
                 if (res.code == 200) {
-                  console.debug('Test::Res -> ', res);
                   ScanditMatrixSimple.showProductExtendedInfo(true, res.data);
                 } else {
                   console.error('Error::Subscribe::GetExtendedInfo::', res);

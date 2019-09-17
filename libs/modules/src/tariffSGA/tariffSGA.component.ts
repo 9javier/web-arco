@@ -61,7 +61,6 @@ export class TariffSGAComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.filters);
     this.filters.patchValue({ warehouseId: 1 });
     this.getWarehouses();
     this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
@@ -115,8 +114,6 @@ export class TariffSGAComponent implements OnInit {
       tariffs => {
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
-        console.log('##################################################')
-        console.log(tariffs)
         this.tariffs = tariffs.map(result => {
           result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
           result.activeTill = new Date(result.activeTill).toLocaleDateString();
@@ -142,12 +139,6 @@ export class TariffSGAComponent implements OnInit {
     e.preventDefault();
     e.stopPropagation();
   }
-
-  // changeCheckBox(i) {
-  //   console.log('Position ', i);
-  //   console.log('this.selectedForm.value.toSelect[i] ', this.selectedForm.value.toSelect[i]);
-    
-  // }
 
   onChecked(i, event) {
     var state = event;
@@ -207,14 +198,12 @@ export class TariffSGAComponent implements OnInit {
 
     // });
 
-    // console.log(list);
     this.intermediaryService.presentLoading("Modificando los seleccionados");
     this.tariffService.updateEnabled(this.tariffsUpdate).subscribe(result => {
         this.intermediaryService.dismissLoading();
         this.listenChanges();
     },error=>{
       this.intermediaryService.dismissLoading();
-      console.log(error);
     }, () => {
       this.tariffsUpdate = [];
       this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
@@ -243,9 +232,6 @@ export class TariffSGAComponent implements OnInit {
       "toSelect", 
       this.formBuilder.array(items.map(item => new FormControl(Boolean(item.enabled))))
     );
-
-    console.log('Init ', this.selectedForm.value);
-    
   }
 
   get existTariffsToUpdate() {

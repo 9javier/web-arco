@@ -173,13 +173,10 @@ export class InputCodesComponent implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancelar');
-          }
+          handler: () => { }
         }, {
           text: 'Seleccionar',
           handler: (data) => {
-            console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;

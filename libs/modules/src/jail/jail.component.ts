@@ -151,7 +151,6 @@ export class JailComponent implements OnInit {
         });
       })));
       this.dataSource = new MatTableDataSource(carriers);
-      console.log(this.toDelete);
       this.intermediaryService.dismissLoading();
     })
   }

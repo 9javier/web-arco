@@ -408,7 +408,6 @@ export class MenuComponent implements OnInit {
    * Select the links that be shown depends of dictionary paramethers
    */
   filterPages(dictionary){
-    // console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
     let logoutItem = dictionary['user-time']?({
       title: 'Cerrar sesión',
@@ -436,15 +435,11 @@ export class MenuComponent implements OnInit {
           this.sgaPages[i] = logoutItem;
       });
       this.project_selector = app.name;
-      console.log('my selector'+  this.project_selector);
-    console.log("diccionario",app,dictionary);
-    // console.log("diccionario",app,dictionary);
     if(!app || !app.name) {
       return false;
     }
     /**obtain the routes for the current application */
     let auxPages = this.menuPages[this.app.name];
-    // console.log(auxPages)
     this.menuPagesFiltered = [];
     if(!auxPages) {
       return false;
@@ -456,7 +451,6 @@ export class MenuComponent implements OnInit {
       /**if the page is a wrapper then iterate over his childrens to get the alloweds */
       if(page.type == "wrapper"){
         page.children.forEach(children => {
-          // console.log(dictionary[children.id],children.id)
           /**if the childen is allowed then add if */
           if(dictionary[children.id]) {
             auxChildren.push(children);
@@ -471,7 +465,6 @@ export class MenuComponent implements OnInit {
         }
       /**if not is a wrapper then is a normal category the check if plus easy */
       }else{
-        // console.log(dictionary[page.id],page.id)
         if(dictionary[page.id]) {
           this.menuPagesFiltered.push(page);
         }
@@ -482,7 +475,6 @@ export class MenuComponent implements OnInit {
   }
 
   tapOption(p) {
-    // console.log(p);
     this.currentRoute = p.title;
     this.menuTitle.emit(p.title);
     if (p.url === 'logout') {
@@ -493,7 +485,6 @@ export class MenuComponent implements OnInit {
             this.authenticationService.logout().then(success => {
               this.router.navigateByUrl('/login')
             });
-            // console.log(data);
           });
       });
     } else if(p.url === 'positioning'){

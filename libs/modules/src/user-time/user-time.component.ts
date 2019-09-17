@@ -78,7 +78,6 @@ export class UserTimeComponent implements OnInit {
       if(this.redirect == "logout" && !this.userRegisterTime){
         this.router.navigate([this.redirect]);
       }
-      console.debug("ERROR", error);
     });
   }
 
