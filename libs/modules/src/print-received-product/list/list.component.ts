@@ -4,6 +4,7 @@ import {PickingNewProductsModel} from "../../../../services/src/models/endpoints
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {validators} from "../../utils/validators";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'list-received-product',
@@ -23,7 +24,8 @@ export class ListReceivedProductTemplateComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private pickingNewProductsService: PickingNewProductsService,
-    private printerService: PrinterService
+    private printerService: PrinterService,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -54,11 +56,14 @@ export class ListReceivedProductTemplateComponent implements OnInit {
       .filter(productReference => productReference);
 
     if (productReferences.length > 0) {
+      this.intermediaryService.presentLoading();
       this.printerService.printTagPrices(productReferences)
         .subscribe(() => {
           this.initSelectedForm();
         }, (error) => {
           console.error('An error succeed to try print products received. \nError:', error);
+        }, () => {
+          this.intermediaryService.dismissLoading();
         });
     }
   }

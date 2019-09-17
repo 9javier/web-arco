@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './update/update.component';
 import { StoreComponent } from './store/store.component';
+import { SendComponent } from './send/send.component';
 
 @Component({
   selector: 'app-jail',
@@ -34,10 +35,10 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'warehouse',"update",'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing', 'warehouse',"update",'buttons-print', 'sendPacking'];
   dataSource:MatTableDataSource<CarrierModel.Carrier>;
   expandedElement:CarrierModel.Carrier;
-  
+
   carriers:Array<CarrierModel.Carrier> = [];
   warehouses:Array<WarehouseModel.Warehouse> = [];
 
@@ -62,7 +63,7 @@ export class JailComponent implements OnInit {
   }
 
   /**
-   * Return a type 
+   * Return a type
    * @param id - the id of type
    */
   typeById(id:number){
@@ -164,8 +165,8 @@ export class JailComponent implements OnInit {
 
   /**
    * copied function to show modal when user tap on print button
-   * @param event 
-   * @param row 
+   * @param event
+   * @param row
    */
   async print(event, row?: CarrierModel.Carrier) {
     event.stopPropagation();
@@ -187,6 +188,27 @@ export class JailComponent implements OnInit {
     } else {
       return await this.printerService.printBarcodesOnBrowser(listReferences);
     }
+  }
+
+  /**
+   * Open modal to edit jail
+   * @param event - to cancel it
+   * @param jail - jail to be updated
+   */
+  async send(event, jail) {
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component:SendComponent,
+      componentProps:{
+        jail:jail
+      },
+      cssClass: 'modalStyles'
+    }))
+    modal.onDidDismiss().then(()=>{
+      this.getCarriers();
+    })
+    modal.present();
   }
 
   /**

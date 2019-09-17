@@ -118,3 +118,16 @@ ion-icon.action-icon, i.action-icon {
 .footer-products:before {
   background: none;
 }
+
+ion-modal{
+  .modal-wrapper{
+    max-height: 20rem !important;
+}
+.modal-wrapper-md{
+    max-height: 20rem !important;
+}
+.sc-ion-modal-md{
+    max-height: 20rem !important;
+}
+}
+

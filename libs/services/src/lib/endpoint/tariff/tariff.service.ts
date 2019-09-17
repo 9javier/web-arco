@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { TariffModel } from 'libs/services/src/models/endpoints/Tariff';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import {SortModel} from "../../../models/endpoints/Sort";
+import { SortModel } from "../../../models/endpoints/Sort";
 
 @Injectable({
   providedIn: 'root'
@@ -12,9 +12,10 @@ import {SortModel} from "../../../models/endpoints/Sort";
 export class TariffService {
 
   /**urls for tariff service */
-  private getIndexUrl:string = environment.apiBase+"/tariffs";
-
-  constructor(private http:HttpClient) { }
+  private getIndexUrl: string = environment.apiBase + "/tariffs";
+  private getTariffIfSoftdeleteSGA: string = environment.apiBase + "/tariffs/";
+  private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
+  constructor(private http: HttpClient) { }
 
   /**
    * Get all tariff of the system
@@ -23,7 +24,7 @@ export class TariffService {
    * @param sort
    * @returns observable with the tariff
    */
-  getIndex(page: number = 1, limit: number = 1, sort: SortModel.Sort):Observable<TariffModel.ResponseTariffPaginator>{
+  getIndex(page: number = 1, limit: number = 1, sort: SortModel.Sort): Observable<TariffModel.ResponseTariffPaginator> {
     let params = {
       pagination: {
         page: page,
@@ -32,8 +33,29 @@ export class TariffService {
         sortType: sort ? sort.type : null
       }
     };
-    return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl, params).pipe(map(response=>{
+    return this.http.post<TariffModel.ResponseTariff>(this.getIndexUrl, params).pipe(map(response => {
       return response.data;
     }));
   }
+
+  updateEnabled(list: any) {
+    return this.http.put(this.putTariffEnabledUrl, list).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getTariffIfSoftdelete() {
+    return this.http.get<{
+      data: {
+        name: string;
+        activeFrom: string;
+        activeTill: string;
+      }[]
+    }>(this.getTariffIfSoftdeleteSGA, {}).pipe(map(response => {
+      return response;
+    })).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
 }

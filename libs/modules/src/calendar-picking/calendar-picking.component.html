@@ -9,20 +9,20 @@
                 <ion-card class="legend-card">                    
                     <ion-card-content>
                         <p class="legend-card-text">
+														<span class="legend-card-color" style="background-color: #2196f3"></span>
                             Datos almacenados
-                            <span class="legend-card-color" style="background-color: #2196f3"></span>
                         </p>
                         <p class="legend-card-text">
-                            Hay información
                             <span class="legend-card-color" style="background-color: #008000"></span>
+                            Hay información
                         </p>
                         <p class="legend-card-text">
-                            No hay información
                             <span class="legend-card-color" style="background-color: #ea5348"></span>
+                            No hay información
                         </p>            
                     </ion-card-content>
                 </ion-card>
-                <ion-button class="clean-button" color="danger" *ngIf="selectDates.length > 1" (click)="clear()">Limpiar calendario</ion-button>
+                <ion-button class="clean-button" color="danger" (click)="clear()">Limpiar calendario</ion-button>
             </ion-col>
 
             <ion-col size="6" [formGroup]="template">
@@ -32,7 +32,8 @@
                     </ion-label>
                     <ion-select formControlName="template" (ionChange)="selectTemplate(templates[$event.detail.value],null)">
                         <ion-select-option *ngFor="let template of templates;let i = index" [value]="i">
-                            {{template.name}}</ion-select-option>
+														{{template.name}}
+												</ion-select-option>
                     </ion-select>
                 </ion-item>
 
@@ -43,25 +44,20 @@
                     Debe seleccionar al menos una fecha para almacenar
                 </div>
 
-                <ion-item *ngIf="selectDates.length">
+                <div *ngIf="selectDates.length">
                     <ion-label>
-                        Fechas
+                       Almacenes
                     </ion-label>
-                    <ion-select *ngIf="!loadingDates" [compareWith]="compareDate" [(ngModel)]="modelDate" (ionChange)="selectTemplate($event.detail.value,$event.detail.value.value,$event.detail.value)">
-                        <div *ngFor="let date of selectDates">
-                            <ion-select-option [value]="date">{{date.date}}</ion-select-option>
-                        </div>
-                    </ion-select>
-                </ion-item>
-                <div class="overAuto" [formGroup]="form">
+                </div>
+                <div class="overAuto" [formGroup]="form" style="margin-top: 3%">
                     <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls'];let i = index">
-                        <mat-expansion-panel (opened)="openeds[i] = true" (closed)="openeds[i] = false">
+                        <mat-expansion-panel [expanded]="warehouse.value.openModal" (opened)="openeds[i] = true" (closed)="openeds[i] = false">
                             <mat-expansion-panel-header>
                                 <ion-grid>
                                     <ion-row>
                                         <ion-col size="3">
                                             <mat-panel-title>
-                                                {{ warehouse.value.originWarehouse.name }}
+																								{{ warehouse.value.originWarehouse.name }}
                                             </mat-panel-title>
                                         </ion-col>
                                         <ion-col size="7">
@@ -75,15 +71,18 @@
                             </mat-expansion-panel-header>
 
                             <div *ngIf="openeds[i]">
-                                <ion-item [formGroup]="destination" class="no-border" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
-                                    <mat-checkbox formControlName="selected"></mat-checkbox>
-                                    <ion-label>{{destination.value.name}}</ion-label>
-                                    <mat-checkbox formControlName="radio"></mat-checkbox>
-                                </ion-item>
-                                <!--<ion-item *ngFor="let control of createForm['controls'].roles['controls'];let i = index">
-                                                    <ion-label>{{roles[i].name}}</ion-label>
-                                                    <ion-checkbox value="{{roles[i].id}}" [formControl]="control"></ion-checkbox>
-                                                </ion-item>-->
+                                <ion-col size="2" size-xs="12" size-md="4">
+																	<ion-label>
+																			Almacenes
+																	</ion-label>
+																	<suite-tags-input placeholder="Almacenes" [options]="warehousesList" formControlName="warehousesInput" notShow="true" multiple="false" (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
+																</ion-col>
+																<div [formGroup]="destination" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
+																		<ion-item *ngIf="destination.value.selected">
+																			<i *ngIf="destination.value.selected" slot="end" class="deleteWarehouse material-icons" (click)="deletedWarehouseOfTemplate(destination.value.id, warehouse.value.originWarehouse.id)">delete</i>
+																			<ion-label *ngIf="destination.value.selected">{{destination.value.name}}</ion-label>
+																		</ion-item>
+																</div>
                             </div>
                             <mat-list style="display: flex; justify-content:center;"></mat-list>
                         </mat-expansion-panel>

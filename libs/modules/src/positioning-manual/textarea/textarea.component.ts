@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel} from "@suite/services";
+import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
 import {AlertController, ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 
@@ -30,6 +30,7 @@ export class TextareaComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
+    private intermediaryService: IntermediaryService,
     private scanditProvider: ScanditProvider
   ) {
     setTimeout(() => {
@@ -112,8 +113,10 @@ export class TextareaComponent implements OnInit {
   }
 
   private storeProductInContainer(params) {
+    this.intermediaryService.presentLoading();
     this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+        this.intermediaryService.dismissLoading();
           if (res.body.code == 200 || res.body.code == 201) {
             let msgSetText = '';
             if (this.isStoreUser) {
@@ -140,22 +143,28 @@ export class TextareaComponent implements OnInit {
             this.processInitiated = false;
           }
         }, (error) => {
+          this.intermediaryService.dismissLoading();
           if (error.error.code == 428) {
             this.showWarningToForce(params);
           } else {
             this.presentToast(error.error.errors, 1500, 'danger');
             this.processInitiated = false;
           }
+        }, () => {
+          this.intermediaryService.dismissLoading();
         }
       );
     }, (error: HttpErrorResponse) => {
+      this.intermediaryService.dismissLoading();
       if (error.error.code == 428) {
         this.showWarningToForce(params);
       } else {
         this.presentToast(error.message, 1500, 'danger');
         this.processInitiated = false;
       }
-    });
+    }), () => {
+      this.intermediaryService.dismissLoading();
+    };
   }
 
   private async showWarningToForce(params) {

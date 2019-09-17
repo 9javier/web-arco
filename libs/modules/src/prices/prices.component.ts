@@ -221,7 +221,7 @@ export class PricesComponent implements OnInit {
 
     let prices = this.selectedForm.value.toSelect.map((price, i) => {
       if (items[i].status != 3) {
-        console.log(items[i]);
+        // console.log(items[i]);
         let object = {
           warehouseId: warehouseId,
           tariffId: items[i].tariff.id,
@@ -235,12 +235,12 @@ export class PricesComponent implements OnInit {
 
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
-      console.log("result of impressions", result);
+      // console.log("result of impressions", result);
       this.intermediaryService.dismissLoading();
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
-      console.log(error);
+      // console.log(error);
     });
 
   }

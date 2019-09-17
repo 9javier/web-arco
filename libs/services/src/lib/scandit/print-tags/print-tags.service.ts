@@ -90,7 +90,6 @@ export class PrintTagsScanditService {
                 case 1:
                   this.printerService.printTagBarcode([codeScanned])
                     .subscribe((res) => {
-                      console.log('Printed product tag ... ', res);
                     }, (error) => {
                       console.warn('Error to print tag ... ', error);
                     });

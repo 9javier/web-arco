@@ -175,7 +175,6 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.initProducts();
     this.getFilters();
     this.listenChanges();
   }
@@ -183,7 +182,7 @@ export class ProductsComponent implements OnInit {
   /**
    * Listen changes in form to resend the request for search
    */
-  listenChanges():void{ 
+  listenChanges():void{
     let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page=>{
@@ -200,7 +199,6 @@ export class ProductsComponent implements OnInit {
     this.form.statusChanges.subscribe(change=>{
       if (this.pauseListenFormChange) return;
       ///**format the reference */
-      //this.form.controls.productReferencePattern.patchValue(this.buildReference(this.form.value.productReferencePattern),{emitEvent:false});
       /**cant send a request in every keypress of reference, then cancel the previous request */
       clearTimeout(this.requestTimeout)
       /**it the change of the form is in reference launch new timeout with request in it */
@@ -208,6 +206,7 @@ export class ProductsComponent implements OnInit {
         /**Just need check the vality if the change happens in the reference */
         if(this.form.valid)
           this.requestTimeout = setTimeout(()=>{
+            // console.log('Search this.form.statusChanges');
             this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         },1000);
       }else{
@@ -236,7 +235,7 @@ export class ProductsComponent implements OnInit {
   /**
    * init selectForm controls
    */
-  initSelectForm():void{  
+  initSelectForm():void{
     this.selectedForm.removeControl("toSelect");
     this.selectedForm.addControl("toSelect",this.formBuilder.array(this.searchsInContainer.map(product=>new FormControl(false))));
   }
@@ -252,12 +251,6 @@ export class ProductsComponent implements OnInit {
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      /*this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-      this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-      this.updateFilterSourceModels(searchsInContainer.data.filters.models);
-      this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
-      this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-      this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);*/
       let paginator = searchsInContainer.data.pagination;
       this.paginator.length = paginator.totalResults;
       this.paginator.pageIndex = paginator.page - 1;
@@ -293,7 +286,8 @@ export class ProductsComponent implements OnInit {
         if(warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
         }
-        this.inventoryServices.searchInContainer({warehouses:[warehouse.id],orderby:{type:TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT.toLocaleString()},pagination: {page: 1, limit: 0}}).subscribe(searchsInContainer=>{
+
+        this.inventoryServices.searchFilters({}).subscribe(searchsInContainer=>{
           this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
@@ -302,7 +296,6 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
           setTimeout(() => {
             this.pauseListenFormChange = false;
--            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
             this.pauseListenFormChange = true;
             this.form.get("warehouses").patchValue([warehouse.id], {emitEvent: false});
             this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, {emitEvent: false});

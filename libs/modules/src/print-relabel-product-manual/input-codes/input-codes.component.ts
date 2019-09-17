@@ -170,7 +170,7 @@ export class InputCodesComponent implements OnInit {
         }, {
           text: 'Seleccionar',
           handler: async (data) => {
-            console.log('Confirm Seleccionar -> ', data);
+            // console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;

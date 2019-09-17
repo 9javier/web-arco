@@ -72,6 +72,19 @@ export namespace InventoryModel {
     }
   }
 
+  export interface ResponseFilters extends Request.Success{
+    data:{
+      filters: {
+        colors: FiltersModel.Color[],
+        containers: FiltersModel.Container[],
+        models: FiltersModel.Model[],
+        sizes: FiltersModel.Size[],
+        warehouses: FiltersModel.Warehouse[],
+        ordertypes: FiltersModel.Group[],
+      }
+    }
+  }
+
   export interface ResponseIndex {
     data: Inventory[];
   }

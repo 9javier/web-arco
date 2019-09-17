@@ -115,7 +115,7 @@ export class BuildingComponent implements OnInit {
       this.initSelectForm(buildings);
       this.dataSource = new MatTableDataSource<BuildingModel.Building>(buildings);
     }, (err) => {
-      console.log(err)
+      // console.log(err)
     }, () => {
       this.intermediaryService.dismissLoading();
     });

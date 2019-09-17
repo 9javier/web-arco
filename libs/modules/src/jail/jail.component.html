@@ -36,6 +36,10 @@
                 <th mat-header-cell *matHeaderCellDef>Imprimir</th>
                 <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons action-icon">print</i> </td>
             </ng-container>
+            <ng-container matColumnDef="sendPacking">
+                    <th mat-header-cell *matHeaderCellDef> Enviar</th>
+                    <td mat-cell *matCellDef="let element"><i  (click)="send($event,element)" class="material-icons">send</i> </td>
+            </ng-container>
 
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
