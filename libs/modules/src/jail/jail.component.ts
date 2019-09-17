@@ -37,7 +37,7 @@ export class JailComponent implements OnInit {
   displayedColumns = ['select', 'reference', 'packing', 'warehouse',"update",'buttons-print'];
   dataSource:MatTableDataSource<CarrierModel.Carrier>;
   expandedElement:CarrierModel.Carrier;
-  
+
   carriers:Array<CarrierModel.Carrier> = [];
   warehouses:Array<WarehouseModel.Warehouse> = [];
 
@@ -62,7 +62,7 @@ export class JailComponent implements OnInit {
   }
 
   /**
-   * Return a type 
+   * Return a type
    * @param id - the id of type
    */
   typeById(id:number){
@@ -164,8 +164,8 @@ export class JailComponent implements OnInit {
 
   /**
    * copied function to show modal when user tap on print button
-   * @param event 
-   * @param row 
+   * @param event
+   * @param row
    */
   async print(event, row?: CarrierModel.Carrier) {
     event.stopPropagation();
@@ -197,6 +197,18 @@ export class JailComponent implements OnInit {
   updateDestination(prev:number,current:number):void{
     this.intermediaryService.presentLoading();
     this.carrierService.updateDestination(prev,{destinationWarehouseId:current}).subscribe(()=>{
+      this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
+      this.intermediaryService.dismissLoading();
+      this.getCarriers();
+    },()=>{
+      this.intermediaryService.presentToastError("Error al actualizar destino");
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
+  setDestination(carrierId: number, current:number):void{
+    this.intermediaryService.presentLoading();
+    this.carrierService.setDestination(carrierId, current).subscribe(()=>{
       this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
       this.intermediaryService.dismissLoading();
       this.getCarriers();
