@@ -21,7 +21,8 @@ export class BaseComponent implements OnInit {
     carriles: ['', Validators.required],
     altura: ['', Validators.required],
     columna: ['', Validators.required],
-    wareHouse: ['', Validators.required]
+    wareHouse: ['', Validators.required],
+    colores: ['', Validators.required]
   });
 
   constructor(
