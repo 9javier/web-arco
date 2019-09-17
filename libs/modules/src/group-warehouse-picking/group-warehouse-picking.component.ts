@@ -89,9 +89,7 @@ export class GroupWarehousePickingComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.groupWarehousePickingService.getIndex().subscribe(groupWarehousePickings=>{
       this.groupsWarehousePicking = groupWarehousePickings;
-    }, (e) => {
-      // console.log(e)
-    }, () => {
+    }, (e) => { }, () => {
       this.intermediaryService.dismissLoading();
     });
   }
@@ -121,7 +119,6 @@ export class GroupWarehousePickingComponent implements OnInit {
         },
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al añadir el warehouse");
-          // console.log(errorResponse)
         }
       );
     });
@@ -139,7 +136,6 @@ export class GroupWarehousePickingComponent implements OnInit {
         },
         (errorResponse: HttpErrorResponse) => {
           this.intermediaryService.presentToastError("Error al remover el warehouse");
-          // console.log(errorResponse)
         }
       );
     });

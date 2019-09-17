@@ -47,9 +47,7 @@ export class InformationComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.agencyService.getAll().subscribe(agencies=>{
       this.agencies = agencies;
-    }, (err) => {
-      // console.log(err)
-    }, () => {
+    }, (err) => { }, () => {
       this.intermediaryService.dismissLoading();
     })
   }

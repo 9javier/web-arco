@@ -7,6 +7,7 @@ import {StoresLineRequestsModel} from "../../../models/endpoints/StoresLineReque
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {Events} from "@ionic/angular";
 import {environment} from "../../../environments/environment";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -20,12 +21,16 @@ export class PickingScanditService {
   private timeoutHideText;
   private packingReferences: string[] = [];
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private events: Events,
     private pickingStoreService: PickingStoreService,
     private scanditProvider: ScanditProvider,
     private pickingProvider: PickingProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   async picking() {
     let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
@@ -43,6 +48,7 @@ export class PickingScanditService {
     let scannerPaused: boolean = false;
     let scanMode = 'products';
     let filtersPicking = this.pickingProvider.listFiltersPicking;
+    let timeoutStarted = null;
 
     const textPickingStoresInit = listProductsToStorePickings.length == 0 ? this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end : 'Escanea los productos a incluir';
 
@@ -53,6 +59,12 @@ export class PickingScanditService {
           if(scanMode == 'products'){
             if(this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT){
               lastCodeScanned = codeScanned;
+
+              if (timeoutStarted) {
+                clearTimeout(timeoutStarted);
+              }
+              timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
               if (listProductsToStorePickings.length > 0) {
                 let paramsPickingStoreProcess: PickingStoreModel.SendProcess = {
                   productReference: codeScanned,

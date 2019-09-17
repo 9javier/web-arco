@@ -4,6 +4,7 @@ import {PrinterService} from "../../../../services/src/lib/printer/printer.servi
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {PriceModel, PriceService} from "@suite/services";
 import {PrintModel} from "../../../../services/src/models/endpoints/Print";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-input-codes',
@@ -19,6 +20,9 @@ export class InputCodesComponent implements OnInit {
   @Input() typeTags: number = 1;
   public typeTagsBoolean: boolean = false;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
@@ -26,6 +30,7 @@ export class InputCodesComponent implements OnInit {
     private priceService: PriceService,
     private scanditProvider: ScanditProvider
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -44,6 +49,11 @@ export class InputCodesComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrote;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       if (!this.typeTagsBoolean) {
         this.typeTags = 1;
@@ -163,13 +173,10 @@ export class InputCodesComponent implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancelar');
-          }
+          handler: () => { }
         }, {
           text: 'Seleccionar',
           handler: (data) => {
-            console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;

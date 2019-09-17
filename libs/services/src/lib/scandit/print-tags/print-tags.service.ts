@@ -6,6 +6,7 @@ import {AuthenticationService, PriceModel, PriceService, ProductModel, ProductsS
 import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
 import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
 import {PrintModel} from "../../../models/endpoints/Print";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -27,12 +28,15 @@ export class PrintTagsScanditService {
   private listProductsPrices: any[];
   private productRelabel: ProductModel.SizesAndModel;
   private lastCodeScanned: string = 'start';
+  private lastProductReferenceScanned: string = 'start';
   private scannedPaused: boolean = false;
 
   private productToPrintPvpLabel: PriceModel.PriceByModelTariff = null;
 
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
+
+  private readonly timeMillisToResetScannedCode: number = 1000;
 
   constructor(
     private printerService: PrinterService,
@@ -41,7 +45,9 @@ export class PrintTagsScanditService {
     private productsService: ProductsService,
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   printTagsReferences() {
     this.typeTags = 1;
@@ -71,18 +77,20 @@ export class PrintTagsScanditService {
 
     this.lastCodeScanned = 'start';
     let codeScanned: string = null;
+    let timeoutStarted = null;
+
     ScanditMatrixSimple.initPrintTags(async (response: ScanditModel.ResponsePrintTags) => {
       if (response && response.result) {
-        // Lock scan same code two times
         if (response.barcode && response.barcode.data != this.lastCodeScanned && !this.scannedPaused) {
-
-        // Lock scan in less than two seconds
-        /*if (!scannedPaused) {
-          scannedPaused = true;
-          setTimeout(() => scannedPaused = false, 2 * 1000);*/
 
           codeScanned = response.barcode.data;
           this.lastCodeScanned = codeScanned;
+          this.lastProductReferenceScanned = codeScanned;
+
+          if (timeoutStarted) {
+            clearTimeout(timeoutStarted);
+          }
+          timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
           switch (this.scanditProvider.checkCodeValue(codeScanned)) {
             case this.scanditProvider.codeValue.PRODUCT:
@@ -114,7 +122,7 @@ export class PrintTagsScanditService {
                   break;
                 case 4:
                   if (this.isStoreUser) {
-                    this.postRelabelProduct(this.lastCodeScanned);
+                    this.postRelabelProduct(this.lastProductReferenceScanned);
                   } else {
                     this.printerService.printTagBarcode([codeScanned])
                       .subscribe((res) => {
@@ -222,7 +230,7 @@ export class PrintTagsScanditService {
           } else if (this.typeTags == 4) {
             let modelId = this.productRelabel.model.id;
             let sizeId = this.productRelabel.sizes[sizeSelected].id;
-            this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId);
+            this.postRelabelProduct(this.lastProductReferenceScanned, modelId, sizeId);
           }
         } else if (response.action == 'print_pvp_label') {
           this.scannedPaused = false;

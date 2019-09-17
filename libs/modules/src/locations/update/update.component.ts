@@ -142,7 +142,7 @@ export class UpdateComponent implements OnInit {
 
   async printBarcode() {
     if(this.container && this.container.reference) {
-      if (window.cordova) {
+      if ((<any>window).cordova) {
         await this.printerService.print({ text: [ this.container.reference ], type: 0 });
       } else {
         await this.printerService.printBarcodesOnBrowser([ this.container.reference ]);
@@ -167,9 +167,7 @@ export class UpdateComponent implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-            // console.log('Confirm Cancel');
-          }
+          handler: () => { }
         }, {
           text: 'Vale',
           handler: (result) => {

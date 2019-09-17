@@ -5,6 +5,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
 import {AlertController, ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-textarea',
@@ -24,6 +25,9 @@ export class TextareaComponent implements OnInit {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private alertController: AlertController,
     private toastController: ToastController,
@@ -33,6 +37,7 @@ export class TextareaComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private scanditProvider: ScanditProvider
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -62,6 +67,11 @@ export class TextareaComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrited;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.processInitiated = true;
       if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {

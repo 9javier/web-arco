@@ -58,7 +58,6 @@ export class SendComponent implements OnInit {
         this.intermediaryService.presentToastSuccess("Jaula enviado con exito");  
     }, (err)=> {
       this.intermediaryService.presentToastSuccess("Error al enviar la jaula");  
-      // console.log(err);
     }, () => {
       this.intermediaryService.dismissLoading();
     })

@@ -26,7 +26,6 @@ export class UtilsComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          // console.log('presented');
           if (!this.isLoading) {
             a.dismiss().then(() => { });
           }

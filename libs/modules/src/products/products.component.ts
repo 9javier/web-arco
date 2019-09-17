@@ -206,7 +206,6 @@ export class ProductsComponent implements OnInit {
         /**Just need check the vality if the change happens in the reference */
         if(this.form.valid)
           this.requestTimeout = setTimeout(()=>{
-            // console.log('Search this.form.statusChanges');
             this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         },1000);
       }else{

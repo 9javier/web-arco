@@ -3,6 +3,7 @@ import {AlertController, ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-input-codes',
@@ -14,11 +15,15 @@ export class InputCodesComponent implements OnInit {
   dataToWrite: string = 'PRODUCTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
+  private lastProductReferenceScanned: string = 'start';
 
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
   public typeTagsBoolean: boolean = false;
+
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
 
   constructor(
     private toastController: ToastController,
@@ -29,6 +34,7 @@ export class InputCodesComponent implements OnInit {
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },800);
@@ -50,6 +56,12 @@ export class InputCodesComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrote;
+      this.lastProductReferenceScanned = dataWrote;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
@@ -79,7 +91,7 @@ export class InputCodesComponent implements OnInit {
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
               if (this.isStoreUser) {
-                this.postRelabelProduct(this.lastCodeScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+                this.postRelabelProduct(this.lastProductReferenceScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               } else {
                 this.presentAlertInput(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               }
@@ -170,7 +182,6 @@ export class InputCodesComponent implements OnInit {
         }, {
           text: 'Seleccionar',
           handler: async (data) => {
-            // console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;
@@ -179,7 +190,7 @@ export class InputCodesComponent implements OnInit {
             let modelId = listProductsSizes.model.id;
             let sizeId = listProductsSizes.sizes[data].id;
             if (this.isStoreUser) {
-              this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId);
+              this.postRelabelProduct(this.lastProductReferenceScanned, modelId, sizeId);
             } else {
               this.presentAlertInput(modelId, sizeId);
             }
@@ -206,7 +217,7 @@ export class InputCodesComponent implements OnInit {
           text: 'Continuar',
           handler: (data) => {
             let reference = data.reference.trim();
-            this.postRelabelProduct(this.lastCodeScanned, modelId, sizeId, reference);
+            this.postRelabelProduct(this.lastProductReferenceScanned, modelId, sizeId, reference);
           }
         }
       ]
