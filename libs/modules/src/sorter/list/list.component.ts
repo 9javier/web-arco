@@ -54,6 +54,7 @@ export class ListComponent implements OnInit {
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   items: FormArray;
+  showRails: boolean = false;
 
   constructor(
     private crudService: CrudService,
@@ -163,6 +164,10 @@ export class ListComponent implements OnInit {
       //this.getAgencies();
     })
     modal.present();
+  }
+
+  displayRails() {
+    this.showRails = !this.showRails;
   }
 }
 
