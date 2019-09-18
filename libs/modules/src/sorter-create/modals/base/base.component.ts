@@ -8,9 +8,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class BaseComponent implements OnInit {
 
-  @Input() set template(template){
-    if(template)
-      this.form.patchValue(template);
+  @Input() set sorter(sorter){
+    if(sorter) {
+      console.log(sorter);
+      this.form.patchValue(sorter);
+    }
   }
 
   @Input() wareHouses: any;
