@@ -9,12 +9,17 @@ import { ModalController } from '@ionic/angular';
 })
 export class RailsConfigurationComponent implements OnInit {
 
+  carriles: number[] = [];
+
   constructor(
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
   ) { }
 
   ngOnInit() {
+    for(let i = 1; i < 66; i++) {
+      this.carriles.push(i);
+    }
   }
 
   
@@ -24,6 +29,10 @@ export class RailsConfigurationComponent implements OnInit {
 
   submit():void{
     console.log('submit')
+  }
+
+  cell(value) {
+    console.log(value)
   }
 
 }
