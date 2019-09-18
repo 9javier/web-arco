@@ -173,7 +173,7 @@ export class UpdateComponent implements OnInit {
           handler: (result) => {
             let productReference = result.productReference;
             if (UpdateComponent.validateProductReference(productReference)) {
-              this.locateProductFunction(this.container.reference, productReference, this.warehouseId, null, null);
+              this.locateProductFunction(this.container.reference, productReference, this.warehouseId, null, null, false);
             } else {
               document.getElementsByClassName('alert-input sc-ion-alert-md')[0].className += " alert-add-product wrong-reference";
               return false;
@@ -264,23 +264,52 @@ export class UpdateComponent implements OnInit {
     this.warehouseSelected = null;
   }
 
-  private saveDataMovement(product) {
+  public async saveDataMovement(product) {
     if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
-      let referenceProduct = product.reference;
-      let textLoading = 'Reubicando producto...';
-      let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
-      if (this.referenceContainer) {
-        let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
-        textToastOk += ' en Ubicación ' + location;
-      } else {
-        textToastOk += ' de tienda.';
-      }
+      let idWarehouseOrigin = product.warehouseId;
+      if (this.warehouseSelected != idWarehouseOrigin) {
+        let alertRequestMovement = await this.alertController.create({
+          header: 'Atención',
+          message: 'Está a punto de mover un producto entre almacenes y/o tiendas. ¿Quiere generar un escaneo de destino en Avelon para el movimiento?',
+          buttons: [
+            'Cancelar',
+            {
+              text: 'No generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, false);
+              }
+            },
+            {
+              text: 'Generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, true);
+              }
+            }
+          ]
+        });
 
-      this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk);
+        await alertRequestMovement.present();
+      } else {
+        this.processMovementMessageAndLocate(product, false);
+      }
     }
   }
 
-  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string) {
+  private processMovementMessageAndLocate(product, generateAvelonMovement: boolean) {
+    let referenceProduct = product.reference;
+    let textLoading = 'Reubicando producto...';
+    let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
+    if (this.referenceContainer) {
+      let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
+      textToastOk += ' en Ubicación ' + location;
+    } else {
+      textToastOk += ' de tienda.';
+    }
+
+    this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk, generateAvelonMovement);
+  }
+
+  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string, generateAvelonMovement: boolean) {
     if (!this.loading) {
       this.showLoading(textLoading || 'Ubicando producto...').then(() => {
         let inventoryProcess: InventoryModel.Inventory = {
@@ -290,7 +319,7 @@ export class UpdateComponent implements OnInit {
 
         if (referenceContainer) inventoryProcess.containerReference = referenceContainer;
 
-        this.storeProductInContainer(inventoryProcess, textToastOk);
+        this.storeProductInContainer(inventoryProcess, textToastOk, generateAvelonMovement);
       });
     }
   }
@@ -320,7 +349,11 @@ export class UpdateComponent implements OnInit {
     await alert.present();
   }
 
-  private storeProductInContainer(params, textToastOk) {
+  private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
+    if (typeof generateAvelonMovement != 'undefined') {
+      params.avelonMovement = generateAvelonMovement;
+    }
+
     this.inventoryService
       .postStore(params)
       .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
