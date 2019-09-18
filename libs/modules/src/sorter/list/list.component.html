@@ -51,6 +51,14 @@
             <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
             <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="configurarCarriles">
+            <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
+            <mat-cell *matCellDef="let element">
+              <span>
+                  <i (click)="openRailsConfiguration()" class="material-icons">store_mall_directory</i>
+              </span> 
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="warehoures">
           <mat-header-cell *matHeaderCellDef>Warehouses</mat-header-cell>
           <mat-cell *matCellDef="let element">

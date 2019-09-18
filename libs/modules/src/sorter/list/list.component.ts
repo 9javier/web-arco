@@ -22,6 +22,7 @@ import { validators } from '../../utils/validators';
 import { StoreComponent } from './modals-zone/store/store.component';
 import { UpdateComponent } from './modals-zone/update/update.component';
 import { WarehousesModalComponent } from './modals-zone/warehouses-modal/warehouses-modal.component';
+import { RailsConfigurationComponent } from './modals-zone/rails-configuration/rails-configuration.component';
 
 @Component({
   selector: 'suite-list-sorter',
@@ -48,7 +49,7 @@ import { WarehousesModalComponent } from './modals-zone/warehouses-modal/warehou
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['icon', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'warehoures'];
+  displayedColumns = ['icon', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'configurarCarriles', 'warehoures'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -128,9 +129,6 @@ export class ListComponent implements OnInit {
         zona:row
       }
     }));
-    modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
-    })
     modal.present();
   }
 
@@ -138,9 +136,6 @@ export class ListComponent implements OnInit {
     let modal = (await this.modalController.create({
       component:StoreComponent
     }));
-    modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
-    })
     modal.present();
   }
 
@@ -160,9 +155,14 @@ export class ListComponent implements OnInit {
         warehouses: this.warehouses
       }
     }));
-    modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
-    })
+    modal.present();
+  }
+
+  async openRailsConfiguration() {
+    event.stopPropagation();
+    let modal = (await this.modalController.create({
+      component:RailsConfigurationComponent
+    }));
     modal.present();
   }
 
