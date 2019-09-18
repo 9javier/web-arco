@@ -107,7 +107,6 @@
         android:orientation="horizontal"
         android:showDividers="middle"
         android:visibility="gone"
-        android:stretchColumns="1,2,3,4,5"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp">

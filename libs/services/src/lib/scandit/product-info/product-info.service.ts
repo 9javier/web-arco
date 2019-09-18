@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {ProductModel, ProductsService} from "@suite/services";
+import {environment} from "../../../environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -76,7 +77,7 @@ export class ProductInfoScanditService {
           }
         }
       }
-    }, 'Info. producto', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color);
+    }, 'Info. producto', this.scanditProvider.colorsHeader.background.color, this.scanditProvider.colorsHeader.color.color, environment.urlBase);
   }
 
   private hideTextMessage(delay: number) {
