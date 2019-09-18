@@ -42,6 +42,8 @@ export class TariffSGAComponent implements OnInit {
 
   warehouseId: number = 49;
 
+  processing: boolean;
+
   /**form to select elements to print or for anything */
   selectedForm: FormGroup = this.formBuilder.group(
     {
@@ -58,7 +60,9 @@ export class TariffSGAComponent implements OnInit {
     private tariffService: TariffService,
     private router: Router,
     private warehousesService: WarehousesService
-  ) {}
+  ) {
+    this.processing = false;
+  }
 
   ngOnInit() {
     this.filters.patchValue({ warehouseId: 1 });
