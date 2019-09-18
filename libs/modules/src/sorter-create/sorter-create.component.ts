@@ -120,10 +120,19 @@ export class SorterCreateComponent implements OnInit {
   }
 
   async update(row):Promise<void>{
+    const { warehouse, ...data} = row;
+    let payload = data;
+    payload = {
+      warehouse: warehouse.id,
+      ...payload
+    };
+
+
     let modal = (await this.modalController.create({
       component: UpdateComponent,
       componentProps:{
-        template:row
+        wareHouses: this.warehouses,
+        sorter: payload,
       }
     }));
     modal.onDidDismiss().then(()=>{
@@ -136,7 +145,8 @@ export class SorterCreateComponent implements OnInit {
     let modal = (await this.modalController.create({
       component: CreateComponent,
       componentProps: {
-        wareHouses: this.warehouses 
+        wareHouses: this.warehouses,
+        sorter: row,
       }
     }));
     modal.onDidDismiss().then(()=>{
@@ -158,8 +168,8 @@ export class SorterCreateComponent implements OnInit {
 export class SorterDataSource extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   data = [
-    { nombre: 'sorter1', carriles: 25, warehouse: 'Almacen Cloud', altura: 10, columna:8, colores: ['rojo', 'verde'] },
-    { nombre: 'sorter2', carriles: 22, warehouse: 'Almacen Cloud', altura: 10, columna:8, colores: ['amarillo', 'azul']  },
+    { nombre: 'sorter1', carriles: 25, warehouse: { id: 3, name: 'Almacén CLOUD'}, altura: 10, columna:8, colores: ['rojo', 'verde'] },
+    { nombre: 'sorter2', carriles: 22, warehouse: { id: 3, name: 'Almacén CLOUD'}, altura: 10, columna:8, colores: ['amarillo', 'azul']  },
   ];
   connect(): Observable<Element[]> {
     const rows = [];

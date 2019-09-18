@@ -10,6 +10,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 export class UpdateComponent implements OnInit {
 
   wareHouses: any;
+  sorter: any;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -17,6 +18,8 @@ export class UpdateComponent implements OnInit {
     private navParams:NavParams
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
+    this.sorter = this.navParams.get("sorter");
+    console.log(this.sorter)
   }
 
   ngOnInit() {
