@@ -276,13 +276,13 @@ export class UpdateComponent implements OnInit {
             {
               text: 'No generar',
               handler: () => {
-                this.processMovementMessageAndLocate(product, false);
+                this.processMovementMessageAndLocate(product, true);
               }
             },
             {
               text: 'Generar',
               handler: () => {
-                this.processMovementMessageAndLocate(product, true);
+                this.processMovementMessageAndLocate(product, false);
               }
             }
           ]
@@ -290,7 +290,7 @@ export class UpdateComponent implements OnInit {
 
         await alertRequestMovement.present();
       } else {
-        this.processMovementMessageAndLocate(product, false);
+        this.processMovementMessageAndLocate(product, true);
       }
     }
   }
