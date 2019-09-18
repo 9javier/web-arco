@@ -138,22 +138,51 @@ export class ProductDetailsComponent implements OnInit {
     this.warehouseSelected = null;
   }
 
-  private saveDataMovement(product) {
+  public async saveDataMovement(product) {
     if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
-      let referenceProduct = product.productShoeUnit.reference;
-      let textLoading = 'Reubicando producto...';
-      let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
-      if (this.referenceContainer) {
-        let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
-        textToastOk += ' en Ubicación ' + location;
-      } else {
-        textToastOk += ' de tienda.';
-      }
-      this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk);
-    }
+      let idWarehouseOrigin = this.product.warehouse.id;
+      if (this.warehouseSelected != idWarehouseOrigin) {
+        let alertRequestMovement = await this.alertController.create({
+          header: 'Atención',
+          message: 'Está a punto de mover un producto entre almacenes y/o tiendas. ¿Quiere generar un escaneo de destino en Avelon para el movimiento?',
+          buttons: [
+            'Cancelar',
+            {
+              text: 'No generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, false);
+              }
+            },
+            {
+              text: 'Generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, true);
+              }
+            }
+          ]
+        });
 
+        await alertRequestMovement.present();
+      } else {
+        this.processMovementMessageAndLocate(product, false);
+      }
+    }
   }
-  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string) {
+
+  private processMovementMessageAndLocate(product, generateAvelonMovement: boolean) {
+    let referenceProduct = product.productShoeUnit.reference;
+    let textLoading = 'Reubicando producto...';
+    let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
+    if (this.referenceContainer) {
+      let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
+      textToastOk += ' en Ubicación ' + location;
+    } else {
+      textToastOk += ' de tienda.';
+    }
+    this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk, generateAvelonMovement);
+  }
+
+  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string, generateAvelonMovement: boolean) {
     if (!this.loading) {
       this.showLoading(textLoading || 'Ubicando producto...').then(() => {
         let inventoryProcess: InventoryModel.Inventory = {
@@ -163,7 +192,7 @@ export class ProductDetailsComponent implements OnInit {
 
         if (referenceContainer) inventoryProcess.containerReference = referenceContainer;
 
-        this.storeProductInContainer(inventoryProcess, textToastOk);
+        this.storeProductInContainer(inventoryProcess, textToastOk, generateAvelonMovement);
       });
     }
   }
@@ -280,7 +309,11 @@ export class ProductDetailsComponent implements OnInit {
   }
 
 
-  private storeProductInContainer(params, textToastOk) {
+  private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
+    if (typeof generateAvelonMovement != 'undefined') {
+      params.avelonMovement = generateAvelonMovement;
+    }
+
     this.inventoryService
       .postStore(params)
       .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {

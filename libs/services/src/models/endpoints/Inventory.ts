@@ -13,7 +13,8 @@ export namespace InventoryModel {
   export interface Inventory {
     productReference?: string,
     containerReference?: string,
-    warehouseId?: number
+    warehouseId?: number,
+    avelonMovement?: boolean
   }
 
   export interface InventoryProcess {
