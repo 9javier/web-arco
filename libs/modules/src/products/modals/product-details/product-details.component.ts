@@ -311,7 +311,7 @@ export class ProductDetailsComponent implements OnInit {
 
   private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
     if (typeof generateAvelonMovement != 'undefined') {
-      params.avelonMovement = generateAvelonMovement;
+      params.avoidAvelonMovement = generateAvelonMovement;
     }
 
     this.inventoryService
