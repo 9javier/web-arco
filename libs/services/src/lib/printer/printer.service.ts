@@ -479,7 +479,10 @@ export class PrinterService {
                 name: price.model.name,
                 color: {
                   name: price.model.color.name
-                }
+                },
+                detailColor: price.model.detailColor,
+                lifestyle: price.model.lifestyle,
+                category: price.model.category
               },
               manufacturer: {
                 name: price.model.brand.name
@@ -717,17 +720,21 @@ export class PrinterService {
         if (printOptions.price.priceOriginal) {
           toPrint += printOptions.price.priceOriginal + ' €';
         }
-        toPrint += "^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,123^FD"
-          // + "R205" // TODO Change by correct value
-          + "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
+        toPrint += "^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,123^FD";
+          if(printOptions.product.productShoeUnit.model.lifestyle && printOptions.product.productShoeUnit.model.lifestyle.reference && printOptions.product.productShoeUnit.model.category){
+            toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0,1) + printOptions.product.productShoeUnit.model.category.reference;
+          }
+          toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^AAN^FO0,145^FB330,1,0,R,0^FD"
           + printOptions.product.productShoeUnit.manufacturer.name
           + "^FS^AAN^FO10,190^FB315,1,0,L,0^FD"
           + printOptions.product.productShoeUnit.model.name
-          + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD"
-          // + "white / black / white" // TODO Change by correct value
-          + "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
+          + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD";
+          if(printOptions.product.productShoeUnit.model.detailColor){
+            toPrint += printOptions.product.productShoeUnit.model.detailColor;
+          }
+          toPrint += "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
           + "^FS^ADN^FO0,157^FB330,1,0,R,0^FD";
         if (printOptions.price.valueRange) {
           toPrint += printOptions.price.valueRange;
