@@ -144,6 +144,9 @@ export class TariffSGAComponent implements OnInit {
     this.tariffService.getIsCalculating().subscribe(
       data => {
         this.processing = data.isCalculating;
+        if (this.processing) {
+          this.listenChanges()
+        }
       },
       () => {
         this.processing = true;
