@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './update/update.component';
 import { StoreComponent } from './store/store.component';
+import { SendComponent } from './send/send.component';
 
 @Component({
   selector: 'app-jail',
@@ -34,7 +35,7 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'warehouse',"update",'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing', 'warehouse',"update",'buttons-print', 'sendPacking'];
   dataSource:MatTableDataSource<CarrierModel.Carrier>;
   expandedElement:CarrierModel.Carrier;
 
@@ -150,7 +151,6 @@ export class JailComponent implements OnInit {
         });
       })));
       this.dataSource = new MatTableDataSource(carriers);
-      console.log(this.toDelete);
       this.intermediaryService.dismissLoading();
     })
   }
@@ -187,6 +187,27 @@ export class JailComponent implements OnInit {
     } else {
       return await this.printerService.printBarcodesOnBrowser(listReferences);
     }
+  }
+
+  /**
+   * Open modal to edit jail
+   * @param event - to cancel it
+   * @param jail - jail to be updated
+   */
+  async send(event, jail) {
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component:SendComponent,
+      componentProps:{
+        jail:jail
+      },
+      cssClass: 'modalStyles'
+    }))
+    modal.onDidDismiss().then(()=>{
+      this.getCarriers();
+    })
+    modal.present();
   }
 
   /**

@@ -1,21 +1,21 @@
-import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Location} from "@angular/common";
-import {SelectionModel} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel} from "@suite/services";
-import {Observable, of} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {HallModel} from "../../../../services/src/models/endpoints/Hall";
-import {HallsService} from "../../../../services/src/lib/endpoint/halls/halls.service";
-import {ActivatedRoute} from "@angular/router";
-import {ModalController, ToastController, NavParams} from "@ionic/angular";
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {UpdateComponent} from "../update/update.component";
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { animate, state, style, transition, trigger } from "@angular/animations";
+import { Location } from "@angular/common";
+import { SelectionModel } from "@angular/cdk/collections";
+import { RolModel, UserModel, WarehouseModel } from "@suite/services";
+import { Observable, of } from "rxjs";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { HallModel } from "../../../../services/src/models/endpoints/Hall";
+import { HallsService } from "../../../../services/src/lib/endpoint/halls/halls.service";
+import { ActivatedRoute } from "@angular/router";
+import { ModalController, ToastController, NavParams } from "@ionic/angular";
+import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { UpdateComponent } from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
-import {LocationsComponent} from "../locations.component";
-import {MoveProductsComponent} from "../modals/move-products/move-products.component";
-import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { LocationsComponent } from "../locations.component";
+import { MoveProductsComponent } from "../modals/move-products/move-products.component";
+import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 
 
 @Component({
@@ -50,7 +50,7 @@ export class ListComponent implements OnInit {
     private toastController: ToastController,
     private warehouseService: WarehouseService,
     private modalController: ModalController,
-    private changeDetector:ChangeDetectorRef,
+    private changeDetector: ChangeDetectorRef,
     private printerService: PrinterService
   ) {
   }
@@ -62,7 +62,7 @@ export class ListComponent implements OnInit {
   @Input() routePath: string;
   @Input() origin: string;
 
-  warehouse:WarehouseModel.Warehouse;
+  warehouse: WarehouseModel.Warehouse;
 
   flagRequestList = false;
 
@@ -75,15 +75,15 @@ export class ListComponent implements OnInit {
   warehouseSelected: number;
 
   // warehouse list
-  warehouses:Array<WarehouseModel.Warehouse> = [];
+  warehouses: Array<WarehouseModel.Warehouse> = [];
 
 
-  dd(event,row){
+  dd(event, row) {
     event.preventDefault();
-    event.stopPropagation();  
-    this.selectRowToExpand(row);  
+    event.stopPropagation();
+    this.selectRowToExpand(row);
   }
-  async toUpdate(event,row){
+  async toUpdate(event, row) {
     event.preventDefault();
     event.stopPropagation();
     let updateComponent = updateHall;
@@ -92,13 +92,6 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
-      console.log("test",{ id: row.id, row: {
-        hall:row.hall,
-        id:row.id,
-        columns:row.columns,
-        rows:row.rows,
-        enabled:true
-      }, routePath: this.routePath });
       modal.onDidDismiss()
         .then(() => {
           this.initHalls();
@@ -131,7 +124,7 @@ export class ListComponent implements OnInit {
   private intervalReload = null;
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params: any )=> {
+    this.route.paramMap.subscribe((params: any) => {
       this.paramsReceived = params;
       this.initHalls();
     });
@@ -145,10 +138,10 @@ export class ListComponent implements OnInit {
   /**
    * Open enable lock container modal
    */
-  async openEnableLockContainer():Promise<any>{
+  async openEnableLockContainer(): Promise<any> {
     let modal = await this.modalController.create({
-      component:EnableLockContainerComponent,
-      componentProps:{warehouseId:this.paramsReceived.params.id}
+      component: EnableLockContainerComponent,
+      componentProps: { warehouseId: this.paramsReceived.params.id }
     });
     modal.onDidDismiss()
       .then(data => {
@@ -171,7 +164,7 @@ export class ListComponent implements OnInit {
       this.parentPage = null;
     }
 
-    this.warehouseService.getShow(this.warehouseSelected).subscribe(warehouse=>{
+    this.warehouseService.getShow(this.warehouseSelected).subscribe(warehouse => {
       this.warehouse = warehouse
     });
 
@@ -181,13 +174,13 @@ export class ListComponent implements OnInit {
         (
           data: Observable<
             HttpResponse<HallModel.ResponseFullIndex>
-            >
+          >
         ) => {
           data.subscribe(
             (
               res: HttpResponse<
                 HallModel.ResponseFullIndex
-                >
+              >
             ) => {
               this.flagRequestList = true;
               this.dataSource = res.body.data
@@ -239,7 +232,7 @@ export class ListComponent implements OnInit {
                   }
                 });
                 element.freeLocations = freeLocations;
-                element.locations = freeLocations+'/'+enabledLocations+' libres';
+                element.locations = freeLocations + '/' + enabledLocations + ' libres';
                 element.hallEnabled = enabledLocations > 0;
                 if (element.expanded) {
                   this.expandedElement = element;
@@ -259,7 +252,7 @@ export class ListComponent implements OnInit {
     this.showDeleteButton = false;
   }
 
-  goPreviousPage () {
+  goPreviousPage() {
     this.location.back();
   }
 
@@ -289,7 +282,7 @@ export class ListComponent implements OnInit {
   selectLocation(event, data, row, column, iRow, iColumn) {
     if (this.isWarehouseListSection()) {
       if (!this.locationsSelected[column.id]) {
-        this.locationsSelected[column.id] = {data: data, row: row, column: column, iRow: iRow, iColumn: iColumn};
+        this.locationsSelected[column.id] = { data: data, row: row, column: column, iRow: iRow, iColumn: iColumn };
         this.expandedElement.container[iRow][iColumn].selected = true;
         this.countLocationsSelected++;
       } else {
@@ -320,7 +313,7 @@ export class ListComponent implements OnInit {
 
   rangeFromValue(value) {
     let items = [];
-    for(var i = 1; i <= value; i++){
+    for (var i = 1; i <= value; i++) {
       items.push(i);
     }
     return items;
@@ -333,7 +326,7 @@ export class ListComponent implements OnInit {
           for (let container of row) {
             if (!container.selected) {
               container.selected = true;
-              this.locationsSelected[container.id] = {row: row, column: container};
+              this.locationsSelected[container.id] = { row: row, column: container };
               this.countLocationsSelected++;
             }
           }
@@ -351,7 +344,7 @@ export class ListComponent implements OnInit {
   }
 
   async printReferencesLocations() {
-    if (window.cordova) {
+    if ((<any>window).cordova) {
       for (let idLocation in this.locationsSelected) {
         let container = this.locationsSelected[idLocation].column;
         await this.printerService.print({text: [container.reference], type: 0})
@@ -496,9 +489,9 @@ export class ListComponent implements OnInit {
     return await modal.present();
   }
 
-  getWarehouses(){
-    this.warehouseService.getIndex().then(observable=>{
-      observable.subscribe(response=>{
+  getWarehouses() {
+    this.warehouseService.getIndex().then(observable => {
+      observable.subscribe(response => {
         this.warehouses = (<any>response.body).data;
       })
     })

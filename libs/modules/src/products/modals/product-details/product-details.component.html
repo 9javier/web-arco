@@ -6,11 +6,11 @@
             </ion-button>
         </ion-buttons>
         <ion-title>Detalles del producto</ion-title>
-      <ion-buttons slot="end">
-        <ion-button (click)="printProductTag()">
-          <ion-icon name="print" class="toogleArrow"></ion-icon>
-        </ion-button>
-      </ion-buttons>
+        <ion-buttons slot="end">
+            <ion-button (click)="printProductTag()">
+                <ion-icon name="print" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
     </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -42,12 +42,14 @@
             </ion-item>
             <ion-item>
                 <ion-label>
-                    Almacén: {{product?.warehouse ? (product?.warehouse.reference + " - " + product?.warehouse.name) : ""}}
+                    Almacén:
+                    {{product?.warehouse ? (product?.warehouse.reference + " - " + product?.warehouse.name) : ""}}
                 </ion-label>
             </ion-item>
             <ion-item>
                 <ion-label>
-                    Ubicación: {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : ''}}
+                    Ubicación:
+                    {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : ''}}
                 </ion-label>
             </ion-item>
             <div padding *ngIf="isProductRelocationEnabled">
@@ -61,8 +63,10 @@
                                 </div>
                                 <ion-label position="floating">Almacén</ion-label>
                                 <div class="field">
-                                    <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
-                                        <ion-select-option *ngFor="let warehouse of listWarehouses" [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
+                                    <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover"
+                                        [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
+                                        <ion-select-option *ngFor="let warehouse of listWarehouses"
+                                            [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
                                     </ion-select>
                                 </div>
                             </ion-item>
@@ -76,8 +80,11 @@
                                 </div>
                                 <ion-label position="floating">Pasillo</ion-label>
                                 <div class="field">
-                                    <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover" [(ngModel)]="hallSelected" *ngIf="checkFieldIsEnabled(2)" (ngModelChange)="changeSelect(2)">
-                                        <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">{{hall.value}}</ion-select-option>
+                                    <ion-select class="ion-margin-horizontal" placeholder="Pasillo" interface="popover"
+                                        [(ngModel)]="hallSelected" *ngIf="checkFieldIsEnabled(2)"
+                                        (ngModelChange)="changeSelect(2)">
+                                        <ion-select-option *ngFor="let hall of listHalls" [value]="hall.id">
+                                            {{hall.value}}</ion-select-option>
                                     </ion-select>
                                 </div>
                             </ion-item>
@@ -91,8 +98,11 @@
                                 </div>
                                 <ion-label position="floating">Fila</ion-label>
                                 <div class="field">
-                                    <ion-select class="ion-margin-horizontal" placeholder="Fila" interface="popover" [(ngModel)]="rowSelected" *ngIf="checkFieldIsEnabled(3)" (ngModelChange)="changeSelect(3)">
-                                        <ion-select-option *ngFor="let row of listRows" [value]="row.row">{{row.row}}</ion-select-option>
+                                    <ion-select class="ion-margin-horizontal" placeholder="Fila" interface="popover"
+                                        [(ngModel)]="rowSelected" *ngIf="checkFieldIsEnabled(3)"
+                                        (ngModelChange)="changeSelect(3)">
+                                        <ion-select-option *ngFor="let row of listRows" [value]="row.row">{{row.row}}
+                                        </ion-select-option>
                                     </ion-select>
                                 </div>
                             </ion-item>
@@ -106,8 +116,11 @@
                                 </div>
                                 <ion-label position="floating">Columna</ion-label>
                                 <div class="field">
-                                    <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover" [(ngModel)]="columnSelected" *ngIf="checkFieldIsEnabled(4)" (ngModelChange)="changeSelect(4)">
-                                        <ion-select-option *ngFor="let column of listColumns" [value]="column.column">{{column.column}}</ion-select-option>
+                                    <ion-select class="ion-margin-horizontal" placeholder="Columna" interface="popover"
+                                        [(ngModel)]="columnSelected" *ngIf="checkFieldIsEnabled(4)"
+                                        (ngModelChange)="changeSelect(4)">
+                                        <ion-select-option *ngFor="let column of listColumns" [value]="column.column">
+                                            {{column.column}}</ion-select-option>
                                     </ion-select>
                                 </div>
                             </ion-item>
@@ -134,13 +147,18 @@
     <!--Historical section-->
     <div *ngIf="section == 'historical'">
         <ion-list>
-            <ion-item *ngFor="let historical of productHistorical">
+            <ion-item *ngFor="let historical of productHistorical; let i = index">
                 <div>
                     <p>
-                        Almacén {{ historical.destinationWarehouse.reference }} - {{ historical.destinationWarehouse.name }}
+                        Almacén {{ historical.destinationWarehouse.reference }} -
+                        {{ historical.destinationWarehouse.name }}
                     </p>
                     <p>
-                        Ubicación: {{ historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
+                        Ubicación:
+                        {{ historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
+                    </p>
+                    <p>
+                        Fecha: {{dates[i]}} {{hours[i]}}
                     </p>
                     <p>
                         Acción realizada: {{actionTypes[historical.typeAction]}}

@@ -152,7 +152,7 @@ export class WarehousesService {
    }
 
    /**
-   * Remove Warehouse to GroupWarehousePicking
+   * Remove Warehouse from GroupWarehousePicking
    */
 
   async removeOfGroupWarehousePicking(

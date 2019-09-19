@@ -12,6 +12,7 @@ import {AuthenticationService} from "../endpoint/authentication/authentication.s
 import {Events} from "@ionic/angular";
 import {WarehouseModel} from "@suite/services";
 import {ScanditProvider} from "../../providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -43,16 +44,18 @@ export class ScanditService {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private http: HttpClient,
+    private events: Events,
     private auth: AuthenticationService,
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
     private authenticationService: AuthenticationService,
-    private events: Events,
     private scanditProvider: ScanditProvider
   ) {
-
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
 
   async setApiKey(api_key) {
@@ -70,6 +73,7 @@ export class ScanditService {
     let containerReference = null;
     let packingReference = null;
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.init((response) => {
       if (response && response.barcode) {
@@ -103,6 +107,11 @@ export class ScanditService {
 
         if (code === lastCodeScanned) return;
         lastCodeScanned = code;
+
+        if (timeoutStarted) {
+          clearTimeout(timeoutStarted);
+        }
+        timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
         if (!this.isStoreUser && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
@@ -139,6 +148,7 @@ export class ScanditService {
                   params.packingReference = packingReference;
                 }
 
+                ScanditMatrixSimple.showLoadingDialog('Ubicando producto...');
                 this.storeProductInContainer(params, response);
               } else {
                 this.positioningLog(2, "1.4.2.1.2", "response NO force!");
@@ -185,6 +195,7 @@ export class ScanditService {
                 } else if (!this.isStoreUser && packingReference) {
                   params.packingReference = packingReference;
                 }
+                ScanditMatrixSimple.showLoadingDialog('Ubicando producto...');
                 this.storeProductInContainer(params, response);
               }
             }
@@ -204,6 +215,7 @@ export class ScanditService {
   private storeProductInContainer(params, responseScanning) {
     this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+          ScanditMatrixSimple.hideLoadingDialog();
           if (res.body.code == 200 || res.body.code == 201) {
             this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
             let msgSetText = '';
@@ -234,6 +246,7 @@ export class ScanditService {
             this.hideTextMessage(1500);
           }
         }, (error) => {
+          ScanditMatrixSimple.hideLoadingDialog();
           if (error.error.code == 428) {
             this.positioningLog(3, "1.4.2.2.2.4", "error 428, stop pause!");
             this.scannerPaused = true;
@@ -246,6 +259,7 @@ export class ScanditService {
         }
       );
     }, (error: HttpErrorResponse) => {
+      ScanditMatrixSimple.hideLoadingDialog();
       if (error.error.code == 428) {
         this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
         this.scannerPaused = true;
@@ -293,6 +307,7 @@ export class ScanditService {
     };
     let timeLastCodeScanned: number = 0;
     let packingReference: string = '';
+    let timeoutStarted = null;
 
     this.clearTimeoutCleanLastCodeScanned();
     this.intervalCleanLastCodeScanned = setInterval(() => {
@@ -329,6 +344,11 @@ export class ScanditService {
       if (code === lastCodeScanned) return;
       lastCodeScanned = code;
 
+      if (timeoutStarted) {
+        clearTimeout(timeoutStarted);
+      }
+      timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
       //Check Jail/Pallet or product
       if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
         this.pickingLog(2, "3", "if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
@@ -349,12 +369,14 @@ export class ScanditService {
             this.pickingLog(2, "7", "if ((packingReference && packingReference == code) || !packingReference) {");
             if (typePackingScanned == typePacking) {
               this.pickingLog(2, "8", "if (typePackingScanned == typePacking) {");
+              ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
               this.postVerifyPacking({
                 status: 2,
                 pickingId: pickingId,
                 packingReference: code
               })
                 .subscribe((res) => {
+                  ScanditMatrixSimple.hideLoadingDialog();
                   this.pickingLog(2, "9", ".subscribe((res) => {");
                   if (code.match(/J([0-9]){4}/)) {
                     this.pickingLog(2, "10", "if (code.match(/J([0-9]){4}/)) {");
@@ -410,6 +432,7 @@ export class ScanditService {
                     this.hideTextMessage(2000);
                   }
                 }, (error) => {
+                  ScanditMatrixSimple.hideLoadingDialog();
                   this.pickingLog(2, "13", "}, (error) => {");
                   if (error.error.code == 404) {
                     this.pickingLog(2, "14", "if (error.error.code == 404) {");
@@ -441,12 +464,14 @@ export class ScanditService {
           this.scannerPaused = true;
           const scanUnlockTimeout = setTimeout(() => { this.scannerPaused = false; }, 10 * 1000);
           try {
+            ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje...');
             this.postVerifyPacking({
               status: 3,
               pickingId: pickingId,
               packingReference: code
             })
               .subscribe((res) => {
+                ScanditMatrixSimple.hideLoadingDialog();
                 this.pickingLog(2, "21", ".subscribe((res) => {");
                 ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
                 this.hideTextMessage(1500);
@@ -458,6 +483,7 @@ export class ScanditService {
                   this.events.publish('picking:remove');
                 }, 1.5 * 1000);
               }, (error) => {
+                ScanditMatrixSimple.hideLoadingDialog();
                 this.pickingLog(2, "23", "}, (error) => {");
                 this.scannerPaused = false;
                 clearTimeout(scanUnlockTimeout);
@@ -473,6 +499,7 @@ export class ScanditService {
                 }
               });
           } catch (e) {
+            ScanditMatrixSimple.hideLoadingDialog();
             this.scannerPaused = false;
             clearTimeout(scanUnlockTimeout);
             this.clearTimeoutCleanLastCodeScanned();
@@ -497,6 +524,7 @@ export class ScanditService {
             };
 
             let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
+              ScanditMatrixSimple.hideLoadingDialog();
               this.pickingLog(2, "31", ".subscribe((res: InventoryModel.ResponsePicking) => {");
               if (res.code == 200 || res.code == 201) {
                 this.pickingLog(2, "32", "if (res.code == 200 || res.code == 201) {");
@@ -521,8 +549,10 @@ export class ScanditService {
                 this.pickingLog(2, "36", "} else {");
                 ScanditMatrixSimple.setText(res.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                 this.hideTextMessage(2000);
+                ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                 this.getPendingListByPicking(pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "37", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                     if (res.code == 200 || res.code == 201) {
                       this.pickingLog(2, "38", "if (res.code == 200 || res.code == 201) {");
@@ -541,15 +571,18 @@ export class ScanditService {
                         }, 2 * 1000);
                       }
                     }
-                  });
+                  }, () => ScanditMatrixSimple.hideLoadingDialog());
               }
             };
             let subscribeError = (error) => {
+              ScanditMatrixSimple.hideLoadingDialog();
               this.pickingLog(2, "42", "}, (error) => {");
               ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
               this.hideTextMessage(2000);
+              ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
               this.getPendingListByPicking(pickingId)
                 .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                  ScanditMatrixSimple.hideLoadingDialog();
                   this.pickingLog(2, "43", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                   if (res.code == 200 || res.code == 201) {
                     this.pickingLog(2, "44", "if (res.code == 200 || res.code == 201) {");
@@ -569,9 +602,10 @@ export class ScanditService {
                     }
 
                   }
-                });
+                }, () => ScanditMatrixSimple.hideLoadingDialog());
             };
 
+            ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
             if (typePicking == 1) {
               this.inventoryService.postPickingDirect(picking).subscribe(subscribeResponse, subscribeError);
             } else {
@@ -587,12 +621,16 @@ export class ScanditService {
         }
       } else if (this.scanContainerToNotFound && !response.action) {
         if ((this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
+          ScanditMatrixSimple.showLoadingDialog('Comprobando ubicación...');
           this.postCheckContainerProduct(code, productsToScan[0].inventory.id)
             .subscribe((res: InventoryModel.ResponseCheckContainer) => {
+              ScanditMatrixSimple.hideLoadingDialog();
               if (res.code == 200) {
                 let productNotFoundId = productsToScan[0].product.id;
+                ScanditMatrixSimple.showLoadingDialog('Marcando producto como no encontrado...');
                 this.putProductNotFound(pickingId, productNotFoundId)
                   .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
                     if (res.code == 200 || res.code == 201) {
                       this.pickingLog(2, "53", "if (res.code == 200 || res.code == 201) {");
@@ -600,8 +638,10 @@ export class ScanditService {
                       ScanditMatrixSimple.showFixedTextBottom(false, this.scanContainerToNotFound);
                       ScanditMatrixSimple.setText('El producto ha sido reportado como no encontrado.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 16);
                       this.hideTextMessage(1500);
+                      ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                       this.getPendingListByPicking(pickingId)
                         .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                          ScanditMatrixSimple.hideLoadingDialog();
                           this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                           if (res.code == 200 || res.code == 201) {
                             this.pickingLog(2, "55", "if (res.code == 200 || res.code == 201) {");
@@ -621,13 +661,14 @@ export class ScanditService {
                             }
 
                           }
-                        });
+                        }, () => ScanditMatrixSimple.hideLoadingDialog());
                     } else {
                       this.pickingLog(2, "59", "} else {");
                       ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                       this.hideTextMessage(2000);
                     }
                   }, error => {
+                    ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "60", "}, error => {");
                     ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                     this.hideTextMessage(2000);
@@ -637,6 +678,7 @@ export class ScanditService {
                 this.hideTextMessage(1500);
               }
             }, (error) => {
+              ScanditMatrixSimple.hideLoadingDialog();
               console.error('Error::Subscribe::CheckContainerProduct -> ', error);
               ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
               this.hideTextMessage(1500);

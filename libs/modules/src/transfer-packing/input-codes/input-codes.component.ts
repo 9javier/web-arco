@@ -3,6 +3,7 @@ import {LoadingController, ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {SettingsService} from "../../../../services/src/lib/storage/settings/settings.service";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-input-codes',
@@ -22,6 +23,9 @@ export class InputCodesComponent implements OnInit {
 
   private disableTransferProductByProduct: boolean = true;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private loadingController: LoadingController,
     private toastController: ToastController,
@@ -29,6 +33,7 @@ export class InputCodesComponent implements OnInit {
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },800);
@@ -49,6 +54,11 @@ export class InputCodesComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrote;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
         || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {

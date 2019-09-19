@@ -35,7 +35,6 @@ export class BaseComponent implements OnInit {
   ngOnInit() {
     this.getTypes();
    // this.items = new FormArray([])
-    console.log('type 1');
   }
 
   getTypes(){
@@ -43,7 +42,6 @@ export class BaseComponent implements OnInit {
     this.globalVariableService.getTypes().subscribe(types=>{
       this.types = types;
     }, (err) => {
-      console.log(err)
     }, () => {
       this.intermediaryService.dismissLoading();
       this.form = this.formBuilder.group({

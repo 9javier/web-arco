@@ -2,9 +2,10 @@ import {Component, OnInit} from '@angular/core';
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel} from "@suite/services";
+import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
 import {AlertController, ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-textarea',
@@ -24,14 +25,19 @@ export class TextareaComponent implements OnInit {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private alertController: AlertController,
     private toastController: ToastController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
+    private intermediaryService: IntermediaryService,
     private scanditProvider: ScanditProvider
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -61,6 +67,11 @@ export class TextareaComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrited;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.processInitiated = true;
       if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
@@ -112,8 +123,10 @@ export class TextareaComponent implements OnInit {
   }
 
   private storeProductInContainer(params) {
+    this.intermediaryService.presentLoading();
     this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+        this.intermediaryService.dismissLoading();
           if (res.body.code == 200 || res.body.code == 201) {
             let msgSetText = '';
             if (this.isStoreUser) {
@@ -140,22 +153,28 @@ export class TextareaComponent implements OnInit {
             this.processInitiated = false;
           }
         }, (error) => {
+          this.intermediaryService.dismissLoading();
           if (error.error.code == 428) {
             this.showWarningToForce(params);
           } else {
             this.presentToast(error.error.errors, 1500, 'danger');
             this.processInitiated = false;
           }
+        }, () => {
+          this.intermediaryService.dismissLoading();
         }
       );
     }, (error: HttpErrorResponse) => {
+      this.intermediaryService.dismissLoading();
       if (error.error.code == 428) {
         this.showWarningToForce(params);
       } else {
         this.presentToast(error.message, 1500, 'danger');
         this.processInitiated = false;
       }
-    });
+    }), () => {
+      this.intermediaryService.dismissLoading();
+    };
   }
 
   private async showWarningToForce(params) {

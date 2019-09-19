@@ -105,7 +105,6 @@ export class PermissionToRolComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.form);
     this.getRoles();
   }
 
@@ -139,7 +138,6 @@ export class PermissionToRolComponent implements OnInit {
         data[0].subscribe(
           (res: HttpResponse<PermissionsModel.ResponseIndex>) => {
             this.permissions = res.body.data;
-            console.log(this.permissions);
             this.intermediaryService.dismissLoading();
           }
         );
@@ -148,13 +146,11 @@ export class PermissionToRolComponent implements OnInit {
           this.form.removeControl("toDelete");
           this.form.addControl("toDelete",this.formBuilder.array(this.roles.map(toDelete=>new FormControl(false))));
           this.rolepermissionsSelected = this.roles;
-          console.log(this.roles);
           this.intermediaryService.dismissLoading();
         });
       },
       err => {
         this.intermediaryService.dismissLoading();
-        console.log(err);
       }
     );
   }
@@ -168,8 +164,6 @@ export class PermissionToRolComponent implements OnInit {
 
     this.currentRolPermissions = this.roles.find(rol => rol.id === rolId)['groups'];
     // res.body.data.length === 0 ? [{ name: '', id: 0 }] : res.body.data;
-    console.log('this.permissions', this.permissions);
-    console.log('this.currentRolPermissions', this.currentRolPermissions);
     this.isLoadingPermissions = false;
     this.rolepermissionsSelected = [];
     // Applying Intersection, to get user roles selected
@@ -207,7 +201,6 @@ export class PermissionToRolComponent implements OnInit {
     ev: MatListOption
   ) {
     this.isLoadingAssignPermissionToRole = true;
-    console.log('assignPermissionToRol', permission);
 
     // Assign New Permission
     if (
@@ -245,7 +238,6 @@ export class PermissionToRolComponent implements OnInit {
       (!ev.selected && permission.selected) ||
       (!ev.selected && !permission.selected)
     ) {
-      console.log('Delete');
       this.permissionService
         .deletePermissionToRol(rol.id, permission.id)
         .then(

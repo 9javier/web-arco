@@ -8,11 +8,11 @@ import { RolesService } from '@suite/services';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
-  
+
   rol;
   isLoading = false;
 
-  constructor(private loadingController: LoadingController,private rolService:RolesService,private navParams:NavParams,private modalController:ModalController) {
+  constructor(private loadingController: LoadingController, private rolService: RolesService, private navParams: NavParams, private modalController: ModalController) {
     this.rol = this.navParams.get("rol");
   }
 
@@ -22,21 +22,19 @@ export class UpdateComponent implements OnInit {
   /**
    * Close the current modal
    */
-  close():void{
+  close(): void {
     this.modalController.dismiss();
   }
 
   /**
    * Update the rol
    */
-  submit(modifiedRol):void{
+  submit(modifiedRol): void {
     this.presentLoading();
-    this.rolService.putUpdate(modifiedRol).then(observable=>{
-      observable.subscribe(data=>{
+    this.rolService.putUpdate(modifiedRol).then(observable => {
+      observable.subscribe(data => {
         this.close();
-      }, (err) => {
-        console.log(err)
-      }, () => {
+      }, (err) => { }, () => {
         this.dismissLoading();
       })
     })
@@ -50,9 +48,8 @@ export class UpdateComponent implements OnInit {
       })
       .then(a => {
         a.present().then(() => {
-          console.log('presented');
           if (!this.isLoading) {
-            a.dismiss().then(() => console.log('abort presenting'));
+            a.dismiss().then(() => { });
           }
         });
       });
@@ -62,6 +59,6 @@ export class UpdateComponent implements OnInit {
     this.isLoading = false;
     return await this.loadingController
       .dismiss()
-      .then(() => console.log('dismissed'));
+      .then(() => { });
   }
 }

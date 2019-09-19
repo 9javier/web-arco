@@ -1546,9 +1546,14 @@ public class ScanditSDK extends CordovaPlugin {
         e.printStackTrace();
       }
 
-      loadingDialog = ProgressDialog.show(activityStarted, "", message, true);
+      if (loadingDialog == null) {
+        loadingDialog = ProgressDialog.show(activityStarted, "", message, true);
+      }
     } else if (action.equals(HIDE_LOADING_DIALOG)) {
-      loadingDialog.dismiss();
+      if (loadingDialog != null) {
+        loadingDialog.dismiss();
+        loadingDialog = null;
+      }
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

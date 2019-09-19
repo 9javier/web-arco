@@ -40,7 +40,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {}
 
   login(user: RequestLogin) {
-    console.log(user);
     this.showLoading('Iniciando sesión...').then(() => {
       this.loginService.post_login(user, AppInfo.Name.Al).subscribe(
         (data: HttpResponse<ResponseLogin>) => {
@@ -49,7 +48,6 @@ export class LoginComponent implements OnInit {
             this.loading = null;
           }
           const response: ResponseLogin = data.body;
-          console.log(response);
           this.authenticationService.login(data.body.data.access_token, data.body.data.user,data.body.data.accessPermitionsDictionary,data.body.data.refresh_token);
           this.router.navigate(['/home']);
         },
@@ -59,7 +57,6 @@ export class LoginComponent implements OnInit {
             this.loading = null;
           }
           //this.intermediaryService.presentToastError("Usuario o contraseña incorrecta");
-          //console.log(errorResponse);
         }
       );
     });

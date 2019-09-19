@@ -13,7 +13,8 @@ export namespace InventoryModel {
   export interface Inventory {
     productReference?: string,
     containerReference?: string,
-    warehouseId?: number
+    warehouseId?: number,
+    avoidAvelonMovement?: boolean
   }
 
   export interface InventoryProcess {
@@ -61,6 +62,19 @@ export namespace InventoryModel {
     data:{
       results:Array<SearchInContainer>;
       pagination:Request.Paginator;
+      filters: {
+        colors: FiltersModel.Color[],
+        containers: FiltersModel.Container[],
+        models: FiltersModel.Model[],
+        sizes: FiltersModel.Size[],
+        warehouses: FiltersModel.Warehouse[],
+        ordertypes: FiltersModel.Group[],
+      }
+    }
+  }
+
+  export interface ResponseFilters extends Request.Success{
+    data:{
       filters: {
         colors: FiltersModel.Color[],
         containers: FiltersModel.Container[],

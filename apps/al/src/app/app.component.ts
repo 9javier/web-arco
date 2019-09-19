@@ -165,7 +165,7 @@ export class AppComponent implements OnInit {
               })
             )
             .catch((possibleMainWarehouse404Error) => {})
-            .then(() => this.router.navigate([this.dictionary['user-time']?'user-time/products':'/products'])
+            .then(() => this.router.navigate([this.dictionary['user-time']?'user-time/products':'/welcome'])
               .then(success => {
                 this.mainHeaderShowHide(true);
                 this.menu.enable(true, 'sidebar');
@@ -188,7 +188,6 @@ export class AppComponent implements OnInit {
     app.name = "al";
     /**Set the dictionary access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
-      console.log("dictionaryManagement", "ngOnInit: dictionaryAcessState.subscribe", JSON.parse(JSON.stringify(state)));
       this.dictionary = state;
     });
   }

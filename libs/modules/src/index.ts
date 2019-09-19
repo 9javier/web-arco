@@ -135,6 +135,9 @@ export * from './list-picking/list-picking.module';
 export * from './tariff/tariff.component';
 export * from './tariff/tariff.module';
 
+/**TariffSGA */
+export * from './tariffSGA/tariffSGA.component';
+export * from './tariffSGA/tariffSGA.module';
 /**Prices */
 export * from './prices/prices.component';
 export * from './prices/prices.module';

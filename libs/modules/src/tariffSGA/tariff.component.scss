@@ -1,0 +1,20 @@
+table {
+    width: 100%;
+}
+
+.mat-cell,
+.mat-header-cell {
+    padding: 10px 10px 10px 0;
+}
+
+.check {
+    text-align: center;
+}
+
+.processing {
+    background: red;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+}

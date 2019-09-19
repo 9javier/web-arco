@@ -29,6 +29,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'welcome',
+    canActivate: [AuthGuard],
+    loadChildren: './welcome/welcome.module#WelcomePageModule',
+    data:{
+      name:'Bienvenido'
+    }
+  },
+  {
     path: 'home',
     canActivate: [AuthGuard],
     loadChildren: './home/home.module#HomePageModule',

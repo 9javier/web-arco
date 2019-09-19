@@ -7,6 +7,7 @@ import { WarehouseService } from "../../../../../services/src/lib/endpoint/wareh
 import { AlertController, LoadingController, ModalController, NavParams, ToastController } from "@ionic/angular";
 import { InventoryService } from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
 import { Observable } from "rxjs";
+import * as moment from 'moment';
 import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { DateTimeParserService } from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
 
@@ -23,7 +24,7 @@ export class ProductDetailsComponent implements OnInit {
 
   product: InventoryModel.SearchInContainer;
   productHistorical;
-
+  date: any;
   container = null;
   warehouseId: number;
 
@@ -47,6 +48,8 @@ export class ProductDetailsComponent implements OnInit {
   rowSelected: number;
   columnSelected: number;
   referenceContainer: string = '';
+  dates: any[] = [];
+  hours: any[] = [];
 
   public isProductRelocationEnabled: boolean = true;
 
@@ -99,6 +102,11 @@ export class ProductDetailsComponent implements OnInit {
   getProductHistorical(): void {
     this.productService.getHistorical(this.product.productShoeUnit.id).subscribe(historical => {
       this.productHistorical = historical;
+
+      for (let i = 0; i < historical.length; i++) {
+        this.dates[i] = moment(historical[i].updatedAt).format('L');
+        this.hours[i] = moment(historical[i].updatedAt).format('HH:mm:ss');
+      }
     });
   }
 
@@ -130,22 +138,51 @@ export class ProductDetailsComponent implements OnInit {
     this.warehouseSelected = null;
   }
 
-  private saveDataMovement(product) {
+  public async saveDataMovement(product) {
     if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
-      let referenceProduct = product.productShoeUnit.reference;
-      let textLoading = 'Reubicando producto...';
-      let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
-      if (this.referenceContainer) {
-        let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
-        textToastOk += ' en Ubicación ' + location;
-      } else {
-        textToastOk += ' de tienda.';
-      }
-      this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk);
-    }
+      let idWarehouseOrigin = this.product.warehouse.id;
+      if (this.warehouseSelected != idWarehouseOrigin) {
+        let alertRequestMovement = await this.alertController.create({
+          header: 'Atención',
+          message: 'Está a punto de mover un producto entre almacenes y/o tiendas. ¿Quiere generar un escaneo de destino en Avelon para el movimiento?',
+          buttons: [
+            'Cancelar',
+            {
+              text: 'No generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, true);
+              }
+            },
+            {
+              text: 'Generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, false);
+              }
+            }
+          ]
+        });
 
+        await alertRequestMovement.present();
+      } else {
+        this.processMovementMessageAndLocate(product, true);
+      }
+    }
   }
-  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string) {
+
+  private processMovementMessageAndLocate(product, generateAvelonMovement: boolean) {
+    let referenceProduct = product.productShoeUnit.reference;
+    let textLoading = 'Reubicando producto...';
+    let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
+    if (this.referenceContainer) {
+      let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
+      textToastOk += ' en Ubicación ' + location;
+    } else {
+      textToastOk += ' de tienda.';
+    }
+    this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk, generateAvelonMovement);
+  }
+
+  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string, generateAvelonMovement: boolean) {
     if (!this.loading) {
       this.showLoading(textLoading || 'Ubicando producto...').then(() => {
         let inventoryProcess: InventoryModel.Inventory = {
@@ -155,7 +192,7 @@ export class ProductDetailsComponent implements OnInit {
 
         if (referenceContainer) inventoryProcess.containerReference = referenceContainer;
 
-        this.storeProductInContainer(inventoryProcess, textToastOk);
+        this.storeProductInContainer(inventoryProcess, textToastOk, generateAvelonMovement);
       });
     }
   }
@@ -272,7 +309,11 @@ export class ProductDetailsComponent implements OnInit {
   }
 
 
-  private storeProductInContainer(params, textToastOk) {
+  private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
+    if (typeof generateAvelonMovement != 'undefined') {
+      params.avoidAvelonMovement = generateAvelonMovement;
+    }
+
     this.inventoryService
       .postStore(params)
       .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {

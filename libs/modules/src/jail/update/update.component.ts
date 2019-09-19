@@ -36,7 +36,6 @@ export class UpdateComponent implements OnInit {
     private modalController:ModalController
     ) {
     this.jail = this.navParams.get("jail");
-    console.log("jail",this.jail);
   }
 
   @ViewChild(DataComponent) data:DataComponent;
