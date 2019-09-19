@@ -1,17 +1,13 @@
-import { Component, OnInit,Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { IntermediaryService } from '@suite/services';
+import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'suite-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss']
+  selector: 'suite-rails-configuration',
+  templateUrl: './rails-configuration.component.html',
+  styleUrls: ['./rails-configuration.component.scss']
 })
-export class BaseComponent implements OnInit {
-
-  @Input() set zone(zone){
-    if(zone)
-      this.form.patchValue(zone);
-  }
+export class RailsConfigurationComponent implements OnInit {
 
   rails = [
     {
@@ -40,31 +36,20 @@ export class BaseComponent implements OnInit {
     }
   ]
 
-  form:FormGroup = this.formBuilder.group({
-    id:[''],
-    nombre:['',Validators.required],
-    carriles:['',Validators.required],
-    color:['',Validators.required]
-  });
-
   constructor(
-    private formBuilder:FormBuilder
+    private intermediaryService:IntermediaryService,
+    private modalController:ModalController,
   ) { }
 
+  ngOnInit() {}
+
   
-  getValue(){
-    return this.sanitize(this.form.value);
+  close():void{
+    this.modalController.dismiss();
   }
 
-  sanitize(zone){
-    Object.keys(zone).forEach(key=>{
-      if(!zone[key])
-        delete zone[key];
-    });
-    return zone;
-  }
-
-  ngOnInit() {
+  submit():void{
+    console.log('submit')
   }
 
   getColumn(index: number, column: number, height: number): void {
