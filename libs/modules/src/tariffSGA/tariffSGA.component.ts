@@ -70,6 +70,7 @@ export class TariffSGAComponent implements OnInit {
     this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     this.listenChanges();
     this.isCalculating();
+    setInterval(() => { this.isCalculating() }, 10000);
 
 
   }
@@ -140,14 +141,12 @@ export class TariffSGAComponent implements OnInit {
 
 
   isCalculating(): void {
-    this.intermediaryService.presentLoading();
     this.tariffService.getIsCalculating().subscribe(
       data => {
         this.processing = data.isCalculating;
-        this.intermediaryService.dismissLoading();
       },
       () => {
-        this.intermediaryService.dismissLoading();
+        this.processing = true;
       }
     );
   }
