@@ -11,7 +11,7 @@ import {
 } from '@suite/services';
 
 import { validators } from '../utils/validators';
- 
+
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -61,7 +61,7 @@ export class TariffSGAComponent implements OnInit {
     private router: Router,
     private warehousesService: WarehousesService
   ) {
-    this.processing = false;
+    this.processing = true;
   }
 
   ngOnInit() {
@@ -69,6 +69,9 @@ export class TariffSGAComponent implements OnInit {
     this.getWarehouses();
     this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     this.listenChanges();
+    this.isCalculating();
+
+
   }
   /**
    * filter the tariff by warehouse
@@ -124,7 +127,7 @@ export class TariffSGAComponent implements OnInit {
           return result;
         });
         this.initSelectForm(this.tariffs);
-       this.dataSource = new MatTableDataSource<any>(this.tariffs);
+        this.dataSource = new MatTableDataSource<any>(this.tariffs);
         let paginator = 1;
         this.paginator.length = 2;
         this.paginator.pageIndex = 0;
@@ -135,11 +138,25 @@ export class TariffSGAComponent implements OnInit {
     );
   }
 
-    /**
-   * Cancel event and stop it propagation
-   * @params e - the event to cancel
-   */
-  prevent(e):void{
+
+  isCalculating(): void {
+    this.intermediaryService.presentLoading();
+    this.tariffService.getIsCalculating().subscribe(
+      data => {
+        this.processing = data.isCalculating;
+        this.intermediaryService.dismissLoading();
+      },
+      () => {
+        this.intermediaryService.dismissLoading();
+      }
+    );
+  }
+
+  /**
+ * Cancel event and stop it propagation
+ * @params e - the event to cancel
+ */
+  prevent(e): void {
     e.preventDefault();
     e.stopPropagation();
   }
@@ -147,16 +164,16 @@ export class TariffSGAComponent implements OnInit {
   onChecked(i, event) {
     var state = event;
     let tariff: any = this.tariffs[i];
-    
-    let exist = _.find(this.tariffsUpdate, {'position': i});
 
-    if(exist) {
-      _.remove(this.tariffsUpdate, function(n) {
+    let exist = _.find(this.tariffsUpdate, { 'position': i });
+
+    if (exist) {
+      _.remove(this.tariffsUpdate, function (n) {
         return n.position == i;
       });
-    } 
+    }
     else {
-      if(!tariff.enabled === event) {
+      if (!tariff.enabled === event) {
         let object = {
           //position: i,
           //warehouseId: tariff.warehouseId,
@@ -174,13 +191,13 @@ export class TariffSGAComponent implements OnInit {
         }
         for (let i = 0; i < this.tariffsUpdate.length; i++) {
           const element = this.tariffsUpdate[i];
-          if(this.tariffsUpdate[i].id == object.id){
+          if (this.tariffsUpdate[i].id == object.id) {
             this.tariffsUpdate.splice(i);
             return false;
           }
         }
       }
-      
+
     }
   }
 
@@ -188,10 +205,10 @@ export class TariffSGAComponent implements OnInit {
    * Update Enabled/Disabled the selected labels
    * @param items - Reference items to extract he ids
    */
-  updateEnabled(warehouseId:number=49):void {
+  updateEnabled(warehouseId: number = 49): void {
     // let list = this.tariffs.map((item, i) => {
     //   let enabled = this.selectedForm.value.toSelect[i];
-      
+
     //   let object = {
     //     warehouseId: items[i].warehouseId,
     //     tariffId: items[i].tariffId,
@@ -204,14 +221,17 @@ export class TariffSGAComponent implements OnInit {
 
     this.intermediaryService.presentLoading("Modificando los seleccionados");
     this.tariffService.updateEnabled(this.tariffsUpdate).subscribe(result => {
-        this.intermediaryService.dismissLoading();
-        this.listenChanges();
-    },error=>{
+      this.intermediaryService.dismissLoading();
+      this.listenChanges();
+      this.isCalculating();
+    }, error => {
       this.intermediaryService.dismissLoading();
     }, () => {
       this.tariffsUpdate = [];
       this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+      this.isCalculating();
     });
+
 
   }
 
@@ -219,9 +239,9 @@ export class TariffSGAComponent implements OnInit {
    * Select or unselect all visible labels
    * @param event to check the status
    */
-  selectAll(event):void{
+  selectAll(event): void {
     let value = event.detail.checked;
-    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach((control, i)=>{
+    (<FormArray>this.selectedForm.controls.toSelect).controls.forEach((control, i) => {
       control.setValue(value);
     });
   }
@@ -230,10 +250,10 @@ export class TariffSGAComponent implements OnInit {
    * Init selectForm controls
    * @param items - reference items for create the formControls
    */
-  initSelectForm(items):void{  
+  initSelectForm(items): void {
     this.selectedForm.removeControl("toSelect");
     this.selectedForm.addControl(
-      "toSelect", 
+      "toSelect",
       this.formBuilder.array(items.map(item => new FormControl(Boolean(item.enabled))))
     );
   }
