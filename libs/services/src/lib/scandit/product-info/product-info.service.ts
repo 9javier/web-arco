@@ -1,9 +1,10 @@
-import {Injectable} from '@angular/core';
-import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
-import {ScanditModel} from "../../../models/scandit/Scandit";
-import {ProductModel, ProductsService} from "@suite/services";
-import {environment} from "../../../environments/environment";
-import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import { Injectable } from '@angular/core';
+import { ScanditProvider } from "../../../providers/scandit/scandit.provider";
+import { ScanditModel } from "../../../models/scandit/Scandit";
+import { ProductModel, ProductsService } from "@suite/services";
+
+import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
+import { environment } from "../../../environments/environment";
 
 declare let Scandit;
 declare let GScandit;
