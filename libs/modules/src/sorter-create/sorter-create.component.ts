@@ -59,7 +59,7 @@ export class SorterCreateComponent implements OnInit {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        selects: this.formBuilder.array([ this.createSelect() ])
+        toSelect: this.formBuilder.array([ this.createSelect() ])
       },
       {
         validators: validators.haveItems('toSelect')
