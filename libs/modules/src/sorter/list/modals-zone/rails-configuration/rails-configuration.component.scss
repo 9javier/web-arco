@@ -16,3 +16,22 @@ ion-label.colorTitle {
 ion-label.color {
   font-size: 18px;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.heights {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  padding: 20px;
+  font-size: 20px;
+  border: 1px solid black;
+}
