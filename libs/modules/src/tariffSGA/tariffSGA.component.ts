@@ -43,6 +43,7 @@ export class TariffSGAComponent implements OnInit {
   warehouseId: number = 49;
 
   processing: boolean;
+  tarifProcessing: any;
 
   /**form to select elements to print or for anything */
   selectedForm: FormGroup = this.formBuilder.group(
@@ -61,7 +62,7 @@ export class TariffSGAComponent implements OnInit {
     private router: Router,
     private warehousesService: WarehousesService
   ) {
-    this.processing = true;
+    this.processing = false;
   }
 
   ngOnInit() {
@@ -144,6 +145,7 @@ export class TariffSGAComponent implements OnInit {
     this.tariffService.getIsCalculating().subscribe(
       data => {
         this.processing = data.isCalculating;
+        this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
           this.listenChanges()
         }
@@ -232,6 +234,7 @@ export class TariffSGAComponent implements OnInit {
       this.tariffsUpdate = [];
       this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
       this.isCalculating();
+      this.intermediaryService.dismissLoading();
     });
 
 
