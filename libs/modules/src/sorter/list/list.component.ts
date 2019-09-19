@@ -53,6 +53,7 @@ export class ListComponent implements OnInit {
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
+  selectedFormActive: FormGroup;
   items: FormArray;
   showRails: boolean = false;
 
@@ -67,10 +68,20 @@ export class ListComponent implements OnInit {
         selects: this.formBuilder.array([ this.createSelect() ])
       },
       {
-        validators: validators.haveItems('selects')
+        validators: validators.haveItems('toSelect')
       }
     );
     console.log(this.selectedForm)
+
+    this.selectedFormActive = this.formBuilder.group(
+      {
+        selector: false,
+        selects: this.formBuilder.array([ this.createSelect() ])
+      },
+      {
+        validators: validators.haveItems('toSelectActive')
+      }
+    );
   }
 
 
@@ -87,6 +98,7 @@ export class ListComponent implements OnInit {
             (res: HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>) => {
               this.warehouses = res.body.data;
               this.initSelect(this.warehouses);
+              this.initSelectActive(this.warehouses);
             },
             (err) => {
               console.log(err)
@@ -106,15 +118,28 @@ export class ListComponent implements OnInit {
 
   selectAll(event):void{
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedForm.get('selects');
+    const controlArray = <FormArray> this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
   }
 
   initSelect(items) {
-    this.selectedForm.removeControl('selects');
-    this.selectedForm.addControl('selects', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    this.selectedForm.removeControl('toSelect');
+    this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+  }
+
+  selectAllActive(event):void{
+    let value = event.detail.checked;
+    const controlArray = <FormArray> this.selectedFormActive.get('toSelectActive');
+    controlArray.controls.forEach((control, i) => {
+      control.setValue(value);
+    });
+  }
+
+  initSelectActive(items) {
+    this.selectedFormActive.removeControl('toSelectActive');
+    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
   }
 
   createSelect(): FormControl {

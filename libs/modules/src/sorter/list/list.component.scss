@@ -2,9 +2,8 @@
     overflow: auto;
     width: 100%;
     position: relative;
-    display: flex;
-    justify-content: flex-end;
-    h1 {
+    display: block;
+    h1, h2 {
         margin-top: 0;
         margin-bottom: 0;
     }
@@ -29,6 +28,9 @@ mat-table {
 
 .container {
     margin-top: 1em;
+    p{
+        margin-left: 5px;
+    }
 }
 
 .row-icon-location {
