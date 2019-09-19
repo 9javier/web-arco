@@ -43,6 +43,7 @@ export class TariffSGAComponent implements OnInit {
   warehouseId: number = 49;
 
   processing: boolean;
+  tarifProcessing: any;
 
   /**form to select elements to print or for anything */
   selectedForm: FormGroup = this.formBuilder.group(
@@ -54,6 +55,8 @@ export class TariffSGAComponent implements OnInit {
     }
   );
 
+  intervalIsCalculation = null;
+
   constructor(
     private intermediaryService: IntermediaryService,
     private formBuilder: FormBuilder,
@@ -61,7 +64,7 @@ export class TariffSGAComponent implements OnInit {
     private router: Router,
     private warehousesService: WarehousesService
   ) {
-    this.processing = true;
+    this.processing = false;
   }
 
   ngOnInit() {
@@ -70,10 +73,18 @@ export class TariffSGAComponent implements OnInit {
     this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     this.listenChanges();
     this.isCalculating();
-    setInterval(() => { this.isCalculating() }, 10000);
-
-
+    if(!this.intervalIsCalculation){
+      this.intervalIsCalculation = setInterval(() => { this.isCalculating() }, 10000);
+    }
   }
+
+  ngOnDestroy(){
+    if(this.intervalIsCalculation){
+      clearInterval(this.intervalIsCalculation);
+      this.intervalIsCalculation = null;
+    }
+  }
+
   /**
    * filter the tariff by warehouse
    * @param event
@@ -144,6 +155,7 @@ export class TariffSGAComponent implements OnInit {
     this.tariffService.getIsCalculating().subscribe(
       data => {
         this.processing = data.isCalculating;
+        this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
           this.listenChanges()
         }
@@ -232,6 +244,7 @@ export class TariffSGAComponent implements OnInit {
       this.tariffsUpdate = [];
       this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
       this.isCalculating();
+      this.intermediaryService.dismissLoading();
     });
 
 

@@ -12,7 +12,8 @@
         </ion-col>
     </ion-row>
     <div class="processing" *ngIf="processing">
-        Calculando precios, espere un momento
+      Se están recalculando los precios porque se está procesando la tarifa <strong>{{tarifProcessing?.name}}</strong>.
+      <br>Por favor, espere a que finalice para activar/desactivar tarifas
     </div>
     <table mat-table [dataSource]="dataSource">
 

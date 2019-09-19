@@ -62,7 +62,12 @@ export class TariffService {
   getIsCalculating() {
     return this.http.get<{
       data: {
-        isCalculating: boolean;
+        isCalculating: boolean,
+        tariff: {
+          name: string;
+          activeFrom: string;
+          activeTill: string;
+        }
       }
     }>(this.isCalculatingSGA, {}).pipe(map(response => {
       return response;
