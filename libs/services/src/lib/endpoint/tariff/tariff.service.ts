@@ -14,6 +14,7 @@ export class TariffService {
   /**urls for tariff service */
   private getIndexUrl: string = environment.apiBase + "/tariffs";
   private getTariffIfSoftdeleteSGA: string = environment.apiBase + "/tariffs/";
+  private isCalculatingSGA: string = environment.apiBase + "/tariffs/iscalculating";
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
   constructor(private http: HttpClient) { }
 
@@ -52,6 +53,18 @@ export class TariffService {
         activeTill: string;
       }[]
     }>(this.getTariffIfSoftdeleteSGA, {}).pipe(map(response => {
+      return response;
+    })).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  getIsCalculating() {
+    return this.http.get<{
+      data: {
+        isCalculating: boolean;
+      }
+    }>(this.isCalculatingSGA, {}).pipe(map(response => {
       return response;
     })).pipe(map(response => {
       return response.data;
