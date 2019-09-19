@@ -55,6 +55,8 @@ export class TariffSGAComponent implements OnInit {
     }
   );
 
+  intervalIsCalculation = null;
+
   constructor(
     private intermediaryService: IntermediaryService,
     private formBuilder: FormBuilder,
@@ -71,10 +73,18 @@ export class TariffSGAComponent implements OnInit {
     this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     this.listenChanges();
     this.isCalculating();
-    setInterval(() => { this.isCalculating() }, 10000);
-
-
+    if(!this.intervalIsCalculation){
+      this.intervalIsCalculation = setInterval(() => { this.isCalculating() }, 10000);
+    }
   }
+
+  ngOnDestroy(){
+    if(this.intervalIsCalculation){
+      clearInterval(this.intervalIsCalculation);
+      this.intervalIsCalculation = null;
+    }
+  }
+
   /**
    * filter the tariff by warehouse
    * @param event
