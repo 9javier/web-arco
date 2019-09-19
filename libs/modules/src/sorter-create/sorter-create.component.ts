@@ -11,6 +11,9 @@ import { HttpResponse } from '@angular/common/http';
 import { UserModel, RolModel } from '@suite/services';
 import { UpdateComponent } from './modals/update/update.component';
 import { CreateComponent } from './modals/create/create.component';
+import { SorterService } from '../../../services/src/lib/endpoint/sorter/sorter.service';
+import { SorterModel } from '../../../services/src/models/endpoints/Sorter';
+import { tap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'suite-sorter-create',
@@ -40,6 +43,7 @@ export class SorterCreateComponent implements OnInit {
   displayedColumns = ['delete', 'nombre', 'carriles', 'warehouse', 'altura', 'columna', 'colores'];
   dataSource = new SorterDataSource();
   warehouses: any = [];
+  sorters: SorterModel.Sorter[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   items: FormArray;
@@ -49,6 +53,7 @@ export class SorterCreateComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private modalController:ModalController,
+    private sorteService: SorterService,
     
   ) {
     this.selectedForm = this.formBuilder.group(
@@ -95,6 +100,12 @@ export class SorterCreateComponent implements OnInit {
           );
         }
       );
+
+    this.sorteService
+      .getIndex().subscribe((data) => {
+        this.sorters = data.data;
+        console.log(this.sorters)
+      });
   }
 
   clickShowExpasion(row: any) {

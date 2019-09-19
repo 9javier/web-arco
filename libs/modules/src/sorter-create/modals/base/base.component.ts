@@ -19,12 +19,12 @@ export class BaseComponent implements OnInit {
 
   form:FormGroup = this.formBuilder.group({
     id: [''],
-    nombre: ['', Validators.required],
-    carriles: ['', Validators.required],
-    altura: ['', Validators.required],
-    columna: ['', Validators.required],
-    wareHouse: ['', Validators.required],
-    colores: ['', Validators.required]
+    name: ['', Validators.required],
+    ways: ['', Validators.required],
+    columns: ['', Validators.required],
+    heights: ['', Validators.required],
+    warehouseId: ['', Validators.required],
+    colors: ['', Validators.required]
   });
 
   constructor(
@@ -33,7 +33,9 @@ export class BaseComponent implements OnInit {
 
   
   getValue(){
-    return this.sanitize(this.form.value);
+    if(this.form.valid) {
+      return this.sanitize(this.form.value);
+    }
   }
 
   sanitize(template){

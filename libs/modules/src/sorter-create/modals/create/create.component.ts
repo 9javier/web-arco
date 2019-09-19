@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { IntermediaryService } from '@suite/services';
 import { ModalController, NavParams } from '@ionic/angular';
+import { BaseComponent } from '../base/base.component';
 
 @Component({
   selector: 'suite-create',
@@ -9,6 +10,7 @@ import { ModalController, NavParams } from '@ionic/angular';
 })
 export class CreateComponent implements OnInit {
 
+  @ViewChild(BaseComponent) base:BaseComponent;
   wareHouses: any;
 
   constructor(
@@ -17,6 +19,7 @@ export class CreateComponent implements OnInit {
     private navParams:NavParams
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
+    console.log(this.wareHouses);
   }
 
   ngOnInit() {
@@ -26,7 +29,12 @@ export class CreateComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  submit(template):void{
-    console.log('submit')
+  submit():void{
+    let { colors, ...data} = this.base.getValue();
+    colors = [1, 2, 3, 4];
+    const payload = {
+      colors, ...data
+    }
+    console.log(payload)
   }
 }

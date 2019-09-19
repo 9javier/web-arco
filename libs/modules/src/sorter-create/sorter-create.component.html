@@ -4,34 +4,34 @@
           <suite-breadcrumb></suite-breadcrumb>
         </ion-text>
         <div class="container">
-          <mat-table #table [dataSource]="dataSource">
+          <mat-table #table [dataSource]="sorters">
             <ng-container matColumnDef="delete">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
             </ng-container>
             <ng-container matColumnDef="nombre">
               <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
             </ng-container>
             <ng-container matColumnDef="carriles">
               <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
+              <mat-cell *matCellDef="let element"> {{element.ways}} </mat-cell>
             </ng-container>
             <ng-container matColumnDef="warehouse">
               <mat-header-cell *matHeaderCellDef>Almacenes </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.warehouse.name}} </mat-cell>
+              <mat-cell *matCellDef="let element"> Almacén CLOUD </mat-cell>
             </ng-container>
             <ng-container matColumnDef="altura">
                 <mat-header-cell *matHeaderCellDef>Alturas </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.altura}} </mat-cell>
+                <mat-cell *matCellDef="let element"> {{element.heights}} </mat-cell>
               </ng-container>
               <ng-container matColumnDef="columna">
                   <mat-header-cell *matHeaderCellDef>Columnas </mat-header-cell>
-                  <mat-cell *matCellDef="let element"> {{element.columna}} </mat-cell>
+                  <mat-cell *matCellDef="let element"> {{element.columns}} </mat-cell>
                 </ng-container>
             <ng-container matColumnDef="colores">
               <mat-header-cell *matHeaderCellDef>Colores </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.colores[0]}} </mat-cell>
+              <mat-cell *matCellDef="let element"> rojo </mat-cell>
             </ng-container>
         
             <!-- Expanded Content Column - The detail row is made up of this one column -->
