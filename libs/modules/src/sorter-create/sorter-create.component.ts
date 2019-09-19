@@ -40,7 +40,7 @@ import { tap, map } from 'rxjs/operators';
 })
 export class SorterCreateComponent implements OnInit {
 
-  displayedColumns = ['delete', 'nombre', 'carriles', 'warehouse', 'altura', 'columna', 'colores'];
+  displayedColumns = ['delete', 'nombre', 'warehouse', 'altura', 'columna', 'colores'];
   dataSource = new SorterDataSource();
   warehouses: any = [];
   sorters: SorterModel.Sorter[] = [];
@@ -62,7 +62,7 @@ export class SorterCreateComponent implements OnInit {
         selects: this.formBuilder.array([ this.createSelect() ])
       },
       {
-        validators: validators.haveItems('selects')
+        validators: validators.haveItems('toSelect')
       }
     );
     console.log(this.selectedForm)
@@ -115,15 +115,15 @@ export class SorterCreateComponent implements OnInit {
 
   selectAll(event):void{
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedForm.get('selects');
+    const controlArray = <FormArray> this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
   }
 
   initSelect(items) {
-    this.selectedForm.removeControl('selects');
-    this.selectedForm.addControl('selects', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    this.selectedForm.removeControl('toSelect');
+    this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
   }
 
   createSelect(): FormControl {

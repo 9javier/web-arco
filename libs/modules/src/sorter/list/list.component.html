@@ -1,16 +1,19 @@
 <ion-content padding="true">
+   
   <ion-grid>
     <ion-text color="primary">
       <suite-breadcrumb [post]="'Plantilla 1'"></suite-breadcrumb>
     </ion-text>
 
     <div class="main-buttons">
-      <h1>
+      <h1 style="float: left">Zonas</h1>
+      <h2 style="float: right">
         <ion-button class="btn-move-products" slot="end" color="primary" (click)="displayRails()">
           VER CARRILES
         </ion-button>
-      </h1>
+      </h2>
     </div>
+    
     <div class="container">
       <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="icon">
@@ -31,14 +34,22 @@
           </mat-cell>
         </ng-container>
 
+        <ng-container matColumnDef="delete" [formGroup]="selectedForm">
+            <mat-header-cell *matHeaderCellDef>  
+              <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+              <p>Eliminar</p>     
+          </mat-header-cell>
+
+            <mat-cell *matCellDef="let element; let i = index"> 
+                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                    <ion-checkbox (click)="activeDelete()" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                </ng-template>                 
+              </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="updateCarriles">
-          <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
-          <mat-cell *matCellDef="let element"> <ion-checkbox (click)="displayRails()"></ion-checkbox> </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="delete">
-          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-          <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
-        </ng-container>
+            <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
+            <mat-cell *matCellDef="let element"> <ion-checkbox (click)="displayRails()"></ion-checkbox> </mat-cell>
+          </ng-container>
         <ng-container matColumnDef="Ntemplate">
           <mat-header-cell *matHeaderCellDef> Zonas </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.Ntemplate}} </mat-cell>
@@ -51,9 +62,16 @@
           <mat-header-cell *matHeaderCellDef> Carriles </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="active">
-            <mat-header-cell *matHeaderCellDef>Active </mat-header-cell>
-            <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
+        <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
+            <mat-header-cell *matHeaderCellDef>  
+                <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
+                <p>Active</p>     
+            </mat-header-cell>
+            <mat-cell *matCellDef="let element; let i = index"> 
+                <ng-template [ngIf]="selectedFormActive['controls']?.toSelectActive">
+                    <ion-checkbox (click)="activeDelete()" [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
+                </ng-template>
+              </mat-cell>
         </ng-container>
         <ng-container matColumnDef="configurarCarriles">
             <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
@@ -95,7 +113,7 @@
     </div>
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-      <ion-fab-button  color="danger" (click)="delete()">
+      <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect"  color="danger" (click)="delete()">
           <ion-icon name="trash"></ion-icon>
       </ion-fab-button>
       <br>

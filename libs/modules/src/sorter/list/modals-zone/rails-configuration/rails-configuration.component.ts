@@ -34,7 +34,9 @@ export class RailsConfigurationComponent implements OnInit {
         {column:3, ways_number:9}
       ]
     }
-  ]
+  ];
+  
+  firstClick: boolean = true;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -53,18 +55,23 @@ export class RailsConfigurationComponent implements OnInit {
   }
 
   getColumn(index: number, column: number, height: number): void {
+    this.firstClick = false;
+    this.cleanStyles();
     //get right and left values
     this.rails.forEach(rail => {
       if(rail.height == height) {
        let columns = rail.columns;
        for(let i = 0; i < columns.length; i++) 
         if(column == columns[i].ways_number) {
+          columns[i]['selected'] = true;
           console.log('Current: '+column)
-          if(columns[i-1]) {
-            console.log('Left: '+columns[i-1].ways_number)
+          if(columns[i-1] && !columns[i-1]['selected']) {
+            console.log('Left: '+columns[i-1].ways_number);
+            columns[i-1]['adjacent'] = true;
           }
-          if(columns[i+1]) {
-            console.log('Right: '+columns[i+1].ways_number)
+          if(columns[i+1] && !columns[i+1]['selected']) {
+            console.log('Right: '+columns[i+1].ways_number);
+            columns[i+1]['adjacent'] = true;
           }
         }
       }
@@ -75,20 +82,31 @@ export class RailsConfigurationComponent implements OnInit {
       if(this.rails[i].height == height) {
           if(this.rails[i-1]) {
             for(let j = 0; j < this.rails[i-1].columns.length; j++) {
-              if(j == index){
-                console.log('Top: '+ this.rails[i-1].columns[j].ways_number)
+              if(j == index && !this.rails[i-1].columns[j]['selected']){
+                console.log('Top: '+ this.rails[i-1].columns[j].ways_number);
+                this.rails[i-1].columns[j]['adjacent'] = true;
               }
             }
           }
           if(this.rails[i+1]) {
             for(let j = 0; j < this.rails[i+1].columns.length; j++) {
-              if(j == index){
-                console.log('Bottom: '+ this.rails[i+1].columns[j].ways_number)
+              if(j == index && !this.rails[i+1].columns[j]['selected']){
+                console.log('Bottom: '+ this.rails[i+1].columns[j].ways_number);
+                this.rails[i+1].columns[j]['adjacent'] = true;
               }
             }
           }
       }
     }
+  }
+
+  cleanStyles() {
+    console.log(this.rails)
+    this.rails.forEach(rail => {
+      rail.columns.forEach(column => {
+        column['adjacent'] = false;
+      });
+    });
   }
 
 }
