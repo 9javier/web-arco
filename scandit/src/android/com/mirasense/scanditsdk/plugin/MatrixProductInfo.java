@@ -29,6 +29,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.mirasense.scanditsdk.plugin.models.Price;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
 import com.mirasense.scanditsdk.plugin.models.Size;
@@ -56,6 +57,8 @@ public class MatrixProductInfo extends Activity {
   private String package_name;
   private Resources resources;
 
+  private static String urlBase = "";
+
   @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,7 @@ public class MatrixProductInfo extends Activity {
       title = b.getString("title", "AL Krack");
       backgroundTitle = b.getString("backgroundTitle", "#FFFFFF");
       colorTitle = b.getString("colorTitle", "#424242");
+      urlBase = b.getString("urlBase", "");
     }
 
     package_name = getApplication().getPackageName();
@@ -211,11 +215,12 @@ public class MatrixProductInfo extends Activity {
     TextView tvBrandName = llExtendedProductInfo.findViewById(resources.getIdentifier("tvBrandName", "id", package_name));
     TableLayout tlTableSizesProduct = llExtendedProductInfo.findViewById(resources.getIdentifier("tlTableSizesProduct", "id", package_name));
 
-    if (productModel.getImageUrl() == null || productModel.getImageUrl().isEmpty()) {
+    if (productModel.getImageUrl() == null || productModel.getImageUrl().isEmpty() && !urlBase.isEmpty()) {
       ivProductImage.setVisibility(View.GONE);
     } else {
       ivProductImage.setVisibility(View.VISIBLE);
-      new DownloadImageFromInternet(ivProductImage).execute(productModel.getImageUrl());
+      String url = urlBase + productModel.getImageUrl();
+      Glide.with(matrixProductInfo).load(url).fitCenter().into(ivProductImage);
     }
 
     if (!productModel.getName().isEmpty()) {
@@ -275,6 +280,19 @@ public class MatrixProductInfo extends Activity {
         countColumnsAdded++;
       }
       if (countColumnsAdded != 0) {
+        if (countColumnsAdded == 1 && countRows == 0) {
+          tlTableSizesProduct.setColumnStretchable(1, true);
+          tlTableSizesProduct.setColumnStretchable(2, false);
+          tlTableSizesProduct.setColumnStretchable(3, false);
+          tlTableSizesProduct.setColumnStretchable(4, false);
+          tlTableSizesProduct.setColumnStretchable(5, false);
+        } else {
+          tlTableSizesProduct.setColumnStretchable(1, true);
+          tlTableSizesProduct.setColumnStretchable(2, true);
+          tlTableSizesProduct.setColumnStretchable(3, true);
+          tlTableSizesProduct.setColumnStretchable(4, true);
+          tlTableSizesProduct.setColumnStretchable(5, true);
+        }
         tlTableSizesProduct.addView(llTableExtendedProductInfo, countRows);
       }
       tlTableSizesProduct.setVisibility(View.VISIBLE);

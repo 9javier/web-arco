@@ -1378,10 +1378,12 @@ public class ScanditSDK extends CordovaPlugin {
       String title = "";
       String backgroundTitle = "";
       String colorTitle = "";
+      String urlBase = "";
       try {
         title = args.getString(0);
         backgroundTitle = args.getString(1);
         colorTitle = args.getString(2);
+        urlBase = args.getString(3);
       } catch (JSONException e) {
         e.printStackTrace();
       }
@@ -1389,6 +1391,7 @@ public class ScanditSDK extends CordovaPlugin {
       b.putString("title", title);
       b.putString("backgroundTitle", backgroundTitle);
       b.putString("colorTitle", colorTitle);
+      b.putString("urlBase", urlBase);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixProductInfo.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, 6);
