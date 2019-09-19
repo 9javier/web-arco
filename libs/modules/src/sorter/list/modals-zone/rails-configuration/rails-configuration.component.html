@@ -11,9 +11,13 @@
 <ion-content padding="true">
     <ion-label class="colorTitle" position="floating">Color: </ion-label>
     <ion-label class="color">Rojo</ion-label>
-    <mat-grid-list cols="8" rowHeight="40px" gutterSize="0px">
-        <mat-grid-tile *ngFor="let item of carriles" [rowspan] = "1">{{item}}</mat-grid-tile>
-      </mat-grid-list>
+    <div class="container">
+        <div *ngFor="let item of rails" class="heights">
+            <div *ngFor="let column of item.columns; let i = index" class="column" (click)="getColumn(i,column.ways_number, item.height)">
+							<span>{{column.ways_number}}</span>
+						</div>
+        </div>
+    </div>
 </ion-content>
 <ion-footer>
     <ion-toolbar>

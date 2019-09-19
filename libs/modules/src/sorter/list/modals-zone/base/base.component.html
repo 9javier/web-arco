@@ -22,4 +22,14 @@
       <ion-select-option value="amarillo">amarillo</ion-select-option>
     </ion-select>
    </ion-item>
+   <ion-item>
+    <ion-label position="floating">Configurar Carriles</ion-label>
+    <div class="container">
+        <div *ngFor="let item of rails" class="heights">
+          <div *ngFor="let column of item.columns; let i = index" class="column" (click)="getColumn(i,column.ways_number, item.height)">
+            <span>{{column.ways_number}}</span>
+          </div>
+        </div>
+      </div>
+   </ion-item>
 </form>
