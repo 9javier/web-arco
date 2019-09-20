@@ -9,18 +9,30 @@
     </ion-toolbar>
 </ion-header>
 <ion-content padding="true">
-    <table mat-table [dataSource]="warehouses">
+    <table mat-table [dataSource]="warehouses" style="width: 100%">
+
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> Nombre </th>
-          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+            <td mat-cell *matCellDef="let element"> {{element.name}} </td>
         </ng-container>
-        <ng-container matColumnDef="check">
-            <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-            <mat-cell *matCellDef="let element"> <ion-checkbox></ion-checkbox> </mat-cell>
+
+        <ng-container matColumnDef="check" [formGroup]="selectedForm">
+
+            <mat-header-cell *matHeaderCellDef (ionChange)="selectAll($event)">
+                <ion-checkbox></ion-checkbox>
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let element; let i = index">
+                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                </ng-template>
+            </mat-cell>
+
         </ng-container>
+
         <tr mat-header-row *matHeaderRowDef="displayedColumnsWareHouse"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumnsWareHouse;"></tr>
-      </table>
+    </table>
 </ion-content>
 <ion-footer>
     <ion-toolbar>

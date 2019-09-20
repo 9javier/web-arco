@@ -1,7 +1,13 @@
-table {
-  width: 40rem;
+
+mat-table {
+    width: 100%;
 }
 
 ion-checkbox {
   margin-top: 15%;
+}
+
+.mat-cell,
+.mat-header-cell {
+    padding: 10px 10px 10px 0;
 }

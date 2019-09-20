@@ -5,11 +5,20 @@
         </ion-text>
         <div class="container">
           <mat-table #table [dataSource]="sorters">
-            <ng-container matColumnDef="delete">
-                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                <mat-cell *matCellDef="let element"> <ion-checkbox (click)="activeDelete()"></ion-checkbox> </mat-cell>
-            </ng-container>
+              <ng-container matColumnDef="delete" [formGroup]="selectedForm">
+                
+                <mat-header-cell *matHeaderCellDef>  
+                    <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+                    <p>Eliminar</p>     
+                </mat-header-cell>
+                
+                <mat-cell *matCellDef="let element; let i = index"> 
+                    <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+                        <ion-checkbox (click)="activeDelete()" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                    </ng-template>                 
+                  </mat-cell>
 
+            </ng-container>
             <ng-container matColumnDef="nombre">
               <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
               <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>

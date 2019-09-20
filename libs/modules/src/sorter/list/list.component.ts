@@ -49,7 +49,7 @@ import { RailsConfigurationComponent } from './modals-zone/rails-configuration/r
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['icon', 'updateCarriles', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'configurarCarriles', 'warehoures'];
+  displayedColumns = ['updateCarriles', 'delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'configurarCarriles', 'warehoures'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
