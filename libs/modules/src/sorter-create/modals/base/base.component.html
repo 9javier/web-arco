@@ -18,7 +18,7 @@
   <ion-item>
     <ion-label position="floating">Almacenes</ion-label>
     <ion-select class="ion-margin-horizontal" [placeholder]="Almacen"
-      formControlName="warehouseId" required>
+      formControlName="warehouse" required>
       <ion-select-option *ngFor="let value of wareHouses" [value]="value.id">{{ value.name }}</ion-select-option>
     </ion-select>
   </ion-item>

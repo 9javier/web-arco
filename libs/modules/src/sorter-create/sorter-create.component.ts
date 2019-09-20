@@ -133,10 +133,10 @@ export class SorterCreateComponent implements OnInit {
   async update(row):Promise<void>{
     const { warehouse, ...data} = row;
     let payload = data;
-    payload = {
+    /*payload = {
       warehouse: warehouse.id,
       ...payload
-    };
+    };*/
 
 
     let modal = (await this.modalController.create({
@@ -147,7 +147,11 @@ export class SorterCreateComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
+      this.sorteService
+      .getIndex().subscribe((data) => {
+        this.sorters = data.data;
+        console.log(this.sorters)
+      });
     })
     modal.present();
   }
@@ -161,7 +165,11 @@ export class SorterCreateComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
+      this.sorteService
+      .getIndex().subscribe((data) => {
+        this.sorters = data.data;
+        console.log(this.sorters)
+      });
     })
     modal.present();
   }

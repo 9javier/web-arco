@@ -1,6 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { IntermediaryService } from '@suite/services';
 import { ModalController, NavParams } from '@ionic/angular';
+import { SorterService } from '../../../../../services/src/lib/endpoint/sorter/sorter.service';
+import { BaseComponent } from '../base/base.component';
 
 @Component({
   selector: 'suite-update',
@@ -9,17 +11,18 @@ import { ModalController, NavParams } from '@ionic/angular';
 })
 export class UpdateComponent implements OnInit {
 
+  @ViewChild(BaseComponent) base:BaseComponent;
   wareHouses: any;
   sorter: any;
 
   constructor(
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
-    private navParams:NavParams
+    private navParams:NavParams,
+    private sorteService: SorterService,
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
     this.sorter = this.navParams.get("sorter");
-    console.log(this.sorter)
   }
 
   ngOnInit() {
@@ -30,7 +33,16 @@ export class UpdateComponent implements OnInit {
   }
 
   submit(template):void{
-    console.log('submit')
+    let { colors, ...data} = this.base.getValue();
+    colors = [1];
+    const payload = {
+      active: false, colors, ...data
+    }
+    this.sorteService
+      .updateSorter(payload, payload.id).subscribe((data) => {
+        console.log(data);
+        this.close();
+      });
   }
 
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { IntermediaryService } from '@suite/services';
 import { ModalController, NavParams } from '@ionic/angular';
 import { BaseComponent } from '../base/base.component';
+import { SorterService } from 'libs/services/src/lib/endpoint/sorter/sorter.service';
 
 @Component({
   selector: 'suite-create',
@@ -16,7 +17,8 @@ export class CreateComponent implements OnInit {
   constructor(
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
-    private navParams:NavParams
+    private navParams:NavParams,
+    private sorteService: SorterService,
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
     console.log(this.wareHouses);
@@ -31,10 +33,14 @@ export class CreateComponent implements OnInit {
 
   submit():void{
     let { colors, ...data} = this.base.getValue();
-    colors = [1, 2, 3, 4];
+    colors = [1];
     const payload = {
       colors, ...data
     }
-    console.log(payload)
+    this.sorteService
+      .postCreate(payload).subscribe((data) => {
+        console.log(data.data);
+        this.close();
+      });
   }
 }

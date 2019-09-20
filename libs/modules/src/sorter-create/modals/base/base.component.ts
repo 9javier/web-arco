@@ -10,8 +10,8 @@ export class BaseComponent implements OnInit {
 
   @Input() set sorter(sorter){
     if(sorter) {
-      console.log(sorter);
       this.form.patchValue(sorter);
+      console.log(this.form.value);
     }
   }
 
@@ -23,8 +23,8 @@ export class BaseComponent implements OnInit {
     ways: ['', Validators.required],
     columns: ['', Validators.required],
     heights: ['', Validators.required],
-    warehouseId: ['', Validators.required],
-    colors: ['', Validators.required]
+    warehouse: ['', Validators.required],
+    colors: ['', Validators.required],
   });
 
   constructor(
