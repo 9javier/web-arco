@@ -12,8 +12,10 @@ import { UserModel, RolModel, IntermediaryService } from '@suite/services';
 import { UpdateComponent } from './modals/update/update.component';
 import { CreateComponent } from './modals/create/create.component';
 import { SorterService } from '../../../services/src/lib/endpoint/sorter/sorter.service';
+import { TemplateColorsService } from '../../../services/src/lib/endpoint/template-colors/template-colors.service';
 import { SorterModel } from '../../../services/src/models/endpoints/Sorter';
 import { tap, map } from 'rxjs/operators';
+import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 
 @Component({
   selector: 'suite-sorter-create',
@@ -44,6 +46,7 @@ export class SorterCreateComponent implements OnInit {
   dataSource = new SorterDataSource();
   warehouses: any = [];
   sorters: SorterModel.Sorter[] = [];
+  colors: TemplateColorsModel.TemplateColors[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   items: FormArray;
@@ -55,6 +58,7 @@ export class SorterCreateComponent implements OnInit {
     private modalController:ModalController,
     private sorteService: SorterService,
     private intermediaryService:IntermediaryService,
+    private templateColorsService:TemplateColorsService,
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -101,7 +105,10 @@ export class SorterCreateComponent implements OnInit {
           );
         }
       );
-
+    this.templateColorsService.getIndex().subscribe((data) => {
+      this.colors = data.data;
+      console.log(data.data)
+    })
     this.sorteService
       .getIndex().subscribe((data) => {
         this.intermediaryService.dismissLoading();
@@ -146,6 +153,7 @@ export class SorterCreateComponent implements OnInit {
       componentProps:{
         wareHouses: this.warehouses,
         sorter: payload,
+        colors: this.colors,
       }
     }));
     modal.onDidDismiss().then(()=>{
@@ -166,6 +174,7 @@ export class SorterCreateComponent implements OnInit {
       componentProps: {
         wareHouses: this.warehouses,
         sorter: row,
+        colors: this.colors,
       }
     }));
     modal.onDidDismiss().then(()=>{

@@ -26,12 +26,13 @@
     <ion-label position="floating">Colores</ion-label>
     <ion-select class="ion-margin-horizontal" [placeholder]="Colores" multiple="true"
       formControlName="colors" required>
-      <ion-select-option value="blanco">blanco</ion-select-option>
+      <ion-select-option *ngFor="let value of colors" [value]="value.id">{{ value.name }}</ion-select-option>
+      <!--<ion-select-option value="blanco">blanco</ion-select-option>
       <ion-select-option value="negro">negro</ion-select-option>
       <ion-select-option value="verde">verde</ion-select-option>
       <ion-select-option value="azul">azul</ion-select-option>
       <ion-select-option value="amarillo">amarillo</ion-select-option>
-      <ion-select-option value="rojo">rojo</ion-select-option>
+      <ion-select-option value="rojo">rojo</ion-select-option>-->
     </ion-select>
   </ion-item>
 </form>

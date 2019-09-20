@@ -16,6 +16,7 @@ export class BaseComponent implements OnInit {
   }
 
   @Input() wareHouses: any;
+  @Input() colors: any;
 
   form:FormGroup = this.formBuilder.group({
     id: [''],
