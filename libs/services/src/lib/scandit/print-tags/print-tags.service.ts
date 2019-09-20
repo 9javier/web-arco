@@ -171,7 +171,6 @@ export class PrintTagsScanditService {
                         } else {
                           this.printerService.printTagPriceUsingPrice(price);
                         }
-                        this.printerService.printTagPriceUsingPrice(response[0]);
                       } else if (response && response.length > 1) {
                         this.listProductsPrices = response;
                         // Request user select size to print
