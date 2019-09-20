@@ -5,11 +5,10 @@
         </ion-text>
         <div class="container">
           <mat-table #table [dataSource]="dataSource">
-
             <ng-container matColumnDef="delete" [formGroup]="selectedForm">
-                <mat-header-cell *matHeaderCellDef>  
+              <mat-header-cell *matHeaderCellDef>  
+                  <i class="material-icons">delete</i>
                   <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
-                  <p>Eliminar</p>     
               </mat-header-cell>
 
                 <mat-cell *matCellDef="let element; let i = index"> 

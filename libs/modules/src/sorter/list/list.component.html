@@ -16,11 +16,10 @@
     
     <div class="container">
       <mat-table #table [dataSource]="dataSource">
-
         <ng-container matColumnDef="delete" [formGroup]="selectedForm">
-            <mat-header-cell *matHeaderCellDef>  
+            <mat-header-cell *matHeaderCellDef>
+              <i class="material-icons">delete</i>
               <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
-              <p>Eliminar</p>     
           </mat-header-cell>
 
             <mat-cell *matCellDef="let element; let i = index"> 
@@ -29,10 +28,6 @@
                 </ng-template>                 
               </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="updateCarriles">
-            <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
-            <mat-cell *matCellDef="let element"> <ion-checkbox (click)="displayRails()"></ion-checkbox> </mat-cell>
-          </ng-container>
         <ng-container matColumnDef="Ntemplate">
           <mat-header-cell *matHeaderCellDef> Zonas </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.Ntemplate}} </mat-cell>
@@ -72,6 +67,12 @@
             </span> 
           </mat-cell>
       </ng-container>
+      <ng-container matColumnDef="updateCarriles">
+          <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
+          <mat-cell *matCellDef="let element"> 
+            <ion-radio (click)="displayRails()" slot="start" value="update"></ion-radio>
+          </mat-cell>
+        </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;"
