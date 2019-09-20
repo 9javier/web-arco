@@ -144,6 +144,12 @@ export class MenuComponent implements OnInit {
           id:'calendar',
           url: '/calendar',
           icon: 'md-calendar'
+        },
+        {
+          title: 'Calendario SGA',
+          id:'calendar-sga',
+          url: '/calendar-sga',
+          icon: 'md-calendar'
         }
       ]
     },
