@@ -7,8 +7,8 @@
           <mat-table #table [dataSource]="sorters">
             <ng-container matColumnDef="delete" [formGroup]="selectedForm">
                 <mat-header-cell *matHeaderCellDef>
+                    <i class="material-icons">delete</i>
                     <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
-                    <p>Eliminar</p>
                   </mat-header-cell>
                 <mat-cell *matCellDef="let items;let i = index">
                     <ng-template [ngIf]="selectedForm['controls']?.toSelect">
