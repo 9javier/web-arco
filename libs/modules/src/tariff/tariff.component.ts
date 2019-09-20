@@ -67,7 +67,6 @@ export class TariffComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // console.log(this.filters);
     this.filters.patchValue({ warehouseId: 1 });
     this.getWarehouses();
     this.getTariffs(this.page, this.limit, this.sortValues);
@@ -153,13 +152,10 @@ export class TariffComponent implements OnInit {
   }
 
   // changeCheckBox(i) {
-  //   // console.log('Position ', i);
-  //   // console.log('this.selectedForm.value.toSelect[i] ', this.selectedForm.value.toSelect[i]);
 
   // }
 
   onChecked(i, event) {
-    // console.log('On Change Check ',i , event);
     let tariff: any = this.tariffs[i];
 
     let exist = _.find(this.tariffsUpdate, {'position': i});
@@ -180,7 +176,6 @@ export class TariffComponent implements OnInit {
       }
     }
 
-    // console.log('this.tariffsUpdate after push', this.tariffsUpdate);
   }
 
   /**
@@ -201,14 +196,12 @@ export class TariffComponent implements OnInit {
 
     // });
 
-    // // console.log(list);
     this.intermediaryService.presentLoading("Modificando los seleccionados");
     this.tariffService.updateEnabled({elements:this.tariffsUpdate}).subscribe(result => {
       this.intermediaryService.dismissLoading();
       this.listenChanges();
     },error=>{
       this.intermediaryService.dismissLoading();
-      // console.log(error);
     });
 
   }
@@ -235,7 +228,6 @@ export class TariffComponent implements OnInit {
       this.formBuilder.array(items.map(item => new FormControl(Boolean(item.enabled))))
     );
 
-    // console.log('Init ', this.selectedForm.value);
 
   }
 

@@ -51,7 +51,7 @@ export class ProductDetailsComponent implements OnInit {
   dates: any[] = [];
   hours: any[] = [];
 
-  public isProductRelocationEnabled: boolean = false;
+  public isProductRelocationEnabled: boolean = true;
 
   constructor(
     private typeService: TypesService,
@@ -138,22 +138,51 @@ export class ProductDetailsComponent implements OnInit {
     this.warehouseSelected = null;
   }
 
-  private saveDataMovement(product) {
+  public async saveDataMovement(product) {
     if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
-      let referenceProduct = product.reference;
-      let textLoading = 'Reubicando producto...';
-      let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
-      if (this.referenceContainer) {
-        let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
-        textToastOk += ' en Ubicación ' + location;
-      } else {
-        textToastOk += ' de tienda.';
-      }
-      this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk);
-    }
+      let idWarehouseOrigin = this.product.warehouse.id;
+      if (this.warehouseSelected != idWarehouseOrigin) {
+        let alertRequestMovement = await this.alertController.create({
+          header: 'Atención',
+          message: 'Está a punto de mover un producto entre almacenes y/o tiendas. ¿Quiere generar un escaneo de destino en Avelon para el movimiento?',
+          buttons: [
+            'Cancelar',
+            {
+              text: 'No generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, true);
+              }
+            },
+            {
+              text: 'Generar',
+              handler: () => {
+                this.processMovementMessageAndLocate(product, false);
+              }
+            }
+          ]
+        });
 
+        await alertRequestMovement.present();
+      } else {
+        this.processMovementMessageAndLocate(product, true);
+      }
+    }
   }
-  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string) {
+
+  private processMovementMessageAndLocate(product, generateAvelonMovement: boolean) {
+    let referenceProduct = product.productShoeUnit.reference;
+    let textLoading = 'Reubicando producto...';
+    let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
+    if (this.referenceContainer) {
+      let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
+      textToastOk += ' en Ubicación ' + location;
+    } else {
+      textToastOk += ' de tienda.';
+    }
+    this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk, generateAvelonMovement);
+  }
+
+  private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string, generateAvelonMovement: boolean) {
     if (!this.loading) {
       this.showLoading(textLoading || 'Ubicando producto...').then(() => {
         let inventoryProcess: InventoryModel.Inventory = {
@@ -163,7 +192,7 @@ export class ProductDetailsComponent implements OnInit {
 
         if (referenceContainer) inventoryProcess.containerReference = referenceContainer;
 
-        this.storeProductInContainer(inventoryProcess, textToastOk);
+        this.storeProductInContainer(inventoryProcess, textToastOk, generateAvelonMovement);
       });
     }
   }
@@ -183,39 +212,6 @@ export class ProductDetailsComponent implements OnInit {
       color: color || "primary"
     });
     toast.present();
-  }
-  loadProducts() {
-    this.inventoryService
-      .productsByContainer(this.container.id)
-      .then((data: Observable<HttpResponse<InventoryModel.ResponseProductsContainer>>) => {
-        data.subscribe((res: HttpResponse<InventoryModel.ResponseProductsContainer>) => {
-          this.listProducts = res.body.data
-            .map(product => {
-              return {
-                id: product.productShoeUnit.id,
-                reference: product.productShoeUnit.reference,
-                status: product.status,
-                name: 'Producto - ' + product.productShoeUnit.reference,
-                warehouseId: product.warehouse.id,
-                rackId: product.rack.id,
-                containerId: product.container.id,
-                hall: product.rack.hall,
-                row: product.container.row,
-                column: product.container.column,
-              }
-            });
-          if (this.listProducts && this.listProducts.length) {
-            this.warehouseSelected = this.listProducts[0].warehouseId;
-            this.changeSelect(1);
-            this.hallSelected = this.listProducts[0].rackId;
-            this.changeSelect(2);
-            this.rowSelected = this.listProducts[0].row;
-            this.changeSelect(3);
-            this.columnSelected = this.listProducts[0].column;
-            this.changeSelect(4);
-          }
-        });
-      });
   }
 
   private changeSelect(source) {
@@ -313,7 +309,11 @@ export class ProductDetailsComponent implements OnInit {
   }
 
 
-  private storeProductInContainer(params, textToastOk) {
+  private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
+    if (typeof generateAvelonMovement != 'undefined') {
+      params.avoidAvelonMovement = generateAvelonMovement;
+    }
+
     this.inventoryService
       .postStore(params)
       .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
@@ -323,9 +323,15 @@ export class ProductDetailsComponent implements OnInit {
             this.loading = null;
           }
           if (res.body.code == 200 || res.body.code == 201) {
-            //this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
-            this.loadProducts();
-            this.loadProductsHistory();
+            this.getProductHistorical();
+            this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
+            this.product.container = res.body.data.destinationContainer;
+            this.product.warehouse = res.body.data.destinationWarehouse;
+            this.product.productShoeUnit = res.body.data.productShoeUnit;
+            this.warehouseSelected = null;
+            this.hallSelected = null;
+            this.rowSelected = null;
+            this.columnSelected = null;
           } else if (res.body.code == 428) {
             this.showWarningToForce(params, textToastOk);
           } else {

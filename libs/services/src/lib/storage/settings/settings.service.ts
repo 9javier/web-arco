@@ -9,6 +9,7 @@ import {AppSettingsModel} from "../../../models/storage/AppSettings";
 export class SettingsService {
 
   private static readonly STORAGE_KEY_PRINTER_BLUETOOTH_MAC_ADDRESS = "printer_bluetooth_mac_address";
+  private static readonly STORAGE_KEY_TRANSFER_PACKING_LAST_METHOD = "transfer_packing_last_method";
 
   constructor(
   ) {}
@@ -23,7 +24,8 @@ export class SettingsService {
       resolve(Observable.create((obs) => {
         console.debug("PRINT::getDeviceSettings 2 [" + new Date().toJSON() + "]");
         obs.next({
-          printerBluetoothMacAddress: localStorage.getItem(SettingsService.STORAGE_KEY_PRINTER_BLUETOOTH_MAC_ADDRESS)
+          printerBluetoothMacAddress: localStorage.getItem(SettingsService.STORAGE_KEY_PRINTER_BLUETOOTH_MAC_ADDRESS),
+          transferPackingLastMethod: localStorage.getItem(SettingsService.STORAGE_KEY_TRANSFER_PACKING_LAST_METHOD)
         });
       }));
     });
@@ -35,7 +37,12 @@ export class SettingsService {
    */
   async saveDeviceSettings(data: AppSettingsModel.AppSettings) {
     return new Promise((resolve, reject) => {
-      localStorage.setItem(SettingsService.STORAGE_KEY_PRINTER_BLUETOOTH_MAC_ADDRESS, data.printerBluetoothMacAddress);
+      if (data.printerBluetoothMacAddress) {
+        localStorage.setItem(SettingsService.STORAGE_KEY_PRINTER_BLUETOOTH_MAC_ADDRESS, data.printerBluetoothMacAddress);
+      }
+      if (data.transferPackingLastMethod) {
+        localStorage.setItem(SettingsService.STORAGE_KEY_TRANSFER_PACKING_LAST_METHOD, data.transferPackingLastMethod);
+      }
       resolve();
     });
   }

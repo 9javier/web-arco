@@ -209,3 +209,7 @@ export * from './components/filter-button/filter-button.module';
 /** Popover for filters */
 export * from './components/filter-popover/filter-popover.component';
 export * from './components/filter-popover/filter-popover.module';
+
+/** Transfer Packing */
+export * from './transfer-packing/transfer-packing.component';
+export * from './transfer-packing/transfer-packing.module';

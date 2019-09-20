@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
-import { ScanditProvider } from "../../../providers/scandit/scandit.provider";
-import { ScanditModel } from "../../../models/scandit/Scandit";
-import { PrinterService } from "../../printer/printer.service";
-import { AuthenticationService, PriceService, ProductModel, ProductsService } from "@suite/services";
-import { PackingInventoryService } from "../../endpoint/packing-inventory/packing-inventory.service";
-import { PackingInventoryModel } from "../../../models/endpoints/PackingInventory";
+import {Injectable} from '@angular/core';
+import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
+import {ScanditModel} from "../../../models/scandit/Scandit";
+import {PrinterService} from "../../printer/printer.service";
+import {AuthenticationService, PriceModel, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
+import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-inventory.service";
+import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
+import {PrintModel} from "../../../models/endpoints/Print";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let Scandit;
 declare let GScandit;
@@ -20,11 +22,21 @@ export class PrintTagsScanditService {
    * 2 - Price Tag
    * 3 - Packing Tag
    */
-  private typeTags: 1 | 2 | 3 | 4 = 1;
+  private typeTags: 1|2|3|4 = 1;
   private timeoutHideText;
 
   private listProductsPrices: any[];
   private productRelabel: ProductModel.SizesAndModel;
+  private lastCodeScanned: string = 'start';
+  private lastProductReferenceScanned: string = 'start';
+  private scannedPaused: boolean = false;
+
+  private productToPrintPvpLabel: PriceModel.PriceByModelTariff = null;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
+
+  private readonly timeMillisToResetScannedCode: number = 1000;
 
   constructor(
     private printerService: PrinterService,
@@ -33,7 +45,9 @@ export class PrintTagsScanditService {
     private productsService: ProductsService,
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider
-  ) { }
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   printTagsReferences() {
     this.typeTags = 1;
@@ -55,22 +69,28 @@ export class PrintTagsScanditService {
     this.initPrintTags();
   }
 
-  private initPrintTags() {
-    let scannedPaused: boolean = false;
-    let lastCodeScanned: string = 'start';
-    let codeScanned: string = null;
-    ScanditMatrixSimple.initPrintTags((response: ScanditModel.ResponsePrintTags) => {
-      if (response && response.result) {
-        // Lock scan same code two times
-        if (response.barcode && response.barcode.data != lastCodeScanned) {
+  private async initPrintTags() {
+    this.isStoreUser = await this.authService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authService.getStoreCurrentUser();
+    }
 
-          // Lock scan in less than two seconds
-          /*if (!scannedPaused) {
-            scannedPaused = true;
-            setTimeout(() => scannedPaused = false, 2 * 1000);*/
+    this.lastCodeScanned = 'start';
+    let codeScanned: string = null;
+    let timeoutStarted = null;
+
+    ScanditMatrixSimple.initPrintTags(async (response: ScanditModel.ResponsePrintTags) => {
+      if (response && response.result) {
+        if (response.barcode && response.barcode.data != this.lastCodeScanned && !this.scannedPaused) {
 
           codeScanned = response.barcode.data;
-          lastCodeScanned = codeScanned;
+          this.lastCodeScanned = codeScanned;
+          this.lastProductReferenceScanned = codeScanned;
+
+          if (timeoutStarted) {
+            clearTimeout(timeoutStarted);
+          }
+          timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
           switch (this.scanditProvider.checkCodeValue(codeScanned)) {
             case this.scanditProvider.codeValue.PRODUCT:
@@ -78,27 +98,42 @@ export class PrintTagsScanditService {
                 case 1:
                   this.printerService.printTagBarcode([codeScanned])
                     .subscribe((res) => {
+                      console.log('Printed product tag ... ', res);
                     }, (error) => {
                       console.warn('Error to print tag ... ', error);
                     });
                   break;
                 case 2:
-                  this.printerService.printTagPrices([codeScanned])
-                    .subscribe((res) => {
-                    }, (error) => {
-                      console.warn('Error to print tag ... ', error);
-                    });
+                  ScanditMatrixSimple.showLoadingDialog('Consultando precio del producto...');
+                  this.priceService
+                    .postPricesByProductsReferences({ references: [codeScanned] })
+                    .subscribe((prices) => {
+                      ScanditMatrixSimple.hideLoadingDialog();
+                      let price = prices[0];
+                      if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                        this.scannedPaused = true;
+                        this.productToPrintPvpLabel = price;
+                        ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                      } else {
+                        this.printerService.printTagPriceUsingPrice(price);
+                      }
+                    }, () => ScanditMatrixSimple.hideLoadingDialog());
                   break;
                 case 3:
                   // Check packing of product
                   this.getCarrierOfProductAndPrint(codeScanned);
                   break;
                 case 4:
-                  this.printerService.printTagBarcode([codeScanned])
-                    .subscribe((res) => {
-                    }, (error) => {
-                      console.warn('Error to print tag ... ', error);
-                    });
+                  if (this.isStoreUser) {
+                    this.postRelabelProduct(this.lastProductReferenceScanned);
+                  } else {
+                    this.printerService.printTagBarcode([codeScanned])
+                      .subscribe((res) => {
+                        console.log('Printed product tag ... ', res);
+                      }, (error) => {
+                        console.warn('Error to print tag ... ', error);
+                      });
+                  }
                   break;
                 default:
                   ScanditMatrixSimple.setText(
@@ -122,19 +157,29 @@ export class PrintTagsScanditService {
                   break;
                 case 2:
                   // Query sizes_range for product model
+                  ScanditMatrixSimple.showLoadingDialog('Consultando precio del producto...');
                   this.priceService
                     .postPricesByModel(codeScanned)
                     .subscribe((response) => {
+                      ScanditMatrixSimple.hideLoadingDialog();
                       if (response && response.length == 1) {
-                        this.printerService.printTagPriceUsingPrice(response[0]);
+                        let price = response[0];
+                        if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                          this.scannedPaused = true;
+                          this.productToPrintPvpLabel = price;
+                          ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                        } else {
+                          this.printerService.printTagPriceUsingPrice(price);
+                        }
                       } else if (response && response.length > 1) {
                         this.listProductsPrices = response;
                         // Request user select size to print
                         ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', response);
                       }
                     }, (error) => {
+                      ScanditMatrixSimple.hideLoadingDialog();
                       // Reset last-code-scanned to can scan another time the same code
-                      lastCodeScanned = 'start';
+                      this.lastCodeScanned = 'start';
                       ScanditMatrixSimple.setText(
                         'Ha ocurrido un error al consultar los precios del artículo escaneado.',
                         this.scanditProvider.colorsMessage.error.color,
@@ -179,11 +224,27 @@ export class PrintTagsScanditService {
         } else if (response.action == 'select_size') {
           let sizeSelected: number = response.size_selected;
           if (this.typeTags == 2) {
-            this.printerService.printTagPriceUsingPrice(this.listProductsPrices[sizeSelected]);
+            let price = this.listProductsPrices[sizeSelected];
+            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+              this.scannedPaused = true;
+              this.productToPrintPvpLabel = price;
+              ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+            } else {
+              this.printerService.printTagPriceUsingPrice(price);
+            }
           } else if (this.typeTags == 4) {
             let modelId = this.productRelabel.model.id;
             let sizeId = this.productRelabel.sizes[sizeSelected].id;
-            this.postRelabelProduct(modelId, sizeId);
+            this.postRelabelProduct(this.lastProductReferenceScanned, modelId, sizeId);
+          }
+        } else if (response.action == 'print_pvp_label') {
+          this.scannedPaused = false;
+          if (response.response) {
+            this.productToPrintPvpLabel.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+            this.printerService.printTagPriceUsingPrice(this.productToPrintPvpLabel);
+          } else {
+            this.lastCodeScanned = 'start';
+            this.productToPrintPvpLabel = null;
           }
         }
       }
@@ -191,14 +252,16 @@ export class PrintTagsScanditService {
   }
 
   private getSizeListByReference(code: string) {
+    ScanditMatrixSimple.showLoadingDialog('Consultando información del producto...');
     this.productsService
       .getInfo(code)
       .subscribe((res: ProductModel.ResponseInfo) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200) {
           let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
-              this.postRelabelProduct(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
+              this.postRelabelProduct(code, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
             } else {
               let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
               this.productRelabel = responseSizeAndModel;
@@ -223,6 +286,7 @@ export class PrintTagsScanditService {
           this.hideTextMessage(1500);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe::GetInfo -> ', error);
         ScanditMatrixSimple.setText(
           'No se ha podido consultar la información del producto escaneado.',
@@ -233,20 +297,28 @@ export class PrintTagsScanditService {
       });
   }
 
-  private async postRelabelProduct(modelId: number, sizeId: number) {
-    let warehouseUser = await this.authService.getWarehouseCurrentUser();
-    let warehouseId = null;
-    if (warehouseUser) {
-      warehouseId = warehouseUser.id;
+  private async postRelabelProduct(productReference: string, modelId?: number, sizeId?: number) {
+    let paramsRelabel: ProductModel.ParamsRelabel = {
+      productReference
+    };
+
+    if (this.isStoreUser) {
+      paramsRelabel.warehouseId = this.storeUserObj.id;
     }
 
+    if (modelId) {
+      paramsRelabel.modelId = modelId;
+    }
+
+    if (sizeId) {
+      paramsRelabel.sizeId = sizeId;
+    }
+
+    ScanditMatrixSimple.showLoadingDialog('Generando nueva etiqueta...');
     this.productsService
-      .postRelabel({
-        modelId,
-        sizeId,
-        warehouseId
-      })
+      .postRelabel(paramsRelabel)
       .subscribe((res: ProductModel.ResponseRelabel) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200) {
           // Do product print
           this.printerService.printTagBarcodeUsingProduct(res.data);
@@ -259,6 +331,7 @@ export class PrintTagsScanditService {
           this.hideTextMessage(1500);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe::Relabel -> ', error);
         ScanditMatrixSimple.setText(
           'Ha ocurrido un error al intentar consultar la información de la talla.',
@@ -270,11 +343,13 @@ export class PrintTagsScanditService {
   }
 
   private getCarrierOfProductAndPrint(codeScanned: string) {
+    ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje del producto...');
     this.packingInventorService
       .getCarrierOfProduct(codeScanned)
       .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200) {
-          this.printerService.print({ text: [res.data.reference], type: 0 })
+          this.printerService.print({text: [res.data.reference], type: 0})
         } else {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
@@ -291,6 +366,7 @@ export class PrintTagsScanditService {
           this.hideTextMessage(1500);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
         let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
         if (error.error) {
@@ -311,8 +387,8 @@ export class PrintTagsScanditService {
       });
   }
 
-  private hideTextMessage(delay: number) {
-    if (this.timeoutHideText) {
+  private hideTextMessage(delay: number){
+    if(this.timeoutHideText){
       clearTimeout(this.timeoutHideText);
     }
     this.timeoutHideText = setTimeout(() => {

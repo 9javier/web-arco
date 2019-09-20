@@ -87,7 +87,6 @@ export class UserManagerComponent implements OnInit {
     })).subscribe(userProccess => {
       this.formGroup = this.buildForm(userProccess);
       this.toDelete = this.formGroup.value;
-      // console.log(this.formGroup.value);
       if (this.utils)
         this.utils.dismissLoading();
     });
@@ -111,7 +110,6 @@ export class UserManagerComponent implements OnInit {
         performance: userProcess.performance || 0
       }));
     });
-    // console.log(userProcessForm)
     return userProcessForm;
   }
 
@@ -137,7 +135,6 @@ export class UserManagerComponent implements OnInit {
     let toDeleteValues = this.sanitize(JSON.parse(JSON.stringify(this.toDelete)));
     this.userProcessService.postUnAssign(toDeleteValues).subscribe(response => {
       this.userProcessService.postAssign(formValues).subscribe(response => {
-        // console.log("value", this.formGroup.value);
         this.utils.presentAlert("Éxito", "Nueva configuración asignada");
         this.toDelete = this.formGroup.value;
         this.utils.dismissLoading();

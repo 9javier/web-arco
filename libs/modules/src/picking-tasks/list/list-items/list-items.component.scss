@@ -2,17 +2,34 @@ mat-grid-list {
   mat-grid-tile.mat-grid-tile {
     font-size: 16px;
     line-height: 20px;
+    mat-radio-group {
+      margin-left: 5vw;
+    }
     div.tile-value {
       justify-content: start !important;
       width: 100%;
       color: var(--ion-color-tertiary);
-      padding: 16px;
-      .store-ref {
-        font-weight: 500;
+      padding-left: 16px;
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
+        .store-ref {
+          font-weight: 500;
+        }
+      }
+      p.show-stores-list {
+        width: 100%;
+        color: var(--ion-color-link-button);
+        font-size: 15px;
+        cursor: pointer;
       }
     }
     div.tile-value-right {
-      justify-content: end !important;
+      padding-right: 24px;
+      width: 100%;
+      text-align: right !important;
     }
     ion-select {
       border: 1px solid black;
@@ -36,6 +53,28 @@ mat-grid-list {
         position: absolute;
         top: 0;
         left: 10px;
+      }
+    }
+  }
+}
+mat-grid-list.destiny-type {
+  min-height: 56px;
+  height: auto;
+}
+mat-grid-list.quantities-shoes {
+  mat-grid-tile.quantity {
+    width: auto;
+    div.quantities-shoes {
+      width: 100%;
+      div.quantity {
+        margin-left: 16px;
+        display: inline-block;
+        width: auto;
+        font-size: 14px;
+        color: #979797;
+        span {
+          color: black;
+        }
       }
     }
   }

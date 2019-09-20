@@ -199,7 +199,6 @@ export class AppComponent implements OnInit {
       /* Check for Authenticated user */
       await this.authenticationService.checkToken();
       this.authenticationService.authenticationState.subscribe(state => {
-        console.log("cambio",state);
         clearTimeout(this.loginTimeout);
         this.loginTimeout = setTimeout(()=>{
           if (state) {
@@ -237,7 +236,6 @@ export class AppComponent implements OnInit {
       /* Update to display current route on Access Denied from Server */
       // this.router.events.subscribe(ev => {
       //   if (ev instanceof NavigationEnd) {
-      //     console.log(ev.url);
       //     this.appPages.map((page, i) =>
       //       page.url === ev.url
       //         ? (this.currentRoute = this.appPages[i].title)
@@ -252,14 +250,12 @@ export class AppComponent implements OnInit {
     app.name = "sga";
     /**Set the dictionary of access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
-      console.log("dictionaryManagement", "ngOnInit: dictionaryAcessState.subscribe", JSON.parse(JSON.stringify(state)));
       this.dictionary = state;
     });
     this.initializeApp();
   }
 
   tapOption(p: MenuItem) {
-    console.log(p);
     this.currentRoute = p.title;
     if (p.title === 'Logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
@@ -269,7 +265,6 @@ export class AppComponent implements OnInit {
             this.authenticationService.logout().then(success => {
               this.router.navigateByUrl('/login')
             });
-            console.log(data);
           });
       });
     }

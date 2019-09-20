@@ -9,6 +9,7 @@ import {WarehouseModel} from "@suite/services";
 import {ReceptionModel} from "../../../models/endpoints/Reception";
 import {ReceptionProvider} from "../../../providers/reception/reception.provider";
 import {Router} from "@angular/router";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let ScanditMatrixSimple;
 
@@ -19,9 +20,13 @@ export class ReceptionScanditService {
 
   private timeoutHideText;
   private scannerPaused: boolean = false;
-  private userWarehouse: WarehouseModel.Warehouse;
   private lastCodeScanned: string;
   private typeReception: number = 1;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
+
+  private readonly timeMillisToResetScannedCode: number = 1000;
 
   constructor(
     private router: Router,
@@ -34,13 +39,20 @@ export class ReceptionScanditService {
     private receptionService: ReceptionService,
     private scanditProvider: ScanditProvider,
     private receptionProvider: ReceptionProvider
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   async reception(typeReception: number) {
-    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
     this.lastCodeScanned = 'start';
     this.receptionProvider.resumeProcessStarted = false;
     this.typeReception = typeReception;
+    let timeoutStarted = null;
 
     ScanditMatrixSimple.init((response) => {
       let code = '';
@@ -51,6 +63,12 @@ export class ReceptionScanditService {
 
           if (!this.scannerPaused && code != this.lastCodeScanned) {
             this.lastCodeScanned = code;
+
+            if (timeoutStarted) {
+              clearTimeout(timeoutStarted);
+            }
+            timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
             this.scannerPaused = true;
             switch (this.scanditProvider.checkCodeValue(code)) {
               case this.scanditProvider.codeValue.JAIL:
@@ -125,9 +143,11 @@ export class ReceptionScanditService {
       ScanditMatrixSimple.showFixedTextBottom(false, '');
       this.receptionProvider.referencePacking = code;
 
+      ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje a recepcionar...');
       this.receptionService
         .getCheckPacking(code)
         .subscribe((res: ReceptionModel.ResponseCheckPacking) => {
+          ScanditMatrixSimple.hideLoadingDialog();
           if (res.code == 200) {
             ScanditMatrixSimple.setText(
               `${this.receptionProvider.literalsJailPallet.packing_emptied}`,
@@ -152,6 +172,7 @@ export class ReceptionScanditService {
             setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
           }
         }, (error) => {
+          ScanditMatrixSimple.hideLoadingDialog();
           if (error.error.code == 428) {
             // Process custom status-code response to check packing
             ScanditMatrixSimple.showWarning(true, `¿Quedan productos sin recepcionar en ${code}?`, 'reception_incomplete', 'Sí', 'No');
@@ -181,11 +202,13 @@ export class ReceptionScanditService {
 
   // Reception of packing in MGA and all products associated
   private setPackingAsReceived(packingReference: string) {
+    ScanditMatrixSimple.showLoadingDialog('Recepcionando embalaje...');
     this.receptionService
       .postReceive({
         packingReference: packingReference,
       })
       .subscribe((res: ReceptionModel.ResponseReceive) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
           if (this.typeReception == 1) {
             ScanditMatrixSimple.showFixedTextBottom(false, '');
@@ -220,6 +243,7 @@ export class ReceptionScanditService {
           setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         ScanditMatrixSimple.setText(
           error.error.errors,
           this.scanditProvider.colorsMessage.error.color,
@@ -240,9 +264,11 @@ export class ReceptionScanditService {
       params.force = force;
     }
 
+    ScanditMatrixSimple.showLoadingDialog('Recepcionando producto...');
     this.receptionService
       .postReceiveProduct(params)
       .subscribe((response: ReceptionModel.ResponseReceptionProduct) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (response.code == 201) {
           ScanditMatrixSimple.setText(
             `Producto recepcionado.`,
@@ -262,6 +288,7 @@ export class ReceptionScanditService {
           this.hideTextMessage(1500);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (error.error.code == 428) {
           this.scannerPaused = true;
           ScanditMatrixSimple.showWarningToForce(true, referenceProduct);
@@ -277,9 +304,11 @@ export class ReceptionScanditService {
   }
 
   private incidenceNotReceived(packingReference: string) {
+    ScanditMatrixSimple.showLoadingDialog('Notificando productos no recepcionados...');
     this.receptionService
       .getNotReceivedProducts(packingReference)
       .subscribe((res: ReceptionModel.ResponseNotReceivedProducts) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 201) {
           ScanditMatrixSimple.setText(
             `${this.receptionProvider.literalsJailPallet.packing_emptied}`,
@@ -293,6 +322,7 @@ export class ReceptionScanditService {
           console.error('Error::Subscribe::Set products as not received after empty packing::', res);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
         this.scannerPaused = false;
         console.error('Error::Subscribe::Set products as not received after empty packing::', error);
       });

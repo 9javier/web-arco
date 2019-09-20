@@ -13,7 +13,8 @@ export namespace InventoryModel {
   export interface Inventory {
     productReference?: string,
     containerReference?: string,
-    warehouseId?: number
+    warehouseId?: number,
+    avoidAvelonMovement?: boolean
   }
 
   export interface InventoryProcess {
@@ -53,7 +54,8 @@ export namespace InventoryModel {
           lock: boolean,
           on_right_side: boolean,
           items: number
-      }
+      },
+      warehouse: any
   }
 
   export interface ResponseSearchInContainer extends Request.Success{

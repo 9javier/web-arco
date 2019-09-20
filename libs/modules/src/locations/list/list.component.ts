@@ -92,13 +92,6 @@ export class ListComponent implements OnInit {
         component: updateComponent,
         componentProps: { id: row.id, row: row, routePath: this.routePath }
       });
-      //  console.log("test",{ id: row.id, row: {
-      //   hall:row.hall,
-      //   id:row.id,
-      //   columns:row.columns,
-      //   rows:row.rows,
-      //   enabled:true
-      // }, routePath: this.routePath });
       modal.onDidDismiss()
         .then(() => {
           this.initHalls();
@@ -351,11 +344,22 @@ export class ListComponent implements OnInit {
   }
 
   async printReferencesLocations() {
-    for (let idLocation in this.locationsSelected) {
-      let container = this.locationsSelected[idLocation].column;
-      await this.printerService.print({ text: [container.reference], type: 0 })
+    if ((<any>window).cordova) {
+      for (let idLocation in this.locationsSelected) {
+        let container = this.locationsSelected[idLocation].column;
+        await this.printerService.print({text: [container.reference], type: 0})
         // stop errors and attempt to print next tag
-        .catch(reason => { });
+          .catch(reason => {});
+      }
+    } else {
+      let referencesToPrint: Array<string> = [];
+      for (let idLocation in this.locationsSelected) {
+        let container = this.locationsSelected[idLocation].column;
+        referencesToPrint.push(container.reference);
+      }
+      if (referencesToPrint.length > 0) {
+        await this.printerService.printBarcodesOnBrowser(referencesToPrint);
+      }
     }
   }
 

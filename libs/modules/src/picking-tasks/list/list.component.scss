@@ -1,12 +1,23 @@
+div.main-element-list-pickings {
+  height: 100vh;
+}
 div.scroll-list {
   overflow-y: scroll;
-  height: 92vh;
+  height: calc(100vh - 54px - 56px);
+
+  p.msg-empty-pickings {
+    height: 64px;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+  }
 }
 mat-grid-list {
   border-bottom: 1px solid #c3c3c3;
   mat-grid-tile.mat-grid-tile {
     font-size: 16px;
     line-height: 20px;
+    height: 24px;
     div.tile-title {
       color: var(--ion-color-tertiary);
       justify-content: start !important;
@@ -15,7 +26,9 @@ mat-grid-list {
       font-weight: 500;
     }
     div.tile-title-right {
-      justify-content: end !important;
+      padding-right: 24px;
+      width: 100%;
+      text-align: right !important;
       font-weight: 500;
     }
   }

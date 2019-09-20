@@ -10,6 +10,7 @@ import {switchMap} from "rxjs/operators";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {Location} from "@angular/common";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-textarea',
@@ -27,6 +28,7 @@ export class TextareaComponent implements OnInit {
   pickingId: number;
   listProducts: ShoesPickingModel.ShoesPicking[];
   typePacking: number;
+  typePicking: number;
   packingReference: string = null;
   processInitiated: boolean = false;
   jailReference: string = null;
@@ -43,6 +45,9 @@ export class TextareaComponent implements OnInit {
   private putProductNotFoundUrl = environment.apiBase+"/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private http: HttpClient,
     private auth: AuthenticationService,
@@ -56,6 +61,7 @@ export class TextareaComponent implements OnInit {
     private scanditProvider: ScanditProvider,
     private intermediaryService: IntermediaryService
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -65,6 +71,7 @@ export class TextareaComponent implements OnInit {
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
     this.typePacking = this.pickingProvider.typePacking;
+    this.typePicking = this.pickingProvider.typePicking;
     this.packingReference = this.pickingProvider.packingReference;
     this.literalsJailPallet = this.pickingProvider.literalsJailPallet;
 
@@ -98,6 +105,11 @@ export class TextareaComponent implements OnInit {
       }
       this.lastCodeScanned = dataWrited;
 
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
       this.inputPicking = null;
       if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {
         if (this.listProducts.length != 0) {
@@ -111,7 +123,7 @@ export class TextareaComponent implements OnInit {
           if ((this.packingReference && this.packingReference == dataWrited) || !this.packingReference) {
             this.timeLastCodeScanned = new Date().getTime();
             this.lastCarrierScanned = dataWrited;
-            if (typePackingScanned == this.typePacking) {
+            if ((this.typePacking && typePackingScanned == this.typePacking) || !this.typePacking) {
               this.intermediaryService.presentLoading();
               this.postVerifyPacking({
                 status: 2,
@@ -232,49 +244,26 @@ export class TextareaComponent implements OnInit {
               productReference: dataWrited
             };
             this.intermediaryService.presentLoading();
-            this.inventoryService
-              .postPicking(picking)
-              .subscribe((res: InventoryModel.ResponsePicking) => {
-                this.intermediaryService.dismissLoading();
-                if (res.code == 200 || res.code == 201) {
-                  this.listProducts = res.data.shoePickingPending;
-                  this.productsScanned.push(dataWrited);
-                  this.inputPicking = null;
-                  this.presentToast(`Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`, 2000, this.pickingProvider.colorsMessage.info.name);
-                  if (this.listProducts.length > 0) {
-                    this.setNexProductToScan(this.listProducts[0]);
-                  } else {
-                    this.showNexProductToScan(false);
-                    setTimeout(() => {
-                      this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                      this.dataToWrite = 'CONTENEDOR';
-                      this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
-                    }, 2 * 1000);
-                  }
-                } else {
-                  this.inputPicking = null;
-                  this.presentToast(res.message, 2000, this.pickingProvider.colorsMessage.error.name);
-                  this.getPendingListByPicking(this.pickingId)
-                    .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
-                      if (res.code == 200 || res.code == 201) {
-                        this.listProducts = res.data;
-                        if (this.listProducts.length > 0) {
-                          this.setNexProductToScan(this.listProducts[0]);
-                        } else {
-                          this.showNexProductToScan(false);
-                          setTimeout(() => {
-                            this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
-                            this.dataToWrite = 'CONTENEDOR';
-                            this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
-                          }, 2 * 1000);
-                        }
-                      }
-                    });
-                }
-              }, (error) => {
-                this.intermediaryService.dismissLoading();
+            let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
+              this.intermediaryService.dismissLoading();
+              if (res.code == 200 || res.code == 201) {
+                this.listProducts = res.data.shoePickingPending;
+                this.productsScanned.push(dataWrited);
                 this.inputPicking = null;
-                this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+                this.presentToast(`Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`, 2000, this.pickingProvider.colorsMessage.info.name);
+                if (this.listProducts.length > 0) {
+                  this.setNexProductToScan(this.listProducts[0]);
+                } else {
+                  this.showNexProductToScan(false);
+                  setTimeout(() => {
+                    this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                    this.dataToWrite = 'CONTENEDOR';
+                    this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
+                  }, 2 * 1000);
+                }
+              } else {
+                this.inputPicking = null;
+                this.presentToast(res.message, 2000, this.pickingProvider.colorsMessage.error.name);
                 this.getPendingListByPicking(this.pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
                     if (res.code == 200 || res.code == 201) {
@@ -291,9 +280,35 @@ export class TextareaComponent implements OnInit {
                       }
                     }
                   });
-              }, () => {
-                this.intermediaryService.dismissLoading();
-              });
+              }
+            };
+            let subscribeError = (error) => {
+              this.intermediaryService.dismissLoading();
+              this.inputPicking = null;
+              this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+              this.getPendingListByPicking(this.pickingId)
+                .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                  if (res.code == 200 || res.code == 201) {
+                    this.listProducts = res.data;
+                    if (this.listProducts.length > 0) {
+                      this.setNexProductToScan(this.listProducts[0]);
+                    } else {
+                      this.showNexProductToScan(false);
+                      setTimeout(() => {
+                        this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
+                        this.dataToWrite = 'CONTENEDOR';
+                        this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
+                      }, 2 * 1000);
+                    }
+                  }
+                });
+            };
+
+            if (this.typePicking == 1) {
+              this.inventoryService.postPickingDirect(picking).subscribe(subscribeResponse, subscribeError, () => {this.intermediaryService.dismissLoading();});
+            } else {
+              this.inventoryService.postPickingConsolidated(picking).subscribe(subscribeResponse, subscribeError, () => {this.intermediaryService.dismissLoading();});
+            }
           } else {
             this.inputPicking = null;
             this.showNexProductToScan(false);

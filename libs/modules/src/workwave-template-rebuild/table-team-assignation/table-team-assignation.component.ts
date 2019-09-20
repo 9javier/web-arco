@@ -17,6 +17,7 @@ export class TableTeamAssignationComponent implements OnInit {
   private maxQuantityAssignations: number = 0;
   maxSizeForCols: number = 12;
   maxSizeForNameCol: number = 2;
+  private columnsMultiple: number = 10;
 
   constructor(
     public events: Events,
@@ -39,6 +40,8 @@ export class TableTeamAssignationComponent implements OnInit {
              this.maxQuantityAssignations = tempMaxCount;
            }
          }
+
+          this.maxQuantityAssignations *= this.columnsMultiple;
 
          this.maxSizeForNameCol = this.maxQuantityAssignations * 0.2;
          this.maxSizeForCols = this.maxQuantityAssignations + this.maxSizeForNameCol;
@@ -72,7 +75,7 @@ export class TableTeamAssignationComponent implements OnInit {
   }
 
   stringToInt(value: string): number {
-    return parseInt(value);
+    return parseInt(value) * this.columnsMultiple;
   }
 
 }

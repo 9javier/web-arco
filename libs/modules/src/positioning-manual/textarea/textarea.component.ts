@@ -4,6 +4,8 @@ import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
 import {AlertController, ToastController} from "@ionic/angular";
+import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-textarea',
@@ -12,13 +14,19 @@ import {AlertController, ToastController} from "@ionic/angular";
 })
 export class TextareaComponent implements OnInit {
 
-  dataToWrite: string = 'CONTENEDOR';
+  dataToWrite: string = 'CONTENEDOR / EMBALAJE';
   containerReference: string = null;
+  packingReference: string = null;
   inputPositioning: string = null;
   errorMessage: string = null;
   processInitiated: boolean;
   lastCodeScanned: string = 'start';
-  private userWarehouse: WarehouseModel.Warehouse;
+
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
+
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
 
   constructor(
     private alertController: AlertController,
@@ -26,24 +34,30 @@ export class TextareaComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private scanditProvider: ScanditProvider
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
   }
 
   async ngOnInit() {
-    this.processInitiated = false;
-    this.userWarehouse = await this.authenticationService.getWarehouseCurrentUser();
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
 
-    if (this.userWarehouse && !this.userWarehouse.has_racks) {
+    this.processInitiated = false;
+
+    if (this.isStoreUser) {
       this.dataToWrite = 'PRODUCTO';
     }
   }
 
   keyUpInput(event) {
-    let warehouseId = this.userWarehouse ? this.userWarehouse.id : this.warehouseService.idWarehouseMain;
+    let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
@@ -54,11 +68,17 @@ export class TextareaComponent implements OnInit {
       }
       this.lastCodeScanned = dataWrited;
 
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
       this.processInitiated = true;
-      if ((!this.userWarehouse || (this.userWarehouse && this.userWarehouse.has_racks)) && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
-        this.presentToast(`Inicio de posicionamiento en ${dataWrited}`, 2000, 'success');
+      if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+        this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
         this.containerReference = dataWrited;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR';
+        this.packingReference = null;
+        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
         this.processInitiated = false;
@@ -68,24 +88,34 @@ export class TextareaComponent implements OnInit {
           warehouseId: warehouseId
         };
 
-        if (this.containerReference) {
+        if (!this.isStoreUser && this.containerReference) {
           params.containerReference = this.containerReference;
+        } else if (!this.isStoreUser && this.packingReference) {
+          params.packingReference = this.packingReference;
         }
 
         this.storeProductInContainer(params);
 
         this.inputPositioning = null;
         this.errorMessage = null;
-      } else if ((!this.userWarehouse && !this.containerReference) || (this.userWarehouse && this.userWarehouse.has_racks && !this.containerReference)) {
+      } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.JAIL)) {
+        this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
+        this.containerReference = null;
+        this.packingReference = dataWrited;
+        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
         this.inputPositioning = null;
-        this.errorMessage = '¡Referencia del contenedor errónea!';
+        this.errorMessage = null;
+        this.processInitiated = false;
+      } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
+        this.inputPositioning = null;
+        this.errorMessage = '¡Referencia del contenedor/embalaje errónea!';
         this.processInitiated = false;
       } else {
         this.inputPositioning = null;
-        if (this.userWarehouse && !this.userWarehouse.has_racks) {
+        if (this.isStoreUser) {
           this.errorMessage = '¡Referencia del producto errónea!';
         } else {
-          this.errorMessage = '¡Referencia del producto/contenedor errónea!';
+          this.errorMessage = '¡Referencia del producto/contenedor/embalaje errónea!';
         }
         this.processInitiated = false;
       }
@@ -98,7 +128,17 @@ export class TextareaComponent implements OnInit {
       data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
         this.intermediaryService.dismissLoading();
           if (res.body.code == 200 || res.body.code == 201) {
-            this.presentToast(`Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`, 2000, 'success');
+            let msgSetText = '';
+            if (this.isStoreUser) {
+              msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
+            } else {
+              if (params.packingReference) {
+                msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
+              } else {
+                msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
+              }
+            }
+            this.presentToast(msgSetText, 2000, 'success');
             this.processInitiated = false;
           } else if (res.body.code == 428) {
             this.showWarningToForce(params);

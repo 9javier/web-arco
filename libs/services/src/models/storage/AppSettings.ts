@@ -1,5 +1,6 @@
 export namespace AppSettingsModel {
   export interface AppSettings {
-    printerBluetoothMacAddress: string;
+    printerBluetoothMacAddress?: string;
+    transferPackingLastMethod?: string;
   }
 }

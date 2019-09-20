@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <FrameLayout
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="10"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="3"
+      android:orientation="vertical"
+      android:background="@color/transparentScanner">
+
+      <ImageButton
+        android:id="@+id/ibChangeToLaser"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_laser"
+        android:background="@drawable/bg_circular_button"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true"/>
+
+      <TextView
+        android:id="@+id/tvMainText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/transparentWhite"
+        android:text=""/>
+
+      <LinearLayout
+        android:id="@+id/llOriginText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:textSize="20sp"
+          android:textColor="@color/transparentWhite"
+          android:layout_marginEnd="8dp"
+          android:text="Origen:"/>
+
+        <TextView
+          android:id="@+id/tvOriginText"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:gravity="center"
+          android:textSize="20sp"
+          android:textColor="@color/transparentWhite"
+          android:textStyle="bold"/>
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="4"
+      android:orientation="horizontal">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner"/>
+
+      <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8">
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_top_left"
+          android:layout_alignParentStart="true"/>
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_top_right"
+          android:layout_alignParentEnd="true"/>
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_bottom_left"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentBottom="true"/>
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:background="@drawable/corner_bottom_right"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentBottom="true"/>
+
+      </RelativeLayout>
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="3"
+      android:orientation="vertical"
+      android:background="@color/transparentScanner"/>
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/llScanInfo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="80dp"
+    android:background="@color/transparentScanner"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentBottom="true"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <TextView
+      android:id="@+id/tvScanInfo"
+      android:layout_width="match_parent"
+      android:layout_height="50dp"
+      android:layout_weight="3"
+      android:layout_marginLeft="3dp"
+      android:layout_marginRight="3dp"
+      android:layout_marginTop="1dp"
+      android:layout_marginBottom="1dp"
+      android:gravity="center|center_vertical"
+      android:textSize="20sp" />
+
+  </LinearLayout>
+
+</RelativeLayout>

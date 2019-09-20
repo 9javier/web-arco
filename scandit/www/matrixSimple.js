@@ -20,9 +20,10 @@ var ScanditMatrixSimple = {
    * @param titleBackground
    * @param titleColor
    * @param textInitInfo
+   * @param urlBase
    */
-  initPickingStores: function (successCallback, title, titleBackground, titleColor, textInitInfo) {
-    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor, textInitInfo]);
+  initPickingStores: function (successCallback, title, titleBackground, titleColor, textInitInfo, urlBase) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixPickingStores", [title, titleBackground, titleColor, textInitInfo, urlBase]);
   },
   /**
    *
@@ -41,9 +42,20 @@ var ScanditMatrixSimple = {
    * @param title
    * @param titleBackground
    * @param titleColor
+   * @param urlBase
    */
-  initProductInfo: function (successCallback, title, titleBackground, titleColor) {
-    exec(successCallback, null, PLUGIN_NAME, "matrixProductInfo", [title, titleBackground, titleColor]);
+  initProductInfo: function (successCallback, title, titleBackground, titleColor, urlBase) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixProductInfo", [title, titleBackground, titleColor, urlBase]);
+  },
+  /**
+   *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initSwitchToIonic: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "switchToIonic", [title, titleBackground, titleColor]);
   },
   /**
    *
@@ -140,6 +152,13 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param rejectionReasons
+   */
+  sendPickingStoresRejectionReasons: function (rejectionReasons) {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresLoadRejectionReasons", [rejectionReasons]);
+  },
+  /**
+   *
    * @param show
    * @param text
    */
@@ -199,6 +218,41 @@ var ScanditMatrixSimple = {
    */
   showProgressBarProductExtendedInfo: function (show) {
     exec(null, null, PLUGIN_NAME, "matrixShowProgressBarProductExtendedInfo", [show]);
+  },
+  /**
+   *
+   * @param show
+   * @param text
+   */
+  setMainTextSwitchToIonic: function (show, text) {
+    exec(null, null, PLUGIN_NAME, "switchToIonicSetMainText", [show, text]);
+  },
+  /**
+   *
+   * @param show
+   * @param origin
+   */
+  setOriginTextSwitchToIonic: function (show, origin) {
+    exec(null, null, PLUGIN_NAME, "switchToIonicSetOriginText", [show, origin]);
+  },
+  /**
+   *
+   * @param message
+   */
+  showLoadingDialog: function (message) {
+    exec(null, null, PLUGIN_NAME, "showLoadingDialog", [message]);
+  },
+  /**
+   *
+   */
+  hideLoadingDialog: function () {
+    exec(null, null, PLUGIN_NAME, "hideLoadingDialog", []);
+  },
+  /**
+   *
+   */
+  hideInfoProductDialog: function () {
+    exec(null, null, PLUGIN_NAME, "matrixPickingStoresHideInfoProductDialog", []);
   }
 }
 

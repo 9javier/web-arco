@@ -188,7 +188,7 @@ export class WorkwavesService {
     }));
   }
 
-  postAssignUserToMatchLineRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequest): Observable<Array<WorkwaveModel.TeamAssignations>> {
+  postAssignUserToMatchLineRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequest): Observable<WorkwaveModel.UsersAndAssignationsQuantities> {
     return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequest>(this.postAssignUserToMatchLineRequestUrl, params).pipe(map(response => {
       return response.data;
     }));

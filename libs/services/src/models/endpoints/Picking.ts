@@ -10,30 +10,32 @@ export namespace PickingModel {
   }
 
   export interface Picking {
-    id?: number;
-    store?: string;
-    storeId?: number;
-    type?: number;
-    typeId?: number;
-    threshold?: number;
-    user?: UserProcessesModel.UserProcesses;
-    users?: UserProcessesModel.UserProcesses[];
-    userId?: number;
-    pickingId?: number;
-    createdAt?: string;
-    updatedAt?: string;
-    typeGeneration?: number;
-    status?: number;
-    packingId?: number;
-    packingRef?: string;
-    listPackings?: JailModel.Jail[];
-    packingType?: number;
-    workwave?: WorkwaveModel.Workwave;
-    workWavesOrderWarehouses?: WorkwaveOrderWarehouse[];
-    typePicking?: TypeModel.Type;
-    quantity?: number;
-    typeString?: string;
-    storeRef?: string;
+    id?: number,
+    store?: string,
+    storeId?: number,
+    type?: number,
+    typeId?: number,
+    threshold?: number,
+    user?: UserProcessesModel.UserProcesses,
+    users?: UserProcessesModel.UserProcesses[],
+    userId?: number,
+    pickingId?: number,
+    createdAt?: string,
+    updatedAt?: string,
+    typeGeneration?: number,
+    status?: number,
+    packingId?: number,
+    packingRef?: string,
+    listPackings?: JailModel.Jail[],
+    packingType?: number,
+    workwave?: WorkwaveModel.Workwave,
+    workWavesOrderWarehouses?: WorkwaveOrderWarehouse[],
+    typePicking?: TypeModel.Type,
+    quantity?: number,
+    typeString?: string,
+    storeRef?: string,
+    quantityPending?: number,
+    quantityScanned?: number
   }
 
   export interface PickingUpdate {

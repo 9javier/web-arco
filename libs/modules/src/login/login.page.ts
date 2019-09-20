@@ -69,7 +69,6 @@ export class LoginComponent implements OnInit {
   }
 
   login(user: RequestLogin) {
-    // console.log(user);
     this.showLoading('Iniciando sesión...').then(() => {
       this.loginService.post_login(user, AppInfo.Name.Sga).subscribe(
         (data: HttpResponse<ResponseLogin>) => {
@@ -78,8 +77,7 @@ export class LoginComponent implements OnInit {
             this.loading = null;
           }
           const response: ResponseLogin = data.body;
-          // console.log(response);
-          
+
           this.authenticationService.login(data.body.data.access_token, data.body.data.user,data.body.data.accessPermitionsDictionary,data.body.data.refresh_token);
           this.router.navigate(['/home']);
         },
@@ -93,7 +91,6 @@ export class LoginComponent implements OnInit {
           } else {
             this.intermediaryService.presentToastError("Error en usuario o contraseña");
           }
-          // console.log(errorResponse);
         }
       );
     });
@@ -131,7 +128,6 @@ export class LoginComponent implements OnInit {
     this.modalController.dismiss();
   }
   hide() {
-    // console.log('hide')
     if (this.platform.is('android') || this.platform.is('ios')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: none;");
@@ -139,7 +135,6 @@ export class LoginComponent implements OnInit {
   }
 
   recover() {
-    // console.log('recover')
     if (this.platform.is('android') || this.platform.is('ios')) {
       let logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: flex;");

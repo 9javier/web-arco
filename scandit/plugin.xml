@@ -143,6 +143,7 @@
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixPickingStores" android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixPrintTags"/>
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixProductInfo"/>
+      <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.SwitchToIonicActivity"/>
     </config-file>
     <!-- The .so/.jar and resources are all contained in the ScanditBarcodeScanner.aar file, which we reference from build.gradle -->
     <framework custom="true" src="src/android/build.gradle" type="gradleReference"/>
@@ -178,6 +179,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixPrintTags.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixProductInfo.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/SwitchToIonicActivity.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
 
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/UiUtils.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/utility/ScreenshotHandler.java" target-dir="src/com/mirasense/scanditsdk/plugin/utility"/>
@@ -204,6 +206,8 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/FiltersPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/KeyPairBoolData.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/SingleFilterPickingStores.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/LineRequestsProduct.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/models/PickingStoreRejectionReason.java" target-dir="src/com/mirasense/scanditsdk/plugin/models"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/PickingStoresAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SearchItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/adapters/SortItemsAdapter.java" target-dir="src/com/mirasense/scanditsdk/plugin/adapters"/>
@@ -238,6 +242,11 @@
     <source-file src="src/android/drawable/bg_filters_picking_stores.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/bg_et_spinner_search.xml" target-dir="res/drawable"/>
     <source-file src="src/android/drawable/bg_ripple_item_spinner.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_circular_button.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/ic_laser.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_round_alert.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_round_image.xml" target-dir="res/drawable"/>
+    <source-file src="src/android/drawable/bg_round_layout.xml" target-dir="res/drawable"/>
     <source-file src="src/android/layout/bubble_maximised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/bubble_minimised_data.xml" target-dir="res/layout"/>
@@ -268,6 +277,8 @@
     <source-file src="src/android/layout/fragment_pending_products_picking_stores_full.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/fragment_processed_products_picking_stores.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/fragment_processed_products_picking_stores_full.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/activity_switch_to_ionic.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/product_info_picking_store.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
     <source-file src="src/android/styles.xml" target-dir="res/values"/>
 

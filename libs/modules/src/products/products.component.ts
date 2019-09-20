@@ -155,13 +155,10 @@ export class ProductsComponent implements OnInit {
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagBarcode(references).subscribe(result=>{
-      // console.log("result of impressions",result);
       this.intermediaryService.dismissLoading();
     },error=>{
       this.intermediaryService.dismissLoading();
-      // console.log(error);
     });
-    // console.log(references);
   }
 
     /**
@@ -171,17 +168,13 @@ export class ProductsComponent implements OnInit {
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagPrices(references).subscribe(result=>{
-      // console.log("result of impressions",result);
       this.intermediaryService.dismissLoading();
     },error=>{
       this.intermediaryService.dismissLoading();
-      // console.log(error);
     });
-    // console.log(references);
   }
 
   ngOnInit() {
-    // console.log(this.form);
     this.getFilters();
     this.listenChanges();
   }
@@ -189,12 +182,11 @@ export class ProductsComponent implements OnInit {
   /**
    * Listen changes in form to resend the request for search
    */
-  listenChanges():void{ 
+  listenChanges():void{
     let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page=>{
       /**true if only change the number of results */
-      // console.log(page);
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
@@ -214,7 +206,6 @@ export class ProductsComponent implements OnInit {
         /**Just need check the vality if the change happens in the reference */
         if(this.form.valid)
           this.requestTimeout = setTimeout(()=>{
-            // console.log('Search this.form.statusChanges');            
             this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         },1000);
       }else{
@@ -243,7 +234,7 @@ export class ProductsComponent implements OnInit {
   /**
    * init selectForm controls
    */
-  initSelectForm():void{  
+  initSelectForm():void{
     this.selectedForm.removeControl("toSelect");
     this.selectedForm.addControl("toSelect",this.formBuilder.array(this.searchsInContainer.map(product=>new FormControl(false))));
   }
@@ -272,7 +263,6 @@ export class ProductsComponent implements OnInit {
    * @param id - the id of the product
    */
     async goDetails(product:InventoryModel.SearchInContainer){
-      // console.log(product);
       return (await this.modalController.create({
         component:ProductDetailsComponent,
         componentProps:{
@@ -365,7 +355,6 @@ export class ProductsComponent implements OnInit {
     this.sizes = sizes
       .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
       .map(size => {
-        // console.log("probando los id del size",size);
         size.id = <number>(<unknown>size.id);
         return size;
       })

@@ -2,11 +2,13 @@ package com.mirasense.scanditsdk.plugin;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -23,15 +25,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.mirasense.scanditsdk.plugin.adapters.PageAdapterFull;
 import com.mirasense.scanditsdk.plugin.adapters.PageAdapterSmall;
 import com.mirasense.scanditsdk.plugin.adapters.SearchItemsAdapter;
@@ -42,6 +50,8 @@ import com.mirasense.scanditsdk.plugin.fragments.ProcessedProductsPickingStores;
 import com.mirasense.scanditsdk.plugin.fragments.ProcessedProductsPickingStoresFull;
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.KeyPairBoolData;
+import com.mirasense.scanditsdk.plugin.models.LineRequestsProduct;
+import com.mirasense.scanditsdk.plugin.models.PickingStoreRejectionReason;
 import com.mirasense.scanditsdk.plugin.models.SingleFilterPickingStores;
 import com.mirasense.scanditsdk.plugin.utility.DragItemTouchHelper;
 import com.scandit.barcodepicker.BarcodePicker;
@@ -94,6 +104,13 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
   private static String packageNameForLoadFull = null;
   private static ArrayList<JSONObject> productsPendingForLoadFull = null;
   private static ArrayList<JSONObject> productsProcessedForLoadFull = null;
+  private static ArrayList<PickingStoreRejectionReason> listRejectionReasons = null;
+  private static ArrayList<String> listNamesRejectionReasons = null;
+
+  private static ViewGroup viewGroup;
+
+  private static String urlBase = "";
+  private static Dialog dialogInfoForProduct = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +126,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       backgroundTitle = b.getString("backgroundTitle", "#FFFFFF");
       colorTitle = b.getString("colorTitle", "#424242");
       textInit = b.getString("textInit", "");
+      urlBase = b.getString("urlBase", "");
     }
 
     String package_name = getApplication().getPackageName();
@@ -122,15 +140,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
 
     setContentView(resources.getIdentifier("references_matrix_picking_stores", "layout", package_name));
 
-    Toolbar toolbarPickingStores = findViewById(resources.getIdentifier("toolbarPickingStores", "id", package_name));
-    setSupportActionBar(toolbarPickingStores);
+    viewGroup = findViewById(android.R.id.content);
 
-    ActionBar actionBar = getSupportActionBar();
-    actionBar.setDisplayShowCustomEnabled(true);
-    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(backgroundTitle)));
-
-    ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setText(title);
-    ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setTextColor(Color.parseColor(colorTitle));
+    initializeToolbar(resources, package_name, title, colorTitle, backgroundTitle);
 
     TextView tvPackingStart = this.findViewById(android.R.id.content).getRootView().findViewById(resources.getIdentifier("tvPackingStart", "id", package_name));
     tvPackingStart.setText(textInit);
@@ -138,25 +150,59 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
 
     ScanditSDK.setViewDataMatrixSimple(this.findViewById(android.R.id.content).getRootView());
 
+    initializeScanditPicker(resources, package_name);
+    initializeListManagement(resources, package_name);
+    initializeTabLayouts(resources, package_name);
+    initializeBottomButtons(resources, package_name);
+    initializeFilters(resources, package_name);
+
+    matrixPickingStores = this;
+    ScanditSDK.setActivityStarted(matrixPickingStores);
+  }
+
+  /*
+   * Get Toolbar created in view files and set as ActionBar for this Activity
+   * Add to Toolbar title sent from Ionic app
+   * Initialize finish action to click back button
+  */
+  private void initializeToolbar(Resources resources, String package_name, String title, String titleColor, String backgroundColor) {
+    Toolbar toolbarPickingStores = findViewById(resources.getIdentifier("toolbarPickingStores", "id", package_name));
+    setSupportActionBar(toolbarPickingStores);
+
+    ActionBar actionBar = getSupportActionBar();
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(backgroundColor)));
+
+    ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setText(title);
+    ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setTextColor(Color.parseColor(titleColor));
+
+    ImageButton arrowBack = findViewById(resources.getIdentifier("arrow_back_button", "id", package_name));
+    arrowBack.setOnClickListener(v -> finish());
+  }
+
+  /*
+   * Initialize Scandit Picker element enabling specific symbology and more options
+   */
+  private void initializeScanditPicker(Resources resources, String package_name) {
     ScanSettings settings = ScanSettings.create();
+
+    // Enable 128 Code type with specific count of digits
     settings.setSymbologyEnabled(Barcode.SYMBOLOGY_CODE128, true);
-    settings.setSymbologyEnabled(Barcode.SYMBOLOGY_CODE39, true);
     SymbologySettings symSettings128 = settings.getSymbologySettings(Barcode.SYMBOLOGY_CODE128);
-    short[] activeSymbolCounts128 = new short[]{
-      7, 8, 9, 12, 14, 15, 16, 17, 18
-    };
+    short[] activeSymbolCounts128 = new short[]{ 7, 8, 9, 12, 14, 15, 16, 17, 18 };
     symSettings128.setActiveSymbolCounts(activeSymbolCounts128);
 
+    // Enable 39 Code type with specific count of digits
+    settings.setSymbologyEnabled(Barcode.SYMBOLOGY_CODE39, true);
     SymbologySettings symSettings39 = settings.getSymbologySettings(Barcode.SYMBOLOGY_CODE39);
-    short[] activeSymbolCounts39 = new short[]{
-      8
-    };
+    short[] activeSymbolCounts39 = new short[]{ 8 };
     symSettings39.setActiveSymbolCounts(activeSymbolCounts39);
 
     settings.setMatrixScanEnabled(true);
     settings.setMaxNumberOfCodesPerFrame(1);
     settings.setCodeRejectionEnabled(true);
 
+    // Limit area to make work the scanner
     settings.setActiveScanningArea(ScanSettings.ORIENTATION_PORTRAIT, new RectF(0, 0, 1, 0.3f));
     settings.setActiveScanningArea(ScanSettings.ORIENTATION_LANDSCAPE, new RectF(0, 0, 1, 0.3f));
 
@@ -165,9 +211,8 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
 
     matrixScanListener = new MatrixSimpleOverlayListener();
 
+    // Enable beep to sound with each new code scanned
     MatrixScan matrixScan = new MatrixScan(mPicker, matrixScanListener);
-
-    // You can enable beeping via:
     matrixScan.setBeepOnNewCode(true);
 
     mPicker.getOverlayView().setTorchEnabled(false);
@@ -175,13 +220,18 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     mPicker.getOverlayView().setViewfinderDimension(0.9f, 0.75f, 0.95f, 0.9f);
     mPicker.getOverlayView().setGuiStyle(ScanOverlay.GUI_STYLE_MATRIX_SCAN);
 
+    // Initialize picker in FrameLayout created for it
     pickerContainer = findViewById(resources.getIdentifier("picker", "id", package_name));
     pickerContainer.addView(mPicker);
+
     mPicker.startScanning();
+  }
 
-    ImageButton arrowBack = findViewById(resources.getIdentifier("arrow_back_button", "id", package_name));
-    arrowBack.setOnClickListener(v -> finish());
-
+  /*
+   * Create actions to open and close a full-screen view with list of products pending and processed
+   * doing a simple click over the title of the view
+   */
+  private void initializeListManagement(Resources resources, String package_name) {
     RelativeLayout rlTitleSmallProductsList = findViewById(resources.getIdentifier("rlTitleSmallProductsList", "id", package_name));
     rlTitleSmallProductsList.setOnClickListener(v -> {
       LinearLayout llListProductsSmall = findViewById(resources.getIdentifier("llListProductsSmall", "id", package_name));
@@ -205,7 +255,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       LinearLayout llListProductsFull = findViewById(resources.getIdentifier("llListProductsFull", "id", package_name));
       llListProductsFull.setVisibility(View.GONE);
     });
+  }
 
+  private void initializeTabLayouts(Resources resources, String package_name) {
     pageAdapterSmall = new PageAdapterSmall(getSupportFragmentManager(), 2);
     pageAdapterFull = new PageAdapterFull(getSupportFragmentManager(), 2);
 
@@ -252,7 +304,9 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     });
     vpTabsFull.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tlProductsListsFull));
     // endregion
+  }
 
+  private void initializeBottomButtons(Resources resources, String package_name) {
     Button btnFinishPickingStore = findViewById(resources.getIdentifier("btnFinishPickingStore", "id", package_name));
     Button btnPackingPickingStore = findViewById(resources.getIdentifier("btnPackingPickingStore", "id", package_name));
     btnFinishPickingStore.setOnClickListener(v -> {
@@ -280,110 +334,6 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       pResult.setKeepCallback(true);
       ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
     });
-
-    initializeFilters(resources, package_name);
-
-    matrixPickingStores = this;
-  }
-
-  public static void loadFiltersPicking(FiltersPickingStores newFilters) {
-    filtersPickingStores = newFilters;
-
-    if (filtersPickingStores != null) {
-      filtersSortTypes = new ArrayList<>();
-      filtersModels = new ArrayList<>();
-      filtersBrands = new ArrayList<>();
-      filtersSizes = new ArrayList<>();
-      filtersColors = new ArrayList<>();
-
-      if (filtersPickingStores.getOrderTypes().size() > 0) {
-        for (SingleFilterPickingStores orderType : filtersPickingStores.getOrderTypes()) {
-          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-          keyPairBoolData.setId(orderType.getId());
-          keyPairBoolData.setName(orderType.getName());
-          keyPairBoolData.setObject(orderType);
-          filtersSortTypes.add(keyPairBoolData);
-        }
-      }
-
-      if (filtersPickingStores.getModels().size() > 0) {
-        for (SingleFilterPickingStores model : filtersPickingStores.getModels()) {
-          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-          keyPairBoolData.setId(model.getId());
-          keyPairBoolData.setName(model.getReference() + " - " + model.getName());
-          keyPairBoolData.setObject(model);
-          filtersModels.add(keyPairBoolData);
-        }
-      }
-
-      if (filtersPickingStores.getBrands().size() > 0) {
-        for (SingleFilterPickingStores brand : filtersPickingStores.getBrands()) {
-          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-          keyPairBoolData.setId(brand.getId());
-          keyPairBoolData.setName(brand.getName());
-          keyPairBoolData.setObject(brand);
-          filtersBrands.add(keyPairBoolData);
-        }
-      }
-
-      if (filtersPickingStores.getSizes().size() > 0) {
-        for (SingleFilterPickingStores size : filtersPickingStores.getSizes()) {
-          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-          keyPairBoolData.setId(size.getId());
-          keyPairBoolData.setName(size.getName());
-          keyPairBoolData.setObject(size);
-          filtersSizes.add(keyPairBoolData);
-        }
-      }
-
-      if (filtersPickingStores.getColors().size() > 0) {
-        for (SingleFilterPickingStores color : filtersPickingStores.getColors()) {
-          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
-          keyPairBoolData.setId(color.getId());
-          keyPairBoolData.setName(color.getName());
-          keyPairBoolData.setObject(color);
-          filtersColors.add(keyPairBoolData);
-        }
-      }
-    }
-  }
-
-  public static void loadProductsPending(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
-    activityForLoadFull = activity;
-    resourcesForLoadFull = resources;
-    packageNameForLoadFull = package_name;
-    productsPendingForLoadFull = productsPending;
-    PendingProductsPickingStores pendingFragment = pageAdapterSmall.getPendingFragment();
-    if (pendingFragment != null) {
-      pendingFragment.updateListView(activity, resources, package_name, productsPending);
-    }
-    loadProductsPendingFull(activity, resources, package_name, productsPending);
-  }
-
-  public static void loadProductsProcessed(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
-    if (activityForLoadFull == null) activityForLoadFull = activity;
-    if (resourcesForLoadFull == null) resourcesForLoadFull = resources;
-    if (packageNameForLoadFull == null) packageNameForLoadFull = package_name;
-    productsProcessedForLoadFull = productsProcessed;
-    ProcessedProductsPickingStores processedFragment = pageAdapterSmall.getProcessedFragment();
-    if (processedFragment != null) {
-      processedFragment.updateListView(activity, resources, package_name, productsProcessed);
-    }
-    loadProductsProcessedFull(activity, resources, package_name, productsProcessed);
-  }
-
-  public static void loadProductsPendingFull(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
-    PendingProductsPickingStoresFull pendingFragmentFull = pageAdapterFull.getPendingFragment();
-    if (pendingFragmentFull != null) {
-      pendingFragmentFull.updateListView(activity, resources, package_name, productsPending);
-    }
-  }
-
-  public static void loadProductsProcessedFull(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
-    ProcessedProductsPickingStoresFull processedFragmentFull = pageAdapterFull.getProcessedFragment();
-    if (processedFragmentFull != null) {
-      processedFragmentFull.updateListView(activity, resources, package_name, productsProcessed);
-    }
   }
 
   private void initializeFilters(Resources resources, String package_name) {
@@ -520,7 +470,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     }
   }
 
-  private  void openSortItemsSpinner(Resources resources, String package_name, TextView tvSelected, final ArrayList<KeyPairBoolData> listItems, int filterType, String titleAlert) {
+  private void openSortItemsSpinner(Resources resources, String package_name, TextView tvSelected, final ArrayList<KeyPairBoolData> listItems, int filterType, String titleAlert) {
     if (filtersPickingStores != null) {
       ViewGroup viewGroup = findViewById(android.R.id.content);
       View customView = LayoutInflater.from(this).inflate(resources.getIdentifier("spinner_sort", "layout", package_name), viewGroup, false);
@@ -600,6 +550,200 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
     PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
     pResult.setKeepCallback(true);
     ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+  }
+
+  public static void loadFiltersPicking(FiltersPickingStores newFilters) {
+    filtersPickingStores = newFilters;
+
+    if (filtersPickingStores != null) {
+      filtersSortTypes = new ArrayList<>();
+      filtersModels = new ArrayList<>();
+      filtersBrands = new ArrayList<>();
+      filtersSizes = new ArrayList<>();
+      filtersColors = new ArrayList<>();
+
+      if (filtersPickingStores.getOrderTypes().size() > 0) {
+        for (SingleFilterPickingStores orderType : filtersPickingStores.getOrderTypes()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(orderType.getId());
+          keyPairBoolData.setName(orderType.getName());
+          keyPairBoolData.setObject(orderType);
+          filtersSortTypes.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getModels().size() > 0) {
+        for (SingleFilterPickingStores model : filtersPickingStores.getModels()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(model.getId());
+          keyPairBoolData.setName(model.getReference() + " - " + model.getName());
+          keyPairBoolData.setObject(model);
+          filtersModels.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getBrands().size() > 0) {
+        for (SingleFilterPickingStores brand : filtersPickingStores.getBrands()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(brand.getId());
+          keyPairBoolData.setName(brand.getName());
+          keyPairBoolData.setObject(brand);
+          filtersBrands.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getSizes().size() > 0) {
+        for (SingleFilterPickingStores size : filtersPickingStores.getSizes()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(size.getId());
+          keyPairBoolData.setName(size.getName());
+          keyPairBoolData.setObject(size);
+          filtersSizes.add(keyPairBoolData);
+        }
+      }
+
+      if (filtersPickingStores.getColors().size() > 0) {
+        for (SingleFilterPickingStores color : filtersPickingStores.getColors()) {
+          KeyPairBoolData keyPairBoolData = new KeyPairBoolData();
+          keyPairBoolData.setId(color.getId());
+          keyPairBoolData.setName(color.getName());
+          keyPairBoolData.setObject(color);
+          filtersColors.add(keyPairBoolData);
+        }
+      }
+    }
+  }
+
+  public static void loadProductsPending(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
+    activityForLoadFull = activity;
+    resourcesForLoadFull = resources;
+    packageNameForLoadFull = package_name;
+    productsPendingForLoadFull = productsPending;
+    PendingProductsPickingStores pendingFragment = pageAdapterSmall.getPendingFragment();
+    if (pendingFragment != null) {
+      pendingFragment.updateListView(activity, resources, package_name, productsPending);
+    }
+    loadProductsPendingFull(activity, resources, package_name, productsPending);
+  }
+
+  public static void loadProductsProcessed(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
+    if (activityForLoadFull == null) activityForLoadFull = activity;
+    if (resourcesForLoadFull == null) resourcesForLoadFull = resources;
+    if (packageNameForLoadFull == null) packageNameForLoadFull = package_name;
+    productsProcessedForLoadFull = productsProcessed;
+    ProcessedProductsPickingStores processedFragment = pageAdapterSmall.getProcessedFragment();
+    if (processedFragment != null) {
+      processedFragment.updateListView(activity, resources, package_name, productsProcessed);
+    }
+    loadProductsProcessedFull(activity, resources, package_name, productsProcessed);
+  }
+
+  public static void loadProductsPendingFull(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsPending) {
+    PendingProductsPickingStoresFull pendingFragmentFull = pageAdapterFull.getPendingFragment();
+    if (pendingFragmentFull != null) {
+      pendingFragmentFull.updateListView(activity, resources, package_name, productsPending);
+    }
+  }
+
+  public static void loadProductsProcessedFull(Activity activity, Resources resources, String package_name, ArrayList<JSONObject> productsProcessed) {
+    ProcessedProductsPickingStoresFull processedFragmentFull = pageAdapterFull.getProcessedFragment();
+    if (processedFragmentFull != null) {
+      processedFragmentFull.updateListView(activity, resources, package_name, productsProcessed);
+    }
+  }
+
+  public static void loadListRejectionReasons(ArrayList<PickingStoreRejectionReason> newListRejectionReasons, ArrayList<String> newListNamesRejectionReasons) {
+    listRejectionReasons = newListRejectionReasons;
+    listNamesRejectionReasons = newListNamesRejectionReasons;
+  }
+
+  public static void showInfoForProduct(LineRequestsProduct lineRequestsProduct, Resources resources, String package_name, boolean isProcessed) {
+    final PickingStoreRejectionReason[] pickingStoreRejectionReasonSelected = { listRejectionReasons.get(0) };
+
+    View customView = LayoutInflater.from(matrixPickingStores).inflate(resources.getIdentifier("product_info_picking_store", "layout", package_name), viewGroup, false);
+    ImageView ivProductPickingStore = customView.findViewById(resources.getIdentifier("ivProductPickingStore", "id", package_name));
+    TextView tvReferencePickingStore = customView.findViewById(resources.getIdentifier("tvReferencePickingStore", "id", package_name));
+    TextView tvNamePickingStore = customView.findViewById(resources.getIdentifier("tvNamePickingStore", "id", package_name));
+    TextView tvSizePickingStore = customView.findViewById(resources.getIdentifier("tvSizePickingStore", "id", package_name));
+    TextView tvBrandPickingStore = customView.findViewById(resources.getIdentifier("tvBrandPickingStore", "id", package_name));
+    TextView tvColorPickingStore = customView.findViewById(resources.getIdentifier("tvColorPickingStore", "id", package_name));
+    Spinner sRejectionReasonPickingStore = customView.findViewById(resources.getIdentifier("sRejectionReasonPickingStore", "id", package_name));
+    LinearLayout llRejectionPickingStore = customView.findViewById(resources.getIdentifier("llRejectionPickingStore", "id", package_name));
+    Button btnRejectionPickingStore = customView.findViewById(resources.getIdentifier("btnRejectionPickingStore", "id", package_name));
+    View vRejectionReasonDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonDividerPickingStore", "id", package_name));
+    View vRejectionReasonNoDividerPickingStore = customView.findViewById(resources.getIdentifier("vRejectionReasonNoDividerPickingStore", "id", package_name));
+
+    if (!urlBase.isEmpty()) {
+      String url = urlBase + lineRequestsProduct.getModel().getImageUrl();
+      Glide.with(matrixPickingStores).load(url).fitCenter().into(ivProductPickingStore);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        ivProductPickingStore.setClipToOutline(true);
+      }
+    }
+
+    tvReferencePickingStore.setText(lineRequestsProduct.getModel().getReference());
+    tvNamePickingStore.setText(lineRequestsProduct.getModel().getName());
+    tvSizePickingStore.setText(lineRequestsProduct.getSize().getName());
+    tvBrandPickingStore.setText(lineRequestsProduct.getModel().getBrand().getName());
+    tvColorPickingStore.setText(lineRequestsProduct.getModel().getColor().getName());
+
+    vRejectionReasonDividerPickingStore.setVisibility(View.GONE);
+    vRejectionReasonNoDividerPickingStore.setVisibility(View.VISIBLE);
+    llRejectionPickingStore.setVisibility(View.GONE);
+    sRejectionReasonPickingStore.setVisibility(View.GONE);
+
+    if (!isProcessed) {
+      vRejectionReasonDividerPickingStore.setVisibility(View.VISIBLE);
+      vRejectionReasonNoDividerPickingStore.setVisibility(View.GONE);
+      sRejectionReasonPickingStore.setVisibility(View.VISIBLE);
+      ArrayAdapter<String> adapterRejectionReasons = new ArrayAdapter<>(matrixPickingStores, android.R.layout.simple_spinner_dropdown_item, listNamesRejectionReasons);
+      sRejectionReasonPickingStore.setAdapter(adapterRejectionReasons);
+      sRejectionReasonPickingStore.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+          if (position == 0) {
+            llRejectionPickingStore.setVisibility(View.GONE);
+          } else {
+            llRejectionPickingStore.setVisibility(View.VISIBLE);
+          }
+          pickingStoreRejectionReasonSelected[0] = listRejectionReasons.get(position);
+        }
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
+      });
+
+      btnRejectionPickingStore.setOnClickListener(view -> {
+        JSONObject jsonObject = new JSONObject();
+        try {
+          jsonObject.put("result", true);
+          jsonObject.put("action", "request_reject");
+          jsonObject.put("reasonId", pickingStoreRejectionReasonSelected[0].getId());
+          jsonObject.put("requestReference", lineRequestsProduct.getReference());
+        } catch (JSONException e) {
+
+        }
+        PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+        pResult.setKeepCallback(true);
+        ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+      });
+    }
+
+    Dialog dialogProductInfoLocal = new Dialog(matrixPickingStores);
+    dialogProductInfoLocal.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    dialogProductInfoLocal.setContentView(customView);
+    dialogProductInfoLocal.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    dialogProductInfoLocal.setCancelable(true);
+    dialogProductInfoLocal.show();
+
+    dialogInfoForProduct = dialogProductInfoLocal;
+  }
+
+  public static void hideInfoForProduct() {
+    if (dialogInfoForProduct != null) {
+      dialogInfoForProduct.hide();
+    }
   }
 
   @Override

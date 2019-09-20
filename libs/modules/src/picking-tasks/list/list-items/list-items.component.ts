@@ -1,5 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {PickingModel} from "../../../../../services/src/models/endpoints/Picking";
+import {PickingProvider} from "../../../../../services/src/providers/picking/picking.provider";
+import {PopoverController} from "@ionic/angular";
+import {PopoverListStoresComponent} from "./popover-list-stores/popover-list-stores.component";
 
 @Component({
   selector: 'picking-task-template',
@@ -10,10 +13,29 @@ export class PickingTaskTemplateComponent implements OnInit {
 
   @Input() pickingAssignment: PickingModel.Picking;
 
-  constructor() {}
+  constructor(
+    private popoverController: PopoverController,
+    public pickingProvider: PickingProvider
+  ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
 
+  selectPicking() {
+    this.pickingProvider.pickingSelectedToStart = this.pickingAssignment;
+  }
+
+  async showStoresPopover(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.pickingProvider.listStoresToPopoverList = this.pickingAssignment.workWavesOrderWarehouses;
+
+    const popover = await this.popoverController.create({
+      cssClass: 'popover-list-stores',
+      component: PopoverListStoresComponent
+    });
+
+    await popover.present();
   }
 
 }
