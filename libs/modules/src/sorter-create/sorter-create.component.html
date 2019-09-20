@@ -3,7 +3,7 @@
       <ion-text color="primary">
           <suite-breadcrumb></suite-breadcrumb>
         </ion-text>
-        <div class="container">
+        <div class="container" *ngIf="sorters">
           <mat-table #table [dataSource]="sorters">
             <ng-container matColumnDef="delete" [formGroup]="selectedForm">
                 <mat-header-cell *matHeaderCellDef>

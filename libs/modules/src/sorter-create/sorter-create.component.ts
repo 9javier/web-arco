@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { HttpResponse } from '@angular/common/http';
-import { UserModel, RolModel } from '@suite/services';
+import { UserModel, RolModel, IntermediaryService } from '@suite/services';
 import { UpdateComponent } from './modals/update/update.component';
 import { CreateComponent } from './modals/create/create.component';
 import { SorterService } from '../../../services/src/lib/endpoint/sorter/sorter.service';
@@ -54,7 +54,7 @@ export class SorterCreateComponent implements OnInit {
     private router: Router,
     private modalController:ModalController,
     private sorteService: SorterService,
-    
+    private intermediaryService:IntermediaryService,
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -74,6 +74,7 @@ export class SorterCreateComponent implements OnInit {
   showExpasion: boolean = false;
   
   ngOnInit() {
+    this.intermediaryService.presentLoading();
     this.crudService
       .getIndex('Warehouses')
       .then(
@@ -103,6 +104,7 @@ export class SorterCreateComponent implements OnInit {
 
     this.sorteService
       .getIndex().subscribe((data) => {
+        this.intermediaryService.dismissLoading();
         this.sorters = data.data;
         console.log(this.sorters)
       });
@@ -147,9 +149,11 @@ export class SorterCreateComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
+      this.intermediaryService.presentLoading();
       this.sorteService
       .getIndex().subscribe((data) => {
         this.sorters = data.data;
+        this.intermediaryService.dismissLoading();
         console.log(this.sorters)
       });
     })
@@ -165,8 +169,10 @@ export class SorterCreateComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
+      this.intermediaryService.presentLoading();
       this.sorteService
       .getIndex().subscribe((data) => {
+        this.intermediaryService.dismissLoading();
         this.sorters = data.data;
         console.log(this.sorters)
       });

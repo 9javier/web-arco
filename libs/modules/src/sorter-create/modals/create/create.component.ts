@@ -35,7 +35,7 @@ export class CreateComponent implements OnInit {
     let { colors, ...data} = this.base.getValue();
     colors = [1];
     const payload = {
-      colors, ...data
+      active: false, colors, ...data
     }
     this.sorteService
       .postCreate(payload).subscribe((data) => {
