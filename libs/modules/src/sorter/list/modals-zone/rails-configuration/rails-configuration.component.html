@@ -13,10 +13,10 @@
     <ion-label class="color">Rojo</ion-label>
     <div class="container">
         <div *ngFor="let item of rails" class="heights">
-            <div 
+						<div
                 *ngFor="let column of item.columns; let i = index;" 
                 class="column" 
-								(click)="getColumn(i,column.ways_number, item.height)"
+								(click)="column.adjacent && getColumn(i,column.ways_number, item.height)"
 								[ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
                 <span>{{column.ways_number}}</span>
             </div>

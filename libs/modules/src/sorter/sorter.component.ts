@@ -48,7 +48,7 @@ import { StoreComponent } from './modals/store/store.component';
 })
 export class SorterComponent implements OnInit {
 
-  displayedColumns = ['icon', 'delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
+  displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
   dataSource = new ExampleDataSource();
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
