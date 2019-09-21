@@ -24,21 +24,23 @@
         </div>
       </ion-col>
       <ion-col size="6" class="col-derecha">
-        <div>
-          <ion-row>
-            <ion-col size="6">
-                <ion-label>Plantillas</ion-label>
-            </ion-col>
-            <ion-col size="6" class="button-add-plantilla">
-              <ion-button>Añadir plantilla</ion-button>
-            </ion-col>
-          </ion-row>
-        </div>
-        <ion-list class="overAuto">
-          <ion-item *ngFor="let template of templates;let i = index" (click)="selectTemplate(template)">
-            <ion-label>{{template.name}}</ion-label>
-          </ion-item>
-        </ion-list>
+        <ion-row>
+          <ion-col size="6">
+              <ion-label>Plantillas</ion-label>
+          </ion-col>
+          <ion-col size="6" class="button-add-plantilla">
+            <ion-button [disabled]="!addWarehouses().length" (click)="storeTemplate()">Añadir plantilla</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-list class="overAuto list-plantillas">
+              <ion-item *ngFor="let template of templates;let i = index" (click)="selectTemplate(template)">
+                <ion-label>{{template.name}}</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-col>
+        </ion-row>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -71,8 +73,8 @@
   </ion-grid>
 </ion-content>
 <ion-footer>
-    <ion-fab-button style="float: right; padding: 5px;" color="light"><ion-icon name="trash"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" (click)="storeDate()"><ion-icon name="add"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" (click)="storeTemplate()"><ion-icon name="save"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
+  <!--<ion-fab-button style="float: right; padding: 5px;" color="light"><ion-icon name="trash"></ion-icon></ion-fab-button>-->
+    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!date || !validToStore()" (click)="storeDate()"><ion-icon name="add"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length" (click)="storeTemplate()"><ion-icon name="save"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="addWarehouses().length" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
 </ion-footer>

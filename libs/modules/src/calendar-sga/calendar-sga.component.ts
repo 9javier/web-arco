@@ -119,12 +119,13 @@ export class CalendarSgaComponent implements OnInit {
           }
           
           if(equals && this.selectDates.length != 1) {
-            this.setWarehousesOfDate(this.selectDates[1].warehouses);
+            this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
           } else if(this.selectDates.length != 1){
-            this.setWarehousesOfDate(this.selectDates[1].warehouses);
+            this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
           }
 
           this.date = auxDates[0];
+          this.manageSelectedClass();
         },()=>{
           this.intermediaryService.dismissLoading();
         })
@@ -135,7 +136,7 @@ export class CalendarSgaComponent implements OnInit {
    * Set warehouses by date
    */
 
-  setWarehousesOfDate(selectDateWarehouses) {
+  setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
     console.log(selectDateWarehouses);
     this.warehousesDestinationList.forEach(val => {
       val.destinos = [],
@@ -146,14 +147,16 @@ export class CalendarSgaComponent implements OnInit {
       warehouse.destinationsWarehouses.forEach(destination => {
           this.warehousesDestinationList.forEach(val2 => {
             if(val2.id === warehouse.originWarehouse.id){
-              val2.destinos.push({
-                id: destination.destinationWarehouse.id,
-                name: destination.destinationWarehouse.name
-              });
-              if(val2.destinos_label != '')
-                val2.destinos_label += ', '+destination.destinationWarehouse.name;
-              else
-                val2.destinos_label = destination.destinationWarehouse.name
+              if(valueDate) {
+                val2.destinos.push({
+                  id: destination.destinationWarehouse.id,
+                  name: destination.destinationWarehouse.name
+                });
+                if(val2.destinos_label != '')
+                  val2.destinos_label += ', '+destination.destinationWarehouse.name;
+                else
+                  val2.destinos_label = destination.destinationWarehouse.name
+              }               
             }
           });
         });
@@ -214,14 +217,7 @@ export class CalendarSgaComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     })
   }
-
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    this.datePicker.api.open();
-    // console.log(this.datePicker);
-  }
-
+  
   /**
    * Guardar destino
    */
@@ -262,6 +258,13 @@ export class CalendarSgaComponent implements OnInit {
             }
           });
         });
+
+        this.selectDates.forEach((date,i)=>{
+          if(i==0)
+            return false;   
+          date.warehouses = this.addWarehouses();
+        });
+
         this.sortByDestinations();
         this.intermediaryService.dismissLoading();
       }
@@ -318,6 +321,8 @@ export class CalendarSgaComponent implements OnInit {
 
     this.warehousesOriginList = [];
     this.warehousesOriginList = tempOrigin;
+
+    this.manageSelectedClass();
   }
 
   /**
@@ -355,7 +360,7 @@ export class CalendarSgaComponent implements OnInit {
             template.name = data.name;
             this.intermediaryService.presentLoading();
             this.calendarService.storeTemplate(template).subscribe(()=>{
-              //this.clear();
+              this.clear();
               this.getCalendarDates();
               this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
               this.getTemplates();
@@ -393,6 +398,14 @@ export class CalendarSgaComponent implements OnInit {
     this.warehousesDestinationList = [];
     this.warehousesDestinationList = tempDestination;
 
+    this.selectDates = [{
+      date:'todas las fechas seleccionadas',
+      warehouses:[],
+      value:null
+    }];
+
+    this.manageSelectedRadio();
+    this.manageSelectedClass();
     this.getCalendarDates();
   }
 
@@ -434,9 +447,7 @@ export class CalendarSgaComponent implements OnInit {
       value.date = date.date;
       if(value.warehouses.length)
         globalValues.calendars.push(value)
-    })
-
-    console.log(globalValues);
+    });
     
     this.intermediaryService.presentLoading();
     this.calendarService.store(globalValues).subscribe(()=>{
@@ -450,5 +461,57 @@ export class CalendarSgaComponent implements OnInit {
     });
     // console.log(globalValues);
   }
+
+  manageSelectedClass():void{
+    let days = <any>document.getElementsByClassName("dp-calendar-day");
+    for(let i=0;i<days.length;i++){
+      let day = days[i];
+      this.selectDates.forEach(date=>{
+        if(date.date.split("-").reverse().join("-") == day.dataset.date){
+          if((date.warehouses.length) || (date.value && this.addWarehouses().length)){
+            day.className+= ' tselected'; 
+          }else{
+            // console.log("borrando")
+            day.className = day.className.replace(/tselected/g, "");
+          }
+        } else {
+          day.className = day.className.replace(/tselected/g, "");
+        }
+      });
+    }
+  }
+
+  manageSelectedRadio():void{
+    let days = <any>document.getElementsByClassName("dp-selected");
+    for(let i=0;i<days.length;i++){
+      let day = days[i];
+      day.className = day.className.replace(/dp-selected/g, "");
+    }
+  }
+
+  /**
+   * Tells if all dates have selected warehouses
+   * @returns status of submit
+   */
+  validToStore(){
+    let flag = true;
+    if(this.date.date == 'todas las fechas seleccionadas' && this.addWarehouses().length )
+      return true;
+    this.selectDates.forEach((date,i)=>{
+      if(!i)
+        return true;
+      if(!(date.warehouses.length || (date.value && this.addWarehouses().length)))
+        flag = false;
+    });
+    return flag;
+  }
+
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    this.datePicker.api.open();
+    // console.log(this.datePicker);
+  }
+
 
 }

@@ -105,6 +105,10 @@ ion-footer {
     margin-bottom: -10px;
 }
 
+.list-plantillas{
+    max-height: 320px !important;
+}
+
 :host /deep/ {
     .dp-picker-input {
         display: none;
