@@ -3,8 +3,8 @@
       <ion-text color="primary">
           <suite-breadcrumb></suite-breadcrumb>
         </ion-text>
-        <div class="container">
-          <mat-table #table [dataSource]="dataSource">
+        <div class="container" *ngIf="templates">
+          <mat-table #table [dataSource]="templates">
             <ng-container matColumnDef="delete" [formGroup]="selectedForm">
               <mat-header-cell *matHeaderCellDef>  
                   
@@ -20,19 +20,19 @@
             </ng-container>
             <ng-container matColumnDef="Ntemplate">
               <mat-header-cell *matHeaderCellDef> Plantilla </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.Ntemplate}} </mat-cell>
+              <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
             </ng-container>
             <ng-container matColumnDef="zona">
               <mat-header-cell *matHeaderCellDef>Cantidad </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.zona}} </mat-cell>
+              <mat-cell *matCellDef="let element"> {{element.zones.length}} </mat-cell>
             </ng-container>
             <ng-container matColumnDef="nombre">
               <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
             </ng-container>
             <ng-container matColumnDef="carriles">
               <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
+              <mat-cell *matCellDef="let element"> {{element.zoneWays.length}} </mat-cell>
             </ng-container>
             <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
                 <mat-header-cell *matHeaderCellDef>  
