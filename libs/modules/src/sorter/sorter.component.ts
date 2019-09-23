@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel, DataSource} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel} from "@suite/services";
+import {RolModel, UserModel, WarehouseModel, IntermediaryService} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../services/src/models/endpoints/Hall";
@@ -22,6 +22,9 @@ import { validators } from '../utils/validators';
 import { Router } from '@angular/router';
 import { UpdateComponent } from './modals/update/update.component';
 import { StoreComponent } from './modals/store/store.component';
+import { SorterTemplateService } from '../../../services/src/lib/endpoint/sorter-template/sorter-template.service';
+import { TemplateSorterModel } from '../../../services/src/models/endpoints/TemplateSorter';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'suite-sorter',
@@ -54,18 +57,22 @@ export class SorterComponent implements OnInit {
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
   items: FormArray;
+  toDeleteIds: number[] = [];
 
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
     private router: Router,
     private modalController:ModalController,
+    private sorterTemplateService: SorterTemplateService,
+    private intermediaryService: IntermediaryService
     
   ) {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        selects: this.formBuilder.array([ this.createSelect() ])
+        selects: this.formBuilder.array([ this.createSelect() ]),
+        global: false
       },
       {
         validators: validators.haveItems('toSelect')
@@ -89,6 +96,8 @@ export class SorterComponent implements OnInit {
   expandedElement: any;
   showExpasion: boolean = false;
   warehouses: any = [];
+  templates: TemplateSorterModel.Template[] = [];
+
   ngOnInit() {
     this.crudService
     .getIndex('Warehouses')
@@ -105,9 +114,7 @@ export class SorterComponent implements OnInit {
             >
           ) => {
             this.warehouses = res.body.data;
-            console.log(this.warehouses);
             this.initSelect(this.warehouses);
-            this.initSelectActive(this.warehouses);
           },
           (err) => {
             console.log(err)
@@ -117,6 +124,10 @@ export class SorterComponent implements OnInit {
         );
       }
     );
+    this.sorterTemplateService.getIndex().subscribe((data) => {
+      this.templates = data.data;
+      this.initSelectActive(this.templates);
+    })
   }
 
   clickShowExpasion(row: any) {
@@ -129,6 +140,10 @@ export class SorterComponent implements OnInit {
     const controlArray = <FormArray> this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
+    });
+    this.toDeleteIds = [];
+    this.templates.forEach(template => {
+      this.toDeleteIds.push(template.id);
     });
   }
 
@@ -145,13 +160,22 @@ export class SorterComponent implements OnInit {
     });
   }
 
-  initSelectActive(items) {
+  initSelectActive(items: TemplateSorterModel.Template[]) {
     this.selectedFormActive.removeControl('toSelectActive');
-    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(
+      items.map(item => new FormControl(Boolean(item.active))))
+    );
   }
 
   createSelect(): FormControl {
     return new FormControl(Boolean(false));
+  }
+
+  getTemplates() {
+    this.sorterTemplateService.getIndex().subscribe((data) => {
+      this.templates = data.data;
+      this.initSelectActive(this.templates);
+    });
   }
 
   async update(row):Promise<void>{
@@ -162,7 +186,7 @@ export class SorterComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
+      this.getTemplates();
     })
     modal.present();
   }
@@ -172,7 +196,7 @@ export class SorterComponent implements OnInit {
       component:StoreComponent
     }));
     modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
+     this.getTemplates();
     })
     modal.present();
   }
@@ -181,8 +205,47 @@ export class SorterComponent implements OnInit {
     event.stopPropagation();
   }
 
+  toDeleteTemplate(index) {
+    event.stopPropagation();
+    let repeat = false;
+    let idToDelete = this.templates[index].id;
+    this.toDeleteIds.forEach(id => {
+      if(id == idToDelete) {
+        repeat = true;
+      }
+    })
+    if(!repeat) {
+      this.toDeleteIds.push(idToDelete);
+    }
+  }
+
   delete() {
-    console.log('delete')
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    if(this.toDeleteIds.length > 0) {
+      this.toDeleteIds.forEach(id => {
+        deletions = deletions.pipe(switchMap(() => { 
+          return (this.sorterTemplateService.deleteTemplateSorter(id))
+        }))
+      });
+    }
+   
+    this.toDeleteIds = [];
+    this.intermediaryService.presentLoading();
+
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getTemplates();
+      this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
+      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      controlArray.controls.forEach((control, i) => {
+        control.setValue(false);
+      });
+      this.selectedForm.get('global').setValue(false);
+    },()=>{
+      this.intermediaryService.dismissLoading(); 
+      this.getTemplates();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+    });
   }
 
 }

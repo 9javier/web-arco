@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { TemplateSorterModel } from '../../../models/endpoints/TemplateSorter';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +11,7 @@ import { map } from 'rxjs/operators';
 export class SorterTemplateService {
 
   /**urls for sorter service */
-  private postCreateTemplateSorterUrl: string = environment.apiBase + "/sorters";
+  private postCreateTemplateSorterUrl: string = environment.apiBase + "/sorter/templates";
   private getTemplateSorterUrl: string = environment.apiBase + "/sorter/templates";
   private putUpdateTemplateSorterUrl: string = environment.apiBase + "/sorter/templates/{{id}}";
   private deleteSorterUrl: string = environment.apiBase + "/sorter/templates/{{id}}";
@@ -24,9 +24,17 @@ export class SorterTemplateService {
   }
 
   postCreate(data: TemplateSorterModel.Template): Observable<TemplateSorterModel.ResponseTemplateCreate> {
-    return this.http.post<TemplateSorterModel.ResponseTemplateCreate>(this.postCreateTemplateSorterUrl, data).pipe(map(response => {
-      return response;
-    }));
+    console.log(data)
+    return this.http.post<TemplateSorterModel.ResponseTemplateCreate>(this.postCreateTemplateSorterUrl, data)
+    .pipe(
+      map(response => {
+       return response;
+      },
+      catchError((err) => {
+        console.log('caught rethrown error, providing fallback value');
+        return of([]);
+      })
+    ));
   }
 
   updateTemplateSorter(data: TemplateSorterModel.Template, id: number): Observable<TemplateSorterModel.ResponseTemplateCreate> {
@@ -37,6 +45,6 @@ export class SorterTemplateService {
   }
 
   deleteTemplateSorter(id: number) {
-    return this.http.delete<any>(this.deleteSorterUrl.replace("{{id}}",String(id)));
+    return this.http.delete(this.deleteSorterUrl.replace("{{id}}",String(id)));
   }
 }

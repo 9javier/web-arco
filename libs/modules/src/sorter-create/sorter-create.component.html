@@ -8,12 +8,12 @@
             <ng-container matColumnDef="delete" [formGroup]="selectedForm">
                 <mat-header-cell *matHeaderCellDef>
                     
-                    <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+                    <ion-checkbox (ionChange)="selectAll($event)" [formControl]="selectedForm['controls']?.global"></ion-checkbox>
                     <i class="material-icons">delete</i>
                   </mat-header-cell>
                 <mat-cell *matCellDef="let items;let i = index">
                     <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                        <ion-checkbox (click)="activeDelete()" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                        <ion-checkbox (click)="toDeleteSorter(i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
                     </ng-template>
               </mat-cell>
             </ng-container>

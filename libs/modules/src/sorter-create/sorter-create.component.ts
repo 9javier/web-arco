@@ -14,7 +14,7 @@ import { CreateComponent } from './modals/create/create.component';
 import { SorterService } from '../../../services/src/lib/endpoint/sorter/sorter.service';
 import { TemplateColorsService } from '../../../services/src/lib/endpoint/template-colors/template-colors.service';
 import { SorterModel } from '../../../services/src/models/endpoints/Sorter';
-import { tap, map } from 'rxjs/operators';
+import { tap, map, switchMap } from 'rxjs/operators';
 import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 
 @Component({
@@ -50,6 +50,7 @@ export class SorterCreateComponent implements OnInit {
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   items: FormArray;
+  toDeleteIds: number[] = [];
 
   constructor(
     private crudService: CrudService,
@@ -63,13 +64,13 @@ export class SorterCreateComponent implements OnInit {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        toSelect: this.formBuilder.array([ this.createSelect() ])
+        toSelect: this.formBuilder.array([ this.createSelect() ]),
+        global: false
       },
       {
         validators: validators.haveItems('toSelect')
       }
     );
-    console.log(this.selectedForm)
   }
 
 
@@ -117,6 +118,16 @@ export class SorterCreateComponent implements OnInit {
       });
   }
 
+  getSorters() {
+    this.intermediaryService.presentLoading();
+    this.sorteService
+    .getIndex().subscribe((data) => {
+      this.intermediaryService.dismissLoading();
+      this.sorters = data.data;
+      console.log(this.sorters)
+    });
+  }
+
   clickShowExpasion(row: any) {
     event.stopPropagation();
     this.router.navigate(['/sorter/plantilla/1'])
@@ -127,6 +138,10 @@ export class SorterCreateComponent implements OnInit {
     const controlArray = <FormArray> this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
+    });
+    this.toDeleteIds = [];
+    this.sorters.forEach(sorter => {
+      this.toDeleteIds.push(sorter.id);
     });
   }
 
@@ -157,13 +172,7 @@ export class SorterCreateComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
-      this.intermediaryService.presentLoading();
-      this.sorteService
-      .getIndex().subscribe((data) => {
-        this.sorters = data.data;
-        this.intermediaryService.dismissLoading();
-        console.log(this.sorters)
-      });
+      this.getSorters();
     })
     modal.present();
   }
@@ -178,13 +187,7 @@ export class SorterCreateComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
-      this.intermediaryService.presentLoading();
-      this.sorteService
-      .getIndex().subscribe((data) => {
-        this.intermediaryService.dismissLoading();
-        this.sorters = data.data;
-        console.log(this.sorters)
-      });
+      this.getSorters();
     })
     modal.present();
   }
@@ -193,8 +196,47 @@ export class SorterCreateComponent implements OnInit {
     event.stopPropagation();
   }
 
+  toDeleteSorter(index) {
+    event.stopPropagation();
+    let repeat = false;
+    let idToDelete = this.sorters[index].id;
+    this.toDeleteIds.forEach(id => {
+      if(id == idToDelete) {
+        repeat = true;
+      }
+    })
+    if(!repeat) {
+      this.toDeleteIds.push(idToDelete);
+    }
+  }
+
   delete() {
-    console.log('delete')
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    if(this.toDeleteIds.length > 0) {
+      this.toDeleteIds.forEach(id => {
+        deletions = deletions.pipe(switchMap(() => { 
+          return (this.sorteService.deleteSorter(id))
+        }))
+      });
+    }
+   
+    this.toDeleteIds = [];
+    this.intermediaryService.presentLoading();
+
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getSorters();
+      this.intermediaryService.presentToastSuccess("Sorters eliminadas con exito");
+      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      controlArray.controls.forEach((control, i) => {
+        control.setValue(false);
+      });
+      this.selectedForm.get('global').setValue(false);
+    },()=>{
+      this.intermediaryService.dismissLoading(); 
+      this.getSorters();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las sorters");
+    });
   }
 
 }
