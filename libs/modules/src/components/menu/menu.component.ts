@@ -222,7 +222,7 @@ export class MenuComponent implements OnInit {
           icon:'logo-usd'
         },
         {
-        title: 'Crear Plantillas',
+        title: 'Crear Plantillas-Zonas',
         id:'sorter-sga',
         url: '/sorter',
         icon:'logo-usd'

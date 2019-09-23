@@ -11,6 +11,7 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ListComponent } from './list/list.component';
 import { ModalsModule } from './modals/modals.module';
 import { ModalsZoneModule } from './list/modals-zone/modals-zone.module';
+import {MatRadioModule} from '@angular/material/radio';
 
 const routes:Routes = [
  
@@ -43,7 +44,8 @@ const routes:Routes = [
     ModalsModule,
     ModalsZoneModule,
     RouterModule.forChild(routes),
-    BreadcrumbModule
+    BreadcrumbModule,
+    MatRadioModule
   ]
 })
 export class SorterModule { }

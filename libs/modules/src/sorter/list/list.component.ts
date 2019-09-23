@@ -58,6 +58,11 @@ export class ListComponent implements OnInit {
   items: FormArray;
   showRails: boolean = false;
 
+  //Get value on ionChange on IonRadioGroup
+  selectedRadioGroup:any;
+  //Get value on ionSelect on IonRadio item
+  selectedRadioItem:any;
+
   rails = [
     {
       height:1,
@@ -260,6 +265,22 @@ export class ListComponent implements OnInit {
   displayRails() {
     event.stopPropagation();
     this.showRails = !this.showRails;
+  }
+
+  radioGroupChange(event) {
+    console.log("radioGroupChange",event.detail);
+    this.selectedRadioGroup = event.detail;
+  }
+ 
+  radioFocus() {
+    console.log("radioFocus");
+  }
+  radioSelect(event) {
+    console.log("radioSelect",event.detail);
+    this.selectedRadioItem = event.detail;
+  }
+  radioBlur() {
+    console.log("radioBlur");
   }
 }
 

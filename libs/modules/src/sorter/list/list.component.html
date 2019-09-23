@@ -1,5 +1,5 @@
 <ion-content padding="true">
-   
+
   <ion-grid>
     <ion-text color="primary">
       <suite-breadcrumb [post]="'Plantilla 1'"></suite-breadcrumb>
@@ -13,20 +13,22 @@
         </ion-button>
       </h2>
     </div>
-    
+
     <div class="container">
       <mat-table #table [dataSource]="dataSource">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm">
-            <mat-header-cell *matHeaderCellDef>
-              <i class="material-icons">delete</i>
-              <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+          <mat-header-cell *matHeaderCellDef>
+            
+            <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+            <i class="material-icons" >delete</i>
           </mat-header-cell>
 
-            <mat-cell *matCellDef="let element; let i = index"> 
-                <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                    <ion-checkbox (click)="activeDelete()" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
-                </ng-template>                 
-              </mat-cell>
+          <mat-cell *matCellDef="let element; let i = index">
+            <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+              <ion-checkbox (click)="activeDelete()" [formControl]="selectedForm['controls']?.toSelect['controls'][i]">
+              </ion-checkbox>
+            </ng-template>
+          </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Ntemplate">
           <mat-header-cell *matHeaderCellDef> Zonas </mat-header-cell>
@@ -41,48 +43,47 @@
           <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
-            <mat-header-cell *matHeaderCellDef>  
-                <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
-                <p>Active</p>     
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element; let i = index"> 
-                <ng-template [ngIf]="selectedFormActive['controls']?.toSelectActive">
-                    <ion-checkbox (click)="activeDelete()" [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
-                </ng-template>
-              </mat-cell>
+          <mat-header-cell *matHeaderCellDef>
+            <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
+            <p>Active</p>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element; let i = index">
+            <ng-template [ngIf]="selectedFormActive['controls']?.toSelectActive">
+              <ion-checkbox (click)="activeDelete()"
+                [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
+            </ng-template>
+          </mat-cell>
         </ng-container>
         <ng-container matColumnDef="configurarCarriles">
-            <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
-            <mat-cell *matCellDef="let element">
-              <span>
-                  <i (click)="openRailsConfiguration()" class="material-icons">build</i>
-              </span> 
-            </mat-cell>
+          <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <span>
+              <i (click)="openRailsConfiguration()" class="material-icons">build</i>
+            </span>
+          </mat-cell>
         </ng-container>
         <ng-container matColumnDef="warehoures">
           <mat-header-cell *matHeaderCellDef>Warehouses</mat-header-cell>
           <mat-cell *matCellDef="let element">
             <span>
-                <i (click)="openWarehousesModal()" class="material-icons">store_mall_directory</i>
-            </span> 
-          </mat-cell>
-      </ng-container>
-      <ng-container matColumnDef="updateCarriles">
-          <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
-          <mat-cell *matCellDef="let element"> 
-            <ion-radio (click)="displayRails()" slot="start" value="update"></ion-radio>
+              <i (click)="openWarehousesModal()" class="material-icons">store_mall_directory</i>
+            </span>
           </mat-cell>
         </ng-container>
-
+        <ng-container matColumnDef="updateCarriles">
+          <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
+         <mat-cell *matCellDef="let element">
+          <mat-radio-group name="rails">
+            <mat-radio-button (click)="displayRails()" [value]="element"></mat-radio-button>
+          </mat-radio-group> 
+         </mat-cell>  
+        </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"
-                matRipple 
-                class="element-row" 
-                [class.expanded]="expandedElement == row"
-                (click)="update(row)"></mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
+          [class.expanded]="expandedElement == row" (click)="update(row)"></mat-row>
         <mat-row *matRowDef="let row; when: isExpansionDetailRow"
-                [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
-                style="overflow: hidden"> 
+          [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+          style="overflow: hidden">
         </mat-row>
       </mat-table>
     </div>
@@ -90,19 +91,20 @@
 
     <div *ngIf="showRails" class="container">
       <div *ngFor="let item of rails" class="heights">
-        <div *ngFor="let column of item.columns; let i = index" class="column" (click)="getColumn(i,column.ways_number, item.height)">
+        <div *ngFor="let column of item.columns; let i = index" class="column"
+          (click)="getColumn(i,column.ways_number, item.height)">
           <span>{{column.ways_number}}</span>
         </div>
       </div>
     </div>
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-      <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect"  color="danger" (click)="delete()">
-          <ion-icon name="trash"></ion-icon>
-      </ion-fab-button>
-      <br>
-      <ion-fab-button (click)="store()">
-          <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
+    <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
+      <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <br>
+    <ion-fab-button (click)="store()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
   </ion-fab>
-</ion-content>  
+</ion-content>

@@ -24,6 +24,7 @@ mat-table {
 .mat-cell,
 .mat-header-cell {
     padding: 10px 10px 10px 0;
+    
 }
 
 .container {
@@ -96,3 +97,15 @@ mat-grid-list {
     font-size: 20px;
     border: 1px solid black;
   }
+
+  mat-radio-button{
+      margin-left: 12px;
+  }
+
+  p{
+      display: flex;
+      position: absolute;
+      margin-top: -17px;
+      margin-left: -8px !important;
+  }
+  
