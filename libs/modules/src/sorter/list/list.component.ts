@@ -27,6 +27,8 @@ import { TemplateZonesService } from '../../../../services/src/lib/endpoint/temp
 import { TemplateZoneModel } from '../../../../services/src/models/endpoints/TemplateZone';
 import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-colors/template-colors.service';
 import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
+import { MatTableDataSource } from '@angular/material/table';
+
 
 @Component({
   selector: 'suite-list-sorter',
@@ -57,6 +59,20 @@ export class ListComponent implements OnInit {
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
+  displayedData = ['prioridad','calle'];
+  data: any[] = [
+    {position: 1, name: 'Hydrogen',},
+    {position: 2, name: 'Helium',},
+    {position: 3, name: 'Lithium',},
+    {position: 4, name: 'Beryllium',},
+    {position: 5, name: 'Boron',},
+    {position: 6, name: 'Carbon',},
+    {position: 7, name: 'Nitrogen',},
+    {position: 8, name: 'Oxygen',},
+    {position: 9, name: 'Fluorine',},
+    {position: 10, name: 'Neon',},
+  ];
+  dataSource2 = new MatTableDataSource<Element>(this.data);
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
   items: FormArray;
@@ -65,6 +81,8 @@ export class ListComponent implements OnInit {
   postRoute: string;
   zones: TemplateZoneModel.Zone[];
   colors: TemplateColorsModel.TemplateColors[];
+  test_counter:number;
+
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup:any;
@@ -105,6 +123,7 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private templateZonesService: TemplateZonesService,
     private templateColorsService:TemplateColorsService,
+    private changeDetectorRefs: ChangeDetectorRef
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -158,6 +177,8 @@ export class ListComponent implements OnInit {
       this.zones = data.data;
       this.initSelectActive(this.zones);
     })
+      this.test_counter = 0;
+      
   }
 
   clickShowExpasion(row: any) {
@@ -255,6 +276,15 @@ export class ListComponent implements OnInit {
           }
       }
     }
+    this.test_counter ++;
+    console.log(this.test_counter);
+    let value = {
+      position: this.test_counter,
+      name: 'test ' + this.test_counter
+    }
+    this.data.push(value);
+    this.dataSource2= new MatTableDataSource<Element>(this.data);
+    console.log(this.dataSource2.data);
   }
 
   activeDelete() {
@@ -319,6 +349,20 @@ export class ExampleDataSource extends DataSource<any> {
     console.log(rows);
     return of(rows);
   }
+
+  disconnect() { }
+}
+
+export class ExampleDataSource2 extends DataSource<any> {
+  /** Connect function called by the table to retrieve one stream containing the data to render. */
+ 
+  connect(): Observable<Element[]> {
+    const rows = [];
+   // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
+    console.log(rows);
+    return of(rows);
+  }
+  
 
   disconnect() { }
 }

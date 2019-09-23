@@ -45,9 +45,6 @@ export class SorterTemplateService {
   }
 
   deleteTemplateSorter(id: number) {
-    return this.http.delete<any>(this.deleteSorterUrl.replace("{{id}}",String(id)))
-    .pipe(map(response => {
-      return response;
-    }));;
+    return this.http.delete(this.deleteSorterUrl.replace("{{id}}",String(id)));
   }
 }

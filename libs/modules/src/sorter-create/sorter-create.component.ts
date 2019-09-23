@@ -64,7 +64,8 @@ export class SorterCreateComponent implements OnInit {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        toSelect: this.formBuilder.array([ this.createSelect() ])
+        toSelect: this.formBuilder.array([ this.createSelect() ]),
+        global: false
       },
       {
         validators: validators.haveItems('toSelect')
@@ -230,6 +231,7 @@ export class SorterCreateComponent implements OnInit {
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
+      this.selectedForm.get('global').setValue(false);
     },()=>{
       this.intermediaryService.dismissLoading(); 
       this.getSorters();
