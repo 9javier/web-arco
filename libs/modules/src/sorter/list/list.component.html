@@ -69,6 +69,7 @@
               <i (click)="openWarehousesModal()" class="material-icons">store_mall_directory</i>
             </span>
           </mat-cell>
+
         </ng-container>
         <ng-container matColumnDef="updateCarriles">
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
@@ -78,6 +79,7 @@
           </mat-radio-group> 
          </mat-cell>  
         </ng-container>
+
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
           [class.expanded]="expandedElement == row" (click)="update(row)"></mat-row>
@@ -90,6 +92,34 @@
 
 
     <div *ngIf="showRails" class="container">
+      <div class="grid overAuto" >
+        
+          <mat-table #table [dataSource]="dataSource2">
+              <ng-container matColumnDef="prioridad" >
+                <mat-header-cell *matHeaderCellDef>
+                 Prioridad
+                </mat-header-cell>
+      
+                <mat-cell *matCellDef="let element">
+                 <p style="margin-left: 20px">{{element.position}}</p> 
+                </mat-cell>
+              </ng-container>
+
+              <ng-container matColumnDef="calle">
+                <mat-header-cell *matHeaderCellDef> calle </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+              </ng-container>
+
+      
+              <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
+                [class.expanded]="expandedElement == row"></mat-row>
+              <mat-row *matRowDef="let row; when: isExpansionDetailRow"
+                [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+                style="overflow: hidden">
+              </mat-row>
+            </mat-table>
+      </div>
       <div *ngFor="let item of rails" class="heights">
         <div *ngFor="let column of item.columns; let i = index" class="column"
           (click)="getColumn(i,column.ways_number, item.height)">
@@ -97,6 +127,7 @@
         </div>
       </div>
     </div>
+
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
     <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
