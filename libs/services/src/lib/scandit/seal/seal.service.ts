@@ -75,8 +75,9 @@ export class SealScanditService {
                 }
               }, (error) => {
                 ScanditMatrixSimple.hideLoadingDialog();
+                let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
                 ScanditMatrixSimple.setText(
-                  'Ha ocurrido un error al intentar precintar el recipiente.',
+                  errorMsg,
                   this.scanditProvider.colorsMessage.error.color,
                   this.scanditProvider.colorText.color,
                   16);
