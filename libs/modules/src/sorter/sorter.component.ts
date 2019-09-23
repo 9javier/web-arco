@@ -22,6 +22,8 @@ import { validators } from '../utils/validators';
 import { Router } from '@angular/router';
 import { UpdateComponent } from './modals/update/update.component';
 import { StoreComponent } from './modals/store/store.component';
+import { SorterTemplateService } from '../../../services/src/lib/endpoint/sorter-template/sorter-template.service';
+import { TemplateSorterModel } from '../../../services/src/models/endpoints/TemplateSorter';
 
 @Component({
   selector: 'suite-sorter',
@@ -60,6 +62,7 @@ export class SorterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private modalController:ModalController,
+    private sorterTemplateService: SorterTemplateService,
     
   ) {
     this.selectedForm = this.formBuilder.group(
@@ -89,6 +92,8 @@ export class SorterComponent implements OnInit {
   expandedElement: any;
   showExpasion: boolean = false;
   warehouses: any = [];
+  templates: TemplateSorterModel.Template[] = [];
+
   ngOnInit() {
     this.crudService
     .getIndex('Warehouses')
@@ -105,9 +110,7 @@ export class SorterComponent implements OnInit {
             >
           ) => {
             this.warehouses = res.body.data;
-            console.log(this.warehouses);
             this.initSelect(this.warehouses);
-            this.initSelectActive(this.warehouses);
           },
           (err) => {
             console.log(err)
@@ -117,6 +120,10 @@ export class SorterComponent implements OnInit {
         );
       }
     );
+    this.sorterTemplateService.getIndex().subscribe((data) => {
+      this.templates = data.data;
+      this.initSelectActive(this.templates);
+    })
   }
 
   clickShowExpasion(row: any) {
@@ -145,9 +152,11 @@ export class SorterComponent implements OnInit {
     });
   }
 
-  initSelectActive(items) {
+  initSelectActive(items: TemplateSorterModel.Template[]) {
     this.selectedFormActive.removeControl('toSelectActive');
-    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(
+      items.map(item => new FormControl(Boolean(item.active))))
+    );
   }
 
   createSelect(): FormControl {
@@ -162,7 +171,10 @@ export class SorterComponent implements OnInit {
       }
     }));
     modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
+      this.sorterTemplateService.getIndex().subscribe((data) => {
+        this.templates = data.data;
+        this.initSelectActive(this.templates);
+      })
     })
     modal.present();
   }
@@ -172,7 +184,10 @@ export class SorterComponent implements OnInit {
       component:StoreComponent
     }));
     modal.onDidDismiss().then(()=>{
-      //this.getAgencies();
+      this.sorterTemplateService.getIndex().subscribe((data) => {
+        this.templates = data.data;
+        this.initSelectActive(this.templates);
+      })
     })
     modal.present();
   }

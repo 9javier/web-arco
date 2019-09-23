@@ -15,8 +15,7 @@ export class BaseComponent implements OnInit {
 
   form:FormGroup = this.formBuilder.group({
     id:[''],
-    nombre:['',Validators.required],
-    carriles:['',Validators.required]
+    name:['',Validators.required],
   });
 
   constructor(
