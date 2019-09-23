@@ -78,7 +78,8 @@ export class InputCodesComponent implements OnInit {
             }
           }, (error) => {
             this.intermediaryService.dismissLoading();
-            this.presentToast('Ha ocurrido un error al intentar precintar el recipiente.', 'danger');
+            let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+            this.presentToast(errorMsg, 'danger');
           }, () => {
             this.intermediaryService.dismissLoading();
           });
