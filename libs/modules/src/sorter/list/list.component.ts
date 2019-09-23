@@ -23,6 +23,10 @@ import { StoreComponent } from './modals-zone/store/store.component';
 import { UpdateComponent } from './modals-zone/update/update.component';
 import { WarehousesModalComponent } from './modals-zone/warehouses-modal/warehouses-modal.component';
 import { RailsConfigurationComponent } from './modals-zone/rails-configuration/rails-configuration.component';
+import { TemplateZonesService } from '../../../../services/src/lib/endpoint/template-zones/template-zones.service';
+import { TemplateZoneModel } from '../../../../services/src/models/endpoints/TemplateZone';
+import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-colors/template-colors.service';
+import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 
 @Component({
   selector: 'suite-list-sorter',
@@ -57,6 +61,10 @@ export class ListComponent implements OnInit {
   selectedFormActive: FormGroup;
   items: FormArray;
   showRails: boolean = false;
+  id: string;
+  postRoute: string;
+  zones: TemplateZoneModel.Zone[];
+  colors: TemplateColorsModel.TemplateColors[];
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup:any;
@@ -93,7 +101,10 @@ export class ListComponent implements OnInit {
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private route: ActivatedRoute,
+    private templateZonesService: TemplateZonesService,
+    private templateColorsService:TemplateColorsService,
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -115,6 +126,8 @@ export class ListComponent implements OnInit {
         validators: validators.haveItems('toSelectActive')
       }
     );
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.postRoute = `Plantilla ${this.id}`;
   }
 
 
@@ -131,7 +144,6 @@ export class ListComponent implements OnInit {
             (res: HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>) => {
               this.warehouses = res.body.data;
               this.initSelect(this.warehouses);
-              this.initSelectActive(this.warehouses);
             },
             (err) => {
               console.log(err)
@@ -139,6 +151,13 @@ export class ListComponent implements OnInit {
           );
         }
       );
+    this.templateColorsService.getIndex().subscribe((data) => {
+        this.colors = data.data;
+    })
+    this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+      this.zones = data.data;
+      this.initSelectActive(this.zones);
+    })
   }
 
   clickShowExpasion(row: any) {
@@ -170,9 +189,9 @@ export class ListComponent implements OnInit {
     });
   }
 
-  initSelectActive(items) {
+  initSelectActive(items: TemplateZoneModel.Zone[]) {
     this.selectedFormActive.removeControl('toSelectActive');
-    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(item.active)))));
   }
 
   createSelect(): FormControl {
@@ -191,7 +210,10 @@ export class ListComponent implements OnInit {
 
   async store(row):Promise<void>{
     let modal = (await this.modalController.create({
-      component:StoreComponent
+      component:StoreComponent,
+      componentProps:{
+        colors: this.colors
+      }
     }));
     modal.present();
   }

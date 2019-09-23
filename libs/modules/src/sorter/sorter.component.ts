@@ -128,7 +128,7 @@ export class SorterComponent implements OnInit {
 
   clickShowExpasion(row: any) {
     event.stopPropagation();
-    this.router.navigate(['/sorter/plantilla/1']);
+    this.router.navigate([`/sorter/plantilla/${row.id}`]);
   }
 
   selectAll(event):void{

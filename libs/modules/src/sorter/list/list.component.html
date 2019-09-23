@@ -2,7 +2,7 @@
 
   <ion-grid>
     <ion-text color="primary">
-      <suite-breadcrumb [post]="'Plantilla 1'"></suite-breadcrumb>
+      <suite-breadcrumb [post]="postRoute"></suite-breadcrumb>
     </ion-text>
 
     <div class="main-buttons">
@@ -14,8 +14,8 @@
       </h2>
     </div>
 
-    <div class="container">
-      <mat-table #table [dataSource]="dataSource">
+    <div class="container" *ngIf="zones">
+      <mat-table #table [dataSource]="zones">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm">
           <mat-header-cell *matHeaderCellDef>
             
@@ -32,15 +32,15 @@
         </ng-container>
         <ng-container matColumnDef="Ntemplate">
           <mat-header-cell *matHeaderCellDef> Zonas </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.Ntemplate}} </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.zoneNumber}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="nombre">
           <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.nombre}} </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="carriles">
           <mat-header-cell *matHeaderCellDef> Carriles </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.carriles}} </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.zoneWays.length}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
           <mat-header-cell *matHeaderCellDef>
