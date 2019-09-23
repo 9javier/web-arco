@@ -37,6 +37,6 @@ export class SorterService {
   }
 
   deleteSorter(id: number) {
-    return this.http.delete<any>(this.deleteSorterUrl.replace("{{id}}",String(id)));
+    return this.http.delete(this.deleteSorterUrl.replace("{{id}}",String(id)));
   }
 }
