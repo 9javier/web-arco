@@ -243,8 +243,8 @@ public class MatrixProductInfo extends Activity {
       tvBrandName.setText("- sin especificar -");
     }
 
+    tlTableSizesProduct.removeAllViews();
     if (productModel.getSizes().size() > 0) {
-      tlTableSizesProduct.removeAllViews();
       int limitForRow = 5;
       int countColumnsAdded = 0;
       int countRows = 0;
