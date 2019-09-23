@@ -13,6 +13,7 @@ export class CreateComponent implements OnInit {
 
   @ViewChild(BaseComponent) base:BaseComponent;
   wareHouses: any;
+  colors: any;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -21,6 +22,7 @@ export class CreateComponent implements OnInit {
     private sorteService: SorterService,
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
+    this.colors = this.navParams.get("colors");
     console.log(this.wareHouses);
   }
 

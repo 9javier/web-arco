@@ -14,6 +14,7 @@ export class UpdateComponent implements OnInit {
   @ViewChild(BaseComponent) base:BaseComponent;
   wareHouses: any;
   sorter: any;
+  colors: any;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -23,6 +24,7 @@ export class UpdateComponent implements OnInit {
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
     this.sorter = this.navParams.get("sorter");
+    this.colors = this.navParams.get("colors");
   }
 
   ngOnInit() {
