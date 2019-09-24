@@ -5,6 +5,10 @@
         <!-- Input Text -->
         <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="nombre" type="text" text></ion-input>
     </ion-item>
+    <ion-item class="active">
+      <ion-label position="floating">Active</ion-label>
+      <ion-checkbox formControlName="active"></ion-checkbox>
+  </ion-item>
    <ion-item>
     <ion-label position="floating">Color</ion-label>
     <ion-select class="ion-margin-horizontal" [placeholder]="Colores" multiple="false"

@@ -31,7 +31,7 @@ export class StoreComponent implements OnInit {
   submit():void{
     let payload = this.base.getValue()
     payload = {
-      active:true,
+      active:false,
       ...payload
     }
     console.log(payload)

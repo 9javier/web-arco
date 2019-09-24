@@ -28,6 +28,7 @@ import { TemplateZoneModel } from '../../../../services/src/models/endpoints/Tem
 import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-colors/template-colors.service';
 import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 import { MatTableDataSource } from '@angular/material/table';
+import { switchMap } from 'rxjs/operators';
 
 
 @Component({
@@ -55,7 +56,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'nombre', 'carriles', 'active', 'configurarCarriles', 'warehoures', 'updateCarriles'];
+  displayedColumns = ['delete', 'Ntemplate', 'nombre', 'active', 'configurarCarriles', 'warehoures', 'color' ,'updateCarriles'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -71,6 +72,7 @@ export class ListComponent implements OnInit {
   zones: TemplateZoneModel.Zone[];
   colors: TemplateColorsModel.TemplateColors[];
   test_counter:number;
+  toDeleteIds: number[] = [];
 
 
   //Get value on ionChange on IonRadioGroup
@@ -171,6 +173,13 @@ export class ListComponent implements OnInit {
       
   }
 
+  getZones() {
+    this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+      this.zones = data.data;
+      this.initSelectActive(this.zones);
+    });
+  }
+
   clickShowExpasion(row: any) {
     event.stopPropagation();
     console.log(row)
@@ -184,6 +193,10 @@ export class ListComponent implements OnInit {
     const controlArray = <FormArray> this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
+    });
+    this.toDeleteIds = [];
+    this.zones.forEach(template => {
+      this.toDeleteIds.push(template.id);
     });
   }
 
@@ -291,9 +304,47 @@ export class ListComponent implements OnInit {
   activeDelete() {
     event.stopPropagation();
   }
+
+  toDeleteZone(index) {
+    event.stopPropagation();
+    let repeat = false;
+    let idToDelete = this.zones[index].id;
+    this.toDeleteIds.forEach(id => {
+      if(id == idToDelete) {
+        repeat = true;
+      }
+    })
+    if(!repeat) {
+      this.toDeleteIds.push(idToDelete);
+    }
+  }
   
   delete() {
-    console.log('delete')
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    if(this.toDeleteIds.length > 0) {
+      this.toDeleteIds.forEach(idZone => {
+        deletions = deletions.pipe(switchMap(() => { 
+          return (this.templateZonesService.deleteTemplateZone(idZone, Number(this.id)))
+        }))
+      });
+    }
+   
+    this.toDeleteIds = [];
+    this.intermediaryService.presentLoading();
+
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getZones();
+      this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
+      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      controlArray.controls.forEach((control, i) => {
+        control.setValue(false);
+      });
+    },()=>{
+      this.intermediaryService.dismissLoading(); 
+      this.getZones();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+    });
   }
 
   async openWarehousesModal() {

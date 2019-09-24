@@ -25,7 +25,7 @@
 
           <mat-cell *matCellDef="let element; let i = index">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-              <ion-checkbox (click)="activeDelete()" [formControl]="selectedForm['controls']?.toSelect['controls'][i]">
+              <ion-checkbox (click)="toDeleteZone(i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]">
               </ion-checkbox>
             </ng-template>
           </mat-cell>
@@ -36,11 +36,7 @@
         </ng-container>
         <ng-container matColumnDef="nombre">
           <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.template.name}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="carriles">
-          <mat-header-cell *matHeaderCellDef> Carriles </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.zoneWays.length}} </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
           <mat-header-cell *matHeaderCellDef>
@@ -69,7 +65,10 @@
               <i (click)="openWarehousesModal()" class="material-icons">store_mall_directory</i>
             </span>
           </mat-cell>
-
+        </ng-container>
+        <ng-container matColumnDef="color">
+          <mat-header-cell *matHeaderCellDef> Color </mat-header-cell>
+          <mat-cell *matCellDef="let element"> color </mat-cell>
         </ng-container>
         <ng-container matColumnDef="updateCarriles">
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>

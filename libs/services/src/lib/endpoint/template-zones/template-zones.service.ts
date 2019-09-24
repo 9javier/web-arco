@@ -56,7 +56,7 @@ export class TemplateZonesService {
     }));
   }
 
-  deleteTemplateSorter(id: number, idTemplate: number) {
+  deleteTemplateZone(id: number, idTemplate: number) {
     return this.http.delete<any>(this.deleteZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
     .pipe(map(response => {
       return response;

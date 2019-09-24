@@ -9,8 +9,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class BaseComponent implements OnInit {
 
   @Input() set zone(zone){
-    if(zone)
+    if(zone) {
       this.form.patchValue(zone);
+    }
   }
 
   @Input() colors: any;
@@ -18,7 +19,8 @@ export class BaseComponent implements OnInit {
   form:FormGroup = this.formBuilder.group({
     id:[''],
     nombre:['',Validators.required],
-    color:['',Validators.required]
+    color:['',Validators.required],
+    active: [null]
   });
 
   constructor(
