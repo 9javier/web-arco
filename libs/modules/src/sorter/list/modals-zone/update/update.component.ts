@@ -13,6 +13,7 @@ export class UpdateComponent implements OnInit {
   @ViewChild(BaseComponent) base:BaseComponent;
   zona;
   colors: any;
+  id: number;
   
   constructor(
     private intermediaryService:IntermediaryService,
@@ -21,6 +22,7 @@ export class UpdateComponent implements OnInit {
   ) {
     this.zona = this.navParams.get("zona"); 
     this.colors = this.navParams.get("colors"); 
+    this.id = this.navParams.get("id"); 
   }
 
   ngOnInit() {
@@ -30,7 +32,7 @@ export class UpdateComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  submit(template):void{
+  submit():void{
     console.log('submit')
   }
 }
