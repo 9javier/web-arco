@@ -12,6 +12,15 @@ export namespace TemplateZoneModel{
         id: number;
     }
 
+    export interface ZoneWarehouse {
+        zone: number;
+        warehouses: number[];
+    }
+    
+    export interface ZonesWarehouses {
+        zones: ZoneWarehouse[];
+    }
+
     export interface ResponseZone{
         data:Array<Zone>;
     }
