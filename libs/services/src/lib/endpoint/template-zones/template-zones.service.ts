@@ -32,6 +32,8 @@ export class TemplateZonesService {
   }
 
   postCreate(data: TemplateZoneModel.Zone, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
+    console.log(data)
+    console.log(idTemplate)
     return this.http.post<TemplateZoneModel.ResponseZoneCreate>(this.postCreateZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)), data)
     .pipe(
       map(response => {

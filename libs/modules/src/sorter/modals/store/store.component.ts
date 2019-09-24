@@ -38,7 +38,9 @@ export class StoreComponent implements OnInit {
     this.sorterTemplateService.postCreate(payload).subscribe((data) => {
       console.log(data.data);
       this.close();
-    });;
+    }, (err) => {
+      console.log(err);
+    });
   }
 
 }

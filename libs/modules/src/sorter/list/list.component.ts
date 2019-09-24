@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel, DataSource} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel} from "@suite/services";
+import {RolModel, UserModel, WarehouseModel, IntermediaryService} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../../services/src/models/endpoints/Hall";
@@ -60,18 +60,7 @@ export class ListComponent implements OnInit {
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   displayedData = ['prioridad','calle'];
-  data: any[] = [
-    {position: 1, name: 'Hydrogen',},
-    {position: 2, name: 'Helium',},
-    {position: 3, name: 'Lithium',},
-    {position: 4, name: 'Beryllium',},
-    {position: 5, name: 'Boron',},
-    {position: 6, name: 'Carbon',},
-    {position: 7, name: 'Nitrogen',},
-    {position: 8, name: 'Oxygen',},
-    {position: 9, name: 'Fluorine',},
-    {position: 10, name: 'Neon',},
-  ];
+  data = [];
   dataSource2 = new MatTableDataSource<Element>(this.data);
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
@@ -123,7 +112,8 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private templateZonesService: TemplateZonesService,
     private templateColorsService:TemplateColorsService,
-    private changeDetectorRefs: ChangeDetectorRef
+    private changeDetectorRefs: ChangeDetectorRef,
+    private intermediaryService: IntermediaryService
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -176,8 +166,8 @@ export class ListComponent implements OnInit {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
       this.initSelectActive(this.zones);
-    })
-      this.test_counter = 0;
+    });
+    this.test_counter = 0;
       
   }
 
@@ -229,13 +219,22 @@ export class ListComponent implements OnInit {
     modal.present();
   }
 
-  async store(row):Promise<void>{
+  async store():Promise<void>{
     let modal = (await this.modalController.create({
       component:StoreComponent,
       componentProps:{
-        colors: this.colors
+        colors: this.colors,
+        id: this.id
       }
     }));
+    modal.onDidDismiss().then(()=>{
+      this.intermediaryService.presentLoading();
+      this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+        this.zones = data.data;
+        this.initSelectActive(this.zones);
+        this.intermediaryService.dismissLoading();
+      });
+    })
     modal.present();
   }
 
