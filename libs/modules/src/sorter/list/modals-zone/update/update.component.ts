@@ -12,6 +12,7 @@ export class UpdateComponent implements OnInit {
 
   @ViewChild(BaseComponent) base:BaseComponent;
   zona;
+  colors: any;
   
   constructor(
     private intermediaryService:IntermediaryService,
@@ -19,6 +20,7 @@ export class UpdateComponent implements OnInit {
     private navParams:NavParams
   ) {
     this.zona = this.navParams.get("zona"); 
+    this.colors = this.navParams.get("colors"); 
   }
 
   ngOnInit() {

@@ -23,6 +23,12 @@ import { StoreComponent } from './modals-zone/store/store.component';
 import { UpdateComponent } from './modals-zone/update/update.component';
 import { WarehousesModalComponent } from './modals-zone/warehouses-modal/warehouses-modal.component';
 import { RailsConfigurationComponent } from './modals-zone/rails-configuration/rails-configuration.component';
+import { TemplateZonesService } from '../../../../services/src/lib/endpoint/template-zones/template-zones.service';
+import { TemplateZoneModel } from '../../../../services/src/models/endpoints/TemplateZone';
+import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-colors/template-colors.service';
+import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
+import { MatTableDataSource } from '@angular/material/table';
+
 
 @Component({
   selector: 'suite-list-sorter',
@@ -53,10 +59,30 @@ export class ListComponent implements OnInit {
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
+  displayedData = ['prioridad','calle'];
+  data: any[] = [
+    {position: 1, name: 'Hydrogen',},
+    {position: 2, name: 'Helium',},
+    {position: 3, name: 'Lithium',},
+    {position: 4, name: 'Beryllium',},
+    {position: 5, name: 'Boron',},
+    {position: 6, name: 'Carbon',},
+    {position: 7, name: 'Nitrogen',},
+    {position: 8, name: 'Oxygen',},
+    {position: 9, name: 'Fluorine',},
+    {position: 10, name: 'Neon',},
+  ];
+  dataSource2 = new MatTableDataSource<Element>(this.data);
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
   items: FormArray;
   showRails: boolean = false;
+  id: string;
+  postRoute: string;
+  zones: TemplateZoneModel.Zone[];
+  colors: TemplateColorsModel.TemplateColors[];
+  test_counter:number;
+
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup:any;
@@ -93,7 +119,11 @@ export class ListComponent implements OnInit {
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private modalController:ModalController
+    private modalController:ModalController,
+    private route: ActivatedRoute,
+    private templateZonesService: TemplateZonesService,
+    private templateColorsService:TemplateColorsService,
+    private changeDetectorRefs: ChangeDetectorRef
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -115,6 +145,8 @@ export class ListComponent implements OnInit {
         validators: validators.haveItems('toSelectActive')
       }
     );
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.postRoute = `Plantilla ${this.id}`;
   }
 
 
@@ -131,7 +163,6 @@ export class ListComponent implements OnInit {
             (res: HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>) => {
               this.warehouses = res.body.data;
               this.initSelect(this.warehouses);
-              this.initSelectActive(this.warehouses);
             },
             (err) => {
               console.log(err)
@@ -139,6 +170,15 @@ export class ListComponent implements OnInit {
           );
         }
       );
+    this.templateColorsService.getIndex().subscribe((data) => {
+        this.colors = data.data;
+    })
+    this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+      this.zones = data.data;
+      this.initSelectActive(this.zones);
+    })
+      this.test_counter = 0;
+      
   }
 
   clickShowExpasion(row: any) {
@@ -170,9 +210,9 @@ export class ListComponent implements OnInit {
     });
   }
 
-  initSelectActive(items) {
+  initSelectActive(items: TemplateZoneModel.Zone[]) {
     this.selectedFormActive.removeControl('toSelectActive');
-    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(item.active)))));
   }
 
   createSelect(): FormControl {
@@ -191,7 +231,10 @@ export class ListComponent implements OnInit {
 
   async store(row):Promise<void>{
     let modal = (await this.modalController.create({
-      component:StoreComponent
+      component:StoreComponent,
+      componentProps:{
+        colors: this.colors
+      }
     }));
     modal.present();
   }
@@ -233,6 +276,15 @@ export class ListComponent implements OnInit {
           }
       }
     }
+    this.test_counter ++;
+    console.log(this.test_counter);
+    let value = {
+      position: this.test_counter,
+      name: 'test ' + this.test_counter
+    }
+    this.data.push(value);
+    this.dataSource2= new MatTableDataSource<Element>(this.data);
+    console.log(this.dataSource2.data);
   }
 
   activeDelete() {
@@ -297,6 +349,20 @@ export class ExampleDataSource extends DataSource<any> {
     console.log(rows);
     return of(rows);
   }
+
+  disconnect() { }
+}
+
+export class ExampleDataSource2 extends DataSource<any> {
+  /** Connect function called by the table to retrieve one stream containing the data to render. */
+ 
+  connect(): Observable<Element[]> {
+    const rows = [];
+   // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
+    console.log(rows);
+    return of(rows);
+  }
+  
 
   disconnect() { }
 }

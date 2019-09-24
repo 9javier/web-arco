@@ -12,11 +12,14 @@ export class StoreComponent implements OnInit {
 
   @ViewChild(BaseComponent) base:BaseComponent;
   
+  colors: any;
+  
   constructor(
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
     private navParams:NavParams
   ) {
+    this.colors = this.navParams.get("colors"); 
   }
 
   ngOnInit() {

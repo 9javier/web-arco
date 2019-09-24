@@ -12,6 +12,8 @@ export class BaseComponent implements OnInit {
     if(zone)
       this.form.patchValue(zone);
   }
+
+  @Input() colors: any;
   
   form:FormGroup = this.formBuilder.group({
     id:[''],
