@@ -172,9 +172,11 @@ export class SorterComponent implements OnInit {
   }
 
   getTemplates() {
+    this.intermediaryService.presentLoading();
     this.sorterTemplateService.getIndex().subscribe((data) => {
       this.templates = data.data;
       this.initSelectActive(this.templates);
+      this.intermediaryService.dismissLoading();
     });
   }
 
@@ -240,7 +242,6 @@ export class SorterComponent implements OnInit {
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
-      this.selectedForm.get('global').setValue(false);
     },()=>{
       this.intermediaryService.dismissLoading(); 
       this.getTemplates();
