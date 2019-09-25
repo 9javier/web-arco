@@ -12,6 +12,19 @@ mat-expansion-panel-header.custom-panel-header {
 
     ion-col.check-print {
       padding: 0;
+
+      ion-row.impress {
+        position: absolute;
+        bottom: 1px;
+        padding: 3px;
+        background-color: black;
+        border-radius: 50%;
+        color: white;
+        ion-icon {
+          height: 12px;
+          width: 12px;
+        }
+      }
     }
 
     ion-col.content-prices-header {
@@ -29,7 +42,7 @@ mat-expansion-panel-header.custom-panel-header {
 
       mat-panel-description.panel-description {
         display: block;
-        ion-row.row-family-lifestyle-size {
+        ion-row.row-family-lifestyle-size, ion-row.row-price-stock {
           width: 100%;
           margin-top: 8px;
           ion-col {
@@ -40,6 +53,16 @@ mat-expansion-panel-header.custom-panel-header {
           }
           ion-col.size {
             color: #979797;
+            text-align: end;
+          }
+          ion-col.price {
+            p.final-price {
+              color: black;
+              font-weight: 500;
+            }
+          }
+          ion-col.stock {
+            width: 100%;
             text-align: end;
           }
         }

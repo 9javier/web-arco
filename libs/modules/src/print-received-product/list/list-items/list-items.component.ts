@@ -60,4 +60,18 @@ export class ReceivedProductTemplateComponent implements OnInit {
     return sizesRange;
   }
 
+  getFinalPrice(): string {
+    if (this.productReceived.filterPrice.priceOriginal) {
+      if (this.productReceived.filterPrice.priceDiscountOutlet && this.productReceived.filterPrice.priceDiscountOutlet != '0.00' && this.productReceived.filterPrice.priceDiscountOutlet != '0,00' && this.productReceived.filterPrice.priceOriginal != this.productReceived.filterPrice.priceDiscountOutlet) {
+        return this.productReceived.filterPrice.priceDiscountOutlet;
+      } else if (this.productReceived.filterPrice.priceDiscount && this.productReceived.filterPrice.priceDiscount != '0.00' && this.productReceived.filterPrice.priceDiscount != '0,00' && this.productReceived.filterPrice.priceOriginal != this.productReceived.filterPrice.priceDiscount) {
+        return this.productReceived.filterPrice.priceDiscount;
+      } else {
+        return this.productReceived.filterPrice.priceOriginal;
+      }
+    }
+
+    return '';
+  }
+
 }
