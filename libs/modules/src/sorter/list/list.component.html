@@ -68,7 +68,7 @@
         </ng-container>
         <ng-container matColumnDef="color">
           <mat-header-cell *matHeaderCellDef> Color </mat-header-cell>
-          <mat-cell *matCellDef="let element"> color </mat-cell>
+          <mat-cell *matCellDef="let element"> {{element.color.name}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="quantity">
           <mat-header-cell *matHeaderCellDef> Cantidad </mat-header-cell>

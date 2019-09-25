@@ -39,7 +39,16 @@
                 </ng-container>
             <ng-container matColumnDef="colores">
               <mat-header-cell *matHeaderCellDef>Colores </mat-header-cell>
-              <mat-cell *matCellDef="let element"> rojo </mat-cell>
+              <mat-cell *matCellDef="let element">
+                <mat-form-field>
+                  <mat-label>Ver Colores</mat-label>
+                  <mat-select (click)="activeDelete()">
+                    <mat-option *ngFor="let color of element.color">
+                      {{color.hex}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </mat-cell>
             </ng-container>
         
             <!-- Expanded Content Column - The detail row is made up of this one column -->

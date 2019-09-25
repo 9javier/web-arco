@@ -157,11 +157,6 @@ export class SorterCreateComponent implements OnInit {
   async update(row):Promise<void>{
     const { warehouse, ...data} = row;
     let payload = data;
-    /*payload = {
-      warehouse: warehouse.id,
-      ...payload
-    };*/
-
 
     let modal = (await this.modalController.create({
       component: UpdateComponent,

@@ -7,6 +7,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule, MatIconModule, MatGridListModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material';
+
 
 const routes:Routes = [
   {
@@ -27,6 +30,8 @@ const routes:Routes = [
     MatGridListModule,
     ModalsModule,
     BreadcrumbModule,
+    MatFormFieldModule,
+    MatSelectModule,
     RouterModule.forChild(routes),
   ]
 })

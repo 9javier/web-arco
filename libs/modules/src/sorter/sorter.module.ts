@@ -12,6 +12,8 @@ import { ListComponent } from './list/list.component';
 import { ModalsModule } from './modals/modals.module';
 import { ModalsZoneModule } from './list/modals-zone/modals-zone.module';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material';
 
 const routes:Routes = [
  
@@ -45,7 +47,9 @@ const routes:Routes = [
     ModalsZoneModule,
     RouterModule.forChild(routes),
     BreadcrumbModule,
-    MatRadioModule
+    MatRadioModule,
+    MatFormFieldModule,
+    MatSelectModule
   ]
 })
 export class SorterModule { }
