@@ -39,7 +39,8 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
     orderby: this.formBuilder.group({
       type: '',
       order: "asc"
-    })
+    }),
+    hideImpress: false
   });
 
   models: Array<TagsInputOption> = [];
@@ -194,7 +195,8 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
       orderby: this.formBuilder.group({
         type: '',
         order: "asc"
-      })
+      }),
+      hideImpress: false
     });
 
     this.getFilters();

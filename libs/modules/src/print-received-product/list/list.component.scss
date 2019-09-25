@@ -54,6 +54,12 @@ div.list-header-filters {
         width: 100%;
         max-width: 100%;
       }
+
+      ion-item.hide-impress-products {
+        margin-top: 16px;
+        height: 50px;
+        --border-width: 0;
+      }
     }
   }
 

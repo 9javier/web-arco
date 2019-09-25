@@ -55,7 +55,8 @@ export namespace PickingNewProductsModel {
     orderby: {
       type: number,
       order: string
-    }
+    },
+    hideImpress: boolean
   }
 
   export interface Search {
