@@ -7,6 +7,8 @@ import { validators } from 'libs/modules/src/utils/validators';
 import { Observable, of } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { UserModel, RolModel } from '@suite/services';
+import { TemplateZonesService } from 'libs/services/src/lib/endpoint/template-zones/template-zones.service';
+import { TemplateZoneModel } from 'libs/services/src/models/endpoints/TemplateZone';
 @Component({
   selector: 'suite-warehouses-modal',
   templateUrl: './warehouses-modal.component.html',
@@ -15,10 +17,14 @@ import { UserModel, RolModel } from '@suite/services';
 export class WarehousesModalComponent implements OnInit {
 
   warehouses: WarehouseModel.Warehouse[] = [];
+  warehousesFromZone = [];
   selectedAll: any;
   displayedColumnsWareHouse: any = ['name', 'check'];
   selectedForm: FormGroup;
   items: FormArray;
+  toSelect: number[] = [];
+  idTemplate: number;
+  id: number;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -26,10 +32,11 @@ export class WarehousesModalComponent implements OnInit {
     private navParams:NavParams,
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    
+    private templateZonesService: TemplateZonesService
   ) {
-    this.warehouses = this.navParams.get("warehouses"); 
-    console.log(this.warehouses)
+    this.warehousesFromZone = this.navParams.get("warehouses"); 
+    this.idTemplate = this.navParams.get("idTemplate"); 
+    this.id = this.navParams.get("id"); 
 
     this.selectedForm = this.formBuilder.group(
       {
@@ -77,7 +84,33 @@ export class WarehousesModalComponent implements OnInit {
   }
 
   submit():void{
-    console.log('submit')
+    const controlArray = <FormArray> this.selectedForm.get('toSelect');
+    let warehousesToSend: number[] = [];
+    console.log(controlArray)
+    controlArray.controls.forEach((control, index) => {
+        for(let i = 0; i < this.warehouses.length; i++) {
+          if(control.value && i == index) {
+            console.log(this.warehouses[i].id)
+            warehousesToSend.push(this.warehouses[i].id);
+          }
+        }
+    });
+
+    let zoneWarehouses: TemplateZoneModel.ZoneWarehouse[] = [{
+      zone: this.id,
+      warehouses: warehousesToSend
+    }];
+
+    let dataToSend: TemplateZoneModel.ZonesWarehouses = {
+      zones: zoneWarehouses
+    }
+
+    this.templateZonesService.assignZoneWarehouseSorter(dataToSend, this.idTemplate).subscribe((data) =>{
+      console.log(data);
+      this.close();
+    }, (err) => {
+      console.log(err);
+    })
   }
 
   selectAll(event):void{
@@ -91,6 +124,24 @@ export class WarehousesModalComponent implements OnInit {
   initSelect(items) {
     this.selectedForm.removeControl('toSelect');
     this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+    
+    console.log(this.warehousesFromZone)
+
+    for(let i = 0; i < this.warehouses.length; i++) {
+      this.warehousesFromZone.forEach(warehouse => {
+        if(warehouse.warehouses.id === this.warehouses[i].id) {
+          this.toSelect.push(i);
+        }
+      });
+    }
+    const controlArray = <FormArray> this.selectedForm.get('toSelect');
+    controlArray.controls.forEach((control, i) => {
+      this.toSelect.forEach(check => {
+        if(check == i) {
+          control.setValue(true);
+        }
+      });
+    });
   }
 
   createSelect(): FormControl {

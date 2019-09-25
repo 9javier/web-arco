@@ -62,13 +62,17 @@
           <mat-header-cell *matHeaderCellDef>Warehouses</mat-header-cell>
           <mat-cell *matCellDef="let element">
             <span>
-              <i (click)="openWarehousesModal()" class="material-icons">store_mall_directory</i>
+              <i (click)="openWarehousesModal(element.id)" class="material-icons">store_mall_directory</i>
             </span>
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="color">
           <mat-header-cell *matHeaderCellDef> Color </mat-header-cell>
           <mat-cell *matCellDef="let element"> color </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="quantity">
+          <mat-header-cell *matHeaderCellDef> Cantidad </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="updateCarriles">
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>

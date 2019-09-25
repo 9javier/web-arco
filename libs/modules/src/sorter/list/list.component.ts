@@ -56,7 +56,7 @@ import { switchMap } from 'rxjs/operators';
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'nombre', 'active', 'configurarCarriles', 'warehoures', 'color' ,'updateCarriles'];
+  displayedColumns = ['delete', 'Ntemplate', 'nombre', 'active', 'configurarCarriles', 'warehoures', 'color', 'quantity', 'updateCarriles'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -168,6 +168,7 @@ export class ListComponent implements OnInit {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
       this.initSelectActive(this.zones);
+      console.log(this.zones)
     });
     this.test_counter = 0;
       
@@ -347,14 +348,26 @@ export class ListComponent implements OnInit {
     });
   }
 
-  async openWarehousesModal() {
+  async openWarehousesModal(id) {
+    let zoneByWarehouses = this.zones.filter(zone => zone.id == id);
+    console.log(zoneByWarehouses[0].zoneWarehouses)
     event.stopPropagation();
     let modal = (await this.modalController.create({
       component:WarehousesModalComponent,
       componentProps:{
-        warehouses: this.warehouses
+        warehouses: zoneByWarehouses[0].zoneWarehouses,
+        idTemplate: this.id,
+        id: zoneByWarehouses[0].id
       }
     }));
+    modal.onDidDismiss().then(()=>{
+      this.intermediaryService.presentLoading();
+      this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+        this.zones = data.data;
+        this.initSelectActive(this.zones);
+        this.intermediaryService.dismissLoading();
+      });
+    })
     modal.present();
   }
 

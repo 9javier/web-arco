@@ -16,11 +16,11 @@ export class TemplateZonesService {
   private putUpdateZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   private deleteZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   /** urls zones warehouse */
-  private postCreateZoneWarehouseUrl: string = environment.apiBase + "sorter/templates/{{idTemplate}}/zones/warehouses";
-  private getZoneWarehousesUrl: string = environment.apiBase + "sorter/templates/{{idTemplate}}/zones/warehouses";
-  private putUpdateZoneWarehousesUrl: string = environment.apiBase + "sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
-  private deleteZoneWarehousesUrl: string = environment.apiBase + "sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
-  private assignZoneWarehousesUrl: string = environment.apiBase + "sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
+  private postCreateZoneWarehouseUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
+  private getZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
+  private putUpdateZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
+  private deleteZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
+  private assignZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
 
   constructor(private http: HttpClient) { }
   
@@ -32,8 +32,6 @@ export class TemplateZonesService {
   }
 
   postCreate(data: TemplateZoneModel.Zone, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
-    console.log(data)
-    console.log(idTemplate)
     return this.http.post<TemplateZoneModel.ResponseZoneCreate>(this.postCreateZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)), data)
     .pipe(
       map(response => {
@@ -46,7 +44,10 @@ export class TemplateZonesService {
     ));
   }
 
-  updateTemplateSorter(data: TemplateZoneModel.Zone, id: number, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
+  updateTemplateZone(data: TemplateZoneModel.Zone, id: number, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
+    console.log(data)
+    console.log(id)
+    console.log(idTemplate)
     return this.http.put<TemplateZoneModel.ResponseZoneCreate>(
       this.putUpdateZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)),
       data
@@ -83,7 +84,7 @@ export class TemplateZonesService {
     ));
   }
 
-  updateZoneWarehouseSorter(data: TemplateZoneModel.ZonesWarehouses, id: number, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
+  updateZoneWarehouse(data: TemplateZoneModel.ZonesWarehouses, id: number, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
     return this.http.put<TemplateZoneModel.ResponseZoneCreate>(
       this.putUpdateZoneWarehousesUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)),
       data
@@ -100,9 +101,9 @@ export class TemplateZonesService {
     }));;
   }
 
-  assignZoneWarehouseSorter(data: TemplateZoneModel.ZonesWarehouses, id: number, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
-    return this.http.put<TemplateZoneModel.ResponseZoneCreate>(
-      this.assignZoneWarehousesUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)),
+  assignZoneWarehouseSorter(data: TemplateZoneModel.ZonesWarehouses, idTemplate: number): Observable<any> {
+     return this.http.post<TemplateZoneModel.ResponseZoneCreate>(
+      this.assignZoneWarehousesUrl.replace("{{idTemplate}}",String(idTemplate)),
       data
     )
     .pipe(map(response => {
