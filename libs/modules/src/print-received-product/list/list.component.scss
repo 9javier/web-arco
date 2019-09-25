@@ -56,9 +56,10 @@ div.list-header-filters {
       }
 
       ion-item.hide-impress-products {
-        margin-top: 16px;
-        height: 50px;
         --border-width: 0;
+        ion-label {
+          margin-left: 8px;
+        }
       }
     }
   }

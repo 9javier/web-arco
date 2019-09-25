@@ -21,16 +21,6 @@
             <suite-tags-input placeholder="Modelo" [options]="models" formControlName="models" multiple="true"></suite-tags-input>
           </ion-col>
           <ion-col size="6">
-            <ion-label>Talla:</ion-label>
-            <suite-tags-input placeholder="Talla" [options]="sizes" formControlName="sizes" multiple="true"></suite-tags-input>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="6">
-            <ion-label>Fecha de recepción:</ion-label>
-            <suite-tags-input placeholder="Fecha de recepción" [options]="dates" formControlName="dates" multiple="true"></suite-tags-input>
-          </ion-col>
-          <ion-col size="6">
             <ion-label>Color:</ion-label>
             <suite-tags-input placeholder="Color" [options]="colors" formControlName="colors" multiple="true"></suite-tags-input>
           </ion-col>
@@ -47,6 +37,10 @@
         </ion-row>
         <ion-row>
           <ion-col size="6">
+            <ion-label>Fecha de recepción:</ion-label>
+            <suite-tags-input placeholder="Fecha de recepción" [options]="dates" formControlName="dates" multiple="true"></suite-tags-input>
+          </ion-col>
+          <ion-col size="6">
             <ion-label>Ordenar:</ion-label>
             <ion-item formGroupName="orderby">
               <ion-select class="order-types" formControlName="type" interface="popover">
@@ -54,10 +48,12 @@
               </ion-select>
             </ion-item>
           </ion-col>
-          <ion-col size="6">
-            <ion-item class="hide-impress-products">
-              <ion-label>Ocultar impresos</ion-label>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-item class="hide-impress-products" no-padding>
               <ion-checkbox formControlName="hideImpress"></ion-checkbox>
+              <ion-label>Ocultar impresos</ion-label>
             </ion-item>
           </ion-col>
         </ion-row>
