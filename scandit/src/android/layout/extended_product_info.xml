@@ -112,6 +112,20 @@
         android:layout_marginBottom="16dp">
       </TableLayout>
 
+      <TextView
+        android:id="@+id/tvNoSizesProduct"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:text="Sin tallas en stock"
+        android:textColor="@color/transparentWhite"
+        android:textStyle="bold"/>
+
     </LinearLayout>
 
   </ScrollView>
