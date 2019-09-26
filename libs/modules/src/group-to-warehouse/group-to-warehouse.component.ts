@@ -44,28 +44,21 @@ export class GroupToWarehouseComponent implements OnInit {
         data[0].subscribe(
           (res: HttpResponse<GroupModel.ResponseIndex>) => {
             this.groups = res.body.data;
-            // console.log(this.groups);
           },
-          err => {
-            // console.log(err);
-          },
+          err => { },
           () => {
             this.intermediaryService.dismissLoading();
           });
         data[1].subscribe(
           (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
             this.warehouses = res.body.data;
-            // console.log(this.warehouses);
           },
-          err => {
-            // console.log(err);
-          },
+          err => { },
           () => {
             this.intermediaryService.dismissLoading();
           });
       },
       err => {
-        // console.log(err);
       }
     );
   }

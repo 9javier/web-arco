@@ -4,7 +4,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { environment } from '../../../environments/environment';
 import {from} from "rxjs";
-import {switchMap} from "rxjs/operators";
+import {map, switchMap} from "rxjs/operators";
 import {CarrierModel} from "../../../models/endpoints/Carrier";
 
 @Injectable({
@@ -14,9 +14,11 @@ export class CarriersService {
 
   private postGenerateUrl: string = environment.apiBase + "/packing/generate";
   private postSealUrl: string = environment.apiBase + "/packing/seal";
+  private postTransferAmongPackingsUrl: string = environment.apiBase + "/packing/transfer";
+  private getUpdatePackingStatusInPickingUrl: string = environment.apiBase + "/packing/update/";
 
   // Relabel
-  private postListByWarehouseUrl: string = environment.apiBase + "/packing/show";
+  private postListByWarehouseUrl: string = environment.apiBase + "/packing/destiny/show";
 
   constructor(
     private http: HttpClient,
@@ -44,6 +46,18 @@ export class CarriersService {
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
 
       return this.http.post<CarrierModel.ResponseSeal>(this.postSealUrl, parameters, { headers });
+    }));
+  }
+
+  postTransferAmongPackings(params: CarrierModel.ParamsTransferAmongPackings): Observable<CarrierModel.ResponseTransferAmongPackings> {
+    return this.http.post<CarrierModel.ResponseTransferAmongPackings>(this.postTransferAmongPackingsUrl, params).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getUpdatePackingStatusInPicking(pickingId: number) : Observable<any> {
+    return this.http.get<CarrierModel.ResponseUpdateStatusInPicking>(`${this.getUpdatePackingStatusInPickingUrl}${pickingId}`).pipe(map(response => {
+      return response.data;
     }));
   }
 

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { GlobalVariablesComponent } from './global-variables.component';
 import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { ReactiveFormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from './modals/modals.module';
@@ -25,8 +25,9 @@ const routes: Routes = [
     MatTableModule,
     MatPaginatorModule,
     BreadcrumbModule,
-    ModalsModule, 
-    RouterModule.forChild(routes)
+    ModalsModule,
+    RouterModule.forChild(routes),
+    FormsModule
   ]
 })
 export class GlobalVariablesModule { }

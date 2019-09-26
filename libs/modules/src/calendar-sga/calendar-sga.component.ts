@@ -16,6 +16,7 @@ export class CalendarSgaComponent implements OnInit {
 
   public templates:Array<CalendarModel.Template> = [];
   public warehousesOriginList:Array<WarehouseModel.Warehouse> = [];
+  public warehousesOriginDestinationList: any = []; //para guardar los posibles destinos de cada origen
   public warehousesDestinationList: any = [];
   public templateBase:Array<CalendarModel.TemplateWarehouse> = [];
 
@@ -85,11 +86,11 @@ export class CalendarSgaComponent implements OnInit {
           }
           this.getCalendarDates();
         })
+        this.getCalendarDates();
         this.selectDates = auxDates;
         this.changeDetectorRef.detectChanges();
         this.intermediaryService.presentLoading();
         this.calendarService.getTemplatesByDate(selectDates).subscribe(templates=>{
-          this.intermediaryService.dismissLoading();
           templates.forEach(template=>{
             this.selectDates.forEach(date=>{
               if(template.date == date.date){
@@ -126,6 +127,7 @@ export class CalendarSgaComponent implements OnInit {
 
           this.date = auxDates[0];
           this.manageSelectedClass();
+          this.intermediaryService.dismissLoading();
         },()=>{
           this.intermediaryService.dismissLoading();
         })
@@ -137,7 +139,6 @@ export class CalendarSgaComponent implements OnInit {
    */
 
   setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
-    console.log(selectDateWarehouses);
     this.warehousesDestinationList.forEach(val => {
       val.destinos = [],
       val.destinos_label = ''
@@ -207,6 +208,10 @@ export class CalendarSgaComponent implements OnInit {
       this.templateBase = warehouses;
       warehouses.forEach(origin => {
         this.warehousesOriginList.push(origin.originWarehouse);
+        this.warehousesOriginDestinationList.push({
+          idOrigen: origin.originWarehouse.id,
+          destinations: origin.destinationsWarehouses
+        });
         this.warehousesDestinationList.push({
           id: origin.originWarehouse.id,
           destinos: [],
@@ -223,14 +228,21 @@ export class CalendarSgaComponent implements OnInit {
    */
   async store(idOrigin: number){
     var destinos = [];
+    var destinations = [];
     this.warehousesDestinationList.forEach(val => {
       if(val.id === idOrigin){
         destinos.push(val.destinos);
       }
     });
+    this.warehousesOriginDestinationList.forEach(val => {
+      if(val.idOrigen === idOrigin){
+        destinations.push(val.destinations);
+      }
+    });
     let modal = (await this.modalController.create({
       component: StoreComponent,
       componentProps: {
+        originDestinations: destinations,
         destinos: destinos
       }
     }));
@@ -266,8 +278,8 @@ export class CalendarSgaComponent implements OnInit {
         });
 
         this.sortByDestinations();
-        this.intermediaryService.dismissLoading();
       }
+      this.intermediaryService.dismissLoading();
     })
     modal.present();
   }
@@ -335,9 +347,6 @@ export class CalendarSgaComponent implements OnInit {
       name: '',
       warehouses: this.addWarehouses()
     };
-
-    console.log(template)
-
     const prompt = await this.alertController.create({
       message:'Inserte el nombre de la plantilla',
       inputs: [
@@ -407,6 +416,7 @@ export class CalendarSgaComponent implements OnInit {
     this.manageSelectedRadio();
     this.manageSelectedClass();
     this.getCalendarDates();
+    this.dates = [];
   }
 
   addWarehouses(): any[]{
@@ -474,9 +484,7 @@ export class CalendarSgaComponent implements OnInit {
             // console.log("borrando")
             day.className = day.className.replace(/tselected/g, "");
           }
-        } else {
-          day.className = day.className.replace(/tselected/g, "");
-        }
+        } 
       });
     }
   }
@@ -505,6 +513,44 @@ export class CalendarSgaComponent implements OnInit {
     });
     return flag;
   }
+
+  /**
+   * Eliminar la plantila
+   * @param idTemplate de la plantilla a eliminar
+   */
+
+   async deleteTemplate(idTemplate){
+    const prompt = await this.alertController.create({
+      message:'¿Seguro desea eliminar la plantilla?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }, {
+          text: 'Ok',
+          handler: (data) => {
+            this.intermediaryService.presentLoading();
+            this.calendarService.deleteTemplate(idTemplate).subscribe(template=>{
+              this.intermediaryService.presentToastSuccess("Plantilla eliminada con éxito");
+              this.intermediaryService.dismissLoading();
+              this.templates = [];
+              this.clear();
+              this.getTemplates();
+            },()=>{
+              this.intermediaryService.presentToastError("Error al eliminar, intente más tarde");
+              this.intermediaryService.dismissLoading();
+            });
+          }
+        }
+      ]
+    });
+
+    await prompt.present();
+    
+   }
 
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.

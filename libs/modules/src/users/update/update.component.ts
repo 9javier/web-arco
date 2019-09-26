@@ -52,23 +52,18 @@ export class UpdateComponent implements OnInit {
     private modalController:ModalController,
     private warehouseService:WarehousesService,
     private alertController:AlertController
-  ) {
-    // console.log(this.navParams);
-  }
+  ) { }
   /**
    * Attach warehouse to user
    * @param warehouseId - id of warehouse to add
    */
   addWarehouseToUser(warehouseId:number):void{
-    // console.log(this.updateForm);
     (<FormArray>this.updateForm.get("permits")).push(this.formBuilder.group({
       name:this.warehouses.find(warehouse=>warehouse.id == warehouseId).name,
       warehouse:warehouseId,
       roles:(new FormArray(this.roles.map(rol=>new FormControl(false))))
     }));
-    // console.log("this is the warehouse id", warehouseId);
       this.warehouse_id = warehouseId * this.check;
-    // console.log('my warehouse' + this.warehouse_id);
   }
 
     /**
@@ -132,8 +127,6 @@ export class UpdateComponent implements OnInit {
         for (let index in <FormArray>this.updateForm.get("permits")) {
           (<FormArray>this.updateForm.get("permits")).removeAt(0);
         }
-        // console.log(this.check);
-        // console.log(this.firstPass);
         if(!this.updateForm.value.permits[0] && this.check == 1 && this.firstPass == true) {
          this.selectNewWarehouse(this.addWarehouseToUser);
         }
@@ -176,7 +169,6 @@ export class UpdateComponent implements OnInit {
    * @param id-the id of the user
    */
   getUser(id:number):void{
-    // console.log(id);
     /**Acá no entendí muy bien el propósito de retornar un observable dentro de una promesa */
     this.userService.getShow(id).then(observable=>{
       observable.subscribe((response)=>{
@@ -184,9 +176,7 @@ export class UpdateComponent implements OnInit {
         let user = response.body.data;
         this.getRoles(user);
         (<any>user).warehouseId = user.warehouse && user.warehouse.id;
-        // console.log(user);
-        this.updateForm.patchValue(user);     
-        // console.log(user);
+        this.updateForm.patchValue(user);
         /**call here to handle the async */
         this.utilsComponent.dismissLoading();
       });
@@ -275,7 +265,6 @@ export class UpdateComponent implements OnInit {
     this.userService.putUpdate(this.sanitize(user)).then(observable=>{
       observable.subscribe(user=>{
         this.utilsComponent.dismissLoading();
-        // console.log(user);
         this.close();
       });
     });

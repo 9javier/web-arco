@@ -5,6 +5,7 @@ import {ScanditProvider} from "../../../../services/src/providers/scandit/scandi
 import {PriceService} from "@suite/services";
 import {PackingInventoryModel} from "../../../../services/src/models/endpoints/PackingInventory";
 import {PackingInventoryService} from "../../../../services/src/lib/endpoint/packing-inventory/packing-inventory.service";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-input-codes',
@@ -19,6 +20,9 @@ export class InputCodesComponent implements OnInit {
 
   public typeTagsBoolean: boolean = false;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private toastController: ToastController,
     private printerService: PrinterService,
@@ -26,6 +30,7 @@ export class InputCodesComponent implements OnInit {
     private scanditProvider: ScanditProvider,
     private packingInventorService: PackingInventoryService
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },800);
@@ -44,6 +49,11 @@ export class InputCodesComponent implements OnInit {
         return;
       }
       this.lastCodeScanned = dataWrote;
+
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {

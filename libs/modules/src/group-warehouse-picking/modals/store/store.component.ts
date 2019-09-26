@@ -28,7 +28,6 @@ export class StoreComponent implements OnInit {
    * @param data - the data to be saved
    */
   submit(data:GroupWarehousePickingModel.RequestGroupWarehousePicking):void{
-    // console.log(data);
     this.intermediaryService.presentLoading();
     this.groupWarehousePicking.store(data).subscribe(()=>{
       this.intermediaryService.dismissLoading();

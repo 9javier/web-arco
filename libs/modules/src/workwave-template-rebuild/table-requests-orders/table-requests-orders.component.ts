@@ -12,6 +12,7 @@ import * as moment from 'moment';
 export class TableRequestsOrdersComponent implements OnInit {
 
   private REQUEST_ORDERS_LOADED = "request-orders-loaded";
+  private DRAW_CONSOLIDATED_MATCHES = "draw-consolidated-matches";
   private FILTER_REQUEST_ID: number = 1;
   private FILTER_DATE: number = 2;
   private FILTER_ORIGIN: number = 3;
@@ -156,10 +157,20 @@ export class TableRequestsOrdersComponent implements OnInit {
       this.isFilteringDestiny = this.listDestinyFilters.length;
       this.isFilteringType = this.listTypeFilters.length;
     });
+
+    this.events.subscribe(this.DRAW_CONSOLIDATED_MATCHES, (data: Array<WorkwaveModel.AssignationsByRequests>) => {
+      for (let requestOrder of this.listRequestOrders) {
+        let matchedForRequest = data.find(match => match.requestId == requestOrder.request.id);
+        if (matchedForRequest) {
+          requestOrder.quantityMatchWarehouse = parseInt(matchedForRequest.quantityShoes);
+        }
+      }
+    })
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(this.REQUEST_ORDERS_LOADED);
+    this.events.unsubscribe(this.DRAW_CONSOLIDATED_MATCHES);
   }
 
   selectAllRequestOrder() {

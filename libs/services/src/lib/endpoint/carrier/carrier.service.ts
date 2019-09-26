@@ -14,6 +14,7 @@ export class CarrierService {
   private carrierUrl:string = environment.apiBase+"/packing";
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
+  private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
   private packingUrl:string = environment.apiBase+"/types/packing";
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
 
@@ -39,6 +40,10 @@ export class CarrierService {
     return this.http.put(this.warehouseDestination.replace("{{id}}",String(id)),destination);
   }
 
+  setDestination(carrierId,destination){
+    return this.http.put(this.setWarehouseDestination,{carrierId: carrierId, destinationWarehouseId: destination});
+  }
+
   /**
    * Get a carrier by id
    * @param id - the id of carrier to get
@@ -60,7 +65,7 @@ export class CarrierService {
 
   /**
    * Store one carrier
-   * @param carrier 
+   * @param carrier
    */
   store(carrier):Observable<CarrierModel.Carrier>{
     return this.http.post<CarrierModel.SingleCarrierResponse>(this.carrierUrl,carrier).pipe(map(response=>{
@@ -70,7 +75,7 @@ export class CarrierService {
 
   /**
    * Update an carrier
-   * @param carrier 
+   * @param carrier
    */
   update(id,carrier){
     return this.http.put<CarrierModel.SingleCarrierResponse>(this.singleCarrierUrl.replace("{{id}}",String(id)),carrier).pipe(map(response=>{

@@ -30,6 +30,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadRejectionReasons();
     this.loadPickingInitiated();
 
     this.events.subscribe('picking-stores:refresh', () => {
@@ -39,6 +40,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
   ngOnDestroy() {
     this.events.unsubscribe('picking-stores:refresh');
+  }
+
+  private loadRejectionReasons() {
+    this.pickingStoreService
+      .getLoadRejectionReasons()
+      .subscribe((res: Array<PickingStoreModel.RejectionReasons>) => {
+        this.pickingProvider.listRejectionReasonsToStorePickings = res;
+      }, (error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      });
   }
 
   private loadPickingInitiated() {
@@ -64,16 +75,24 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
     this.pickingStoreService
       .getLineRequests()
       .subscribe((res: PickingStoreModel.ResponseLineRequests) => {
-        if (res.code == 200 || res.code == 201) {
+        if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
           this.lineRequestsByStores = res.data;
           this.stores = [];
           this.lineRequests = [];
           this.isLoadingData = false;
           this.isPickingInitiated = false;
         } else {
+          this.lineRequestsByStores = [];
+          this.stores = [];
+          this.lineRequests = [];
+          this.isLoadingData = false;
           console.error('Error Subscribe::List line-requests by store::', res);
         }
       }, (error) => {
+        this.lineRequestsByStores = [];
+        this.stores = [];
+        this.lineRequests = [];
+        this.isLoadingData = false;
         console.error('Error Subscribe::List line-requests by store::', error);
       });
   }

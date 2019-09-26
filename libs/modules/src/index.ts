@@ -150,6 +150,10 @@ export * from './components/tags-input/tags-input.module';
 export * from './building/building.component';
 export * from './building/building.module';
 
+/**Sorter */
+export * from './sorter/sorter.component';
+export * from './sorter/sorter.module';
+
 /**Calendar picking */
 export * from './calendar-picking/calendar-picking.component';
 export * from './calendar-picking/calendar-picking.module';
@@ -209,3 +213,7 @@ export * from './components/filter-button/filter-button.module';
 /** Popover for filters */
 export * from './components/filter-popover/filter-popover.component';
 export * from './components/filter-popover/filter-popover.module';
+
+/** Transfer Packing */
+export * from './transfer-packing/transfer-packing.component';
+export * from './transfer-packing/transfer-packing.module';

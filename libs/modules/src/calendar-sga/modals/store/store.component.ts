@@ -24,7 +24,7 @@ export class StoreComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.params.data.destinos[0]);
+    console.log(this.params.data.originDestinations)
     this.getBase();
   }
 
@@ -33,33 +33,27 @@ export class StoreComponent implements OnInit {
    */
   getBase():void{
     this.intermediaryService.presentLoading();
-    this.calendarService.getBaseBad().subscribe(warehouses=>{
-      // console.log(warehouses);
-      this.intermediaryService.dismissLoading();
-      this.templateBase = warehouses;
-      warehouses[0].destinationsWarehouses.forEach(destination => {
-        var temp = false;
-        this.params.data.destinos[0].forEach(param => {
-          if(param.id === destination.destinationWarehouse.id){
-            temp = true;
-          }
-        });
-
-        if(temp){
-          destination.destinationWarehouse.is_main = true;
-          this.listCheck.push({
-            id: destination.destinationWarehouse.id,
-            name: destination.destinationWarehouse.name
-          });
+    this.params.data.originDestinations[0].forEach(destination => {
+      var temp = false;
+      this.params.data.destinos[0].forEach(param => {
+        if(param.id === destination.destinationWarehouse.id){
+          temp = true;
         }
-        else  
-          destination.destinationWarehouse.is_main = false;
-
-        this.warehousesList.push(destination.destinationWarehouse);
       });
-    },()=>{
-      this.intermediaryService.dismissLoading();
-    })
+
+      if(temp){
+        destination.destinationWarehouse.is_main = true;
+        this.listCheck.push({
+          id: destination.destinationWarehouse.id,
+          name: destination.destinationWarehouse.name
+        });
+      }
+      else  
+        destination.destinationWarehouse.is_main = false;
+
+      this.warehousesList.push(destination.destinationWarehouse);
+    });
+    this.intermediaryService.dismissLoading();
   }
 
 

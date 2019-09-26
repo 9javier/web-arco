@@ -37,6 +37,7 @@
             <ion-list class="overAuto list-plantillas">
               <ion-item *ngFor="let template of templates;let i = index" (click)="selectTemplate(template)">
                 <ion-label>{{template.name}}</ion-label>
+                <ion-icon name="trash" slot="end" (click)="deleteTemplate(template.id)"></ion-icon>
               </ion-item>
             </ion-list>
           </ion-col>

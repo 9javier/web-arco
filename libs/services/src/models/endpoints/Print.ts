@@ -51,7 +51,26 @@ export namespace PrintModel {
           id?: number,
           name?: string
         },
-        updatedAt?: string
+        updatedAt?: string,
+        lifestyle?: {
+          avelonId?: string,
+          createdAt?: string,
+          datasetHash?: string,
+          groupNumber?: string,
+          id?: number,
+          reference?: string,
+          updatedAt?: string
+        },
+        category?: {
+          avelonId?: string,
+          createdAt?: string,
+          datasetHash?: string,
+          groupNumber?: string,
+          id?: number,
+          reference?: string,
+          updatedAt?: string
+        },
+        detailColor?: string
       },
       reference?: string,
       size?: {

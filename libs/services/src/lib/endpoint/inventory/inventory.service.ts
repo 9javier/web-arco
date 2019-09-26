@@ -24,7 +24,8 @@ export class InventoryService {
 
 
   private postGlobalUrl:string = environment.apiBase+"/processes/positioner-main/global";
-  private postPickingUrl:string = environment.apiBase+"/processes/picking-main/direct";
+  private postPickingDirectUrl:string = environment.apiBase+"/processes/picking-main/direct";
+  private postPickingConsolidatedUrl: string = environment.apiBase + '/processes/picking-main/consolidated';
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
@@ -92,10 +93,17 @@ export class InventoryService {
     return this.http.post<InventoryModel.ResponseGlobal>(this.postGlobalUrl, containersToMoveProducts);
   }
 
-  postPicking(picking: InventoryModel.Picking) : Observable<InventoryModel.ResponsePicking> {
+  postPickingDirect(picking: InventoryModel.Picking) : Observable<InventoryModel.ResponsePicking> {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<InventoryModel.ResponsePicking>(this.postPickingUrl, picking, { headers });
+      return this.http.post<InventoryModel.ResponsePicking>(this.postPickingDirectUrl, picking, { headers });
+    }));
+  }
+
+  postPickingConsolidated(picking: InventoryModel.Picking) : Observable<InventoryModel.ResponsePicking> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<InventoryModel.ResponsePicking>(this.postPickingConsolidatedUrl, picking, { headers });
     }));
   }
 }

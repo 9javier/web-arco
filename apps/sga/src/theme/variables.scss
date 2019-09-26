@@ -89,5 +89,9 @@
   --ion-color-required-field-input: #f2545414;
 
   --max-modal-height: calc(80vh + 56px);
-  --max-modal-width: calc((var(--max-modal-height) - 56px) / 1.33)
+  --max-modal-width: calc((var(--max-modal-height) - 56px) / 1.33);
+
+  --ion-color-picking-direct: #28e070;
+  --ion-color-picking-consolidated: #3f51b5;
+  --ion-color-border-legend: #b5b5b5;
 }

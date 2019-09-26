@@ -215,6 +215,12 @@ export class MenuComponent implements OnInit {
       url:'/tariff',
       icon:'logo-usd'
     },
+    {
+      title:'Sorter',
+      id:'sorter-sga',
+      url:'/sorter',
+      icon:'logo-usd'
+    },
   ];
 
   alPages: MenuItemList = [
@@ -248,19 +254,6 @@ export class MenuComponent implements OnInit {
           url: '/print/product/received',
           icon: 'archive'
         },
-        // TODO When enable Relabel of Products, remove the next two sections
-        {
-          title: 'Código Caja',
-          id: 'print-ref-tag',
-          url: 'print/tag/ref',
-          icon: 'barcode'
-        },
-        {
-          title: 'Código Caja Manual',
-          id: 'print-ref-tag-manual',
-          url: '/print-tag/manual/box',
-          icon: 'barcode'
-        },
         {
           title: 'Reetiquetado productos',
           id: 'print-product',
@@ -272,6 +265,32 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
+        }
+      ]
+    },
+    {
+      title: 'Sorter',
+      open: false,
+      type: 'wrapper',
+      icon: 'logo-usd',
+      children: [
+        {
+          title: 'Sorter',
+          id: 'sorter-al',
+          url: '/sorter',
+          icon: 'logo-usd'
+        },
+        {
+          title: 'Código exposición',
+          id: 'print-price-tag',
+          url: 'print/tag/price',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Código exposición manual',
+          id: 'print-price-tag-manual',
+          url: '/print-tag/manual/price',
+          icon: 'pricetags'
         }
       ]
     },
@@ -360,7 +379,8 @@ export class MenuComponent implements OnInit {
           id: 'print-packing',
           url: '/print/packing',
           icon: 'grid'
-        },{
+        },
+        {
           title: 'Precintar embalaje',
           id: 'packing-seal',
           url: 'packing/seal',
@@ -371,6 +391,12 @@ export class MenuComponent implements OnInit {
           id: 'packing-seal-manual',
           url: '/packing/seal/manual',
           icon: 'paper-plane'
+        },
+        {
+          title: 'Traspaso embalaje',
+          id: 'packing-transfer',
+          url: '/packing/transfer',
+          icon: 'redo'
         }
       ]
     },
@@ -384,11 +410,6 @@ export class MenuComponent implements OnInit {
           title: 'Ajustes',
           id: 'settings',
           url: '/settings',
-          icon: 'cog'
-        },{
-          title: 'Variables globales',
-          id: 'global-variables',
-          url: '/global-variables',
           icon: 'cog'
         }
       ]
@@ -425,7 +446,6 @@ export class MenuComponent implements OnInit {
    * Select the links that be shown depends of dictionary paramethers
    */
   filterPages(dictionary){
-    // console.log("dictionaryManagement", "filterpages", JSON.parse(JSON.stringify(dictionary)));
     dictionary = JSON.parse(JSON.stringify(dictionary));
     let logoutItem = dictionary['user-time']?({
       title: 'Cerrar sesión',
@@ -445,7 +465,7 @@ export class MenuComponent implements OnInit {
         if((<any>item).id == "logout")
           this.alPages[i] = logoutItem;
       });
-    if(!this.sgaPages.find(item=>(<any>item).id=="logout"))  
+    if(!this.sgaPages.find(item=>(<any>item).id=="logout"))
       this.sgaPages.push(logoutItem);
       else
       this.sgaPages.forEach((item,i)=>{
@@ -453,15 +473,11 @@ export class MenuComponent implements OnInit {
           this.sgaPages[i] = logoutItem;
       });
       this.project_selector = app.name;
-      console.log('my selector'+  this.project_selector);
-    console.log("diccionario",app,dictionary);
-    // console.log("diccionario",app,dictionary);
     if(!app || !app.name) {
       return false;
     }
     /**obtain the routes for the current application */
     let auxPages = this.menuPages[this.app.name];
-    // console.log(auxPages)
     this.menuPagesFiltered = [];
     if(!auxPages) {
       return false;
@@ -473,7 +489,6 @@ export class MenuComponent implements OnInit {
       /**if the page is a wrapper then iterate over his childrens to get the alloweds */
       if(page.type == "wrapper"){
         page.children.forEach(children => {
-          // console.log(dictionary[children.id],children.id)
           /**if the childen is allowed then add if */
           if(dictionary[children.id]) {
             auxChildren.push(children);
@@ -488,7 +503,6 @@ export class MenuComponent implements OnInit {
         }
       /**if not is a wrapper then is a normal category the check if plus easy */
       }else{
-        // console.log(dictionary[page.id],page.id)
         if(dictionary[page.id]) {
           this.menuPagesFiltered.push(page);
         }
@@ -499,7 +513,6 @@ export class MenuComponent implements OnInit {
   }
 
   tapOption(p) {
-    // console.log(p);
     this.currentRoute = p.title;
     this.menuTitle.emit(p.title);
     if (p.url === 'logout') {
@@ -510,7 +523,6 @@ export class MenuComponent implements OnInit {
             this.authenticationService.logout().then(success => {
               this.router.navigateByUrl('/login')
             });
-            // console.log(data);
           });
       });
     } else if(p.url === 'positioning'){

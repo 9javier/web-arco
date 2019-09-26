@@ -2,7 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {AlertController, ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {PriceService} from "@suite/services";
+import {PriceModel, PriceService} from "@suite/services";
+import {PrintModel} from "../../../../services/src/models/endpoints/Print";
+import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 
 @Component({
   selector: 'suite-input-codes',
@@ -18,6 +20,9 @@ export class InputCodesComponent implements OnInit {
   @Input() typeTags: number = 1;
   public typeTagsBoolean: boolean = false;
 
+  private timeoutStarted = null;
+  private readonly timeMillisToResetScannedCode: number = 1000;
+
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
@@ -25,6 +30,7 @@ export class InputCodesComponent implements OnInit {
     private priceService: PriceService,
     private scanditProvider: ScanditProvider
   ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
@@ -44,6 +50,11 @@ export class InputCodesComponent implements OnInit {
       }
       this.lastCodeScanned = dataWrote;
 
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
       if (!this.typeTagsBoolean) {
         this.typeTags = 1;
       } else {
@@ -57,17 +68,21 @@ export class InputCodesComponent implements OnInit {
             case 1:
               this.printerService.printTagBarcode([dataWrote])
                 .subscribe((res) => {
-                  // console.log('Printed product tag ... ', res);
+                  console.log('Printed product tag ... ', res);
                 }, (error) => {
                   console.warn('Error to print tag ... ', error);
                 });
               break;
             case 2:
-              this.printerService.printTagPrices([dataWrote])
-                .subscribe((res) => {
-                  // console.log('Printed price tag ... ', res);
-                }, (error) => {
-                  console.warn('Error to print tag ... ', error);
+              this.priceService
+                .postPricesByProductsReferences({ references: [dataWrote] })
+                .subscribe((prices) => {
+                  let price = prices[0];
+                  if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                    this.presentAlertWarningPriceWithoutTariff(price);
+                  } else {
+                    this.printerService.printTagPriceUsingPrice(price);
+                  }
                 });
               break;
             default:
@@ -85,9 +100,13 @@ export class InputCodesComponent implements OnInit {
               this.priceService
                 .postPricesByModel(dataWrote)
                 .subscribe((response) => {
-                  console.debug('Test::Response -> ', response);
                   if (response && response.length == 1) {
-                    this.printerService.printTagPriceUsingPrice(response[0]);
+                    let price = response[0];
+                    if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                      this.presentAlertWarningPriceWithoutTariff(price);
+                    } else {
+                      this.printerService.printTagPriceUsingPrice(price);
+                    }
                   } else if (response && response.length > 1) {
                     // Request user select size to print
                     let listItems = response.map((productPrice, iProductPrice) => {
@@ -154,19 +173,48 @@ export class InputCodesComponent implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {
-            // console.log('Confirm Cancelar');
-          }
+          handler: () => { }
         }, {
           text: 'Seleccionar',
           handler: (data) => {
-            // console.log('Confirm Seleccionar -> ', data);
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;
             }
 
-            this.printerService.printTagPriceUsingPrice(listProductPrices[data]);
+            let price = listProductPrices[data];
+            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+              this.presentAlertWarningPriceWithoutTariff(price);
+            } else {
+              this.printerService.printTagPriceUsingPrice(price);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  private async presentAlertWarningPriceWithoutTariff(price: PriceModel.PriceByModelTariff) {
+    const alert = await this.alertController.create({
+      header: '¡Precio sin tarifa!',
+      message: 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?',
+      buttons: [
+        {
+          text: 'No',
+          handler: () => {
+            this.lastCodeScanned = 'start';
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          }
+        },
+        {
+          text: 'Sí',
+          handler: () => {
+            price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+            this.printerService.printTagPriceUsingPrice(price);
           }
         }
       ]
