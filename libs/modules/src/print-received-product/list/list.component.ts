@@ -73,7 +73,8 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
     private dateTimeParserService: DateTimeParserService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.intermediaryService.presentLoading('Cargando productos...');
     this.clearFilters();
   }
 
@@ -89,14 +90,16 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
       .filter(productReference => productReference);
 
     if (productReferences.length > 0) {
-      this.intermediaryService.presentLoading();
       this.printerService.printTagPrices(productReferences)
         .subscribe(() => {
+          for (let iSelected in this.selectedForm.value.toSelect) {
+            if (this.selectedForm.value.toSelect[iSelected]) {
+              this.productsReceived[iSelected].filterPrice.impress = true;
+            }
+          }
           this.initSelectedForm();
         }, (error) => {
           console.error('An error succeed to try print products received. \nError:', error);
-        }, () => {
-          this.intermediaryService.dismissLoading();
         });
     }
   }
@@ -130,7 +133,9 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
   private listenChangesPaginator(): void {
     let previousPageSize = this.limit;
 
-    this.paginator.page.subscribe(page => {
+    this.paginator.page.subscribe(async page => {
+      await this.intermediaryService.presentLoading('Cargando productos...');
+
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
