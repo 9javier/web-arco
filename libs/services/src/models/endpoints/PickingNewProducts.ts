@@ -39,7 +39,8 @@ export namespace PickingNewProductsModel {
     rangesNumbers: {
       sizeRangeNumberMin: string,
       sizeRangeNumberMax: string
-    }
+    },
+    numProducts: string
   }
 
   export interface ParamsSearch {
