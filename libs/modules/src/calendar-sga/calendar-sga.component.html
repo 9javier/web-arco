@@ -75,7 +75,7 @@
 </ion-content>
 <ion-footer>
   <!--<ion-fab-button style="float: right; padding: 5px;" color="light"><ion-icon name="trash"></ion-icon></ion-fab-button>-->
-    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!date || !validToStore()" (click)="storeDate()"><ion-icon name="add"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length" (click)="storeTemplate()"><ion-icon name="save"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="addWarehouses().length" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length" (click)="storeTemplate()" (click)="storeDate()"><ion-icon name="add"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!date || !validToStore()"><ion-icon name="save"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="addWarehouses().length || cantDates" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
 </ion-footer>

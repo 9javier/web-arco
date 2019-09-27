@@ -19,6 +19,7 @@ export class CalendarSgaComponent implements OnInit {
   public warehousesOriginDestinationList: any = []; //para guardar los posibles destinos de cada origen
   public warehousesDestinationList: any = [];
   public templateBase:Array<CalendarModel.TemplateWarehouse> = [];
+  public cantDates: boolean = false;
 
   public calendarConfiguration:IDatePickerConfig  = {
     closeOnSelect:false,
@@ -63,6 +64,7 @@ export class CalendarSgaComponent implements OnInit {
     });
 
     this.datePicker.onSelect.subscribe((changes)=>{
+        this.cantDates = false;
         let selectDates = this.dates.map(_=>{
           return _.format("YYYY-MM-DD");
         });
@@ -85,6 +87,7 @@ export class CalendarSgaComponent implements OnInit {
             auxDates.push(aux)
           }
           this.getCalendarDates();
+          this.cantDates = true;
         })
         this.getCalendarDates();
         this.selectDates = auxDates;
@@ -313,6 +316,7 @@ export class CalendarSgaComponent implements OnInit {
       });
     });
 
+    this.manageSelectedClass();
     this.sortByDestinations();
 
     this.intermediaryService.dismissLoading();
@@ -417,6 +421,7 @@ export class CalendarSgaComponent implements OnInit {
     this.manageSelectedClass();
     this.getCalendarDates();
     this.dates = [];
+    this.cantDates = false;
   }
 
   addWarehouses(): any[]{
@@ -478,7 +483,7 @@ export class CalendarSgaComponent implements OnInit {
       let day = days[i];
       this.selectDates.forEach(date=>{
         if(date.date.split("-").reverse().join("-") == day.dataset.date){
-          if((date.warehouses.length) || (date.value && this.addWarehouses().length)){
+          if((date.warehouses.length) || (date.date && this.addWarehouses().length)){
             day.className+= ' tselected'; 
           }else{
             // console.log("borrando")
