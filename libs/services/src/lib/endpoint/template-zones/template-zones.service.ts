@@ -21,6 +21,7 @@ export class TemplateZonesService {
   private putUpdateZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
   private deleteZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
   private assignZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
+  private getMatrixByTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/matrix";
 
   constructor(private http: HttpClient) { }
   
@@ -45,9 +46,6 @@ export class TemplateZonesService {
   }
 
   updateTemplateZone(data: TemplateZoneModel.Zone, id: number, idTemplate: number): Observable<TemplateZoneModel.ResponseZoneCreate> {
-    console.log(data)
-    console.log(id)
-    console.log(idTemplate)
     return this.http.put<TemplateZoneModel.ResponseZoneCreate>(
       this.putUpdateZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)),
       data
@@ -106,6 +104,13 @@ export class TemplateZonesService {
       this.assignZoneWarehousesUrl.replace("{{idTemplate}}",String(idTemplate)),
       data
     )
+    .pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getMatrixByTemplate(idTemplate: number): Observable<any> {
+    return this.http.get<any>(this.getMatrixByTemplateUrl.replace("{{idTemplate}}",String(idTemplate)))
     .pipe(map(response => {
       return response;
     }));

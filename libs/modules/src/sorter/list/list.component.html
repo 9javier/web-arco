@@ -123,11 +123,10 @@
               </mat-row>
             </mat-table>
       </div>
-      <div *ngFor="let item of rails" class="heights">
-        <div *ngFor="let column of item.columns; let i = index" class="column"
-          (click)="getColumn(i,column.ways_number, item.height)">
-          <span>{{column.ways_number}}</span>
-        </div>
+      <div *ngFor="let way of ways"  class="height">
+        <div *ngFor="let column of way.columns; let i = index" class="column" (click)="getColumn(i,column.ways_number, way.height)">
+            <span style="margin: 20px">{{column.ways_number}}</span>
+          </div>
       </div>
     </div>
 

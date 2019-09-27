@@ -126,6 +126,7 @@ export class SorterComponent implements OnInit {
     );
     this.sorterTemplateService.getIndex().subscribe((data) => {
       this.templates = data.data;
+      console.log(this.templates)
       this.initSelectActive(this.templates);
     })
   }

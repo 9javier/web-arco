@@ -73,6 +73,7 @@ export class ListComponent implements OnInit {
   colors: TemplateColorsModel.TemplateColors[];
   test_counter:number;
   toDeleteIds: number[] = [];
+  ways = [];
 
 
   //Get value on ionChange on IonRadioGroup
@@ -171,7 +172,13 @@ export class ListComponent implements OnInit {
       console.log(this.zones)
     });
     this.test_counter = 0;
-      
+    
+    this.templateZonesService.getMatrixByTemplate(Number(this.id)).subscribe((data) => {
+      this.ways = data.data;
+      console.log(this.ways)
+    }, (err) => {
+      console.log(err)
+    });
   }
 
   getZones() {

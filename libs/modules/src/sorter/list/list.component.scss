@@ -98,9 +98,10 @@ mat-grid-list {
     align-items: center;
   }
   
-  .heights {
+  .height {
     display: flex;
     flex-direction: row;
+    margin-right: 20%;
   }
   
   .column {
@@ -112,8 +113,8 @@ mat-grid-list {
   .grid{
       display: flex;
       position: absolute;
-      margin-left: 12rem;
-      
+      margin-left: 20rem;
+      margin-top: 4rem;
       width: 13rem;
       height: 14rem;
       max-width: 13rem;
