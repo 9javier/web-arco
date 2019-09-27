@@ -90,10 +90,10 @@ mat-grid-list {
     margin: 3em auto;
 }
 
-.container {
+.containerTable {
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
+    margin-top: 3rem;
     justify-content: center;
     align-items: center;
   }
@@ -140,7 +140,3 @@ mat-grid-list {
     max-height: calc(100vh - 278px) !important;
     overflow: auto;
 }
-
-
- 
-  

@@ -94,10 +94,10 @@
     </div>
 
 
-    <div *ngIf="showRails" class="container">
+    <div *ngIf="showRails" class="containerTable">
       <div class="grid overAuto" >
         
-          <mat-table #table [dataSource]="dataSource2">
+          <mat-table #table [dataSource]="dataSource2" class="prioridad">
               <ng-container matColumnDef="prioridad" >
                 <mat-header-cell *matHeaderCellDef>
                  Prioridad
