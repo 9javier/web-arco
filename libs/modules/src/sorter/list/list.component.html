@@ -78,7 +78,7 @@
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
          <mat-cell *matCellDef="let element">
           <mat-radio-group name="rails">
-            <mat-radio-button (click)="displayRails()" [value]="element"></mat-radio-button>
+            <mat-radio-button (click)="displayRailsRadio()" [value]="element"></mat-radio-button>
           </mat-radio-group> 
          </mat-cell>  
         </ng-container>
@@ -124,7 +124,11 @@
             </mat-table>
       </div>
       <div *ngFor="let way of ways"  class="height">
-        <div *ngFor="let column of way.columns; let i = index" class="column" (click)="getColumn(i,column.ways_number, way.height)">
+        <div 
+        *ngFor="let column of way.columns; let i = index" 
+        class="column" 
+        (click)="(column.adjacent || firstClick) && getColumn(i,column.ways_number, way.height)"
+        [ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
             <span style="margin: 20px">{{column.ways_number}}</span>
           </div>
       </div>

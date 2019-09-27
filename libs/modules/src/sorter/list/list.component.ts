@@ -107,6 +107,8 @@ export class ListComponent implements OnInit {
       ]
     }
   ]
+  firstClick: boolean = true;
+  radioDisplay: boolean = false;
 
   constructor(
     private crudService: CrudService,
@@ -262,42 +264,53 @@ export class ListComponent implements OnInit {
   }
 
   getColumn(index: number, column: number, height: number): void {
-    //get right and left values
-    this.rails.forEach(rail => {
-      if(rail.height == height) {
-       let columns = rail.columns;
-       for(let i = 0; i < columns.length; i++) 
+    this.firstClick = false;
+    this.cleanStyles();
+
+    console.log(this.ways)
+
+    this.ways.forEach(way => {
+      if(way.height === height) {
+        let columns = way.columns;
+        console.log(columns)
+        for(let i = 0; i < columns.length; i++) 
         if(column == columns[i].ways_number) {
+          columns[i]['selected'] = true;
+          columns[i]['adjacent'] = false;
           console.log('Current: '+column)
-          if(columns[i-1]) {
-            console.log('Left: '+columns[i-1].ways_number)
+          if(columns[i-1] && !columns[i-1]['selected']) {
+            console.log('Left: '+columns[i-1].ways_number);
+            columns[i-1]['adjacent'] = true;
           }
-          if(columns[i+1]) {
-            console.log('Right: '+columns[i+1].ways_number)
+          if(columns[i+1] && !columns[i+1]['selected']) {
+            console.log('Right: '+columns[i+1].ways_number);
+            columns[i+1]['adjacent'] = true;
           }
         }
       }
-    })
+    });
 
-    //get top and bottom
-    for(let i = 0; i < this.rails.length; i++) {
-      if(this.rails[i].height == height) {
-          if(this.rails[i-1]) {
-            for(let j = 0; j < this.rails[i-1].columns.length; j++) {
-              if(j == index){
-                console.log('Top: '+ this.rails[i-1].columns[j].ways_number)
-              }
+    for(let i = 0; i < this.ways.length; i++) {
+      if(this.ways[i].height == height) {
+        if(this.ways[i-1]) {
+          for(let j = 0; j < this.ways[i-1].columns.length; j++) {
+            if(j == index && !this.ways[i-1].columns[j]['selected']){
+              console.log('Top: '+ this.ways[i-1].columns[j].ways_number);
+              this.ways[i-1].columns[j]['adjacent'] = true;
             }
           }
-          if(this.rails[i+1]) {
-            for(let j = 0; j < this.rails[i+1].columns.length; j++) {
-              if(j == index){
-                console.log('Bottom: '+ this.rails[i+1].columns[j].ways_number)
-              }
+        }
+        if(this.ways[i+1]) {
+          for(let j = 0; j < this.ways[i+1].columns.length; j++) {
+            if(j == index && !this.ways[i+1].columns[j]['selected']){
+              console.log('Bottom: '+ this.ways[i+1].columns[j].ways_number);
+              this.ways[i+1].columns[j]['adjacent'] = true;
             }
           }
+        }
       }
     }
+    console.log(this.ways)
     this.test_counter ++;
     console.log(this.test_counter);
     let value = {
@@ -307,6 +320,15 @@ export class ListComponent implements OnInit {
     this.data.push(value);
     this.dataSource2= new MatTableDataSource<Element>(this.data);
     console.log(this.dataSource2.data);
+  }
+
+  cleanStyles() {
+    console.log(this.rails)
+    this.rails.forEach(rail => {
+      rail.columns.forEach(column => {
+        column['adjacent'] = false;
+      });
+    });
   }
 
   activeDelete() {
@@ -389,6 +411,11 @@ export class ListComponent implements OnInit {
   displayRails() {
     event.stopPropagation();
     this.showRails = !this.showRails;
+  }
+
+  displayRailsRadio() {
+    event.stopPropagation();
+    this.showRails = true;
   }
 
   radioGroupChange(event) {

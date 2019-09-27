@@ -110,6 +110,16 @@ mat-grid-list {
     border: 1px solid black;
   }
 
+  .selected {
+    background: red;
+    color: white;
+  }
+  
+  .adjacent {
+    background: #dddddd;
+    color: white;
+  }
+
   .grid{
       display: flex;
       position: absolute;

@@ -63,6 +63,7 @@ export class RailsConfigurationComponent implements OnInit {
        let columns = rail.columns;
        for(let i = 0; i < columns.length; i++) 
         if(column == columns[i].ways_number) {
+          columns[i]['adjacent'] = false;
           columns[i]['selected'] = true;
           console.log('Current: '+column)
           if(columns[i-1] && !columns[i-1]['selected']) {
