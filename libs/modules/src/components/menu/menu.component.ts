@@ -285,6 +285,12 @@ export class MenuComponent implements OnInit {
           id: 'sorter-input',
           url: '/sorter/input',
           icon: 'exit'
+        },
+        {
+          title: 'Salida',
+          id: 'sorter-output',
+          url: '/sorter/output',
+          icon: 'exit'
         }
       ]
     },

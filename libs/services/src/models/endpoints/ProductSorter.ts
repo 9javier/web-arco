@@ -6,7 +6,8 @@ export namespace ProductSorterModel {
 
   export interface DestinyWarehouseSorter {
     reference: string,
-    name: string
+    name: string,
+    id: number
   }
 
   export interface SizeSorter {

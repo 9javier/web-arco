@@ -15,6 +15,8 @@ import {ColorItemSorterComponent} from "./color-selector/color/color.component";
 import {MatrixInputSorterComponent} from "./matrix-input/matrix-input.component";
 import {ScannerInputSorterComponent} from "./al-input/scanner/scanner.component";
 import {FooterButtonsScannerSorterComponent} from "./footer-buttons-scanner/footer-buttons-scanner.component";
+import {AlOutputSorterComponent} from "./al-output/al-output.component";
+import {ScannerOutputSorterComponent} from "./al-output/scanner/scanner.component";
 
 const routes:Routes = [
   { path: '', redirectTo: 'plantillas', pathMatch: 'full' },
@@ -46,10 +48,36 @@ const routes:Routes = [
       name: 'Entrada sorter'
     }
   },
+  {
+    path: 'output',
+    component: AlOutputSorterComponent,
+    data: {
+      name: 'Salida sorter'
+    }
+  },
+  {
+    path: 'output/scanner',
+    component: ScannerOutputSorterComponent,
+    data: {
+      name: 'Salida sorter'
+    }
+  }
 ]; 
 
 @NgModule({
-  declarations: [SorterComponent, ListComponent, AlInputSorterComponent, ColorSelectorSorterComponent, ColorItemSorterComponent, FooterButtonsSorterComponent, MatrixInputSorterComponent, ScannerInputSorterComponent, FooterButtonsScannerSorterComponent],
+  declarations: [
+    SorterComponent,
+    ListComponent,
+    AlInputSorterComponent,
+    AlOutputSorterComponent,
+    MatrixInputSorterComponent,
+    ScannerInputSorterComponent,
+    ScannerOutputSorterComponent,
+    FooterButtonsSorterComponent,
+    FooterButtonsScannerSorterComponent,
+    ColorSelectorSorterComponent,
+    ColorItemSorterComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

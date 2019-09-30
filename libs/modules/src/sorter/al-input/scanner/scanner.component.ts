@@ -73,11 +73,13 @@ export class ScannerInputSorterComponent implements OnInit {
           },
           destinyWarehouse: {
             reference: 'REF',
-            name: 'Store Destiny'
+            name: 'Store Destiny',
+            id: 1
           }
-        }
+        };
+        await this.intermediaryService.presentToastSuccess(`Artículo ${dataWrote} añadido al sorter.`);
       } else {
-        await this.intermediaryService.presentToastError('Escaneé un código de caja.');
+        await this.intermediaryService.presentToastError('Escanea un código de caja.');
       }
     }
   }

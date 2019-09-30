@@ -1,0 +1,13 @@
+<ion-content>
+  <sorter-color-selector
+    [colors]="colorsSelectors"
+    [title]="'Organiza los artículos del sorter. Pulsa un color.'"
+    (colorSelected)="colorSelected($event)">
+  </sorter-color-selector>
+
+  <sorter-footer-buttons
+    *ngIf="sorterProvider.colorSelected"
+    (operationCancel)="sorterOperationCancelled()"
+    (operationStart)="sorterOperationStarted()">
+  </sorter-footer-buttons>
+</ion-content>

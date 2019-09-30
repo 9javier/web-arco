@@ -10,6 +10,7 @@ import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.p
 export class ColorSelectorSorterComponent implements OnInit {
 
   @Input() colors: ColorSorterModel.ColorSorter[] = [];
+  @Input() title: string = 'Organiza los artículos en el sorter. Pulsa un color.';
   @Output() colorSelected = new EventEmitter();
 
   constructor(
