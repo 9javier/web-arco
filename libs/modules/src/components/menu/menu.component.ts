@@ -281,10 +281,10 @@ export class MenuComponent implements OnInit {
           icon: 'pricetags'
         },
         {
-          title: 'Código exposición manual',
-          id: 'print-price-tag-manual',
-          url: '/print-tag/manual/price',
-          icon: 'pricetags'
+          title: 'Entrada',
+          id: 'sorter-input',
+          url: '/sorter/input',
+          icon: 'exit'
         }
       ]
     },
