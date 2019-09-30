@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ColorSorterModel} from "../../../../services/src/models/endpoints/ColorSorter";
 import {MatrixSorterModel} from "../../../../services/src/models/endpoints/MatrixSorter";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
+import {Router} from "@angular/router";
+import {IntermediaryService} from "@suite/services";
 
 @Component({
   selector: 'sorter-input-al',
@@ -14,6 +16,8 @@ export class AlInputSorterComponent implements OnInit {
   public sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
 
   constructor(
+    private router: Router,
+    private intermediaryService: IntermediaryService,
     private sorterProvider: SorterProvider
   ) { }
   
@@ -1176,7 +1180,12 @@ export class AlInputSorterComponent implements OnInit {
     this.sorterProvider.colorSelected = null;
   }
 
-  sorterOperationStarted() {
+  async sorterOperationStarted() {
+    if (!this.sorterProvider.colorSelected) {
+      await this.intermediaryService.presentToastError('Selecciona un color para comenzar.');
+      return;
+    }
 
+    this.router.navigate(['sorter/input/scanner']);
   }
 }
