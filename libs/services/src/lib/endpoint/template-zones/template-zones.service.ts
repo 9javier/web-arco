@@ -23,6 +23,7 @@ export class TemplateZonesService {
   private assignZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
   private getMatrixByTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/matrix";
   private assignPrioritiesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign";
+  private getTemplteZonesAndWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways";
 
   constructor(private http: HttpClient) { }
   
@@ -112,6 +113,13 @@ export class TemplateZonesService {
 
   getMatrixByTemplate(idTemplate: number): Observable<any> {
     return this.http.get<any>(this.getMatrixByTemplateUrl.replace("{{idTemplate}}",String(idTemplate)))
+    .pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getTemplateZonesAndWays(idTemplate: number): Observable<any> {
+    return this.http.get<any>(this.getTemplteZonesAndWaysUrl.replace("{{idTemplate}}",String(idTemplate)))
     .pipe(map(response => {
       return response;
     }));

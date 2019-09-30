@@ -73,6 +73,7 @@ export class ListComponent implements OnInit {
   colors: TemplateColorsModel.TemplateColors[];
   test_counter:number;
   toDeleteIds: number[] = [];
+  waysMatrix = [];
   ways = [];
 
 
@@ -171,13 +172,17 @@ export class ListComponent implements OnInit {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
       this.initSelectActive(this.zones);
-      console.log(this.zones)
     });
     this.test_counter = 0;
     
     this.templateZonesService.getMatrixByTemplate(Number(this.id)).subscribe((data) => {
+      this.waysMatrix = data.data;
+    }, (err) => {
+      console.log(err)
+    });
+
+    this.templateZonesService.getTemplateZonesAndWays(Number(this.id)).subscribe((data) => {
       this.ways = data.data;
-      console.log(this.ways)
     }, (err) => {
       console.log(err)
     });
@@ -263,16 +268,15 @@ export class ListComponent implements OnInit {
     modal.present();
   }
 
-  getColumn(index: number, column: number, height: number): void {
+  getColumn(index: number, column: number, height: number, way): void {
     this.firstClick = false;
     this.cleanStyles();
 
     console.log(this.ways)
 
-    this.ways.forEach(way => {
+    this.waysMatrix.forEach(way => {
       if(way.height === height) {
         let columns = way.columns;
-        console.log(columns)
         for(let i = 0; i < columns.length; i++) 
         if(column == columns[i].ways_number) {
           columns[i]['selected'] = true;
@@ -310,12 +314,19 @@ export class ListComponent implements OnInit {
         }
       }
     }
-    console.log(this.ways)
-    this.test_counter ++;
-    console.log(this.test_counter);
+
+    let wayNumber: number;
+    let wayColumn: number;
+    this.ways.forEach(item => {
+      if(item.ways.id === way.way.id) {
+        wayNumber = item.priority;
+        wayColumn = way.way.column
+      }
+    });
+  
     let value = {
-      position: this.test_counter,
-      name: 'test ' + this.test_counter
+      position: wayNumber,
+      name: wayColumn
     }
     this.data.push(value);
     this.dataSource2= new MatTableDataSource<Element>(this.data);

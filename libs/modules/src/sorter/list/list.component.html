@@ -123,11 +123,11 @@
               </mat-row>
             </mat-table>
       </div>
-      <div *ngFor="let way of ways"  class="height">
+      <div *ngFor="let way of waysMatrix"  class="height">
         <div 
         *ngFor="let column of way.columns; let i = index" 
         class="column" 
-        (click)="(column.adjacent || firstClick) && getColumn(i,column.ways_number, way.height)"
+        (click)="(column.adjacent || firstClick) && getColumn(i,column.ways_number, way.height, column)"
         [ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
             <span style="margin: 20px">{{column.ways_number}}</span>
           </div>
