@@ -40,6 +40,6 @@ export class UpdateComponent implements OnInit {
     this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe((data) => {
       console.log(data.data);
       this.close();
-    });;
+    });
   }
 }

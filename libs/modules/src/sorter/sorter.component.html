@@ -41,7 +41,7 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element; let i = index"> 
                     <ng-template [ngIf]="selectedFormActive['controls']?.toSelectActive">
-                        <ion-checkbox (click)="activeDelete()" [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
+                        <ion-checkbox (click)="active(element, selectedFormActive['controls']?.toSelectActive['controls'][i])" [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
                     </ng-template>
                   </mat-cell>
             </ng-container>

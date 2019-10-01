@@ -34,11 +34,11 @@ export class UpdateComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  submit(template):void{
-    let { colors, ...data} = this.base.getValue();
-    colors = [1];
+  submit():void{
+    let { ...data} = this.base.getValue();
+    let ways = 0;
     const payload = {
-      active: false, colors, ...data
+      active: false, ways, ...data
     }
     this.sorteService
       .updateSorter(payload, payload.id).subscribe((data) => {

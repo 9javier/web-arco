@@ -82,32 +82,7 @@ export class ListComponent implements OnInit {
   //Get value on ionSelect on IonRadio item
   selectedRadioItem:any;
 
-  rails = [
-    {
-      height:1,
-      columns:[
-        {column:1, ways_number:1},
-        {column:2, ways_number:2},
-        {column:3, ways_number:3}
-      ]
-    },
-    {
-      height:2,
-      columns:[
-        {column:1, ways_number:4},
-        {column:2, ways_number:5},
-        {column:3, ways_number:6}
-      ]
-    },
-    {
-      height:3,
-      columns:[
-        {column:1, ways_number:7},
-        {column:2, ways_number:8},
-        {column:3, ways_number:9}
-      ]
-    }
-  ]
+  rails = []
   firstClick: boolean = true;
   radioDisplay: boolean = false;
 
@@ -177,6 +152,7 @@ export class ListComponent implements OnInit {
     
     this.templateZonesService.getMatrixByTemplate(Number(this.id)).subscribe((data) => {
       this.waysMatrix = data.data;
+      console.log(this.waysMatrix)
     }, (err) => {
       console.log(err)
     });
@@ -330,7 +306,6 @@ export class ListComponent implements OnInit {
     }
     this.data.push(value);
     this.dataSource2= new MatTableDataSource<Element>(this.data);
-    console.log(this.dataSource2.data);
   }
 
   cleanStyles() {
@@ -342,8 +317,9 @@ export class ListComponent implements OnInit {
     });
   }
 
-  activeDelete() {
+  active() {
     event.stopPropagation();
+    console.log('active')
   }
 
   toDeleteZone(index) {

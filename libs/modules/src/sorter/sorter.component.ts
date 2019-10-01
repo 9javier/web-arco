@@ -204,8 +204,25 @@ export class SorterComponent implements OnInit {
     modal.present();
   }
 
-  activeDelete() {
+  active(element, check) {
     event.stopPropagation();
+    console.log('active')
+    console.log(check.value)
+    let payload = element;
+    payload = {
+      active: check.value,
+      ...payload
+    }
+    this.intermediaryService.presentLoading();
+    this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe((data) => {
+      console.log(data);
+    }, (err) => {
+      console.log(err)
+    }, () => {
+      this.getTemplates();
+      console.log(this.templates)
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   toDeleteTemplate(index) {
