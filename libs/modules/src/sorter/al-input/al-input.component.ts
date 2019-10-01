@@ -4,6 +4,13 @@ import {MatrixSorterModel} from "../../../../services/src/models/endpoints/Matri
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
 import {Router} from "@angular/router";
 import {IntermediaryService} from "@suite/services";
+import {SorterService} from "../../../../services/src/lib/endpoint/sorter/sorter.service";
+import {SorterModel} from "../../../../services/src/models/endpoints/Sorter";
+import {TemplateZonesService} from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
+import {SorterTemplateService} from "../../../../services/src/lib/endpoint/sorter-template/sorter-template.service";
+import {TemplateSorterModel} from "../../../../services/src/models/endpoints/TemplateSorter";
+import {SorterExecutionService} from "../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
+import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/ExecutionSorter";
 
 @Component({
   selector: 'sorter-input-al',
@@ -12,20 +19,32 @@ import {IntermediaryService} from "@suite/services";
 })
 export class AlInputSorterComponent implements OnInit {
 
+  private activeDefaultData: boolean = false;
+
   public colorsSelectors: ColorSorterModel.ColorSorter[] = [];
   public sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
+  public loadingSorterTemplateMatrix: boolean = true;
 
   constructor(
     private router: Router,
     private intermediaryService: IntermediaryService,
+    private sorterService: SorterService,
+    private templateZonesService: TemplateZonesService,
+    private sorterTemplateService: SorterTemplateService,
+    private sorterExecutionService: SorterExecutionService,
     public sorterProvider: SorterProvider
   ) { }
   
   ngOnInit() {
-    this.loadDefaultData();
+    if (this.activeDefaultData) {
+      this.loadDefaultData();
+    } else {
+      this.loadingSorterTemplateMatrix = true;
+      this.loadData();
+    }
   }
 
-  loadDefaultData() {
+  private loadDefaultData() {
     this.colorsSelectors = [
       {
         id: 1,
@@ -1172,6 +1191,10 @@ export class AlInputSorterComponent implements OnInit {
     ];
   }
 
+  private loadData() {
+    this.loadActiveSorter();
+  }
+
   colorSelected(data) {
     this.sorterProvider.colorSelected = data;
   }
@@ -1186,6 +1209,60 @@ export class AlInputSorterComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['sorter/input/scanner']);
+    this.sorterExecutionService
+      .postExecuteColor({
+        color: this.sorterProvider.colorSelected.id,
+        type: 1
+      })
+      .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
+        await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
+        this.router.navigate(['sorter/input/scanner']);
+      }, async (error) => {
+        console.error('Error::Subscribe::sorterExecutionService::postExecuteColor', error);
+        await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar iniciar el proces con el color ${this.sorterProvider.colorSelected.name}`);
+      });
+
   }
+
+  //region Endpoints requests
+  private loadActiveSorter() {
+    this.sorterService
+      .getFirstSorter()
+      .subscribe((res: SorterModel.FirstSorter) => {
+        this.colorsSelectors = res.colors.map(color => color.sorterZonesColor);
+        this.loadActiveTemplate(res.id);
+      }, async (error) => {
+        console.error('Error::Subscribe::sorterService::getFirstSorter', error);
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos del sorter.');
+        this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private loadActiveTemplate(idSorter: number) {
+    this.sorterTemplateService
+      .getActiveTemplate()
+      .subscribe((res: TemplateSorterModel.Template) => {
+        this.loadMatrixTemplateSorter(idSorter, res.id);
+      }, async (error) => {
+        console.error('Error::Subscribe::sorterTemplateService::getActiveTemplate', error);
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar la plantilla actual del sorter.');
+        this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private loadMatrixTemplateSorter(idSorter: number, idTemplate: number) {
+    this.loadingSorterTemplateMatrix = true;
+    this.templateZonesService
+      .getMatrixTemplateSorter(idSorter, idTemplate)
+      .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
+        console.debug('Test::getMatrixTemplateSorter', res);
+        this.sorterTemplateMatrix = res;
+        this.loadingSorterTemplateMatrix = false;
+      }, async (error) => {
+        console.error('Error::Subscribe::templateZonesService::getMatrixTemplateSorter', error);
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar la plantilla actual del sorter.');
+        this.loadingSorterTemplateMatrix = false;
+      });
+  }
+  //endregion
 }

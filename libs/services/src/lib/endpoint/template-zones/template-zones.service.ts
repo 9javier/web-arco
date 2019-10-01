@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { TemplateZoneModel } from '../../../models/endpoints/TemplateZone';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
+import {MatrixSorterModel} from "../../../models/endpoints/MatrixSorter";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,7 @@ export class TemplateZonesService {
   private getMatrixByTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/matrix";
   private assignPrioritiesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign";
   private getTemplteZonesAndWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways";
+  private getMatrixTemplateSorterUrl: string = environment.apiBase + '/sorters/{{idSorter}}/templates/{{idTemplate}}/zones/ways/matrix';
 
   constructor(private http: HttpClient) { }
   
@@ -129,6 +131,16 @@ export class TemplateZonesService {
     return this.http.post<any>(this.assignPrioritiesUrl.replace("{{idTemplate}}",String(idTemplate)), data)
     .pipe(map(response => {
       return response;
+    }));
+  }
+
+  getMatrixTemplateSorter(idSorter: number, idTemplate: number): Observable<MatrixSorterModel.MatrixTemplateSorter[]> {
+    let url = this.getMatrixTemplateSorterUrl;
+    url = url.replace('{{idSorter}}', idSorter.toString());
+    url = url.replace('{{idTemplate}}', idTemplate.toString());
+
+    return this.http.get<MatrixSorterModel.ResponseMatrixTemplateSorter>(url).pipe(map(response => {
+      return response.data;
     }));
   }
 }

@@ -1,0 +1,24 @@
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
+import {ExecutionSorterModel} from "../../../models/endpoints/ExecutionSorter";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SorterExecutionService {
+
+  private postExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color";
+
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  postExecuteColor(params: ExecutionSorterModel.ParamsExecuteColor): Observable<ExecutionSorterModel.ExecuteColor> {
+    return this.http.post<ExecutionSorterModel.ResponseExecuteColor>(this.postExecuteColorUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+}

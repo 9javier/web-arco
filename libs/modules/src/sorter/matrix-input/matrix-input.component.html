@@ -1,12 +1,21 @@
 <div class="matrix-main">
-  <div class="matrix">
-    <div class="height" *ngFor="let sorterHeight of sorterTemplateMatrix">
-      <div class="column" *ngFor="let sorterColumn of sorterHeight.columns" [ngStyle]="{'background-color': getBackgroundForSelected(sorterColumn)}">
+  <div class="center-block">
+    <div class="matrix">
+      <div class="height" *ngFor="let sorterHeight of sorterTemplateMatrix">
+        <div class="column" *ngFor="let sorterColumn of sorterHeight.columns" [ngStyle]="{'background-color': getBackgroundForSelected(sorterColumn)}">
+
+        </div>
+      </div>
+      <div class="footer" [ngStyle]="{'width': (sorterTemplateMatrix[0].columns.length * 40) + 'px'}">
 
       </div>
     </div>
-    <div class="footer" [ngStyle]="{'width': (sorterTemplateMatrix[0].columns.length * 40) + 'px'}">
-
+    <div class="legend">
+      <div class="zone" *ngFor="let zoneColor of listZonesWithColors">
+        <div class="color-zone" [ngStyle]="{'background-color': zoneColor.color}">
+        </div>
+        <span class="name-zone">{{zoneColor.name}}</span>
+      </div>
     </div>
   </div>
 </div>

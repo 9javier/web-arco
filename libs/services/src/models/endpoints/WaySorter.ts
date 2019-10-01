@@ -11,6 +11,6 @@ export namespace WaySorterModel {
     active: boolean,
     column: number,
     height: number,
-    templateZone: TemplateSorterModel.TemplateZone
+    templateZone?: TemplateSorterModel.TemplateZone
   }
 }

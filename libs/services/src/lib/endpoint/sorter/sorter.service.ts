@@ -15,6 +15,8 @@ export class SorterService {
   private getSortersUrl: string = environment.apiBase + "/sorters";
   private putUpdateSorterUrl: string = environment.apiBase + "/sorters/{{id}}";
   private deleteSorterUrl: string = environment.apiBase + "/sorters/{{id}}";
+  private getFirstSorterUrl: string = environment.apiBase + '/sorters/first';
+
   constructor(private http: HttpClient) { }
   
   getIndex(): Observable<SorterModel.ResponseSorter> {
@@ -38,5 +40,11 @@ export class SorterService {
 
   deleteSorter(id: number) {
     return this.http.delete(this.deleteSorterUrl.replace("{{id}}",String(id)));
+  }
+
+  getFirstSorter(): Observable<SorterModel.FirstSorter> {
+    return this.http.get<SorterModel.ResponseFirstSorter>(this.getFirstSorterUrl).pipe(map(response => {
+      return response.data;
+    }));
   }
 }

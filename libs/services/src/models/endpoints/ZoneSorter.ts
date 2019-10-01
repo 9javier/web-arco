@@ -11,4 +11,11 @@ export namespace ZoneSorterModel {
     active: boolean,
     color: ColorSorterModel.ColorSorter
   }
+
+  export interface ZoneColor {
+    id: number,
+    name: string,
+    active: boolean,
+    color: string
+  }
 }

@@ -1,3 +1,5 @@
+import {SorterModel} from "./Sorter";
+
 export namespace ColorSorterModel {
 
   export interface ColorSorter {
@@ -6,5 +8,13 @@ export namespace ColorSorterModel {
     id: number,
     name: string,
     hex: string
+  }
+
+  export interface ColorAssignedSorter {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    sorter: SorterModel.Sorter,
+    sorterZonesColor: ColorSorter
   }
 }

@@ -22,6 +22,10 @@ export namespace TemplateSorterModel {
         data:Template;
     }
 
+    export interface ResponseActiveTemplate {
+      data: Template
+    }
+
     export interface TemplateZone {
         createdAt?: string,
         updatedAt?: string,

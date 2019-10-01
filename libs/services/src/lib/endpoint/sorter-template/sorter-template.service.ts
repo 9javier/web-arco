@@ -15,6 +15,8 @@ export class SorterTemplateService {
   private getTemplateSorterUrl: string = environment.apiBase + "/sorter/templates";
   private putUpdateTemplateSorterUrl: string = environment.apiBase + "/sorter/templates/{{id}}";
   private deleteSorterUrl: string = environment.apiBase + "/sorter/templates/{{id}}";
+  private getActiveTemplateUrl: string = environment.apiBase + '/sorter/templates/active';
+
   constructor(private http: HttpClient) { }
   
   getIndex(): Observable<TemplateSorterModel.ResponseTemplate> {
@@ -46,5 +48,11 @@ export class SorterTemplateService {
 
   deleteTemplateSorter(id: number) {
     return this.http.delete(this.deleteSorterUrl.replace("{{id}}",String(id)));
+  }
+
+  getActiveTemplate(): Observable<TemplateSorterModel.Template> {
+    return this.http.get<TemplateSorterModel.ResponseActiveTemplate>(this.getActiveTemplateUrl).pipe(map(response => {
+      return response.data;
+    }));
   }
 }
