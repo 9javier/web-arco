@@ -7,7 +7,8 @@ import {PrintReceivedProductRoutingModule} from "./print-received-product-routin
 import {CdkTableModule} from "@angular/cdk/table";
 import {ListReceivedProductTemplateComponent} from "./list/list.component";
 import {ReceivedProductTemplateComponent} from "./list/list-items/list-items.component";
-import {MatExpansionModule, MatGridListModule} from "@angular/material";
+import {MatExpansionModule, MatGridListModule, MatPaginatorModule} from "@angular/material";
+import {TagsInputModule} from "@suite/common-modules";
 
 @NgModule({
   declarations: [PrintReceivedProductComponent, ListReceivedProductTemplateComponent, ReceivedProductTemplateComponent],
@@ -19,7 +20,9 @@ import {MatExpansionModule, MatGridListModule} from "@angular/material";
     CdkTableModule,
     FormsModule,
     MatExpansionModule,
-    MatGridListModule
+    MatGridListModule,
+    MatPaginatorModule,
+    TagsInputModule
   ],
   entryComponents: [PrintReceivedProductComponent, ListReceivedProductTemplateComponent, ReceivedProductTemplateComponent]
 })
