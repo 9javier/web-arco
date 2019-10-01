@@ -27,11 +27,25 @@ public class ProductModel {
   }
 
   public void fromJsonObject(JSONObject productAndSizes) throws JSONException {
-    JSONObject productModel = productAndSizes.getJSONObject("productModel");
+    JSONObject productModel = null;
+    if (!productAndSizes.isNull("productModel")) {
+      productModel = productAndSizes.getJSONObject("productModel");
+    } else {
+      productModel = productAndSizes;
+    }
+
     this.name = productModel.getString("name");
     this.reference = productModel.getString("reference");
+
     if (!productModel.isNull("image")) {
       this.imageUrl = productModel.getString("image");
+    }
+    if (!productModel.isNull("photos")) {
+      JSONArray photos = productModel.getJSONArray("photos");
+      if (photos.length() > 0) {
+        JSONObject photo = photos.getJSONObject(0);
+        this.imageUrl = photo.getString("urn");
+      }
     }
 
     if (!productModel.isNull("color")) {

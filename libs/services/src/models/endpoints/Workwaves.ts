@@ -128,11 +128,19 @@ export namespace WorkwaveModel {
 
   export interface ParamsAssignUserToMatchLineRequest {
     requestIds: Array<number>,
-    userIds: Array<number>
+    userIds: Array<number>,
+    groupsWarehousePicking: Array<GroupWarehousePickingModel.GroupWarehousesSelected>,
+    typesShippingOrders: Array<number>
+  }
+
+  interface PickingType {
+    id: number,
+    name: string
   }
 
   interface ShoesAssignation {
     pickingId: number,
+    pickingTypeId?: PickingType,
     quantityShoes: string,
     temporary: boolean
   }
@@ -142,8 +150,21 @@ export namespace WorkwaveModel {
     pickingShoes: Array<ShoesAssignation>
   }
 
+  export interface AssignationsByRequests {
+    pickingId: number,
+    pickingTypeId: string,
+    quantityShoes: string,
+    requestId: number,
+    requestReference: number
+  }
+
+  export interface UsersAndAssignationsQuantities {
+    assignations: Array<TeamAssignations>,
+    quantities: Array<AssignationsByRequests>
+  }
+
   export interface ResponseAssignUserToMatchLineRequest {
-    data: Array<TeamAssignations>
+    data: UsersAndAssignationsQuantities
   }
 
   export interface ParamsConfirmMatchLineRequest {

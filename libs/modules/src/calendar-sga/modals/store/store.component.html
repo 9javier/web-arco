@@ -1,0 +1,21 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Agregar destinos</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <suite-base-destinations
+        [destinations]="warehousesList"
+        [listCheck]="listCheck"></suite-base-destinations>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" (click)="submit(base.getValue())">Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>

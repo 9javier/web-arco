@@ -1,12 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from '@suite/services';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatTableDataSource } from '@angular/material';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { ModalController } from '@ionic/angular';
-import { StoreComponent } from './modals/store/store.component';
-import { UpdateComponent } from './modals/update/update.component';
+import { FormBuilder } from '@angular/forms';
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'suite-global-variables',
@@ -15,110 +10,106 @@ import { UpdateComponent } from './modals/update/update.component';
 })
 export class GlobalVariablesComponent implements OnInit {
 
-  displayedColumns:string[] = ["type","value","selected"];
-  form:FormGroup = this.formBuilder.group({
-    selecteds:this.formBuilder.array([])
-  });
+  listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
+  private listTypesFromDb: Array<{ id: number, name: string }> = [];
+  private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
+  private countLoadOfVariables: number = 0;
 
-  dataSource:MatTableDataSource<GlobalVariableModel.GlobalVariable>;
-
-  types:{id:number;name:string}[] = [];
   constructor(
-    private globalVariableService:GlobalVariableService,
-    private formBuilder:FormBuilder,
-    private intermediaryService:IntermediaryService,
-    private modalController:ModalController
-    ) { }
+    private events: Events,
+    private globalVariableService: GlobalVariableService,
+    private formBuilder: FormBuilder,
+    private intermediaryService: IntermediaryService
+  ) { }
 
   ngOnInit() {
+    this.intermediaryService.presentLoading();
+
     this.getTypes();
     this.getGlobalVariables();
-  }
 
-  /**
-   * Init form to select global variables to print
-   */
-  initForm(variables:GlobalVariableModel.GlobalVariable[]):void{
-    this.form = this.formBuilder.group({
-      selecteds:this.formBuilder.array(variables.map(variable=>{
-        return this.formBuilder.group({
-          id:variable.id,
-          selected:false
-        })
-      }))
-    })
-  }
-
-  async store(){
-    let modal = (await this.modalController.create({
-      component:StoreComponent
-    }));
-    modal.onDidDismiss().then(()=>{
-      this.getGlobalVariables();
-    })
-    modal.present();
-  }
-
-  async update(variable:GlobalVariableModel.GlobalVariable){
-    let modal = (await this.modalController.create({
-      component:UpdateComponent,
-      componentProps:{
-        variable:variable
+    this.events.subscribe('load_of_variables', () => {
+      this.countLoadOfVariables++;
+      if (this.countLoadOfVariables == 2) {
+        this.generateVariablesList();
+        this.countLoadOfVariables = 0;
       }
-    }));
-    modal.onDidDismiss().then(()=>{
-      this.getGlobalVariables();
-    })
-    modal.present();    
-  }
-
-  getGlobalVariables():void{
-    this.intermediaryService.presentLoading();
-    this.globalVariableService.getAll().subscribe(globalVariables=>{
-      this.initForm(globalVariables);
-      this.dataSource = new MatTableDataSource(globalVariables);
-    }, (err) => {
-      // console.log(err)
-    }, () => {
-      this.intermediaryService.dismissLoading();
     });
   }
 
-  selecteds(selecteds:Array<{id:number;selected:boolean}>){
-    return ((selecteds.filter(selected=>selected.selected)).map(selected=>selected.id));
-  }
-
-  prevent(event){
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  getTypes():void{
-    this.globalVariableService.getTypes().subscribe(types=>{
-      this.types = types;
+  generateVariablesList() {
+    this.intermediaryService.dismissLoading();
+    if (this.listVariablesFromDb.length != this.listTypesFromDb.length) {
+      this.listVariables = this.listVariablesFromDb;
+      for (let iType in this.listTypesFromDb) {
+        let type = this.listTypesFromDb[iType];
+        let isTypeCreated: boolean = false;
+        for (let iVariable in this.listVariablesFromDb) {
+          let variable = this.listVariablesFromDb[iVariable];
+          if (variable.type == type.id) {
+            isTypeCreated = true;
+            break;
+          }
+        }
+        if (!isTypeCreated) {
+          this.listVariables.push({ type: type.id, value: null });
+        }
+      }
+    } else {
+      this.listVariables = this.listVariablesFromDb;
+    }
+    this.listVariables.sort((a, b) => {
+      return a.type < b.type ? -1 : 1;
     })
   }
 
-  getTypeById(id):string{
-    return (this.types.find(type=>{
+  getGlobalVariables() {
+    this.globalVariableService
+      .getAll()
+      .subscribe((globalVariables) => {
+        this.listVariablesFromDb = globalVariables;
+        this.events.publish('load_of_variables');
+      });
+  }
+
+  getTypes() {
+    this.globalVariableService
+      .getTypes()
+      .subscribe((types) => {
+        this.listTypesFromDb = types;
+        this.events.publish('load_of_variables');
+      });
+  }
+
+  getTypeById(id) : string {
+    let type = this.listTypesFromDb.find((type) => {
       return type.id == id;
-    })||{name:""}).name;
+    });
+
+    return type.name || '';
   }
 
-  delete(toDeletes:number[]):void{
-    let observable = new Observable(observer=>{observer.next()});
-    this.intermediaryService.presentLoading();
-    toDeletes.forEach(id=>{
-      observable = observable.pipe(switchMap(response=>{
-        return this.globalVariableService.delete(id);
-      }))
+  updateVariables() {
+    let variablesToUpdate = this.listVariables.filter((variable, index) => {
+      this.listVariables[index].error = !variable.value;
+      return variable.value;
     });
-    observable.subscribe(response=>{
-      this.intermediaryService.dismissLoading();
-      this.getGlobalVariables();
-    },()=>{
-      this.getGlobalVariables();
-    });
+
+    if (variablesToUpdate.length == this.listVariables.length) {
+      this.intermediaryService.presentLoading('Actualizando las variables...').then(() => {
+        this.globalVariableService.store(variablesToUpdate).subscribe((res) => {
+          this.getTypes();
+          this.getGlobalVariables();
+          this.intermediaryService.dismissLoading();
+          this.intermediaryService.presentToastSuccess("Las variables han sido actualizadas.")
+        },() => {
+          this.intermediaryService.dismissLoading();
+          this.intermediaryService.presentToastError("Actualización de variables fallida.");
+        });
+      });
+    } else {
+      this.intermediaryService.presentToastError('Inicialice todas las variables del sistema.');
+    }
   }
 
 }

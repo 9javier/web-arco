@@ -74,6 +74,17 @@ div.list-header-filters-mobile {
       border: 1px solid #eee;
     }
   }
+
+  ion-col.btn-remove {
+    ion-button {
+      --background: white;
+      background: white;
+      color: var(--ion-color-primary);
+    }
+  }
+  ion-col.btn-remove, ion-col.btn-apply {
+    text-align: center;
+  }
 }
 
 div.list-items-mobile {
@@ -140,8 +151,8 @@ div.list-items-mobile {
     padding-top: 8px;
     img.img-product-mobile {
       width: 100%;
-      height: 410px;
-      object-fit: cover;
+      height: 100%;
+      object-fit: contain;
     }
   }
 }

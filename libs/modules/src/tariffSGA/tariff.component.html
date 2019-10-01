@@ -11,6 +11,10 @@
             </ion-select>-->
         </ion-col>
     </ion-row>
+    <div class="processing" *ngIf="processing">
+      Se están recalculando los precios porque se está procesando la tarifa <strong>{{tarifProcessing?.name}}</strong>.
+      <br>Por favor, espere a que finalice para activar/desactivar tarifas
+    </div>
     <table mat-table [dataSource]="dataSource">
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -50,7 +54,8 @@
             </th>
             <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)" class="check">
                 <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]" (ngModelChange)="onChecked(i, $event)"></ion-checkbox>
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                        (ngModelChange)="onChecked(i, $event)"></ion-checkbox>
                 </ng-template>
             </td>
         </ng-container>
@@ -59,7 +64,7 @@
 </ion-content>
 
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="updateEnabled()" *ngIf="existTariffsToUpdate">
+    <ion-fab-button (click)="updateEnabled()" *ngIf="existTariffsToUpdate && !processing">
         <ion-icon name="save"></ion-icon>
     </ion-fab-button>
 </ion-fab>

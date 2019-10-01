@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.mirasense.scanditsdk.plugin.MatrixPickingStores;
+import com.mirasense.scanditsdk.plugin.models.LineRequestsProduct;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,12 +57,7 @@ public class ProcessedPickingStoresAdapter extends ArrayAdapter<JSONObject> {
       e.printStackTrace();
     }
 
-    itemView.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-
-      }
-    });
+    itemView.setOnClickListener(view1 -> MatrixPickingStores.showInfoForProduct(new LineRequestsProduct(products.get(position)), resources, packageName, true));
 
     return itemView;
   }

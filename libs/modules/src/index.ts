@@ -162,6 +162,10 @@ export * from './sorter-create/sorter-create.module';
 export * from './calendar-picking/calendar-picking.component';
 export * from './calendar-picking/calendar-picking.module';
 
+/**Calendar sga */
+export * from './calendar-sga/calendar-sga.component';
+export * from './calendar-sga/calendar-sga.module';
+
 /**Manual Print Prices*/
 export * from './print-prices-manual/print-prices-manual.component';
 export * from './print-prices-manual/print-prices-manual.module';
@@ -213,3 +217,7 @@ export * from './components/filter-button/filter-button.module';
 /** Popover for filters */
 export * from './components/filter-popover/filter-popover.component';
 export * from './components/filter-popover/filter-popover.module';
+
+/** Transfer Packing */
+export * from './transfer-packing/transfer-packing.component';
+export * from './transfer-packing/transfer-packing.module';

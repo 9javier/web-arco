@@ -21,6 +21,7 @@ export class CalendarService {
   private templatesByDateUrl:string = environment.apiBase+"/processes/picking-calendar/warehouses-by-dates";
   private getBaseUrl:string = environment.apiBase+"/processes/picking-calendar/warehouses";
   private getCalendarDatesUrl:string = environment.apiBase+"/processes/picking-calendar/calendar-dates";
+  private deleteTemplateUrl:string = environment.apiBase+"/processes/picking-calendar/template/{{id}}";
 
 
   constructor(private http: HttpClient) {}
@@ -211,6 +212,19 @@ export class CalendarService {
                 ]
             }
         ));
+  }
+
+  /**
+   * Delete template by the id
+   * @param id - id that by found
+   * @returns the requested template
+   */
+  deleteTemplate(id:number):Observable<CalendarModel.Template>{
+    return this.http.delete<CalendarModel.SingleTemplateRequest>(
+        this.deleteTemplateUrl.replace("{{id}}",String(id))
+        ).pipe(map(response=>{
+        return response.data;
+    }));
   }
 
 }

@@ -161,6 +161,7 @@ public class MatrixPrintTags extends Activity {
     });
 
     matrixPrintTags = this;
+    ScanditSDK.setActivityStarted(matrixPrintTags);
   }
 
   @Override

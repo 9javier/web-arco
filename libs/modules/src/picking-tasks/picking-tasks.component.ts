@@ -10,6 +10,7 @@ import {AuthenticationService} from "@suite/services";
 })
 export class PickingTasksComponent implements OnInit {
 
+  public isStoreChecked: boolean = false;
   public isStore: boolean = false;
 
   constructor(
@@ -28,9 +29,8 @@ export class PickingTasksComponent implements OnInit {
       }
     });
 
-    if (await this.authenticationService.getWarehouseCurrentUser()) {
-      this.isStore = true;
-    }
+    this.isStore = await this.authenticationService.isStoreUser();
+    this.isStoreChecked = true;
   }
 
 }

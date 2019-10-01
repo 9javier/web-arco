@@ -9,7 +9,8 @@ import {
   PriceModel,
   PriceService,
   WarehousesService,
-  ProductsService, AuthenticationService
+  WarehouseService,
+  ProductsService, AuthenticationService, WarehouseModel
 
 } from '@suite/services';
 
@@ -53,7 +54,8 @@ export class PricesComponent implements OnInit {
     brands: [],
     seasons: [],
     colors: [],
-    warehouseId: 49,
+    families: [],
+    lifestyles: [],
     status: 0,
     tariffId: 0,
     pagination: this.formBuilder.group({
@@ -71,6 +73,8 @@ export class PricesComponent implements OnInit {
   brands: Array<TagsInputOption> = [];
   seasons: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
+  families: Array<TagsInputOption> = [];
+  lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
@@ -105,6 +109,9 @@ export class PricesComponent implements OnInit {
   public mobileVersionTypeList: 'list'|'table' = 'list';
   public showFiltersMobileVersion: boolean = false;
 
+  private isStoreUser: boolean = false;
+  private storeUserObj: WarehouseModel.Warehouse = null;
+
   constructor(
     private printerService: PrinterService,
     private priceService: PriceService,
@@ -112,6 +119,7 @@ export class PricesComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private warehousesService: WarehousesService,
+    private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService
   ) {
@@ -170,6 +178,11 @@ export class PricesComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
       this.page = flag ? page.pageIndex + 1 : 1;
+
+      this.form.value.pagination.page = this.page;
+      this.form.value.pagination.limit = this.limit;
+
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
 
@@ -199,12 +212,15 @@ export class PricesComponent implements OnInit {
    */
   async printPrices(items, warehouseId: number) {
     if (!warehouseId) {
-      warehouseId = (await this.authenticationService.getWarehouseCurrentUser()).id;
+      if (this.isStoreUser) {
+        warehouseId = this.storeUserObj.id;
+      } else {
+        warehouseId = this.warehouseService.idWarehouseMain;
+      }
     }
 
     let prices = this.selectedForm.value.toSelect.map((price, i) => {
       if (items[i].status != 3) {
-        // console.log(items[i]);
         let object = {
           warehouseId: warehouseId,
           tariffId: items[i].tariff.id,
@@ -218,41 +234,23 @@ export class PricesComponent implements OnInit {
 
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
-      // console.log("result of impressions", result);
       this.intermediaryService.dismissLoading();
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
-      // console.log(error);
     });
 
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
     this.getWarehouses();
 
-
-    this.priceService.getStatusEnum().subscribe(status => {
-      this.filterTypes = status;
-      this.status = this.filterTypes.find((status) => {
-        return status.name.toLowerCase() == "todos";
-      }).id;
-      this.route.paramMap.subscribe(params => {
-        this.tariffId = Number(params.get("tariffId"));
-        this.getFilters();
-      });
-    });
-
-    /**detect changes in the form */
-    this.form.statusChanges.subscribe(change => {
-      if (this.pauseListenFormChange) return;
-      /**cant send a request in every keypress of reference, then cancel the previous request */
-      clearTimeout(this.requestTimeout);
-      this.paginator.pageIndex = 0;
-      this.requestTimeout = setTimeout(() => {
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-      }, 100);
-    });
+    this.clearFilters();
   }
 
   ngAfterViewInit(): void {
@@ -311,6 +309,10 @@ export class PricesComponent implements OnInit {
       this.brands = filters.brands;
       this.seasons = filters.seasons;
       this.models = filters.models;
+      this.families = filters.families;
+      this.lifestyles = filters.lifestyles;
+
+      this.applyFilters();
     });
   }
 
@@ -321,6 +323,7 @@ export class PricesComponent implements OnInit {
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
     this.priceService.getIndex(parameters).subscribe(prices => {
+      this.showFiltersMobileVersion = false;
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
@@ -403,6 +406,58 @@ export class PricesComponent implements OnInit {
 
   openFiltersMobile() {
     this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
+  }
+
+  getFamilyAndLifestyle(priceObj: PriceModel.Price): string {
+    let familyLifestyle: string[] = [];
+    if (priceObj.model.family) {
+      familyLifestyle.push(priceObj.model.family.name);
+    }
+    if (priceObj.model.lifestyle) {
+      familyLifestyle.push(priceObj.model.lifestyle.name);
+    }
+    return familyLifestyle.join(' - ');
+  }
+
+  applyFilters() {
+    if (this.pauseListenFormChange) return;
+    clearTimeout(this.requestTimeout);
+    this.paginator.pageIndex = 0;
+    this.requestTimeout = setTimeout(() => {
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+    }, 100);
+  }
+
+  clearFilters() {
+    this.form = this.formBuilder.group({
+      models: [],
+      brands: [],
+      seasons: [],
+      colors: [],
+      families: [],
+      lifestyles: [],
+      status: 0,
+      tariffId: 0,
+      pagination: this.formBuilder.group({
+        page: this.page || 1,
+        limit: this.limit || this.pagerValues[0]
+      }),
+      orderby: this.formBuilder.group({
+        type: '',
+        order: "asc"
+      })
+    });
+
+    this.priceService.getStatusEnum().subscribe(status => {
+      this.filterTypes = status;
+      this.status = this.filterTypes.find((status) => {
+        return status.name.toLowerCase() == "todos";
+      }).id;
+      this.route.paramMap.subscribe(params => {
+        this.tariffId = Number(params.get("tariffId"));
+        this.getFilters();
+      });
+    });
   }
 
   // GET & SET SECTION

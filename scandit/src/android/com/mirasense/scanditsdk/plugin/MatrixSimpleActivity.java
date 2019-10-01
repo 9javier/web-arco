@@ -114,6 +114,7 @@ public class MatrixSimpleActivity extends Activity {
     });
 
     matrixSimple = this;
+    ScanditSDK.setActivityStarted(matrixSimple);
   }
 
   @Override

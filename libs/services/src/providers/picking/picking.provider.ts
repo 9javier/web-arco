@@ -124,6 +124,14 @@ export class PickingProvider {
     this._typePacking = value;
   }
 
+  private _typePicking: number;
+  get typePicking(): number {
+    return this._typePicking;
+  }
+  set typePicking(value: number) {
+    this._typePicking = value;
+  }
+
   private _packingReference: string = null;
   get packingReference(): string {
     return this._packingReference;
@@ -146,6 +154,14 @@ export class PickingProvider {
   }
   set listLineRequestsToStorePickings(value: StoresLineRequestsModel.StoresLineRequests[]) {
     this._listLineRequestsToStorePickings = value;
+  }
+
+  private _listRejectionReasonsToStorePickings: PickingStoreModel.RejectionReasons[] = null;
+  get listRejectionReasonsToStorePickings(): PickingStoreModel.RejectionReasons[] {
+    return this._listRejectionReasonsToStorePickings;
+  }
+  set listRejectionReasonsToStorePickings(value: PickingStoreModel.RejectionReasons[]) {
+    this._listRejectionReasonsToStorePickings = value;
   }
 
   private _listProductsToStorePickings: StoresLineRequestsModel.LineRequests[] = null;
@@ -197,5 +213,21 @@ export class PickingProvider {
   };
   getPickingStatusText(status: number): string {
     return this._listStatus[status];
+  }
+
+  private _pickingSelectedToStart: PickingModel.Picking = null;
+  get pickingSelectedToStart(): PickingModel.Picking {
+    return this._pickingSelectedToStart;
+  }
+  set pickingSelectedToStart(value: PickingModel.Picking) {
+    this._pickingSelectedToStart = value;
+  }
+
+  private _listStoresToPopoverList: Array<PickingModel.WorkwaveOrderWarehouse> = new Array<PickingModel.WorkwaveOrderWarehouse>();
+  get listStoresToPopoverList(): Array<PickingModel.WorkwaveOrderWarehouse> {
+    return this._listStoresToPopoverList;
+  }
+  set listStoresToPopoverList(value: Array<PickingModel.WorkwaveOrderWarehouse>) {
+    this._listStoresToPopoverList = value;
   }
 }

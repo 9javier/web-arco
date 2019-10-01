@@ -19,7 +19,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
 
   @Input() set options(options) {
     if (options.length) {
-      console.log(options, "teststs");
       this._options = options.map(option => {
 
         if (this.literalmixed) {
@@ -38,10 +37,11 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
 
         return option;
       });
-      if (this.multiple)
+      if (this.multiple) {
         this.writeValue(this.values);
-      else
+      } else{
         this.writeValue(this.value);
+      }
       this.filteredOptions = this.filterOptions(options, "");
     }
   }
@@ -104,7 +104,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
         if (this.literalmixed) {
           if (isNaN(parseInt(node.dataset.id))) {
             tags.push(node.dataset.id.toString());
-            console.log("claro");
           } else {
             tags.push(parseInt(node.dataset.id));
           }
@@ -126,38 +125,36 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    * Select option via input options
    * @param option - the selected option
    */
-  selectOption(option: TagsInputOption, click?): void {
-    ////console.log(option.name,"hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+  selectOption(option:TagsInputOption,click?):void{
     this.filteredOptions = [];
     //this.selectedOption = option;
     this.optionPointerIndex = 0;
     /**Obtenemos el nodo que se está editando actualmente */
     let node;
-    if (!click)
+    if (!click) {
       node = window.getSelection().anchorNode;
-    else
+    } else {
       node = this.lastNode;
+    }
     this.flagEmmit = true;
     this.insertTag(option.id, (node != this.inputElement.nativeElement) ? node : null);
   }
 
   /**
    * @todo definition
-   * @param event 
+   * @param event
    */
   clickEditable(event): void {
     let target = event.target;
     let node = window.getSelection().anchorNode;
-    this.filteredOptions = this.filterOptions(this._options, node.textContent);
-    //console.log(window.getSelection());
+    this.filteredOptions = this.filterOptions(this._options,node.textContent);
   }
 
   /**
    * test purpouses
-   * @param event 
+   * @param event
    */
-  eventClick(event) {
-    ////console.log(event);
+  eventClick(event){
   }
 
   /**
@@ -258,21 +255,18 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     let endPosition = null;
     for (let i = 0; i < str.length; i++) {
       let comparator = str.substr(i, separator.length);
-      //console.log("comparator",comparator,separator, comparator == separator);
       if (comparator == separator)
         if (startPosition === null)
           startPosition = i + separator.length;
         else
           endPosition = i;
       if (startPosition < index) {
-        //console.log(startPosition,index)
         startPosition = null;
         endPosition = null;
       }
     }
     startPosition = startPosition !== null ? startPosition : 0;
     endPosition = endPosition !== null ? endPosition : str.length;
-    //console.log('separador',startPosition,endPosition);
     return str.substr(startPosition, endPosition - startPosition);
   }
 
@@ -284,21 +278,18 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     let endPosition = null;
     for (let i = 0; i < str.length; i++) {
       let comparator = str.substr(i, separator.length);
-      //console.log("comparator",comparator,separator, comparator == separator);
       if (comparator == separator)
         if (startPosition === null)
           startPosition = i + separator.length;
         else
           endPosition = i;
       if (startPosition < index) {
-        //console.log(startPosition,index)
         startPosition = null;
         endPosition = null;
       }
     }
     startPosition = startPosition !== null ? startPosition : 0;
     endPosition = endPosition !== null ? endPosition : str.length;
-    //console.log('separador',startPosition,endPosition);
     return str.substr(0, startPosition) + replacement + str.substr(endPosition);
   }
 
@@ -315,7 +306,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       if (_node === currentNode) {
         break;
       } else {
-        //console.log(_node);
         offset += (_node.innerText || _node.textContent).length;
       }
 
@@ -331,28 +321,23 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     /**nodo sobre el cual se está escribiendo*/
     let node = window.getSelection().anchorNode;
     this.lastNode = node;
-    console.log("que pasa", this._options, node.textContent);
     /**y eso es lo que vamos a usar para filtrar */
     this.filteredOptions = this.filterOptions([...this._options], node.textContent.trim());
-    console.warn(this.filteredOptions);
     if (node.textContent && !this._options.filter(option => option.name.toLowerCase() == (node.textContent.trim()).toLowerCase())[0]) {
       this.currentTextOption = {
-        id: node.textContent,
+        id: node.textContent.toString().trim(),
         name: node.textContent,
         type: "text"
       }
       this.filteredOptions = [this.currentTextOption].concat(this.filteredOptions);
     }
 
-    ////console.log("testes")
     /**Get the text of the div */
     /*let text:string = this.inputElement.nativeElement.innerText;
     let selection = window.getSelection();
     let cursorPosition:number = window.getSelection().focusOffset - 1;
     cursorPosition+=this.getOffsetPosition(this.inputElement,selection.anchorNode);
-    //console.log(text,cursorPosition);
     let textToFilter = this.getWord(text,cursorPosition);
-    //console.log(text.length,textToFilter);
     this.filteredOptions = this.filterOptions(this._options,textToFilter);*/
 
     /**if not have exactyle coincidence add the current text as option */
@@ -372,9 +357,8 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    * @param currentNode - for stop the loop
    * @returns the offset
    */
-  getIndexOfNode(parentElement: ElementRef, currentNode): number {
-    //console.log(currentNode);
-    for (let i = 0; i < parentElement.nativeElement.childNodes.length || 0; i++) {
+ getIndexOfNode(parentElement:ElementRef,currentNode):number{
+    for(let i = 0; i < parentElement.nativeElement.childNodes.length || 0; i++){
       let _node = parentElement.nativeElement.childNodes[i];
       if (_node === currentNode)
         return i;
@@ -392,7 +376,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     let selection = window.getSelection();
     let cursorPosition: number = window.getSelection().focusOffset - 1;
     cursorPosition += this.getOffsetPosition(this.inputElement, selection.anchorNode);
-    //console.log(text,cursorPosition);
     let textToFilter = this.replaceWord(text, cursorPosition, `<span class="tag" style="
       background: #222428;
       color: white;
@@ -400,7 +383,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       padding: 2px 4px;
       border-radius: 5px;
       white-space:pre">${option.name}</span> <span></span>`);
-    //console.log(textToFilter);
 
     //let offset:number = this.getIndexOfNode(this.inputElement,window.getSelection().anchorNode);
     /**divide the text of div in words */
@@ -426,7 +408,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
      this.inputElement.nativeElement.innerHTML = positions.join(" ");
      this.inputElement.nativeElement.focus();
      let startNode = offset?this.inputElement.nativeElement.childNodes[offset]:this.inputElement.nativeElement;
-     //console.log(startNode,offset);
      let endNode = startNode;*/
     setTimeout(() => {
       /* let range = document.createRange();
@@ -437,7 +418,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
        sel.addRange(range);*/
     }, 0);
 
-    //////console.log(this.inputElement.nativeElement);
     //this.inputElement.nativeElement.setSelectionRange(index,index);
     this.inputElement.nativeElement.innerHTML = textToFilter;
     return textToFilter;
@@ -465,20 +445,20 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
   onTouch() { }
 
   /**
-   * 
+   *
    * @param id - the id to be inserted
    * @param node - the node to be replaced
    * @returns the last node inserted
    */
   insertTag(id: any, node?: Node, emit = true): Node {
-    let option = this._options.filter(option => option.id == id)[0];
-    if (!option)
+    let option = this._options.filter(option => option.id === id)[0];
+    if (!option) {
       option = {
         id: id,
-        name: id,
+        name: node ? node.nodeValue : id,
         type: "text"
-      }
-
+      };
+    }
 
     if (!node) {
       node = document.createElement("span");
@@ -491,10 +471,11 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     tagSpan.dataset.id = <string>option.id;
     tagSpan.dataset.type = option.type;
     /**reemplazamos el nodo anterior con el nuevo */
-    if (node.parentElement.className == "parent-editable")
+    if (node.parentElement.className == "parent-editable") {
       node.parentElement.replaceChild(tagSpan, node);
-    else
+    } else {
       node.parentElement.parentElement.replaceChild(tagSpan, node.parentElement);
+    }
     /**Inserto un espacio antes a menos que sea el primer elemento */
     if (this.inputElement.nativeElement.childNodes[0] !== tagSpan) {
       let separator = document.createTextNode(" ");
@@ -514,8 +495,9 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       sel.removeAllRanges();
       sel.addRange(range)
     }
-    if (emit)
+    if (emit) {
       this.emitSelection();
+    }
 
     return textNode;
   }
@@ -531,11 +513,10 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
   }
 
   /**
-   * 
+   *
    * @param value - the value to acting
    */
-  writeValue(value: any): void {
-    console.log("test");
+  writeValue(value: any): void{
     /**need to know is value is an array or a single value */
     if (!this.flagEmmit) {
       this.clearInput(this.inputElement.nativeElement);
@@ -550,7 +531,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       }
     } else {
       setTimeout(() => { this.flagEmmit = false; }, 50);
-
     }
 
   }

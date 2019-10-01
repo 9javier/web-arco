@@ -1,6 +1,21 @@
 <div class="main-element">
   <h2 class="title-table">Asignaciones del Equipo</h2>
 
+  <div class="legend">
+    <div>
+      <div class="picking other"></div>
+      <p>Pickings en curso</p>
+    </div>
+    <div>
+      <div class="picking direct"><div></div></div>
+      <p>Picking directo</p>
+    </div>
+    <div>
+      <div class="picking consolidated"><div></div></div>
+      <p>Picking consolidado</p>
+    </div>
+  </div>
+
   <div class="loader" *ngIf="pickingParametrizationProvider.loadingListTeamAssignations && pickingParametrizationProvider.loadingListTeamAssignations > 0">
     <div class="spinner">
       <p class="message">Cargando asignaciones del equipo</p>
@@ -19,6 +34,7 @@
       </mat-grid-tile>
       <mat-grid-tile class="assignation" *ngFor="let assignation of teamAssignation.pickingShoes" [ngClass]="assignation.temporary ? 'temporal' : 'fixed'" [colspan]="stringToInt(assignation.quantityShoes)">
         <div class="tile-value">{{assignation.quantityShoes}}</div>
+        <div class="tile-picking-type" [ngClass]="assignation.temporary ? assignation.pickingTypeId.id == 1 ? 'temporal direct' : 'temporal consolidated' : 'fixed'"></div>
       </mat-grid-tile>
     </mat-grid-list>
   </div>

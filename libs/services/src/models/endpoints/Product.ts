@@ -88,9 +88,10 @@ export namespace ProductModel {
   }
 
   export interface ParamsRelabel {
-    warehouseId: number,
-    modelId: number,
-    sizeId: number,
+    productReference: string,
+    warehouseId?: number,
+    modelId?: number,
+    sizeId?: number,
     locationReference?: string
   }
 
