@@ -210,11 +210,25 @@ export class MenuComponent implements OnInit {
       icon:'logo-usd'
     },
     {
-      title:'Sorter',
-      id:'sorter-sga',
-      url:'/sorter',
-      icon:'logo-usd'
-    },
+      title: 'Sorter',
+      open: true,
+      type: 'wrapper',
+      icon:'logo-usd',
+      children: [
+        {
+          title: 'Crear Sorter',
+          id:'sorter-sga-create',
+          url: '/sorter-new',
+          icon:'logo-usd'
+        },
+        {
+        title: 'Crear Plantillas-Zonas',
+        id:'sorter-sga',
+        url: '/sorter',
+        icon:'logo-usd'
+        }
+      ]
+    }
   ];
 
   alPages: MenuItemList = [

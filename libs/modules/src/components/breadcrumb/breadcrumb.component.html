@@ -2,11 +2,11 @@
     <div landscape>
         <h1>
             <span *ngFor="let breadCrumb of breadCrumbs;let i = index">
-          <span *ngIf="breadCrumb.path;else withoutLink" routerLink="/{{breadCrumb.path}}">
+          <a *ngIf="breadCrumb.path;else withoutLink" routerLink="/{{breadCrumb.path}}" >
               {{
                 i ? " > "+breadCrumb.data.name:breadCrumb.data.name
               }}
-          </span>
+            </a>
 
             <ng-template #withoutLink>
                 <span>
@@ -22,11 +22,11 @@
 
         <h5>
             <span *ngFor="let breadCrumb of breadCrumbs;let i = index">
-              <span *ngIf="breadCrumb.path;else withoutLink" routerLink="/{{breadCrumb.path}}">
+              <a *ngIf="breadCrumb.path;else withoutLink" routerLink="/{{breadCrumb.path}}" >
                   {{
                     i ? " > "+breadCrumb.data.name:breadCrumb.data.name
                   }}
-              </span>
+                </a>
 
             <ng-template #withoutLink>
                 <span>

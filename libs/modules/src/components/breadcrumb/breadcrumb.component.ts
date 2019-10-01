@@ -2,13 +2,14 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router,Route } from '@angular/router';
 
 
+
 @Component({
   selector: 'suite-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss']
 })
 export class BreadcrumbComponent implements OnInit {
-
+ 
   _patch;
   _post;
   @Input() set patch(patch){
@@ -27,7 +28,6 @@ export class BreadcrumbComponent implements OnInit {
   }
 
   public breadCrumbs:Array<Route> = [];
-
   @Input() set override(override){
     if(override){
       this.breadCrumbs = override.map(override=>{
@@ -41,7 +41,7 @@ export class BreadcrumbComponent implements OnInit {
 
   ngOnInit() {
     if(!this.breadCrumbs.length)
-      this.getBreadcrumbs();
+      this.getBreadcrumbs();    
   }
 
   /**
@@ -50,7 +50,6 @@ export class BreadcrumbComponent implements OnInit {
   getBreadcrumbs():void{
     
     let activePath = this.router.url.substr(1);
-
     while(activePath){
       let levelRoute = this.getRouteByPath(activePath);
       let activePathArray = activePath.split("/");
@@ -67,7 +66,8 @@ export class BreadcrumbComponent implements OnInit {
         }
       };
     } else {
-      this.breadCrumbs[0].path = '';
+      // this.breadCrumbs[0].path = activePath;
+     // this.breadCrumbs[0].path = '';
     }
     this.breadCrumbs = this.breadCrumbs.reverse();
     if(this._post && !this._patch) {
@@ -80,6 +80,7 @@ export class BreadcrumbComponent implements OnInit {
         }
       );
     }
+    
   }
 
   /**

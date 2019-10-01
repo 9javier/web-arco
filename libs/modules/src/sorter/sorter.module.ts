@@ -6,8 +6,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule, MatIconModule } from '@angular/material';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { CdkTableModule } from '@angular/cdk/table';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ListComponent } from './list/list.component';
+import { ModalsModule } from './modals/modals.module';
+import { ModalsZoneModule } from './list/modals-zone/modals-zone.module';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material';
 import { AlInputSorterComponent } from "./al-input/al-input.component";
 import {ColorSelectorSorterComponent} from "./color-selector/color-selector.component";
 import {FooterButtonsSorterComponent} from "./footer-buttons/footer-buttons.component";
@@ -19,9 +25,8 @@ import {AlOutputSorterComponent} from "./al-output/al-output.component";
 import {ScannerOutputSorterComponent} from "./al-output/scanner/scanner.component";
 
 const routes:Routes = [
-  { path: '', redirectTo: 'plantillas', pathMatch: 'full' },
   {
-    path: 'plantillas',
+    path: '',
     component: SorterComponent,
     data: {
       name: 'Plantillas'
@@ -62,7 +67,7 @@ const routes:Routes = [
       name: 'Salida sorter'
     }
   }
-]; 
+];
 
 @NgModule({
   declarations: [
@@ -86,8 +91,13 @@ const routes:Routes = [
     MatTableModule,
     MatIconModule,
     MatGridListModule,
+    ModalsModule,
+    ModalsZoneModule,
     RouterModule.forChild(routes),
-    BreadcrumbModule
+    BreadcrumbModule,
+    MatRadioModule,
+    MatFormFieldModule,
+    MatSelectModule
   ]
 })
 export class SorterModule { }

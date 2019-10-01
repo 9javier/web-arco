@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel, DataSource} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel} from "@suite/services";
+import {RolModel, UserModel, WarehouseModel, IntermediaryService} from "@suite/services";
 import {Observable, of} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {HallModel} from "../../../services/src/models/endpoints/Hall";
@@ -20,6 +20,11 @@ import { CrudService } from '../../../common/ui/crud/src/lib/service/crud.servic
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
 import { Router } from '@angular/router';
+import { UpdateComponent } from './modals/update/update.component';
+import { StoreComponent } from './modals/store/store.component';
+import { SorterTemplateService } from '../../../services/src/lib/endpoint/sorter-template/sorter-template.service';
+import { TemplateSorterModel } from '../../../services/src/models/endpoints/TemplateSorter';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'suite-sorter',
@@ -46,84 +51,203 @@ import { Router } from '@angular/router';
 })
 export class SorterComponent implements OnInit {
 
-  displayedColumns = ['icon', 'Ntemplate', 'zona', 'dropdown'];
+  displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
   dataSource = new ExampleDataSource();
-  warehouses: any = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
+  selectedFormActive: FormGroup;
   items: FormArray;
+  toDeleteIds: number[] = [];
 
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private modalController:ModalController,
+    private sorterTemplateService: SorterTemplateService,
+    private intermediaryService: IntermediaryService
     
   ) {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
+        selects: this.formBuilder.array([ this.createSelect() ]),
+        global: false
+      },
+      {
+        validators: validators.haveItems('toSelect')
+      }
+    );
+    console.log(this.selectedForm);
+
+    this.selectedFormActive = this.formBuilder.group(
+      {
+        selector: false,
         selects: this.formBuilder.array([ this.createSelect() ])
       },
       {
-        validators: validators.haveItems('selects')
+        validators: validators.haveItems('toSelectActive')
       }
     );
-    console.log(this.selectedForm)
   }
 
 
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   showExpasion: boolean = false;
-  
+  warehouses: any = [];
+  templates: TemplateSorterModel.Template[] = [];
+
   ngOnInit() {
     this.crudService
-      .getIndex('Warehouses')
-      .then(
-        (
-          data: Observable<
-            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
-          >
-        ) => {
-          data.subscribe(
-            (
-              res: HttpResponse<
-                UserModel.ResponseIndex | RolModel.ResponseIndex
-              >
-            ) => {
-              this.warehouses = res.body.data;
-              console.log(this.warehouses);
-              this.initSelect(this.warehouses);
-            },
-            (err) => {
-              console.log(err)
-            }, () => {
+    .getIndex('Warehouses')
+    .then(
+      (
+        data: Observable<
+          HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
+        >
+      ) => {
+        data.subscribe(
+          (
+            res: HttpResponse<
+              UserModel.ResponseIndex | RolModel.ResponseIndex
+            >
+          ) => {
+            this.warehouses = res.body.data;
+            this.initSelect(this.warehouses);
+          },
+          (err) => {
+            console.log(err)
+          }, () => {
 
-            }
-          );
-        }
-      );
+          }
+        );
+      }
+    );
+    this.sorterTemplateService.getIndex().subscribe((data) => {
+      this.templates = data.data;
+      console.log(this.templates)
+      this.initSelectActive(this.templates);
+    })
   }
 
   clickShowExpasion(row: any) {
-    this.router.navigate(['/sorter/plantilla/1'])
+    event.stopPropagation();
+    this.router.navigate([`/sorter/plantilla/${row.id}`]);
   }
 
   selectAll(event):void{
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedForm.get('selects');
+    const controlArray = <FormArray> this.selectedForm.get('toSelect');
+    controlArray.controls.forEach((control, i) => {
+      control.setValue(value);
+    });
+    this.toDeleteIds = [];
+    this.templates.forEach(template => {
+      this.toDeleteIds.push(template.id);
+    });
+  }
+
+  initSelect(items) {
+    this.selectedForm.removeControl('toSelect');
+    this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+  }
+
+  selectAllActive(event):void{
+    let value = event.detail.checked;
+    const controlArray = <FormArray> this.selectedFormActive.get('toSelectActive');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
   }
 
-  initSelect(items) {
-    this.selectedForm.removeControl('selects');
-    this.selectedForm.addControl('selects', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
+  initSelectActive(items: TemplateSorterModel.Template[]) {
+    this.selectedFormActive.removeControl('toSelectActive');
+    this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(
+      items.map(item => new FormControl(Boolean(item.active))))
+    );
   }
 
   createSelect(): FormControl {
     return new FormControl(Boolean(false));
+  }
+
+  getTemplates() {
+    this.intermediaryService.presentLoading();
+    this.sorterTemplateService.getIndex().subscribe((data) => {
+      this.templates = data.data;
+      this.initSelectActive(this.templates);
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
+  async update(row):Promise<void>{
+    let modal = (await this.modalController.create({
+      component:UpdateComponent,
+      componentProps:{
+        template:row
+      }
+    }));
+    modal.onDidDismiss().then(()=>{
+      this.getTemplates();
+    })
+    modal.present();
+  }
+
+  async store(row):Promise<void>{
+    let modal = (await this.modalController.create({
+      component:StoreComponent
+    }));
+    modal.onDidDismiss().then(()=>{
+     this.getTemplates();
+    })
+    modal.present();
+  }
+
+  activeDelete() {
+    event.stopPropagation();
+  }
+
+  toDeleteTemplate(index) {
+    event.stopPropagation();
+    let repeat = false;
+    let idToDelete = this.templates[index].id;
+    this.toDeleteIds.forEach(id => {
+      if(id == idToDelete) {
+        repeat = true;
+      }
+    })
+    if(!repeat) {
+      this.toDeleteIds.push(idToDelete);
+    }
+  }
+
+  delete() {
+    let deletions:Observable<any> =new Observable(observer=>observer.next());
+    if(this.toDeleteIds.length > 0) {
+      this.toDeleteIds.forEach(id => {
+        deletions = deletions.pipe(switchMap(() => { 
+          return (this.sorterTemplateService.deleteTemplateSorter(id))
+        }))
+      });
+    }
+   
+    this.toDeleteIds = [];
+    this.intermediaryService.presentLoading();
+
+    deletions.subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.getTemplates();
+      this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
+      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      controlArray.controls.forEach((control, i) => {
+        control.setValue(false);
+      });
+    },()=>{
+      this.intermediaryService.dismissLoading(); 
+      this.getTemplates();
+      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+    });
   }
 
 }
@@ -131,9 +255,9 @@ export class SorterComponent implements OnInit {
 export class ExampleDataSource extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   data = [
-    { icon: '', Ntemplate: 1, zona: 2, dropdown: false },
-    { icon: '', Ntemplate: 2, zona: 2, dropdown: false },
-    { icon: '', Ntemplate: 3, zona: 2, dropdown: false },
+    { icon: '', Ntemplate: 1, zona: 2, dropdown: false, nombre:'template1', carriles: 20 },
+    { icon: '', Ntemplate: 2, zona: 2, dropdown: false, nombre:'template2', carriles: 23 },
+    { icon: '', Ntemplate: 3, zona: 2, dropdown: false, nombre:'template3', carriles: 26 },
   ];
   connect(): Observable<Element[]> {
     const rows = [];

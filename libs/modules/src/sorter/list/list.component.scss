@@ -2,9 +2,8 @@
     overflow: auto;
     width: 100%;
     position: relative;
-    display: flex;
-    justify-content: flex-end;
-    h1 {
+    display: block;
+    h1, h2 {
         margin-top: 0;
         margin-bottom: 0;
     }
@@ -19,17 +18,32 @@
 }
 
 mat-table {
-    width: 100%;
+    width: 100% !important;
 }
 
 .mat-cell,
 .mat-header-cell {
     padding: 10px 10px 10px 0;
+    
 }
+.mat-header-cell{
+
+    p{
+    display: flex;
+    position: absolute;
+    margin-top: -17px;
+    margin-left: -8px !important;
+}
+}
+
 
 .container {
     margin-top: 1em;
+    p{
+        margin-left: 5px;
+    }
 }
+
 
 .row-icon-location {
     width: 80px;
@@ -74,4 +88,55 @@ mat-grid-tile {
 mat-grid-list {
     width: 80%;
     margin: 3em auto;
+}
+
+.containerTable {
+    display: flex;
+    flex-direction: column;
+    margin-top: 3rem;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .height {
+    display: flex;
+    flex-direction: row;
+    margin-right: 20%;
+  }
+  
+  .column {
+    padding: 20px;
+    font-size: 20px;
+    border: 1px solid black;
+  }
+
+  .selected {
+    background: red;
+    color: white;
+  }
+  
+  .adjacent {
+    background: #dddddd;
+    color: white;
+  }
+
+  .grid{
+      display: flex;
+      position: absolute;
+      margin-left: 20rem;
+      margin-top: 4rem;
+      width: 13rem;
+      height: 14rem;
+      max-width: 13rem;
+      max-height: 14rem;
+  }
+
+
+  mat-radio-button{
+      margin-left: 12px;
+  }
+  
+.overAuto {
+    max-height: calc(100vh - 278px) !important;
+    overflow: auto;
 }

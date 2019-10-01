@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Actualizar Plantilla</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <suite-base [template]="template"></suite-base>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="base.form.invalid" (click)="submit(base.getValue())">Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>
