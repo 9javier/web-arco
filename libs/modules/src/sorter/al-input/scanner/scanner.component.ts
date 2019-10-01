@@ -4,6 +4,8 @@ import {SorterProvider} from "../../../../../services/src/providers/sorter/sorte
 import {ScanditProvider} from "../../../../../services/src/providers/scandit/scandit.provider";
 import {IntermediaryService} from "@suite/services";
 import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
+import {SorterInputService} from "../../../../../services/src/lib/endpoint/sorter-input/sorter-input.service";
+import {InputSorterModel} from "../../../../../services/src/models/endpoints/InputSorter";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -16,18 +18,23 @@ export class ScannerInputSorterComponent implements OnInit {
   inputValue: string = null;
   lastCodeScanned: string = 'start';
   processStarted: boolean = false;
+  isWaitingSorterFeedback: boolean = false;
+  productToSetInSorter: string = null;
 
   productScanned: ProductSorterModel.ProductSorter = null;
 
+  // Reset of scanner to scan same code multiple times
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
+  // Footer buttons
   leftButtonText: string = 'CARRIL. EQUIV.';
   rightButtonText: string = 'NO CABE CAJA';
   leftButtonDanger: boolean = true;
 
   constructor(
     private intermediaryService: IntermediaryService,
+    private sorterInputService: SorterInputService,
     public sorterProvider: SorterProvider,
     private scanditProvider: ScanditProvider
   ) {
@@ -41,7 +48,9 @@ export class ScannerInputSorterComponent implements OnInit {
   }
 
   focusToInput() {
-    document.getElementById('input').focus();
+    if (!this.isWaitingSorterFeedback) {
+      document.getElementById('input').focus();
+    }
   }
 
   async keyUpInput(event) {
@@ -61,26 +70,48 @@ export class ScannerInputSorterComponent implements OnInit {
 
       this.inputValue = null;
 
-      if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT) {
-        this.processStarted = true;
-        this.productScanned = {
-          reference: dataWrote,
-          model: {
-            reference: dataWrote.substr(2, 6)
-          },
-          size: {
-            name: '41'
-          },
-          destinyWarehouse: {
-            reference: 'REF',
-            name: 'Store Destiny',
-            id: 1
-          }
-        };
-        await this.intermediaryService.presentToastSuccess(`Artículo ${dataWrote} añadido al sorter.`);
+      if (this.isWaitingSorterFeedback && this.productToSetInSorter != dataWrote) {
+        await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
       } else {
-        await this.intermediaryService.presentToastError('Escanea un código de caja.');
+        if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT) {
+          await this.intermediaryService.presentLoading('Registrando entrada de producto...');
+          this.inputProductInSorter(dataWrote);
+        } else {
+          await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
+        }
       }
     }
+  }
+
+  private inputProductInSorter(productReference: string) {
+    this.sorterInputService
+      .postProductScan({ productReference })
+      .subscribe(async (res: InputSorterModel.ProductScan) => {
+        this.isWaitingSorterFeedback = true;
+        this.productToSetInSorter = productReference;
+        this.messageGuide = '¡ESPERE!';
+
+        await this.intermediaryService.dismissLoading();
+        this.processStarted = true;
+        this.productScanned = {
+          reference: res.reference,
+          model: {
+            reference: res.model.reference
+          },
+          size: {
+            name: res.size.name
+          },
+          destinyWarehouse: res.destinyWarehouse ? {
+            id: res.destinyWarehouse.id,
+            reference: res.destinyWarehouse.reference,
+            name: res.destinyWarehouse.name
+          } : null
+        };
+
+        await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+      }, async (error) => {
+        await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
+        await this.intermediaryService.dismissLoading();
+      });
   }
 }
