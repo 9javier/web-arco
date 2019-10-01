@@ -1209,6 +1209,8 @@ export class AlInputSorterComponent implements OnInit {
       return;
     }
 
+    await this.intermediaryService.presentLoading('Iniciando proceso...');
+
     this.sorterExecutionService
       .postExecuteColor({
         color: this.sorterProvider.colorSelected.id,
@@ -1217,9 +1219,11 @@ export class AlInputSorterComponent implements OnInit {
       .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
         await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
         this.router.navigate(['sorter/input/scanner']);
+        await this.intermediaryService.dismissLoading();
       }, async (error) => {
         console.error('Error::Subscribe::sorterExecutionService::postExecuteColor', error);
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar iniciar el proces con el color ${this.sorterProvider.colorSelected.name}`);
+        await this.intermediaryService.dismissLoading();
       });
 
   }
