@@ -83,6 +83,22 @@ export class ScannerInputSorterComponent implements OnInit {
     }
   }
 
+  async wrongWay() {
+    let setWayAsWrong = () => {
+      // TODO Request to server to notify that las product was set in a wrong way and reset the sorter notify led
+    };
+
+    await this.intermediaryService.presentConfirm('Se obviará el par escaneado anteriormente y se continuará con el escaneo de productos para el sorter. ¿Continuar?', setWayAsWrong);
+  }
+
+  async fullWay() {
+    let setWayAsFull = () => {
+      // TODO Request to server to set way as full, assign in sorter a new way and return info to notify to user
+    };
+
+    await this.intermediaryService.presentConfirm('Se marcará la calle actual como llena y se le indicará una nueva calle donde ir metiendo los productos. ¿Continuar?', setWayAsFull);
+  }
+
   private inputProductInSorter(productReference: string) {
     this.sorterInputService
       .postProductScan({ productReference })
@@ -109,6 +125,13 @@ export class ScannerInputSorterComponent implements OnInit {
         };
 
         await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+
+        setTimeout(async () => {
+          await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
+          this.isWaitingSorterFeedback = false;
+          this.productToSetInSorter = null;
+          this.messageGuide = 'ARTÍCULO';
+        }, 5 * 1000);
       }, async (error) => {
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
         await this.intermediaryService.dismissLoading();

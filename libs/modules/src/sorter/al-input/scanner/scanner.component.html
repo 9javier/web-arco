@@ -36,6 +36,8 @@
     *ngIf="processStarted"
     [leftButton]="leftButtonText"
     [leftButtonDanger]="leftButtonDanger"
-    [rightButton]="rightButtonText">
+    [rightButton]="rightButtonText"
+    (leftButtonAction)="wrongWay()"
+    (rightButtonAction)="fullWay()">
   </sorter-footer-buttons-scanner>
 </div>
