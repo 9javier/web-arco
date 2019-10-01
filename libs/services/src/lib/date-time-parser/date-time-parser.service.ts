@@ -22,6 +22,11 @@ export class DateTimeParserService {
     return moment(dateToFormat).format('DD/MM/YYYY HH:mm')
   }
 
+  public date(dateToFormat) : string {
+    this.setLocale(null);
+    return moment(dateToFormat).format('DD/MM/YYYY')
+  }
+
   public nowGlobalFormat() : string {
     this.setLocale(null);
     return moment().format('YYYY/MM/DD');

@@ -214,6 +214,7 @@ public class MatrixProductInfo extends Activity {
     TextView tvColor = llExtendedProductInfo.findViewById(resources.getIdentifier("tvColor", "id", package_name));
     TextView tvBrandName = llExtendedProductInfo.findViewById(resources.getIdentifier("tvBrandName", "id", package_name));
     TableLayout tlTableSizesProduct = llExtendedProductInfo.findViewById(resources.getIdentifier("tlTableSizesProduct", "id", package_name));
+    TextView tvNoSizesProduct = llExtendedProductInfo.findViewById(resources.getIdentifier("tvNoSizesProduct", "id", package_name));
 
     if (productModel.getImageUrl() == null || productModel.getImageUrl().isEmpty() && !urlBase.isEmpty()) {
       ivProductImage.setVisibility(View.GONE);
@@ -296,6 +297,10 @@ public class MatrixProductInfo extends Activity {
         tlTableSizesProduct.addView(llTableExtendedProductInfo, countRows);
       }
       tlTableSizesProduct.setVisibility(View.VISIBLE);
+      tvNoSizesProduct.setVisibility(View.GONE);
+    } else {
+      tlTableSizesProduct.setVisibility(View.GONE);
+      tvNoSizesProduct.setVisibility(View.VISIBLE);
     }
   }
 

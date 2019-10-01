@@ -154,6 +154,10 @@ export * from './building/building.module';
 export * from './sorter/sorter.component';
 export * from './sorter/sorter.module';
 
+/**Sorter Create*/
+export * from './sorter-create/sorter-create.component';
+export * from './sorter-create/sorter-create.module';
+
 /**Calendar picking */
 export * from './calendar-picking/calendar-picking.component';
 export * from './calendar-picking/calendar-picking.module';

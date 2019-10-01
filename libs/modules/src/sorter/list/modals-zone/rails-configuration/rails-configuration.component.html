@@ -1,0 +1,31 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Carriles</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <ion-label class="colorTitle" position="floating">Color: </ion-label>
+    <ion-label class="color">Rojo</ion-label>
+    <div class="container">
+        <div *ngFor="let item of rails" class="heights">
+						<div
+                *ngFor="let column of item.columns; let i = index;" 
+                class="column" 
+								(click)="(column.adjacent || firstClick) && getColumn(i,column.ways_number, item.height)"
+								[ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
+                <span>{{column.ways_number}}</span>
+            </div>
+        </div>
+    </div>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" (click)="submit()">Guardar</ion-button>
+    </ion-toolbar>
+</ion-footer>
