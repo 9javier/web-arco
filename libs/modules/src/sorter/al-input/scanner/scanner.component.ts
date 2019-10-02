@@ -101,7 +101,7 @@ export class ScannerInputSorterComponent implements OnInit {
 
   private inputProductInSorter(productReference: string) {
     this.sorterInputService
-      .postProductScan({ productReference })
+      .postProductScan({ productReference, packingReference: 'P0010' })
       .subscribe(async (res: InputSorterModel.ProductScan) => {
         this.isWaitingSorterFeedback = true;
         this.productToSetInSorter = productReference;
@@ -110,17 +110,17 @@ export class ScannerInputSorterComponent implements OnInit {
         await this.intermediaryService.dismissLoading();
         this.processStarted = true;
         this.productScanned = {
-          reference: res.reference,
+          reference: res.product.reference,
           model: {
-            reference: res.model.reference
+            reference: res.product.model.reference
           },
           size: {
-            name: res.size.name
+            name: res.product.size.name
           },
-          destinyWarehouse: res.destinyWarehouse ? {
-            id: res.destinyWarehouse.id,
-            reference: res.destinyWarehouse.reference,
-            name: res.destinyWarehouse.name
+          destinyWarehouse: res.warehouse ? {
+            id: res.warehouse.id,
+            reference: res.warehouse.reference,
+            name: res.warehouse.name
           } : null
         };
 

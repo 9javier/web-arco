@@ -8,7 +8,9 @@ export namespace ExecutionSorterModel {
     createdAt: string,
     updatedAt: string,
     id: number,
-    status: number
+    status: number,
+    template?: TemplateSorterModel.Template,
+    templateOld?: TemplateSorterModel.Template
   }
 
   export interface ParamsExecuteColor {
