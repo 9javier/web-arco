@@ -154,12 +154,13 @@ export class ListComponent implements OnInit {
     
     this.sorterService.getFirst().subscribe(data => {
       this.firstSorter = data.data;
-      this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
+      console.log(this.firstSorter)
+      /*this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
         this.waysMatrix = data.data;
         console.log(this.waysMatrix)
       }, (err) => {
         console.log(err)
-      });
+      });*/
     }, err => {
       console.log(err)
     });
@@ -305,7 +306,7 @@ export class ListComponent implements OnInit {
       item.columns.forEach(item => {
         if(item.way.id === way.way.id) {
           wayNumber = item.priority;
-          wayColumn = way.way.column
+          wayColumn = way.ways_number
         }
       })
     });
