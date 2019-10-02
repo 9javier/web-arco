@@ -18,6 +18,10 @@
               Envios permitidos
           </p>
           <p class="legend-card-text">
+              <span class="legend-card-color round" style="background-color: #0b63a9"></span>
+              Datos almacenados
+          </p>
+          <p class="legend-card-text">
               <span class="legend-card-color round" style="background-color: #ea5348"></span>
               Fechas seleccionadas
           </p>
@@ -64,7 +68,7 @@
           </ion-item>
           <ion-item *ngFor="let warehouse of warehousesOriginList;let i = index" lines="none">
             <ion-label lines="none" no-padding>
-              <mat-checkbox [checked]="warehouse.is_main">
+              <mat-checkbox [checked]="warehouse.is_main" (click)="addValueArray(warehouse)">
                   {{ warehouse.name }}
               </mat-checkbox>
             </ion-label>
@@ -79,7 +83,8 @@
           <ion-item *ngFor="let warehouse of warehousesDestinationList;let i = index" lines="none">
             <ion-label lines="none" no-padding *ngIf="warehouse.destinos_label != ''">{{ warehouse.destinos_label }}</ion-label>
             <ion-label lines="none" no-padding *ngIf="warehouse.destinos_label == ''">Seleccione destino</ion-label>
-            <ion-icon name="create" slot="end" (click)="store(warehouse.id)"></ion-icon>
+            <ion-icon name="create" *ngIf="!listOriginCheck.length" slot="end" (click)="store(warehouse.id)"></ion-icon>
+            <ion-icon name="create" *ngIf="listOriginCheck.length" slot="end" (click)="openModalDestination()"></ion-icon>
           </ion-item>
         </ion-list>
       </ion-col>
@@ -88,6 +93,7 @@
 </ion-content>
 <ion-footer>
   <!--<ion-fab-button style="float: right; padding: 5px;" color="light"><ion-icon name="trash"></ion-icon></ion-fab-button>-->
-    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length || !date || !validToStore()" (click)="storeDate()"><ion-icon name="save"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length || !cantDates || !validToStore()" (click)="storeDate()"><ion-icon name="save"></ion-icon></ion-fab-button>
     <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="addWarehouses().length || cantDates" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="listOriginCheck.length" (click)="openModalDestination()"><ion-icon name="albums"></ion-icon></ion-fab-button>
 </ion-footer>

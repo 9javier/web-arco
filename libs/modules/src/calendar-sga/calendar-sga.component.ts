@@ -45,6 +45,8 @@ export class CalendarSgaComponent implements OnInit {
     isChecked: [false, []]
   });
 
+  public listOriginCheck: any = [];
+
   constructor(
     private calendarService: CalendarService,
     private intermediaryService:IntermediaryService,
@@ -248,14 +250,15 @@ export class CalendarSgaComponent implements OnInit {
     var destinations = [];
     this.warehousesDestinationList.forEach(val => {
       if(val.id === idOrigin){
-        destinos.push(val.destinos);
+        destinos = val.destinos;
       }
     });
     this.warehousesOriginDestinationList.forEach(val => {
       if(val.idOrigen === idOrigin){
-        destinations.push(val.destinations);
+        destinations = val.destinations;
       }
     });
+
     let modal = (await this.modalController.create({
       component: StoreComponent,
       componentProps: {
@@ -422,6 +425,7 @@ export class CalendarSgaComponent implements OnInit {
           tempDestination.push(destination);
         }
       });
+      origin.is_main = false;
     });
 
     this.warehousesDestinationList = [];
@@ -432,6 +436,10 @@ export class CalendarSgaComponent implements OnInit {
       warehouses:[],
       value:null
     }];
+
+    /** limpiar check */
+    this.listOriginCheck = [];
+    this.selectForm.get("isChecked").setValue(false);
 
     this.manageSelectedRadio();
     this.manageSelectedClass();
@@ -594,14 +602,117 @@ export class CalendarSgaComponent implements OnInit {
     /**Listen for changes on isChecked control */
     this.selectForm.get("isChecked").valueChanges.subscribe((isChecked) => {
       this.warehousesOriginList.forEach(origin => {
-        if(isChecked){
-          origin.is_main = true;
-        } else {
-          origin.is_main = false;
+          if(isChecked){
+            var obj = {
+              id: origin.id
+            };
+            this.listOriginCheck.push(obj);
+            origin.is_main = true;
+          } else {
+            origin.is_main = false;
+          }
+        });
+    
+        if(!isChecked){
+          this.listOriginCheck = [];
+        }
+    });
+  }
+
+
+  /**
+   * Seleccionar origenes
+   */
+  addValueArray(origin: any): void {
+  
+    var indexA = -1;
+    
+    this.listOriginCheck.forEach((val, index) => {
+      if(val.id === origin.id){
+        indexA = index;
+      }
+    });
+
+ 
+    if (indexA > -1)
+      this.listOriginCheck.splice(indexA, 1);
+    else{
+      var obj = {
+        id: origin.id
+      };
+      this.listOriginCheck.push(obj);
+    }
+  }
+  
+  /**
+   * Abrir modal para agregar destinos
+   */
+  async openModalDestination(){
+    var destinations = [];
+    var destinos = [];
+    this.warehousesOriginDestinationList.forEach(destination => {
+      this.listOriginCheck.forEach(originCheck => {
+        if(destination.idOrigen === originCheck.id){
+          destinations = destinations.concat(destination.destinations); 
         }
       });
     });
+
+    /** Eliminar repetidos */
+    destinations = destinations.filter((valorActual, indiceActual, arreglo) => {
+        return arreglo.findIndex(valorDelArreglo => JSON.stringify(valorDelArreglo) === JSON.stringify(valorActual)) === indiceActual
+    });
+
+    /** ordenar destinos */
+    destinations.sort((destinoUno, destinoOtro) => destinoUno.destinationWarehouse.id - destinoOtro.destinationWarehouse.id);
+
+    console.log(destinations);
+
+    let modal = (await this.modalController.create({
+      component: StoreComponent,
+      componentProps: {
+        originDestinations: destinations,
+        destinos: destinos
+      }
+    }));
+    modal.onDidDismiss().then((data)=>{
+      this.intermediaryService.presentLoading();
+      var dataInfo: any = data;
+      if(dataInfo.data !== undefined){
+        this.warehousesDestinationList.forEach(val => {
+          val.destinos = new Array;
+          val.destinos_label = '';
+        });
+        dataInfo.data.listDestinos.forEach(destino => {
+          this.warehousesDestinationList.forEach(val2 => {
+            this.listOriginCheck.forEach(originCheck => {
+              if(val2.id === originCheck.id && originCheck.id !== destino.id){
+                val2.destinos.push({
+                  id: destino.id,
+                  name: destino.name
+                });
+                if(val2.destinos_label != '')
+                  val2.destinos_label += ', '+destino.name;
+                else
+                  val2.destinos_label = destino.name
+              }
+            });
+          });
+        });
+
+        this.selectDates.forEach((date,i)=>{
+          if(i==0)
+            return false;   
+          date.warehouses = this.addWarehouses();
+        });
+
+        this.sortByDestinations();
+      }
+      this.intermediaryService.dismissLoading();
+    })
+    modal.present();
   }
+
 
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.

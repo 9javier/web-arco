@@ -19,7 +19,6 @@ export class StoreComponent implements OnInit {
   constructor(
     private modalController:ModalController,
     private intermediaryService:IntermediaryService,
-    private calendarService: CalendarService,
     private params: NavParams
   ) { }
 
@@ -33,9 +32,9 @@ export class StoreComponent implements OnInit {
    */
   getBase():void{
     this.intermediaryService.presentLoading();
-    this.params.data.originDestinations[0].forEach(destination => {
+    this.params.data.originDestinations.forEach(destination => {
       var temp = false;
-      this.params.data.destinos[0].forEach(param => {
+      this.params.data.destinos.forEach(param => {
         if(param.id === destination.destinationWarehouse.id){
           temp = true;
         }
