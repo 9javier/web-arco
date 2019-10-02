@@ -86,6 +86,7 @@ export class ListComponent implements OnInit {
   rails = []
   firstClick: boolean = true;
   radioDisplay: boolean = false;
+  wayClicked: boolean = true;
 
   constructor(
     private crudService: CrudService,
@@ -256,8 +257,6 @@ export class ListComponent implements OnInit {
     this.firstClick = false;
     this.cleanStyles();
 
-    console.log(this.ways)
-
     this.waysMatrix.forEach(way => {
       if(way.height === height) {
         let columns = way.columns;
@@ -267,11 +266,9 @@ export class ListComponent implements OnInit {
           columns[i]['adjacent'] = false;
           console.log('Current: '+column)
           if(columns[i-1] && !columns[i-1]['selected']) {
-            console.log('Left: '+columns[i-1].ways_number);
             columns[i-1]['adjacent'] = true;
           }
           if(columns[i+1] && !columns[i+1]['selected']) {
-            console.log('Right: '+columns[i+1].ways_number);
             columns[i+1]['adjacent'] = true;
           }
         }
@@ -283,7 +280,6 @@ export class ListComponent implements OnInit {
         if(this.waysMatrix[i-1]) {
           for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
             if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
-              console.log('Top: '+ this.waysMatrix[i-1].columns[j].ways_number);
               this.waysMatrix[i-1].columns[j]['adjacent'] = true;
             }
           }
@@ -291,7 +287,6 @@ export class ListComponent implements OnInit {
         if(this.waysMatrix[i+1]) {
           for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
             if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
-              console.log('Bottom: '+ this.waysMatrix[i+1].columns[j].ways_number);
               this.waysMatrix[i+1].columns[j]['adjacent'] = true;
             }
           }
@@ -318,6 +313,55 @@ export class ListComponent implements OnInit {
     this.data.push(value);
     this.dataSource2= new MatTableDataSource<Element>(this.data);
   }
+
+  cleanColumn(index: number, column: number, height: number, way): void { 
+    this.waysMatrix.forEach(way => {
+      if(way.height === height) {
+        let columns = way.columns;
+        for(let i = 0; i < columns.length; i++) 
+        if(column == columns[i].ways_number) {
+          columns[i]['selected'] = false;
+          if(columns[i-1] && !columns[i-1]['selected']) {
+            columns[i-1]['adjacent'] = false;
+          } else if(columns[i-1] && columns[i-1]['selected']) {
+            columns[i]['adjacent'] = true;
+          }
+          if(columns[i+1] && !columns[i+1]['selected']) {
+            columns[i+1]['adjacent'] = false;
+          } else if(columns[i+1] && columns[i+1]['selected']) {
+            columns[i]['adjacent'] = true;
+          }
+        }
+      }
+    });
+
+    for(let i = 0; i < this.waysMatrix.length; i++) {
+      if(this.waysMatrix[i].height == height) {
+        if(this.waysMatrix[i-1]) {
+          for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
+              this.waysMatrix[i-1].columns[j]['adjacent'] = false;
+            } else if(j == index && this.waysMatrix[i-1].columns[j]['selected']){
+              this.waysMatrix[i].columns[j]['adjacent'] = true;
+            }
+          }
+        }
+        if(this.waysMatrix[i+1]) {
+          for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
+              this.waysMatrix[i+1].columns[j]['adjacent'] = false;
+            } else if(j == index && this.waysMatrix[i+1].columns[j]['selected']) {
+              this.waysMatrix[i].columns[j]['adjacent'] = true;
+            }
+          }
+        }
+      }
+    }
+    
+    this.firstClick = true;
+
+  }
+
 
   cleanStyles() {
     console.log(this.rails)
