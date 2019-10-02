@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ColorSorterModel} from "../../../../services/src/models/endpoints/ColorSorter";
 import {MatrixSorterModel} from "../../../../services/src/models/endpoints/MatrixSorter";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
@@ -17,7 +17,7 @@ import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/Ex
   templateUrl: './al-input.component.html',
   styleUrls: ['./al-input.component.scss']
 })
-export class AlInputSorterComponent implements OnInit {
+export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   private activeDefaultData: boolean = false;
 
@@ -42,6 +42,11 @@ export class AlInputSorterComponent implements OnInit {
       this.loadingSorterTemplateMatrix = true;
       this.loadData();
     }
+  }
+
+  ngOnDestroy() {
+    // Stop the execution color for user
+    this.stopExecutionColor();
   }
 
   private loadDefaultData() {
@@ -1222,10 +1227,9 @@ export class AlInputSorterComponent implements OnInit {
         await this.intermediaryService.dismissLoading();
       }, async (error) => {
         console.error('Error::Subscribe::sorterExecutionService::postExecuteColor', error);
-        await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar iniciar el proces con el color ${this.sorterProvider.colorSelected.name}`);
+        await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`);
         await this.intermediaryService.dismissLoading();
       });
-
   }
 
   //region Endpoints requests
@@ -1266,6 +1270,16 @@ export class AlInputSorterComponent implements OnInit {
         console.error('Error::Subscribe::templateZonesService::getMatrixTemplateSorter', error);
         await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar la plantilla actual del sorter.');
         this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private stopExecutionColor() {
+    this.sorterExecutionService
+      .postStopExecuteColor()
+      .subscribe((res: ExecutionSorterModel.StopExecuteColor) => {
+
+      }, (error) => {
+        console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
       });
   }
   //endregion

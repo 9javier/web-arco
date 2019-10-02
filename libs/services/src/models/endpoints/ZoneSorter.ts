@@ -9,7 +9,7 @@ export namespace ZoneSorterModel {
     name: string,
     zoneNumber: number,
     active: boolean,
-    color: ColorSorterModel.ColorSorter
+    color?: ColorSorterModel.ColorSorter
   }
 
   export interface ZoneColor {

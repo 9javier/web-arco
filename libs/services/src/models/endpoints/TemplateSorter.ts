@@ -1,4 +1,3 @@
-import { Request } from './request';
 import {ZoneSorterModel} from "./ZoneSorter";
 
 export namespace TemplateSorterModel {

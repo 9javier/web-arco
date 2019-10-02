@@ -11,6 +11,7 @@ import {ExecutionSorterModel} from "../../../models/endpoints/ExecutionSorter";
 export class SorterExecutionService {
 
   private postExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color";
+  private postStopExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color/stop";
 
   constructor(
     private http: HttpClient
@@ -18,6 +19,12 @@ export class SorterExecutionService {
 
   postExecuteColor(params: ExecutionSorterModel.ParamsExecuteColor): Observable<ExecutionSorterModel.ExecuteColor> {
     return this.http.post<ExecutionSorterModel.ResponseExecuteColor>(this.postExecuteColorUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postStopExecuteColor(): Observable<ExecutionSorterModel.StopExecuteColor> {
+    return this.http.post<ExecutionSorterModel.ResponseStopExecuteColor>(this.postStopExecuteColorUrl, {}).pipe(map(response => {
       return response.data;
     }));
   }
