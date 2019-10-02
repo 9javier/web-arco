@@ -23,7 +23,6 @@ export class CreateComponent implements OnInit {
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
     this.colors = this.navParams.get("colors");
-    console.log(this.wareHouses);
   }
 
   ngOnInit() {
@@ -34,11 +33,11 @@ export class CreateComponent implements OnInit {
   }
 
   submit():void{
-    let { colors, ...data} = this.base.getValue();
-    colors = [1];
+    let { ...data} = this.base.getValue();
     const payload = {
-      active: false, colors, ...data
+      active: false, ...data
     }
+    console.log(payload)
     this.sorteService
       .postCreate(payload).subscribe((data) => {
         console.log(data.data);

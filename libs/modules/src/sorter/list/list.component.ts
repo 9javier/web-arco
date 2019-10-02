@@ -156,6 +156,7 @@ export class ListComponent implements OnInit {
       this.firstSorter = data.data;
       this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
         this.waysMatrix = data.data;
+        console.log(this.waysMatrix)
       }, (err) => {
         console.log(err)
       });
@@ -276,21 +277,21 @@ export class ListComponent implements OnInit {
       }
     });
 
-    for(let i = 0; i < this.ways.length; i++) {
-      if(this.ways[i].height == height) {
-        if(this.ways[i-1]) {
-          for(let j = 0; j < this.ways[i-1].columns.length; j++) {
-            if(j == index && !this.ways[i-1].columns[j]['selected']){
-              console.log('Top: '+ this.ways[i-1].columns[j].ways_number);
-              this.ways[i-1].columns[j]['adjacent'] = true;
+    for(let i = 0; i < this.waysMatrix.length; i++) {
+      if(this.waysMatrix[i].height == height) {
+        if(this.waysMatrix[i-1]) {
+          for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
+              console.log('Top: '+ this.waysMatrix[i-1].columns[j].ways_number);
+              this.waysMatrix[i-1].columns[j]['adjacent'] = true;
             }
           }
         }
-        if(this.ways[i+1]) {
-          for(let j = 0; j < this.ways[i+1].columns.length; j++) {
-            if(j == index && !this.ways[i+1].columns[j]['selected']){
-              console.log('Bottom: '+ this.ways[i+1].columns[j].ways_number);
-              this.ways[i+1].columns[j]['adjacent'] = true;
+        if(this.waysMatrix[i+1]) {
+          for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
+              console.log('Bottom: '+ this.waysMatrix[i+1].columns[j].ways_number);
+              this.waysMatrix[i+1].columns[j]['adjacent'] = true;
             }
           }
         }
@@ -299,11 +300,14 @@ export class ListComponent implements OnInit {
 
     let wayNumber: number;
     let wayColumn: number;
-    this.ways.forEach(item => {
-      if(item.ways.id === way.way.id) {
-        wayNumber = item.priority;
-        wayColumn = way.way.column
-      }
+    console.log(way)
+    this.waysMatrix.forEach(item => {
+      item.columns.forEach(item => {
+        if(item.way.id === way.way.id) {
+          wayNumber = item.priority;
+          wayColumn = way.way.column
+        }
+      })
     });
   
     let value = {

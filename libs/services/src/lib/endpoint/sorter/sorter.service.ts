@@ -25,6 +25,7 @@ export class SorterService {
   }
 
   postCreate(data: SorterModel.Sorter): Observable<SorterModel.ResponseSorterCreate> {
+    console.log(data)
     return this.http.post<SorterModel.ResponseSorterCreate>(this.postCreateSorterUrl, data).pipe(map(response => {
       return response;
     }));

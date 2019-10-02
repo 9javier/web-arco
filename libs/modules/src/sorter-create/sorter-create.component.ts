@@ -95,7 +95,6 @@ export class SorterCreateComponent implements OnInit {
               >
             ) => {
               this.warehouses = res.body.data;
-              console.log(this.warehouses);
               this.initSelect(this.warehouses);
             },
             (err) => {
