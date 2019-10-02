@@ -95,13 +95,13 @@ export class ScannerInputSorterComponent implements OnInit {
         this.sorterExecutionService
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.WrongWay) => {
-            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de carril equivocado!', 1500);
+            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle equivocada!', 1500);
           }, async (error) => {
             console.error('Error::Subscribe::sorterExecutionService::postWrongWay', error);
-            await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de carril equivocado.', 2000);
+            await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', 2000);
           });
       } else {
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de carril equivocado.', 2000);
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', 2000);
       }
     };
 
@@ -110,7 +110,15 @@ export class ScannerInputSorterComponent implements OnInit {
 
   async fullWay() {
     let setWayAsFull = () => {
-      // TODO Request to server to set way as full, assign in sorter a new way and return info to notify to user
+      // Request to server to set way as full, assign in sorter a new way and return info to notify to user
+      this.sorterExecutionService
+        .postFullWay()
+        .subscribe(async (res: ExecutionSorterModel.FullWay) => {
+          await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500);
+        }, async (error) => {
+          console.error('Error::Subscribe::sorterExecutionService::postFullWay', error);
+          await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
+        });
     };
 
     await this.intermediaryService.presentConfirm('Se marcará la calle actual como llena y se le indicará una nueva calle donde ir metiendo los productos. ¿Continuar?', setWayAsFull);

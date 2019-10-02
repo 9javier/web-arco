@@ -64,4 +64,12 @@ export namespace ExecutionSorterModel {
   export interface ResponseWrongWay {
     data: WrongWay
   }
+
+  export interface FullWay {
+
+  }
+
+  export interface ResponseFullWay {
+    data: FullWay
+  }
 }
