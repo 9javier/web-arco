@@ -11,15 +11,15 @@
         <div class="text-colors">
           <p class="legend-card-text">
               <span class="legend-card-color round" style="background-color: #008000"></span>
-              Pendiente por guardar
+              Pendiente de guardar
           </p>
           <p class="legend-card-text">
               <span class="legend-card-color round" style="background-color: #2196f3"></span>
-              Envios previstos
+              Envios permitidos
           </p>
           <p class="legend-card-text">
               <span class="legend-card-color round" style="background-color: #ea5348"></span>
-              Sin datos / envios
+              Fechas seleccionadas
           </p>
         </div>
       </ion-col>
@@ -75,7 +75,6 @@
 </ion-content>
 <ion-footer>
   <!--<ion-fab-button style="float: right; padding: 5px;" color="light"><ion-icon name="trash"></ion-icon></ion-fab-button>-->
-    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length" (click)="storeTemplate()" (click)="storeDate()"><ion-icon name="add"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!date || !validToStore()"><ion-icon name="save"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length || !date || !validToStore()" (click)="storeDate()"><ion-icon name="save"></ion-icon></ion-fab-button>
     <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="addWarehouses().length || cantDates" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
 </ion-footer>

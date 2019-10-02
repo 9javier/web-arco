@@ -24,7 +24,7 @@ export class StoreComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.params.data.originDestinations)
+    //console.log(this.params.data.originDestinations)
     this.getBase();
   }
 
@@ -62,7 +62,7 @@ export class StoreComponent implements OnInit {
   }
 
   submit(data){
-    console.log(data);
+    //console.log(data);
     this.modalController.dismiss({
       listDestinos: data
     });

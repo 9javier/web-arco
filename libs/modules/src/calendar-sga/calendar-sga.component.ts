@@ -4,6 +4,7 @@ import { CalendarService, CalendarModel, IntermediaryService, WarehouseModel, Gr
 import { ModalController, AlertController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import * as _ from 'lodash';
+import * as moment from 'moment';
 
 @Component({
   selector: 'suite-calendar-sga',
@@ -27,7 +28,8 @@ export class CalendarSgaComponent implements OnInit {
     hideOnOutsideClick:false,
     appendTo:'.append',
     drops:'down',
-    firstDayOfWeek: 'mo'
+    firstDayOfWeek: 'mo',
+    locale: 'es'
   } 
 
   public selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
@@ -44,7 +46,9 @@ export class CalendarSgaComponent implements OnInit {
     private modalController:ModalController,
     private alertController:AlertController,
     private changeDetectorRef:ChangeDetectorRef
-  ) { }
+  ) {
+    console.log(moment.locale())
+   }
 
   ngOnInit() {
     this.getBase();
@@ -293,10 +297,12 @@ export class CalendarSgaComponent implements OnInit {
    */
   selectTemplate(template: CalendarModel.Template){
     this.intermediaryService.presentLoading();
-    this.warehousesDestinationList.forEach(val => {
-      val.destinos = [],
-      val.destinos_label = ''
-    });
+    if(this.selectDates.length == 0){
+      this.warehousesDestinationList.forEach(val => {
+        val.destinos = [],
+        val.destinos_label = ''
+      });
+    }
 
     var warehouses = template.warehouses;
     warehouses.forEach(warehouse => {
