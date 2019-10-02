@@ -12,6 +12,13 @@
             <ion-item>
                 <ion-label lines="none" no-padding>
                     <div inset lines="none">
+                        <ion-item no-padding lines="none">
+                            <form [formGroup]="selectForm">
+                                <mat-checkbox formControlName="isChecked">
+                                    Seleccionar todos
+                                </mat-checkbox>
+                            </form>
+                        </ion-item>
                         <ion-item *ngFor="let item of destinations; let j = index" no-padding lines="none">
                             <mat-checkbox [checked]="item.is_main" (click)="addValueArray(item)">
                                 {{ item.name }}

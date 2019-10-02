@@ -29,7 +29,7 @@ export class CalendarSgaComponent implements OnInit {
     appendTo:'.append',
     drops:'down',
     firstDayOfWeek: 'mo',
-    locale: moment.locale()
+    locale: 'es'
   } 
 
   public selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
@@ -46,7 +46,9 @@ export class CalendarSgaComponent implements OnInit {
     private modalController:ModalController,
     private alertController:AlertController,
     private changeDetectorRef:ChangeDetectorRef
-  ) { }
+  ) {
+    console.log(moment.locale())
+   }
 
   ngOnInit() {
     this.getBase();
