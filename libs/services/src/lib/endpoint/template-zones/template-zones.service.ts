@@ -111,8 +111,8 @@ export class TemplateZonesService {
     }));
   }
 
-  getMatrixByTemplate(idTemplate: number): Observable<any> {
-    return this.http.get<any>(this.getMatrixByTemplateUrl.replace("{{idTemplate}}",String(idTemplate)))
+  getMatrixByTemplate(id: number, idTemplate: number): Observable<any> {
+    return this.http.get<any>(this.getMatrixByTemplateUrl.replace("{{id}}",String(id)).replace("{{idTemplate}}",String(idTemplate)))
     .pipe(map(response => {
       return response;
     }));

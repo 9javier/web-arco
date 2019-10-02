@@ -29,6 +29,7 @@ import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-c
 import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs/operators';
+import { SorterService } from 'libs/services/src/lib/endpoint/sorter/sorter.service';
 
 
 @Component({
@@ -75,7 +76,7 @@ export class ListComponent implements OnInit {
   toDeleteIds: number[] = [];
   waysMatrix = [];
   ways = [];
-
+  firstSorter;
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup:any;
@@ -93,6 +94,7 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private templateZonesService: TemplateZonesService,
     private templateColorsService:TemplateColorsService,
+    private sorterService: SorterService,
     private changeDetectorRefs: ChangeDetectorRef,
     private intermediaryService: IntermediaryService
   ) {
@@ -150,10 +152,14 @@ export class ListComponent implements OnInit {
     });
     this.test_counter = 0;
     
-    this.templateZonesService.getMatrixByTemplate(Number(this.id)).subscribe((data) => {
-      this.waysMatrix = data.data;
-      console.log(this.waysMatrix)
-    }, (err) => {
+    this.sorterService.getFirst().subscribe(data => {
+      this.firstSorter = data.data;
+      this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
+        this.waysMatrix = data.data;
+      }, (err) => {
+        console.log(err)
+      });
+    }, err => {
       console.log(err)
     });
 
