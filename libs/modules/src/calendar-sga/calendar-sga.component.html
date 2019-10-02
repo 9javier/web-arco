@@ -55,14 +55,27 @@
     <ion-row class="overAuto">
       <ion-col size="6">
         <ion-list>
+          <ion-item lines="none">
+            <form [formGroup]="selectForm">
+                <mat-checkbox formControlName="isChecked">
+                    Seleccionar todos
+                </mat-checkbox>
+            </form>
+          </ion-item>
           <ion-item *ngFor="let warehouse of warehousesOriginList;let i = index" lines="none">
-            <ion-label lines="none" no-padding>{{ warehouse.name }}</ion-label>
+            <ion-label lines="none" no-padding>
+              <mat-checkbox [checked]="warehouse.is_main">
+                  {{ warehouse.name }}
+              </mat-checkbox>
+            </ion-label>
             <ion-icon name="arrow-forward" slot="end"></ion-icon>
           </ion-item>
         </ion-list>
       </ion-col>
       <ion-col size="6" class="col-derecha">
         <ion-list>
+          <ion-item lines="none">
+          </ion-item>
           <ion-item *ngFor="let warehouse of warehousesDestinationList;let i = index" lines="none">
             <ion-label lines="none" no-padding *ngIf="warehouse.destinos_label != ''">{{ warehouse.destinos_label }}</ion-label>
             <ion-label lines="none" no-padding *ngIf="warehouse.destinos_label == ''">Seleccione destino</ion-label>

@@ -5,6 +5,7 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'suite-calendar-sga',
@@ -40,12 +41,17 @@ export class CalendarSgaComponent implements OnInit {
   public date:{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any};
   public dates: any;
 
+  selectForm = this.formBuilder.group({
+    isChecked: [false, []]
+  });
+
   constructor(
     private calendarService: CalendarService,
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
     private alertController:AlertController,
-    private changeDetectorRef:ChangeDetectorRef
+    private changeDetectorRef:ChangeDetectorRef,
+    private formBuilder: FormBuilder
   ) {
     console.log(moment.locale())
    }
@@ -54,6 +60,7 @@ export class CalendarSgaComponent implements OnInit {
     this.getBase();
     this.getTemplates();
     this.getCalendarDates();
+    this.changeValues();
     
     this.datePicker.onLeftNav.subscribe(changes=>{
       this.getCalendarDates();
@@ -133,7 +140,7 @@ export class CalendarSgaComponent implements OnInit {
           }
 
           this.date = auxDates[0];
-          this.manageSelectedClass();
+          this.manageSelectedClass2();
           this.intermediaryService.dismissLoading();
         },()=>{
           this.intermediaryService.dismissLoading();
@@ -224,6 +231,9 @@ export class CalendarSgaComponent implements OnInit {
           destinos: [],
           destinos_label: ''
         })
+      });
+      this.warehousesOriginList.forEach(origin => {
+        origin.is_main = false;
       });
     },()=>{
       this.intermediaryService.dismissLoading();
@@ -500,6 +510,23 @@ export class CalendarSgaComponent implements OnInit {
     }
   }
 
+  manageSelectedClass2():void{
+    let days = <any>document.getElementsByClassName("dp-calendar-day");
+    for(let i=0;i<days.length;i++){
+      let day = days[i];
+      this.selectDates.forEach(date=>{
+        if(date.date.split("-").reverse().join("-") == day.dataset.date){
+          if((date.warehouses.length) || (date.date && this.addWarehouses().length)){
+            day.className+= ' tselected2'; 
+          }else{
+            // console.log("borrando")
+            day.className = day.className.replace(/tselected2/g, "");
+          }
+        } 
+      });
+    }
+  }
+
   manageSelectedRadio():void{
     let days = <any>document.getElementsByClassName("dp-selected");
     for(let i=0;i<days.length;i++){
@@ -562,6 +589,19 @@ export class CalendarSgaComponent implements OnInit {
     await prompt.present();
     
    }
+
+   changeValues(): void {
+    /**Listen for changes on isChecked control */
+    this.selectForm.get("isChecked").valueChanges.subscribe((isChecked) => {
+      this.warehousesOriginList.forEach(origin => {
+        if(isChecked){
+          origin.is_main = true;
+        } else {
+          origin.is_main = false;
+        }
+      });
+    });
+  }
 
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
