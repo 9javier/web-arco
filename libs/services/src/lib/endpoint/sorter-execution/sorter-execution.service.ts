@@ -12,6 +12,7 @@ export class SorterExecutionService {
 
   private postExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color";
   private postStopExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color/stop";
+  private postWrongWayUrl: string = environment.apiBase + "/sorter/execution/incidence";
 
   constructor(
     private http: HttpClient
@@ -25,6 +26,12 @@ export class SorterExecutionService {
 
   postStopExecuteColor(): Observable<ExecutionSorterModel.StopExecuteColor> {
     return this.http.post<ExecutionSorterModel.ResponseStopExecuteColor>(this.postStopExecuteColorUrl, {}).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postWrongWay(params: ExecutionSorterModel.ParamsWrongWay): Observable<ExecutionSorterModel.WrongWay> {
+    return this.http.post<ExecutionSorterModel.ResponseWrongWay>(this.postWrongWayUrl, params).pipe(map(response => {
       return response.data;
     }));
   }

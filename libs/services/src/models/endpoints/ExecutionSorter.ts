@@ -51,4 +51,17 @@ export namespace ExecutionSorterModel {
   export interface ResponseStopExecuteColor {
     data: StopExecuteColor
   }
+
+  export interface ParamsWrongWay {
+    way: number,
+    productReference: string
+  }
+
+  export interface WrongWay {
+
+  }
+
+  export interface ResponseWrongWay {
+    data: WrongWay
+  }
 }

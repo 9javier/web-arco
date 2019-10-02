@@ -6,6 +6,8 @@ import {IntermediaryService} from "@suite/services";
 import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
 import {SorterInputService} from "../../../../../services/src/lib/endpoint/sorter-input/sorter-input.service";
 import {InputSorterModel} from "../../../../../services/src/models/endpoints/InputSorter";
+import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
+import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints/ExecutionSorter";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -20,6 +22,7 @@ export class ScannerInputSorterComponent implements OnInit {
   processStarted: boolean = false;
   isWaitingSorterFeedback: boolean = false;
   productToSetInSorter: string = null;
+  idLastWaySet: number = null;
 
   productScanned: ProductSorterModel.ProductSorter = null;
 
@@ -35,6 +38,7 @@ export class ScannerInputSorterComponent implements OnInit {
   constructor(
     private intermediaryService: IntermediaryService,
     private sorterInputService: SorterInputService,
+    private sorterExecutionService: SorterExecutionService,
     public sorterProvider: SorterProvider,
     private scanditProvider: ScanditProvider
   ) {
@@ -84,8 +88,21 @@ export class ScannerInputSorterComponent implements OnInit {
   }
 
   async wrongWay() {
-    let setWayAsWrong = () => {
-      // TODO Request to server to notify that las product was set in a wrong way and reset the sorter notify led
+    let setWayAsWrong = async () => {
+      // Request to server to notify that las product was set in a wrong way and reset the sorter notify led
+      let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      if (productRef) {
+        this.sorterExecutionService
+          .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
+          .subscribe(async (res: ExecutionSorterModel.WrongWay) => {
+            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de carril equivocado!', 1500);
+          }, async (error) => {
+            console.error('Error::Subscribe::sorterExecutionService::postWrongWay', error);
+            await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de carril equivocado.', 2000);
+          });
+      } else {
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de carril equivocado.', 2000);
+      }
     };
 
     await this.intermediaryService.presentConfirm('Se obviará el par escaneado anteriormente y se continuará con el escaneo de productos para el sorter. ¿Continuar?', setWayAsWrong);
@@ -123,6 +140,7 @@ export class ScannerInputSorterComponent implements OnInit {
             name: res.warehouse.name
           } : null
         };
+        this.idLastWaySet = res.way.id;
 
         await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
 
