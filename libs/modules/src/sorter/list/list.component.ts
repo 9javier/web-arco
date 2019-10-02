@@ -77,6 +77,7 @@ export class ListComponent implements OnInit {
   waysMatrix = [];
   ways = [];
   firstSorter;
+  zoneId: number;
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup:any;
@@ -87,6 +88,7 @@ export class ListComponent implements OnInit {
   firstClick: boolean = true;
   radioDisplay: boolean = false;
   wayClicked: boolean = true;
+  priority: number = 1;
 
   constructor(
     private crudService: CrudService,
@@ -149,6 +151,7 @@ export class ListComponent implements OnInit {
     })
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
+      console.log(this.zones)
       this.initSelectActive(this.zones);
     });
     this.test_counter = 0;
@@ -293,10 +296,34 @@ export class ListComponent implements OnInit {
         }
       }
     }
+    
 
     let wayNumber: number;
     let wayColumn: number;
     console.log(way)
+    console.log(this.zoneId)
+    let zones = [
+      {
+        zone: this.zoneId,
+        ways: [
+          {
+            waysId: way.way.id,
+            priority: this.priority
+          }
+        ]
+      }
+    ];
+
+    let payload = {
+      zones
+    }
+
+    this.templateZonesService.assignWays(payload, Number(this.id)).subscribe(data => {
+      console.log(data);
+    }, err => {
+      console.log(err);
+    })
+
     this.waysMatrix.forEach(item => {
       item.columns.forEach(item => {
         if(item.way.id === way.way.id) {
@@ -307,14 +334,24 @@ export class ListComponent implements OnInit {
     });
   
     let value = {
-      position: wayNumber,
+      position: this.priority,
       name: wayColumn
     }
+    this.priority++;
     this.data.push(value);
     this.dataSource2= new MatTableDataSource<Element>(this.data);
   }
 
   cleanColumn(index: number, column: number, height: number, way): void { 
+    
+    this.data.forEach(item => {
+      if(item.name == way.ways_number) {
+        let newData = this.data.filter(item => item.name != way.ways_number);
+        this.data = newData;
+      }
+    });
+    this.dataSource2= new MatTableDataSource<Element>(this.data);
+
     this.waysMatrix.forEach(way => {
       if(way.height === height) {
         let columns = way.columns;
@@ -359,7 +396,6 @@ export class ListComponent implements OnInit {
     }
     
     this.firstClick = true;
-
   }
 
 
@@ -455,8 +491,9 @@ export class ListComponent implements OnInit {
     this.showRails = !this.showRails;
   }
 
-  displayRailsRadio() {
+  displayRailsRadio(element) {
     event.stopPropagation();
+    this.zoneId = element.id;
     this.showRails = true;
   }
 

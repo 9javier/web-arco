@@ -25,6 +25,7 @@ export class TemplateZonesService {
   private getMatrixByTemplateUrl: string = environment.apiBase + "/sorters/{{id}}/templates/{{idTemplate}}/zones/ways/matrix";
   private assignPrioritiesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign";
   private getTemplteZonesAndWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways";
+  private assignWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign-ways";
 
   constructor(private http: HttpClient) { }
   
@@ -135,6 +136,14 @@ export class TemplateZonesService {
 
   assignPriorities(data, idTemplate: number): Observable<any> {
     return this.http.post<any>(this.assignPrioritiesUrl.replace("{{idTemplate}}",String(idTemplate)), data)
+    .pipe(map(response => {
+      return response;
+    }));
+  }
+
+  assignWays(data, idTemplate: number): Observable<any> {
+    console.log(data)
+    return this.http.post<any>(this.assignWaysUrl.replace("{{idTemplate}}",String(idTemplate)), data)
     .pipe(map(response => {
       return response;
     }));

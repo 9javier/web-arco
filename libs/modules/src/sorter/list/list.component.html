@@ -78,7 +78,7 @@
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
          <mat-cell *matCellDef="let element">
           <mat-radio-group name="rails">
-            <mat-radio-button (click)="displayRailsRadio()" [value]="element"></mat-radio-button>
+            <mat-radio-button (click)="displayRailsRadio(element)" [value]="element"></mat-radio-button>
           </mat-radio-group> 
          </mat-cell>  
         </ng-container>
