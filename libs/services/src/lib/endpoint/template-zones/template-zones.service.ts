@@ -15,6 +15,7 @@ export class TemplateZonesService {
   private getZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones";
   private putUpdateZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   private deleteZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
+  private getShowUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   /** urls zones warehouse */
   private postCreateZoneWarehouseUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
   private getZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
@@ -59,6 +60,13 @@ export class TemplateZonesService {
 
   deleteTemplateZone(id: number, idTemplate: number) {
     return this.http.delete<any>(this.deleteZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
+    .pipe(map(response => {
+      return response;
+    }));;
+  }
+
+  getShowTemplateZone(id: number, idTemplate: number): Observable<any> {
+    return this.http.get<any>(this.getShowUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
     .pipe(map(response => {
       return response;
     }));;

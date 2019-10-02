@@ -12,7 +12,8 @@ import { TemplateZonesService } from 'libs/services/src/lib/endpoint/template-zo
 export class UpdateComponent implements OnInit {
 
   @ViewChild(BaseComponent) base:BaseComponent;
-  zona;
+  zonaId: number;
+  zone: any;
   colors: any;
   id: number;
   
@@ -22,12 +23,19 @@ export class UpdateComponent implements OnInit {
     private navParams:NavParams,
     private templateZonesService: TemplateZonesService
   ) {
-    this.zona = this.navParams.get("zona"); 
+    this.zonaId = this.navParams.get("zonaId"); 
     this.colors = this.navParams.get("colors"); 
     this.id = this.navParams.get("id"); 
   }
 
   ngOnInit() {
+    this.templateZonesService.getShowTemplateZone(this.zonaId, this.id).subscribe(data => {
+      this.zone = data.data;
+      console.log(this.zone)
+      console.log(data.data)
+    }, err => {
+      console.log(err)
+    })
   }
 
   close():void{

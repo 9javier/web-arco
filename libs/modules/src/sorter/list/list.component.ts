@@ -226,7 +226,7 @@ export class ListComponent implements OnInit {
     let modal = (await this.modalController.create({
       component:UpdateComponent,
       componentProps:{
-        zona:row,
+        zonaId:row.id,
         colors: this.colors,
         id: this.id
       }

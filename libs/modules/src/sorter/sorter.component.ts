@@ -185,7 +185,7 @@ export class SorterComponent implements OnInit {
     let modal = (await this.modalController.create({
       component:UpdateComponent,
       componentProps:{
-        template:row
+        templateId:row.id
       }
     }));
     modal.onDidDismiss().then(()=>{
