@@ -155,12 +155,12 @@ export class ListComponent implements OnInit {
     this.sorterService.getFirst().subscribe(data => {
       this.firstSorter = data.data;
       console.log(this.firstSorter)
-      /*this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
+      this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
         this.waysMatrix = data.data;
         console.log(this.waysMatrix)
       }, (err) => {
         console.log(err)
-      });*/
+      });
     }, err => {
       console.log(err)
     });

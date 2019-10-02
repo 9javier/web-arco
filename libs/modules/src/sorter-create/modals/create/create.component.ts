@@ -35,7 +35,7 @@ export class CreateComponent implements OnInit {
   submit():void{
     let { ...data} = this.base.getValue();
     const payload = {
-      active: false, ...data
+      active: true, ...data
     }
     console.log(payload)
     this.sorteService
