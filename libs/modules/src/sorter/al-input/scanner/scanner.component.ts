@@ -144,15 +144,20 @@ export class ScannerInputSorterComponent implements OnInit {
 
         await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
 
+        // TODO Remove it when notify from sorter be able. It is temporal to test
         setTimeout(async () => {
-          await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
-          this.isWaitingSorterFeedback = false;
-          this.productToSetInSorter = null;
-          this.messageGuide = 'ARTÍCULO';
+          this.sorterNotifyAboutProductScanned();
         }, 5 * 1000);
       }, async (error) => {
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
         await this.intermediaryService.dismissLoading();
       });
+  }
+
+  private async sorterNotifyAboutProductScanned() {
+    await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
+    this.isWaitingSorterFeedback = false;
+    this.productToSetInSorter = null;
+    this.messageGuide = 'ARTÍCULO';
   }
 }
