@@ -2,9 +2,12 @@
   <div
     class="color-item"
     [ngStyle]="{'background-color': color.hex}"
-    [ngClass]="sorterProvider.colorSelected ? (sorterProvider.colorSelected.id == color.id ? 'selected' : 'no-selected') : ''">
+    [ngClass]="getColorClass()">
     <div *ngIf="sorterProvider.colorSelected && sorterProvider.colorSelected.id == color.id">
       <i class="material-icons">check</i>
+    </div>
+    <div *ngIf="color.available == '0'">
+      <i class="material-icons">close</i>
     </div>
   </div>
 </div>

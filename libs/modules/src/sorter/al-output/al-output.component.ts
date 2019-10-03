@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {ColorSorterModel} from "../../../../services/src/models/endpoints/ColorSorter";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
 import {Router} from "@angular/router";
 import {IntermediaryService} from "@suite/services";
+import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
 
 @Component({
   selector: 'sorter-output-al',
@@ -11,7 +11,7 @@ import {IntermediaryService} from "@suite/services";
 })
 export class AlOutputSorterComponent implements OnInit {
 
-  public colorsSelectors: ColorSorterModel.ColorSorter[] = [];
+  public colorsSelectors: TemplateColorsModel.AvailableColorsByProcess[] = [];
 
   constructor(
     private router: Router,
@@ -28,22 +28,26 @@ export class AlOutputSorterComponent implements OnInit {
       {
         id: 1,
         name: "Yellow",
-        hex: '#FFE600'
+        hex: '#FFE600',
+        available: '1'
       },
       {
         id: 2,
         name: "Green",
-        hex: '#0C9D58'
+        hex: '#0C9D58',
+        available: '1'
       },
       {
         id: 3,
         name: "Red",
-        hex: '#DB4437'
+        hex: '#DB4437',
+        available: '1'
       },
       {
         id: 4,
         name: "Blue",
-        hex: '#1B91FF'
+        hex: '#1B91FF',
+        available: '1'
       }
     ];
   }

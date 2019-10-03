@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {ColorSorterModel} from "../../../../../services/src/models/endpoints/ColorSorter";
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
+import {TemplateColorsModel} from "../../../../../services/src/models/endpoints/TemplateColors";
 
 @Component({
   selector: 'sorter-color-item',
@@ -9,7 +9,7 @@ import {SorterProvider} from "../../../../../services/src/providers/sorter/sorte
 })
 export class ColorItemSorterComponent implements OnInit {
 
-  @Input() color: ColorSorterModel.ColorSorter = null;
+  @Input() color: TemplateColorsModel.AvailableColorsByProcess = null;
 
   constructor(
     public sorterProvider: SorterProvider
@@ -19,5 +19,21 @@ export class ColorItemSorterComponent implements OnInit {
   
   ngOnInit() {
 
+  }
+
+  getColorClass() : string {
+    if (this.color.available == '0') {
+      return 'unavailable';
+    } else {
+      if (this.sorterProvider.colorSelected) {
+        if (this.sorterProvider.colorSelected.id == this.color.id) {
+          return 'selected';
+        } else {
+          return 'no-selected';
+        }
+      } else {
+        return '';
+      }
+    }
   }
 }

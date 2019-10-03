@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ColorSorterModel} from "../../../../services/src/models/endpoints/ColorSorter";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
+import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
 
 @Component({
   selector: 'sorter-color-selector',
@@ -9,7 +9,7 @@ import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.p
 })
 export class ColorSelectorSorterComponent implements OnInit {
 
-  @Input() colors: ColorSorterModel.ColorSorter[] = [];
+  @Input() colors: TemplateColorsModel.AvailableColorsByProcess[] = [];
   @Input() title: string = 'Organiza los artículos en el sorter. Pulsa un color.';
   @Output() colorSelected = new EventEmitter();
 
@@ -23,7 +23,9 @@ export class ColorSelectorSorterComponent implements OnInit {
 
   }
 
-  selectColor(colorSelected: ColorSorterModel.ColorSorter) {
-    this.colorSelected.next(colorSelected);
+  selectColor(colorSelected: TemplateColorsModel.AvailableColorsByProcess) {
+    if (colorSelected.available != '0') {
+      this.colorSelected.next(colorSelected);
+    }
   }
 }

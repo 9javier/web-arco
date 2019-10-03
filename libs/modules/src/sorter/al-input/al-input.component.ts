@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ColorSorterModel} from "../../../../services/src/models/endpoints/ColorSorter";
 import {MatrixSorterModel} from "../../../../services/src/models/endpoints/MatrixSorter";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
 import {Router} from "@angular/router";
@@ -12,6 +11,8 @@ import {TemplateSorterModel} from "../../../../services/src/models/endpoints/Tem
 import {SorterExecutionService} from "../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
 import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/ExecutionSorter";
 import {Events} from "@ionic/angular";
+import {TemplateColorsService} from "../../../../services/src/lib/endpoint/template-colors/template-colors.service";
+import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
 
 @Component({
   selector: 'sorter-input-al',
@@ -24,7 +25,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   private activeDefaultData: boolean = false;
 
-  public colorsSelectors: ColorSorterModel.ColorSorter[] = [];
+  public colorsSelectors: TemplateColorsModel.AvailableColorsByProcess[] = [];
   public sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
   public loadingSorterTemplateMatrix: boolean = true;
 
@@ -36,6 +37,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     private templateZonesService: TemplateZonesService,
     private sorterTemplateService: SorterTemplateService,
     private sorterExecutionService: SorterExecutionService,
+    private templateColorsService: TemplateColorsService,
     public sorterProvider: SorterProvider
   ) { }
   
@@ -58,22 +60,26 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       {
         id: 1,
         name: "Yellow",
-        hex: '#FFE600'
+        hex: '#FFE600',
+        available: '1'
       },
       {
         id: 2,
         name: "Green",
-        hex: '#0C9D58'
+        hex: '#0C9D58',
+        available: '1'
       },
       {
         id: 3,
         name: "Red",
-        hex: '#DB4437'
+        hex: '#DB4437',
+        available: '1'
       },
       {
         id: 4,
         name: "Blue",
-        hex: '#1B91FF'
+        hex: '#1B91FF',
+        available: '1'
       }
     ];
     this.sorterTemplateMatrix = [
@@ -1242,10 +1248,23 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     this.sorterService
       .getFirstSorter()
       .subscribe((res: SorterModel.FirstSorter) => {
-        this.colorsSelectors = res.colors.map(color => color.sorterZonesColor);
-        this.loadActiveTemplate(res.id);
+        this.loadAvailableColors(res.id);
       }, async (error) => {
         console.error('Error::Subscribe::sorterService::getFirstSorter', error);
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos del sorter.');
+        this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private loadAvailableColors(idSorter: number) {
+    this.templateColorsService
+      .postAvailableColorsByProcess({ processType: 1 })
+      .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
+        this.colorsSelectors = res;
+        console.debug('Test::Colors', this.colorsSelectors);
+        this.loadActiveTemplate(idSorter);
+      }, async (error) => {
+        console.error('Error::Subscribe::templateColorsService::postAvailableColorsByProcess', error);
         await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos del sorter.');
         this.loadingSorterTemplateMatrix = false;
       });
@@ -1268,7 +1287,6 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     this.templateZonesService
       .getMatrixTemplateSorter(idSorter, idTemplate)
       .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
-        console.debug('Test::getMatrixTemplateSorter', res);
         this.sorterTemplateMatrix = res;
         this.events.publish(this.DRAW_TEMPLATE_MATRIX, this.sorterTemplateMatrix);
         this.loadingSorterTemplateMatrix = false;
