@@ -156,8 +156,8 @@ export class ListComponent implements OnInit {
     });
     this.test_counter = 0;
     
-    this.sorterService.getFirst().subscribe(data => {
-      this.firstSorter = data.data;
+    this.sorterService.getFirstSorter().subscribe(data => {
+      this.firstSorter = data;
       console.log(this.firstSorter)
       this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
         this.waysMatrix = data.data;
