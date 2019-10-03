@@ -84,5 +84,18 @@ export class IntermediaryService {
     });
     return await alert.present();
   }
+
+  async presentWarning(message:string, callback) {
+    const alert = await this.alertController.create({
+      header: '¡Atención!',
+      message: message,
+      buttons: [{
+        text: "Cerrar",
+        handler: callback
+      }]
+    });
+
+    return await alert.present();
+  }
   
 }

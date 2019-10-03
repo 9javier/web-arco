@@ -14,6 +14,7 @@ export class SorterExecutionService {
   private postStopExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color/stop";
   private postWrongWayUrl: string = environment.apiBase + "/sorter/execution/incidence";
   private postFullWayUrl: string = environment.apiBase + "/sorter/execution/way/full";
+  private getChangeExecutionTemplateUrl: string = environment.apiBase + "/sorter/execution/template/";
 
   constructor(
     private http: HttpClient
@@ -39,6 +40,13 @@ export class SorterExecutionService {
 
   postFullWay(): Observable<ExecutionSorterModel.FullWay> {
     return this.http.post<ExecutionSorterModel.ResponseFullWay>(this.postFullWayUrl, {}).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  getChangeExecutionTemplate(idTemplate: number): Observable<ExecutionSorterModel.ChangeExecutionTemplate> {
+    let url = this.getChangeExecutionTemplateUrl + idTemplate;
+    return this.http.get<ExecutionSorterModel.ResponseChangeExecutionTemplate>(url).pipe(map(response => {
       return response.data;
     }));
   }

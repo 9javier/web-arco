@@ -72,4 +72,12 @@ export namespace ExecutionSorterModel {
   export interface ResponseFullWay {
     data: FullWay
   }
+
+  export interface ChangeExecutionTemplate {
+
+  }
+
+  export interface ResponseChangeExecutionTemplate {
+    data: ChangeExecutionTemplate
+  }
 }

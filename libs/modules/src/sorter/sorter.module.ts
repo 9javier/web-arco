@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule, MatIconModule } from '@angular/material';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { CdkTableModule } from '@angular/cdk/table';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ListComponent } from './list/list.component';
 import { ModalsModule } from './modals/modals.module';
@@ -23,6 +22,10 @@ import {ScannerInputSorterComponent} from "./al-input/scanner/scanner.component"
 import {FooterButtonsScannerSorterComponent} from "./footer-buttons-scanner/footer-buttons-scanner.component";
 import {AlOutputSorterComponent} from "./al-output/al-output.component";
 import {ScannerOutputSorterComponent} from "./al-output/scanner/scanner.component";
+import {TemplateSelectionComponent} from "./template-selection/template-selection";
+import {SorterListTemplatesSelectionComponent} from "./template-selection/list-templates/list-templates";
+import {SorterMatrixSelectedComponent} from "./template-selection/matrix-selected/matrix-selected";
+import {SorterTemplateSelectionComponent} from "./template-selection/list-templates/template/template";
 
 const routes:Routes = [
   {
@@ -37,6 +40,13 @@ const routes:Routes = [
     component: ListComponent,
     data: {
       name: 'Plantilla'
+    }
+  },
+  {
+    path: 'template/selection',
+    component: TemplateSelectionComponent,
+    data: {
+      name: 'Selección de plantilla'
     }
   },
   {
@@ -81,7 +91,11 @@ const routes:Routes = [
     FooterButtonsSorterComponent,
     FooterButtonsScannerSorterComponent,
     ColorSelectorSorterComponent,
-    ColorItemSorterComponent
+    ColorItemSorterComponent,
+    TemplateSelectionComponent,
+    SorterListTemplatesSelectionComponent,
+    SorterTemplateSelectionComponent,
+    SorterMatrixSelectedComponent
   ],
   imports: [
     CommonModule,

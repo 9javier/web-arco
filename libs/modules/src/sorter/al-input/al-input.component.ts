@@ -11,6 +11,7 @@ import {SorterTemplateService} from "../../../../services/src/lib/endpoint/sorte
 import {TemplateSorterModel} from "../../../../services/src/models/endpoints/TemplateSorter";
 import {SorterExecutionService} from "../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
 import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/ExecutionSorter";
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'sorter-input-al',
@@ -18,6 +19,8 @@ import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/Ex
   styleUrls: ['./al-input.component.scss']
 })
 export class AlInputSorterComponent implements OnInit, OnDestroy {
+
+  private DRAW_TEMPLATE_MATRIX: string = 'draw_template_matrix';
 
   private activeDefaultData: boolean = false;
 
@@ -27,6 +30,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
+    private events: Events,
     private intermediaryService: IntermediaryService,
     private sorterService: SorterService,
     private templateZonesService: TemplateZonesService,
@@ -1194,6 +1198,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         ]
       }
     ];
+    this.events.publish(this.DRAW_TEMPLATE_MATRIX, this.sorterTemplateMatrix);
   }
 
   private loadData() {
@@ -1265,6 +1270,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
         console.debug('Test::getMatrixTemplateSorter', res);
         this.sorterTemplateMatrix = res;
+        this.events.publish(this.DRAW_TEMPLATE_MATRIX, this.sorterTemplateMatrix);
         this.loadingSorterTemplateMatrix = false;
       }, async (error) => {
         console.error('Error::Subscribe::templateZonesService::getMatrixTemplateSorter', error);

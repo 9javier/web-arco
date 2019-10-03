@@ -13,4 +13,12 @@ export class SorterProvider {
   set colorSelected(value: ColorSorterModel.ColorSorter) {
     this._colorSelected = value;
   }
+
+  private _idTemplateSelected: number;
+  get idTemplateSelected(): number {
+    return this._idTemplateSelected;
+  }
+  set idTemplateSelected(value: number) {
+    this._idTemplateSelected = value;
+  }
 }
