@@ -59,21 +59,21 @@
     <ion-row class="overAuto">
       <ion-col size="6">
         <ion-list>
-          <ion-item lines="none">
-            <form [formGroup]="selectForm">
-                <mat-checkbox formControlName="isChecked">
-                    Seleccionar todos
+          <form [formGroup]="selectForm">
+            <ion-item lines="none">
+                  <mat-checkbox formControlName="isChecked">
+                      Seleccionar todos
+                  </mat-checkbox>
+            </ion-item>
+            <ion-item formArrayName="origins" *ngFor="let warehouse of warehousesOriginList;let i = index" lines="none">
+              <ion-label lines="none" no-padding>
+                <mat-checkbox [formControlName]="i">
+                    {{ warehouse.name }}
                 </mat-checkbox>
-            </form>
-          </ion-item>
-          <ion-item *ngFor="let warehouse of warehousesOriginList;let i = index" lines="none">
-            <ion-label lines="none" no-padding>
-              <mat-checkbox [checked]="warehouse.is_main" (click)="addValueArray(warehouse)">
-                  {{ warehouse.name }}
-              </mat-checkbox>
-            </ion-label>
-            <ion-icon name="arrow-forward" slot="end"></ion-icon>
-          </ion-item>
+              </ion-label>
+              <ion-icon name="arrow-forward" slot="end"></ion-icon>
+            </ion-item>
+          </form>
         </ion-list>
       </ion-col>
       <ion-col size="6" class="col-derecha">
@@ -95,5 +95,5 @@
   <!--<ion-fab-button style="float: right; padding: 5px;" color="light"><ion-icon name="trash"></ion-icon></ion-fab-button>-->
     <ion-fab-button style="float: right; padding: 5px;" color="light" [disabled]="!addWarehouses().length || !cantDates || !validToStore()" (click)="storeDate()"><ion-icon name="save"></ion-icon></ion-fab-button>
     <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="addWarehouses().length || cantDates" (click)="clear()"><ion-icon name="apps"></ion-icon></ion-fab-button>
-    <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="listOriginCheck.length" (click)="openModalDestination()"><ion-icon name="albums"></ion-icon></ion-fab-button>
+    <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="this.selectForm.get('origins').length" (click)="openModalDestination()"><ion-icon name="albums"></ion-icon></ion-fab-button>
 </ion-footer>

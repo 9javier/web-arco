@@ -5,7 +5,7 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { StoreComponent } from './modals/store/store.component';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'suite-calendar-sga',
@@ -41,11 +41,8 @@ export class CalendarSgaComponent implements OnInit {
   public date:{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any};
   public dates: any;
 
-  selectForm = this.formBuilder.group({
-    isChecked: [false, []]
-  });
-
   public listOriginCheck: any = [];
+  public selectForm: any;
 
   constructor(
     private calendarService: CalendarService,
@@ -55,7 +52,11 @@ export class CalendarSgaComponent implements OnInit {
     private changeDetectorRef:ChangeDetectorRef,
     private formBuilder: FormBuilder
   ) {
-    console.log(moment.locale())
+    this.selectForm = this.formBuilder.group({
+      isChecked: [false, []],
+      origins: new FormArray([])
+    });
+
    }
 
   ngOnInit() {
@@ -234,8 +235,9 @@ export class CalendarSgaComponent implements OnInit {
           destinos_label: ''
         })
       });
-      this.warehousesOriginList.forEach(origin => {
-        origin.is_main = false;
+      this.warehousesOriginList.forEach((o, i) => {
+        const control = new FormControl();
+        (this.selectForm.controls.origins as FormArray).push(control);
       });
     },()=>{
       this.intermediaryService.dismissLoading();
@@ -411,6 +413,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   clear(){
+    this.intermediaryService.presentLoading();
     this.warehousesOriginList.sort((unaCadena, otraCadena) => unaCadena.id - otraCadena.id);
 
     this.warehousesDestinationList.forEach(val => {
@@ -446,6 +449,7 @@ export class CalendarSgaComponent implements OnInit {
     this.getCalendarDates();
     this.dates = [];
     this.cantDates = false;
+    this.intermediaryService.dismissLoading();
   }
 
   addWarehouses(): any[]{
@@ -607,16 +611,21 @@ export class CalendarSgaComponent implements OnInit {
               id: origin.id
             };
             this.listOriginCheck.push(obj);
-            origin.is_main = true;
-          } else {
-            origin.is_main = false;
-          }
+          } 
         });
     
         if(!isChecked){
+          (<FormArray>this.selectForm.get("origins")).controls.forEach(control=>{
+            control.setValue(false,{emitEvent:false});
+          });
           this.listOriginCheck = [];
+        } else {
+          (<FormArray>this.selectForm.get("origins")).controls.forEach(control=>{
+            control.setValue(true,{emitEvent:true});
+          });
         }
     });
+    
   }
 
 
@@ -648,6 +657,18 @@ export class CalendarSgaComponent implements OnInit {
    * Abrir modal para agregar destinos
    */
   async openModalDestination(){
+    this.listOriginCheck = [];
+
+    const selectedOrderIds = this.selectForm.value.origins
+        .map((v, i) => v ? this.warehousesOriginList[i].id : null)
+        .filter(v => v !== null);
+    
+    selectedOrderIds.forEach(select => {
+      this.listOriginCheck.push({
+        id: select
+      })
+    });
+
     var destinations = [];
     var destinos = [];
     this.warehousesOriginDestinationList.forEach(destination => {
@@ -660,13 +681,11 @@ export class CalendarSgaComponent implements OnInit {
 
     /** Eliminar repetidos */
     destinations = destinations.filter((valorActual, indiceActual, arreglo) => {
-        return arreglo.findIndex(valorDelArreglo => JSON.stringify(valorDelArreglo) === JSON.stringify(valorActual)) === indiceActual
+        return arreglo.findIndex(valorDelArreglo => JSON.stringify(valorDelArreglo.destinationWarehouse.id) === JSON.stringify(valorActual.destinationWarehouse.id)) === indiceActual
     });
 
     /** ordenar destinos */
     destinations.sort((destinoUno, destinoOtro) => destinoUno.destinationWarehouse.id - destinoOtro.destinationWarehouse.id);
-
-    console.log(destinations);
 
     let modal = (await this.modalController.create({
       component: StoreComponent,
@@ -712,7 +731,6 @@ export class CalendarSgaComponent implements OnInit {
     })
     modal.present();
   }
-
 
   ngAfterViewInit(): void {
     //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
