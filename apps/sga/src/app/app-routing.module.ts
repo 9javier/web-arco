@@ -28,6 +28,13 @@ const routes: Routes = [
     data: {
       name: 'Calendario'
     }
+  },  {
+    path: 'calendar-sga',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/calendar-sga//calendar-sga.module#CalendarSgaModule',
+    data:{
+      name: 'Calendario SGA'
+    }
   },
   {
     path: 'roles',

@@ -12,18 +12,24 @@ import { SorterTemplateService } from 'libs/services/src/lib/endpoint/sorter-tem
 export class UpdateComponent implements OnInit {
 
   @ViewChild(BaseComponent) base:BaseComponent;
-  template;
-  
+  templateId: any;
+  template: any;
+
   constructor(
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
     private navParams:NavParams,
     private sorterTemplateService: SorterTemplateService,
   ) {
-    this.template = this.navParams.get("template"); 
+    this.templateId = this.navParams.get("templateId"); 
   }
 
   ngOnInit() {
+    this.sorterTemplateService.getShow(this.templateId).subscribe(data =>{
+      this.template = data.data;
+    }, err => {
+      console.log(err)
+    })
   }
 
   close():void{
@@ -40,6 +46,6 @@ export class UpdateComponent implements OnInit {
     this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe((data) => {
       console.log(data.data);
       this.close();
-    });;
+    });
   }
 }

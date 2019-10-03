@@ -29,6 +29,7 @@ import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-c
 import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs/operators';
+import { SorterService } from 'libs/services/src/lib/endpoint/sorter/sorter.service';
 
 
 @Component({
@@ -75,41 +76,19 @@ export class ListComponent implements OnInit {
   toDeleteIds: number[] = [];
   waysMatrix = [];
   ways = [];
-
+  firstSorter;
+  zoneId: number;
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup:any;
   //Get value on ionSelect on IonRadio item
   selectedRadioItem:any;
 
-  rails = [
-    {
-      height:1,
-      columns:[
-        {column:1, ways_number:1},
-        {column:2, ways_number:2},
-        {column:3, ways_number:3}
-      ]
-    },
-    {
-      height:2,
-      columns:[
-        {column:1, ways_number:4},
-        {column:2, ways_number:5},
-        {column:3, ways_number:6}
-      ]
-    },
-    {
-      height:3,
-      columns:[
-        {column:1, ways_number:7},
-        {column:2, ways_number:8},
-        {column:3, ways_number:9}
-      ]
-    }
-  ]
+  rails = []
   firstClick: boolean = true;
   radioDisplay: boolean = false;
+  wayClicked: boolean = true;
+  priority: number = 1;
 
   constructor(
     private crudService: CrudService,
@@ -118,6 +97,7 @@ export class ListComponent implements OnInit {
     private route: ActivatedRoute,
     private templateZonesService: TemplateZonesService,
     private templateColorsService:TemplateColorsService,
+    private sorterService: SorterService,
     private changeDetectorRefs: ChangeDetectorRef,
     private intermediaryService: IntermediaryService
   ) {
@@ -171,13 +151,21 @@ export class ListComponent implements OnInit {
     })
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
+      console.log(this.zones)
       this.initSelectActive(this.zones);
     });
     this.test_counter = 0;
     
-    this.templateZonesService.getMatrixByTemplate(Number(this.id)).subscribe((data) => {
-      this.waysMatrix = data.data;
-    }, (err) => {
+    this.sorterService.getFirst().subscribe(data => {
+      this.firstSorter = data.data;
+      console.log(this.firstSorter)
+      this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
+        this.waysMatrix = data.data;
+        console.log(this.waysMatrix)
+      }, (err) => {
+        console.log(err)
+      });
+    }, err => {
       console.log(err)
     });
 
@@ -241,7 +229,7 @@ export class ListComponent implements OnInit {
     let modal = (await this.modalController.create({
       component:UpdateComponent,
       componentProps:{
-        zona:row,
+        zonaId:row.id,
         colors: this.colors,
         id: this.id
       }
@@ -272,8 +260,6 @@ export class ListComponent implements OnInit {
     this.firstClick = false;
     this.cleanStyles();
 
-    console.log(this.ways)
-
     this.waysMatrix.forEach(way => {
       if(way.height === height) {
         let columns = way.columns;
@@ -283,55 +269,135 @@ export class ListComponent implements OnInit {
           columns[i]['adjacent'] = false;
           console.log('Current: '+column)
           if(columns[i-1] && !columns[i-1]['selected']) {
-            console.log('Left: '+columns[i-1].ways_number);
             columns[i-1]['adjacent'] = true;
           }
           if(columns[i+1] && !columns[i+1]['selected']) {
-            console.log('Right: '+columns[i+1].ways_number);
             columns[i+1]['adjacent'] = true;
           }
         }
       }
     });
 
-    for(let i = 0; i < this.ways.length; i++) {
-      if(this.ways[i].height == height) {
-        if(this.ways[i-1]) {
-          for(let j = 0; j < this.ways[i-1].columns.length; j++) {
-            if(j == index && !this.ways[i-1].columns[j]['selected']){
-              console.log('Top: '+ this.ways[i-1].columns[j].ways_number);
-              this.ways[i-1].columns[j]['adjacent'] = true;
+    for(let i = 0; i < this.waysMatrix.length; i++) {
+      if(this.waysMatrix[i].height == height) {
+        if(this.waysMatrix[i-1]) {
+          for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
+              this.waysMatrix[i-1].columns[j]['adjacent'] = true;
             }
           }
         }
-        if(this.ways[i+1]) {
-          for(let j = 0; j < this.ways[i+1].columns.length; j++) {
-            if(j == index && !this.ways[i+1].columns[j]['selected']){
-              console.log('Bottom: '+ this.ways[i+1].columns[j].ways_number);
-              this.ways[i+1].columns[j]['adjacent'] = true;
+        if(this.waysMatrix[i+1]) {
+          for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
+              this.waysMatrix[i+1].columns[j]['adjacent'] = true;
             }
           }
         }
       }
     }
+    
 
     let wayNumber: number;
     let wayColumn: number;
-    this.ways.forEach(item => {
-      if(item.ways.id === way.way.id) {
-        wayNumber = item.priority;
-        wayColumn = way.way.column
+    console.log(way)
+    console.log(this.zoneId)
+    let zones = [
+      {
+        zone: this.zoneId,
+        ways: [
+          {
+            waysId: way.way.id,
+            priority: this.priority
+          }
+        ]
       }
+    ];
+
+    let payload = {
+      zones
+    }
+
+    this.templateZonesService.assignWays(payload, Number(this.id)).subscribe(data => {
+      console.log(data);
+    }, err => {
+      console.log(err);
+    })
+
+    this.waysMatrix.forEach(item => {
+      item.columns.forEach(item => {
+        if(item.way.id === way.way.id) {
+          wayNumber = item.priority;
+          wayColumn = way.ways_number
+        }
+      })
     });
   
     let value = {
-      position: wayNumber,
+      position: this.priority,
       name: wayColumn
     }
+    this.priority++;
     this.data.push(value);
     this.dataSource2= new MatTableDataSource<Element>(this.data);
-    console.log(this.dataSource2.data);
   }
+
+  cleanColumn(index: number, column: number, height: number, way): void { 
+    
+    this.data.forEach(item => {
+      if(item.name == way.ways_number) {
+        let newData = this.data.filter(item => item.name != way.ways_number);
+        this.data = newData;
+      }
+    });
+    this.dataSource2= new MatTableDataSource<Element>(this.data);
+
+    this.waysMatrix.forEach(way => {
+      if(way.height === height) {
+        let columns = way.columns;
+        for(let i = 0; i < columns.length; i++) 
+        if(column == columns[i].ways_number) {
+          columns[i]['selected'] = false;
+          if(columns[i-1] && !columns[i-1]['selected']) {
+            columns[i-1]['adjacent'] = false;
+          } else if(columns[i-1] && columns[i-1]['selected']) {
+            columns[i]['adjacent'] = true;
+          }
+          if(columns[i+1] && !columns[i+1]['selected']) {
+            columns[i+1]['adjacent'] = false;
+          } else if(columns[i+1] && columns[i+1]['selected']) {
+            columns[i]['adjacent'] = true;
+          }
+        }
+      }
+    });
+
+    for(let i = 0; i < this.waysMatrix.length; i++) {
+      if(this.waysMatrix[i].height == height) {
+        if(this.waysMatrix[i-1]) {
+          for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
+              this.waysMatrix[i-1].columns[j]['adjacent'] = false;
+            } else if(j == index && this.waysMatrix[i-1].columns[j]['selected']){
+              this.waysMatrix[i].columns[j]['adjacent'] = true;
+            }
+          }
+        }
+        if(this.waysMatrix[i+1]) {
+          for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
+            if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
+              this.waysMatrix[i+1].columns[j]['adjacent'] = false;
+            } else if(j == index && this.waysMatrix[i+1].columns[j]['selected']) {
+              this.waysMatrix[i].columns[j]['adjacent'] = true;
+            }
+          }
+        }
+      }
+    }
+    
+    this.firstClick = true;
+  }
+
 
   cleanStyles() {
     console.log(this.rails)
@@ -342,8 +408,9 @@ export class ListComponent implements OnInit {
     });
   }
 
-  activeDelete() {
+  active() {
     event.stopPropagation();
+    console.log('active')
   }
 
   toDeleteZone(index) {
@@ -424,8 +491,9 @@ export class ListComponent implements OnInit {
     this.showRails = !this.showRails;
   }
 
-  displayRailsRadio() {
+  displayRailsRadio(element) {
     event.stopPropagation();
+    this.zoneId = element.id;
     this.showRails = true;
   }
 

@@ -1,0 +1,143 @@
+dp-date-picker {
+    position: relative;
+    display: block;
+    width: 354px;
+    height: 326px;
+    height: 2px;
+    margin: auto;
+}
+
+.legend-card {
+    margin-top: 96px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    max-width: 354px;
+}
+
+.legend-card-text {
+    margin: 1em 0;
+    padding: 0 2em;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #000000;
+}
+
+.legend-card-color {
+    width: 32px;
+    height: 32px;
+    display: block;
+}
+
+.clean-button {
+    margin-top: 3em;
+}
+
+ion-footer {
+    text-align: right;
+}
+
+.no-border {
+    border: none !important;
+    ion-label {
+        text-align: center;
+    }
+}
+
+.append {
+    width: 354px;
+    height: 326px;
+    margin: auto;
+}
+
+.overAuto {
+    max-height: calc(100vh - 278px) !important;
+    overflow: auto;
+}
+
+.error {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.warning {
+    color: orange;
+    margin-bottom: 10px;
+}
+
+.ion-datepicker {
+    text-align: center;
+    .title {
+        text-align: center;
+    }
+}
+
+.top{
+    height: 385px;
+    border-bottom: 1px solid black;
+    margin-bottom: 20px;
+}
+
+.col-derecha{
+    width: 10px;
+}
+
+.text-colors{
+    margin-top: 235px;
+}
+
+.legend-card-color{
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.legend-card-text{
+    padding: 0;
+    justify-content: flex-start;
+}
+
+.button-add-plantilla{
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: -10px;
+}
+
+.list-plantillas{
+    max-height: 320px !important;
+}
+
+:host /deep/ {
+    .dp-picker-input {
+        display: none;
+    }
+    .haveDate {
+        background: #2196f3 !important;
+    }
+    .dp-calendar-day.dp-selected {
+        background: #ea5348 !important;
+        &.haveDate {
+            background: #ea5348 !important;
+        }
+        &.tselected {
+            background: green !important;
+            &.haveDate {
+                background: green !important;
+            }
+        }
+    }
+
+    dp-day-calendar.dp-material .dp-calendar-weekday{
+        width: 50px;
+    }
+    
+    .dp-calendar-weekday.ng-star-inserted {
+        width: 50px;
+    }
+    dp-day-calendar .dp-calendar-day {
+        width: 50px;
+        height: 50px;
+    }
+}

@@ -37,10 +37,11 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
 
         return option;
       });
-      if (this.multiple)
+      if (this.multiple) {
         this.writeValue(this.values);
-      else
+      } else{
         this.writeValue(this.value);
+      }
       this.filteredOptions = this.filterOptions(options, "");
     }
   }
@@ -130,10 +131,11 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     this.optionPointerIndex = 0;
     /**Obtenemos el nodo que se está editando actualmente */
     let node;
-    if (!click)
+    if (!click) {
       node = window.getSelection().anchorNode;
-    else
+    } else {
       node = this.lastNode;
+    }
     this.flagEmmit = true;
     this.insertTag(option.id, (node != this.inputElement.nativeElement) ? node : null);
   }
@@ -323,7 +325,7 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     this.filteredOptions = this.filterOptions([...this._options], node.textContent.trim());
     if (node.textContent && !this._options.filter(option => option.name.toLowerCase() == (node.textContent.trim()).toLowerCase())[0]) {
       this.currentTextOption = {
-        id: node.textContent,
+        id: node.textContent.toString().trim(),
         name: node.textContent,
         type: "text"
       }
@@ -449,14 +451,14 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    * @returns the last node inserted
    */
   insertTag(id: any, node?: Node, emit = true): Node {
-    let option = this._options.filter(option => option.id == id)[0];
-    if (!option)
+    let option = this._options.filter(option => option.id === id)[0];
+    if (!option) {
       option = {
         id: id,
-        name: id,
+        name: node ? node.nodeValue : id,
         type: "text"
-      }
-
+      };
+    }
 
     if (!node) {
       node = document.createElement("span");
@@ -469,10 +471,11 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     tagSpan.dataset.id = <string>option.id;
     tagSpan.dataset.type = option.type;
     /**reemplazamos el nodo anterior con el nuevo */
-    if (node.parentElement.className == "parent-editable")
+    if (node.parentElement.className == "parent-editable") {
       node.parentElement.replaceChild(tagSpan, node);
-    else
+    } else {
       node.parentElement.parentElement.replaceChild(tagSpan, node.parentElement);
+    }
     /**Inserto un espacio antes a menos que sea el primer elemento */
     if (this.inputElement.nativeElement.childNodes[0] !== tagSpan) {
       let separator = document.createTextNode(" ");
@@ -492,8 +495,9 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       sel.removeAllRanges();
       sel.addRange(range)
     }
-    if (emit)
+    if (emit) {
       this.emitSelection();
+    }
 
     return textNode;
   }
@@ -527,7 +531,6 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       }
     } else {
       setTimeout(() => { this.flagEmmit = false; }, 50);
-
     }
 
   }

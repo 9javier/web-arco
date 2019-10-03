@@ -162,6 +162,10 @@ export * from './sorter-create/sorter-create.module';
 export * from './calendar-picking/calendar-picking.component';
 export * from './calendar-picking/calendar-picking.module';
 
+/**Calendar sga */
+export * from './calendar-sga/calendar-sga.component';
+export * from './calendar-sga/calendar-sga.module';
+
 /**Manual Print Prices*/
 export * from './print-prices-manual/print-prices-manual.component';
 export * from './print-prices-manual/print-prices-manual.module';

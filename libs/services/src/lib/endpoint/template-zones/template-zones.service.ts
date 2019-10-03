@@ -16,15 +16,17 @@ export class TemplateZonesService {
   private getZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones";
   private putUpdateZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   private deleteZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
+  private getShowUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   /** urls zones warehouse */
   private postCreateZoneWarehouseUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
   private getZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
   private putUpdateZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
   private deleteZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
   private assignZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
-  private getMatrixByTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/matrix";
+  private getMatrixByTemplateUrl: string = environment.apiBase + "/sorters/{{id}}/templates/{{idTemplate}}/zones/ways/matrix";
   private assignPrioritiesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign";
   private getTemplteZonesAndWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways";
+  private assignWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign-ways";
   private getMatrixTemplateSorterUrl: string = environment.apiBase + '/sorters/{{idSorter}}/templates/{{idTemplate}}/zones/ways/matrix';
 
   constructor(private http: HttpClient) { }
@@ -61,6 +63,13 @@ export class TemplateZonesService {
 
   deleteTemplateZone(id: number, idTemplate: number) {
     return this.http.delete<any>(this.deleteZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
+    .pipe(map(response => {
+      return response;
+    }));;
+  }
+
+  getShowTemplateZone(id: number, idTemplate: number): Observable<any> {
+    return this.http.get<any>(this.getShowUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
     .pipe(map(response => {
       return response;
     }));;
@@ -113,8 +122,8 @@ export class TemplateZonesService {
     }));
   }
 
-  getMatrixByTemplate(idTemplate: number): Observable<any> {
-    return this.http.get<any>(this.getMatrixByTemplateUrl.replace("{{idTemplate}}",String(idTemplate)))
+  getMatrixByTemplate(id: number, idTemplate: number): Observable<any> {
+    return this.http.get<any>(this.getMatrixByTemplateUrl.replace("{{id}}",String(id)).replace("{{idTemplate}}",String(idTemplate)))
     .pipe(map(response => {
       return response;
     }));
@@ -129,6 +138,14 @@ export class TemplateZonesService {
 
   assignPriorities(data, idTemplate: number): Observable<any> {
     return this.http.post<any>(this.assignPrioritiesUrl.replace("{{idTemplate}}",String(idTemplate)), data)
+    .pipe(map(response => {
+      return response;
+    }));
+  }
+
+  assignWays(data, idTemplate: number): Observable<any> {
+    console.log(data)
+    return this.http.post<any>(this.assignWaysUrl.replace("{{idTemplate}}",String(idTemplate)), data)
     .pipe(map(response => {
       return response;
     }));

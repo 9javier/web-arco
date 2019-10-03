@@ -13,8 +13,9 @@ export class UpdateComponent implements OnInit {
 
   @ViewChild(BaseComponent) base:BaseComponent;
   wareHouses: any;
-  sorter: any;
+  sorterId: any;
   colors: any;
+  sorter: any;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -23,22 +24,27 @@ export class UpdateComponent implements OnInit {
     private sorteService: SorterService,
   ) {
     this.wareHouses = this.navParams.get("wareHouses");
-    this.sorter = this.navParams.get("sorter");
+    this.sorterId = this.navParams.get("sorterId");
     this.colors = this.navParams.get("colors");
   }
 
   ngOnInit() {
+    this.sorteService.getShow(this.sorterId).subscribe(data => {
+      this.sorter = data.data;
+    }, err => {
+      console.log(err)
+    })
   }
 
   close():void{
     this.modalController.dismiss();
   }
 
-  submit(template):void{
-    let { colors, ...data} = this.base.getValue();
-    colors = [1];
+  submit():void{
+    let { ...data} = this.base.getValue();
+    let ways = 0;
     const payload = {
-      active: false, colors, ...data
+      active: false, ways, ...data
     }
     this.sorteService
       .updateSorter(payload, payload.id).subscribe((data) => {

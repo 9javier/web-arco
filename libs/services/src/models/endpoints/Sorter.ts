@@ -16,6 +16,7 @@ export namespace SorterModel {
         warehouseId?: number;
         zoneSorter?: any,
         waySorter?: Ways[],
+        colors?: [],
     }
 
     export interface Ways {

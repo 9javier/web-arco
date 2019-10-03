@@ -68,16 +68,16 @@
     "zone.js": "^0.8.26"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~0.13.0",
+    "@angular/cli": "7.3.1",
     "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "^7.0.0",
-    "@angular-devkit/build-angular": "~0.13.0",
-    "codelyzer": "~4.5.0",
-    "protractor": "~5.4.0",
-    "@angular/cli": "7.3.1",
+    "@ionic/angular-toolkit": "~1.5.1",
     "@nrwl/schematics": "7.7.2",
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "codelyzer": "~4.5.0",
     "dotenv": "6.2.0",
     "jasmine-core": "~2.99.1",
     "jasmine-marbles": "0.4.0",
@@ -87,11 +87,12 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "node-sass": "^4.12.0",
     "prettier": "1.15.2",
+    "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typescript": "3.2.2",
-    "@ionic/angular-toolkit": "~1.5.1"
+    "typescript": "3.2.2"
   },
   "cordova": {
     "plugins": {
