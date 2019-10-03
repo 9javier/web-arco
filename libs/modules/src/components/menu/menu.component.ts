@@ -549,7 +549,6 @@ export class MenuComponent implements OnInit {
   }
 
   tapOptionSubitem(p) {
-    //this.toggleSidebar();
     this.menuController.close();
     if (p.url === 'print/tag/ref') {
       this.printTagsScanditService.printTagsReferences();

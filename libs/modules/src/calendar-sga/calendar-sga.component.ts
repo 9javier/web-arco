@@ -172,7 +172,7 @@ export class CalendarSgaComponent implements OnInit {
    */
 
   setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
-    
+
     this.warehousesDestinationList.forEach(val => {
       val.destinos = [],
         val.destinos_label = ''
@@ -526,7 +526,6 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   manageSelectedClass(): void {
-    console.log("ok");
     let days: Array<any> = <any>document.getElementsByClassName("dp-calendar-day");
     let days1: Array<any> = <any>document.getElementsByClassName("tselected2");
 
@@ -561,7 +560,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   manageSelectedClass2(): void {
-    console.log("ok1");
+
     let days = <any>document.getElementsByClassName("dp-calendar-day");
     for (let i = 0; i < days.length; i++) {
       let day = days[i];
@@ -579,7 +578,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   manageSelectedRadio(): void {
-    console.log("cuando llega aqui");
+
     let days = <any>document.getElementsByClassName("dp-selected");
     for (let i = 0; i < days.length; i++) {
       let day = days[i];
