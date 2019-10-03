@@ -9,7 +9,7 @@
       </p>
     </div>
   </div>
-  <sorter-matrix-input *ngIf="!loadingSorterTemplateMatrix && sorterTemplateMatrix.length > 0"></sorter-matrix-input>
+  <sorter-matrix-input></sorter-matrix-input>
 
   <sorter-footer-buttons *ngIf="sorterProvider.colorSelected" (operationCancel)="sorterOperationCancelled()" (operationStart)="sorterOperationStarted()"></sorter-footer-buttons>
 </ion-content>
