@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { DatePickerComponent, IDatePickerConfig } from 'ng2-date-picker';
 import { CalendarService, CalendarModel, IntermediaryService, WarehouseModel, GroupModel } from '@suite/services';
 import { ModalController, AlertController } from '@ionic/angular';
@@ -14,31 +14,33 @@ import { FormBuilder, FormArray, FormControl } from '@angular/forms';
 })
 export class CalendarSgaComponent implements OnInit {
 
-  @ViewChild(DatePickerComponent) datePicker:DatePickerComponent;
+  @ViewChild(DatePickerComponent) datePicker: DatePickerComponent;
 
-  public templates:Array<CalendarModel.Template> = [];
-  public warehousesOriginList:Array<WarehouseModel.Warehouse> = [];
+  public templates: Array<CalendarModel.Template> = [];
+  public warehousesOriginList: Array<WarehouseModel.Warehouse> = [];
   public warehousesOriginDestinationList: any = []; //para guardar los posibles destinos de cada origen
   public warehousesDestinationList: any = [];
-  public templateBase:Array<CalendarModel.TemplateWarehouse> = [];
+  public templateBase: Array<CalendarModel.TemplateWarehouse> = [];
   public cantDates: boolean = false;
+  private isCheckedOrigin: boolean = false;
 
-  public calendarConfiguration:IDatePickerConfig  = {
-    closeOnSelect:false,
-    allowMultiSelect:true,
-    hideOnOutsideClick:false,
-    appendTo:'.append',
-    drops:'down',
+
+  public calendarConfiguration: IDatePickerConfig = {
+    closeOnSelect: false,
+    allowMultiSelect: true,
+    hideOnOutsideClick: false,
+    appendTo: '.append',
+    drops: 'down',
     firstDayOfWeek: 'mo',
     locale: 'es'
-  } 
+  }
 
-  public selectDates:Array<{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any}> = [{
-    date:'todas las fechas seleccionadas',
-    warehouses:[],
-    value:null
+  public selectDates: Array<{ date: string; warehouses: Array<CalendarModel.TemplateWarehouse>; value: any }> = [{
+    date: 'todas las fechas seleccionadas',
+    warehouses: [],
+    value: null
   }];
-  public date:{date:string;warehouses:Array<CalendarModel.TemplateWarehouse>;value:any};
+  public date: { date: string; warehouses: Array<CalendarModel.TemplateWarehouse>; value: any };
   public dates: any;
 
   public listOriginCheck: any = [];
@@ -46,10 +48,10 @@ export class CalendarSgaComponent implements OnInit {
 
   constructor(
     private calendarService: CalendarService,
-    private intermediaryService:IntermediaryService,
-    private modalController:ModalController,
-    private alertController:AlertController,
-    private changeDetectorRef:ChangeDetectorRef,
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
+    private alertController: AlertController,
+    private changeDetectorRef: ChangeDetectorRef,
     private formBuilder: FormBuilder
   ) {
     this.selectForm = this.formBuilder.group({
@@ -57,98 +59,112 @@ export class CalendarSgaComponent implements OnInit {
       origins: new FormArray([])
     });
 
-   }
+
+
+
+  }
+
+
 
   ngOnInit() {
     this.getBase();
     this.getTemplates();
     this.getCalendarDates();
     this.changeValues();
-    
-    this.datePicker.onLeftNav.subscribe(changes=>{
+
+    this.datePicker.onLeftNav.subscribe(changes => {
       this.getCalendarDates();
     });
 
-    this.datePicker.onRightNav.subscribe(changes=>{
+    this.datePicker.onRightNav.subscribe(changes => {
       this.getCalendarDates();
     });
 
-    this.datePicker.onGoToCurrent.subscribe(changes=>{
+    this.datePicker.onGoToCurrent.subscribe(changes => {
       this.getCalendarDates();
     });
 
-    this.datePicker.onSelect.subscribe((changes)=>{
-        this.cantDates = false;
-        let selectDates = this.dates.map(_=>{
-          return _.format("YYYY-MM-DD");
-        });
-        let auxDates = [{
-          date:'todas las fechas seleccionadas',
-          warehouses:[],
-          value:null
-        }];
-        selectDates.forEach(date=>{
-          let aux = this.selectDates.find(_date=>{return (_date.date == date)});
-          if(!aux){
-            auxDates.push(
-              {
-                date:date,
-                warehouses:[],
-                value:null
-              }
-            );
-          }else{
-            auxDates.push(aux)
-          }
-          this.getCalendarDates();
-          this.cantDates = true;
-        })
+    this.datePicker.onSelect.subscribe((changes) => {
+      this.cantDates = false;
+      let selectDates = this.dates.map(_ => {
+        return _.format("YYYY-MM-DD");
+      });
+      let auxDates = [{
+        date: 'todas las fechas seleccionadas',
+        warehouses: [],
+        value: null
+      }];
+      selectDates.forEach(date => {
+        let aux = this.selectDates.find(_date => { return (_date.date == date) });
+        if (!aux) {
+          auxDates.push(
+            {
+              date: date,
+              warehouses: [],
+              value: null
+            }
+          );
+        } else {
+          auxDates.push(aux)
+        }
         this.getCalendarDates();
-        this.selectDates = auxDates;
-        this.changeDetectorRef.detectChanges();
-        this.intermediaryService.presentLoading();
-        this.calendarService.getTemplatesByDate(selectDates).subscribe(templates=>{
-          templates.forEach(template=>{
-            this.selectDates.forEach(date=>{
-              if(template.date == date.date){
-                date.warehouses = template.warehouses;
-              }
-            });
+        this.cantDates = true;
+      })
+      this.getCalendarDates();
+      this.selectDates = auxDates;
+      this.changeDetectorRef.detectChanges();
+      this.intermediaryService.presentLoading();
+      this.calendarService.getTemplatesByDate(selectDates).subscribe(templates => {
+        templates.forEach(template => {
+          this.selectDates.forEach(date => {
+            if (template.date == date.date) {
+              date.warehouses = template.warehouses;
+            }
           });
-          let equals = true;
-          for(let i = 1; i < this.selectDates.length; i++) {
-            for(let j = 0; j < this.selectDates[i].warehouses.length; j++) {
-              if(i+1 <= this.selectDates.length && this.selectDates[i+1]) {
-                if(this.selectDates[i].warehouses.length == this.selectDates[i+1].warehouses.length){
-                  if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
-                    let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
-                    let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
-                    if(currentWarehouses.length == nextWarehouses.length) {
-                      for(let k = 0; k < currentWarehouses.length; k++) {
-                        if(!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
-                          equals = false;
-                        }
+        });
+        let equals = true;
+        for (let i = 1; i < this.selectDates.length; i++) {
+          for (let j = 0; j < this.selectDates[i].warehouses.length; j++) {
+            if (i + 1 <= this.selectDates.length && this.selectDates[i + 1]) {
+              if (this.selectDates[i].warehouses.length == this.selectDates[i + 1].warehouses.length) {
+                if (_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i + 1].warehouses[j].originWarehouse)) {
+                  let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
+                  let nextWarehouses = this.selectDates[i + 1].warehouses[j].destinationsWarehouses;
+                  if (currentWarehouses.length == nextWarehouses.length) {
+                    for (let k = 0; k < currentWarehouses.length; k++) {
+                      if (!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
+                        equals = false;
                       }
-                    } else { equals = false; }
+                    }
                   } else { equals = false; }
-                } else {equals = false; }
-              }
+                } else { equals = false; }
+              } else { equals = false; }
             }
           }
-          
-          if(equals && this.selectDates.length != 1) {
-            this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
-          } else if(this.selectDates.length != 1){
-            this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
-          }
+        }
 
-          this.date = auxDates[0];
-          this.manageSelectedClass2();
-          this.intermediaryService.dismissLoading();
-        },()=>{
-          this.intermediaryService.dismissLoading();
-        })
+        if (equals && this.selectDates.length != 1) {
+          this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
+        } else if (this.selectDates.length != 1) {
+          this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
+        }
+
+        this.date = auxDates[0];
+        this.manageSelectedClass2();
+        this.intermediaryService.dismissLoading();
+      }, () => {
+        this.intermediaryService.dismissLoading();
       })
+    });
+
+    this.selectForm.valueChanges.subscribe((obj) => {
+      this.isCheckedOrigin = false;
+      obj.origins.forEach(element => {
+        if (element) {
+          this.isCheckedOrigin = true;
+        }
+      });
+    });
   }
 
   /**
@@ -156,29 +172,30 @@ export class CalendarSgaComponent implements OnInit {
    */
 
   setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
+    
     this.warehousesDestinationList.forEach(val => {
       val.destinos = [],
-      val.destinos_label = ''
+        val.destinos_label = ''
     });
 
     selectDateWarehouses.forEach(warehouse => {
       warehouse.destinationsWarehouses.forEach(destination => {
-          this.warehousesDestinationList.forEach(val2 => {
-            if(val2.id === warehouse.originWarehouse.id){
-              if(valueDate) {
-                val2.destinos.push({
-                  id: destination.destinationWarehouse.id,
-                  name: destination.destinationWarehouse.name
-                });
-                if(val2.destinos_label != '')
-                  val2.destinos_label += ', '+destination.destinationWarehouse.name;
-                else
-                  val2.destinos_label = destination.destinationWarehouse.name
-              }               
+        this.warehousesDestinationList.forEach(val2 => {
+          if (val2.id === warehouse.originWarehouse.id) {
+            if (valueDate) {
+              val2.destinos.push({
+                id: destination.destinationWarehouse.id,
+                name: destination.destinationWarehouse.name
+              });
+              if (val2.destinos_label != '')
+                val2.destinos_label += ', ' + destination.destinationWarehouse.name;
+              else
+                val2.destinos_label = destination.destinationWarehouse.name
             }
-          });
+          }
         });
       });
+    });
     this.sortByDestinations();
   }
 
@@ -187,19 +204,19 @@ export class CalendarSgaComponent implements OnInit {
   /**
    * Obtener todas las fechas
    */
-  getCalendarDates():void{
-    this.calendarService.getCalendarDates().subscribe(dates=>{
+  getCalendarDates(): void {
+    this.calendarService.getCalendarDates().subscribe(dates => {
       this.manageHaveClass(dates);
     });
   }
 
-  manageHaveClass(dates:Array<string>):void{
+  manageHaveClass(dates: Array<string>): void {
     let days = <any>document.getElementsByClassName("dp-calendar-day");
-    for(let i=0;i<days.length;i++){
+    for (let i = 0; i < days.length; i++) {
       let day = days[i];
-      dates.forEach(date=>{
-        if(date.split("-").reverse().join("-") == day.dataset.date){
-          day.className+= ' haveDate'; 
+      dates.forEach(date => {
+        if (date.split("-").reverse().join("-") == day.dataset.date) {
+          day.className += ' haveDate';
         }
       });
     }
@@ -208,8 +225,8 @@ export class CalendarSgaComponent implements OnInit {
   /**
    * Obtain the stored templates
    */
-  getTemplates():void{
-    this.calendarService.getTemplates().subscribe(templates=>{
+  getTemplates(): void {
+    this.calendarService.getTemplates().subscribe(templates => {
       this.templates = templates;
     });
   }
@@ -217,9 +234,9 @@ export class CalendarSgaComponent implements OnInit {
   /**
    * Get the base template skeleton to show
    */
-  getBase():void{
+  getBase(): void {
     this.intermediaryService.presentLoading();
-    this.calendarService.getBaseBad().subscribe(warehouses=>{
+    this.calendarService.getBaseBad().subscribe(warehouses => {
       //console.log(warehouses);
       this.intermediaryService.dismissLoading();
       this.templateBase = warehouses;
@@ -239,24 +256,25 @@ export class CalendarSgaComponent implements OnInit {
         const control = new FormControl();
         (this.selectForm.controls.origins as FormArray).push(control);
       });
-    },()=>{
+    }, () => {
       this.intermediaryService.dismissLoading();
     })
   }
-  
+
   /**
    * Guardar destino
    */
-  async store(idOrigin: number){
+  async store(idOrigin: number) {
+    console.log("rrigen", idOrigin);
     var destinos = [];
     var destinations = [];
     this.warehousesDestinationList.forEach(val => {
-      if(val.id === idOrigin){
+      if (val.id === idOrigin) {
         destinos = val.destinos;
       }
     });
     this.warehousesOriginDestinationList.forEach(val => {
-      if(val.idOrigen === idOrigin){
+      if (val.idOrigen === idOrigin) {
         destinations = val.destinations;
       }
     });
@@ -268,40 +286,41 @@ export class CalendarSgaComponent implements OnInit {
         destinos: destinos
       }
     }));
-    modal.onDidDismiss().then((data)=>{
+    modal.onDidDismiss().then((data) => {
       this.intermediaryService.presentLoading();
       var dataInfo: any = data;
-      if(dataInfo.data !== undefined){
+      if (dataInfo.data !== undefined) {
         this.warehousesDestinationList.forEach(val => {
-          if(val.id === idOrigin){
+          if (val.id === idOrigin) {
             val.destinos = new Array;
             val.destinos_label = '';
           }
         });
         dataInfo.data.listDestinos.forEach(destino => {
           this.warehousesDestinationList.forEach(val2 => {
-            if(val2.id === idOrigin){
+            if (val2.id === idOrigin) {
               val2.destinos.push({
                 id: destino.id,
                 name: destino.name
               });
-              if(val2.destinos_label != '')
-                val2.destinos_label += ', '+destino.name;
+              if (val2.destinos_label != '')
+                val2.destinos_label += ', ' + destino.name;
               else
                 val2.destinos_label = destino.name
             }
           });
         });
 
-        this.selectDates.forEach((date,i)=>{
-          if(i==0)
-            return false;   
+        this.selectDates.forEach((date, i) => {
+          if (i == 0)
+            return false;
           date.warehouses = this.addWarehouses();
         });
 
         this.sortByDestinations();
       }
       this.intermediaryService.dismissLoading();
+      this.manageSelectedClass();
     })
     modal.present();
   }
@@ -310,26 +329,26 @@ export class CalendarSgaComponent implements OnInit {
    * Seleccionar plantilla
    * @param template
    */
-  selectTemplate(template: CalendarModel.Template){
+  selectTemplate(template: CalendarModel.Template) {
     this.intermediaryService.presentLoading();
-    if(this.selectDates.length == 0){
+    if (this.selectDates.length == 0) {
       this.warehousesDestinationList.forEach(val => {
         val.destinos = [],
-        val.destinos_label = ''
+          val.destinos_label = ''
       });
     }
 
     var warehouses = template.warehouses;
     warehouses.forEach(warehouse => {
       this.warehousesDestinationList.forEach(destination => {
-        if(destination.id === warehouse.originWarehouse.id){
+        if (destination.id === warehouse.originWarehouse.id) {
           warehouse.destinationsWarehouses.forEach(destinationFinal => {
             destination.destinos.push({
               id: destinationFinal.destinationWarehouse.id,
               name: destinationFinal.destinationWarehouse.name
             });
-            if(destination.destinos_label != '')
-              destination.destinos_label += ', '+destinationFinal.destinationWarehouse.name;
+            if (destination.destinos_label != '')
+              destination.destinos_label += ', ' + destinationFinal.destinationWarehouse.name;
             else
               destination.destinos_label = destinationFinal.destinationWarehouse.name
           });
@@ -339,18 +358,19 @@ export class CalendarSgaComponent implements OnInit {
 
     this.manageSelectedClass();
     this.sortByDestinations();
-
+    this.selectForm.get("isChecked").setValue(false);
     this.intermediaryService.dismissLoading();
+
   }
 
-  async sortByDestinations(){
+  async sortByDestinations() {
     // ordenar por tamaño destinos
     this.warehousesDestinationList.sort((unaCadena, otraCadena) => otraCadena.destinos.length - unaCadena.destinos.length);
-    
+
     var tempOrigin = [];
     this.warehousesDestinationList.forEach(destination => {
       this.warehousesOriginList.forEach(origin => {
-        if(destination.id === origin.id){
+        if (destination.id === origin.id) {
           tempOrigin.push(origin);
         }
       });
@@ -366,14 +386,14 @@ export class CalendarSgaComponent implements OnInit {
    * Store a new template
    * @param template - the template to save
    */
-  async storeTemplate(){
+  async storeTemplate() {
 
     var template: CalendarModel.SingleTemplateParams = {
       name: '',
       warehouses: this.addWarehouses()
     };
     const prompt = await this.alertController.create({
-      message:'Inserte el nombre de la plantilla',
+      message: 'Inserte el nombre de la plantilla',
       inputs: [
         {
           name: 'name',
@@ -393,13 +413,13 @@ export class CalendarSgaComponent implements OnInit {
           handler: (data) => {
             template.name = data.name;
             this.intermediaryService.presentLoading();
-            this.calendarService.storeTemplate(template).subscribe(()=>{
+            this.calendarService.storeTemplate(template).subscribe(() => {
               this.clear();
               this.getCalendarDates();
               this.intermediaryService.presentToastSuccess("Plantilla guardada con éxito");
               this.getTemplates();
               this.intermediaryService.dismissLoading();
-            },()=>{
+            }, () => {
               this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
               this.intermediaryService.dismissLoading();
             });
@@ -412,19 +432,19 @@ export class CalendarSgaComponent implements OnInit {
 
   }
 
-  clear(){
+  clear() {
     this.intermediaryService.presentLoading();
     this.warehousesOriginList.sort((unaCadena, otraCadena) => unaCadena.id - otraCadena.id);
 
     this.warehousesDestinationList.forEach(val => {
       val.destinos = [],
-      val.destinos_label = ''
+        val.destinos_label = ''
     });
 
     var tempDestination = [];
     this.warehousesOriginList.forEach(origin => {
       this.warehousesDestinationList.forEach(destination => {
-        if(destination.id === origin.id){
+        if (destination.id === origin.id) {
           tempDestination.push(destination);
         }
       });
@@ -435,9 +455,9 @@ export class CalendarSgaComponent implements OnInit {
     this.warehousesDestinationList = tempDestination;
 
     this.selectDates = [{
-      date:'todas las fechas seleccionadas',
-      warehouses:[],
-      value:null
+      date: 'todas las fechas seleccionadas',
+      warehouses: [],
+      value: null
     }];
 
     /** limpiar check */
@@ -452,96 +472,116 @@ export class CalendarSgaComponent implements OnInit {
     this.intermediaryService.dismissLoading();
   }
 
-  addWarehouses(): any[]{
+  addWarehouses(): any[] {
     var warehouses: any = [];
 
     this.warehousesDestinationList.forEach(val => {
-      if(val.destinos.length > 0){
+      if (val.destinos.length > 0) {
         warehouses.push({
           originWarehouseId: val.id,
-          destinationWarehouseIds: (val.destinos.map(warehouse=>warehouse.id))
+          destinationWarehouseIds: (val.destinos.map(warehouse => warehouse.id))
         });
       }
     });
 
     return warehouses;
   }
-  
+
 
   /**
    * Store new ????
    */
-  storeDate():void{
+  storeDate(): void {
     let globalValues = {
-      calendars:[]
+      calendars: []
     }
-    this.selectDates.forEach((date,i)=>{
-      if(i==0)
+    this.selectDates.forEach((date, i) => {
+      if (i == 0)
         return false;
       var value = {
         date: '',
         warehouses: []
       };
 
-      if(this.date.date != 'todas las fechas seleccionadas')
+      if (this.date.date != 'todas las fechas seleccionadas')
         value.warehouses = this.addWarehouses();
       else
         value.warehouses = this.addWarehouses();
       value.date = date.date;
-      if(value.warehouses.length)
+      if (value.warehouses.length)
         globalValues.calendars.push(value)
     });
-    
+
     this.intermediaryService.presentLoading();
-    this.calendarService.store(globalValues).subscribe(()=>{
+    this.calendarService.store(globalValues).subscribe(() => {
       this.clear()
       this.intermediaryService.presentToastSuccess("Guardado con éxito");
       this.intermediaryService.dismissLoading();
       this.getCalendarDates();
-    },(error)=>{
+    }, (error) => {
       this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
       this.intermediaryService.dismissLoading();
     });
     // console.log(globalValues);
   }
 
-  manageSelectedClass():void{
-    let days = <any>document.getElementsByClassName("dp-calendar-day");
-    for(let i=0;i<days.length;i++){
+  manageSelectedClass(): void {
+    console.log("ok");
+    let days: Array<any> = <any>document.getElementsByClassName("dp-calendar-day");
+    let days1: Array<any> = <any>document.getElementsByClassName("tselected2");
+
+    for (let i = 0; i < days.length; i++) {
       let day = days[i];
-      this.selectDates.forEach(date=>{
-        if(date.date.split("-").reverse().join("-") == day.dataset.date){
-          if((date.warehouses.length) || (date.date && this.addWarehouses().length)){
-            day.className+= ' tselected'; 
-          }else{
+      this.selectDates.forEach(date => {
+
+        if (date.date.split("-").reverse().join("-") == day.dataset.date) {
+          if ((date.warehouses.length) || (date.date && this.addWarehouses().length)) {
+            day.className += ' tselected';
+          } else {
             // console.log("borrando")
             day.className = day.className.replace(/tselected/g, "");
           }
-        } 
+        }
+      });
+    }
+
+    for (let i = 0; i < days1.length; i++) {
+      let day1 = days1[i];
+      day1.className = day1.className.replace(/haveDate/g, "");
+      day1.className = day1.className.replace(/tselected2/g, "");
+      this.selectDates.forEach(date => {
+
+        if (date.date.split("-").reverse().join("-") == day1.dataset.date) {
+          if ((date.warehouses.length) || (date.date && this.addWarehouses().length)) {
+            day1.className += ' tselected';
+          }
+        }
       });
     }
   }
 
-  manageSelectedClass2():void{
+  manageSelectedClass2(): void {
+    console.log("ok1");
     let days = <any>document.getElementsByClassName("dp-calendar-day");
-    for(let i=0;i<days.length;i++){
+    for (let i = 0; i < days.length; i++) {
       let day = days[i];
-      this.selectDates.forEach(date=>{
-        if(date.date.split("-").reverse().join("-") == day.dataset.date){
-          if((date.warehouses.length) || (date.date && this.addWarehouses().length)){
-            day.className+= ' tselected2'; 
-          }else{
+      this.selectDates.forEach(date => {
+        if (date.date.split("-").reverse().join("-") == day.dataset.date) {
+          if ((date.warehouses.length) || (date.date && this.addWarehouses().length)) {
+            day.className += ' tselected2';
+          } else {
             // console.log("borrando")
             day.className = day.className.replace(/tselected2/g, "");
           }
-        } 
+        }
       });
     }
   }
 
-  manageSelectedRadio():void{
+  manageSelectedRadio(): void {
+    console.log("cuando llega aqui");
     let days = <any>document.getElementsByClassName("dp-selected");
-    for(let i=0;i<days.length;i++){
+    for (let i = 0; i < days.length; i++) {
       let day = days[i];
       day.className = day.className.replace(/dp-selected/g, "");
     }
@@ -551,16 +591,21 @@ export class CalendarSgaComponent implements OnInit {
    * Tells if all dates have selected warehouses
    * @returns status of submit
    */
-  validToStore(){
+  validToStore() {
     let flag = true;
-    if(this.date.date == 'todas las fechas seleccionadas' && this.addWarehouses().length )
-      return true;
-    this.selectDates.forEach((date,i)=>{
-      if(!i)
+    if (this.date) {
+      if (this.date.date == 'todas las fechas seleccionadas' && this.addWarehouses().length)
         return true;
-      if(!(date.warehouses.length || (date.value && this.addWarehouses().length)))
-        flag = false;
-    });
+      this.selectDates.forEach((date, i) => {
+        if (!i)
+          return true;
+        if (!(date.warehouses.length || (date.value && this.addWarehouses().length)))
+          flag = false;
+      });
+    } else
+      flag = false;
+
+
     return flag;
   }
 
@@ -569,9 +614,9 @@ export class CalendarSgaComponent implements OnInit {
    * @param idTemplate de la plantilla a eliminar
    */
 
-   async deleteTemplate(idTemplate){
+  async deleteTemplate(idTemplate) {
     const prompt = await this.alertController.create({
-      message:'¿Seguro desea eliminar la plantilla?',
+      message: '¿Seguro desea eliminar la plantilla?',
       buttons: [
         {
           text: 'Cancel',
@@ -583,13 +628,13 @@ export class CalendarSgaComponent implements OnInit {
           text: 'Ok',
           handler: (data) => {
             this.intermediaryService.presentLoading();
-            this.calendarService.deleteTemplate(idTemplate).subscribe(template=>{
+            this.calendarService.deleteTemplate(idTemplate).subscribe(template => {
               this.intermediaryService.presentToastSuccess("Plantilla eliminada con éxito");
               this.intermediaryService.dismissLoading();
               this.templates = [];
               this.clear();
               this.getTemplates();
-            },()=>{
+            }, () => {
               this.intermediaryService.presentToastError("Error al eliminar, intente más tarde");
               this.intermediaryService.dismissLoading();
             });
@@ -599,33 +644,33 @@ export class CalendarSgaComponent implements OnInit {
     });
 
     await prompt.present();
-    
-   }
 
-   changeValues(): void {
+  }
+
+  changeValues(): void {
     /**Listen for changes on isChecked control */
     this.selectForm.get("isChecked").valueChanges.subscribe((isChecked) => {
       this.warehousesOriginList.forEach(origin => {
-          if(isChecked){
-            var obj = {
-              id: origin.id
-            };
-            this.listOriginCheck.push(obj);
-          } 
-        });
-    
-        if(!isChecked){
-          (<FormArray>this.selectForm.get("origins")).controls.forEach(control=>{
-            control.setValue(false,{emitEvent:false});
-          });
-          this.listOriginCheck = [];
-        } else {
-          (<FormArray>this.selectForm.get("origins")).controls.forEach(control=>{
-            control.setValue(true,{emitEvent:true});
-          });
+        if (isChecked) {
+          var obj = {
+            id: origin.id
+          };
+          this.listOriginCheck.push(obj);
         }
+      });
+
+      if (!isChecked) {
+        (<FormArray>this.selectForm.get("origins")).controls.forEach(control => {
+          control.setValue(false, { emitEvent: false });
+        });
+        this.listOriginCheck = [];
+      } else {
+        (<FormArray>this.selectForm.get("origins")).controls.forEach(control => {
+          control.setValue(true, { emitEvent: true });
+        });
+      }
     });
-    
+
   }
 
 
@@ -633,36 +678,36 @@ export class CalendarSgaComponent implements OnInit {
    * Seleccionar origenes
    */
   addValueArray(origin: any): void {
-  
+
     var indexA = -1;
-    
+
     this.listOriginCheck.forEach((val, index) => {
-      if(val.id === origin.id){
+      if (val.id === origin.id) {
         indexA = index;
       }
     });
 
- 
+
     if (indexA > -1)
       this.listOriginCheck.splice(indexA, 1);
-    else{
+    else {
       var obj = {
         id: origin.id
       };
       this.listOriginCheck.push(obj);
     }
   }
-  
+
   /**
    * Abrir modal para agregar destinos
    */
-  async openModalDestination(){
+  async openModalDestination() {
     this.listOriginCheck = [];
 
     const selectedOrderIds = this.selectForm.value.origins
-        .map((v, i) => v ? this.warehousesOriginList[i].id : null)
-        .filter(v => v !== null);
-    
+      .map((v, i) => v ? this.warehousesOriginList[i].id : null)
+      .filter(v => v !== null);
+
     selectedOrderIds.forEach(select => {
       this.listOriginCheck.push({
         id: select
@@ -673,15 +718,21 @@ export class CalendarSgaComponent implements OnInit {
     var destinos = [];
     this.warehousesOriginDestinationList.forEach(destination => {
       this.listOriginCheck.forEach(originCheck => {
-        if(destination.idOrigen === originCheck.id){
-          destinations = destinations.concat(destination.destinations); 
+        if (destination.idOrigen === originCheck.id) {
+          destinations = destinations.concat(destination.destinations);
         }
       });
+
+
     });
 
     /** Eliminar repetidos */
     destinations = destinations.filter((valorActual, indiceActual, arreglo) => {
-        return arreglo.findIndex(valorDelArreglo => JSON.stringify(valorDelArreglo.destinationWarehouse.id) === JSON.stringify(valorActual.destinationWarehouse.id)) === indiceActual
+      return arreglo.findIndex(valorDelArreglo => JSON.stringify(valorDelArreglo.destinationWarehouse.id) === JSON.stringify(valorActual.destinationWarehouse.id)) === indiceActual
+    });
+
+    let dest = destinations.forEach(destination => {
+
     });
 
     /** ordenar destinos */
@@ -694,10 +745,10 @@ export class CalendarSgaComponent implements OnInit {
         destinos: destinos
       }
     }));
-    modal.onDidDismiss().then((data)=>{
+    modal.onDidDismiss().then((data) => {
       this.intermediaryService.presentLoading();
       var dataInfo: any = data;
-      if(dataInfo.data !== undefined){
+      if (dataInfo.data !== undefined) {
         this.warehousesDestinationList.forEach(val => {
           val.destinos = new Array;
           val.destinos_label = '';
@@ -705,13 +756,13 @@ export class CalendarSgaComponent implements OnInit {
         dataInfo.data.listDestinos.forEach(destino => {
           this.warehousesDestinationList.forEach(val2 => {
             this.listOriginCheck.forEach(originCheck => {
-              if(val2.id === originCheck.id && originCheck.id !== destino.id){
+              if (val2.id === originCheck.id && originCheck.id !== destino.id) {
                 val2.destinos.push({
                   id: destino.id,
                   name: destino.name
                 });
-                if(val2.destinos_label != '')
-                  val2.destinos_label += ', '+destino.name;
+                if (val2.destinos_label != '')
+                  val2.destinos_label += ', ' + destino.name;
                 else
                   val2.destinos_label = destino.name
               }
@@ -719,9 +770,9 @@ export class CalendarSgaComponent implements OnInit {
           });
         });
 
-        this.selectDates.forEach((date,i)=>{
-          if(i==0)
-            return false;   
+        this.selectDates.forEach((date, i) => {
+          if (i == 0)
+            return false;
           date.warehouses = this.addWarehouses();
         });
 
