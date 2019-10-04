@@ -1,0 +1,83 @@
+div.content {
+  height: 100%;
+  div.product-scanned {
+    position: absolute;
+    width: 100%;
+    color: var(--ion-color-white-tint);
+    background-color: var(--ion-color-primary);
+    font-size: 16px;
+    margin: 0;
+    padding: 18px 24px;
+    span {
+      padding: 5px;
+    }
+    div.model-data {
+      line-height: 20px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      span {
+        flex-direction: column;
+        flex: 1;
+        display: flex;
+      }
+      span.model {
+        font-weight: 500;
+      }
+      div.color-sorter {
+        width: 30px;
+        height: 30px;
+        flex-direction: column;
+        flex: 1;
+        display: flex;
+        div {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          margin-top: 7px;
+          position: absolute;
+          right: 30px;
+        }
+      }
+    }
+    ion-row {
+      span.col-store {
+        font-weight: 500;
+      }
+    }
+  }
+  div.start-message-guide, p.message-guide {
+    top: calc(50% - 65px);
+    position: absolute;
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+    span {
+      line-height: 30px;
+      font-weight: 500;
+      font-size: 24px;
+    }
+    div.color-selected {
+      width: 16px;
+      height: 16px;
+      background-color: red;
+      border-radius: 50%;
+      display: inline-block;
+    }
+  }
+  p.message-guide {
+    line-height: 30px;
+    font-weight: 500;
+    font-size: 24px;
+  }
+  input.input-sorter {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 23px;
+    font-weight: bold;
+  }
+}

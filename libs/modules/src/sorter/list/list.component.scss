@@ -102,12 +102,14 @@ mat-grid-list {
     display: flex;
     flex-direction: row;
     margin-right: 20%;
+    flex-wrap: wrap;
   }
   
   .column {
-    padding: 20px;
     font-size: 20px;
     border: 1px solid black;
+    flex: 1 1 auto;
+    width: 65px;
   }
 
   .selected {
@@ -139,4 +141,9 @@ mat-grid-list {
 .overAuto {
     max-height: calc(100vh - 278px) !important;
     overflow: auto;
+}
+
+.containerWays {
+    margin: 0 auto;
+    width: 75%;
 }

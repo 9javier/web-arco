@@ -1,0 +1,52 @@
+div.matrix-main {
+  display: table;
+  height: calc(100vh - 56px - 152px - 76px);
+  width: 100%;
+  div.center-block {
+    display: table-cell;
+    vertical-align: middle;
+    height: 100%;
+    width: 100%;
+    div.matrix {
+      div.height {
+        width: auto;
+        height: auto;
+        display: table;
+        margin: 0 auto;
+        div.column {
+          height: 24px;
+          width: 40px;
+          border: 1px solid black;
+          display: table-cell;
+        }
+      }
+      div.footer {
+        margin: 0 auto;
+        height: 12px;
+        border-right: 1px solid black;
+        border-left: 1px solid black;
+      }
+    }
+    div.legend {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 14px;
+      div.zone {
+        display: block;
+        line-height: 18px;
+        div.color-zone {
+          width: 12px;
+          height: 12px;
+          display: inline-block;
+          margin-right: 8px;
+          margin-top: 8px;
+          padding-top: 3px;
+          border: 1px solid black;
+        }
+        span.name-zone {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}

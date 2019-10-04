@@ -1,0 +1,15 @@
+<ion-content>
+  <sorter-color-selector [colors]="colorsSelectors" (colorSelected)="colorSelected($event)"></sorter-color-selector>
+
+  <div *ngIf="loadingSorterTemplateMatrix" class="loader-template-matrix">
+    <div>
+      <ion-spinner></ion-spinner>
+      <p>
+        Cargando plantilla actual del sorter...
+      </p>
+    </div>
+  </div>
+  <sorter-matrix-input></sorter-matrix-input>
+
+  <sorter-footer-buttons *ngIf="sorterProvider.colorSelected" (operationCancel)="sorterOperationCancelled()" (operationStart)="sorterOperationStarted()"></sorter-footer-buttons>
+</ion-content>

@@ -9,22 +9,23 @@ const routes: Routes = [
     path: 'home',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/home/home.module#HomePageModule',
-    data:{
-      name:'Principal'
+    data: {
+      name: 'Principal'
     }
   },
   {
     path: 'users',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/users/users.module#UsersModule',
-    data:{
+    data: {
       name: 'Usuarios'
     }
-  },  {
+  },
+  {
     path: 'calendar',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/calendar-picking//calendar-picking.module#CalendarPickingModule',
-    data:{
+    data: {
       name: 'Calendario'
     }
   },  {
@@ -39,24 +40,24 @@ const routes: Routes = [
     path: 'roles',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/roles/roles.module#RolesModule',
-    data:{
-      name:'Roles'
+    data: {
+      name: 'Roles'
     }
   },
   {
     path: 'group-to-warehouse',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-to-warehouse/group-to-warehouse.module#GroupToWarehouseModule',
-    data:{
-      name:'Asignar grupos de tiendas'
+    data: {
+      name: 'Asignar grupos de tiendas'
     }
   },
   {
     path: 'assign',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/assign/assign.module#AssignModule',
-    data:{
-      name:'Asignar'
+    data: {
+      name: 'Asignar'
     }
   },
   {
@@ -65,227 +66,232 @@ const routes: Routes = [
       token: RemoteTokenResolver
     },
     loadChildren: '../../../../libs/modules/src/login/login.module#LoginPageModule',
-    data:{
-      name:'Login'
+    data: {
+      name: 'Login'
     }
   },
   {
     path: 'user-time/:redirect',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
-    data:{
-      name:'Registro horario'
+    data: {
+      name: 'Registro horario'
     }
-  },{
+  },
+  {
     path: 'user-time',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
-    data:{
-      name:'Registro horario'
+    data: {
+      name: 'Registro horario'
     }
   },
   {
     path: 'group-warehouse-picking',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/group-warehouse-picking/group-warehouse-picking.module#GroupWarehousePickingModule',
-    data:{
-      name:'Grupos de almacenes para picking'
+    data: {
+      name: 'Grupos de almacenes para picking'
     }
   },
   {
     path: 'jails',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',
-    data:{
-      name:'Jaulas'
+    data: {
+      name: 'Jaulas'
     }
   },
   {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
-    data:{
-      name:'Paletas'
+    data: {
+      name: 'Paletas'
     }
   },
   {
     path: 'permissions',
     loadChildren: '../../../../libs/modules/src/permissions/permissions.module#PermissionsPageModule',
-    data:{
-      name:'Permisos'
+    data: {
+      name: 'Permisos'
     }
   },
   {
     path: 'warehouses',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/warehouses/warehouses.module#WarehousesModule',
-    data:{
-      name:'Almacenes'
+    data: {
+      name: 'Almacenes'
     }
   },
   {
     path: 'groups',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/groups/groups.module#GroupsModule',
-    data:{
-      name:'Grupo de tiendas'
+    data: {
+      name: 'Grupo de tiendas'
     }
   },
   {
     path: 'user-manager',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-manager/user-manager.module#UserManagerModule',
-    data:{
-      name:'Parametrización de operarios'
+    data: {
+      name: 'Parametrización de operarios'
     }
   },
   {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
-    data:{
-      name:'Pasillos'
+    data: {
+      name: 'Pasillos'
     }
   },
   {
     path: 'products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule',
-    data:{
-      name:'Productos'
+    data: {
+      name: 'Productos'
     }
   },
   {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule',
-    data:{
-      name:'Ubicaciones'
+    data: {
+      name: 'Ubicaciones'
     }
   },
   {
-     path: '',
-     redirectTo: 'login',
-     pathMatch: 'full'
-  },{
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
     path: 'logout',
     redirectTo: 'login',
-    pathMatch: 'full'    
+    pathMatch: 'full'
   },
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule',
-    data:{
-      name:'Almacenes'
+    data: {
+      name: 'Almacenes'
     }
   },
   {
     path: 'manage-agencies',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/agency/agency.module#AgencyModule',
-    data:{
-      name:'Agencias'
+    data: {
+      name: 'Agencias'
     }
-  },  
+  },
   {
     path: 'global-variables',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/global-variables/global-variables.module#GlobalVariablesModule',
-    data:{
-      name:'Variables globales'
+    data: {
+      name: 'Variables globales'
     }
   },
   {
     path: 'workwaves-scheduled',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-schedule/workwaves-schedule.module#WorkwavesScheduleModule',
-    data:{
-      name:'Programadas'
+    data: {
+      name: 'Programadas'
     }
   },
   {
     path: 'workwave-template-rebuild',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwave-template-rebuild/workwave-template-rebuild.module#WorkwaveTemplateRebuildModule',
-    data:{
-      name:'Plantilla'
+    data: {
+      name: 'Plantilla'
     }
   },
   {
     path: 'workwaves-history',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-history/workwaves-history.module#WorkwavesHistoryModule',
-    data:{
-      name:'Historial'
+    data: {
+      name: 'Historial'
     }
   },
   {
     path: 'assign/user/picking',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-assignment-picking/user-assignment-picking.module#UserAssignmentPickingModule',
-    data:{
-      name:''
+    data: {
+      name: ''
     }
   },
   {
     path: 'labels',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/labels/labels.module#LabelsModule',
-    data:{
-      name:'Etiquetas'
+    data: {
+      name: 'Etiquetas'
     }
-  },{
+  },
+  {
     path: 'tariff',
-    canActivate:[AuthGuard],
-    loadChildren:'../../../../libs/modules/src/tariffSGA/tariffSGA.module#TariffSGAModule',
-    data:{
-      name:'Tarifas'
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/tariffSGA/tariffSGA.module#TariffSGAModule',
+    data: {
+      name: 'Tarifas'
     }
   },
   {
     path: 'incidences',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/incidences-list/incidences-list.module#IncidencesListModule',
-    data:{
-      name:'Notificaciones'
+    data: {
+      name: 'Notificaciones'
     }
   },
   {
-    path:'prices',
-    redirectTo:'products',
-    data:{
-      name:'Precios'
+    path: 'prices',
+    redirectTo: 'products',
+    data: {
+      name: 'Precios'
     }
   },
   {
     path: 'prices/:tariffId',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
-    data:{
-      name:'Prices'
+    data: {
+      name: 'Prices'
     }
-  },{
+  },
+  {
     path: 'building',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
-    data:{
-      name:'Edificios'
+    data: {
+      name: 'Edificios'
     }
-  },{
+  },
+  {
     path: 'sorter',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
-    data:{
-      name:'Plantillas'
+    data: {
+      name: 'Plantillas'
     }
-  }
-  ,{
+  },
+  {
     path: 'sorter-new',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/sorter-create/sorter-create.module#SorterCreateModule',
-    data:{
-      name:'Crear Sorter'
+    data: {
+      name: 'Crear Sorter'
     }
   }
 ];

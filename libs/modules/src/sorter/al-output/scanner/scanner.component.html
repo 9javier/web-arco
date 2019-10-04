@@ -1,0 +1,60 @@
+<div class="content" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
+  <div class="store-packing" *ngIf="infoSorterOperation">
+    <div class="model-data">
+      <span class="store">
+        {{ infoSorterOperation.destinyWarehouse.reference + ' ' + infoSorterOperation.destinyWarehouse.name }}
+      </span>
+      <span class="packing">
+        {{ infoSorterOperation.packingReference || '' }}
+      </span>
+      <div class="color-sorter">
+        <div [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-product-wrong-code" *ngIf="firstProductScanned && wrongCodeScanned">
+    <div class="store">
+      <span [ngClass]="infoSorterOperation.destinyWarehouse.id != lastProductScannedChecking.destinyWarehouse.id ? 'wrong-store' : ''">
+        {{ lastProductScannedChecking.destinyWarehouse.reference + ' ' + lastProductScannedChecking.destinyWarehouse.name }}
+      </span>
+    </div>
+    <div class="model-info">
+      <span class="product">
+        {{ lastProductScannedChecking.reference }}
+      </span>
+      <span class="model">
+        {{ lastProductScannedChecking.model?.reference }}
+      </span>
+      <span class="size">
+        {{ lastProductScannedChecking.size ? 'T: ' + lastProductScannedChecking.size.name : '' }}
+      </span>
+    </div>
+  </div>
+
+  <p *ngIf="firstProductScanned && !wrongCodeScanned" class="message-guide-finish">
+    Escanea el último artículo del sorter para acabar.
+  </p>
+  <p *ngIf="firstProductScanned && wrongCodeScanned" class="message-guide-wrong-code">
+    ¡Escanea cada artículo y revisa destino!
+  </p>
+
+  <div class="start-message-guide" (click)="focusToInput()" *ngIf="!inputValue && !processStarted">
+    <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div><span>!</span>
+    <br/>
+    <span>Escanea una jaula</span>
+    <br/>
+    <span>para comenzar</span>
+  </div>
+  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted">{{messageGuide}}</p>
+
+  <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
+
+  <sorter-footer-buttons-scanner
+    *ngIf="firstProductScanned"
+    [leftButton]="leftButtonText"
+    [leftButtonDanger]="leftButtonDanger"
+    [rightButton]="rightButtonText"
+    (rightButtonAction)="emptyPacking()">
+  </sorter-footer-buttons-scanner>
+</div>

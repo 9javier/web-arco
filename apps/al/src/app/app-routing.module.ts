@@ -208,6 +208,14 @@ const routes: Routes = [
     data: {
       name: 'Traspaso'
     }
+  },
+  {
+    path: 'sorter',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
+    data: {
+      name: 'sorter'
+    }
   }
 ];
 

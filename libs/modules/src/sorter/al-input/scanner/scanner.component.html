@@ -1,0 +1,43 @@
+<div class="content">
+  <div class="product-scanned" *ngIf="processStarted && productScanned">
+    <div class="model-data">
+      <span class="col-text">
+        {{ productScanned.reference }}
+      </span>
+      <span class="model">
+        {{ productScanned.model?.reference }}
+      </span>
+      <span>
+        {{ productScanned.size ? 'T: ' + productScanned.size.name : '' }}
+      </span>
+      <div class="color-sorter">
+        <div [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div>
+      </div>
+    </div>
+    <ion-row *ngIf="productScanned.destinyWarehouse">
+      <span class="col-store">
+        {{ productScanned.destinyWarehouse.reference + ' ' + productScanned.destinyWarehouse.name }}
+      </span>
+    </ion-row>
+  </div>
+
+  <div class="start-message-guide" (click)="focusToInput()" *ngIf="!inputValue && !processStarted">
+    <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div><span>!</span>
+    <br/>
+    <span>Escanea un artículo</span>
+    <br/>
+    <span>para comenzar</span>
+  </div>
+  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted">{{messageGuide}}</p>
+
+  <input id="input" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue">
+
+  <sorter-footer-buttons-scanner
+    *ngIf="processStarted"
+    [leftButton]="leftButtonText"
+    [leftButtonDanger]="leftButtonDanger"
+    [rightButton]="rightButtonText"
+    (leftButtonAction)="wrongWay()"
+    (rightButtonAction)="fullWay()">
+  </sorter-footer-buttons-scanner>
+</div>

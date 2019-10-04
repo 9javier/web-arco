@@ -57,7 +57,7 @@ export class MenuComponent implements OnInit {
       children: [
         {
           title: 'Productos',
-          id:'products',
+          id: 'products',
           url: '/products',
           icon: 'basket'
         },
@@ -69,7 +69,7 @@ export class MenuComponent implements OnInit {
         },*/
         {
           title: 'Gestión de almacén',
-          id:'warehouses-management',
+          id: 'warehouses-management',
           url: '/warehouse/manage',
           icon: 'apps'
         },
@@ -89,13 +89,13 @@ export class MenuComponent implements OnInit {
       children: [
         {
           title: 'Listado',
-          id:'workwaves-scheduled',
+          id: 'workwaves-scheduled',
           url: '/workwaves-scheduled',
           icon: 'code'
         },
         {
           title: 'Historial',
-          id:'workwaves-history',
+          id: 'workwaves-history',
           url: '/workwaves-history',
           icon: 'code-download'
         },
@@ -116,32 +116,32 @@ export class MenuComponent implements OnInit {
         {
           title: 'Gestión de usuarios',
           url: '/users/menu',
-          id:'user-management',
+          id: 'user-management',
           icon: 'people'
         },
         {
           title: 'Parametrización de operarios',
-          id:'operator-parametrization',
+          id: 'operator-parametrization',
           url: '/user-manager',
           icon: 'people'
         },
         {
           title: 'Roles',
-          id:'roles',
+          id: 'roles',
           url: '/roles/menu',
           icon: 'person'
         },
       ]
     },
     {
-      title: 'Picking Tiendas',
+      title: 'Picking tiendas',
       open: true,
       type: 'wrapper',
       icon: 'cart',
       children: [
         {
           title: 'Calendario',
-          id:'calendar',
+          id: 'calendar',
           url: '/calendar',
           icon: 'md-calendar'
         },
@@ -160,78 +160,84 @@ export class MenuComponent implements OnInit {
       icon: 'options',
       children: [
         {
-        title: 'Variables globales',
-        id: 'global-variables',
-        url: '/global-variables',
-        icon: 'cog'
-      },
+          title: 'Variables globales',
+          id: 'global-variables',
+          url: '/global-variables',
+          icon: 'cog'
+        },
         {
           title: 'Almacenes',
-          id:'warehouses',
+          id: 'warehouses',
           url: '/warehouses',
           icon: 'filing'
         },
         {
           title: 'Grupos de almacenes',
-          id:'warehouses-group',
+          id: 'warehouses-group',
           url: '/groups/menu',
           icon: 'person'
         },
         {
           title: 'Asignar grupos de almacenes',
-          id:'group-to-warehouse',
+          id: 'group-to-warehouse',
           url: '/group-to-warehouse',
           icon: 'people'
         },
         {
           title: 'Grupos de tiendas para picking',
-          id:'group-warehouse-picking',
+          id: 'group-warehouse-picking',
           url: '/group-warehouse-picking',
           icon: 'people'
         },
         {
-          title:'Agencias',
-          id:'agency',
-          url:'/manage-agencies',
-          icon:'train'
+          title: 'Agencias',
+          id: 'agency',
+          url: '/manage-agencies',
+          icon: 'train'
         },
         {
           title: 'Edificios',
-          id:'building',
+          id: 'building',
           url: '/building',
           icon: 'business'
         },
         {
           title: 'Embalajes',
-          id:'jails',
+          id: 'jails',
           url: '/jails/menu',
           icon: 'grid'
         },
       ]
     },
     {
-      title:'Tarifas',
-      id:'tariff-sga',
-      url:'/tariff',
-      icon:'logo-usd'
+      title: 'Tarifas',
+      id: 'tariff-sga',
+      url: '/tariff',
+      icon: 'logo-usd'
     },
     {
       title: 'Sorter',
       open: true,
       type: 'wrapper',
-      icon:'logo-usd',
+      icon: 'apps',
       children: [
         {
-          title: 'Crear Sorter',
-          id:'sorter-sga-create',
+          title: 'Crear sorter',
+          id: 'sorter-sga-create',
           url: '/sorter-new',
-          icon:'logo-usd'
+          icon: 'add'
         },
         {
-        title: 'Crear Plantillas-Zonas',
-        id:'sorter-sga',
-        url: '/sorter',
-        icon:'logo-usd'
+          title: 'Crear plantillas-zonas',
+          id: 'sorter-sga',
+          url: '/sorter',
+          icon: 'document'
+        },
+        {
+          title: 'Selección de plantilla',
+          id: 'sorter-template-selection',
+          url: '/sorter/template/selection',
+          icon: 'checkbox-outline'
         }
       ]
     }
@@ -301,10 +307,16 @@ export class MenuComponent implements OnInit {
           icon: 'pricetags'
         },
         {
-          title: 'Código exposición manual',
-          id: 'print-price-tag-manual',
-          url: '/print-tag/manual/price',
-          icon: 'pricetags'
+          title: 'Entrada',
+          id: 'sorter-input',
+          url: '/sorter/input',
+          icon: 'exit'
+        },
+        {
+          title: 'Salida',
+          id: 'sorter-output',
+          url: '/sorter/output',
+          icon: 'exit'
         }
       ]
     },

@@ -22,7 +22,7 @@ then for
 
 
 ### API requests config
-
+#### Obsolete / Legacy
 - Go to: 
 ```bash
 Krack/config/postman/Server.postman_enviroment.json
@@ -39,6 +39,9 @@ Krack/config/postman/Server.postman_enviroment.json
  ...
  ]
 ```
+
+#### Current configuration
+Edit: `environment.apiBase` and `environment.urlBase` keys on file `libs/services/src/environments/environment.ts` with the values of your API.
 
 ### Web development
 
@@ -58,7 +61,7 @@ ionic serve --project al
 
 open console in the root project and execute
 
-\*For first time build
+\*For first time build. DO NOT override `config.xml` nor `resources/`
 
 ```bash
 ionic integrations enable cordova --add --project al
@@ -67,7 +70,7 @@ ionic integrations enable cordova --add --project al
 For local mobile development
 
 ```
-ionic cordova run android --project mobile
+ionic cordova run android --project al
 ```
 
 for more commands to build or run, [running iOS](https://ionicframework.com/docs/building/android) or [running Android](https://ionicframework.com/docs/building/ios)

@@ -95,7 +95,6 @@ export class SorterCreateComponent implements OnInit {
               >
             ) => {
               this.warehouses = res.body.data;
-              console.log(this.warehouses);
               this.initSelect(this.warehouses);
             },
             (err) => {
@@ -162,7 +161,7 @@ export class SorterCreateComponent implements OnInit {
       component: UpdateComponent,
       componentProps:{
         wareHouses: this.warehouses,
-        sorter: payload,
+        sorterId: payload.id,
         colors: this.colors,
       }
     }));
