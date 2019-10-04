@@ -23,6 +23,7 @@ export class CalendarSgaComponent implements OnInit {
   public templateBase: Array<CalendarModel.TemplateWarehouse> = [];
   public cantDates: boolean = false;
   private isCheckedOrigin: boolean = false;
+  private selectTem: boolean = false;
 
 
   public calendarConfiguration: IDatePickerConfig = {
@@ -175,7 +176,10 @@ export class CalendarSgaComponent implements OnInit {
 
   setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
 
+
     selectDateWarehouses.forEach(warehouse => {
+
+
       warehouse.destinationsWarehouses.forEach(destination => {
         this.warehousesDestinationList.forEach(val2 => {
           if (val2.id === warehouse.originWarehouse.id) {
@@ -193,18 +197,17 @@ export class CalendarSgaComponent implements OnInit {
                 else
                   val2.destinos_label = destination.destinationWarehouse.name
               };
-
-
             } else {
               val2.destinos = [],
                 val2.destinos_label = ''
             }
+          } else {
+            val2.destinos = [],
+              val2.destinos_label = ''
           }
         });
 
-        // this.warehousesDestinationList = this.warehousesDestinationList.filter((valorActual, indiceActual, arreglo) => {
-        //   return arreglo.findIndex(valorDelArreglo => JSON.stringify(valorDelArreglo.destinationWarehouse.id) === JSON.stringify(valorActual.destinationWarehouse.id)) === indiceActual
-        // });
+
 
       });
     });
@@ -342,6 +345,7 @@ export class CalendarSgaComponent implements OnInit {
    * @param template
    */
   selectTemplate(template: CalendarModel.Template) {
+    this.selectTem = true;
     this.intermediaryService.presentLoading();
     if (this.selectDates.length === 0) {
       this.warehousesDestinationList.forEach(val => {
@@ -454,6 +458,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   clear() {
+    this.selectTem = false;
     this.intermediaryService.presentLoading();
     this.warehousesOriginList.sort((unaCadena, otraCadena) => unaCadena.id - otraCadena.id);
 
@@ -595,8 +600,12 @@ export class CalendarSgaComponent implements OnInit {
           day.className = day.className.replace(/tselected2/g, "");
           day.className = day.className.replace(/tselected/g, "");
           if ((date.warehouses.length) || (date.date && this.addWarehouses().length)) {
+            if (!this.selectTem) {
+              day.className += ' tselected2';
+            } else {
+              day.className += ' tselected';
+            }
 
-            day.className += ' tselected2';
           } else {
             day.className += ' haveDate';
           }
