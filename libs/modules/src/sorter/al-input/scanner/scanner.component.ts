@@ -148,7 +148,7 @@ export class ScannerInputSorterComponent implements OnInit {
             name: res.warehouse.name
           } : null
         };
-        this.idLastWaySet = res.way.id;
+        this.idLastWaySet = (<ExecutionSorterModel.ExecutionWay>res.way).zoneWay.way.id;
 
         await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
 

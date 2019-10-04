@@ -16,7 +16,7 @@ export namespace InputSorterModel {
     zone: ZoneSorterModel.ZoneSorter,
     sorterExecution: ExecutionSorterModel.Execution,
     color: ColorSorterModel.ColorSorter,
-    way: WaySorterModel.WaySorter,
+    way: WaySorterModel.WaySorter | ExecutionSorterModel.ExecutionWay,
     product: ProductModel.Product
   }
 

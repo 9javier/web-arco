@@ -1,4 +1,5 @@
 import {ZoneSorterModel} from "./ZoneSorter";
+import {WaySorterModel} from "./WaySorter";
 
 export namespace TemplateSorterModel {
 
@@ -31,7 +32,8 @@ export namespace TemplateSorterModel {
         id: number,
         priority: number,
         active: boolean,
-        template: Template,
-        zones: ZoneSorterModel.ZoneSorter
+        template?: Template,
+        zones?: ZoneSorterModel.ZoneSorter,
+        way?: WaySorterModel.WaySorter
     }
 }

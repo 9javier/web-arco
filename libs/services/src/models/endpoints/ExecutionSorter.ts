@@ -32,6 +32,14 @@ export namespace ExecutionSorterModel {
     zone: number
   }
 
+  export interface ExecutionWay {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    status: number,
+    zoneWay?: TemplateSorterModel.TemplateZone
+  }
+
   export interface ResponseExecuteColor {
     data: ExecuteColor
   }
