@@ -185,7 +185,11 @@ export class CalendarSgaComponent implements OnInit {
           if (val2.id === warehouse.originWarehouse.id) {
             if (valueDate) {
               if (!this.warehousesDestinationList.find((data) => {
-                let t = data.destinos.find((dt) => { return dt.id == destination.destinationWarehouse.id });
+                let t = false;
+                if (data.id == warehouse.originWarehouse.id) {
+                  t = data.destinos.find((dt) => { return (dt.id == destination.destinationWarehouse.id) });
+                }
+
                 return t ? true : false;
               })) {
                 val2.destinos.push({
