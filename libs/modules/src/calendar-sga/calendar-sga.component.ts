@@ -201,9 +201,6 @@ export class CalendarSgaComponent implements OnInit {
               val2.destinos = [],
                 val2.destinos_label = ''
             }
-          } else {
-            val2.destinos = [],
-              val2.destinos_label = ''
           }
         });
 
