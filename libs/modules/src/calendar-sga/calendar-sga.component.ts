@@ -347,12 +347,13 @@ export class CalendarSgaComponent implements OnInit {
   selectTemplate(template: CalendarModel.Template) {
     this.selectTem = true;
     this.intermediaryService.presentLoading();
-    if (this.selectDates.length === 0) {
-      this.warehousesDestinationList.forEach(val => {
-        val.destinos = [],
-          val.destinos_label = ''
-      });
-    }
+
+    this.warehousesDestinationList.forEach(val => {
+      val.destinos = [],
+        val.destinos_label = ''
+    });
+
+
 
     var warehouses = template.warehouses;
     warehouses.forEach(warehouse => {
