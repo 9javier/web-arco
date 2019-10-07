@@ -77,7 +77,7 @@ export class SorterCreateComponent implements OnInit {
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   showExpasion: boolean = false;
-  
+
   ngOnInit() {
     this.intermediaryService.presentLoading();
     this.crudService
@@ -172,12 +172,12 @@ export class SorterCreateComponent implements OnInit {
     modal.present();
   }
 
-  async store(row):Promise<void>{
+  async store():Promise<void>{
     let modal = (await this.modalController.create({
       component: CreateComponent,
       componentProps: {
         wareHouses: this.warehouses,
-        sorter: row,
+        // sorter: row,
         colors: this.colors,
       }
     }));
@@ -209,12 +209,12 @@ export class SorterCreateComponent implements OnInit {
     let deletions:Observable<any> =new Observable(observer=>observer.next());
     if(this.toDeleteIds.length > 0) {
       this.toDeleteIds.forEach(id => {
-        deletions = deletions.pipe(switchMap(() => { 
+        deletions = deletions.pipe(switchMap(() => {
           return (this.sorteService.deleteSorter(id))
         }))
       });
     }
-   
+
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
 
@@ -228,7 +228,7 @@ export class SorterCreateComponent implements OnInit {
       });
       this.selectedForm.get('global').setValue(false);
     },()=>{
-      this.intermediaryService.dismissLoading(); 
+      this.intermediaryService.dismissLoading();
       this.getSorters();
       this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las sorters");
     });
