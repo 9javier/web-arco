@@ -292,7 +292,7 @@ export class MenuComponent implements OnInit {
       title: 'Sorter',
       open: false,
       type: 'wrapper',
-      icon: 'logo-usd',
+      icon: 'apps',
       children: [
         {
           title: 'Sorter',
@@ -310,13 +310,13 @@ export class MenuComponent implements OnInit {
           title: 'Entrada',
           id: 'sorter-input',
           url: '/sorter/input',
-          icon: 'exit'
+          icon: 'log-in'
         },
         {
           title: 'Salida',
           id: 'sorter-output',
           url: '/sorter/output',
-          icon: 'exit'
+          icon: 'log-out'
         }
       ]
     },
