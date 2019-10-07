@@ -66,7 +66,7 @@ export class SorterComponent implements OnInit {
     private modalController:ModalController,
     private sorterTemplateService: SorterTemplateService,
     private intermediaryService: IntermediaryService
-    
+
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -194,7 +194,7 @@ export class SorterComponent implements OnInit {
     modal.present();
   }
 
-  async store(row):Promise<void>{
+  async store():Promise<void>{
     let modal = (await this.modalController.create({
       component:StoreComponent
     }));
@@ -243,12 +243,12 @@ export class SorterComponent implements OnInit {
     let deletions:Observable<any> =new Observable(observer=>observer.next());
     if(this.toDeleteIds.length > 0) {
       this.toDeleteIds.forEach(id => {
-        deletions = deletions.pipe(switchMap(() => { 
+        deletions = deletions.pipe(switchMap(() => {
           return (this.sorterTemplateService.deleteTemplateSorter(id))
         }))
       });
     }
-   
+
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
 
@@ -261,7 +261,7 @@ export class SorterComponent implements OnInit {
         control.setValue(false);
       });
     },()=>{
-      this.intermediaryService.dismissLoading(); 
+      this.intermediaryService.dismissLoading();
       this.getTemplates();
       this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
     });
