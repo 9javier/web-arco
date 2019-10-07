@@ -23,4 +23,17 @@ export namespace InputSorterModel {
   export interface ResponseProductScan {
     data: ProductScan
   }
+
+  export interface ParamsCheckProductInWay {
+    wayId: number,
+    productReference: string
+  }
+
+  export interface CheckProductInWay {
+    is_in_way: boolean
+  }
+
+  export interface ResponseCheckProductInWay {
+    data: CheckProductInWay
+  }
 }

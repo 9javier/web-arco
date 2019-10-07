@@ -11,6 +11,7 @@ import {InputSorterModel} from "../../../models/endpoints/InputSorter";
 export class SorterInputService {
 
   private postProductScanUrl: string = environment.apiBase + "/sorters/scanProduct";
+  private postCheckProductInWayUrl: string = environment.apiBase + "/sorter/execution/way/product/check";
 
   constructor(
     private http: HttpClient
@@ -18,6 +19,12 @@ export class SorterInputService {
 
   postProductScan(params: InputSorterModel.ParamsProductScan): Observable<InputSorterModel.ProductScan> {
     return this.http.post<InputSorterModel.ResponseProductScan>(this.postProductScanUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postCheckProductInWay(params: InputSorterModel.ParamsCheckProductInWay): Observable<InputSorterModel.CheckProductInWay> {
+    return this.http.post<InputSorterModel.ResponseCheckProductInWay>(this.postCheckProductInWayUrl, params).pipe(map(response => {
       return response.data;
     }));
   }

@@ -152,14 +152,30 @@ export class ScannerInputSorterComponent implements OnInit {
 
         await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
 
-        // TODO Remove it when notify from sorter be able. It is temporal to test
-        setTimeout(async () => {
-          this.sorterNotifyAboutProductScanned();
-        }, 5 * 1000);
+        this.checkProductInWay(productReference, this.idLastWaySet);
       }, async (error) => {
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
         await this.intermediaryService.dismissLoading();
       });
+  }
+
+  private checkProductInWay(productReference: string, wayId: number) {
+    let checkProductInWayLocal = (productReference: string, wayId: number) => {
+      console.log('Test::CheckProductInWayLocal', productReference, wayId);
+      this.sorterInputService
+        .postCheckProductInWay({ productReference, wayId })
+        .subscribe((res: InputSorterModel.CheckProductInWay) => {
+          if (!res.is_in_way) {
+            checkProductInWayLocal(productReference, wayId);
+          } else {
+            this.sorterNotifyAboutProductScanned();
+          }
+        }, (error) => {
+          console.error('Error::Subscribe::sorterInputService::postCheckProductInWay', error);
+        });
+    };
+
+    checkProductInWayLocal(productReference, wayId);
   }
 
   private async sorterNotifyAboutProductScanned() {
