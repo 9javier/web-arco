@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectorRef, ViewChild} from '@angular/core';
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Location} from "@angular/common";
 import {SelectionModel, DataSource} from "@angular/cdk/collections";
@@ -30,6 +30,7 @@ import { TemplateColorsModel } from 'libs/services/src/models/endpoints/Template
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs/operators';
 import { SorterService } from 'libs/services/src/lib/endpoint/sorter/sorter.service';
+import { MatrixSelectWaySorterComponent } from './components/matrix-select-way-sorter/matrix-select-way-sorter.component';
 
 
 @Component({
@@ -89,6 +90,8 @@ export class ListComponent implements OnInit {
   radioDisplay: boolean = false;
   wayClicked: boolean = true;
   priority: number = 1;
+
+  @ViewChild(MatrixSelectWaySorterComponent) matrixSelectWay:MatrixSelectWaySorterComponent;
 
   constructor(
     private crudService: CrudService,

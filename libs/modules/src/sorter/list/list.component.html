@@ -78,7 +78,7 @@
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
          <mat-cell *matCellDef="let element">
           <mat-radio-group name="rails">
-            <mat-radio-button (click)="displayRailsRadio(element)" [value]="element"></mat-radio-button>
+            <mat-radio-button (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)" [value]="element"></mat-radio-button>
           </mat-radio-group> 
          </mat-cell>  
         </ng-container>
@@ -95,45 +95,8 @@
 
 
     <div *ngIf="showRails" class="containerTable">
-      <div class="grid overAuto" >
-        
-          <mat-table #table [dataSource]="dataSource2" class="prioridad">
-              <ng-container matColumnDef="prioridad" >
-                <mat-header-cell *matHeaderCellDef>
-                 Prioridad
-                </mat-header-cell>
-      
-                <mat-cell *matCellDef="let element">
-                 <p style="margin-left: 20px">{{element.position}}</p> 
-                </mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="calle">
-                <mat-header-cell *matHeaderCellDef> Calle </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-              </ng-container>
-
-      
-              <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
-                [class.expanded]="expandedElement == row"></mat-row>
-              <mat-row *matRowDef="let row; when: isExpansionDetailRow"
-                [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
-                style="overflow: hidden">
-              </mat-row>
-            </mat-table>
-      </div>
-      <div class="containerWays">
-        <div *ngFor="let way of waysMatrix"  class="height">
-          <div 
-          *ngFor="let column of way.columns; let i = index" 
-          class="column" 
-          (click)="(column.adjacent || firstClick) ? getColumn(i,column.ways_number, way.height, column) : cleanColumn(i,column.ways_number, way.height, column)"
-          [ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
-              <span style="margin: 20px">{{column.ways_number}}</span>
-            </div>
-        </div>
-      </div>
+      <suite-matrix-select-way-sorter
+        [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
     </div>
 
   </ion-grid>
