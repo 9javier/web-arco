@@ -23,6 +23,7 @@ export class CalendarSgaComponent implements OnInit {
   public templateBase: Array<CalendarModel.TemplateWarehouse> = [];
   public cantDates: boolean = false;
   private isCheckedOrigin: boolean = false;
+  private selectTem: boolean = false;
 
 
   public calendarConfiguration: IDatePickerConfig = {
@@ -143,13 +144,14 @@ export class CalendarSgaComponent implements OnInit {
           }
         }
 
-        if(equals && this.selectDates.length != 1) {
+        if (equals && this.selectDates.length != 1) {
           this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
-          this.manageSelectedClass2();
-        } else if(this.selectDates.length != 1){
+        } else if (this.selectDates.length != 1) {
           this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
-          this.manageSelectedClass();
         }
+
+        this.addDarkBlueOrRed();
+
 
         this.date = auxDates[0];
         this.intermediaryService.dismissLoading();
@@ -174,27 +176,42 @@ export class CalendarSgaComponent implements OnInit {
 
   setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
 
+
     selectDateWarehouses.forEach(warehouse => {
+
+
       warehouse.destinationsWarehouses.forEach(destination => {
-          this.warehousesDestinationList.forEach(val2 => {
-            if(val2.id === warehouse.originWarehouse.id){
-              if(valueDate) {
+        this.warehousesDestinationList.forEach(val2 => {
+          if (val2.id === warehouse.originWarehouse.id) {
+            if (valueDate) {
+              if (!this.warehousesDestinationList.find((data) => {
+                let t = false;
+                if (data.id == warehouse.originWarehouse.id) {
+                  t = data.destinos.find((dt) => { return (dt.id == destination.destinationWarehouse.id) });
+                }
+
+                return t ? true : false;
+              })) {
                 val2.destinos.push({
                   id: destination.destinationWarehouse.id,
                   name: destination.destinationWarehouse.name
                 });
-                if(val2.destinos_label !== '')
-                  val2.destinos_label += ', '+destination.destinationWarehouse.name;
+                if (val2.destinos_label !== '')
+                  val2.destinos_label += ', ' + destination.destinationWarehouse.name;
                 else
                   val2.destinos_label = destination.destinationWarehouse.name
-              } else {
-                val2.destinos = [],
+              };
+            } else {
+              val2.destinos = [],
                 val2.destinos_label = ''
-              }           
             }
-          });
+          }
         });
+
+
+
       });
+    });
     this.sortByDestinations();
   }
 
@@ -264,7 +281,7 @@ export class CalendarSgaComponent implements OnInit {
    * Guardar destino
    */
   async store(idOrigin: number) {
-    console.log("rrigen", idOrigin);
+
     var destinos = [];
     var destinations = [];
     this.warehousesDestinationList.forEach(val => {
@@ -329,31 +346,33 @@ export class CalendarSgaComponent implements OnInit {
    * @param template
    */
   selectTemplate(template: CalendarModel.Template) {
+    this.selectTem = true;
     this.intermediaryService.presentLoading();
-    if(this.selectDates.length === 0){
-      this.warehousesDestinationList.forEach(val => {
-        val.destinos = [],
+
+    this.warehousesDestinationList.forEach(val => {
+      val.destinos = [],
         val.destinos_label = ''
-      });
-    }
+    });
+
+
 
     var warehouses = template.warehouses;
     warehouses.forEach(warehouse => {
       this.warehousesDestinationList.forEach(destination => {
-        if(destination.id === warehouse.originWarehouse.id){
+        if (destination.id === warehouse.originWarehouse.id) {
           warehouse.destinationsWarehouses.forEach(destinationFinal => {
             var band = false;
             destination.destinos.forEach(des => {
-              if(des.id === destinationFinal.destinationWarehouse.id)
+              if (des.id === destinationFinal.destinationWarehouse.id)
                 band = true;
             });
-            if(!band){
+            if (!band) {
               destination.destinos.push({
                 id: destinationFinal.destinationWarehouse.id,
                 name: destinationFinal.destinationWarehouse.name
               });
-              if(destination.destinos_label != '')
-                destination.destinos_label += ', '+destinationFinal.destinationWarehouse.name;
+              if (destination.destinos_label != '')
+                destination.destinos_label += ', ' + destinationFinal.destinationWarehouse.name;
               else
                 destination.destinos_label = destinationFinal.destinationWarehouse.name;
             }
@@ -362,7 +381,9 @@ export class CalendarSgaComponent implements OnInit {
       });
     });
 
-    this.manageSelectedClass();
+    this.addDarkBlueOrRed();
+
+    //this.manageSelectedClass();
     this.sortByDestinations();
     this.selectForm.get("isChecked").setValue(false);
     this.intermediaryService.dismissLoading();
@@ -439,6 +460,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   clear() {
+    this.selectTem = false;
     this.intermediaryService.presentLoading();
     this.warehousesOriginList.sort((unaCadena, otraCadena) => unaCadena.id - otraCadena.id);
 
@@ -565,6 +587,62 @@ export class CalendarSgaComponent implements OnInit {
       });
     }
   }
+
+
+  addDarkBlueOrRed() {
+    let days: Array<any> = <any>document.getElementsByClassName("dp-calendar-day");
+
+    for (let i = 0; i < days.length; i++) {
+      let day = days[i];
+
+
+      this.selectDates.forEach(date => {
+        if (date.date.split("-").reverse().join("-") == day.dataset.date) {
+          day.className = day.className.replace(/haveDate/g, "");
+          day.className = day.className.replace(/tselected2/g, "");
+          day.className = day.className.replace(/tselected/g, "");
+          if ((date.warehouses.length) || (date.date && this.addWarehouses().length)) {
+            if (!this.selectTem) {
+              day.className += ' tselected2';
+            } else {
+              day.className += ' tselected';
+            }
+
+          } else {
+            day.className += ' haveDate';
+          }
+        }
+      });
+    }
+  }
+
+
+  addGreen() {
+    let days: Array<any> = <any>document.getElementsByClassName("dp-calendar-day");
+
+    for (let i = 0; i < days.length; i++) {
+      let day = days[i];
+
+
+      this.selectDates.forEach(date => {
+        if (date.date.split("-").reverse().join("-") == day.dataset.date) {
+          day.className = day.className.replace(/haveDate/g, "");
+          day.className = day.className.replace(/tselected2/g, "");
+          day.className = day.className.replace(/tselected/g, "");
+          if ((date.warehouses.length) || (date.date && this.addWarehouses().length)) {
+
+            day.className += ' tselected';
+          } else {
+            day.className += ' haveDate';
+          }
+        }
+      });
+    }
+  }
+
+
+
+
 
   manageSelectedClass2(): void {
 
@@ -753,10 +831,10 @@ export class CalendarSgaComponent implements OnInit {
         destinos: destinos
       }
     }));
-    modal.onDidDismiss().then((data)=>{
+    modal.onDidDismiss().then((data) => {
       this.intermediaryService.presentLoading();
       var dataInfo: any = data;
-      if(dataInfo.data !== undefined){
+      if (dataInfo.data !== undefined) {
         this.warehousesDestinationList.forEach(val => {
           val.destinos = new Array;
           val.destinos_label = '';
@@ -764,13 +842,13 @@ export class CalendarSgaComponent implements OnInit {
         dataInfo.data.listDestinos.forEach(destino => {
           this.warehousesDestinationList.forEach(val2 => {
             this.listOriginCheck.forEach(originCheck => {
-              if(val2.id === originCheck.id && originCheck.id !== destino.id){
+              if (val2.id === originCheck.id && originCheck.id !== destino.id) {
                 val2.destinos.push({
                   id: destino.id,
                   name: destino.name
                 });
-                if(val2.destinos_label != '')
-                  val2.destinos_label += ', '+destino.name;
+                if (val2.destinos_label != '')
+                  val2.destinos_label += ', ' + destino.name;
                 else
                   val2.destinos_label = destino.name
               }
@@ -778,9 +856,9 @@ export class CalendarSgaComponent implements OnInit {
           });
         });
 
-        this.selectDates.forEach((date,i)=>{
-          if(i==0)
-            return false;   
+        this.selectDates.forEach((date, i) => {
+          if (i == 0)
+            return false;
           date.warehouses = this.addWarehouses();
         });
 
@@ -791,12 +869,12 @@ export class CalendarSgaComponent implements OnInit {
     modal.present();
   }
 
-  cantChecks(){
+  cantChecks() {
     const selectedOrderIds = this.selectForm.value.origins
       .map((v, i) => v ? this.warehousesOriginList[i].id : null)
       .filter(v => v !== null);
 
-      return selectedOrderIds;
+    return selectedOrderIds;
   }
 
   ngAfterViewInit(): void {
