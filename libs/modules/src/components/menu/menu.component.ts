@@ -8,6 +8,7 @@ import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/prin
 import {MenuController} from "@ionic/angular";
 import {SealScanditService} from "../../../../services/src/lib/scandit/seal/seal.service";
 import {ProductInfoScanditService} from "../../../../services/src/lib/scandit/product-info/product-info.service";
+import {ToolbarProvider} from "../../../../services/src/providers/toolbar/toolbar.provider";
 
 type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
 
@@ -460,11 +461,14 @@ export class MenuComponent implements OnInit {
     private printTagsScanditService: PrintTagsScanditService,
     private sealScanditService: SealScanditService,
     private productInfoScanditService: ProductInfoScanditService,
-    private menuController: MenuController
+    private menuController: MenuController,
+    private toolbarProvider: ToolbarProvider
   ) { }
 
   returnTitle(item:MenuSectionItem){
     this.currentRoute = item.title
+    this.toolbarProvider.currentPage.next(item.title);
+    this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(item.title);
   }
 
@@ -540,6 +544,8 @@ export class MenuComponent implements OnInit {
 
   tapOption(p) {
     this.currentRoute = p.title;
+    this.toolbarProvider.currentPage.next(p.title);
+    this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(p.title);
     if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {

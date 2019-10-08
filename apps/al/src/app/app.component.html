@@ -1,28 +1,12 @@
 <ion-app [ngClass]="{ 'sm-custom': displaySmallSidebar }">
-    <ion-header *ngIf="showMainHeader" [ngClass]="{ 'mainheader mainheader-fullheight': showMainHeader }">
-        <ion-toolbar color="primary" [class.display-none]="router.url=='/login'">
-            <ion-buttons slot="start">
-                <ion-button (window:resize)="onResize($event)" *ngIf="deploySidebarSmallDevices" (click)="toggleSidebarSmallDevices()">
-                    <ion-icon name="menu" class="menu"></ion-icon>
-                </ion-button>
-                <ion-button (window:resize)="onResize($event)" *ngIf="!deploySidebarSmallDevices" (click)="toggleSidebar()">
-                    <ion-icon name="arrow-round-back" class="toogleArrow"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-            <ion-title>{{ currentRoute }}</ion-title>
-            <ion-buttons slot="secondary">
-                <ion-button>
-                    <ion-icon slot="icon-only" name="contact"></ion-icon>
-                </ion-button>
-                <ion-button>
-                    <ion-icon name="notifications-outline"></ion-icon>
-                </ion-button>
-                <ion-button>
-                    <ion-icon slot="icon-only" name="more"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-        </ion-toolbar>
-    </ion-header>
+  <toolbar
+    *ngIf="showMainHeader"
+    [showAlMenu]="true"
+    (windowResize)="onResize($event)"
+    (toggleSideMenuAl)="toggleSidebarSmallDevices()"
+    (toggleSideMenuSga)="toggleSidebar()">
+  </toolbar>
+
     <ion-split-pane>
         <ion-menu menuId="sidebar" class="sidebar" [class.display-none]="router.url=='/login'">
             <ion-header>

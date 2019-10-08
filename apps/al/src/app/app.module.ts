@@ -14,7 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { ServicesModule, AddTokenToRequestInterceptor } from '@suite/services';
-import { ScannerConfigurationModule,MenuModule } from "@suite/common-modules";
+import {ScannerConfigurationModule, MenuModule, ToolbarAlModule} from "@suite/common-modules";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -38,7 +38,8 @@ registerLocaleData(localeEs);
     AppRoutingModule,
     ServicesModule,
     BrowserAnimationsModule,
-    ScannerConfigurationModule
+    ScannerConfigurationModule,
+    ToolbarAlModule
   ],
   providers: [
     StatusBar,

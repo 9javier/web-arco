@@ -15,6 +15,7 @@ import {Observable} from "rxjs";
 import {app} from "@suite/services";
 import {DateAdapter} from "@angular/material";
 import {PrinterConnectionService} from "../../../../libs/services/src/lib/printer-connection/printer-connection.service";
+import {ToolbarProvider} from "../../../../libs/services/src/providers/toolbar/toolbar.provider";
 
 interface MenuItem {
   title: string;
@@ -110,6 +111,7 @@ export class AppComponent implements OnInit {
     private scanditService: ScanditService,
     private typesService: TypesService,
     private printerConnectionService: PrinterConnectionService,
+    private toolbarProvider: ToolbarProvider
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -146,6 +148,7 @@ export class AppComponent implements OnInit {
       window.innerWidth < 992
         ? (this.deploySidebarSmallDevices = true)
         : (this.deploySidebarSmallDevices = false);
+      this.showAlMenu();
 
       /* Check for Authenticated user */
       this.authenticationService.authenticationState.subscribe(state => {
@@ -243,9 +246,14 @@ export class AppComponent implements OnInit {
       this.displaySmallSidebar = true;
       this.iconsDirection = 'end';
     }
+    this.showAlMenu();
   }
 
   toggleSidebarSmallDevices() {
     this.menu.toggle('sidebar');
+  }
+
+  private showAlMenu() {
+    this.toolbarProvider.showAlMenu.next(this.deploySidebarSmallDevices);
   }
 }

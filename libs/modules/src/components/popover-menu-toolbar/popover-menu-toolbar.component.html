@@ -1,0 +1,6 @@
+<div class="main-element">
+  <ion-item *ngFor="let option of optionsMenu" (click)="actionOption(option)">
+    <ion-label>{{option.label}}</ion-label>
+    <ion-icon slot="end" [name]="option.icon"></ion-icon>
+  </ion-item>
+</div>
