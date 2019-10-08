@@ -52,8 +52,18 @@ export class MatrixSelectWaySorterComponent implements OnInit {
       this.selectWay.forEach(way => {
         way.columns.forEach(column => {
           if(column.ways_number === waySelect.ways_number){
-            column.zone = this.zoneSelect.id;
-            column.color = this.zoneSelect.color.hex;
+            if(column.zone === '' && column.color === ''){
+              column.zone = this.zoneSelect.id;
+              column.color = this.zoneSelect.color.hex;
+            } else{
+              if(column.zone === this.zoneSelect.id && column.color === this.zoneSelect.color.hex){
+                column.zone = '';
+                column.color = '';
+              } else {
+                column.zone = this.zoneSelect.id;
+                column.color = this.zoneSelect.color.hex;
+              }
+            }
           }
         });
       });

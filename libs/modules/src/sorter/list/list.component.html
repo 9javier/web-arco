@@ -94,9 +94,46 @@
       </mat-table>
     </div>
 
-    <div class="containerTable" *ngIf="waysMatrix.length > 0">
-      <suite-matrix-select-way-sorter [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
-    </div>
+    <ion-row *ngIf="waysMatrix.length > 0">
+      <ion-col size="6">
+        <div class="containerWays" >
+          <suite-matrix-select-way-sorter [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
+        </div>
+      </ion-col>
+      <ion-col size="6">
+        <ion-row *ngIf="waysMatrix.length > 0">
+          <ion-col size="6">
+            <div class="containerTable">
+              <mat-table #table [dataSource]="dataSource2" class="prioridad">
+                <ng-container matColumnDef="prioridad" >
+                  <mat-header-cell *matHeaderCellDef>
+                    Prioridad
+                  </mat-header-cell>
+        
+                  <mat-cell *matCellDef="let element">
+                    <p style="margin-left: 20px">{{element.position}}</p> 
+                  </mat-cell>
+                </ng-container>
+      
+                <ng-container matColumnDef="calle">
+                  <mat-header-cell *matHeaderCellDef> Calle </mat-header-cell>
+                  <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+                </ng-container>
+      
+        
+                <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
+                  [class.expanded]="expandedElement == row"></mat-row>
+                <mat-row *matRowDef="let row; when: isExpansionDetailRow"
+                  [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+                  style="overflow: hidden">
+                </mat-row>
+              </mat-table>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
 
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
@@ -104,6 +141,9 @@
       <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
     <br>
+    <ion-fab-button (click)="store()">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
     <ion-fab-button (click)="store()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
