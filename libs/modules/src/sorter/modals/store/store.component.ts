@@ -11,12 +11,12 @@ import { SorterTemplateService } from '../../../../../services/src/lib/endpoint/
 })
 export class StoreComponent implements OnInit {
 
-  @ViewChild(BaseComponent) base:BaseComponent;
-  
+  @ViewChild(BaseComponent) base: BaseComponent;
+
   constructor(
-    private intermediaryService:IntermediaryService,
-    private modalController:ModalController,
-    private navParams:NavParams,
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
+    private navParams: NavParams,
     private sorterTemplateService: SorterTemplateService,
   ) {
   }
@@ -24,14 +24,14 @@ export class StoreComponent implements OnInit {
   ngOnInit() {
   }
 
-  close():void{
+  close(): void {
     this.modalController.dismiss();
   }
 
-  submit():void{
+  submit(): void {
     let payload = this.base.getValue()
     payload = {
-      active:false,
+      active: true,
       ...payload
     }
     console.log(payload)

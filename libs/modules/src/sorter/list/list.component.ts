@@ -1,21 +1,21 @@
-import {Component, Input, OnInit, ChangeDetectorRef, ViewChild} from '@angular/core';
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Location} from "@angular/common";
-import {SelectionModel, DataSource} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel, IntermediaryService} from "@suite/services";
-import {Observable, of} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {HallModel} from "../../../../services/src/models/endpoints/Hall";
-import {HallsService} from "../../../../services/src/lib/endpoint/halls/halls.service";
-import {ActivatedRoute} from "@angular/router";
-import {ModalController, ToastController, NavParams} from "@ionic/angular";
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { Component, Input, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { animate, state, style, transition, trigger } from "@angular/animations";
+import { Location } from "@angular/common";
+import { SelectionModel, DataSource } from "@angular/cdk/collections";
+import { RolModel, UserModel, WarehouseModel, IntermediaryService } from "@suite/services";
+import { Observable, of } from "rxjs";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { HallModel } from "../../../../services/src/models/endpoints/Hall";
+import { HallsService } from "../../../../services/src/lib/endpoint/halls/halls.service";
+import { ActivatedRoute } from "@angular/router";
+import { ModalController, ToastController, NavParams } from "@ionic/angular";
+import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 /*import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
 import {LocationsComponent} from "../locations.component";
 import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
-import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import { CrudService } from '../../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
@@ -58,11 +58,11 @@ import { MatrixSelectWaySorterComponent } from './components/matrix-select-way-s
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'nombre'/*, 'active'*/, 'configurarCarriles', 'warehoures', 'color', 'quantity', 'updateCarriles'];
+  displayedColumns = ['delete', 'Ntemplate', 'nombre'/*, 'active'*/, /*'configurarCarriles',*/ 'warehoures', 'color', 'quantity', 'updateCarriles'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
-  displayedData = ['prioridad','calle'];
+  displayedData = ['prioridad', 'calle'];
   data = [];
   dataSource2 = new MatTableDataSource<Element>(this.data);
   selectedForm: FormGroup;
@@ -73,7 +73,7 @@ export class ListComponent implements OnInit {
   postRoute: string;
   zones: TemplateZoneModel.Zone[];
   colors: TemplateColorsModel.TemplateColors[];
-  test_counter:number;
+  test_counter: number;
   toDeleteIds: number[] = [];
   waysMatrix = [];
   ways = [];
@@ -81,9 +81,9 @@ export class ListComponent implements OnInit {
   zoneId: number;
 
   //Get value on ionChange on IonRadioGroup
-  selectedRadioGroup:any;
+  selectedRadioGroup: any;
   //Get value on ionSelect on IonRadio item
-  selectedRadioItem:any;
+  selectedRadioItem: any;
 
   rails = []
   firstClick: boolean = true;
@@ -93,15 +93,15 @@ export class ListComponent implements OnInit {
 
   radioButton: any;
 
-  @ViewChild(MatrixSelectWaySorterComponent) matrixSelectWay:MatrixSelectWaySorterComponent;
+  @ViewChild(MatrixSelectWaySorterComponent) matrixSelectWay: MatrixSelectWaySorterComponent;
 
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private modalController:ModalController,
+    private modalController: ModalController,
     private route: ActivatedRoute,
     private templateZonesService: TemplateZonesService,
-    private templateColorsService:TemplateColorsService,
+    private templateColorsService: TemplateColorsService,
     private sorterService: SorterService,
     private changeDetectorRefs: ChangeDetectorRef,
     private intermediaryService: IntermediaryService
@@ -109,7 +109,7 @@ export class ListComponent implements OnInit {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        selects: this.formBuilder.array([ this.createSelect() ])
+        selects: this.formBuilder.array([this.createSelect()])
       },
       {
         validators: validators.haveItems('toSelect')
@@ -134,7 +134,7 @@ export class ListComponent implements OnInit {
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   showExpasion: boolean = false;
-  
+
   ngOnInit() {
     this.crudService
       .getIndex('Warehouses')
@@ -152,7 +152,7 @@ export class ListComponent implements OnInit {
         }
       );
     this.templateColorsService.getIndex().subscribe((data) => {
-        this.colors = data.data;
+      this.colors = data.data;
     })
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
@@ -161,7 +161,7 @@ export class ListComponent implements OnInit {
       //this.initSelectActive(this.zones);
     });
     this.test_counter = 0;
-    
+
     this.sorterService.getFirstSorter().subscribe(data => {
       this.firstSorter = data;
       //console.log(this.firstSorter)
@@ -197,9 +197,9 @@ export class ListComponent implements OnInit {
     row.dropdown = this.showExpasion;
   }
 
-  selectAll(event):void{
+  selectAll(event): void {
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedForm.get('toSelect');
+    const controlArray = <FormArray>this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
@@ -231,11 +231,11 @@ export class ListComponent implements OnInit {
     return new FormControl(Boolean(false));
   }
 
-  async update(row):Promise<void>{
+  async update(row): Promise<void> {
     let modal = (await this.modalController.create({
-      component:UpdateComponent,
-      componentProps:{
-        zonaId:row.id,
+      component: UpdateComponent,
+      componentProps: {
+        zonaId: row.id,
         colors: this.colors,
         id: this.id
       }
@@ -243,15 +243,15 @@ export class ListComponent implements OnInit {
     modal.present();
   }
 
-  async store():Promise<void>{
+  async store(): Promise<void> {
     let modal = (await this.modalController.create({
-      component:StoreComponent,
-      componentProps:{
+      component: StoreComponent,
+      componentProps: {
         colors: this.colors,
         id: this.id
       }
     }));
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
@@ -268,42 +268,42 @@ export class ListComponent implements OnInit {
     this.cleanStyles();
 
     this.waysMatrix.forEach(way => {
-      if(way.height === height) {
+      if (way.height === height) {
         let columns = way.columns;
-        for(let i = 0; i < columns.length; i++) 
-        if(column == columns[i].ways_number) {
-          columns[i]['selected'] = true;
-          columns[i]['adjacent'] = false;
-          console.log('Current: '+column)
-          if(columns[i-1] && !columns[i-1]['selected']) {
-            columns[i-1]['adjacent'] = true;
+        for (let i = 0; i < columns.length; i++)
+          if (column == columns[i].ways_number) {
+            columns[i]['selected'] = true;
+            columns[i]['adjacent'] = false;
+            console.log('Current: ' + column)
+            if (columns[i - 1] && !columns[i - 1]['selected']) {
+              columns[i - 1]['adjacent'] = true;
+            }
+            if (columns[i + 1] && !columns[i + 1]['selected']) {
+              columns[i + 1]['adjacent'] = true;
+            }
           }
-          if(columns[i+1] && !columns[i+1]['selected']) {
-            columns[i+1]['adjacent'] = true;
-          }
-        }
       }
     });
 
-    for(let i = 0; i < this.waysMatrix.length; i++) {
-      if(this.waysMatrix[i].height == height) {
-        if(this.waysMatrix[i-1]) {
-          for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
-            if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
-              this.waysMatrix[i-1].columns[j]['adjacent'] = true;
+    for (let i = 0; i < this.waysMatrix.length; i++) {
+      if (this.waysMatrix[i].height == height) {
+        if (this.waysMatrix[i - 1]) {
+          for (let j = 0; j < this.waysMatrix[i - 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i - 1].columns[j]['selected']) {
+              this.waysMatrix[i - 1].columns[j]['adjacent'] = true;
             }
           }
         }
-        if(this.waysMatrix[i+1]) {
-          for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
-            if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
-              this.waysMatrix[i+1].columns[j]['adjacent'] = true;
+        if (this.waysMatrix[i + 1]) {
+          for (let j = 0; j < this.waysMatrix[i + 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i + 1].columns[j]['selected']) {
+              this.waysMatrix[i + 1].columns[j]['adjacent'] = true;
             }
           }
         }
       }
     }
-    
+
 
     let wayNumber: number;
     let wayColumn: number;
@@ -333,75 +333,75 @@ export class ListComponent implements OnInit {
 
     this.waysMatrix.forEach(item => {
       item.columns.forEach(item => {
-        if(item.way.id === way.way.id) {
+        if (item.way.id === way.way.id) {
           wayNumber = item.priority;
           wayColumn = way.ways_number
         }
       })
     });
-  
+
     let value = {
       position: this.priority,
       name: wayColumn
     }
     this.priority++;
     this.data.push(value);
-    this.dataSource2= new MatTableDataSource<Element>(this.data);
+    this.dataSource2 = new MatTableDataSource<Element>(this.data);
   }
 
-  cleanColumn(index: number, column: number, height: number, way): void { 
-    
+  cleanColumn(index: number, column: number, height: number, way): void {
+
     this.data.forEach(item => {
-      if(item.name == way.ways_number) {
+      if (item.name == way.ways_number) {
         let newData = this.data.filter(item => item.name != way.ways_number);
         this.data = newData;
       }
     });
-    this.dataSource2= new MatTableDataSource<Element>(this.data);
+    this.dataSource2 = new MatTableDataSource<Element>(this.data);
 
     this.waysMatrix.forEach(way => {
-      if(way.height === height) {
+      if (way.height === height) {
         let columns = way.columns;
-        for(let i = 0; i < columns.length; i++) 
-        if(column == columns[i].ways_number) {
-          columns[i]['selected'] = false;
-          if(columns[i-1] && !columns[i-1]['selected']) {
-            columns[i-1]['adjacent'] = false;
-          } else if(columns[i-1] && columns[i-1]['selected']) {
-            columns[i]['adjacent'] = true;
+        for (let i = 0; i < columns.length; i++)
+          if (column == columns[i].ways_number) {
+            columns[i]['selected'] = false;
+            if (columns[i - 1] && !columns[i - 1]['selected']) {
+              columns[i - 1]['adjacent'] = false;
+            } else if (columns[i - 1] && columns[i - 1]['selected']) {
+              columns[i]['adjacent'] = true;
+            }
+            if (columns[i + 1] && !columns[i + 1]['selected']) {
+              columns[i + 1]['adjacent'] = false;
+            } else if (columns[i + 1] && columns[i + 1]['selected']) {
+              columns[i]['adjacent'] = true;
+            }
           }
-          if(columns[i+1] && !columns[i+1]['selected']) {
-            columns[i+1]['adjacent'] = false;
-          } else if(columns[i+1] && columns[i+1]['selected']) {
-            columns[i]['adjacent'] = true;
-          }
-        }
       }
     });
 
-    for(let i = 0; i < this.waysMatrix.length; i++) {
-      if(this.waysMatrix[i].height == height) {
-        if(this.waysMatrix[i-1]) {
-          for(let j = 0; j < this.waysMatrix[i-1].columns.length; j++) {
-            if(j == index && !this.waysMatrix[i-1].columns[j]['selected']){
-              this.waysMatrix[i-1].columns[j]['adjacent'] = false;
-            } else if(j == index && this.waysMatrix[i-1].columns[j]['selected']){
+    for (let i = 0; i < this.waysMatrix.length; i++) {
+      if (this.waysMatrix[i].height == height) {
+        if (this.waysMatrix[i - 1]) {
+          for (let j = 0; j < this.waysMatrix[i - 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i - 1].columns[j]['selected']) {
+              this.waysMatrix[i - 1].columns[j]['adjacent'] = false;
+            } else if (j == index && this.waysMatrix[i - 1].columns[j]['selected']) {
               this.waysMatrix[i].columns[j]['adjacent'] = true;
             }
           }
         }
-        if(this.waysMatrix[i+1]) {
-          for(let j = 0; j < this.waysMatrix[i+1].columns.length; j++) {
-            if(j == index && !this.waysMatrix[i+1].columns[j]['selected']){
-              this.waysMatrix[i+1].columns[j]['adjacent'] = false;
-            } else if(j == index && this.waysMatrix[i+1].columns[j]['selected']) {
+        if (this.waysMatrix[i + 1]) {
+          for (let j = 0; j < this.waysMatrix[i + 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i + 1].columns[j]['selected']) {
+              this.waysMatrix[i + 1].columns[j]['adjacent'] = false;
+            } else if (j == index && this.waysMatrix[i + 1].columns[j]['selected']) {
               this.waysMatrix[i].columns[j]['adjacent'] = true;
             }
           }
         }
       }
     }
-    
+
     this.firstClick = true;
   }
 
@@ -425,38 +425,38 @@ export class ListComponent implements OnInit {
     let repeat = false;
     let idToDelete = this.zones[index].id;
     this.toDeleteIds.forEach(id => {
-      if(id == idToDelete) {
+      if (id == idToDelete) {
         repeat = true;
       }
     })
-    if(!repeat) {
+    if (!repeat) {
       this.toDeleteIds.push(idToDelete);
     }
   }
-  
+
   delete() {
-    let deletions:Observable<any> =new Observable(observer=>observer.next());
-    if(this.toDeleteIds.length > 0) {
+    let deletions: Observable<any> = new Observable(observer => observer.next());
+    if (this.toDeleteIds.length > 0) {
       this.toDeleteIds.forEach(idZone => {
-        deletions = deletions.pipe(switchMap(() => { 
+        deletions = deletions.pipe(switchMap(() => {
           return (this.templateZonesService.deleteTemplateZone(idZone, Number(this.id)))
         }))
       });
     }
-   
+
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
 
-    deletions.subscribe(()=>{
+    deletions.subscribe(() => {
       this.intermediaryService.dismissLoading();
       this.getZones();
       this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
-      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      const controlArray = <FormArray>this.selectedForm.get('toSelect');
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
-    },()=>{
-      this.intermediaryService.dismissLoading(); 
+    }, () => {
+      this.intermediaryService.dismissLoading();
       this.getZones();
       this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
     });
@@ -467,14 +467,14 @@ export class ListComponent implements OnInit {
     console.log(zoneByWarehouses[0].zoneWarehouses)
     event.stopPropagation();
     let modal = (await this.modalController.create({
-      component:WarehousesModalComponent,
-      componentProps:{
+      component: WarehousesModalComponent,
+      componentProps: {
         warehouses: zoneByWarehouses[0].zoneWarehouses,
         idTemplate: this.id,
         id: zoneByWarehouses[0].id
       }
     }));
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
@@ -488,7 +488,7 @@ export class ListComponent implements OnInit {
   async openRailsConfiguration() {
     event.stopPropagation();
     let modal = (await this.modalController.create({
-      component:RailsConfigurationComponent
+      component: RailsConfigurationComponent
     }));
     modal.present();
   }
@@ -508,7 +508,7 @@ export class ListComponent implements OnInit {
     //console.log("radioGroupChange",event.detail);
     this.selectedRadioGroup = event.detail;
   }
- 
+
   radioFocus() {
     //console.log("radioFocus");
   }
@@ -540,18 +540,18 @@ export class ExampleDataSource extends DataSource<any> {
 
 export class ExampleDataSource2 extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
- 
+
   connect(): Observable<Element[]> {
     const rows = [];
-   // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
+    // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
     //console.log(rows);
     return of(rows);
   }
-  
+
 
   disconnect() { }
 
-  addCarriles(){
+  addCarriles() {
     //console.log("aqui")
   }
 }

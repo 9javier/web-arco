@@ -18,9 +18,9 @@
       <mat-table #table [dataSource]="zones">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm">
           <mat-header-cell *matHeaderCellDef>
-            
+
             <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
-            <i class="material-icons" >delete</i>
+            <i class="material-icons">delete</i>
           </mat-header-cell>
 
           <mat-cell *matCellDef="let element; let i = index">
@@ -50,14 +50,14 @@
             </ng-template>
           </mat-cell>
         </ng-container>-->
-        <ng-container matColumnDef="configurarCarriles">
+        <!-- <ng-container matColumnDef="configurarCarriles">
           <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
           <mat-cell *matCellDef="let element">
             <span>
               <i (click)="openRailsConfiguration()" class="material-icons">build</i>
             </span>
           </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="warehoures">
           <mat-header-cell *matHeaderCellDef>Warehouses</mat-header-cell>
           <mat-cell *matCellDef="let element">
@@ -76,11 +76,12 @@
         </ng-container>
         <ng-container matColumnDef="updateCarriles">
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
-         <mat-cell *matCellDef="let element">
-          <mat-radio-group name="rails">
-            <mat-radio-button (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)" [value]="element"></mat-radio-button>
-          </mat-radio-group> 
-         </mat-cell>  
+          <mat-cell *matCellDef="let element">
+            <mat-radio-group name="rails">
+              <mat-radio-button (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)"
+                [value]="element"></mat-radio-button>
+            </mat-radio-group>
+          </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
@@ -94,8 +95,7 @@
     </div>
 
     <div class="containerTable" *ngIf="waysMatrix.length > 0">
-      <suite-matrix-select-way-sorter
-        [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
+      <suite-matrix-select-way-sorter [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
     </div>
 
   </ion-grid>
