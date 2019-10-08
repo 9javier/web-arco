@@ -36,7 +36,6 @@ export class StoreComponent implements OnInit {
   submit():void{
     let payload = this.base.getValue()
     payload = {
-      zoneNumber: 1,
       active:true,
       zoneWays: [],
       zoneWarehouses: [],

@@ -58,7 +58,7 @@ import { MatrixSelectWaySorterComponent } from './components/matrix-select-way-s
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'nombre', 'active', 'configurarCarriles', 'warehoures', 'color', 'quantity', 'updateCarriles'];
+  displayedColumns = ['delete', 'Ntemplate', 'nombre'/*, 'active'*/, 'configurarCarriles', 'warehoures', 'color', 'quantity', 'updateCarriles'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
@@ -91,6 +91,8 @@ export class ListComponent implements OnInit {
   wayClicked: boolean = true;
   priority: number = 1;
 
+  radioButton: any;
+
   @ViewChild(MatrixSelectWaySorterComponent) matrixSelectWay:MatrixSelectWaySorterComponent;
 
   constructor(
@@ -113,9 +115,9 @@ export class ListComponent implements OnInit {
         validators: validators.haveItems('toSelect')
       }
     );
-    console.log(this.selectedForm)
+    //console.log(this.selectedForm)
 
-    this.selectedFormActive = this.formBuilder.group(
+    /*this.selectedFormActive = this.formBuilder.group(
       {
         selector: false,
         selects: this.formBuilder.array([ this.createSelect() ])
@@ -123,7 +125,7 @@ export class ListComponent implements OnInit {
       {
         validators: validators.haveItems('toSelectActive')
       }
-    );
+    );*/
     this.id = this.route.snapshot.paramMap.get('id');
     this.postRoute = `Plantilla ${this.id}`;
   }
@@ -154,17 +156,18 @@ export class ListComponent implements OnInit {
     })
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
+      this.radioButton = this.zones[0];
       console.log(this.zones)
-      this.initSelectActive(this.zones);
+      //this.initSelectActive(this.zones);
     });
     this.test_counter = 0;
     
     this.sorterService.getFirstSorter().subscribe(data => {
       this.firstSorter = data;
-      console.log(this.firstSorter)
+      //console.log(this.firstSorter)
       this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
         this.waysMatrix = data.data;
-        console.log(this.waysMatrix)
+        //console.log(this.waysMatrix)
       }, (err) => {
         console.log(err)
       });
@@ -182,7 +185,7 @@ export class ListComponent implements OnInit {
   getZones() {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
-      this.initSelectActive(this.zones);
+      //this.initSelectActive(this.zones);
     });
   }
 
@@ -211,7 +214,7 @@ export class ListComponent implements OnInit {
     this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
   }
 
-  selectAllActive(event):void{
+  /*selectAllActive(event):void{
     let value = event.detail.checked;
     const controlArray = <FormArray> this.selectedFormActive.get('toSelectActive');
     controlArray.controls.forEach((control, i) => {
@@ -222,7 +225,7 @@ export class ListComponent implements OnInit {
   initSelectActive(items: TemplateZoneModel.Zone[]) {
     this.selectedFormActive.removeControl('toSelectActive');
     this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(item.active)))));
-  }
+  }*/
 
   createSelect(): FormControl {
     return new FormControl(Boolean(false));
@@ -252,7 +255,8 @@ export class ListComponent implements OnInit {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
-        this.initSelectActive(this.zones);
+        console.log(this.zones);
+        //this.initSelectActive(this.zones);
         this.intermediaryService.dismissLoading();
       });
     })
@@ -474,7 +478,7 @@ export class ListComponent implements OnInit {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
-        this.initSelectActive(this.zones);
+        //this.initSelectActive(this.zones);
         this.intermediaryService.dismissLoading();
       });
     })
@@ -501,19 +505,19 @@ export class ListComponent implements OnInit {
   }
 
   radioGroupChange(event) {
-    console.log("radioGroupChange",event.detail);
+    //console.log("radioGroupChange",event.detail);
     this.selectedRadioGroup = event.detail;
   }
  
   radioFocus() {
-    console.log("radioFocus");
+    //console.log("radioFocus");
   }
   radioSelect(event) {
-    console.log("radioSelect",event.detail);
+    //console.log("radioSelect",event.detail);
     this.selectedRadioItem = event.detail;
   }
   radioBlur() {
-    console.log("radioBlur");
+    //console.log("radioBlur");
   }
 }
 
@@ -527,7 +531,7 @@ export class ExampleDataSource extends DataSource<any> {
   connect(): Observable<Element[]> {
     const rows = [];
     this.data.forEach(element => rows.push(element, { detailRow: true, element }));
-    console.log(rows);
+    //console.log(rows);
     return of(rows);
   }
 
@@ -540,10 +544,14 @@ export class ExampleDataSource2 extends DataSource<any> {
   connect(): Observable<Element[]> {
     const rows = [];
    // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
-    console.log(rows);
+    //console.log(rows);
     return of(rows);
   }
   
 
   disconnect() { }
+
+  addCarriles(){
+    //console.log("aqui")
+  }
 }

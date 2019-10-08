@@ -4,7 +4,7 @@
       <div class="height" *ngFor="let way of selectWay">
         <div class="column" *ngFor="let column of way.columns; let i = index"
           (click)="getColumn(column)" [ngStyle]="{'background-color': column.color !== '' ? column.color : '' }">
-          <span></span>
+          <span>{{ column.ways_number }}</span>
         </div>
       </div>
     </div> 

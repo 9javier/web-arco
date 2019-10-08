@@ -8,8 +8,8 @@
     <div class="main-buttons">
       <h1 style="float: left">Zonas</h1>
       <h2 style="float: right">
-        <ion-button class="btn-move-products" slot="end" color="primary" (click)="displayRails()">
-          VER CARRILES
+        <ion-button class="btn-move-products" slot="end" color="primary" (click)="addCarriles()">
+          GUARDAR CARRILES
         </ion-button>
       </h2>
     </div>
@@ -31,14 +31,14 @@
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Ntemplate">
-          <mat-header-cell *matHeaderCellDef> Zonas </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> Identificación </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.zoneNumber}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="nombre">
           <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
+        <!--<ng-container matColumnDef="active" [formGroup]="selectedFormActive">
           <mat-header-cell *matHeaderCellDef>
             <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
             <p>Active</p>
@@ -49,7 +49,7 @@
                 [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
             </ng-template>
           </mat-cell>
-        </ng-container>
+        </ng-container>-->
         <ng-container matColumnDef="configurarCarriles">
           <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
           <mat-cell *matCellDef="let element">
@@ -93,8 +93,7 @@
       </mat-table>
     </div>
 
-
-    <div *ngIf="showRails" class="containerTable">
+    <div class="containerTable" *ngIf="waysMatrix.length > 0">
       <suite-matrix-select-way-sorter
         [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
     </div>
