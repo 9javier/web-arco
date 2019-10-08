@@ -47,8 +47,8 @@ export class TemplateSelectionComponent implements OnInit {
 
   async applyTemplate(data) {
     let template: TemplateSorterModel.Template = data;
-    if (template && !template.active) {
-      await this.intermediaryService.presentWarning('¡La plantilla que intenta aplicar está desactivada! <br/> Actívela antes para poder aplicarla al sorter.', null);
+    if (!template || (template && !template.zones)) {
+      await this.intermediaryService.presentWarning('¡La plantilla que intenta aplicar no tiene zonas! <br/> Crea sus zonas para aplicarla al sorter.', null);
     } else {
       await this.intermediaryService.presentLoading('Aplicando plantilla...');
       this.sorterExecutionService
