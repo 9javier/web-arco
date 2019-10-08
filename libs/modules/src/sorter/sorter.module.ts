@@ -26,6 +26,7 @@ import {TemplateSelectionComponent} from "./template-selection/template-selectio
 import {SorterListTemplatesSelectionComponent} from "./template-selection/list-templates/list-templates";
 import {SorterMatrixSelectedComponent} from "./template-selection/matrix-selected/matrix-selected";
 import {SorterTemplateSelectionComponent} from "./template-selection/list-templates/template/template";
+import { MatrixSelectWaySorterComponent } from './list/components/matrix-select-way-sorter/matrix-select-way-sorter.component';
 
 const routes:Routes = [
   {
@@ -95,7 +96,8 @@ const routes:Routes = [
     TemplateSelectionComponent,
     SorterListTemplatesSelectionComponent,
     SorterTemplateSelectionComponent,
-    SorterMatrixSelectedComponent
+    SorterMatrixSelectedComponent,
+    MatrixSelectWaySorterComponent
   ],
   imports: [
     CommonModule,

@@ -11,33 +11,32 @@ import { TemplateZonesService } from 'libs/services/src/lib/endpoint/template-zo
 })
 export class StoreComponent implements OnInit {
 
-  @ViewChild(BaseComponent) base:BaseComponent;
-  
+  @ViewChild(BaseComponent) base: BaseComponent;
+
   colors: any;
   id: number;
-  
+
   constructor(
-    private intermediaryService:IntermediaryService,
-    private modalController:ModalController,
-    private navParams:NavParams,
+    private intermediaryService: IntermediaryService,
+    private modalController: ModalController,
+    private navParams: NavParams,
     private templateZonesService: TemplateZonesService
   ) {
-    this.colors = this.navParams.get("colors"); 
+    //this.colors = this.navParams.get("colors");
     this.id = this.navParams.get("id");
   }
 
   ngOnInit() {
   }
 
-  close():void{
+  close(): void {
     this.modalController.dismiss();
   }
 
-  submit():void{
+  submit(): void {
     let payload = this.base.getValue()
     payload = {
-      zoneNumber: 1,
-      active:true,
+      active: true,
       zoneWays: [],
       zoneWarehouses: [],
       ...payload

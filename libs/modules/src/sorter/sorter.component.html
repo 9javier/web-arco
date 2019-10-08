@@ -1,40 +1,42 @@
 <ion-content padding="true">
   <ion-grid>
-      <ion-text color="primary">
-          <suite-breadcrumb></suite-breadcrumb>
-        </ion-text>
-        <div class="container" *ngIf="templates">
-          <mat-table #table [dataSource]="templates">
-            <ng-container matColumnDef="delete" [formGroup]="selectedForm">
-              <mat-header-cell *matHeaderCellDef>  
-                  
-                  <ion-checkbox (ionChange)="selectAll($event)" [formControl]="selectedForm['controls']?.global"></ion-checkbox>
-                  <i class="material-icons">delete</i>
-              </mat-header-cell>
+    <ion-text color="primary">
+      <suite-breadcrumb></suite-breadcrumb>
+    </ion-text>
+    <div class="container" *ngIf="templates">
+      <mat-table #table [dataSource]="templates">
+        <ng-container matColumnDef="delete" [formGroup]="selectedForm">
+          <mat-header-cell *matHeaderCellDef>
 
-                <mat-cell *matCellDef="let element; let i = index"> 
-                    <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                        <ion-checkbox (click)="toDeleteTemplate(i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
-                    </ng-template>                 
-                  </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="Ntemplate">
-              <mat-header-cell *matHeaderCellDef> Plantilla </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="zona">
-              <mat-header-cell *matHeaderCellDef>Cantidad </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.zones.length}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="nombre">
-              <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="carriles">
-              <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
-              <mat-cell *matCellDef="let element"> {{element.zoneWays.length}} </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
+            <ion-checkbox (ionChange)="selectAll($event)" [formControl]="selectedForm['controls']?.global">
+            </ion-checkbox>
+            <i class="material-icons">delete</i>
+          </mat-header-cell>
+
+          <mat-cell *matCellDef="let element; let i = index">
+            <ng-template [ngIf]="selectedForm['controls']?.toSelect">
+              <ion-checkbox (click)="toDeleteTemplate(i)"
+                [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+            </ng-template>
+          </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="Ntemplate">
+          <mat-header-cell *matHeaderCellDef> Plantilla </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="zona">
+          <mat-header-cell *matHeaderCellDef>Cantidad </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.zones.length}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="carriles">
+          <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.zoneWays.length}} </mat-cell>
+        </ng-container>
+        <!-- <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
                 <mat-header-cell *matHeaderCellDef>  
                     <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
                     <p>Active</p>     
@@ -44,65 +46,59 @@
                         <ion-checkbox (click)="active(element, selectedFormActive['controls']?.toSelectActive['controls'][i])" [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
                     </ng-template>
                   </mat-cell>
-            </ng-container>
-            <ng-container matColumnDef="dropdown">
-              <mat-header-cell *matHeaderCellDef></mat-header-cell>
-              <mat-cell *matCellDef="let element">
-                <span>
-                    <i  (click)="clickShowExpasion(element)" class="material-icons">send</i>
-                </span>
-              </mat-cell>
-            </ng-container>
-        
-            <!-- Expanded Content Column - The detail row is made up of this one column -->
-            <ng-container matColumnDef="expandedDetail">
-              <mat-cell *matCellDef="let detail"> 
-                <table mat-table [dataSource]="warehouses">
-                  <ng-container matColumnDef="check" [formGroup]="selectedForm">
-                    <th mat-header-cell *matHeaderCellDef>
-                      <ion-checkbox
-                        formControlName="selector" (ionChange)="selectAll($event)">
-                      </ion-checkbox>
-                    </th>
-                    <td mat-cell *matCellDef="let element; let i = index">
-                      <ng-template [ngIf]="selectedForm['controls']?.selects">
-                        <ion-checkbox></ion-checkbox>
-                      </ng-template>
-                    </td>
-                  </ng-container>
-                
-                  <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef> Name </th>
-                    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="displayedColumnsWareHouse"></tr>
-                  <tr mat-row *matRowDef="let row; columns: displayedColumnsWareHouse;"></tr>
-                </table>
-              </mat-cell>
-            </ng-container>
-        
-            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;"
-                    matRipple 
-                    class="element-row" 
-                    [class.expanded]="expandedElement == row"
-                    (click)="update(row)"></mat-row>
-            <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
-                    [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
-                    style="overflow: hidden"> 
-            </mat-row>
-          </mat-table>
-        </div>
+            </ng-container> -->
+        <ng-container matColumnDef="dropdown">
+          <mat-header-cell *matHeaderCellDef></mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <span>
+              <i (click)="clickShowExpasion(element)" class="material-icons">send</i>
+            </span>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Expanded Content Column - The detail row is made up of this one column -->
+        <ng-container matColumnDef="expandedDetail">
+          <mat-cell *matCellDef="let detail">
+            <table mat-table [dataSource]="warehouses">
+              <ng-container matColumnDef="check" [formGroup]="selectedForm">
+                <th mat-header-cell *matHeaderCellDef>
+                  <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)">
+                  </ion-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let element; let i = index">
+                  <ng-template [ngIf]="selectedForm['controls']?.selects">
+                    <ion-checkbox></ion-checkbox>
+                  </ng-template>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef> Name </th>
+                <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumnsWareHouse"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumnsWareHouse;"></tr>
+            </table>
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
+          [class.expanded]="expandedElement == row" (click)="update(row)"></mat-row>
+        <mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isExpansionDetailRow"
+          [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+          style="overflow: hidden">
+        </mat-row>
+      </mat-table>
+    </div>
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-      <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
-          <ion-icon name="trash"></ion-icon>
-      </ion-fab-button>
-      <br>
-      <ion-fab-button (click)="store()">
-          <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
+    <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
+      <ion-icon name="trash"></ion-icon>
+    </ion-fab-button>
+    <br>
+    <ion-fab-button (click)="store()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
   </ion-fab>
 </ion-content>
-
-

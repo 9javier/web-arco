@@ -86,7 +86,7 @@ ion-footer {
 }
 
 .text-colors{
-    margin-top: 235px;
+    margin-top: 195px;
 }
 
 .legend-card-color{
@@ -125,6 +125,12 @@ ion-footer {
             background: green !important;
             &.haveDate {
                 background: green !important;
+            }
+        }
+        &.tselected2 {
+            background: #0b63a9 !important;
+            &.haveDate {
+                background: #0b63a9 !important;
             }
         }
     }
