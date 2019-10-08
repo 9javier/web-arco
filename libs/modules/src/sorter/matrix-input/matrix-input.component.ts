@@ -14,39 +14,18 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
 
   sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
   private listZonesWithColors: ZoneSorterModel.ZoneColor[] = [];
-  private listColors: string[] = [];
 
   constructor(
     private events: Events
   ) { }
   
   ngOnInit() {
-    this.listColors = [
-      '#b388ff',
-      '#ccff90',
-      '#ff9e80',
-      '#ea80fc',
-      '#a7ffeb',
-      '#ffd180',
-      '#82b1ff',
-      '#ffe57f',
-      '#ff80ab',
-      '#f4ff81',
-      '#b9f6ca',
-      '#8c9eff',
-      '#84ffff',
-      '#ffff8d',
-      '#ff8a80',
-      '#80d8ff',
-  ];
-
     this.events.subscribe(this.DRAW_TEMPLATE_MATRIX, (sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[]) => {
       this.sorterTemplateMatrix = sorterTemplateMatrix;
 
       let savedIds: any = {};
       this.listZonesWithColors = [];
 
-      let iColorToZone = 0;
       for (let template of this.sorterTemplateMatrix) {
         for (let column of template.columns) {
           if (column.way && column.way.templateZone) {
@@ -57,9 +36,8 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
                 id: zone.zones.id,
                 name: zone.zones.name,
                 active: zone.zones.active,
-                color: this.listColors[iColorToZone]
+                color: zone.zones.color.hex
               });
-              iColorToZone++;
             }
           }
         }
@@ -72,10 +50,10 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
   }
 
   getBackgroundForSelected(column: MatrixSorterModel.Column) {
-    if (column.way && column.way.templateZone){
-      let zoneColor = this.listZonesWithColors.find(zone => zone.id == column.way.templateZone.zones.id);
-      return zoneColor.color;
+    if (column && column.way && column.way.templateZone && column.way.templateZone.zones && column.way.templateZone.zones.color) {
+      return column.way.templateZone.zones.color.hex;
+    } else {
+      return '#ffffff';
     }
-    return '#ffffff';
   }
 }
