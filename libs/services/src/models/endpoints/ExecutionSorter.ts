@@ -15,7 +15,8 @@ export namespace ExecutionSorterModel {
 
   export interface ParamsExecuteColor {
     color: number,
-    type: 1|2
+    type: 1|2,
+    idZone?: number
   }
 
   export interface ExecuteColor {

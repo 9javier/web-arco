@@ -1244,11 +1244,17 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
     await this.intermediaryService.presentLoading('Iniciando proceso...');
 
+    let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+      color: this.sorterProvider.colorSelected.id,
+      type: 1
+    };
+
+    if (this.sorterProvider.idZoneSelected) {
+      paramsRequest.idZone = this.sorterProvider.idZoneSelected
+    }
+
     this.sorterExecutionService
-      .postExecuteColor({
-        color: this.sorterProvider.colorSelected.id,
-        type: 1
-      })
+      .postExecuteColor(paramsRequest)
       .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
         await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
         this.router.navigate(['sorter/input/scanner']);
