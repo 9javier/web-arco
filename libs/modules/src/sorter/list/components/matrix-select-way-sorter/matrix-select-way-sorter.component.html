@@ -21,21 +21,23 @@
       <ion-col size="6">
         <div class="containerTable">
           <mat-table #table [dataSource]="dataSource" class="prioridad" multiTemplateDataRows>
-            <ng-container matColumnDef="prioridad" >
-              <mat-header-cell *matHeaderCellDef>
-                Prioridad
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element">
-                <p style="margin-left: 20px">{{element.priority}}</p> 
-              </mat-cell>
-            </ng-container>
+            
 
             <ng-container matColumnDef="carril">
-              <mat-header-cell *matHeaderCellDef>
+              <mat-header-cell *matHeaderCellDef class="title">
                  Carril
               </mat-header-cell>
               <mat-cell *matCellDef="let element"> 
-                <ion-input type="text" value="{{element.waysId}} "></ion-input>
+                <p style="margin-left: 20px">{{element.waysId}}</p> 
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="prioridad" >
+              <mat-header-cell *matHeaderCellDef class="title">
+                Prioridad
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <ion-input type="text" value="{{element.priority}} "></ion-input>
               </mat-cell>
             </ng-container>
 

@@ -67,6 +67,7 @@ export class ListComponent implements OnInit {
   dataSource2 = new MatTableDataSource<Element>(this.data);
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
+  radioForm: FormGroup;
   items: FormArray;
   showRails: boolean = false;
   id: string;
@@ -79,6 +80,7 @@ export class ListComponent implements OnInit {
   ways = [];
   firstSorter;
   zoneId: number;
+  equalParts: any;
 
   //Get value on ionChange on IonRadioGroup
   selectedRadioGroup: any;
@@ -126,7 +128,18 @@ export class ListComponent implements OnInit {
         validators: validators.haveItems('toSelectActive')
       }
     );*/
+
+    this.radioForm = this.formBuilder.group(
+      {
+        selector: false,
+        selects: this.formBuilder.array([this.createSelect()])
+      },
+      {
+        validators: validators.haveItems('toSelectRadio')
+      }
+    );
     this.id = this.route.snapshot.paramMap.get('id');
+    this.equalParts = this.route.snapshot.paramMap.get('equalParts');
     this.postRoute = `Plantilla ${this.id}`;
   }
 
@@ -156,9 +169,10 @@ export class ListComponent implements OnInit {
     })
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
-      this.radioButton = this.zones[0];
+      this.radioButton = this.zones[0].id;
       console.log(this.zones)
       //this.initSelectActive(this.zones);
+      this.initRadioActive(this.zones);
     });
     this.test_counter = 0;
 
@@ -186,6 +200,7 @@ export class ListComponent implements OnInit {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
       //this.initSelectActive(this.zones);
+      this.initRadioActive(this.zones);
     });
   }
 
@@ -227,6 +242,12 @@ export class ListComponent implements OnInit {
     this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(item.active)))));
   }*/
 
+  initRadioActive(items: TemplateZoneModel.Zone[]) {
+    this.radioForm.removeControl('toSelectRadio');
+    this.radioForm.addControl('toSelectRadio', this.formBuilder.array(items.map((item, index, array) => new FormControl(Boolean(true)))));
+    console.log(this.radioForm)
+  }
+
   createSelect(): FormControl {
     return new FormControl(Boolean(false));
   }
@@ -257,6 +278,7 @@ export class ListComponent implements OnInit {
         this.zones = data.data;
         console.log(this.zones);
         //this.initSelectActive(this.zones);
+        this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
       });
     })
@@ -479,6 +501,7 @@ export class ListComponent implements OnInit {
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
         //this.initSelectActive(this.zones);
+        this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
       });
     })
@@ -518,6 +541,33 @@ export class ListComponent implements OnInit {
   }
   radioBlur() {
     //console.log("radioBlur");
+  }
+
+  storeWays(data){
+    this.intermediaryService.presentLoading();
+    var info = {
+      zones: data
+    }
+    this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(() => {
+      this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
+      this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+        this.zones = data.data;
+        //this.initSelectActive(this.zones);
+        this.initRadioActive(this.zones);
+        this.intermediaryService.dismissLoading();
+      });
+    }, () => {
+      this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
+  validSave(){
+    //this.changeDetectorRefs.detectChanges();
+    if(this.matrixSelectWay !== undefined){
+      return this.matrixSelectWay.getBanSave();
+    } 
+    return false;
   }
 }
 

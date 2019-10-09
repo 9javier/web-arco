@@ -38,7 +38,7 @@ const routes:Routes = [
     }
   },
   {
-    path: 'plantilla/:id',
+    path: 'plantilla/:id/:equalParts',
     component: ListComponent,
     data: {
       name: 'Plantilla'
