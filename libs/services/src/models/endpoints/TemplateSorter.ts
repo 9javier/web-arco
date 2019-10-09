@@ -11,7 +11,8 @@ export namespace TemplateSorterModel {
         active: boolean,
         zones?: any,
         zoneWays?: any,
-        zoneWarehouses?: any
+        zoneWarehouses?: any,
+        equalParts?: boolean
     }
 
     export interface ResponseTemplate {

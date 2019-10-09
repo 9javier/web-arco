@@ -2,8 +2,13 @@
   <div class="center-block">
     <div class="matrix">
       <div class="height" *ngFor="let sorterHeight of sorterTemplateMatrix">
-        <div class="column" *ngFor="let sorterColumn of sorterHeight.columns" [ngStyle]="{'background-color': getBackgroundForSelected(sorterColumn)}">
-
+        <div class="column"
+             *ngFor="let sorterColumn of sorterHeight.columns"
+             [ngStyle]="{'background-color': getBackgroundForSelected(sorterColumn)}"
+             (click)="selectZone(sorterColumn)">
+          <div class="column-selected" *ngIf="isFromSelectedZone(sorterColumn)">
+            <i class="material-icons">check</i>
+          </div>
         </div>
       </div>
       <div class="footer" [ngStyle]="{'width': (sorterTemplateMatrix[0].columns.length * 40) + 'px'}">
@@ -12,7 +17,7 @@
     </div>
     <div class="legend">
       <div class="zone" *ngFor="let zoneColor of listZonesWithColors">
-        <div class="color-zone" [ngStyle]="{'background-color': zoneColor.color}">
+        <div class="color-zone" [ngStyle]="{'background-color': zoneColor.id == 0 ? 'var(--ion-color-background-zone-selected)' : zoneColor.color, 'filter': zoneColor.id == 0 ? 'grayscale(0.5)' : 'grayscale(0)'}">
         </div>
         <span class="name-zone">{{zoneColor.name}}</span>
       </div>

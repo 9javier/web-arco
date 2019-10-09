@@ -9,7 +9,7 @@
       </p>
     </div>
   </div>
-  <sorter-matrix-input></sorter-matrix-input>
+  <sorter-matrix-input [enableZoneSelection]="true" (zoneSelected)="zoneSelected($event)"></sorter-matrix-input>
 
-  <sorter-footer-buttons *ngIf="sorterProvider.colorSelected" (operationCancel)="sorterOperationCancelled()" (operationStart)="sorterOperationStarted()"></sorter-footer-buttons>
+  <sorter-footer-buttons *ngIf="showButtonsFooter()" (operationCancel)="sorterOperationCancelled()" (operationStart)="sorterOperationStarted()"></sorter-footer-buttons>
 </ion-content>

@@ -14,6 +14,14 @@ export class SorterProvider {
     this._colorSelected = value;
   }
 
+  private _idZoneSelected: number;
+  get idZoneSelected(): number {
+    return this._idZoneSelected;
+  }
+  set idZoneSelected(value: number) {
+    this._idZoneSelected = value;
+  }
+
   private _idTemplateSelected: number;
   get idTemplateSelected(): number {
     return this._idTemplateSelected;
