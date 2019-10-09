@@ -7,11 +7,11 @@
 
     <div class="main-buttons">
       <h1 style="float: left">Zonas</h1>
-      <h2 style="float: right">
+      <!--<h2 style="float: right">
         <ion-button class="btn-move-products" slot="end" color="primary" (click)="addCarriles()">
           GUARDAR CARRILES
         </ion-button>
-      </h2>
+      </h2>-->
     </div>
 
     <div class="container" *ngIf="zones">
@@ -79,7 +79,7 @@
           <mat-cell *matCellDef="let element">
             <mat-radio-group name="rails">
               <mat-radio-button (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)"
-                [value]="element"></mat-radio-button>
+                value="element.id"></mat-radio-button>
             </mat-radio-group>
           </mat-cell>
         </ng-container>
@@ -94,46 +94,9 @@
       </mat-table>
     </div>
 
-    <ion-row *ngIf="waysMatrix.length > 0">
-      <ion-col size="6">
-        <div class="containerWays" >
-          <suite-matrix-select-way-sorter [waysMatrix]="waysMatrix"></suite-matrix-select-way-sorter>
-        </div>
-      </ion-col>
-      <ion-col size="6">
-        <ion-row *ngIf="waysMatrix.length > 0">
-          <ion-col size="6">
-            <div class="containerTable">
-              <mat-table #table [dataSource]="dataSource2" class="prioridad">
-                <ng-container matColumnDef="prioridad" >
-                  <mat-header-cell *matHeaderCellDef>
-                    Prioridad
-                  </mat-header-cell>
-        
-                  <mat-cell *matCellDef="let element">
-                    <p style="margin-left: 20px">{{element.position}}</p> 
-                  </mat-cell>
-                </ng-container>
+    <suite-matrix-select-way-sorter [waysMatrix]="waysMatrix" *ngIf="waysMatrix.length > 0">
       
-                <ng-container matColumnDef="calle">
-                  <mat-header-cell *matHeaderCellDef> Calle </mat-header-cell>
-                  <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-                </ng-container>
-      
-        
-                <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
-                  [class.expanded]="expandedElement == row"></mat-row>
-                <mat-row *matRowDef="let row; when: isExpansionDetailRow"
-                  [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
-                  style="overflow: hidden">
-                </mat-row>
-              </mat-table>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-col>
-    </ion-row>
+    </suite-matrix-select-way-sorter>
 
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
