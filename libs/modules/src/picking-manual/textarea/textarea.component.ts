@@ -62,9 +62,7 @@ export class TextareaComponent implements OnInit {
     private intermediaryService: IntermediaryService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
-    setTimeout(() => {
-      document.getElementById('input-ta').focus();
-    },500);
+    this.focusToInput();
   }
 
   ngOnInit() {
@@ -142,6 +140,7 @@ export class TextareaComponent implements OnInit {
                       if(res.data.packingStatus == 2){
                         this.processInitiated = true;
                         this.inputPicking = null;
+                        this.focusToInput();
                         this.jailReference = dataWrited;
                         this.dataToWrite = 'PRODUCTO';
                         if (!this.packingReference) {
@@ -153,6 +152,7 @@ export class TextareaComponent implements OnInit {
                       } else if(res.data.packingStatus == 3){
                         this.processInitiated = false;
                         this.inputPicking = null;
+                        this.focusToInput();
                         this.jailReference = null;
                         this.dataToWrite = 'CONTENEDOR';
                         this.packingReference = this.jailReference;
@@ -162,16 +162,19 @@ export class TextareaComponent implements OnInit {
                       } else {
                         this.processInitiated = false;
                         this.inputPicking = null;
+                        this.focusToInput();
                         this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
                       }
                     } else {
                       this.processInitiated = false;
                       this.inputPicking = null;
+                      this.focusToInput();
                       this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
                     }
                   } else {
                     this.processInitiated = false;
                     this.inputPicking = null;
+                    this.focusToInput();
                     this.jailReference = null;
                     this.dataToWrite = 'CONTENEDOR';
                     this.packingReference = this.jailReference;
@@ -187,19 +190,23 @@ export class TextareaComponent implements OnInit {
                   } else {
                     this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
                   }
+                  this.focusToInput();
                 }, () => {
                   this.intermediaryService.dismissLoading();
                 });
             } else {
               this.inputPicking = null;
+              this.focusToInput();
               this.presentToast(this.literalsJailPallet[this.typePacking].wrong_packing, 2000, this.pickingProvider.colorsMessage.error.name);
             }
           } else {
             this.inputPicking = null;
+            this.focusToInput();
             this.presentToast(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, 2000, this.pickingProvider.colorsMessage.error.name);
           }
         } else if (this.jailReference && this.jailReference != dataWrited) {
           this.inputPicking = null;
+          this.focusToInput();
           this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
           this.intermediaryService.presentLoading();
@@ -221,6 +228,7 @@ export class TextareaComponent implements OnInit {
             }, (error) => {
               this.intermediaryService.dismissLoading();
               this.inputPicking = null;
+              this.focusToInput();
               this.clearTimeoutCleanLastCodeScanned();
               if (error.error.code == 404) {
                 this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
@@ -234,6 +242,7 @@ export class TextareaComponent implements OnInit {
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
         if (!this.processInitiated) {
           this.inputPicking = null;
+          this.focusToInput();
           this.presentToast(this.literalsJailPallet[this.typePacking].scan_before_products, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
           if (this.listProducts.length > 0) {
@@ -250,6 +259,7 @@ export class TextareaComponent implements OnInit {
                 this.listProducts = res.data.shoePickingPending;
                 this.productsScanned.push(dataWrited);
                 this.inputPicking = null;
+                this.focusToInput();
                 this.presentToast(`Producto ${dataWrited} escaneado y añadido ${this.literalsJailPallet[this.typePacking].toThe}.`, 2000, this.pickingProvider.colorsMessage.info.name);
                 if (this.listProducts.length > 0) {
                   this.setNexProductToScan(this.listProducts[0]);
@@ -263,6 +273,7 @@ export class TextareaComponent implements OnInit {
                 }
               } else {
                 this.inputPicking = null;
+                this.focusToInput();
                 this.presentToast(res.message, 2000, this.pickingProvider.colorsMessage.error.name);
                 this.getPendingListByPicking(this.pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
@@ -285,6 +296,7 @@ export class TextareaComponent implements OnInit {
             let subscribeError = (error) => {
               this.intermediaryService.dismissLoading();
               this.inputPicking = null;
+              this.focusToInput();
               this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
               this.getPendingListByPicking(this.pickingId)
                 .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
@@ -311,6 +323,7 @@ export class TextareaComponent implements OnInit {
             }
           } else {
             this.inputPicking = null;
+            this.focusToInput();
             this.showNexProductToScan(false);
             this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
             this.dataToWrite = 'CONTENEDOR';
@@ -330,6 +343,7 @@ export class TextareaComponent implements OnInit {
                     if (res.code == 200 || res.code == 201) {
                       this.scanContainerToNotFound = null;
                       this.dataToWrite = "PRODUCTO";
+                      this.focusToInput();
 
                       this.presentToast('El producto ha sido reportado como no encontrado', 1500, this.pickingProvider.colorsMessage.success.name);
                       this.getPendingListByPicking(this.pickingId)
@@ -346,33 +360,39 @@ export class TextareaComponent implements OnInit {
                                 this.presentToast(this.literalsJailPallet[this.typePacking].scan_to_end, 1500, this.pickingProvider.colorsMessage.success.name);
                               }, 2 * 1000);
                             }
-
                           }
                         });
                     } else {
+                      this.focusToInput();
                       this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
                     }
                   }, error => {
+                    this.focusToInput();
                     this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
                   });
               } else {
+                this.focusToInput();
                 this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
               }
             }, (error) => {
               this.intermediaryService.dismissLoading();
               console.error('Error::Subscribe::CheckContainerProduct -> ', error);
+              this.focusToInput();
               this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
             }, () => {
               this.intermediaryService.dismissLoading();
             });
         } else {
+          this.focusToInput();
           this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
         }
       } else {
         if (this.processInitiated) {
           this.inputPicking = null;
+          this.focusToInput();
         } else {
           this.inputPicking = null;
+          this.focusToInput();
           this.presentToast('Referencia errónea', 1500, this.pickingProvider.colorsMessage.error.name);
         }
       }
@@ -512,5 +532,11 @@ export class TextareaComponent implements OnInit {
       clearTimeout(this.intervalCleanLastCodeScanned);
       this.intervalCleanLastCodeScanned = null;
     }
+  }
+
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    },500);
   }
 }
