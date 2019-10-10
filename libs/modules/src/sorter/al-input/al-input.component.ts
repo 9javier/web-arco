@@ -28,6 +28,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   public colorsSelectors: TemplateColorsModel.AvailableColorsByProcess[] = [];
   public sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
   public loadingSorterTemplateMatrix: boolean = true;
+  private isTemplateWithEqualZones: boolean = false;
 
   constructor(
     private router: Router,
@@ -42,6 +43,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit() {
+    this.isTemplateWithEqualZones = false;
     if (this.activeDefaultData) {
       this.loadDefaultData();
     } else {
@@ -1215,8 +1217,23 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     this.sorterProvider.colorSelected = data;
   }
 
+  zoneSelected(data) {
+    this.sorterProvider.idZoneSelected = data;
+  }
+
   sorterOperationCancelled() {
     this.sorterProvider.colorSelected = null;
+    this.sorterProvider.idZoneSelected = null;
+  }
+
+  showButtonsFooter() : boolean {
+    if (this.isTemplateWithEqualZones && this.sorterProvider.colorSelected && this.sorterProvider.idZoneSelected) {
+      return true;
+    } else if (!this.isTemplateWithEqualZones && this.sorterProvider.colorSelected) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   async sorterOperationStarted() {
@@ -1227,11 +1244,17 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
     await this.intermediaryService.presentLoading('Iniciando proceso...');
 
+    let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+      color: this.sorterProvider.colorSelected.id,
+      type: 1
+    };
+
+    if (this.sorterProvider.idZoneSelected) {
+      paramsRequest.idZone = this.sorterProvider.idZoneSelected
+    }
+
     this.sorterExecutionService
-      .postExecuteColor({
-        color: this.sorterProvider.colorSelected.id,
-        type: 1
-      })
+      .postExecuteColor(paramsRequest)
       .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
         await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
         this.router.navigate(['sorter/input/scanner']);
@@ -1261,7 +1284,6 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .postAvailableColorsByProcess({ processType: 1 })
       .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
         this.colorsSelectors = res;
-        console.debug('Test::Colors', this.colorsSelectors);
         this.loadActiveTemplate(idSorter);
       }, async (error) => {
         console.error('Error::Subscribe::templateColorsService::postAvailableColorsByProcess', error);
@@ -1274,6 +1296,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     this.sorterTemplateService
       .getActiveTemplate()
       .subscribe((res: TemplateSorterModel.Template) => {
+        this.isTemplateWithEqualZones = res.equalParts;
         this.loadMatrixTemplateSorter(idSorter, res.id);
       }, async (error) => {
         console.error('Error::Subscribe::sorterTemplateService::getActiveTemplate', error);
