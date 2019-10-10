@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   apiBase: 'http://mga.krack.es:8080/api',
+  apiSorter: '', // TODO Define url to access Sorter Api
   urlBase: 'http://mga.krack.es:8080',
   sga:{
     client_id:"krack-client-sga",

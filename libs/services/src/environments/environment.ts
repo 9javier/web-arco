@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
-  apiBase: "http://localhost:8080/api",
+  apiBase: 'http://localhost:8080/api',
+  apiSorter: '', // TODO Define url to access Sorter Api
   urlBase: 'http://localhost:8080',
   sga: {
     client_id: "krack-client-sga",

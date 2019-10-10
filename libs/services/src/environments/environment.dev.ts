@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   apiBase: 'http://192.168.254.111:8080/api',
+  apiSorter: '', // TODO Define url to access Sorter Api
   urlBase: 'http://192.168.254.111:8080',
   sga:{
     client_id:"krack-client-sga",
