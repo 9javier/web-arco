@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {AuthenticationService} from "../../lib/endpoint/authentication/authentication.service";
+import {HttpRequestModel} from "../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class RequestsProvider {
     private auth: AuthenticationService,
   ) {}
 
-  public get(url: string) : Promise<HttpResponse> {
+  public get(url: string) : Promise<HttpRequestModel.Response> {
     return new Promise((resolve, reject) => {
       this.auth.getCurrentToken().then((authToken) => {
         let req = new XMLHttpRequest();
@@ -30,7 +31,7 @@ export class RequestsProvider {
     });
   }
 
-  public post(url: string, body: any) : Promise<HttpResponse> {
+  public post(url: string, body: any) : Promise<HttpRequestModel.Response> {
     return new Promise((resolve, reject) => {
       this.auth.getCurrentToken().then((authToken) => {
         let req = new XMLHttpRequest();
@@ -50,11 +51,4 @@ export class RequestsProvider {
     });
   }
 
-}
-
-interface HttpResponse {
-  message?: string,
-  code?: number,
-  data?: any,
-  error?: any
 }

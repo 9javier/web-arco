@@ -107,9 +107,10 @@ export class PrintTagsScanditService {
                   ScanditMatrixSimple.showLoadingDialog('Consultando precio del producto...');
                   this.priceService
                     .postPricesByProductsReferences({ references: [codeScanned] })
-                    .subscribe((prices) => {
+                    .then((prices: PriceModel.ResponsePricesByProductsReferences) => {
+                      let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
                       ScanditMatrixSimple.hideLoadingDialog();
-                      let price = prices[0];
+                      let price = pricesData[0];
                       if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                         this.scannedPaused = true;
                         this.productToPrintPvpLabel = price;
@@ -117,7 +118,7 @@ export class PrintTagsScanditService {
                       } else {
                         this.printerService.printTagPriceUsingPrice(price);
                       }
-                    }, () => ScanditMatrixSimple.hideLoadingDialog());
+                    }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
                   break;
                 case 3:
                   // Check packing of product
@@ -160,10 +161,11 @@ export class PrintTagsScanditService {
                   ScanditMatrixSimple.showLoadingDialog('Consultando precio del producto...');
                   this.priceService
                     .postPricesByModel(codeScanned)
-                    .subscribe((response) => {
+                    .then((response) => {
+                      let responseData = response.data;
                       ScanditMatrixSimple.hideLoadingDialog();
-                      if (response && response.length == 1) {
-                        let price = response[0];
+                      if (responseData && responseData.length == 1) {
+                        let price = responseData[0];
                         if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                           this.scannedPaused = true;
                           this.productToPrintPvpLabel = price;
@@ -171,12 +173,23 @@ export class PrintTagsScanditService {
                         } else {
                           this.printerService.printTagPriceUsingPrice(price);
                         }
-                      } else if (response && response.length > 1) {
-                        this.listProductsPrices = response;
+                      } else if (responseData && responseData.length > 1) {
+                        this.listProductsPrices = responseData;
                         // Request user select size to print
-                        ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', response);
+                        ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', responseData);
                       }
                     }, (error) => {
+                      ScanditMatrixSimple.hideLoadingDialog();
+                      // Reset last-code-scanned to can scan another time the same code
+                      this.lastCodeScanned = 'start';
+                      ScanditMatrixSimple.setText(
+                        'Ha ocurrido un error al consultar los precios del artículo escaneado.',
+                        this.scanditProvider.colorsMessage.error.color,
+                        this.scanditProvider.colorText.color,
+                        16);
+                      this.hideTextMessage(1500);
+                    })
+                    .catch((error) => {
                       ScanditMatrixSimple.hideLoadingDialog();
                       // Reset last-code-scanned to can scan another time the same code
                       this.lastCodeScanned = 'start';
@@ -317,7 +330,7 @@ export class PrintTagsScanditService {
     ScanditMatrixSimple.showLoadingDialog('Generando nueva etiqueta...');
     this.productsService
       .postRelabel(paramsRelabel)
-      .subscribe((res: ProductModel.ResponseRelabel) => {
+      .then((res: ProductModel.ResponseRelabel) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200) {
           // Do product print
@@ -331,6 +344,16 @@ export class PrintTagsScanditService {
           this.hideTextMessage(1500);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        console.error('Error::Subscribe::Relabel -> ', error);
+        ScanditMatrixSimple.setText(
+          'Ha ocurrido un error al intentar consultar la información de la talla.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
+      })
+      .catch((error) => {
         ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe::Relabel -> ', error);
         ScanditMatrixSimple.setText(
