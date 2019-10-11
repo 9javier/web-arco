@@ -8,4 +8,10 @@
         <ion-label position="floating">Partes Iguales</ion-label>
         <ion-checkbox formControlName="equalParts"></ion-checkbox>
     </ion-item>
+    <ion-item *ngIf="form.value.equalParts">
+        <ion-label position="floating">Cantidad de Zonas (Min:2 - Max:4)</ion-label>
+        <ion-input placeholder="Número" class="ion-margin-horizontal" formControlName="quantityParts" type="number"
+            number>
+        </ion-input>
+    </ion-item>
 </form>
