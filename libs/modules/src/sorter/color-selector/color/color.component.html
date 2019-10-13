@@ -1,0 +1,13 @@
+<div class="color-space" *ngIf="color.available == '1'">
+  <div
+    class="color-item"
+    [ngStyle]="{'background-color': color.hex}"
+    [ngClass]="getColorClass()">
+    <div *ngIf="sorterProvider.colorSelected && sorterProvider.colorSelected.id == color.id">
+      <i class="material-icons">check</i>
+    </div>
+    <div *ngIf="color.available == '0'">
+      <i class="material-icons">close</i>
+    </div>
+  </div>
+</div>

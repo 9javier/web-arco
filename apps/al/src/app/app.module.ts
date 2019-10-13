@@ -14,18 +14,19 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 
 import { ServicesModule, AddTokenToRequestInterceptor } from '@suite/services';
-import { ScannerConfigurationModule,MenuModule } from "@suite/common-modules";
+import {ScannerConfigurationModule, MenuModule, ToolbarAlModule} from "@suite/common-modules";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import localeEs from '@angular/common/locales/es';
 import {registerLocaleData} from "@angular/common";
 import {MondayStartingDateAdapterService} from "../../../../libs/services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
+import { TablePrioritiesSorterComponent } from './table-priorities-sorter/table-priorities-sorter.component';
 
 registerLocaleData(localeEs);
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, TablePrioritiesSorterComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
@@ -38,7 +39,8 @@ registerLocaleData(localeEs);
     AppRoutingModule,
     ServicesModule,
     BrowserAnimationsModule,
-    ScannerConfigurationModule
+    ScannerConfigurationModule,
+    ToolbarAlModule
   ],
   providers: [
     StatusBar,

@@ -1,21 +1,21 @@
-import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Location} from "@angular/common";
-import {SelectionModel, DataSource} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel, IntermediaryService} from "@suite/services";
-import {Observable, of} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {HallModel} from "../../../services/src/models/endpoints/Hall";
-import {HallsService} from "../../../services/src/lib/endpoint/halls/halls.service";
-import {ActivatedRoute} from "@angular/router";
-import {ModalController, ToastController, NavParams} from "@ionic/angular";
-import {WarehouseService} from "../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { animate, state, style, transition, trigger } from "@angular/animations";
+import { Location } from "@angular/common";
+import { SelectionModel, DataSource } from "@angular/cdk/collections";
+import { RolModel, UserModel, WarehouseModel, IntermediaryService } from "@suite/services";
+import { Observable, of } from "rxjs";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { HallModel } from "../../../services/src/models/endpoints/Hall";
+import { HallsService } from "../../../services/src/lib/endpoint/halls/halls.service";
+import { ActivatedRoute } from "@angular/router";
+import { ModalController, ToastController, NavParams } from "@ionic/angular";
+import { WarehouseService } from "../../../services/src/lib/endpoint/warehouse/warehouse.service";
 /*import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
 import {LocationsComponent} from "../locations.component";
 import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
-import {PrinterService} from "../../../services/src/lib/printer/printer.service";
+import { PrinterService } from "../../../services/src/lib/printer/printer.service";
 import { CrudService } from '../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
@@ -51,8 +51,8 @@ import { switchMap } from 'rxjs/operators';
 })
 export class SorterComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'active', 'dropdown'];
-  dataSource = new ExampleDataSource();
+  displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'dropdown'];
+  //dataSource = new ExampleDataSource();
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
@@ -63,7 +63,7 @@ export class SorterComponent implements OnInit {
     private crudService: CrudService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private modalController:ModalController,
+    private modalController: ModalController,
     private sorterTemplateService: SorterTemplateService,
     private intermediaryService: IntermediaryService
 
@@ -71,7 +71,7 @@ export class SorterComponent implements OnInit {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        selects: this.formBuilder.array([ this.createSelect() ]),
+        selects: this.formBuilder.array([this.createSelect()]),
         global: false
       },
       {
@@ -83,7 +83,7 @@ export class SorterComponent implements OnInit {
     this.selectedFormActive = this.formBuilder.group(
       {
         selector: false,
-        selects: this.formBuilder.array([ this.createSelect() ])
+        selects: this.formBuilder.array([this.createSelect()])
       },
       {
         validators: validators.haveItems('toSelectActive')
@@ -100,30 +100,30 @@ export class SorterComponent implements OnInit {
 
   ngOnInit() {
     this.crudService
-    .getIndex('Warehouses')
-    .then(
-      (
-        data: Observable<
-          HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
-        >
-      ) => {
-        data.subscribe(
-          (
-            res: HttpResponse<
-              UserModel.ResponseIndex | RolModel.ResponseIndex
-            >
-          ) => {
-            this.warehouses = res.body.data;
-            this.initSelect(this.warehouses);
-          },
-          (err) => {
-            console.log(err)
-          }, () => {
+      .getIndex('Warehouses')
+      .then(
+        (
+          data: Observable<
+            HttpResponse<UserModel.ResponseIndex | RolModel.ResponseIndex>
+          >
+        ) => {
+          data.subscribe(
+            (
+              res: HttpResponse<
+                UserModel.ResponseIndex | RolModel.ResponseIndex
+              >
+            ) => {
+              this.warehouses = res.body.data;
+              this.initSelect(this.warehouses);
+            },
+            (err) => {
+              console.log(err)
+            }, () => {
 
-          }
-        );
-      }
-    );
+            }
+          );
+        }
+      );
     this.sorterTemplateService.getIndex().subscribe((data) => {
       this.templates = data.data;
       console.log(this.templates)
@@ -133,12 +133,12 @@ export class SorterComponent implements OnInit {
 
   clickShowExpasion(row: any) {
     event.stopPropagation();
-    this.router.navigate([`/sorter/plantilla/${row.id}`]);
+    this.router.navigate([`/sorter/plantilla/${row.id}/${row.equalParts}`]);
   }
 
-  selectAll(event):void{
+  selectAll(event): void {
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedForm.get('toSelect');
+    const controlArray = <FormArray>this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
@@ -153,9 +153,9 @@ export class SorterComponent implements OnInit {
     this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
   }
 
-  selectAllActive(event):void{
+  selectAllActive(event): void {
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedFormActive.get('toSelectActive');
+    const controlArray = <FormArray>this.selectedFormActive.get('toSelectActive');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
@@ -181,25 +181,25 @@ export class SorterComponent implements OnInit {
     });
   }
 
-  async update(row):Promise<void>{
+  async update(row): Promise<void> {
     let modal = (await this.modalController.create({
-      component:UpdateComponent,
-      componentProps:{
-        template:row
+      component: UpdateComponent,
+      componentProps: {
+        templateId: row.id
       }
     }));
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.getTemplates();
     })
     modal.present();
   }
 
-  async store():Promise<void>{
+  async store(): Promise<void> {
     let modal = (await this.modalController.create({
-      component:StoreComponent
+      component: StoreComponent
     }));
-    modal.onDidDismiss().then(()=>{
-     this.getTemplates();
+    modal.onDidDismiss().then(() => {
+      this.getTemplates();
     })
     modal.present();
   }
@@ -230,18 +230,18 @@ export class SorterComponent implements OnInit {
     let repeat = false;
     let idToDelete = this.templates[index].id;
     this.toDeleteIds.forEach(id => {
-      if(id == idToDelete) {
+      if (id == idToDelete) {
         repeat = true;
       }
     })
-    if(!repeat) {
+    if (!repeat) {
       this.toDeleteIds.push(idToDelete);
     }
   }
 
   delete() {
-    let deletions:Observable<any> =new Observable(observer=>observer.next());
-    if(this.toDeleteIds.length > 0) {
+    let deletions: Observable<any> = new Observable(observer => observer.next());
+    if (this.toDeleteIds.length > 0) {
       this.toDeleteIds.forEach(id => {
         deletions = deletions.pipe(switchMap(() => {
           return (this.sorterTemplateService.deleteTemplateSorter(id))
@@ -252,15 +252,15 @@ export class SorterComponent implements OnInit {
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
 
-    deletions.subscribe(()=>{
+    deletions.subscribe(() => {
       this.intermediaryService.dismissLoading();
       this.getTemplates();
       this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
-      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      const controlArray = <FormArray>this.selectedForm.get('toSelect');
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
-    },()=>{
+    }, () => {
       this.intermediaryService.dismissLoading();
       this.getTemplates();
       this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
@@ -269,19 +269,19 @@ export class SorterComponent implements OnInit {
 
 }
 
-export class ExampleDataSource extends DataSource<any> {
-  /** Connect function called by the table to retrieve one stream containing the data to render. */
-  data = [
-    { icon: '', Ntemplate: 1, zona: 2, dropdown: false, nombre:'template1', carriles: 20 },
-    { icon: '', Ntemplate: 2, zona: 2, dropdown: false, nombre:'template2', carriles: 23 },
-    { icon: '', Ntemplate: 3, zona: 2, dropdown: false, nombre:'template3', carriles: 26 },
-  ];
-  connect(): Observable<Element[]> {
-    const rows = [];
-    this.data.forEach(element => rows.push(element, { detailRow: true, element }));
-    console.log(rows);
-    return of(rows);
-  }
+// export class ExampleDataSource extends DataSource<any> {
+//   /** Connect function called by the table to retrieve one stream containing the data to render. */
+//   data = [
+//     { icon: '', Ntemplate: 1, zona: 2, dropdown: false, nombre: 'template1', carriles: 20 },
+//     { icon: '', Ntemplate: 2, zona: 2, dropdown: false, nombre: 'template2', carriles: 23 },
+//     { icon: '', Ntemplate: 3, zona: 2, dropdown: false, nombre: 'template3', carriles: 26 },
+//   ];
+//   connect(): Observable<Element[]> {
+//     const rows = [];
+//     this.data.forEach(element => rows.push(element, { detailRow: true, element }));
+//     console.log(rows);
+//     return of(rows);
+//   }
 
-  disconnect() { }
-}
+//   disconnect() { }
+// }

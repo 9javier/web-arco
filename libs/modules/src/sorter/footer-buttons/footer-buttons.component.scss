@@ -1,0 +1,32 @@
+div.footer {
+  width: 100%;
+  display: table;
+  margin: 20px 0 20px 0;
+  padding: 0 20px;
+  position: absolute;
+  bottom: 0;
+  height: 36px;
+  div.button {
+    display: table-cell;
+    width: 50%;
+    button {
+      width: 100%;
+      height: 36px;
+      padding: 0;
+    }
+  }
+  div.start {
+    padding-left: 8px;
+    button {
+      background-color: var(--ion-color-tertiary);
+      color: white;
+    }
+  }
+  div.cancel {
+    padding-right: 8px;
+    button {
+      background-color: var(--ion-color-secondary);
+      color: white;
+    }
+  }
+}

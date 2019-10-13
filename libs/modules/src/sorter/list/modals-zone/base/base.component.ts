@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -8,33 +8,34 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class BaseComponent implements OnInit {
 
-  @Input() set zone(zone){
-    if(zone) {
+  @Input() set zone(zone) {
+    if (zone) {
       this.form.patchValue(zone);
     }
   }
 
   @Input() colors: any;
-  
-  form:FormGroup = this.formBuilder.group({
-    id:[''],
-    name:['',Validators.required],
-    color:['',Validators.required],
-    active: [null]
+
+  form: FormGroup = this.formBuilder.group({
+    id: [''],
+    name: ['', Validators.required],
+    zoneNumber: ['', Validators.required],
+    //color:['',Validators.required]
+    //active: [true]
   });
 
   constructor(
-    private formBuilder:FormBuilder
+    private formBuilder: FormBuilder
   ) { }
 
-  
-  getValue(){
+
+  getValue() {
     return this.sanitize(this.form.value);
   }
 
-  sanitize(zone){
-    Object.keys(zone).forEach(key=>{
-      if(!zone[key])
+  sanitize(zone) {
+    Object.keys(zone).forEach(key => {
+      if (!zone[key])
         delete zone[key];
     });
     return zone;

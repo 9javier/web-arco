@@ -1,15 +1,16 @@
-import { Component, OnInit,Input, Output, EventEmitter } from '@angular/core';
-import {  app } from '../../../../services/src/environments/environment';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service } from '@suite/services';
 import { Router } from '@angular/router';
-import {ScanditService} from "../../../../services/src/lib/scandit/scandit.service";
-import {ReceptionScanditService} from "../../../../services/src/lib/scandit/reception/reception.service";
-import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
-import {MenuController} from "@ionic/angular";
-import {SealScanditService} from "../../../../services/src/lib/scandit/seal/seal.service";
-import {ProductInfoScanditService} from "../../../../services/src/lib/scandit/product-info/product-info.service";
+import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
+import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
+import { PrintTagsScanditService } from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
+import { MenuController } from "@ionic/angular";
+import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
+import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
+import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 
-type MenuItemList = (MenuSectionGroupItem|MenuSectionItem)[];
+type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
 interface MenuSectionGroupItem {
   title: string,
@@ -32,8 +33,8 @@ interface MenuSectionItem {
 })
 export class MenuComponent implements OnInit {
   project_selector: any;
-  @Input() set alloweds(allowed){
-    this.filterPages(allowed || {logout:true});
+  @Input() set alloweds(allowed) {
+    this.filterPages(allowed || { logout: true });
   }
 
 
@@ -41,7 +42,7 @@ export class MenuComponent implements OnInit {
 
   iconsDirection = 'start';
   displaySmallSidebar = false;
-  currentRoute:string = "";
+  currentRoute: string = "";
   sgaPages: MenuItemList = [
     {
       title: 'Registro horario',
@@ -57,7 +58,7 @@ export class MenuComponent implements OnInit {
       children: [
         {
           title: 'Productos',
-          id:'products',
+          id: 'products',
           url: '/products',
           icon: 'basket'
         },
@@ -69,7 +70,7 @@ export class MenuComponent implements OnInit {
         },*/
         {
           title: 'Gestión de almacén',
-          id:'warehouses-management',
+          id: 'warehouses-management',
           url: '/warehouse/manage',
           icon: 'apps'
         },
@@ -89,13 +90,13 @@ export class MenuComponent implements OnInit {
       children: [
         {
           title: 'Listado',
-          id:'workwaves-scheduled',
+          id: 'workwaves-scheduled',
           url: '/workwaves-scheduled',
           icon: 'code'
         },
         {
           title: 'Historial',
-          id:'workwaves-history',
+          id: 'workwaves-history',
           url: '/workwaves-history',
           icon: 'code-download'
         },
@@ -116,32 +117,32 @@ export class MenuComponent implements OnInit {
         {
           title: 'Gestión de usuarios',
           url: '/users/menu',
-          id:'user-management',
+          id: 'user-management',
           icon: 'people'
         },
         {
           title: 'Parametrización de operarios',
-          id:'operator-parametrization',
+          id: 'operator-parametrization',
           url: '/user-manager',
           icon: 'people'
         },
         {
           title: 'Roles',
-          id:'roles',
+          id: 'roles',
           url: '/roles/menu',
           icon: 'person'
         },
       ]
     },
     {
-      title: 'Picking Tiendas',
+      title: 'Picking tiendas',
       open: true,
       type: 'wrapper',
       icon: 'cart',
       children: [
         {
           title: 'Calendario',
-          id:'calendar-sga',
+          id: 'calendar-sga',
           url: '/calendar-sga',
           icon: 'md-calendar'
         }
@@ -154,78 +155,78 @@ export class MenuComponent implements OnInit {
       icon: 'options',
       children: [
         {
-        title: 'Variables globales',
-        id: 'global-variables',
-        url: '/global-variables',
-        icon: 'cog'
-      },
+          title: 'Variables globales',
+          id: 'global-variables',
+          url: '/global-variables',
+          icon: 'cog'
+        },
         {
           title: 'Almacenes',
-          id:'warehouses',
+          id: 'warehouses',
           url: '/warehouses',
           icon: 'filing'
         },
         {
           title: 'Grupos de almacenes',
-          id:'warehouses-group',
+          id: 'warehouses-group',
           url: '/groups/menu',
           icon: 'person'
         },
         {
           title: 'Asignar grupos de almacenes',
-          id:'group-to-warehouse',
+          id: 'group-to-warehouse',
           url: '/group-to-warehouse',
           icon: 'people'
         },
         {
           title: 'Grupos de tiendas para picking',
-          id:'group-warehouse-picking',
+          id: 'group-warehouse-picking',
           url: '/group-warehouse-picking',
           icon: 'people'
         },
         {
-          title:'Agencias',
-          id:'agency',
-          url:'/manage-agencies',
-          icon:'train'
+          title: 'Agencias',
+          id: 'agency',
+          url: '/manage-agencies',
+          icon: 'train'
         },
         {
           title: 'Edificios',
-          id:'building',
+          id: 'building',
           url: '/building',
           icon: 'business'
         },
         {
           title: 'Embalajes',
-          id:'jails',
+          id: 'jails',
           url: '/jails/menu',
           icon: 'grid'
         },
       ]
     },
     {
-      title:'Tarifas',
-      id:'tariff-sga',
-      url:'/tariff',
-      icon:'logo-usd'
+      title: 'Tarifas',
+      id: 'tariff-sga',
+      url: '/tariff',
+      icon: 'logo-usd'
     },
     {
       title: 'Sorter',
       open: true,
       type: 'wrapper',
-      icon:'logo-usd',
+      icon: 'apps',
       children: [
         {
-          title: 'Crear Sorter',
-          id:'sorter-sga-create',
-          url: '/sorter-new',
-          icon:'logo-usd'
+          title: 'Crear plantillas-zonas',
+          id: 'sorter-sga',
+          url: '/sorter',
+          icon: 'document'
         },
         {
-        title: 'Crear Plantillas-Zonas',
-        id:'sorter-sga',
-        url: '/sorter',
-        icon:'logo-usd'
+          title: 'Selección de plantilla',
+          id: 'sorter-template-selection',
+          url: '/sorter/template/selection',
+          icon: 'checkbox-outline'
         }
       ]
     }
@@ -234,7 +235,7 @@ export class MenuComponent implements OnInit {
   alPages: MenuItemList = [
     {
       title: 'Registro horario',
-      id:'user-time',
+      id: 'user-time',
       url: '/user-time',
       icon: 'time'
     },
@@ -280,7 +281,7 @@ export class MenuComponent implements OnInit {
       title: 'Sorter',
       open: false,
       type: 'wrapper',
-      icon: 'logo-usd',
+      icon: 'apps',
       children: [
         {
           title: 'Sorter',
@@ -295,10 +296,16 @@ export class MenuComponent implements OnInit {
           icon: 'pricetags'
         },
         {
-          title: 'Código exposición manual',
-          id: 'print-price-tag-manual',
-          url: '/print-tag/manual/price',
-          icon: 'pricetags'
+          title: 'Entrada',
+          id: 'sorter-input',
+          url: '/sorter/input',
+          icon: 'log-in'
+        },
+        {
+          title: 'Salida',
+          id: 'sorter-output',
+          url: '/sorter/output',
+          icon: 'log-out'
         }
       ]
     },
@@ -425,80 +432,83 @@ export class MenuComponent implements OnInit {
 
   ];
   private menuPages = {
-    sga:this.sgaPages,
-    al:this.alPages
+    sga: this.sgaPages,
+    al: this.alPages
   }
 
   menuPagesFiltered: MenuItemList = [];
-@Output() menuTitle = new EventEmitter();
+  @Output() menuTitle = new EventEmitter();
 
 
   constructor(
-    private loginService:Oauth2Service,
-    private router:Router,
-    private authenticationService:AuthenticationService,
+    private loginService: Oauth2Service,
+    private router: Router,
+    private authenticationService: AuthenticationService,
     private scanditService: ScanditService,
     private receptionScanditService: ReceptionScanditService,
     private printTagsScanditService: PrintTagsScanditService,
     private sealScanditService: SealScanditService,
     private productInfoScanditService: ProductInfoScanditService,
-    private menuController: MenuController
+    private menuController: MenuController,
+    private toolbarProvider: ToolbarProvider
   ) { }
 
-  returnTitle(item:MenuSectionItem){
+  returnTitle(item: MenuSectionItem) {
     this.currentRoute = item.title
+    this.toolbarProvider.currentPage.next(item.title);
+    this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(item.title);
   }
 
   /**
    * Select the links that be shown depends of dictionary paramethers
    */
-  filterPages(dictionary){
+  filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
-    let logoutItem = dictionary['user-time']?({
+    let logoutItem = dictionary['user-time'] ? ({
       title: 'Cerrar sesión',
-      id:'logout',
+      id: 'logout',
       url: '/user-time/logout',
       icon: 'log-out'
-    }):(    {
+    }) : ({
       title: 'Cerrar sesión',
-      id:'logout',
+      id: 'logout',
       url: '/logout',
       icon: 'log-out'
     });
-    if(!this.alPages.find(item=>(<any>item).id=="logout"))
+    if (!this.alPages.find(item => (<any>item).id == "logout"))
       this.alPages.push(logoutItem);
     else
-      this.alPages.forEach((item,i)=>{
-        if((<any>item).id == "logout")
+      this.alPages.forEach((item, i) => {
+        if ((<any>item).id == "logout")
           this.alPages[i] = logoutItem;
       });
-    if(!this.sgaPages.find(item=>(<any>item).id=="logout"))
+    if (!this.sgaPages.find(item => (<any>item).id == "logout"))
       this.sgaPages.push(logoutItem);
-      else
-      this.sgaPages.forEach((item,i)=>{
-        if((<any>item).id == "logout")
+    else
+      this.sgaPages.forEach((item, i) => {
+        if ((<any>item).id == "logout")
           this.sgaPages[i] = logoutItem;
       });
-      this.project_selector = app.name;
-    if(!app || !app.name) {
+    this.project_selector = app.name;
+    if (!app || !app.name) {
       return false;
     }
     /**obtain the routes for the current application */
     let auxPages = this.menuPages[this.app.name];
     this.menuPagesFiltered = [];
-    if(!auxPages) {
+    if (!auxPages) {
       return false;
     }
     /**iterate over all pages of the application */
-    auxPages.forEach((page:any)=>{
+    auxPages.forEach((page: any) => {
       /**to save the childrens of the actual page */
       let auxChildren = [];
       /**if the page is a wrapper then iterate over his childrens to get the alloweds */
-      if(page.type == "wrapper"){
+      if (page.type == "wrapper") {
         page.children.forEach(children => {
           /**if the childen is allowed then add if */
-          if(dictionary[children.id]) {
+          if (dictionary[children.id]) {
             auxChildren.push(children);
           }
         });
@@ -506,22 +516,24 @@ export class MenuComponent implements OnInit {
         let auxPage = JSON.parse(JSON.stringify(page));
         auxPage.children = auxChildren;
         /** */
-        if(auxChildren.length) {
+        if (auxChildren.length) {
           this.menuPagesFiltered.push(auxPage);
         }
-      /**if not is a wrapper then is a normal category the check if plus easy */
-      }else{
-        if(dictionary[page.id]) {
+        /**if not is a wrapper then is a normal category the check if plus easy */
+      } else {
+        if (dictionary[page.id]) {
           this.menuPagesFiltered.push(page);
         }
       }
     });
 
-   //this.currentRoute = this.menuPagesFiltered[0].children[0].title;
+    //this.currentRoute = this.menuPagesFiltered[0].children[0].title;
   }
 
   tapOption(p) {
     this.currentRoute = p.title;
+    this.toolbarProvider.currentPage.next(p.title);
+    this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(p.title);
     if (p.url === 'logout') {
       this.authenticationService.getCurrentToken().then(accessToken => {
@@ -533,9 +545,9 @@ export class MenuComponent implements OnInit {
             });
           });
       });
-    } else if(p.url === 'positioning'){
+    } else if (p.url === 'positioning') {
       this.scanditService.positioning();
-    } else if(p.url === 'reception') {
+    } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.receptionScanditService.reception(2);
@@ -550,7 +562,7 @@ export class MenuComponent implements OnInit {
       this.printTagsScanditService.printTagsPrices();
     } else if (p.url === 'packing/seal') {
       this.sealScanditService.seal();
-    } else if(p.url === 'reception') {
+    } else if (p.url === 'reception') {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.receptionScanditService.reception(2);
@@ -558,7 +570,7 @@ export class MenuComponent implements OnInit {
       this.printTagsScanditService.printRelabelProducts();
     } else if (p.url == 'products/info') {
       this.productInfoScanditService.init();
-    } else if(p.url === 'positioning'){
+    } else if (p.url === 'positioning') {
       this.scanditService.positioning();
     } else {
       this.returnTitle(p);

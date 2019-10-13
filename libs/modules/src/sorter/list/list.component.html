@@ -7,20 +7,20 @@
 
     <div class="main-buttons">
       <h1 style="float: left">Zonas</h1>
-      <h2 style="float: right">
-        <ion-button class="btn-move-products" slot="end" color="primary" (click)="displayRails()">
-          VER CARRILES
+      <!--<h2 style="float: right">
+        <ion-button class="btn-move-products" slot="end" color="primary" (click)="addCarriles()">
+          GUARDAR CARRILES
         </ion-button>
-      </h2>
+      </h2>-->
     </div>
 
     <div class="container" *ngIf="zones">
       <mat-table #table [dataSource]="zones">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm">
           <mat-header-cell *matHeaderCellDef>
-            
+
             <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
-            <i class="material-icons" >delete</i>
+            <i class="material-icons">delete</i>
           </mat-header-cell>
 
           <mat-cell *matCellDef="let element; let i = index">
@@ -31,14 +31,14 @@
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Ntemplate">
-          <mat-header-cell *matHeaderCellDef> Zonas </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> Identificación </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.zoneNumber}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="nombre">
           <mat-header-cell *matHeaderCellDef> Nombre </mat-header-cell>
           <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
         </ng-container>
-        <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
+        <!--<ng-container matColumnDef="active" [formGroup]="selectedFormActive">
           <mat-header-cell *matHeaderCellDef>
             <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
             <p>Active</p>
@@ -49,15 +49,15 @@
                 [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
             </ng-template>
           </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="configurarCarriles">
+        </ng-container>-->
+        <!-- <ng-container matColumnDef="configurarCarriles">
           <mat-header-cell *matHeaderCellDef>Configurar Carriles</mat-header-cell>
           <mat-cell *matCellDef="let element">
             <span>
               <i (click)="openRailsConfiguration()" class="material-icons">build</i>
             </span>
           </mat-cell>
-        </ng-container>
+        </ng-container> -->
         <ng-container matColumnDef="warehoures">
           <mat-header-cell *matHeaderCellDef>Warehouses</mat-header-cell>
           <mat-cell *matCellDef="let element">
@@ -76,13 +76,24 @@
         </ng-container>
         <ng-container matColumnDef="updateCarriles">
           <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
-         <mat-cell *matCellDef="let element">
-          <mat-radio-group name="rails">
-            <mat-radio-button (click)="displayRailsRadio()" [value]="element"></mat-radio-button>
-          </mat-radio-group> 
-         </mat-cell>  
+          <mat-cell *matCellDef="let element">
+            <mat-radio-group name="rails">
+              <mat-radio-button (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)"
+                value="element.id"></mat-radio-button>
+            </mat-radio-group>
+          </mat-cell>
         </ng-container>
-
+          <!--
+            <ng-container matColumnDef="updateCarriles" [formGroup]="radioForm">
+              <mat-cell *matCellDef="let element; let i = index">
+                <ng-template [ngIf]="radioForm['controls']?.toSelectRadio">
+                  <ion-radio (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)" 
+                        <[formControl]="radioForm['controls']?.toSelectRadio['controls'][i]">
+                  </ion-radio>
+                </ng-template>
+              </mat-cell>
+            </ng-container>
+          -->
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
           [class.expanded]="expandedElement == row" (click)="update(row)"></mat-row>
@@ -93,55 +104,26 @@
       </mat-table>
     </div>
 
-
-    <div *ngIf="showRails" class="containerTable">
-      <div class="grid overAuto" >
-        
-          <mat-table #table [dataSource]="dataSource2" class="prioridad">
-              <ng-container matColumnDef="prioridad" >
-                <mat-header-cell *matHeaderCellDef>
-                 Prioridad
-                </mat-header-cell>
+    <suite-matrix-select-way-sorter 
+      [waysMatrix]="waysMatrix"
+      [equalParts]="equalParts" *ngIf="waysMatrix.length > 0">
       
-                <mat-cell *matCellDef="let element">
-                 <p style="margin-left: 20px">{{element.position}}</p> 
-                </mat-cell>
-              </ng-container>
-
-              <ng-container matColumnDef="calle">
-                <mat-header-cell *matHeaderCellDef> Calle </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-              </ng-container>
-
-      
-              <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
-                [class.expanded]="expandedElement == row"></mat-row>
-              <mat-row *matRowDef="let row; when: isExpansionDetailRow"
-                [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
-                style="overflow: hidden">
-              </mat-row>
-            </mat-table>
-      </div>
-      <div *ngFor="let way of waysMatrix"  class="height">
-        <div 
-        *ngFor="let column of way.columns; let i = index" 
-        class="column" 
-        (click)="(column.adjacent || firstClick) && getColumn(i,column.ways_number, way.height, column)"
-        [ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
-            <span style="margin: 20px">{{column.ways_number}}</span>
-          </div>
-      </div>
-    </div>
+    </suite-matrix-select-way-sorter>
 
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
+    <ion-fab-button style="float: right; padding: 5px;" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
       <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
     <br>
-    <ion-fab-button (click)="store()">
+    
+    <ion-fab-button style="float: right; padding: 5px;" (click)="store()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    
+    <ion-fab-button *ngIf="waysMatrix.length > 0" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
+      <ion-icon name="save"></ion-icon>
+    </ion-fab-button>
+    
   </ion-fab>
 </ion-content>

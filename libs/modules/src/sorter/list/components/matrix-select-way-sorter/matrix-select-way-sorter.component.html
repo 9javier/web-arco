@@ -1,0 +1,100 @@
+
+<ion-row>
+  <ion-col size="6">
+    <div class="containerWays" >
+      <div class="matrix-main">
+        <div class="center-block">
+          <div class="matrix">
+            <div class="height" *ngFor="let way of selectWay">
+              <div class="column" *ngFor="let column of way.columns; let i = index"
+                (click)="getColumn(column)" [ngStyle]="{'background-color': column.color !== '' ? column.color : '' }">
+                <span>{{ column.ways_number }}</span>
+              </div>
+            </div>
+          </div> 
+        </div>
+      </div>
+    </div>
+  </ion-col>
+  <ion-col size="6">
+    <ion-row class="overAuto">
+      <ion-col size="6">
+        <div class="containerTable">
+          <mat-table #table [dataSource]="dataSource" class="prioridad" multiTemplateDataRows>
+            
+
+            <ng-container matColumnDef="carril">
+              <mat-header-cell *matHeaderCellDef class="title">
+                 Carril
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element"> 
+                <p style="margin-left: 20px">{{element.waysId}}</p> 
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="prioridad" >
+              <mat-header-cell *matHeaderCellDef class="title">
+                Prioridad
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element">
+                <ion-input type="text" value="{{element.priority}} "></ion-input>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
+              [class.expanded]="expandedElement == row"></mat-row>
+            <mat-row *matRowDef="let row; when: isExpansionDetailRow"
+              [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+              style="overflow: hidden">
+            </mat-row>
+          </mat-table>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-col>
+</ion-row>
+<!--
+<div class="grid overAuto" >
+    <mat-table #table [dataSource]="dataSource2" class="prioridad">
+        <ng-container matColumnDef="prioridad" >
+          <mat-header-cell *matHeaderCellDef>
+           Prioridad
+          </mat-header-cell>
+
+          <mat-cell *matCellDef="let element">
+           <p style="margin-left: 20px">{{element.position}}</p> 
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="calle">
+          <mat-header-cell *matHeaderCellDef> Calle </mat-header-cell>
+          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+        </ng-container>
+
+
+        <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
+          [class.expanded]="expandedElement == row"></mat-row>
+        <mat-row *matRowDef="let row; when: isExpansionDetailRow"
+          [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+          style="overflow: hidden">
+        </mat-row>
+      </mat-table>
+</div>
+<div class="containerWays">
+    <div class="matrix">
+      <div class="height" *ngFor="let way of waysMatrix">
+        <div class="column" *ngFor="let column of way.columns; let i = index">
+            {{column.ways_number}}
+        </div>
+      </div>
+    </div>
+  <div *ngFor="let way of waysMatrix"  class="height">
+    <div *ngFor="let column of way.columns; let i = index" class="column" 
+      (click)="(column.adjacent || firstClick) ? getColumn(i,column.ways_number, way.height, column) : cleanColumn(i,column.ways_number, way.height, column)"
+      [ngClass]="{'selected': column.selected, 'adjacent': column.adjacent}">
+        <span style="margin: 20px">{{column.ways_number}}</span>
+    </div>
+  </div>
+</div>-->

@@ -1,17 +1,25 @@
-import { Request } from './request';
-export namespace SorterModel{
-    export interface Sorter{
+import {WaySorterModel} from "./WaySorter";
+import {ColorSorterModel} from "./ColorSorter";
+import {WarehouseModel} from "@suite/services";
+
+export namespace SorterModel {
+
+    export interface Sorter {
+        createdAt: string,
+        updatedAt: string,
         id: number;
         name: string;
         ways: number;
         columns: number;
         heights: number;
         active: boolean;
-        warehouseId: number;
+        warehouseId?: number;
         zoneSorter?: any,
         waySorter?: Ways[],
+        colors?: [],
     }
-    export interface Ways{
+
+    export interface Ways {
         id: number;
         name: string;
         ways: number;
@@ -36,5 +44,24 @@ export namespace SorterModel{
     }
     export interface ResponseSorterUpdate{
         data:  Sorter;
+    }
+
+    export interface FirstSorter {
+      createdAt: string,
+      updatedAt: string,
+      id: number,
+      name: string,
+      ways: number,
+      columns: number,
+      heights: number,
+      active: boolean,
+      zoneSorter: any[],
+      waySorter: WaySorterModel.WaySorter[],
+      colors: ColorSorterModel.ColorAssignedSorter[],
+      warehouse: WarehouseModel.Warehouse
+    }
+
+    export interface ResponseFirstSorter {
+      data: FirstSorter
     }
 }

@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar color="primary" [class.display-none]="hideByUrl()">
+    <ion-buttons slot="start">
+      <ion-button (window:resize)="onResize($event)" *ngIf="showAlMenu" (click)="toggleSideMenu(true)">
+        <ion-icon name="menu" class="menu"></ion-icon>
+      </ion-button>
+      <ion-button (window:resize)="onResize($event)" *ngIf="!showAlMenu" (click)="toggleSideMenu(false)">
+        <ion-icon name="arrow-round-back" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{ currentPage }}
+    </ion-title>
+
+    <ion-buttons slot="secondary" *ngIf="optionsActions.length < 4">
+      <ion-button *ngFor="let optionAction of optionsActions" (click)="actionFromToolbar(optionAction)">
+        <ion-icon slot="icon-only" [name]="optionAction.icon"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="secondary" *ngIf="optionsActions.length > 3">
+      <ion-button (click)="actionFromToolbar(optionsActions[0])">
+        <ion-icon slot="icon-only" [name]="optionsActions[0].icon"></ion-icon>
+      </ion-button>
+
+      <ion-button (click)="actionFromToolbar(optionsActions[1])">
+        <ion-icon slot="icon-only" [name]="optionsActions[1].icon"></ion-icon>
+      </ion-button>
+
+      <ion-button (click)="actionMoreFromToolbar($event)">
+        <ion-icon slot="icon-only" name="more"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

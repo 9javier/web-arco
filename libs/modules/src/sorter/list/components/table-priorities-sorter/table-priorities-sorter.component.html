@@ -1,0 +1,25 @@
+<mat-table #table [dataSource]="dataSource" class="prioridad">
+  <ng-container matColumnDef="prioridad" >
+    <mat-header-cell *matHeaderCellDef>
+      Prioridad
+    </mat-header-cell>
+
+    <mat-cell *matCellDef="let element">
+      <p style="margin-left: 20px">{{element.position}}</p> 
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="calle">
+    <mat-header-cell *matHeaderCellDef> Calle </mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+  </ng-container>
+
+
+  <mat-header-row *matHeaderRowDef="displayedData"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedData;" matRipple class="element-row"
+    [class.expanded]="expandedElement == row"></mat-row>
+  <mat-row *matRowDef="let row; when: isExpansionDetailRow"
+    [@detailExpand]="row.element == expandedElement && showExpasion ? 'expanded' : 'collapsed'"
+    style="overflow: hidden">
+  </mat-row>
+</mat-table>

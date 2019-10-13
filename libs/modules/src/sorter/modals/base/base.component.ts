@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -8,29 +8,32 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class BaseComponent implements OnInit {
 
-  @Input() set template(template){
-    if(template)
+  @Input() set template(template) {
+    if (template)
       this.form.patchValue(template);
   }
 
-  form:FormGroup = this.formBuilder.group({
+  form: FormGroup = this.formBuilder.group({
     id: [''],
-    name: ['',Validators.required],
-    active: [null]
+    name: ['', Validators.required],
+    equalParts: [null],
+    quantityParts: [null]
+
   });
 
+
   constructor(
-    private formBuilder:FormBuilder
+    private formBuilder: FormBuilder
   ) { }
 
-  
-  getValue(){
+
+  getValue() {
     return this.sanitize(this.form.value);
   }
 
-  sanitize(template){
-    Object.keys(template).forEach(key=>{
-      if(!template[key])
+  sanitize(template) {
+    Object.keys(template).forEach(key => {
+      if (!template[key])
         delete template[key];
     });
     return template;

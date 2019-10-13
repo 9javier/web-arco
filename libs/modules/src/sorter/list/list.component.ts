@@ -1,21 +1,21 @@
-import {Component, Input, OnInit, ChangeDetectorRef} from '@angular/core';
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Location} from "@angular/common";
-import {SelectionModel, DataSource} from "@angular/cdk/collections";
-import {RolModel, UserModel, WarehouseModel, IntermediaryService} from "@suite/services";
-import {Observable, of} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {HallModel} from "../../../../services/src/models/endpoints/Hall";
-import {HallsService} from "../../../../services/src/lib/endpoint/halls/halls.service";
-import {ActivatedRoute} from "@angular/router";
-import {ModalController, ToastController, NavParams} from "@ionic/angular";
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { Component, Input, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { animate, state, style, transition, trigger } from "@angular/animations";
+import { Location } from "@angular/common";
+import { SelectionModel, DataSource } from "@angular/cdk/collections";
+import { RolModel, UserModel, WarehouseModel, IntermediaryService } from "@suite/services";
+import { Observable, of } from "rxjs";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { HallModel } from "../../../../services/src/models/endpoints/Hall";
+import { HallsService } from "../../../../services/src/lib/endpoint/halls/halls.service";
+import { ActivatedRoute } from "@angular/router";
+import { ModalController, ToastController, NavParams } from "@ionic/angular";
+import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 /*import {UpdateComponent} from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
 import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
 import {LocationsComponent} from "../locations.component";
 import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
-import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import { CrudService } from '../../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
@@ -29,6 +29,8 @@ import { TemplateColorsService } from 'libs/services/src/lib/endpoint/template-c
 import { TemplateColorsModel } from 'libs/services/src/models/endpoints/TemplateColors';
 import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs/operators';
+import { SorterService } from 'libs/services/src/lib/endpoint/sorter/sorter.service';
+import { MatrixSelectWaySorterComponent } from './components/matrix-select-way-sorter/matrix-select-way-sorter.component';
 
 
 @Component({
@@ -56,58 +58,68 @@ import { switchMap } from 'rxjs/operators';
 })
 export class ListComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'nombre', 'active', 'configurarCarriles', 'warehoures', 'color', 'quantity', 'updateCarriles'];
+  displayedColumns = ['delete', 'Ntemplate', 'nombre'/*, 'active'*/, /*'configurarCarriles',*/ 'warehoures', 'color', 'quantity', 'updateCarriles'];
   dataSource = new ExampleDataSource();
   warehouses: WarehouseModel.Warehouse[] = [];
   displayedColumnsWareHouse: any = ['check', 'name'];
-  displayedData = ['prioridad','calle'];
+  displayedData = ['prioridad', 'calle'];
   data = [];
   dataSource2 = new MatTableDataSource<Element>(this.data);
   selectedForm: FormGroup;
   selectedFormActive: FormGroup;
+  radioForm: FormGroup;
   items: FormArray;
   showRails: boolean = false;
   id: string;
   postRoute: string;
   zones: TemplateZoneModel.Zone[];
   colors: TemplateColorsModel.TemplateColors[];
-  test_counter:number;
+  test_counter: number;
   toDeleteIds: number[] = [];
   waysMatrix = [];
   ways = [];
-
+  firstSorter;
+  zoneId: number;
+  equalParts: any;
 
   //Get value on ionChange on IonRadioGroup
-  selectedRadioGroup:any;
+  selectedRadioGroup: any;
   //Get value on ionSelect on IonRadio item
-  selectedRadioItem:any;
+  selectedRadioItem: any;
 
   rails = []
   firstClick: boolean = true;
   radioDisplay: boolean = false;
+  wayClicked: boolean = true;
+  priority: number = 1;
+
+  radioButton: any;
+
+  @ViewChild(MatrixSelectWaySorterComponent) matrixSelectWay: MatrixSelectWaySorterComponent;
 
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private modalController:ModalController,
+    private modalController: ModalController,
     private route: ActivatedRoute,
     private templateZonesService: TemplateZonesService,
-    private templateColorsService:TemplateColorsService,
+    private templateColorsService: TemplateColorsService,
+    private sorterService: SorterService,
     private changeDetectorRefs: ChangeDetectorRef,
     private intermediaryService: IntermediaryService
   ) {
     this.selectedForm = this.formBuilder.group(
       {
         selector: false,
-        selects: this.formBuilder.array([ this.createSelect() ])
+        selects: this.formBuilder.array([this.createSelect()])
       },
       {
         validators: validators.haveItems('toSelect')
       }
     );
-    console.log(this.selectedForm)
+    //console.log(this.selectedForm)
 
-    this.selectedFormActive = this.formBuilder.group(
+    /*this.selectedFormActive = this.formBuilder.group(
       {
         selector: false,
         selects: this.formBuilder.array([ this.createSelect() ])
@@ -115,8 +127,19 @@ export class ListComponent implements OnInit {
       {
         validators: validators.haveItems('toSelectActive')
       }
+    );*/
+
+    this.radioForm = this.formBuilder.group(
+      {
+        selector: false,
+        selects: this.formBuilder.array([this.createSelect()])
+      },
+      {
+        validators: validators.haveItems('toSelectRadio')
+      }
     );
     this.id = this.route.snapshot.paramMap.get('id');
+    this.equalParts = this.route.snapshot.paramMap.get('equalParts');
     this.postRoute = `Plantilla ${this.id}`;
   }
 
@@ -124,7 +147,7 @@ export class ListComponent implements OnInit {
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   showExpasion: boolean = false;
-  
+
   ngOnInit() {
     this.crudService
       .getIndex('Warehouses')
@@ -142,18 +165,27 @@ export class ListComponent implements OnInit {
         }
       );
     this.templateColorsService.getIndex().subscribe((data) => {
-        this.colors = data.data;
+      this.colors = data.data;
     })
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
-      this.initSelectActive(this.zones);
+      this.radioButton = this.zones[0].id;
+      console.log(this.zones)
+      //this.initSelectActive(this.zones);
+      this.initRadioActive(this.zones);
     });
     this.test_counter = 0;
-    
-    this.templateZonesService.getMatrixByTemplate(Number(this.id)).subscribe((data) => {
-      this.waysMatrix = data.data;
-      console.log(this.waysMatrix)
-    }, (err) => {
+
+    this.sorterService.getFirstSorter().subscribe(data => {
+      this.firstSorter = data;
+      //console.log(this.firstSorter)
+      this.templateZonesService.getMatrixByTemplate(Number(this.firstSorter.id), Number(this.id)).subscribe((data) => {
+        this.waysMatrix = data.data;
+        //console.log(this.waysMatrix)
+      }, (err) => {
+        console.log(err)
+      });
+    }, err => {
       console.log(err)
     });
 
@@ -167,7 +199,8 @@ export class ListComponent implements OnInit {
   getZones() {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
-      this.initSelectActive(this.zones);
+      //this.initSelectActive(this.zones);
+      this.initRadioActive(this.zones);
     });
   }
 
@@ -179,9 +212,9 @@ export class ListComponent implements OnInit {
     row.dropdown = this.showExpasion;
   }
 
-  selectAll(event):void{
+  selectAll(event): void {
     let value = event.detail.checked;
-    const controlArray = <FormArray> this.selectedForm.get('toSelect');
+    const controlArray = <FormArray>this.selectedForm.get('toSelect');
     controlArray.controls.forEach((control, i) => {
       control.setValue(value);
     });
@@ -196,7 +229,7 @@ export class ListComponent implements OnInit {
     this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
   }
 
-  selectAllActive(event):void{
+  /*selectAllActive(event):void{
     let value = event.detail.checked;
     const controlArray = <FormArray> this.selectedFormActive.get('toSelectActive');
     controlArray.controls.forEach((control, i) => {
@@ -207,17 +240,23 @@ export class ListComponent implements OnInit {
   initSelectActive(items: TemplateZoneModel.Zone[]) {
     this.selectedFormActive.removeControl('toSelectActive');
     this.selectedFormActive.addControl('toSelectActive', this.formBuilder.array(items.map(item => new FormControl(Boolean(item.active)))));
+  }*/
+
+  initRadioActive(items: TemplateZoneModel.Zone[]) {
+    this.radioForm.removeControl('toSelectRadio');
+    this.radioForm.addControl('toSelectRadio', this.formBuilder.array(items.map((item, index, array) => new FormControl(Boolean(true)))));
+    console.log(this.radioForm)
   }
 
   createSelect(): FormControl {
     return new FormControl(Boolean(false));
   }
 
-  async update(row):Promise<void>{
+  async update(row): Promise<void> {
     let modal = (await this.modalController.create({
-      component:UpdateComponent,
-      componentProps:{
-        zona:row,
+      component: UpdateComponent,
+      componentProps: {
+        zonaId: row.id,
         colors: this.colors,
         id: this.id
       }
@@ -225,19 +264,21 @@ export class ListComponent implements OnInit {
     modal.present();
   }
 
-  async store():Promise<void>{
+  async store(): Promise<void> {
     let modal = (await this.modalController.create({
-      component:StoreComponent,
-      componentProps:{
+      component: StoreComponent,
+      componentProps: {
         colors: this.colors,
         id: this.id
       }
     }));
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
-        this.initSelectActive(this.zones);
+        console.log(this.zones);
+        //this.initSelectActive(this.zones);
+        this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
       });
     })
@@ -248,65 +289,144 @@ export class ListComponent implements OnInit {
     this.firstClick = false;
     this.cleanStyles();
 
-    console.log(this.ways)
-
     this.waysMatrix.forEach(way => {
-      if(way.height === height) {
+      if (way.height === height) {
         let columns = way.columns;
-        for(let i = 0; i < columns.length; i++) 
-        if(column == columns[i].ways_number) {
-          columns[i]['selected'] = true;
-          columns[i]['adjacent'] = false;
-          console.log('Current: '+column)
-          if(columns[i-1] && !columns[i-1]['selected']) {
-            console.log('Left: '+columns[i-1].ways_number);
-            columns[i-1]['adjacent'] = true;
+        for (let i = 0; i < columns.length; i++)
+          if (column == columns[i].ways_number) {
+            columns[i]['selected'] = true;
+            columns[i]['adjacent'] = false;
+            console.log('Current: ' + column)
+            if (columns[i - 1] && !columns[i - 1]['selected']) {
+              columns[i - 1]['adjacent'] = true;
+            }
+            if (columns[i + 1] && !columns[i + 1]['selected']) {
+              columns[i + 1]['adjacent'] = true;
+            }
           }
-          if(columns[i+1] && !columns[i+1]['selected']) {
-            console.log('Right: '+columns[i+1].ways_number);
-            columns[i+1]['adjacent'] = true;
-          }
-        }
       }
     });
 
-    for(let i = 0; i < this.ways.length; i++) {
-      if(this.ways[i].height == height) {
-        if(this.ways[i-1]) {
-          for(let j = 0; j < this.ways[i-1].columns.length; j++) {
-            if(j == index && !this.ways[i-1].columns[j]['selected']){
-              console.log('Top: '+ this.ways[i-1].columns[j].ways_number);
-              this.ways[i-1].columns[j]['adjacent'] = true;
+    for (let i = 0; i < this.waysMatrix.length; i++) {
+      if (this.waysMatrix[i].height == height) {
+        if (this.waysMatrix[i - 1]) {
+          for (let j = 0; j < this.waysMatrix[i - 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i - 1].columns[j]['selected']) {
+              this.waysMatrix[i - 1].columns[j]['adjacent'] = true;
             }
           }
         }
-        if(this.ways[i+1]) {
-          for(let j = 0; j < this.ways[i+1].columns.length; j++) {
-            if(j == index && !this.ways[i+1].columns[j]['selected']){
-              console.log('Bottom: '+ this.ways[i+1].columns[j].ways_number);
-              this.ways[i+1].columns[j]['adjacent'] = true;
+        if (this.waysMatrix[i + 1]) {
+          for (let j = 0; j < this.waysMatrix[i + 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i + 1].columns[j]['selected']) {
+              this.waysMatrix[i + 1].columns[j]['adjacent'] = true;
             }
           }
         }
       }
     }
+
 
     let wayNumber: number;
     let wayColumn: number;
-    this.ways.forEach(item => {
-      if(item.ways.id === way.way.id) {
-        wayNumber = item.priority;
-        wayColumn = way.way.column
+    console.log(way)
+    console.log(this.zoneId)
+    let zones = [
+      {
+        zone: this.zoneId,
+        ways: [
+          {
+            waysId: way.way.id,
+            priority: this.priority
+          }
+        ]
       }
+    ];
+
+    let payload = {
+      zones
+    }
+
+    this.templateZonesService.assignWays(payload, Number(this.id)).subscribe(data => {
+      console.log(data);
+    }, err => {
+      console.log(err);
+    })
+
+    this.waysMatrix.forEach(item => {
+      item.columns.forEach(item => {
+        if (item.way.id === way.way.id) {
+          wayNumber = item.priority;
+          wayColumn = way.ways_number
+        }
+      })
     });
-  
+
     let value = {
-      position: wayNumber,
+      position: this.priority,
       name: wayColumn
     }
+    this.priority++;
     this.data.push(value);
-    this.dataSource2= new MatTableDataSource<Element>(this.data);
+    this.dataSource2 = new MatTableDataSource<Element>(this.data);
   }
+
+  cleanColumn(index: number, column: number, height: number, way): void {
+
+    this.data.forEach(item => {
+      if (item.name == way.ways_number) {
+        let newData = this.data.filter(item => item.name != way.ways_number);
+        this.data = newData;
+      }
+    });
+    this.dataSource2 = new MatTableDataSource<Element>(this.data);
+
+    this.waysMatrix.forEach(way => {
+      if (way.height === height) {
+        let columns = way.columns;
+        for (let i = 0; i < columns.length; i++)
+          if (column == columns[i].ways_number) {
+            columns[i]['selected'] = false;
+            if (columns[i - 1] && !columns[i - 1]['selected']) {
+              columns[i - 1]['adjacent'] = false;
+            } else if (columns[i - 1] && columns[i - 1]['selected']) {
+              columns[i]['adjacent'] = true;
+            }
+            if (columns[i + 1] && !columns[i + 1]['selected']) {
+              columns[i + 1]['adjacent'] = false;
+            } else if (columns[i + 1] && columns[i + 1]['selected']) {
+              columns[i]['adjacent'] = true;
+            }
+          }
+      }
+    });
+
+    for (let i = 0; i < this.waysMatrix.length; i++) {
+      if (this.waysMatrix[i].height == height) {
+        if (this.waysMatrix[i - 1]) {
+          for (let j = 0; j < this.waysMatrix[i - 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i - 1].columns[j]['selected']) {
+              this.waysMatrix[i - 1].columns[j]['adjacent'] = false;
+            } else if (j == index && this.waysMatrix[i - 1].columns[j]['selected']) {
+              this.waysMatrix[i].columns[j]['adjacent'] = true;
+            }
+          }
+        }
+        if (this.waysMatrix[i + 1]) {
+          for (let j = 0; j < this.waysMatrix[i + 1].columns.length; j++) {
+            if (j == index && !this.waysMatrix[i + 1].columns[j]['selected']) {
+              this.waysMatrix[i + 1].columns[j]['adjacent'] = false;
+            } else if (j == index && this.waysMatrix[i + 1].columns[j]['selected']) {
+              this.waysMatrix[i].columns[j]['adjacent'] = true;
+            }
+          }
+        }
+      }
+    }
+
+    this.firstClick = true;
+  }
+
 
   cleanStyles() {
     console.log(this.rails)
@@ -327,38 +447,38 @@ export class ListComponent implements OnInit {
     let repeat = false;
     let idToDelete = this.zones[index].id;
     this.toDeleteIds.forEach(id => {
-      if(id == idToDelete) {
+      if (id == idToDelete) {
         repeat = true;
       }
     })
-    if(!repeat) {
+    if (!repeat) {
       this.toDeleteIds.push(idToDelete);
     }
   }
-  
+
   delete() {
-    let deletions:Observable<any> =new Observable(observer=>observer.next());
-    if(this.toDeleteIds.length > 0) {
+    let deletions: Observable<any> = new Observable(observer => observer.next());
+    if (this.toDeleteIds.length > 0) {
       this.toDeleteIds.forEach(idZone => {
-        deletions = deletions.pipe(switchMap(() => { 
+        deletions = deletions.pipe(switchMap(() => {
           return (this.templateZonesService.deleteTemplateZone(idZone, Number(this.id)))
         }))
       });
     }
-   
+
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
 
-    deletions.subscribe(()=>{
+    deletions.subscribe(() => {
       this.intermediaryService.dismissLoading();
       this.getZones();
       this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
-      const controlArray = <FormArray> this.selectedForm.get('toSelect');
+      const controlArray = <FormArray>this.selectedForm.get('toSelect');
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
-    },()=>{
-      this.intermediaryService.dismissLoading(); 
+    }, () => {
+      this.intermediaryService.dismissLoading();
       this.getZones();
       this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
     });
@@ -369,18 +489,19 @@ export class ListComponent implements OnInit {
     console.log(zoneByWarehouses[0].zoneWarehouses)
     event.stopPropagation();
     let modal = (await this.modalController.create({
-      component:WarehousesModalComponent,
-      componentProps:{
+      component: WarehousesModalComponent,
+      componentProps: {
         warehouses: zoneByWarehouses[0].zoneWarehouses,
         idTemplate: this.id,
         id: zoneByWarehouses[0].id
       }
     }));
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
-        this.initSelectActive(this.zones);
+        //this.initSelectActive(this.zones);
+        this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
       });
     })
@@ -390,7 +511,7 @@ export class ListComponent implements OnInit {
   async openRailsConfiguration() {
     event.stopPropagation();
     let modal = (await this.modalController.create({
-      component:RailsConfigurationComponent
+      component: RailsConfigurationComponent
     }));
     modal.present();
   }
@@ -400,25 +521,53 @@ export class ListComponent implements OnInit {
     this.showRails = !this.showRails;
   }
 
-  displayRailsRadio() {
+  displayRailsRadio(element) {
     event.stopPropagation();
+    this.zoneId = element.id;
     this.showRails = true;
   }
 
   radioGroupChange(event) {
-    console.log("radioGroupChange",event.detail);
+    //console.log("radioGroupChange",event.detail);
     this.selectedRadioGroup = event.detail;
   }
- 
+
   radioFocus() {
-    console.log("radioFocus");
+    //console.log("radioFocus");
   }
   radioSelect(event) {
-    console.log("radioSelect",event.detail);
+    //console.log("radioSelect",event.detail);
     this.selectedRadioItem = event.detail;
   }
   radioBlur() {
-    console.log("radioBlur");
+    //console.log("radioBlur");
+  }
+
+  storeWays(data){
+    this.intermediaryService.presentLoading();
+    var info = {
+      zones: data
+    }
+    this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(() => {
+      this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
+      this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+        this.zones = data.data;
+        //this.initSelectActive(this.zones);
+        this.initRadioActive(this.zones);
+        this.intermediaryService.dismissLoading();
+      });
+    }, () => {
+      this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
+  validSave(){
+    //this.changeDetectorRefs.detectChanges();
+    if(this.matrixSelectWay !== undefined){
+      return this.matrixSelectWay.getBanSave();
+    } 
+    return false;
   }
 }
 
@@ -432,7 +581,7 @@ export class ExampleDataSource extends DataSource<any> {
   connect(): Observable<Element[]> {
     const rows = [];
     this.data.forEach(element => rows.push(element, { detailRow: true, element }));
-    console.log(rows);
+    //console.log(rows);
     return of(rows);
   }
 
@@ -441,14 +590,18 @@ export class ExampleDataSource extends DataSource<any> {
 
 export class ExampleDataSource2 extends DataSource<any> {
   /** Connect function called by the table to retrieve one stream containing the data to render. */
- 
+
   connect(): Observable<Element[]> {
     const rows = [];
-   // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
-    console.log(rows);
+    // this.data.forEach(element => rows.push(element, { detailRow: true, element }));
+    //console.log(rows);
     return of(rows);
   }
-  
+
 
   disconnect() { }
+
+  addCarriles() {
+    //console.log("aqui")
+  }
 }
