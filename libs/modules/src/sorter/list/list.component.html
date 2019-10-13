@@ -16,7 +16,7 @@
 
     <div class="container" *ngIf="zones">
       <mat-table #table [dataSource]="zones">
-        <ng-container matColumnDef="delete" [formGroup]="selectedForm">
+        <ng-container matColumnDef="delete" [formGroup]="selectedForm" *ngIf="equalParts === 'false'">
           <mat-header-cell *matHeaderCellDef>
 
             <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
@@ -112,12 +112,13 @@
 
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button style="float: right; padding: 5px;" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
-      <ion-icon name="trash"></ion-icon>
-    </ion-fab-button>
-    <br>
+    <div *ngIf="equalParts === 'false'" style="float: left;">
+      <ion-fab-button style="padding: 5px;" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-fab-button>
+    </div>
     
-    <ion-fab-button style="float: right; padding: 5px;" (click)="store()">
+    <ion-fab-button *ngIf="equalParts === 'false'" style="float: right; padding: 5px;" (click)="store()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     
