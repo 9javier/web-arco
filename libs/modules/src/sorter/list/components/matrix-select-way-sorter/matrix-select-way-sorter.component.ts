@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { DataSource } from '@angular/cdk/table';
 import { Observable, of } from 'rxjs';
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-matrix-select-way-sorter',
@@ -17,43 +18,47 @@ export class MatrixSelectWaySorterComponent implements OnInit {
   dataSource = new MatTableDataSource<Element>(this.data);
 
   public contZone: any = [];
-  public selectWay: any = [{
-    height: 0,
-    columns: []
-  }];
+  public selectWay: any = [];
   public dataPriorities: any = [];
   public zoneSelect: any = {};
 
-  displayedData = ['carril', 'prioridad'];
+  displayedData = ['prioridad', 'carril'];
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any;
   showExpasion: boolean = false;
 
   public band: boolean = false;
+  public SizeMatrix: number = 0;
 
-  constructor() { 
+  constructor(private intermediaryService: IntermediaryService) { 
   }
 
   ngOnInit() {
-    if(this.equalParts === 'false')
+    this.SizeMatrix = this.waysMatrix.length * this.waysMatrix[0].columns.length;
+
+    if(this.equalParts === 'true')
       this.band = true;
+
     this.waysMatrix.forEach(way => {
       var dataColumns = [];
-      console.log(way);
+      console.log(way)
       way.columns.forEach(column => {
         var dataColumn = {
           column: '',
           ways_number: '',
+          waysId: '',
           zone: '',
           color: ''
         };
         dataColumn.column = column.column;
+        dataColumn.waysId = column.way.id;
         dataColumn.ways_number = column.ways_number;
         if(column.way.templateZone !== null){
           dataColumn.zone = column.way.templateZone.zones.id;
           dataColumn.color = column.way.templateZone.zones.color.hex;
           this.data.push({
-            waysId: column.ways_number,
+            waysId: column.way.id,
+            ways_number: column.ways_number,
             priority: column.way.templateZone.priority
           });
           if(this.dataPriorities.length > 0){
@@ -62,7 +67,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
               if(priority.zone === dataColumn.zone){
                 band = true;
                 priority.ways.push({
-                  waysId: column.ways_number,
+                  waysId: column.way.id,
+                  ways_number: column.ways_number,
                   priority: column.way.templateZone.priority
                 });
               }
@@ -72,7 +78,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
               this.dataPriorities.push({
                 zone: dataColumn.zone,
                 ways: [{
-                  waysId: column.ways_number,
+                  waysId: column.way.id,
+                  ways_number: column.ways_number,
                   priority: column.way.templateZone.priority
                 }]
               });
@@ -81,7 +88,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
             this.dataPriorities.push({
               zone: dataColumn.zone,
               ways: [{
-                waysId: column.ways_number,
+                waysId: column.way.id,
+                ways_number: column.ways_number,
                 priority: column.way.templateZone.priority
               }]
             });
@@ -97,6 +105,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         columns: dataColumns
       });
     });
+
     if(this.data.length > 0){
       this.dataSource = new MatTableDataSource<Element>(this.data);
     }
@@ -139,7 +148,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         this.band = true;
         this.selectWay.forEach(way => {
           way.columns.forEach(column => {
-            if(column.ways_number === waySelect.ways_number){
+            if(column.waysId === waySelect.waysId){
+              console.log(column);
               if(column.zone === '' && column.color === ''){
                 column.zone = this.zoneSelect.id;
                 column.color = this.zoneSelect.color.hex;
@@ -152,7 +162,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                         if(cz.zone === column.zone){
                           cz.cont ++;
                           zone.ways.push({
-                            waysId: column.ways_number,
+                            waysId: column.waysId,
+                            ways_number: column.ways_number,
                             priority: cz.cont
                           });
                         }
@@ -163,7 +174,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                     this.dataPriorities.push({
                       zone: column.zone,
                       ways: [{
-                        waysId: column.ways_number,
+                        waysId: column.waysId,
+                        ways_number: column.ways_number,
                         priority: 1
                       }]
                     });
@@ -176,7 +188,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                   this.dataPriorities.push({
                     zone: column.zone,
                     ways: [{
-                      waysId: column.ways_number,
+                      waysId: column.waysId,
+                      ways_number: column.ways_number,
                       priority: 1
                     }]
                   });
@@ -214,7 +227,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                   this.dataPriorities.forEach(zone => {
                     var position = -1;
                     zone.ways.forEach((way, index, array) => {
-                      if(way.waysId === column.ways_number){
+                      if(way.waysId === column.waysId){
                         position = index;
                         zoneDelete = zone.zone;
                       }
@@ -242,7 +255,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                         if(cz.zone === column.zone){
                           cz.cont ++;
                           zone.ways.push({
-                            waysId: column.ways_number,
+                            waysId: column.waysId,
+                            ways_number: column.ways_number,
                             priority: cz.cont
                           });
                         }
@@ -253,7 +267,8 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                     this.dataPriorities.push({
                       zone: column.zone,
                       ways: [{
-                        waysId: column.ways_number,
+                        waysId: column.waysId,
+                        ways_number: column.ways_number,
                         priority: 1
                       }]
                     });
@@ -275,6 +290,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
             priority.ways.forEach(way => {
               this.data.push({
                 waysId: way.waysId,
+                ways_number: way.ways_number,
                 priority: way.priority
               })
             });
@@ -294,6 +310,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         priority.ways.forEach(way => {
           this.data.push({
             waysId: way.waysId,
+            ways_number: way.ways_number,
             priority: way.priority
           })
         });
@@ -303,12 +320,118 @@ export class MatrixSelectWaySorterComponent implements OnInit {
     this.dataSource = new MatTableDataSource<Element>(this.data);
   }
 
+  /**
+   * deveolver objeto para guardar
+   */
   getWays(){
     return this.dataPriorities;
   }
 
+  /**
+   * validar si existen cambios para guiardar
+   */
+
   getBanSave(){
     return this.band;
+  }
+
+  /**
+   * cambiar input de carril
+   */
+
+  onChangeWay(event, element){
+    /**validar que exista en la matrix */
+    if(parseInt(event) !== parseInt(element.ways_number)){
+      console.log(element)
+      if(event > this.SizeMatrix){
+        this.intermediaryService.presentToastError("Carril no válido");
+      } else {
+        var banExisteCarril = false;
+        this.selectWay.forEach(way => {
+          way.columns.forEach(column => {
+            if(column.ways_number === parseInt(event) && column.zone !== ''){
+              banExisteCarril = true;
+            }
+          });
+        });
+        if(!banExisteCarril){
+          var priorityDelete = -1;
+          this.selectWay.forEach(way => {
+            way.columns.forEach(column => {
+              /**eliminar anterior carril */
+              if(column.waysId === parseInt(element.waysId)){
+                this.dataPriorities.forEach(zone => {
+                  if(zone.zone === column.zone){
+                    var position = -1;
+                    zone.ways.forEach((way, index, array) => {
+                      if(way.waysId === column.waysId){
+                        position = index;
+                        priorityDelete = way.priority;
+                      }
+                    });
+                    if(position !== -1)
+                      zone.ways.splice(position, 1);
+                  }
+                });
+                column.zone = '';
+                column.color = '';
+              }
+            });  
+          });  
+
+          if(priorityDelete !== -1){
+
+            this.selectWay.forEach(way => {
+              way.columns.forEach(column => {
+                /**agregar nuevo carril */
+                if(column.waysId === parseInt(event)){
+                  column.zone = this.zoneSelect.id;
+                  column.color = this.zoneSelect.color.hex;
+                  if(this.dataPriorities.length > 0){
+                    this.dataPriorities.forEach(zone => {
+                      if(zone.zone === column.zone){
+                        zone.ways.push({
+                          waysId: column.waysId,
+                          ways_number: column.ways_number,
+                          priority: priorityDelete
+                        });
+                      }
+                    });
+                  } else {
+                    this.dataPriorities.push({
+                      zone: column.zone,
+                      ways: [{
+                        waysId: column.waysId,
+                        ways_number: column.ways_number,
+                        priority: priorityDelete
+                      }]
+                    });
+                  }
+                }
+              });  
+            });  
+            
+          }
+        } else {
+          this.intermediaryService.presentToastError("Carril ya tiene prioridad asignada");
+        }
+        this.data = [];
+        this.dataPriorities.forEach(priority => {
+          priority.ways = priority.ways.sort((priorityOne, priorityTwo) => priorityOne.priority - priorityTwo.priority);
+          if(priority.zone === this.zoneSelect.id){
+            priority.ways.forEach(way => {
+              this.data.push({
+                waysId: way.waysId,
+                ways_number: way.ways_number,
+                priority: way.priority
+              })
+            });
+          }
+        });
+
+        this.dataSource = new MatTableDataSource<Element>(this.data);
+      }
+    }
   }
 
 }

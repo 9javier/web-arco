@@ -16,7 +16,7 @@
 
     <div class="container" *ngIf="zones">
       <mat-table #table [dataSource]="zones">
-        <ng-container matColumnDef="delete" [formGroup]="selectedForm">
+        <ng-container matColumnDef="delete" [formGroup]="selectedForm" *ngIf="equalParts === 'false'">
           <mat-header-cell *matHeaderCellDef>
 
             <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
@@ -83,17 +83,16 @@
             </mat-radio-group>
           </mat-cell>
         </ng-container>
-          <!--
-            <ng-container matColumnDef="updateCarriles" [formGroup]="radioForm">
-              <mat-cell *matCellDef="let element; let i = index">
-                <ng-template [ngIf]="radioForm['controls']?.toSelectRadio">
-                  <ion-radio (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)" 
-                        <[formControl]="radioForm['controls']?.toSelectRadio['controls'][i]">
-                  </ion-radio>
-                </ng-template>
-              </mat-cell>
-            </ng-container>
-          -->
+          
+        <!--<ng-container matColumnDef="updateCarriles" [formGroup]="radioForm">
+          <mat-cell *matCellDef="let element; let i = index">
+            <ng-template [ngIf]="radioForm['controls']?.toSelectRadio">
+              <ion-checkbox [formControl]="radioForm['controls']?.toSelectRadio['controls'][i]">
+              </ion-checkbox>
+            </ng-template>
+          </mat-cell>
+        </ng-container>-->
+          
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
           [class.expanded]="expandedElement == row" (click)="update(row)"></mat-row>
@@ -112,18 +111,21 @@
 
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button style="float: right; padding: 5px;" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
-      <ion-icon name="trash"></ion-icon>
-    </ion-fab-button>
-    <br>
+    <div *ngIf="equalParts === 'false'" style="float: left;">
+      <ion-fab-button style="padding: 5px;" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-fab-button>
+    </div>
     
-    <ion-fab-button style="float: right; padding: 5px;" (click)="store()">
+    <ion-fab-button *ngIf="equalParts === 'false'" style="float: right; padding: 5px;" (click)="store()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     
-    <ion-fab-button *ngIf="waysMatrix.length > 0" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
-      <ion-icon name="save"></ion-icon>
-    </ion-fab-button>
+    <div *ngIf="validSave" style="float: left;">
+      <ion-fab-button *ngIf="matrixSelectWay.getBanSave()" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
+        <ion-icon name="save"></ion-icon>
+      </ion-fab-button>
+    </div>
     
   </ion-fab>
 </ion-content>
