@@ -97,6 +97,8 @@ export class ListComponent implements OnInit {
 
   @ViewChild(MatrixSelectWaySorterComponent) matrixSelectWay: MatrixSelectWaySorterComponent;
 
+  public validSave: boolean = false;
+
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
@@ -155,6 +157,9 @@ export class ListComponent implements OnInit {
   showExpasion: boolean = false;
 
   ngOnInit() {
+    setTimeout(() => {
+      this.validSave = true;
+    }, 2000);
     this.crudService
       .getIndex('Warehouses')
       .then(
@@ -177,9 +182,11 @@ export class ListComponent implements OnInit {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
       this.radioButton = this.zones[0].id;
-      console.log(this.zones)
+      this.radioForm = this.formBuilder.group({
+        selectRadio: [this.radioButton]
+      });
       //this.initSelectActive(this.zones);
-      this.initRadioActive(this.zones);
+      //this.initRadioActive(this.zones);
     });
     this.test_counter = 0;
 
@@ -206,6 +213,10 @@ export class ListComponent implements OnInit {
   getZones() {
     this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
       this.zones = data.data;
+      this.radioButton = this.zones[0].id;
+      this.radioForm = this.formBuilder.group({
+        selectRadio: [this.radioButton]
+      });
       //this.initSelectActive(this.zones);
       this.initRadioActive(this.zones);
     });
@@ -251,8 +262,7 @@ export class ListComponent implements OnInit {
 
   initRadioActive(items: TemplateZoneModel.Zone[]) {
     this.radioForm.removeControl('toSelectRadio');
-    this.radioForm.addControl('toSelectRadio', this.formBuilder.array(items.map((item, index, array) => new FormControl(Boolean(true)))));
-    console.log(this.radioForm)
+    this.radioForm.addControl('toSelectRadio', this.formBuilder.array(items.map(item => new FormControl(item.id))));
   }
 
   createSelect(): FormControl {
@@ -284,6 +294,10 @@ export class ListComponent implements OnInit {
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
         console.log(this.zones);
+        this.radioButton = this.zones[0].id;
+        this.radioForm = this.formBuilder.group({
+          selectRadio: [this.radioButton]
+        });
         //this.initSelectActive(this.zones);
         this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
@@ -507,6 +521,10 @@ export class ListComponent implements OnInit {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
+        this.radioButton = this.zones[0].id;
+        this.radioForm = this.formBuilder.group({
+          selectRadio: [this.radioButton]
+        });
         //this.initSelectActive(this.zones);
         this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
@@ -551,8 +569,7 @@ export class ListComponent implements OnInit {
   }
 
   storeWays(data){
-    console.log(data);
-    /*this.intermediaryService.presentLoading();
+    this.intermediaryService.presentLoading();
     var info = {
       zones: data
     }
@@ -560,6 +577,10 @@ export class ListComponent implements OnInit {
       this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
+        this.radioButton = this.zones[0].id;
+        this.radioForm = this.formBuilder.group({
+          selectRadio: [this.radioButton]
+        });
         //this.initSelectActive(this.zones);
         this.initRadioActive(this.zones);
         this.intermediaryService.dismissLoading();
@@ -567,16 +588,9 @@ export class ListComponent implements OnInit {
     }, () => {
       this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
       this.intermediaryService.dismissLoading();
-    });*/
+    });
   }
 
-  validSave(){
-    //this.changeDetectorRefs.detectChanges();
-    if(this.matrixSelectWay !== undefined){
-      return this.matrixSelectWay.getBanSave();
-    } 
-    return false;
-  }
 }
 
 export class ExampleDataSource extends DataSource<any> {

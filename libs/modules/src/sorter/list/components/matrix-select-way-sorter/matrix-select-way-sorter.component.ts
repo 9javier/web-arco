@@ -36,7 +36,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
   ngOnInit() {
     this.SizeMatrix = this.waysMatrix.length * this.waysMatrix[0].columns.length;
 
-    if(this.equalParts === 'false')
+    if(this.equalParts === 'true')
       this.band = true;
 
     this.waysMatrix.forEach(way => {
@@ -341,86 +341,96 @@ export class MatrixSelectWaySorterComponent implements OnInit {
 
   onChangeWay(event, element){
     /**validar que exista en la matrix */
-    console.log(element)
-    if(event > this.SizeMatrix){
-      this.intermediaryService.presentToastError("Carril no válido");
-    } else {
-      this.selectWay.forEach(way => {
-        way.columns.forEach(column => {
-          if(column.ways_number === parseInt(event)){
-            var zoneDelete = -1;
-            this.dataPriorities.forEach(zone => {
-              var position = -1;
-              zone.ways.forEach((way, index, array) => {
-                if(way.ways_number === parseInt(event)){
-                  position = index;
-                  zoneDelete = zone.zone;
-                }
-                if(position !== -1){
-                  way.priority --;
-                }
-              });
-              if(position !== -1)
-                zone.ways.splice(position, 1);
-            });
-            if(zoneDelete !== -1){
-              this.contZone.forEach(cz => {
-                if(cz.zone === zoneDelete){
-                  cz.cont --;
-                }
-              });
+    if(parseInt(event) !== parseInt(element.ways_number)){
+      console.log(element)
+      if(event > this.SizeMatrix){
+        this.intermediaryService.presentToastError("Carril no válido");
+      } else {
+        var banExisteCarril = false;
+        this.selectWay.forEach(way => {
+          way.columns.forEach(column => {
+            if(column.ways_number === parseInt(event) && column.zone !== ''){
+              banExisteCarril = true;
             }
-            column.zone = this.zoneSelect.id;
-            column.color = this.zoneSelect.color.hex;
-            var bandZone = false;
-            this.dataPriorities.forEach(zone => {
-              if(zone.zone === column.zone){
-                bandZone = true;
-                this.contZone.forEach(cz => {
-                  if(cz.zone === column.zone){
-                    cz.cont ++;
-                    zone.ways.push({
-                      waysId: column.waysId,
-                      ways_number: column.ways_number,
-                      priority: cz.cont
+          });
+        });
+        if(!banExisteCarril){
+          var priorityDelete = -1;
+          this.selectWay.forEach(way => {
+            way.columns.forEach(column => {
+              /**eliminar anterior carril */
+              if(column.waysId === parseInt(element.waysId)){
+                this.dataPriorities.forEach(zone => {
+                  if(zone.zone === column.zone){
+                    var position = -1;
+                    zone.ways.forEach((way, index, array) => {
+                      if(way.waysId === column.waysId){
+                        position = index;
+                        priorityDelete = way.priority;
+                      }
                     });
+                    if(position !== -1)
+                      zone.ways.splice(position, 1);
                   }
                 });
+                column.zone = '';
+                column.color = '';
               }
-            });
-            if(!bandZone){
-              this.dataPriorities.push({
-                zone: column.zone,
-                ways: [{
-                  waysId: column.waysId,
-                  ways_number: column.ways_number,
-                  priority: 1
-                }]
-              });
-              this.contZone.push({
-                zone: column.zone,
-                cont: 1
-              });
-            }
-          }
-        });  
-      });  
-        
-      console.log(this.dataPriorities);
-      this.data = [];
-      this.dataPriorities.forEach(priority => {
-        if(priority.zone === this.zoneSelect.id){
-          priority.ways.forEach(way => {
-            this.data.push({
-              waysId: way.waysId,
-              ways_number: way.ways_number,
-              priority: way.priority
-            })
-          });
-        }
-      });
+            });  
+          });  
 
-      this.dataSource = new MatTableDataSource<Element>(this.data);
+          if(priorityDelete !== -1){
+
+            this.selectWay.forEach(way => {
+              way.columns.forEach(column => {
+                /**agregar nuevo carril */
+                if(column.waysId === parseInt(event)){
+                  column.zone = this.zoneSelect.id;
+                  column.color = this.zoneSelect.color.hex;
+                  if(this.dataPriorities.length > 0){
+                    this.dataPriorities.forEach(zone => {
+                      if(zone.zone === column.zone){
+                        zone.ways.push({
+                          waysId: column.waysId,
+                          ways_number: column.ways_number,
+                          priority: priorityDelete
+                        });
+                      }
+                    });
+                  } else {
+                    this.dataPriorities.push({
+                      zone: column.zone,
+                      ways: [{
+                        waysId: column.waysId,
+                        ways_number: column.ways_number,
+                        priority: priorityDelete
+                      }]
+                    });
+                  }
+                }
+              });  
+            });  
+            
+          }
+        } else {
+          this.intermediaryService.presentToastError("Carril ya tiene prioridad asignada");
+        }
+        this.data = [];
+        this.dataPriorities.forEach(priority => {
+          priority.ways = priority.ways.sort((priorityOne, priorityTwo) => priorityOne.priority - priorityTwo.priority);
+          if(priority.zone === this.zoneSelect.id){
+            priority.ways.forEach(way => {
+              this.data.push({
+                waysId: way.waysId,
+                ways_number: way.ways_number,
+                priority: way.priority
+              })
+            });
+          }
+        });
+
+        this.dataSource = new MatTableDataSource<Element>(this.data);
+      }
     }
   }
 
