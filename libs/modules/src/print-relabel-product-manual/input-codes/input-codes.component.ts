@@ -141,7 +141,7 @@ export class InputCodesComponent implements OnInit {
 
     this.productsService
       .postRelabel(paramsRelabel)
-      .subscribe((res: ProductModel.ResponseRelabel) => {
+      .then((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // Do product print
           this.printerService.printTagBarcodeUsingProduct(res.data);

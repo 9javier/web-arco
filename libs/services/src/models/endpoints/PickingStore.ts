@@ -1,5 +1,6 @@
 import {StoresLineRequestsModel} from "./StoresLineRequests";
 import {WarehouseModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace PickingStoreModel {
 
@@ -27,14 +28,14 @@ export namespace PickingStoreModel {
     linesPending: ResponseDataLineRequestsPending
   }
 
-  export interface ResponseInitiated {
+  export interface ResponseInitiated extends HttpRequestModel.Response{
     data: InitiatedPicking;
     message: string;
     code: number;
     errors: any;
   }
 
-  export interface ResponseLineRequests {
+  export interface ResponseLineRequests extends HttpRequestModel.Response {
     data: StoresLineRequestsModel.StoresLineRequests[];
     message: string;
     code: number;
@@ -94,14 +95,14 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
-  export interface ResponsePostPacking {
+  export interface ResponsePostPacking extends HttpRequestModel.Response {
     data: any;
     message: string;
     code: number;
     errors: any;
   }
 
-  export interface ResponseLineRequestsFiltered {
+  export interface ResponseLineRequestsFiltered extends HttpRequestModel.Response {
     data: ResponseDataLineRequestsFiltered,
     message: string,
     code: number,
@@ -120,7 +121,7 @@ export namespace PickingStoreModel {
     isPos: boolean
   }
 
-  export interface ResponseLoadRejectionReasons {
+  export interface ResponseLoadRejectionReasons extends HttpRequestModel.Response {
     data: Array<RejectionReasons>
   }
 
@@ -135,7 +136,7 @@ export namespace PickingStoreModel {
     linesRequestFiltered: ResponseDataLineRequestsFiltered
   }
 
-  export interface ResponseRejectRequest {
+  export interface ResponseRejectRequest extends HttpRequestModel.Response {
     data: RejectRequest
   }
 
@@ -144,11 +145,11 @@ export namespace PickingStoreModel {
     filters: ParamsFiltered
   }
 
-  export interface ResponseLineRequestDisassociate {
+  export interface ResponseLineRequestDisassociate extends HttpRequestModel.Response {
     data: ResponseDataLineRequestsFiltered
   }
 
-  export interface ResponseSendProcess {
+  export interface ResponseSendProcess extends HttpRequestModel.Response {
     data: {
       inventory: any,
       linesRequestFiltered: ResponseDataLineRequestsFiltered
@@ -158,7 +159,7 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
-  export interface ResponseChangeStatus {
+  export interface ResponseChangeStatus extends HttpRequestModel.Response {
     data: any;
     message: string;
     code: number;

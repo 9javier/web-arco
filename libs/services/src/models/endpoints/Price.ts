@@ -1,9 +1,9 @@
 import { Request } from './request';
 import { WarehouseModel } from './Warehouse';
 import { TariffModel } from './Tariff';
-import { reference } from '@angular/core/src/render3';
 import {ModelModel} from "@suite/services";
 import {StockModel} from "./Stock";
+import {HttpRequestModel} from "./HttpRequest";
 export namespace PriceModel{
     
     export interface Price{
@@ -56,7 +56,7 @@ export namespace PriceModel{
         }
     }
 
-    export interface ResponsePricesByProductsReferences {
+    export interface ResponsePricesByProductsReferences extends HttpRequestModel.Response {
       data: PriceByModelTariff[],
       message: string,
       code: number
