@@ -53,7 +53,7 @@ export class ScannerInputSorterComponent implements OnInit {
 
   focusToInput() {
     if (!this.isWaitingSorterFeedback) {
-      document.getElementById('input').focus();
+      setTimeout(() => document.getElementById('input').focus(), 500);
     }
   }
 
@@ -63,6 +63,7 @@ export class ScannerInputSorterComponent implements OnInit {
     if (event.keyCode == 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputValue = null;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrote;
@@ -76,12 +77,14 @@ export class ScannerInputSorterComponent implements OnInit {
 
       if (this.isWaitingSorterFeedback && this.productToSetInSorter != dataWrote) {
         await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
+        this.focusToInput();
       } else {
         if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT) {
           await this.intermediaryService.presentLoading('Registrando entrada de producto...');
           this.inputProductInSorter(dataWrote);
         } else {
           await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
+          this.focusToInput();
         }
       }
     }
@@ -96,12 +99,15 @@ export class ScannerInputSorterComponent implements OnInit {
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.WrongWay) => {
             await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle equivocada!', 1500);
+            this.focusToInput();
           }, async (error) => {
             console.error('Error::Subscribe::sorterExecutionService::postWrongWay', error);
             await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', 2000);
+            this.focusToInput();
           });
       } else {
         await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', 2000);
+        this.focusToInput();
       }
     };
 
@@ -109,7 +115,7 @@ export class ScannerInputSorterComponent implements OnInit {
   }
 
   async fullWay() {
-    let setWayAsFull = () => {
+    let setWayAsFull = async () => {
       // Request to server to set way as full, assign in sorter a new way and return info to notify to user
       let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
       if (productRef) {
@@ -117,12 +123,15 @@ export class ScannerInputSorterComponent implements OnInit {
           .postFullWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.FullWay) => {
             await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500);
+            this.focusToInput();
           }, async (error) => {
             console.error('Error::Subscribe::sorterExecutionService::postFullWay', error);
             await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
+            this.focusToInput();
           });
       } else {
         await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
+        this.focusToInput();
       }
     };
 
@@ -157,10 +166,13 @@ export class ScannerInputSorterComponent implements OnInit {
 
         await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
 
+        this.focusToInput();
+
         this.checkProductInWay(productReference, this.idLastWaySet);
       }, async (error) => {
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
         await this.intermediaryService.dismissLoading();
+        this.focusToInput();
       });
   }
 
@@ -174,9 +186,11 @@ export class ScannerInputSorterComponent implements OnInit {
             setTimeout(() => checkProductInWayLocal(productReference, wayId), 1000);
           } else {
             this.sorterNotifyAboutProductScanned();
+            this.focusToInput();
           }
         }, (error) => {
           console.error('Error::Subscribe::sorterInputService::postCheckProductInWay', error);
+          this.focusToInput();
         });
     };
 
