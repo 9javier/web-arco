@@ -35,6 +35,6 @@ export namespace TemplateSorterModel {
         active: boolean,
         template?: Template,
         zones?: ZoneSorterModel.ZoneSorter,
-        way?: WaySorterModel.WaySorter
+        ways?: WaySorterModel.WaySorter
     }
 }
