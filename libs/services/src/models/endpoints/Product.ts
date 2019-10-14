@@ -4,6 +4,7 @@ import { SizeModel } from './Size';
 import {BrandModel} from "./Brand";
 import {SeasonModel} from "./Season";
 import {PriceModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace ProductModel {
   export interface Product {
@@ -70,7 +71,7 @@ export namespace ProductModel {
     model: ModelModel.Model
   }
 
-  export interface ResponseInfo {
+  export interface ResponseInfo extends HttpRequestModel.Response {
     data?: Product|SizesAndModel,
     errors?: string,
     message: string,

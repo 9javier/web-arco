@@ -268,7 +268,7 @@ export class PrintTagsScanditService {
     ScanditMatrixSimple.showLoadingDialog('Consultando información del producto...');
     this.productsService
       .getInfo(code)
-      .subscribe((res: ProductModel.ResponseInfo) => {
+      .then((res: ProductModel.ResponseInfo) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200) {
           let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
@@ -299,6 +299,16 @@ export class PrintTagsScanditService {
           this.hideTextMessage(1500);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        ScanditMatrixSimple.setText(
+          'No se ha podido consultar la información del producto escaneado.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
+      })
+      .catch((error) => {
         ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe::GetInfo -> ', error);
         ScanditMatrixSimple.setText(
@@ -369,17 +379,17 @@ export class PrintTagsScanditService {
     ScanditMatrixSimple.showLoadingDialog('Comprobando embalaje del producto...');
     this.packingInventorService
       .getCarrierOfProduct(codeScanned)
-      .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
+      .then((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200) {
           this.printerService.print({text: [res.data.reference], type: 0})
         } else {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
-          let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
-          if (res.message) {
-            msgError = res.message;
-          } else if (res.errors && typeof res.errors == 'string') {
+          let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${codeScanned}.`;
+          if (res.errors && typeof res.errors == 'string') {
             msgError = res.errors;
+          } else if (res.message) {
+            msgError = res.message;
           }
           ScanditMatrixSimple.setText(
             msgError,
@@ -391,7 +401,27 @@ export class PrintTagsScanditService {
       }, (error) => {
         ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
-        let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${codeScanned}.`;
+        let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${codeScanned}.`;
+        if (error.error) {
+          if (error.error.message) {
+            msgError = error.error.message;
+          } else if (error.error.errors) {
+            msgError = error.error.errors;
+          } else if (typeof error.error == 'string') {
+            msgError = error.error;
+          }
+        }
+        ScanditMatrixSimple.setText(
+          msgError,
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+        this.hideTextMessage(1500);
+      })
+      .catch((error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        console.error('Error::Subscribe::GetCarrierOfProduct::', error);
+        let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${codeScanned}.`;
         if (error.error) {
           if (error.error.message) {
             msgError = error.error.message;

@@ -32,7 +32,7 @@ export class ProductsService {
     private requestsProvider: RequestsProvider
   ) {}
 
-  async getIndex(): Promise<Observable<HttpResponse<ProductModel.ResponseIndex>>> {
+  async getIndex() : Promise<Observable<HttpResponse<ProductModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.get<ProductModel.ResponseIndex>(this.getIndexUrl, {
@@ -51,15 +51,11 @@ export class ProductsService {
     }));
   }
 
-  getInfo(reference: string): Observable<ProductModel.ResponseInfo> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.get<ProductModel.ResponseInfo>(this.getInfoUrl + reference, { headers });
-    }));
+  getInfo(reference: string) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getInfoUrl + reference);
   }
 
-  postRelabel(params: ProductModel.ParamsRelabel): Promise<HttpRequestModel.Response> {
+  postRelabel(params: ProductModel.ParamsRelabel) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postRelabelUrl, params);
   }
 
