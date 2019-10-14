@@ -128,7 +128,7 @@ export class ScanditService {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
           let productReference = code;
-          if (!this.isStoreUser && (!containerReference || !packingReference)) {
+          if (!this.isStoreUser && (!containerReference && !packingReference)) {
             this.positioningLog(3, "1.4.1", "no container!");
             ScanditMatrixSimple.setText(`Debe escanear una posición o embalaje para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
