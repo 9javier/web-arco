@@ -5,6 +5,8 @@ import {environment} from "../../../environments/environment";
 import {map, switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
 import {PickingStoreModel} from "../../../models/endpoints/PickingStore";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -22,21 +24,16 @@ export class PickingStoreService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
   ) {}
 
-  getInitiated() : Observable<PickingStoreModel.ResponseInitiated> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<PickingStoreModel.ResponseInitiated>(this.getInitiatedUrl, { headers });
-    }));
+  getInitiated() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getInitiatedUrl);
   }
 
-  getLineRequests() : Observable<PickingStoreModel.ResponseLineRequests> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<PickingStoreModel.ResponseLineRequests>(this.getLineRequestsUrl, { headers });
-    }));
+  getLineRequests() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getLineRequestsUrl);
   }
 
   getLineRequestsPending() : Observable<PickingStoreModel.ResponseLineRequestsPending> {
@@ -46,54 +43,36 @@ export class PickingStoreService {
     }));
   }
 
-  postPackings(parameters: PickingStoreModel.PostPacking) : Observable<PickingStoreModel.ResponsePostPacking> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingStoreModel.ResponsePostPacking>(this.postCheckPackingUrl, parameters, { headers });
-    }));
+  postPackings(parameters: PickingStoreModel.PostPacking) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCheckPackingUrl, parameters);
   }
 
-  postLineRequestFiltered(parameters: PickingStoreModel.ParamsFiltered) : Observable<PickingStoreModel.ResponseLineRequestsFiltered> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingStoreModel.ResponseLineRequestsFiltered>(this.postLineRequestsFilteredUrl, parameters, { headers });
-    }));
+  postLineRequestFiltered(parameters: PickingStoreModel.ParamsFiltered) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postLineRequestsFilteredUrl, parameters);
   }
 
-  getLoadRejectionReasons() : Observable<Array<PickingStoreModel.RejectionReasons>> {
-    return this.http.get<PickingStoreModel.ResponseLoadRejectionReasons>(this.getLoadRejectionReasonsUrl).pipe(map(response => {
-      return response.data;
-    }));
+  getLoadRejectionReasons() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getLoadRejectionReasonsUrl);
   }
 
-  postRejectRequest(params: PickingStoreModel.ParamsRejectRequest) : Observable<PickingStoreModel.RejectRequest> {
-    return this.http.post<PickingStoreModel.ResponseRejectRequest>(this.postRejectRequestUrl, params).pipe(map(response => {
-      return response.data;
-    }));
+  postRejectRequest(params: PickingStoreModel.ParamsRejectRequest) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postRejectRequestUrl, params);
   }
 
-  postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Observable<PickingStoreModel.ResponseDataLineRequestsFiltered> {
-    return this.http.post<PickingStoreModel.ResponseLineRequestDisassociate>(this.postLineRequestDisassociateUrl, params).pipe(map(response => {
-      return response.data;
-    }));
+  postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postLineRequestDisassociateUrl, params);
   }
 
   // Send_Process endpoints
   private postPickingStoreProcessUrl = environment.apiBase + '/processes/picking-store/process';
   private postPickingStoreChangeStatusUrl = environment.apiBase + '/processes/picking-store/change-status';
 
-  postPickingStoreProcess(parameters: PickingStoreModel.SendProcess) : Observable<PickingStoreModel.ResponseSendProcess> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingStoreModel.ResponseSendProcess>(this.postPickingStoreProcessUrl, parameters, { headers });
-    }));
+  postPickingStoreProcess(parameters: PickingStoreModel.SendProcess) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPickingStoreProcessUrl, parameters);
   }
 
-  postPickingStoreChangeStatus(parameters: PickingStoreModel.ChangeStatus) : Observable<PickingStoreModel.ResponseChangeStatus> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<PickingStoreModel.ResponseChangeStatus>(this.postPickingStoreChangeStatusUrl, parameters, { headers });
-    }));
+  postPickingStoreChangeStatus(parameters: PickingStoreModel.ChangeStatus) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPickingStoreChangeStatusUrl, parameters);
   }
 
 }

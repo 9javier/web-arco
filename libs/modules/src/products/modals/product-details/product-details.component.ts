@@ -219,7 +219,11 @@ export class ProductDetailsComponent implements OnInit {
       case 1:
         this.listHalls = this.listHallsOriginal[this.warehouseSelected];
         if (this.listHalls && this.listHalls.length > 0) {
-          this.hallSelected = this.listHalls[0].id;
+          if (this.listHalls[0].containers) {
+            this.hallSelected = this.listHalls[0].id;
+          } else {
+            this.hallSelected = (this.listHalls.find(hall => hall.containers)).id;
+          }
           this.listRows = this.listRowsOriginal[this.warehouseSelected][this.hallSelected];
           this.rowSelected = this.listRows[0].row;
           this.listColumns = this.listColumnsOriginal[this.warehouseSelected][this.hallSelected][this.rowSelected];
@@ -335,13 +339,7 @@ export class ProductDetailsComponent implements OnInit {
           } else if (res.body.code == 428) {
             this.showWarningToForce(params, textToastOk);
           } else {
-            let errorMessage = '';
-            if (res.body.errors.productReference && res.body.errors.productReference.message) {
-              errorMessage = res.body.errors.productReference.message;
-            } else {
-              errorMessage = res.body.message;
-            }
-            this.presentToast(errorMessage, 'danger');
+            this.presentToast('Ha ocurrido un error al intentar reubicar el producto', 'danger');
           }
         }, (error: HttpErrorResponse) => {
           if (this.loading) {
@@ -351,7 +349,7 @@ export class ProductDetailsComponent implements OnInit {
           if (error.error.code == 428) {
             this.showWarningToForce(params, textToastOk);
           } else {
-            this.presentToast(error.error.message, 'danger');
+            this.presentToast('Ha ocurrido un error al intentar reubicar el producto', 'danger');
           }
         });
       }, (error: HttpErrorResponse) => {
@@ -362,7 +360,7 @@ export class ProductDetailsComponent implements OnInit {
         if (error.error.code == 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
-          this.presentToast(error.message, 'danger');
+          this.presentToast('Ha ocurrido un error al intentar reubicar el producto', 'danger');
         }
       });
   }
