@@ -4,7 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PriceModel } from 'libs/services/src/models/endpoints/Price';
-import { Enum } from 'libs/services/src/models/enum.model';
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -18,27 +19,10 @@ export class PriceService {
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
   private postPricesByModelUrl: string = environment.apiBase + "/tariffs/model";
 
-  constructor(private http:HttpClient) { }
-
-  /**
-   * Get the prices relateds with a tariff
-   * @param tariffId - the tariff id related to price
-   * @param page
-   * @param limit
-   */
-  // getIndex(tariffId:number,page:number,limit:number,status:number,warehouseId:number):Observable<PriceModel.ResponsePricePaginated>{
-  //   return this.http.post<PriceModel.ResponsePrice>(this.getIndexUrl,{
-  //    // warehouseId:warehouseId,
-  //     tariffId:tariffId,
-  //     status:status,
-  //     pagination:{
-  //       page:page,
-  //       limit:limit
-  //     }
-  //   }).pipe(map(response=>{
-  //     return response.data;
-  //   }));
-  // }
+  constructor(
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
+  ) { }
 
   /**
    * Get the prices relateds with a tariff
@@ -77,21 +61,16 @@ export class PriceService {
    * Search prices by products references
    * @param parameters object for search
    */
-  postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Observable<PriceModel.PriceByModelTariff[]> {
+  postPricesByProductsReferences(parameters: PriceModel.ProductsReferences): Promise<HttpRequestModel.Response> {
     console.debug("PRINT::postPricesByProductsReferences 1 [" + new Date().toJSON() + "]", parameters);
-    return this.http.post<PriceModel.ResponsePricesByProductsReferences>(this.postPricesByProductsReferencesUrl, parameters).pipe(map(response => {
-      console.debug("PRINT::postPricesByProductsReferences 2 [" + new Date().toJSON() + "]", response);
-      return response.data;
-    }));
+    return this.requestsProvider.post(this.postPricesByProductsReferencesUrl, parameters);
   }
 
-  postPricesByModel(model: string): Observable<any[]> {
+  postPricesByModel(model: string): Promise<HttpRequestModel.Response> {
     let parameters = {
       reference: model
     };
 
-    return this.http.post<any>(this.postPricesByModelUrl, parameters).pipe(map(response=>{
-      return response.data;
-    }));
+    return this.requestsProvider.post(this.postPricesByModelUrl, parameters);
   }
 }

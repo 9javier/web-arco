@@ -106,7 +106,11 @@ export class WarehouseService {
               if (typeof this.listHalls[warehouse.id] == 'undefined') {
                 this.listHalls[warehouse.id] = [];
               }
-              this.listHalls[warehouse.id].push({id: hall.id, value: hall.hall});
+              if (hall.containers.length > 0) {
+                if (!this.listHalls[warehouse.id].find(searchHall => searchHall.id == hall.id)) {
+                  this.listHalls[warehouse.id].push({id: hall.id, value: hall.hall, containers: hall.containers.length > 0});
+                }
+              }
               let lastRow = 0;
               hall.containers.forEach(container => {
                 if (typeof this.listRows[warehouse.id] == 'undefined') {
