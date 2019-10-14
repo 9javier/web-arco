@@ -10,11 +10,11 @@ import {ExecutionSorterModel} from "../../../models/endpoints/ExecutionSorter";
 })
 export class SorterExecutionService {
 
-  private postExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color";
-  private postStopExecuteColorUrl: string = environment.apiBase + "/sorter/execution/color/stop";
-  private postWrongWayUrl: string = environment.apiBase + "/sorter/execution/incidence";
-  private postFullWayUrl: string = environment.apiBase + "/sorter/execution/way/full";
-  private getChangeExecutionTemplateUrl: string = environment.apiBase + "/sorter/execution/template/";
+  private postExecuteColorUrl: string = environment.apiSorter + "/sorter/execution/color";
+  private postStopExecuteColorUrl: string = environment.apiSorter + "/sorter/execution/color/stop";
+  private postWrongWayUrl: string = environment.apiSorter + "/sorter/execution/incidence";
+  private postFullWayUrl: string = environment.apiSorter + "/sorter/execution/way/full";
+  private getChangeExecutionTemplateUrl: string = environment.apiSorter + "/sorter/execution/template/";
 
   constructor(
     private http: HttpClient

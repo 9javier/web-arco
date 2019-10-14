@@ -11,12 +11,12 @@ import { map } from 'rxjs/operators';
 export class SorterService {
 
   /**urls for sorter service */
-  private postCreateSorterUrl: string = environment.apiBase + "/sorters";
-  private getSortersUrl: string = environment.apiBase + "/sorters";
-  private putUpdateSorterUrl: string = environment.apiBase + "/sorters/{{id}}";
-  private deleteSorterUrl: string = environment.apiBase + "/sorters/{{id}}";
-  private getFirstSorterUrl: string = environment.apiBase + '/sorters/first';
-  private getShowUrl: string = environment.apiBase + "/sorters/{{id}}";
+  private postCreateSorterUrl: string = environment.apiSorter + "/sorters";
+  private getSortersUrl: string = environment.apiSorter + "/sorters";
+  private putUpdateSorterUrl: string = environment.apiSorter + "/sorters/{{id}}";
+  private deleteSorterUrl: string = environment.apiSorter + "/sorters/{{id}}";
+  private getFirstSorterUrl: string = environment.apiSorter + '/sorters/first';
+  private getShowUrl: string = environment.apiSorter + "/sorters/{{id}}";
 
   constructor(private http: HttpClient) { }
   

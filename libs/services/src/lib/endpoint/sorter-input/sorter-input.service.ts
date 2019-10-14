@@ -10,8 +10,8 @@ import {InputSorterModel} from "../../../models/endpoints/InputSorter";
 })
 export class SorterInputService {
 
-  private postProductScanUrl: string = environment.apiBase + "/sorters/scanProduct";
-  private postCheckProductInWayUrl: string = environment.apiBase + "/sorter/execution/way/product/check";
+  private postProductScanUrl: string = environment.apiSorter + "/sorters/scanProduct";
+  private postCheckProductInWayUrl: string = environment.apiSorter + "/sorter/execution/way/product/check";
 
   constructor(
     private http: HttpClient

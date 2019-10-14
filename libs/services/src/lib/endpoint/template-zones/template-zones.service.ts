@@ -12,22 +12,22 @@ import {MatrixSorterModel} from "../../../models/endpoints/MatrixSorter";
 export class TemplateZonesService {
 
   /**urls for zones service */
-  private postCreateZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones";
-  private getZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones";
-  private putUpdateZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
-  private deleteZoneTemplateUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
-  private getShowUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
+  private postCreateZoneTemplateUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones";
+  private getZoneTemplateUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones";
+  private putUpdateZoneTemplateUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
+  private deleteZoneTemplateUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
+  private getShowUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/{{id}}";
   /** urls zones warehouse */
-  private postCreateZoneWarehouseUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
-  private getZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses";
-  private putUpdateZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
-  private deleteZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
-  private assignZoneWarehousesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
-  private getMatrixByTemplateUrl: string = environment.apiBase + "/sorters/{{id}}/templates/{{idTemplate}}/zones/ways/matrix";
-  private assignPrioritiesUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign";
-  private getTemplteZonesAndWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways";
-  private assignWaysUrl: string = environment.apiBase + "/sorter/templates/{{idTemplate}}/zones/ways/assign-ways";
-  private getMatrixTemplateSorterUrl: string = environment.apiBase + '/sorters/{{idSorter}}/templates/{{idTemplate}}/zones/ways/matrix';
+  private postCreateZoneWarehouseUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/warehouses";
+  private getZoneWarehousesUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/warehouses";
+  private putUpdateZoneWarehousesUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
+  private deleteZoneWarehousesUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/warehouses/{{id}}";
+  private assignZoneWarehousesUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/warehouses/assign-warehouses";
+  private getMatrixByTemplateUrl: string = environment.apiSorter + "/sorters/{{id}}/templates/{{idTemplate}}/zones/ways/matrix";
+  private assignPrioritiesUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/ways/assign";
+  private getTemplteZonesAndWaysUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/ways";
+  private assignWaysUrl: string = environment.apiSorter + "/sorter/templates/{{idTemplate}}/zones/ways/assign-ways";
+  private getMatrixTemplateSorterUrl: string = environment.apiSorter + '/sorters/{{idSorter}}/templates/{{idTemplate}}/zones/ways/matrix';
 
   constructor(private http: HttpClient) { }
   

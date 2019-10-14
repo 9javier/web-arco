@@ -10,8 +10,8 @@ import { map } from 'rxjs/operators';
 })
 export class TemplateColorsService {
 
-  private getColorsUrl: string = environment.apiBase + "/sorter/templates/colors";
-  private postAvailableColorsByProcessUrl: string = environment.apiBase + "/sorter/templates/colors/available";
+  private getColorsUrl: string = environment.apiSorter + "/sorter/templates/colors";
+  private postAvailableColorsByProcessUrl: string = environment.apiSorter + "/sorter/templates/colors/available";
 
   constructor(private http: HttpClient) { }
   
