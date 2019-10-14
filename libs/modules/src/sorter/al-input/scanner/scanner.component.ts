@@ -111,14 +111,19 @@ export class ScannerInputSorterComponent implements OnInit {
   async fullWay() {
     let setWayAsFull = () => {
       // Request to server to set way as full, assign in sorter a new way and return info to notify to user
-      this.sorterExecutionService
-        .postFullWay()
-        .subscribe(async (res: ExecutionSorterModel.FullWay) => {
-          await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500);
-        }, async (error) => {
-          console.error('Error::Subscribe::sorterExecutionService::postFullWay', error);
-          await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
-        });
+      let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      if (productRef) {
+        this.sorterExecutionService
+          .postFullWay({ way: this.idLastWaySet, productReference: productRef })
+          .subscribe(async (res: ExecutionSorterModel.FullWay) => {
+            await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500);
+          }, async (error) => {
+            console.error('Error::Subscribe::sorterExecutionService::postFullWay', error);
+            await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
+          });
+      } else {
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
+      }
     };
 
     await this.intermediaryService.presentConfirm('Se marcará la calle actual como llena y se le indicará una nueva calle donde ir metiendo los productos. ¿Continuar?', setWayAsFull);

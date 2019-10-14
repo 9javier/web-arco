@@ -38,8 +38,8 @@ export class SorterExecutionService {
     }));
   }
 
-  postFullWay(): Observable<ExecutionSorterModel.FullWay> {
-    return this.http.post<ExecutionSorterModel.ResponseFullWay>(this.postFullWayUrl, {}).pipe(map(response => {
+  postFullWay(params: ExecutionSorterModel.ParamsFullWay): Observable<ExecutionSorterModel.FullWay> {
+    return this.http.post<ExecutionSorterModel.ResponseFullWay>(this.postFullWayUrl, params).pipe(map(response => {
       return response.data;
     }));
   }

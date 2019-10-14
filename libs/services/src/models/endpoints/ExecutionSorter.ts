@@ -74,6 +74,11 @@ export namespace ExecutionSorterModel {
     data: WrongWay
   }
 
+  export interface ParamsFullWay {
+    way: number,
+    productReference: string
+  }
+
   export interface FullWay {
 
   }
