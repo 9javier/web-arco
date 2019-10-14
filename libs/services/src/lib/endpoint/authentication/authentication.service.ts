@@ -81,8 +81,12 @@ export class AuthenticationService {
   }
 
   getCurrentToken(): Promise<string> {
-    return new Promise((resolve, reject) => {
-      resolve('Bearer db3e66e1cd06047b495839f4ae866acf510c15a4');
+    return this.localStorageProvider.get(this.localStorageProvider.KEYS.ACCESS_TOKEN).then(res => {
+      if (res && typeof res == 'string') {
+        return res;
+      } else {
+        return null;
+      }
     });
   }
 
