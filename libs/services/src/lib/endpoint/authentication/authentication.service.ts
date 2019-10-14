@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { BehaviorSubject, Observable, from } from 'rxjs';
 import { WarehouseModel } from "@suite/services";
-
-const TOKEN_KEY = 'access_token';
-const USER_ID_KEY = 'user_id';
-const USER_KEY = 'user';
+import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-
   authenticationState = new BehaviorSubject(null);
   dictionaryAcessState = new BehaviorSubject(null);
 
-  constructor(private storage: Storage) {
+  constructor(
+    private localStorageProvider: LocalStorageProvider
+  ) {
     this.getDictionaryAccess();
   }
 
@@ -24,12 +21,12 @@ export class AuthenticationService {
  * Get the last sucessfull login username
  * @returns the last username loged from this terminal
  */
-  getUsername(): Observable<string> {
-    return from(this.storage.get("username"));
+  getUsername(): Observable<any> {
+    return from(this.localStorageProvider.get(this.localStorageProvider.KEYS.USERNAME));
   }
 
   async checkToken() {
-    return await this.storage.get(TOKEN_KEY).then(res => {
+    return await this.localStorageProvider.get(this.localStorageProvider.KEYS.ACCESS_TOKEN).then(res => {
       if (res) {
         this.authenticationState.next(true);
         return true;
@@ -43,34 +40,36 @@ export class AuthenticationService {
   }
 
   async getDictionaryAccess() {
-
-    return await this.storage.get("dictionaryAcess").then(access => {
+    return await this.localStorageProvider.get(this.localStorageProvider.KEYS.DICTIONARY_ACCESS).then(access => {
+      if (access && typeof access == 'string') {
+        access = JSON.parse(access);
+      }
       this.dictionaryAcessState.next(access);
     });
   }
 
   async login(accessToken: string, user?: any, dictionary?, refreshToken?: string) {
     if (user) {
-      await this.storage.set(USER_ID_KEY, user.id);
-      await this.storage.set(USER_KEY, JSON.stringify(user));
+      await this.localStorageProvider.set(this.localStorageProvider.KEYS.USER_ID, user.id);
+      await this.localStorageProvider.set(this.localStorageProvider.KEYS.USER, JSON.stringify(user));
     }
     if (refreshToken)
-      await this.storage.set("refreshToken", refreshToken);
+      await this.localStorageProvider.set(this.localStorageProvider.KEYS.REFRESH_TOKEN, refreshToken);
     if (dictionary) {
-      await this.storage.set("dictionaryAcess", dictionary).then(() => {
+      await this.localStorageProvider.set(this.localStorageProvider.KEYS.DICTIONARY_ACCESS, JSON.stringify(dictionary)).then(() => {
         return this.getDictionaryAccess();
       });
     }
-    return this.storage.set(TOKEN_KEY, `Bearer ${accessToken}`).then(() => {
+    return this.localStorageProvider.set(this.localStorageProvider.KEYS.ACCESS_TOKEN, `Bearer ${accessToken}`).then(() => {
       this.authenticationState.next(true);
     });
   }
 
   logout() {
-    this.storage.remove(USER_ID_KEY);
-    this.storage.remove(USER_KEY);
+    this.localStorageProvider.remove(this.localStorageProvider.KEYS.USER_ID);
+    this.localStorageProvider.remove(this.localStorageProvider.KEYS.USER);
 
-    return this.storage.remove(TOKEN_KEY).then((data) => {
+    return this.localStorageProvider.remove(this.localStorageProvider.KEYS.ACCESS_TOKEN).then((data) => {
       if (this.authenticationState.value) {
         this.authenticationState.next(false);
       }
@@ -82,9 +81,11 @@ export class AuthenticationService {
   }
 
   getCurrentToken(): Promise<string> {
-    return this.storage.get(TOKEN_KEY).then(res => {
-      if (res) {
+    return this.localStorageProvider.get(this.localStorageProvider.KEYS.ACCESS_TOKEN).then(res => {
+      if (res && typeof res == 'string') {
         return res;
+      } else {
+        return null;
       }
     });
   }
@@ -93,31 +94,38 @@ export class AuthenticationService {
    * @returns the stored refresh token
    */
   getCurrentRefreshToken(): Promise<string> {
-    return this.storage.get("refreshToken").then(res => {
-      if (res)
+    return this.localStorageProvider.get(this.localStorageProvider.KEYS.REFRESH_TOKEN).then(res => {
+      if (res && typeof res == 'string') {
         return res;
+      } else {
+        return null;
+      }
     });
   }
 
   getCurrentUserId(): Promise<number> {
-    return this.storage.get(USER_ID_KEY).then(res => {
-      if (res) {
+    return this.localStorageProvider.get(this.localStorageProvider.KEYS.USER_ID).then(res => {
+      if (res && typeof res == 'number') {
         return res;
+      } else {
+        return null;
       }
     });
   }
 
   getCurrentUser(): Promise<any> {
-    return this.storage.get(USER_KEY).then(res => {
-      if (res) {
-        return JSON.parse(res);
+    return this.localStorageProvider.get(this.localStorageProvider.KEYS.USER).then(res => {
+      if (res && typeof res == 'string') {
+        return JSON.parse(res) || null;
+      } else {
+        return null;
       }
     });
   }
 
   getStoreCurrentUser(): Promise<WarehouseModel.Warehouse> {
-    return this.storage.get(USER_KEY).then(res => {
-      if (res) {
+    return this.localStorageProvider.get(this.localStorageProvider.KEYS.USER).then(res => {
+      if (res && typeof res == 'string') {
         let warehouse = null;
         if (JSON.parse(res)) {
           let user = JSON.parse(res);

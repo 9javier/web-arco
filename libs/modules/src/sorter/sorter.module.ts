@@ -27,6 +27,7 @@ import {SorterListTemplatesSelectionComponent} from "./template-selection/list-t
 import {SorterMatrixSelectedComponent} from "./template-selection/matrix-selected/matrix-selected";
 import {SorterTemplateSelectionComponent} from "./template-selection/list-templates/template/template";
 import { MatrixSelectWaySorterComponent } from './list/components/matrix-select-way-sorter/matrix-select-way-sorter.component';
+import { TablePrioritiesSorterComponent } from './list/components/table-priorities-sorter/table-priorities-sorter.component';
 
 const routes:Routes = [
   {
@@ -37,7 +38,7 @@ const routes:Routes = [
     }
   },
   {
-    path: 'plantilla/:id',
+    path: 'plantilla/:id/:equalParts',
     component: ListComponent,
     data: {
       name: 'Plantilla'
@@ -97,7 +98,8 @@ const routes:Routes = [
     SorterListTemplatesSelectionComponent,
     SorterTemplateSelectionComponent,
     SorterMatrixSelectedComponent,
-    MatrixSelectWaySorterComponent
+    MatrixSelectWaySorterComponent,
+    TablePrioritiesSorterComponent
   ],
   imports: [
     CommonModule,

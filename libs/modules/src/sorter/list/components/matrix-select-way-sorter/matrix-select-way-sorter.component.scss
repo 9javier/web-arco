@@ -26,3 +26,64 @@ div.matrix-main {
         }
     }
 }
+
+.containerTable {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .height {
+    display: flex;
+    flex-direction: row;
+    margin-right: 20%;
+    flex-wrap: wrap;
+  }
+  
+  .column {
+    font-size: 20px;
+    border: 1px solid black;
+    flex: 1 1 auto;
+    width: 65px;
+  }
+
+  .selected {
+    background: red;
+    color: white;
+  }
+  
+  .adjacent {
+    background: #dddddd;
+    color: white;
+  }
+
+  .grid{
+      display: flex;
+      position: absolute;
+      margin-left: 20rem;
+      margin-top: 4rem;
+      width: 13rem;
+      height: 14rem;
+      max-width: 13rem;
+      max-height: 14rem;
+  }
+
+
+  mat-radio-button{
+      margin-left: 12px;
+  }
+  
+.overAuto {
+    max-height: calc(100vh - 278px) !important;
+    overflow: auto;
+}
+
+.containerWays {
+    margin: 0 auto;
+    width: 75%;
+}
+
+.title{
+    font-weight: bold;
+}

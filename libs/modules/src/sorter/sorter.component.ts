@@ -133,7 +133,7 @@ export class SorterComponent implements OnInit {
 
   clickShowExpasion(row: any) {
     event.stopPropagation();
-    this.router.navigate([`/sorter/plantilla/${row.id}`]);
+    this.router.navigate([`/sorter/plantilla/${row.id}/${row.equalParts}`]);
   }
 
   selectAll(event): void {

@@ -76,8 +76,9 @@ export class InputCodesComponent implements OnInit {
             case 2:
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
-                .subscribe((prices) => {
-                  let price = prices[0];
+                .then((prices) => {
+                  let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
+                  let price = pricesData[0];
                   if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                     this.presentAlertWarningPriceWithoutTariff(price);
                   } else {
@@ -99,17 +100,18 @@ export class InputCodesComponent implements OnInit {
               // Query sizes_range for product model
               this.priceService
                 .postPricesByModel(dataWrote)
-                .subscribe((response) => {
-                  if (response && response.length == 1) {
-                    let price = response[0];
+                .then((response) => {
+                  let responseData = response.data;
+                  if (responseData && responseData.length == 1) {
+                    let price = responseData[0];
                     if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                       this.presentAlertWarningPriceWithoutTariff(price);
                     } else {
                       this.printerService.printTagPriceUsingPrice(price);
                     }
-                  } else if (response && response.length > 1) {
+                  } else if (responseData && responseData.length > 1) {
                     // Request user select size to print
-                    let listItems = response.map((productPrice, iProductPrice) => {
+                    let listItems = responseData.map((productPrice, iProductPrice) => {
                       let label = productPrice.rangesNumbers.sizeRangeNumberMin;
                       if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
                         label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
@@ -122,9 +124,13 @@ export class InputCodesComponent implements OnInit {
                         value: iProductPrice
                       }
                     });
-                    this.presentAlertSelect(listItems, response);
+                    this.presentAlertSelect(listItems, responseData);
                   }
                 }, (error) => {
+                  this.lastCodeScanned = 'start';
+                  this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                })
+                .catch((error) => {
                   this.lastCodeScanned = 'start';
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                 });

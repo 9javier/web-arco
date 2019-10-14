@@ -45,9 +45,13 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   private loadRejectionReasons() {
     this.pickingStoreService
       .getLoadRejectionReasons()
-      .subscribe((res: Array<PickingStoreModel.RejectionReasons>) => {
-        this.pickingProvider.listRejectionReasonsToStorePickings = res;
+      .then((res: PickingStoreModel.ResponseLoadRejectionReasons) => {
+        let resData: Array<PickingStoreModel.RejectionReasons> = res.data;
+        this.pickingProvider.listRejectionReasonsToStorePickings = resData;
       }, (error) => {
+        console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
+      })
+      .catch((error) => {
         console.error('Error::Subscribe::pickingStoreService::getLoadRejectionReasons', error);
       });
   }
@@ -56,7 +60,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
     this.isLoadingData = true;
     this.pickingStoreService
       .getInitiated()
-      .subscribe((res: PickingStoreModel.ResponseInitiated) => {
+      .then((res: PickingStoreModel.ResponseInitiated) => {
         if (res.code == 200 && res.data && res.data.status == 2 && res.data.destinationWarehouses && res.data.linesPending) {
           this.lineRequestsByStores = [];
           this.stores = res.data.destinationWarehouses;
@@ -68,13 +72,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
         }
       }, (error) => {
         this.loadPossibleLineRequestsByStores();
+      })
+      .catch((error) => {
+        this.loadPossibleLineRequestsByStores();
       });
   }
 
   private loadPossibleLineRequestsByStores() {
     this.pickingStoreService
       .getLineRequests()
-      .subscribe((res: PickingStoreModel.ResponseLineRequests) => {
+      .then((res: PickingStoreModel.ResponseLineRequests) => {
         if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
           this.lineRequestsByStores = res.data;
           this.stores = [];
@@ -89,6 +96,13 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
           console.error('Error Subscribe::List line-requests by store::', res);
         }
       }, (error) => {
+        this.lineRequestsByStores = [];
+        this.stores = [];
+        this.lineRequests = [];
+        this.isLoadingData = false;
+        console.error('Error Subscribe::List line-requests by store::', error);
+      })
+      .catch((error) => {
         this.lineRequestsByStores = [];
         this.stores = [];
         this.lineRequests = [];
@@ -156,11 +170,11 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
           status: 2,
           warehouseIds: this.pickingProvider.listStoresIdsToStorePicking
         })
-        .subscribe((res: PickingStoreModel.ResponseChangeStatus) => {
+        .then((res: PickingStoreModel.ResponseChangeStatus) => {
           if (res.code == 200 || res.code == 201) {
             this.pickingStoreService
               .postLineRequestFiltered(filtersToGetProducts)
-              .subscribe((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+              .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
                 if (res.code == 200 || res.code == 201) {
                   this.pickingProvider.listProductsToStorePickings = res.data.pending;
                   this.pickingProvider.listProductsProcessedToStorePickings = res.data.processed;
@@ -172,6 +186,9 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
             console.error('Error Subscribe::Change status for picking-store::', res);
           }
         }, (error) => {
+          console.error('Error Subscribe::Change status for picking-store::', error);
+        })
+        .catch((error) => {
           console.error('Error Subscribe::Change status for picking-store::', error);
         });
     }
