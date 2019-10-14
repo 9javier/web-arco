@@ -99,7 +99,7 @@ export class PickingScanditService {
                       this.refreshListPickingsStores();
                     } else {
                       ScanditMatrixSimple.setText(
-                        res.message,
+                        res.errors,
                         this.scanditProvider.colorsMessage.error.color,
                         this.scanditProvider.colorText.color,
                         18);
@@ -386,7 +386,7 @@ export class PickingScanditService {
           this.refreshListPickingsStores();
         } else {
           ScanditMatrixSimple.setText(
-            res.message,
+            res.errors,
             this.scanditProvider.colorsMessage.error.color,
             this.scanditProvider.colorText.color,
             18);
