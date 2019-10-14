@@ -52,4 +52,25 @@ export class RequestsProvider {
     });
   }
 
+  public put(url: string, body: any) : Promise<HttpRequestModel.Response> {
+    return new Promise((resolve, reject) => {
+      this.auth.getCurrentToken().then((authToken) => {
+        let req = new XMLHttpRequest();
+
+        req.open('PUT', url, false);
+        req.setRequestHeader('Authorization', authToken);
+        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        req.send(JSON.stringify(body));
+
+        let response = { error: 'Error to make PUT Request' };
+
+        if (req.responseText) {
+          response = JSON.parse(req.responseText)
+        }
+
+        resolve(response);
+      });
+    });
+  }
+
 }
