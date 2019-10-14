@@ -7,6 +7,11 @@ div.matrix-main {
     vertical-align: middle;
     height: 100%;
     width: 100%;
+    p.msg-select-zone {
+      margin: 0 0 24px 0;
+      text-align: center;
+      font-weight: 500;
+    }
     div.matrix {
       div.height {
         width: auto;
