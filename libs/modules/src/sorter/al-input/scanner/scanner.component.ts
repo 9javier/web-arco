@@ -166,7 +166,7 @@ export class ScannerInputSorterComponent implements OnInit {
         .postCheckProductInWay({ productReference, wayId })
         .subscribe((res: InputSorterModel.CheckProductInWay) => {
           if (!res.is_in_way) {
-            checkProductInWayLocal(productReference, wayId);
+            setTimeout(() => checkProductInWayLocal(productReference, wayId), 1000);
           } else {
             this.sorterNotifyAboutProductScanned();
           }
