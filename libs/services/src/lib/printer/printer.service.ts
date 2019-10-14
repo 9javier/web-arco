@@ -405,9 +405,9 @@ export class PrinterService {
    * Print the prices of products
    * @param listReferences references of products
    */
-  printTagPrices(listReferences: string[]): Observable<Boolean> {
+  printTagPrices(listReferences: string[]): Observable<Boolean|Observable<any>> {
     console.debug("PRINT::printTagPrices 1 [" + new Date().toJSON() + "]", listReferences);
-    let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+    let observable: Observable<boolean|Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
       }).pipe(flatMap((r) => {
@@ -416,7 +416,7 @@ export class PrinterService {
         })
       }));
       console.debug("PRINT::printTagPrices 2 [" + new Date().toJSON() + "]", listReferences);
-      return this.priceService.postPricesByProductsReferences({references: listReferences}).pipe(flatMap((prices) => {
+      return this.priceService.postPricesByProductsReferences({references: listReferences}).then((prices) => {
         let dataToPrint = this.processProductToPrintTagPrice(prices);
         console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices);
         innerObservable = innerObservable.pipe(flatMap(product=>{
@@ -425,7 +425,7 @@ export class PrinterService {
           return this.printNotify(dataToPrint.options.map(option=>option.price.id));
         }));
         return innerObservable;
-      }));
+      });
     }));
     console.debug("PRINT::printTagPrices 4 [" + new Date().toJSON() + "]", listReferences);
     return observable;

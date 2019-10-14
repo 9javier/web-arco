@@ -48,23 +48,12 @@ export class ProductInfoScanditService {
 
           if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT
             || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
-            this.productService
-              .getExtendedInfo(codeScanned)
-              .subscribe((res: ProductModel.ResponseExtendedInfo) => {
-                if (res.code == 200) {
-                  ScanditMatrixSimple.showProductExtendedInfo(true, res.data);
-                } else {
-                  console.error('Error::Subscribe::GetExtendedInfo::', res);
-                  ScanditMatrixSimple.showProgressBarProductExtendedInfo(false);
-                  ScanditMatrixSimple.setText(
-                    'Ha ocurrido un error al intentar consultar la información del producto.',
-                    this.scanditProvider.colorsMessage.error.color,
-                    this.scanditProvider.colorText.color,
-                    16);
-                  this.hideTextMessage(1500);
-                }
-              }, (error) => {
-                console.error('Error::Subscribe::GetExtendedInfo::', error);
+
+            this.productService.getExtendedInfo(codeScanned).then((res) => {
+              if (res.code == 200) {
+                ScanditMatrixSimple.showProductExtendedInfo(true, res.data);
+              } else {
+                console.error('Error::Subscribe::GetExtendedInfo::', res);
                 ScanditMatrixSimple.showProgressBarProductExtendedInfo(false);
                 ScanditMatrixSimple.setText(
                   'Ha ocurrido un error al intentar consultar la información del producto.',
@@ -72,7 +61,26 @@ export class ProductInfoScanditService {
                   this.scanditProvider.colorText.color,
                   16);
                 this.hideTextMessage(1500);
-              })
+              }
+            }, (error) => {
+              console.error('Error::Subscribe::GetExtendedInfo::', error);
+              ScanditMatrixSimple.showProgressBarProductExtendedInfo(false);
+              ScanditMatrixSimple.setText(
+                'Ha ocurrido un error al intentar consultar la información del producto.',
+                this.scanditProvider.colorsMessage.error.color,
+                this.scanditProvider.colorText.color,
+                16);
+              this.hideTextMessage(1500);
+            }).catch((error) => {
+              console.error('Error::Subscribe::GetExtendedInfo::', error);
+              ScanditMatrixSimple.showProgressBarProductExtendedInfo(false);
+              ScanditMatrixSimple.setText(
+                'Ha ocurrido un error al intentar consultar la información del producto.',
+                this.scanditProvider.colorsMessage.error.color,
+                this.scanditProvider.colorText.color,
+                16);
+              this.hideTextMessage(1500);
+            });
           } else {
             ScanditMatrixSimple.showProgressBarProductExtendedInfo(false);
             ScanditMatrixSimple.setText(

@@ -73,7 +73,7 @@ export class PickingScanditService {
                 ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
                 this.pickingStoreService
                   .postPickingStoreProcess(paramsPickingStoreProcess)
-                  .subscribe((res: PickingStoreModel.ResponseSendProcess) => {
+                  .then((res: PickingStoreModel.ResponseSendProcess) => {
                     ScanditMatrixSimple.hideLoadingDialog();
                     if (res.code == 200 || res.code == 201) {
                       listProductsToStorePickings = res.data.linesRequestFiltered.pending;
@@ -92,14 +92,14 @@ export class PickingScanditService {
                             this.scanditProvider.colorsMessage.info.color,
                             this.scanditProvider.colorText.color,
                             16);
-                          this.hideTextMessage(1500);
+                          this.hideTextMessage(2000);
                           ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
                         }, 2 * 1000);
                       }
                       this.refreshListPickingsStores();
                     } else {
                       ScanditMatrixSimple.setText(
-                        res.message,
+                        res.errors,
                         this.scanditProvider.colorsMessage.error.color,
                         this.scanditProvider.colorText.color,
                         18);
@@ -115,6 +115,16 @@ export class PickingScanditService {
                       18);
                     this.hideTextMessage(2000);
                     this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
+                  })
+                  .catch((error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    ScanditMatrixSimple.setText(
+                      error.error.errors,
+                      this.scanditProvider.colorsMessage.error.color,
+                      this.scanditProvider.colorText.color,
+                      18);
+                    this.hideTextMessage(2000);
+                    this.loadLineRequestsPending(listProductsToStorePickings, listProductsProcessed, filtersToGetProducts, typePacking);
                   });
               } else {
                 ScanditMatrixSimple.setText(
@@ -122,7 +132,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.success.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
               }
             } else {
               ScanditMatrixSimple.setText(
@@ -144,7 +154,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.info.color,
                   this.scanditProvider.colorText.color,
                   18);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
               }, 0.5 * 1000);
             } else {
               ScanditMatrixSimple.setText(
@@ -162,9 +172,10 @@ export class PickingScanditService {
                   filters: filtersToGetProducts,
                   productReference: codeScanned
                 })
-                .subscribe((res: PickingStoreModel.ResponseDataLineRequestsFiltered) => {
-                  listProductsToStorePickings = res.pending;
-                  listProductsProcessed = res.processed;
+                .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+                  let resData: PickingStoreModel.ResponseDataLineRequestsFiltered = res.data;
+                  listProductsToStorePickings = resData.pending;
+                  listProductsProcessed = resData.processed;
                   ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                   this.refreshListPickingsStores();
 
@@ -174,7 +185,7 @@ export class PickingScanditService {
                     this.scanditProvider.colorsMessage.success.color,
                     this.scanditProvider.colorText.color,
                     16);
-                  this.hideTextMessage(1500);
+                  this.hideTextMessage(2000);
                 }, (error) => {
                   console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
                   ScanditMatrixSimple.hideLoadingDialog();
@@ -183,7 +194,17 @@ export class PickingScanditService {
                     this.scanditProvider.colorsMessage.error.color,
                     this.scanditProvider.colorText.color,
                     16);
-                  this.hideTextMessage(1500);
+                  this.hideTextMessage(2000);
+                })
+                .catch((error) => {
+                  console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
+                  ScanditMatrixSimple.hideLoadingDialog();
+                  ScanditMatrixSimple.setText(
+                    'Ha ocurrido un error al intentar desasociar el artículo del picking actual.',
+                    this.scanditProvider.colorsMessage.error.color,
+                    this.scanditProvider.colorText.color,
+                    16);
+                  this.hideTextMessage(2000);
                 });
             } else {
               ScanditMatrixSimple.setText(
@@ -191,7 +212,7 @@ export class PickingScanditService {
                 this.scanditProvider.colorsMessage.error.color,
                 this.scanditProvider.colorText.color,
                 18);
-              this.hideTextMessage(1500);
+              this.hideTextMessage(2000);
             }
           }
         } else {
@@ -207,7 +228,7 @@ export class PickingScanditService {
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 16);
-              this.hideTextMessage(1500);
+              this.hideTextMessage(2000);
               ScanditMatrixSimple.hideLoadingDialog();
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
             }
@@ -252,7 +273,7 @@ export class PickingScanditService {
             ScanditMatrixSimple.showLoadingDialog('Cargando productos...');
             this.pickingStoreService
               .postLineRequestFiltered(filtersToGetProducts)
-              .subscribe((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+              .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
                 ScanditMatrixSimple.hideLoadingDialog();
                 if (res.code == 200) {
                   listProductsToStorePickings = res.data.pending;
@@ -260,7 +281,7 @@ export class PickingScanditService {
                   ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                   this.refreshListPickingsStores();
                 }
-              }, () => ScanditMatrixSimple.hideLoadingDialog());
+              }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
           } else if (response.action == 'request_reject') {
             ScanditMatrixSimple.showLoadingDialog('Rechazando artículo del picking...');
 
@@ -273,9 +294,10 @@ export class PickingScanditService {
                 reasonRejectionId: reasonId,
                 reference: requestReference
               })
-              .subscribe((res: PickingStoreModel.RejectRequest) => {
-                listProductsToStorePickings = res.linesRequestFiltered.pending;
-                listProductsProcessed = res.linesRequestFiltered.processed;
+              .then((res: PickingStoreModel.ResponseRejectRequest) => {
+                let resData: PickingStoreModel.RejectRequest = res.data;
+                listProductsToStorePickings = resData.linesRequestFiltered.pending;
+                listProductsProcessed = resData.linesRequestFiltered.processed;
                 ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                 this.refreshListPickingsStores();
 
@@ -285,7 +307,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.success.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
                 ScanditMatrixSimple.hideInfoProductDialog();
               }, (error) => {
                 console.error('Error::Subscribe::pickingStoreService::postRejectRequest', error);
@@ -295,7 +317,17 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.error.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
+              })
+              .catch((error) => {
+                console.error('Error::Subscribe::pickingStoreService::postRejectRequest', error);
+                ScanditMatrixSimple.hideLoadingDialog();
+                ScanditMatrixSimple.setText(
+                  'Ha ocurrido un error al intentar rechazar el artículo en el picking actual.',
+                  this.scanditProvider.colorsMessage.error.color,
+                  this.scanditProvider.colorText.color,
+                  16);
+                this.hideTextMessage(2000);
               });
           } else if (response.action == 'products_out_of_packing') {
             if (response.response) {
@@ -314,7 +346,7 @@ export class PickingScanditService {
     ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
     this.pickingStoreService
       .postLineRequestFiltered(filtersToGetProducts)
-      .subscribe((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
+      .then((res: PickingStoreModel.ResponseLineRequestsFiltered) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
           listProductsToStorePickings = res.data.pending;
@@ -327,13 +359,13 @@ export class PickingScanditService {
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 16);
-              this.hideTextMessage(1500);
+              this.hideTextMessage(2000);
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
             }, 2 * 1000);
           }
           this.refreshListPickingsStores();
         }
-      }, () => ScanditMatrixSimple.hideLoadingDialog());
+      }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
   }
 
   private finishPicking() {
@@ -343,18 +375,19 @@ export class PickingScanditService {
       this.scanditProvider.colorsMessage.info.color,
       this.scanditProvider.colorText.color,
       18);
+    this.hideTextMessage(2000);
     this.pickingStoreService
       .postPackings({
         packingReferences: this.packingReferences
       })
-      .subscribe((res: PickingStoreModel.ResponsePostPacking) => {
+      .then((res: PickingStoreModel.ResponsePostPacking) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
           ScanditMatrixSimple.finishPickingStores();
           this.refreshListPickingsStores();
         } else {
           ScanditMatrixSimple.setText(
-            res.message,
+            res.errors,
             this.scanditProvider.colorsMessage.error.color,
             this.scanditProvider.colorText.color,
             18);
@@ -363,6 +396,17 @@ export class PickingScanditService {
           ScanditMatrixSimple.setTextPickingStores(true, `Escanee de nuevo los embalajes a usar`);
         }
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        ScanditMatrixSimple.setText(
+          error.error.errors,
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          18);
+        this.hideTextMessage(2000);
+        this.packingReferences = [];
+        ScanditMatrixSimple.setTextPickingStores(true, `Escanee de nuevo los embalajes a usar`);
+      })
+      .catch((error) => {
         ScanditMatrixSimple.hideLoadingDialog();
         ScanditMatrixSimple.setText(
           error.error.errors,

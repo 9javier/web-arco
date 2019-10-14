@@ -9,6 +9,9 @@ import { ProductModel } from '../../../models/endpoints/Product';
 import { environment } from '../../../environments/environment';
 import {map, switchMap} from 'rxjs/operators';
 import {from} from "rxjs";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,7 +26,11 @@ export class ProductsService {
   
   private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
 
-  constructor(private http: HttpClient, private auth: AuthenticationService) {}
+  constructor(
+    private http: HttpClient,
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
+  ) {}
 
   async getIndex(): Promise<Observable<HttpResponse<ProductModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
@@ -52,20 +59,12 @@ export class ProductsService {
     }));
   }
 
-  postRelabel(params: ProductModel.ParamsRelabel): Observable<ProductModel.ResponseRelabel> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.post<ProductModel.ResponseRelabel>(this.postRelabelUrl, params,  { headers });
-    }));
+  postRelabel(params: ProductModel.ParamsRelabel): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postRelabelUrl, params);
   }
 
-  getExtendedInfo(reference: string): Observable<ProductModel.ResponseExtendedInfo> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.get<ProductModel.ResponseExtendedInfo>(this.getExtendedInfoUrl + reference, { headers });
-    }));
+  getExtendedInfo(reference: string) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getExtendedInfoUrl + reference);
   }
 
   /**
