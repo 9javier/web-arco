@@ -21,12 +21,11 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import localeEs from '@angular/common/locales/es';
 import {registerLocaleData} from "@angular/common";
 import {MondayStartingDateAdapterService} from "../../../../libs/services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
-import { TablePrioritiesSorterComponent } from './table-priorities-sorter/table-priorities-sorter.component';
 
 registerLocaleData(localeEs);
 
 @NgModule({
-  declarations: [AppComponent, TablePrioritiesSorterComponent],
+  declarations: [AppComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
