@@ -92,7 +92,7 @@ export class PickingScanditService {
                             this.scanditProvider.colorsMessage.info.color,
                             this.scanditProvider.colorText.color,
                             16);
-                          this.hideTextMessage(1500);
+                          this.hideTextMessage(2000);
                           ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
                         }, 2 * 1000);
                       }
@@ -132,7 +132,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.success.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
               }
             } else {
               ScanditMatrixSimple.setText(
@@ -154,7 +154,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.info.color,
                   this.scanditProvider.colorText.color,
                   18);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
               }, 0.5 * 1000);
             } else {
               ScanditMatrixSimple.setText(
@@ -185,7 +185,7 @@ export class PickingScanditService {
                     this.scanditProvider.colorsMessage.success.color,
                     this.scanditProvider.colorText.color,
                     16);
-                  this.hideTextMessage(1500);
+                  this.hideTextMessage(2000);
                 }, (error) => {
                   console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
                   ScanditMatrixSimple.hideLoadingDialog();
@@ -194,7 +194,7 @@ export class PickingScanditService {
                     this.scanditProvider.colorsMessage.error.color,
                     this.scanditProvider.colorText.color,
                     16);
-                  this.hideTextMessage(1500);
+                  this.hideTextMessage(2000);
                 })
                 .catch((error) => {
                   console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
@@ -204,7 +204,7 @@ export class PickingScanditService {
                     this.scanditProvider.colorsMessage.error.color,
                     this.scanditProvider.colorText.color,
                     16);
-                  this.hideTextMessage(1500);
+                  this.hideTextMessage(2000);
                 });
             } else {
               ScanditMatrixSimple.setText(
@@ -212,7 +212,7 @@ export class PickingScanditService {
                 this.scanditProvider.colorsMessage.error.color,
                 this.scanditProvider.colorText.color,
                 18);
-              this.hideTextMessage(1500);
+              this.hideTextMessage(2000);
             }
           }
         } else {
@@ -228,7 +228,7 @@ export class PickingScanditService {
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 16);
-              this.hideTextMessage(1500);
+              this.hideTextMessage(2000);
               ScanditMatrixSimple.hideLoadingDialog();
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
             }
@@ -307,7 +307,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.success.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
                 ScanditMatrixSimple.hideInfoProductDialog();
               }, (error) => {
                 console.error('Error::Subscribe::pickingStoreService::postRejectRequest', error);
@@ -317,7 +317,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.error.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
               })
               .catch((error) => {
                 console.error('Error::Subscribe::pickingStoreService::postRejectRequest', error);
@@ -327,7 +327,7 @@ export class PickingScanditService {
                   this.scanditProvider.colorsMessage.error.color,
                   this.scanditProvider.colorText.color,
                   16);
-                this.hideTextMessage(1500);
+                this.hideTextMessage(2000);
               });
           } else if (response.action == 'products_out_of_packing') {
             if (response.response) {
@@ -359,7 +359,7 @@ export class PickingScanditService {
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 16);
-              this.hideTextMessage(1500);
+              this.hideTextMessage(2000);
               ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
             }, 2 * 1000);
           }
@@ -375,6 +375,7 @@ export class PickingScanditService {
       this.scanditProvider.colorsMessage.info.color,
       this.scanditProvider.colorText.color,
       18);
+    this.hideTextMessage(2000);
     this.pickingStoreService
       .postPackings({
         packingReferences: this.packingReferences
