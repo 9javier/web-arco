@@ -144,7 +144,7 @@ export class ScannerInputSorterComponent implements OnInit {
       .subscribe(async (res: InputSorterModel.ProductScan) => {
         this.isWaitingSorterFeedback = true;
         this.productToSetInSorter = productReference;
-        this.messageGuide = '¡ESPERE!';
+        this.messageGuide = 'COLOQUE EL ARTÍCULO EN LA CALLE INDICADA';
 
         await this.intermediaryService.dismissLoading();
         this.processStarted = true;
@@ -182,7 +182,7 @@ export class ScannerInputSorterComponent implements OnInit {
       this.sorterInputService
         .postCheckProductInWay({ productReference, wayId })
         .subscribe((res: InputSorterModel.CheckProductInWay) => {
-          if (!res.is_in_way) {
+          if (!res.is_in_way && this.isWaitingSorterFeedback) {
             setTimeout(() => checkProductInWayLocal(productReference, wayId), 1000);
           } else {
             this.sorterNotifyAboutProductScanned();
@@ -199,8 +199,13 @@ export class ScannerInputSorterComponent implements OnInit {
 
   private async sorterNotifyAboutProductScanned() {
     await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
+    this.resetLastScanProcess();
+  }
+
+  private resetLastScanProcess() {
     this.isWaitingSorterFeedback = false;
     this.productToSetInSorter = null;
-    this.messageGuide = 'ARTÍCULO';
+    this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
+    this.productScanned = null;
   }
 }

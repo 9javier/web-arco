@@ -33,7 +33,7 @@
   <input id="input" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue">
 
   <sorter-footer-buttons-scanner
-    *ngIf="processStarted"
+    *ngIf="processStarted && productScanned"
     [leftButton]="leftButtonText"
     [leftButtonDanger]="leftButtonDanger"
     [rightButton]="rightButtonText"
