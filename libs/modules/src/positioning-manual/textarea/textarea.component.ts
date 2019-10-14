@@ -124,57 +124,44 @@ export class TextareaComponent implements OnInit {
 
   private storeProductInContainer(params) {
     this.intermediaryService.presentLoading();
-    this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-      data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
+    this.inventoryService
+      .postStore(params)
+      .then((res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
-          if (res.body.code == 200 || res.body.code == 201) {
-            let msgSetText = '';
-            if (this.isStoreUser) {
-              msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
-            } else {
-              if (params.packingReference) {
-                msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
-              } else {
-                msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
-              }
-            }
-            this.presentToast(msgSetText, 2000, 'success');
-            this.processInitiated = false;
-          } else if (res.body.code == 428) {
-            this.showWarningToForce(params);
+        if (res.code == 200 || res.code == 201) {
+          let msgSetText = '';
+          if (this.isStoreUser) {
+            msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
           } else {
-            let errorMessage = '';
-            if (res.body.errors.productReference && res.body.errors.productReference.message) {
-              errorMessage = res.body.errors.productReference.message;
+            if (params.packingReference) {
+              msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
             } else {
-              errorMessage = res.body.message;
+              msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
-            this.presentToast(errorMessage, 1500, 'danger');
-            this.processInitiated = false;
           }
-        }, (error) => {
-          this.intermediaryService.dismissLoading();
-          if (error.error.code == 428) {
-            this.showWarningToForce(params);
+          this.presentToast(msgSetText, 2000, 'success');
+          this.processInitiated = false;
+        } else if (res.code == 428) {
+          this.showWarningToForce(params);
+        } else {
+          let errorMessage = '';
+          if (res.errors.productReference && res.errors.productReference.message) {
+            errorMessage = res.errors.productReference.message;
           } else {
-            this.presentToast(error.error.errors, 1500, 'danger');
-            this.processInitiated = false;
+            errorMessage = res.message;
           }
-        }, () => {
-          this.intermediaryService.dismissLoading();
+          this.presentToast(errorMessage, 1500, 'danger');
+          this.processInitiated = false;
         }
-      );
-    }, (error: HttpErrorResponse) => {
-      this.intermediaryService.dismissLoading();
-      if (error.error.code == 428) {
-        this.showWarningToForce(params);
-      } else {
-        this.presentToast(error.message, 1500, 'danger');
-        this.processInitiated = false;
-      }
-    }), () => {
-      this.intermediaryService.dismissLoading();
-    };
+      }, (error) => {
+        this.intermediaryService.dismissLoading();
+        if (error.error.code == 428) {
+          this.showWarningToForce(params);
+        } else {
+          this.presentToast(error.message, 1500, 'danger');
+          this.processInitiated = false;
+        }
+      });
   }
 
   private async showWarningToForce(params) {

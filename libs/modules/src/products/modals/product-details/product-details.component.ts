@@ -316,45 +316,33 @@ export class ProductDetailsComponent implements OnInit {
 
     this.inventoryService
       .postStore(params)
-      .then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-        data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-          if (this.loading) {
-            this.loading.dismiss();
-            this.loading = null;
-          }
-          if (res.body.code == 200 || res.body.code == 201) {
-            this.getProductHistorical();
-            this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
-            this.product.container = res.body.data.destinationContainer;
-            this.product.warehouse = res.body.data.destinationWarehouse;
-            this.product.productShoeUnit = res.body.data.productShoeUnit;
-            this.warehouseSelected = null;
-            this.hallSelected = null;
-            this.rowSelected = null;
-            this.columnSelected = null;
-          } else if (res.body.code == 428) {
-            this.showWarningToForce(params, textToastOk);
+      .then((res: InventoryModel.ResponseStore) => {
+        if (this.loading) {
+          this.loading.dismiss();
+          this.loading = null;
+        }
+        if (res.code == 200 || res.code == 201) {
+          this.getProductHistorical();
+          this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
+          this.product.container = res.data.destinationContainer;
+          this.product.warehouse = res.data.destinationWarehouse;
+          this.product.productShoeUnit = res.data.productShoeUnit;
+          this.warehouseSelected = null;
+          this.hallSelected = null;
+          this.rowSelected = null;
+          this.columnSelected = null;
+        } else if (res.code == 428) {
+          this.showWarningToForce(params, textToastOk);
+        } else {
+          let errorMessage = '';
+          if (res.errors.productReference && res.errors.productReference.message) {
+            errorMessage = res.errors.productReference.message;
           } else {
-            let errorMessage = '';
-            if (res.body.errors.productReference && res.body.errors.productReference.message) {
-              errorMessage = res.body.errors.productReference.message;
-            } else {
-              errorMessage = res.body.message;
-            }
-            this.presentToast(errorMessage, 'danger');
+            errorMessage = res.message;
           }
-        }, (error: HttpErrorResponse) => {
-          if (this.loading) {
-            this.loading.dismiss();
-            this.loading = null;
-          }
-          if (error.error.code == 428) {
-            this.showWarningToForce(params, textToastOk);
-          } else {
-            this.presentToast(error.error.message, 'danger');
-          }
-        });
-      }, (error: HttpErrorResponse) => {
+          this.presentToast(errorMessage, 'danger');
+        }
+      }, (error) => {
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;

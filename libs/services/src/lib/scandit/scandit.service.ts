@@ -3,9 +3,8 @@ import {InventoryService} from "../endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../models/endpoints/Inventory";
 import {WarehouseService} from "../endpoint/warehouse/warehouse.service";
 import {from, Observable} from "rxjs/index";
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
-import {PickingModel} from "../../models/endpoints/Picking";
 import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
 import {AuthenticationService} from "../endpoint/authentication/authentication.service";
@@ -213,63 +212,51 @@ export class ScanditService {
   }
 
   private storeProductInContainer(params, responseScanning) {
-    this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-      data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-          ScanditMatrixSimple.hideLoadingDialog();
-          if (res.body.code == 200 || res.body.code == 201) {
-            this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
-            let msgSetText = '';
-            if (this.isStoreUser) {
-              msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
-            } else {
-              if (params.packingReference) {
-                msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
-              } else {
-                msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
-              }
-            }
-            ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-            this.hideTextMessage(2000);
-          } else if (res.body.code == 428) {
-            this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
-            this.scannerPaused = true;
-            ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+    this.inventoryService
+      .postStore(params)
+      .then((res: InventoryModel.ResponseStore) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        if (res.code == 200 || res.code == 201) {
+          this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
+          let msgSetText = '';
+          if (this.isStoreUser) {
+            msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
           } else {
-            this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
-            let errorMessage = '';
-            if (res.body.errors.productReference && res.body.errors.productReference.message) {
-              errorMessage = res.body.errors.productReference.message;
+            if (params.packingReference) {
+              msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
             } else {
-              errorMessage = res.body.message;
+              msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
-            ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-            this.hideTextMessage(1500);
           }
-        }, (error) => {
-          ScanditMatrixSimple.hideLoadingDialog();
-          if (error.error.code == 428) {
-            this.positioningLog(3, "1.4.2.2.2.4", "error 428, stop pause!");
-            this.scannerPaused = true;
-            ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+          ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else if (res.code == 428) {
+          this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
+          this.scannerPaused = true;
+          ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+        } else {
+          this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
+          let errorMessage = '';
+          if (res.errors.productReference && res.errors.productReference.message) {
+            errorMessage = res.errors.productReference.message;
           } else {
-            this.positioningLog(3, "1.4.2.2.2.5", "error unknown!!!");
-            ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-            this.hideTextMessage(1500);
+            errorMessage = res.message;
           }
+          ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
         }
-      );
-    }, (error: HttpErrorResponse) => {
-      ScanditMatrixSimple.hideLoadingDialog();
-      if (error.error.code == 428) {
-        this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
-        this.scannerPaused = true;
-        ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
-      } else {
-        this.positioningLog(3, "1.4.2.2.2.7", "error unknown!!!");
-        ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-        this.hideTextMessage(1500);
-      }
-    });
+      }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        if (error.error.code == 428) {
+          this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
+          this.scannerPaused = true;
+          ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+        } else {
+          this.positioningLog(3, "1.4.2.2.2.7", "error unknown!!!");
+          ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
+        }
+      });
   }
 
   picking(pickingId: number, listProducts: ShoesPickingModel.ShoesPicking[], typePacking: number, typePicking: number) {

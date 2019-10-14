@@ -7,6 +7,8 @@ import {from, Observable} from "rxjs";
 import {InventoryModel} from "../../../models/endpoints/Inventory";
 import {environment} from '../../../environments/environment';
 import {map, switchMap} from 'rxjs/operators';
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
 
 const PATH_POST_STORE: string = PATH('Inventory Process', 'Store');
 const PATH_GET_PRODUCTS_CONTAINER: string = PATH('Inventory', 'List by Container').slice(0, -1);
@@ -30,7 +32,11 @@ export class InventoryService {
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
 
-  constructor(private http: HttpClient, private auth: AuthenticationService) {}
+  constructor(
+    private http: HttpClient,
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
+  ) {}
 
   /**
    * Seach products in the inventory filtereds by params
@@ -55,15 +61,8 @@ export class InventoryService {
     }));
   }
 
-  async postStore(
-    inventoryProcess: InventoryModel.Inventory
-  ): Promise<Observable<HttpResponse<InventoryModel.ResponseStore>>> {
-    const currentToken = await this.auth.getCurrentToken();
-    const headers = new HttpHeaders({ Authorization: currentToken });
-    return this.http.post<InventoryModel.ResponseStore>(this.postStoreUrl, inventoryProcess, {
-      headers: headers,
-      observe: 'response'
-    });
+  postStore(params: InventoryModel.Inventory) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postStoreUrl, params);
   }
 
   async productsByContainer(
