@@ -27,7 +27,7 @@ export class LocalStorageProvider {
       if (typeof value != 'undefined' && value != null) {
         resolve(value);
       } else {
-        reject(`Error to try get ${key} from LocalStorage`);
+        resolve('');
       }
     });
   }
