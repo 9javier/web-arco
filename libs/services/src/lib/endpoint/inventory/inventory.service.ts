@@ -92,17 +92,11 @@ export class InventoryService {
     return this.http.post<InventoryModel.ResponseGlobal>(this.postGlobalUrl, containersToMoveProducts);
   }
 
-  postPickingDirect(picking: InventoryModel.Picking) : Observable<InventoryModel.ResponsePicking> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<InventoryModel.ResponsePicking>(this.postPickingDirectUrl, picking, { headers });
-    }));
+  postPickingDirect(picking: InventoryModel.Picking) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPickingDirectUrl, picking);
   }
 
-  postPickingConsolidated(picking: InventoryModel.Picking) : Observable<InventoryModel.ResponsePicking> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<InventoryModel.ResponsePicking>(this.postPickingConsolidatedUrl, picking, { headers });
-    }));
+  postPickingConsolidated(picking: InventoryModel.Picking) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPickingConsolidatedUrl, picking);
   }
 }

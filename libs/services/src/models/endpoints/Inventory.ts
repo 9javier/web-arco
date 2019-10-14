@@ -144,7 +144,7 @@ export namespace InventoryModel {
     code: number;
   }
 
-  export interface ResponsePicking {
+  export interface ResponsePicking extends HttpRequestModel.Response {
     data?: {
       inventory?: ShoesPickingModel.ShoesPicking,
       shoePickingPending?: ShoesPickingModel.ShoesPicking[]
@@ -158,7 +158,7 @@ export namespace InventoryModel {
     inventoryId: number
   }
 
-  export interface ResponseCheckContainer {
+  export interface ResponseCheckContainer extends HttpRequestModel.Response {
     data?: {
       containerReference: string,
       inventory: Inventory

@@ -317,9 +317,9 @@ export class TextareaComponent implements OnInit {
             };
 
             if (this.typePicking == 1) {
-              this.inventoryService.postPickingDirect(picking).subscribe(subscribeResponse, subscribeError, () => {this.intermediaryService.dismissLoading();});
+              this.inventoryService.postPickingDirect(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             } else {
-              this.inventoryService.postPickingConsolidated(picking).subscribe(subscribeResponse, subscribeError, () => {this.intermediaryService.dismissLoading();});
+              this.inventoryService.postPickingConsolidated(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             }
           } else {
             this.inputPicking = null;
