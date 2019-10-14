@@ -49,7 +49,7 @@ export class SealScanditService {
               .postSeal({
                 reference: codeScanned
               })
-              .subscribe((res: CarrierModel.ResponseSeal) => {
+              .then((res: CarrierModel.ResponseSeal) => {
                 ScanditMatrixSimple.hideLoadingDialog();
                 if (res.code == 200) {
                   let msgOk = 'El recipiente';
@@ -74,6 +74,16 @@ export class SealScanditService {
                   this.hideTextMessage(1500);
                 }
               }, (error) => {
+                ScanditMatrixSimple.hideLoadingDialog();
+                let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+                ScanditMatrixSimple.setText(
+                  errorMsg,
+                  this.scanditProvider.colorsMessage.error.color,
+                  this.scanditProvider.colorText.color,
+                  16);
+                this.hideTextMessage(1500);
+              })
+              .catch((error) => {
                 ScanditMatrixSimple.hideLoadingDialog();
                 let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
                 ScanditMatrixSimple.setText(

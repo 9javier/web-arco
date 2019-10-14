@@ -89,7 +89,7 @@ export class InputCodesComponent implements OnInit {
     this.showLoading('Traspasando productos...').then(() => {
       this.carriersService
         .postTransferAmongPackings({ origin: this.packingReferenceOrigin, destiny: destinyPacking })
-        .subscribe(() => {
+        .then(() => {
           this.hideLoading();
           this.presentToast('Traspaso de productos entre embalajes realizado.', 'success');
           this.packingReferenceOrigin = null;
@@ -98,6 +98,11 @@ export class InputCodesComponent implements OnInit {
           this.placeholderDataToWrite = "EMBALAJE";
           this.lastCodeScanned = null;
         }, (error) => {
+          this.hideLoading();
+          console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
+          this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+        })
+        .catch((error) => {
           this.hideLoading();
           console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
           this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');

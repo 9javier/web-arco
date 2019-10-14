@@ -110,7 +110,7 @@ export class TransferPackingScanditService {
     ScanditMatrixSimple.showLoadingDialog('Traspasando productos...');
     this.carriersService
       .postTransferAmongPackings({ origin: this.packingReferenceOrigin, destiny: destinyPacking })
-      .subscribe(() => {
+      .then(() => {
         ScanditMatrixSimple.hideLoadingDialog();
         ScanditMatrixSimple.setText(
           'Traspaso de productos entre embalajes realizado.',
@@ -124,6 +124,15 @@ export class TransferPackingScanditService {
         ScanditMatrixSimple.setMainTextSwitchToIonic(true, 'Escanea el embalaje de origen');
         ScanditMatrixSimple.setOriginTextSwitchToIonic(false, null);
       }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
+        ScanditMatrixSimple.setText(
+          'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.',
+          this.scanditProvider.colorsMessage.error.color,
+          this.scanditProvider.colorText.color,
+          16);
+      })
+      .catch((error) => {
         ScanditMatrixSimple.hideLoadingDialog();
         console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
         ScanditMatrixSimple.setText(
