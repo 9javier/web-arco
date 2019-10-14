@@ -16,7 +16,7 @@ export class AlOutputSorterComponent implements OnInit {
   constructor(
     private router: Router,
     private intermediaryService: IntermediaryService,
-    private sorterProvider: SorterProvider
+    public sorterProvider: SorterProvider
   ) { }
   
   ngOnInit() {
