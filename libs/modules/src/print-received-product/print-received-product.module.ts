@@ -8,7 +8,7 @@ import {CdkTableModule} from "@angular/cdk/table";
 import {ListReceivedProductTemplateComponent} from "./list/list.component";
 import {ReceivedProductTemplateComponent} from "./list/list-items/list-items.component";
 import {MatExpansionModule, MatGridListModule, MatPaginatorModule} from "@angular/material";
-import {TagsInputModule} from "@suite/common-modules";
+import {TagsInputModule} from "../components/tags-input/tags-input.module";
 
 @NgModule({
   declarations: [PrintReceivedProductComponent, ListReceivedProductTemplateComponent, ReceivedProductTemplateComponent],

@@ -102,7 +102,7 @@ export class AppComponent implements OnInit {
     private dateAdapter: DateAdapter<any>,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private router: Router,
+    public router: Router,
     private menu: MenuController,
     private loginService: Oauth2Service,
     private authenticationService: AuthenticationService,
