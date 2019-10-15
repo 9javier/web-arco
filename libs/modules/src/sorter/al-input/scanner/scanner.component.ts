@@ -105,8 +105,12 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
       this.inputValue = null;
 
-      if (this.isWaitingSorterFeedback && this.productToSetInSorter != dataWrote) {
-        await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
+      if (this.isWaitingSorterFeedback) {
+        if (this.productToSetInSorter != dataWrote) {
+          await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
+        } else {
+          await this.intermediaryService.presentToastError(`¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`, 2000);
+        }
         this.focusToInput();
       } else {
         if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT) {
@@ -184,7 +188,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.sorterInputService
       .postProductScan({ productReference, packingReference: 'P0010' })
       .subscribe(async (res: InputSorterModel.ProductScan) => {
-        this.isWaitingSorterFeedback = true;
         this.productToSetInSorter = productReference;
         this.messageGuide = 'COLOQUE EL ARTÍCULO EN LA CALLE INDICADA';
 
@@ -219,25 +222,29 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   private checkProductInWay(productReference: string) {
-    let checkProductInWayLocal = (productReference: string) => {
-      let wayId = this.idLastWaySet;
-      this.sorterInputService
-        .postCheckProductInWay({ productReference, wayId })
-        .subscribe((res: InputSorterModel.CheckProductInWay) => {
-          if (!res.is_in_way && this.isWaitingSorterFeedback) {
-            setTimeout(() => checkProductInWayLocal(productReference), 1000);
-          } else {
-            this.timeoutToQuickUser();
-            this.sorterNotifyAboutProductScanned();
-            this.focusToInput();
-          }
-        }, (error) => {
-          console.error('Error::Subscribe::sorterInputService::postCheckProductInWay', error);
-          this.focusToInput();
-        });
-    };
+    if (!this.isWaitingSorterFeedback) {
+      this.isWaitingSorterFeedback = true;
 
-    checkProductInWayLocal(productReference);
+      let checkProductInWayLocal = (productReference: string) => {
+        let wayId = this.idLastWaySet;
+        this.sorterInputService
+          .postCheckProductInWay({ productReference, wayId })
+          .subscribe((res: InputSorterModel.CheckProductInWay) => {
+            if (!res.is_in_way && this.isWaitingSorterFeedback) {
+              setTimeout(() => checkProductInWayLocal(productReference), 1000);
+            } else {
+              this.timeoutToQuickUser();
+              this.sorterNotifyAboutProductScanned();
+              this.focusToInput();
+            }
+          }, (error) => {
+            console.error('Error::Subscribe::sorterInputService::postCheckProductInWay', error);
+            this.focusToInput();
+          });
+      };
+
+      checkProductInWayLocal(productReference);
+    }
   }
 
   private async sorterNotifyAboutProductScanned() {
@@ -253,6 +260,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   private stopExecutionInput() {
+    this.isWaitingSorterFeedback = false;
     this.sorterExecutionService
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
@@ -266,9 +274,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   private timeoutToQuickUser() {
-    console.debug('Test::timeoutToQuickUser');
     if (this.timeoutToQuickStarted) {
-      console.debug('Test::clear > timeoutToQuickUser');
       clearTimeout(this.timeoutToQuickStarted);
     }
 
