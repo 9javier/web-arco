@@ -10,6 +10,7 @@ import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/s
 import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints/ExecutionSorter";
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 import {Location} from "@angular/common";
+import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -136,9 +137,12 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
             await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle equivocada!', 1500);
             this.resetLastScanProcess();
             this.focusToInput();
-          }, async (error) => {
-            console.error('Error::Subscribe::sorterExecutionService::postWrongWay', error);
-            await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar del uso de calle equivocada.', 2000);
+          }, async (error: HttpRequestModel.Error) => {
+            let errorMessage = 'Ha ocurrido un error al intentar avisar del uso de calle equivocada.';
+            if (error.error && error.error.errors) {
+              errorMessage = error.error.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage, 2000);
             this.focusToInput();
           });
       } else {
@@ -170,9 +174,12 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
               }
             }, 1.5 * 1000);
             this.focusToInput();
-          }, async (error) => {
-            console.error('Error::Subscribe::sorterExecutionService::postFullWay', error);
-            await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar avisar de la calle llena.', 2000);
+          }, async (error: HttpRequestModel.Error) => {
+            let errorMessage = 'Ha ocurrido un error al intentar avisar de la calle llena.';
+            if (error.error && error.error.errors) {
+              errorMessage = error.error.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage, 2000);
             this.focusToInput();
           });
       } else {
@@ -214,8 +221,12 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         this.focusToInput();
 
         this.checkProductInWay(productReference);
-      }, async (error) => {
-        await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = `Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`;
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage, 1500);
         await this.intermediaryService.dismissLoading();
         this.focusToInput();
       });
@@ -267,10 +278,13 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
         this.location.back();
-      }, async (error) => {
+      }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar finalizar el proceso.', 2000);
-        console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
+        let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage, 2000);
       });
   }
 

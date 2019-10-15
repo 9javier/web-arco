@@ -44,9 +44,12 @@ export class SorterListTemplatesSelectionComponent implements OnInit, OnDestroy 
         this.isLoadingTemplates = false;
         this.listTemplates = res.data;
       }, async (error) => {
-        console.error('Error::Subscribe::sorterTemplateService::getIndex', error);
+        let errorMessage = 'Ha ocurrido un error al intentar cargar las plantillas disponibles.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
         this.isLoadingTemplates = false;
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las plantillas disponibles.');
+        await this.intermediaryService.presentToastError(errorMessage);
       });
   }
 

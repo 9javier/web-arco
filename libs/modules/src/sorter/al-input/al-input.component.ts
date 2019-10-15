@@ -13,6 +13,7 @@ import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/Ex
 import {Events} from "@ionic/angular";
 import {TemplateColorsService} from "../../../../services/src/lib/endpoint/template-colors/template-colors.service";
 import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
+import {HttpRequestModel} from "../../../../services/src/models/endpoints/HttpRequest";
 
 @Component({
   selector: 'sorter-input-al',
@@ -1261,9 +1262,12 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
         this.router.navigate(['sorter/input/scanner']);
         await this.intermediaryService.dismissLoading();
-      }, async (error) => {
-        console.error('Error::Subscribe::sorterExecutionService::postExecuteColor', error);
-        await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`);
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
         await this.intermediaryService.dismissLoading();
       });
   }
@@ -1281,9 +1285,12 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .getFirstSorter()
       .subscribe((res: SorterModel.FirstSorter) => {
         this.loadAvailableColors(res.id);
-      }, async (error) => {
-        console.error('Error::Subscribe::sorterService::getFirstSorter', error);
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos del sorter.');
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar los datos del sorter.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
         this.loadingSorterTemplateMatrix = false;
       });
   }
@@ -1313,9 +1320,12 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
         this.colorsSelectors = res;
         this.loadActiveTemplate(idSorter);
-      }, async (error) => {
-        console.error('Error::Subscribe::templateColorsService::postAvailableColorsByProcess', error);
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos del sorter.');
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar los datos del sorter.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
         this.loadingSorterTemplateMatrix = false;
       });
   }
@@ -1326,9 +1336,12 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .subscribe((res: TemplateSorterModel.Template) => {
         this.isTemplateWithEqualZones = res.equalParts;
         this.loadMatrixTemplateSorter(idSorter, res.id);
-      }, async (error) => {
-        console.error('Error::Subscribe::sorterTemplateService::getActiveTemplate', error);
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar la plantilla actual del sorter.');
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
         this.loadingSorterTemplateMatrix = false;
       });
   }
@@ -1341,9 +1354,12 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         this.sorterTemplateMatrix = res;
         this.events.publish(this.DRAW_TEMPLATE_MATRIX, this.sorterTemplateMatrix);
         this.loadingSorterTemplateMatrix = false;
-      }, async (error) => {
-        console.error('Error::Subscribe::templateZonesService::getMatrixTemplateSorter', error);
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar la plantilla actual del sorter.');
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
         this.loadingSorterTemplateMatrix = false;
       });
   }
@@ -1363,8 +1379,13 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
           this.loadData();
           this.sorterOperationCancelled();
         }
-      }, (error) => {
-        console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
+      }, async (error: HttpRequestModel.Error) => {
+        if (waitingResponse) {
+          let errorMessage = 'Ha ocurrido un error al intentar finalizar la ejecución actual del sorter par el usuario.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }await this.intermediaryService.presentToastError(errorMessage);
+        }
       });
   }
   //endregion

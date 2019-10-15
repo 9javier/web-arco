@@ -7,6 +7,7 @@ import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/Ex
 import {SorterExecutionService} from "../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
 import {IntermediaryService} from "@suite/services";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
+import {HttpRequestModel} from "../../../../services/src/models/endpoints/HttpRequest";
 
 @Component({
   selector: 'suite-sorter-template-selection',
@@ -73,13 +74,16 @@ export class TemplateSelectionComponent implements OnInit, OnDestroy {
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess(`Se ha aplicado al sorter la plantilla ${template.name}.`, 1500);
           this.events.publish(this.RELOAD_LIST_TEMPLATES);
-        }, async (error) => {
-          console.error('Error::Subscribe::sorterExecutionService::getChangeExecutionTemplate', error);
+        }, async (error: HttpRequestModel.Error) => {
           await this.intermediaryService.dismissLoading();
           if (error.error.code == 405) {
             await this.intermediaryService.presentToastError(`La plantilla ${template.name} ya está aplicada al sorter actualmente.`, 1500);
           } else {
-            await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar aplicar la plantilla ${template.name}.`, 2000);
+            let errorMessage = `Ha ocurrido un error al intentar aplicar la plantilla ${template.name}.`;
+            if (error.error && error.error.errors) {
+              errorMessage = error.error.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage, 2000);
           }
         });
     }

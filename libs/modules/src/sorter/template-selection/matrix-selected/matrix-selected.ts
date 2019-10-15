@@ -4,6 +4,7 @@ import {TemplateSorterModel} from "../../../../../services/src/models/endpoints/
 import {Events} from "@ionic/angular";
 import {TemplateZonesService} from "../../../../../services/src/lib/endpoint/template-zones/template-zones.service";
 import {IntermediaryService} from "@suite/services";
+import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
 
 @Component({
   selector: 'suite-sorter-matrix-selected',
@@ -54,10 +55,13 @@ export class SorterMatrixSelectedComponent implements OnInit, OnDestroy {
         this.loadingSorterTemplateMatrix = false;
         this.sorterTemplateMatrix = res;
         this.events.publish(this.DRAW_TEMPLATE_MATRIX, this.sorterTemplateMatrix);
-      }, async (error) => {
-        console.error('Error::Subscribe::templateZoneService::getMatrixTemplateSorter', error);
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar los datos de la plantilla';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
         this.loadingSorterTemplateMatrix = false;
-        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos de la plantilla');
+        await this.intermediaryService.presentToastError(errorMessage);
       });
   }
 

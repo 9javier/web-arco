@@ -6,4 +6,18 @@ export namespace HttpRequestModel {
     data?: any,
     error?: any
   }
+
+  interface ApiError {
+    code: number
+    errors: string
+    message: string
+    result: any
+    statusCode: number
+    statusDescription: string
+    statusMessage: string
+  }
+
+  export interface Error {
+    error: ApiError
+  }
 }
