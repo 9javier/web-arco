@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
 import {ScanditProvider} from "../../../../../services/src/providers/scandit/scandit.provider";
@@ -8,13 +8,15 @@ import {SorterInputService} from "../../../../../services/src/lib/endpoint/sorte
 import {InputSorterModel} from "../../../../../services/src/models/endpoints/InputSorter";
 import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
 import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints/ExecutionSorter";
+import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'sorter-input-scanner',
   templateUrl: './scanner.component.html',
   styleUrls: ['./scanner.component.scss']
 })
-export class ScannerInputSorterComponent implements OnInit {
+export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   messageGuide: string = 'ARTÍCULO';
   inputValue: string = null;
@@ -36,11 +38,13 @@ export class ScannerInputSorterComponent implements OnInit {
   leftButtonDanger: boolean = true;
 
   constructor(
+    private location: Location,
     private intermediaryService: IntermediaryService,
     private sorterInputService: SorterInputService,
     private sorterExecutionService: SorterExecutionService,
     public sorterProvider: SorterProvider,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private toolbarProvider: ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -48,7 +52,32 @@ export class ScannerInputSorterComponent implements OnInit {
     },800); }
   
   ngOnInit() {
+    this.toolbarProvider.optionsActions.next([
+      {
+        icon: 'hand',
+        label: 'Finalizar',
+        action: async () => {
+          let callback = async () => {
+            await this.intermediaryService.presentLoading('Finalizando proceso de entrada...');
+            this.sorterExecutionService
+              .postStopExecuteColor()
+              .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
+                await this.intermediaryService.dismissLoading();
+                this.location.back();
+              }, async (error) => {
+                await this.intermediaryService.dismissLoading();
+                await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar finalizar el proceso.', 2000);
+                console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
+              });
+          };
+          await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de entrada en el sorter. ¿Está seguro?', callback);
+        }
+      }
+    ]);
+  }
 
+  ngOnDestroy() {
+    this.toolbarProvider.optionsActions.next([]);
   }
 
   focusToInput() {
