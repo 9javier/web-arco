@@ -80,7 +80,8 @@ export namespace ExecutionSorterModel {
   }
 
   export interface FullWay {
-
+    success: boolean,
+    idNewWay: number
   }
 
   export interface ResponseFullWay {

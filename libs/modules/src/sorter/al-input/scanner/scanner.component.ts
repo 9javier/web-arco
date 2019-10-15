@@ -99,6 +99,7 @@ export class ScannerInputSorterComponent implements OnInit {
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.WrongWay) => {
             await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle equivocada!', 1500);
+            this.resetLastScanProcess();
             this.focusToInput();
           }, async (error) => {
             console.error('Error::Subscribe::sorterExecutionService::postWrongWay', error);
@@ -123,6 +124,15 @@ export class ScannerInputSorterComponent implements OnInit {
           .postFullWay({ way: this.idLastWaySet, productReference: productRef })
           .subscribe(async (res: ExecutionSorterModel.FullWay) => {
             await this.intermediaryService.presentToastSuccess('¡Reportado el aviso de calle llena!', 1500);
+            setTimeout(async () => {
+              if (res.success) {
+                this.idLastWaySet = res.idNewWay;
+                await this.intermediaryService.presentToastSuccess('Se le ha asignado una nueva calle donde continuar introduciendo el artículo.', 1500);
+              } else {
+                this.resetLastScanProcess();
+                await this.intermediaryService.presentToastSuccess('No se le ha podido asignar una nueva calle donde introducir el artículo.', 1500);
+              }
+            }, 1.5 * 1000);
             this.focusToInput();
           }, async (error) => {
             console.error('Error::Subscribe::sorterExecutionService::postFullWay', error);
@@ -168,7 +178,7 @@ export class ScannerInputSorterComponent implements OnInit {
 
         this.focusToInput();
 
-        this.checkProductInWay(productReference, this.idLastWaySet);
+        this.checkProductInWay(productReference);
       }, async (error) => {
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`, 1500);
         await this.intermediaryService.dismissLoading();
@@ -176,14 +186,14 @@ export class ScannerInputSorterComponent implements OnInit {
       });
   }
 
-  private checkProductInWay(productReference: string, wayId: number) {
-    let checkProductInWayLocal = (productReference: string, wayId: number) => {
-      console.log('Test::CheckProductInWayLocal', productReference, wayId);
+  private checkProductInWay(productReference: string) {
+    let checkProductInWayLocal = (productReference: string) => {
+      let wayId = this.idLastWaySet;
       this.sorterInputService
         .postCheckProductInWay({ productReference, wayId })
         .subscribe((res: InputSorterModel.CheckProductInWay) => {
           if (!res.is_in_way && this.isWaitingSorterFeedback) {
-            setTimeout(() => checkProductInWayLocal(productReference, wayId), 1000);
+            setTimeout(() => checkProductInWayLocal(productReference), 1000);
           } else {
             this.sorterNotifyAboutProductScanned();
             this.focusToInput();
@@ -194,7 +204,7 @@ export class ScannerInputSorterComponent implements OnInit {
         });
     };
 
-    checkProductInWayLocal(productReference, wayId);
+    checkProductInWayLocal(productReference);
   }
 
   private async sorterNotifyAboutProductScanned() {
