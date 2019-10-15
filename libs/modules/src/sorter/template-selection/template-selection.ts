@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Events} from "@ionic/angular";
 import {SorterService} from "../../../../services/src/lib/endpoint/sorter/sorter.service";
 import {SorterModel} from "../../../../services/src/models/endpoints/Sorter";
@@ -13,7 +13,7 @@ import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.p
   templateUrl: './template-selection.html',
   styleUrls: ['./template-selection.scss']
 })
-export class TemplateSelectionComponent implements OnInit {
+export class TemplateSelectionComponent implements OnInit, OnDestroy {
 
   private LOAD_MATRIX_TEMPLATE: string = 'load_matrix_template';
   private RELOAD_LIST_TEMPLATES: string = 'reload_list_templates';
@@ -35,6 +35,10 @@ export class TemplateSelectionComponent implements OnInit {
       .subscribe((res: SorterModel.FirstSorter) => {
         this.idSorter = res.id;
       });
+  }
+
+  ngOnDestroy() {
+    this.sorterProvider.idTemplateSelected = null;
   }
 
   selectionOfTemplate(data) {
