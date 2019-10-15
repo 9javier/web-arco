@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   apiBase: 'http://conexion1.globalretail.es:57354/api',
-  apiSorter: '', // TODO Define url to access Sorter Api
+  apiSorter: 'http://conexion1.globalretail.es:57354/api',
   urlBase: 'http://conexion1.globalretail.es:57354',
   sga:{
     client_id:"krack-client-sga",
