@@ -26,6 +26,23 @@ mat-table {
     padding: 10px 10px 10px 0;
     
 }
+
+mat-cell.color {
+  div.color-zone {
+    width: 36px;
+    height: 40px;
+    div {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid var(--ion-color-primary-contrast);
+      position: absolute;
+      top: 16px;
+      left: 16px;
+    }
+  }
+}
+
 .mat-header-cell{
 
     p{
