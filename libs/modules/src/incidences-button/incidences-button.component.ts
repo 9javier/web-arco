@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { IncidencesPopoverComponent } from "../incidences-popover/incidences-popover.component";
 import { PopoverController } from "@ionic/angular";
 import { IncidencesService } from "../../../services/src/lib/endpoint/incidences/incidences.service";
@@ -9,7 +9,9 @@ import {Router} from "@angular/router";
   templateUrl: './incidences-button.component.html',
   styleUrls: ['./incidences-button.component.scss']
 })
-export class IncidencesButtonComponent implements OnInit {
+export class IncidencesButtonComponent implements OnInit, OnDestroy {
+
+  private intervalLoadIncidencesPreview = null;
 
   constructor(
     private router: Router,
@@ -22,9 +24,15 @@ export class IncidencesButtonComponent implements OnInit {
     this.incidencesService.initPreview();
 
     // Reload incidences each 15 seconds
-    setInterval(() => {
+    this.intervalLoadIncidencesPreview = setInterval(() => {
       this.incidencesService.initPreview();
     }, 30 * 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.intervalLoadIncidencesPreview) {
+      clearInterval(this.intervalLoadIncidencesPreview);
+    }
   }
 
   async showIncidences(ev: any) {
