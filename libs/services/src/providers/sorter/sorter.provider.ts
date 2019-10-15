@@ -29,4 +29,12 @@ export class SorterProvider {
   set idTemplateSelected(value: number) {
     this._idTemplateSelected = value;
   }
+
+  private _colorActiveForUser: string;
+  get colorActiveForUser(): string {
+    return this._colorActiveForUser;
+  }
+  set colorActiveForUser(value: string) {
+    this._colorActiveForUser = value;
+  }
 }

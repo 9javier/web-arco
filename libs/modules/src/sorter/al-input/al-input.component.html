@@ -13,14 +13,14 @@
 
   <sorter-footer-buttons
     *ngIf="showButtonsFooter()"
-    [overNotification]="colorActiveForUser"
+    [overNotification]="!!sorterProvider.colorActiveForUser"
     (operationCancel)="sorterOperationCancelled()"
     (operationStart)="sorterOperationStarted()">
   </sorter-footer-buttons>
 
   <sorter-notification-active-process
-    *ngIf="colorActiveForUser"
-    [userColorActive]="this.colorActiveForUser"
+    *ngIf="sorterProvider.colorActiveForUser"
+    [userColorActive]="sorterProvider.colorActiveForUser"
     [actionButtonText]="'FINALIZAR'"
     [message]="'el usuario ya tiene un proceso iniciado.'"
     (actionLaunched)="actionLaunched()">

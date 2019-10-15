@@ -265,6 +265,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
         await this.intermediaryService.dismissLoading();
+        this.sorterProvider.colorActiveForUser = null;
         this.location.back();
       }, async (error) => {
         await this.intermediaryService.dismissLoading();
