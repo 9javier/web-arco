@@ -30,6 +30,9 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   public loadingSorterTemplateMatrix: boolean = true;
   private isTemplateWithEqualZones: boolean = false;
 
+  public isColorActiveForUser: boolean = false;
+  public colorActiveForUser: string = null;
+
   constructor(
     private router: Router,
     private events: Events,
@@ -54,7 +57,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // Stop the execution color for user
-    this.stopExecutionColor();
+    this.stopExecutionColor(false);
   }
 
   private loadDefaultData() {
@@ -1211,6 +1214,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   private loadData() {
     this.loadActiveSorter();
+    this.checkActiveColor();
   }
 
   colorSelected(data) {
@@ -1257,6 +1261,8 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .postExecuteColor(paramsRequest)
       .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
         await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
+        this.isColorActiveForUser = true;
+        this.colorActiveForUser = this.sorterProvider.colorSelected.hex;
         this.router.navigate(['sorter/input/scanner']);
         await this.intermediaryService.dismissLoading();
       }, async (error) => {
@@ -1264,6 +1270,13 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         await this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`);
         await this.intermediaryService.dismissLoading();
       });
+  }
+
+  async actionLaunched() {
+    this.intermediaryService.presentConfirm(
+      'Va a finalizar el proceso activo actualmente para el usuario. <br/>¿Está seguro de querer hacerlo?',
+      () => this.stopExecutionColor(true)
+    );
   }
 
   //region Endpoints requests
@@ -1276,6 +1289,29 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         console.error('Error::Subscribe::sorterService::getFirstSorter', error);
         await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los datos del sorter.');
         this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private checkActiveColor() {
+    this.sorterExecutionService
+      .getColorActive()
+      .then((res: ExecutionSorterModel.ResponseColorActive) => {
+        if (res.code == 201) {
+          this.isColorActiveForUser = true;
+          this.colorActiveForUser = res.data.color.hex;
+        } else {
+          this.isColorActiveForUser = false;
+          this.colorActiveForUser = null;
+        }
+      }, async (error) => {
+        console.error('Error::Rejected::sorterExecutionService::getColorActive', error);
+        this.isColorActiveForUser = false;
+        this.colorActiveForUser = null;
+      })
+      .catch(async (error) => {
+        console.error('Error::Catch::sorterExecutionService::getColorActive', error);
+        this.isColorActiveForUser = false;
+        this.colorActiveForUser = null;
       });
   }
 
@@ -1320,11 +1356,22 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  private stopExecutionColor() {
+  private async stopExecutionColor(waitingResponse: boolean) {
+    if (waitingResponse) {
+      await this.intermediaryService.presentLoading('Finalizando proceso actual...');
+    }
     this.sorterExecutionService
       .postStopExecuteColor()
-      .subscribe((res: ExecutionSorterModel.StopExecuteColor) => {
-
+      .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
+        this.isColorActiveForUser = false;
+        this.colorActiveForUser = null;
+        if (waitingResponse) {
+          await this.intermediaryService.dismissLoading();
+          await this.intermediaryService.presentToastSuccess('Proceso finalizado', 1500);
+          this.loadingSorterTemplateMatrix = true;
+          this.loadData();
+          this.sorterOperationCancelled();
+        }
       }, (error) => {
         console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
       });

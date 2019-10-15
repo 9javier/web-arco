@@ -11,5 +11,18 @@
   </div>
   <sorter-matrix-input [enableZoneSelection]="true" (zoneSelected)="zoneSelected($event)"></sorter-matrix-input>
 
-  <sorter-footer-buttons *ngIf="showButtonsFooter()" (operationCancel)="sorterOperationCancelled()" (operationStart)="sorterOperationStarted()"></sorter-footer-buttons>
+  <sorter-footer-buttons
+    *ngIf="showButtonsFooter()"
+    [overNotification]="colorActiveForUser"
+    (operationCancel)="sorterOperationCancelled()"
+    (operationStart)="sorterOperationStarted()">
+  </sorter-footer-buttons>
+
+  <sorter-notification-active-process
+    *ngIf="colorActiveForUser"
+    [userColorActive]="this.colorActiveForUser"
+    [actionButtonText]="'FINALIZAR'"
+    [message]="'el usuario ya tiene un proceso iniciado.'"
+    (actionLaunched)="actionLaunched()">
+  </sorter-notification-active-process>
 </ion-content>

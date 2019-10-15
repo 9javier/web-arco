@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'sorter-footer-buttons',
@@ -7,6 +7,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class FooterButtonsSorterComponent implements OnInit {
 
+  @Input() overNotification: boolean = false;
   @Output() operationCancel = new EventEmitter();
   @Output() operationStart = new EventEmitter();
 

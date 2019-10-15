@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import {ExecutionSorterModel} from "../../../models/endpoints/ExecutionSorter";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -15,9 +17,11 @@ export class SorterExecutionService {
   private postWrongWayUrl: string = environment.apiSorter + "/sorter/execution/incidence";
   private postFullWayUrl: string = environment.apiSorter + "/sorter/execution/way/full";
   private getChangeExecutionTemplateUrl: string = environment.apiSorter + "/sorter/execution/template/";
+  private getColorActiveUrl: string = environment.apiSorter + "/sorter/execution/color/active";
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
   ) { }
 
   postExecuteColor(params: ExecutionSorterModel.ParamsExecuteColor): Observable<ExecutionSorterModel.ExecuteColor> {
@@ -49,5 +53,9 @@ export class SorterExecutionService {
     return this.http.get<ExecutionSorterModel.ResponseChangeExecutionTemplate>(url).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  getColorActive(): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getColorActiveUrl);
   }
 }

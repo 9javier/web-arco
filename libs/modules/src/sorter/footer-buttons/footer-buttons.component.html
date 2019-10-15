@@ -1,4 +1,4 @@
-<div class="footer">
+<div class="footer" [ngStyle]="{'bottom': overNotification ? '40px' : '0'}">
   <div class="button cancel">
     <button (click)="cancelSorterOperation()">CANCELAR</button>
   </div>

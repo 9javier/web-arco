@@ -1,0 +1,60 @@
+div.notification-active-process {
+  height: 48px;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+  div.my-col {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--ion-color-primary);
+  }
+  div.message-color {
+    flex: 2;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    div.container-color-message {
+      display: table;
+      width: 100%;
+      height: 100%;
+      div.color-user {
+        width: 36px;
+        height: 40px;
+        display: table-cell;
+        div {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 1px solid var(--ion-color-primary-contrast);
+          position: absolute;
+          top: 16px;
+          left: 16px;
+        }
+      }
+      p.message {
+        display: table-cell;
+        vertical-align: middle;
+        color: var(--ion-color-primary-contrast);
+        margin: 0;
+        font-size: 14px;
+        max-height: 40px;
+      }
+    }
+  }
+  div.button {
+    flex: 1;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    p.action {
+      color: var(--ion-color-primary-contrast);
+      margin: 0;
+      text-align: center;
+      line-height: 40px;
+    }
+  }
+  div.button:hover {
+    opacity: 0.7;
+  }
+}

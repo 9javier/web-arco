@@ -1,6 +1,7 @@
 import {ColorSorterModel} from "./ColorSorter";
 import {ZoneSorterModel} from "./ZoneSorter";
 import {TemplateSorterModel} from "./TemplateSorter";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace ExecutionSorterModel {
 
@@ -94,5 +95,21 @@ export namespace ExecutionSorterModel {
 
   export interface ResponseChangeExecutionTemplate {
     data: ChangeExecutionTemplate
+  }
+
+  export interface ColorActive {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    type: number,
+    process: number,
+    color: ColorSorterModel.ColorSorter,
+    execution: Execution,
+    template: TemplateSorterModel.Template,
+    zone: ZoneSorterModel.ZoneSorter
+  }
+
+  export interface ResponseColorActive extends HttpRequestModel.Response {
+    data: ColorActive
   }
 }

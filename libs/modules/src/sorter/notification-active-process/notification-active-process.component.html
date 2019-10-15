@@ -1,0 +1,15 @@
+<div class="notification-active-process">
+  <div class="my-col message-color">
+    <div class="container-color-message">
+      <div class="color-user" *ngIf="userColorActive">
+        <div [ngStyle]="{'background-color': userColorActive}"></div>
+      </div>
+      <p class="message">
+        {{ message }}
+      </p>
+    </div>
+  </div>
+  <div class="my-col button" (click)="launchAction()">
+    <p class="action">{{ actionButtonText }}</p>
+  </div>
+</div>
