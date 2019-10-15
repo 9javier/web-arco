@@ -31,11 +31,14 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   // Reset of scanner to scan same code multiple times
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
+  private readonly timeMillisToQuickUserFromSorterProcess: number = 10 * 60 * 1000;
 
   // Footer buttons
   leftButtonText: string = 'CARRIL. EQUIV.';
   rightButtonText: string = 'NO CABE CAJA';
   leftButtonDanger: boolean = true;
+
+  private timeoutToQuickStarted = null;
 
   constructor(
     private location: Location,
@@ -47,6 +50,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     private toolbarProvider: ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+    this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
     setTimeout(() => {
       document.getElementById('input').focus();
     },800); }
@@ -57,26 +61,22 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         icon: 'hand',
         label: 'Finalizar',
         action: async () => {
+          this.timeoutToQuickUser();
           let callback = async () => {
             await this.intermediaryService.presentLoading('Finalizando proceso de entrada...');
-            this.sorterExecutionService
-              .postStopExecuteColor()
-              .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
-                await this.intermediaryService.dismissLoading();
-                this.location.back();
-              }, async (error) => {
-                await this.intermediaryService.dismissLoading();
-                await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar finalizar el proceso.', 2000);
-                console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
-              });
+            this.stopExecutionInput();
           };
           await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de entrada en el sorter. ¿Está seguro?', callback);
         }
       }
     ]);
+    this.timeoutToQuickUser();
   }
 
   ngOnDestroy() {
+    if (this.timeoutToQuickStarted) {
+      clearTimeout(this.timeoutToQuickStarted);
+    }
     this.toolbarProvider.optionsActions.next([]);
   }
 
@@ -87,6 +87,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async keyUpInput(event) {
+    this.timeoutToQuickUser();
     let dataWrote = (this.inputValue || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -120,6 +121,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async wrongWay() {
+    this.timeoutToQuickUser();
     let setWayAsWrong = async () => {
       // Request to server to notify that las product was set in a wrong way and reset the sorter notify led
       let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
@@ -145,6 +147,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async fullWay() {
+    this.timeoutToQuickUser();
     let setWayAsFull = async () => {
       // Request to server to set way as full, assign in sorter a new way and return info to notify to user
       let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
@@ -224,6 +227,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           if (!res.is_in_way && this.isWaitingSorterFeedback) {
             setTimeout(() => checkProductInWayLocal(productReference), 1000);
           } else {
+            this.timeoutToQuickUser();
             this.sorterNotifyAboutProductScanned();
             this.focusToInput();
           }
@@ -246,5 +250,35 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
+  }
+
+  private stopExecutionInput() {
+    this.sorterExecutionService
+      .postStopExecuteColor()
+      .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
+        await this.intermediaryService.dismissLoading();
+        this.location.back();
+      }, async (error) => {
+        await this.intermediaryService.dismissLoading();
+        await this.intermediaryService.presentToastError('Ha ocurrido un error al intentar finalizar el proceso.', 2000);
+        console.error('Error::Subscribe::sorterExecutionService::postStopExecuteColor', error);
+      });
+  }
+
+  private timeoutToQuickUser() {
+    console.debug('Test::timeoutToQuickUser');
+    if (this.timeoutToQuickStarted) {
+      console.debug('Test::clear > timeoutToQuickUser');
+      clearTimeout(this.timeoutToQuickStarted);
+    }
+
+    this.timeoutToQuickStarted = setTimeout(async () => {
+      console.debug('Test::timeout quick');
+      await this.intermediaryService.presentLoading('Forzando la salida del usuario de la tarea...');
+      setTimeout(() => {
+        console.debug('Test::timeout hide loading');
+        this.stopExecutionInput();
+      }, 3 * 1000);
+    }, this.timeMillisToQuickUserFromSorterProcess);
   }
 }
