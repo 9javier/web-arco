@@ -47,8 +47,20 @@ export class TemplateSelectionComponent implements OnInit {
 
   async applyTemplate(data) {
     let template: TemplateSorterModel.Template = data;
-    if (!template || (template && (template.zones.length < 1 || template.zoneWays.length < 1 || template.zoneWarehouses.length < 1))) {
+    if (!template) {
       await this.intermediaryService.presentWarning('¡La plantilla que intenta aplicar no tiene las zonas definidas! <br/> Cree sus zonas para aplicar la plantilla al sorter.', null);
+    } else if (template && (template.zones.length < 1 || template.zoneWays.length < 1 || template.zoneWarehouses.length < 1)) {
+      let elementsToDefine = '';
+      if (template.zones.length < 1) {
+        elementsToDefine += '<li>Zonas</li>';
+      }
+      if (template.zoneWays.length < 1) {
+        elementsToDefine += '<li>Calles por zona</li>';
+      }
+      if (template.zoneWarehouses.length < 1) {
+        elementsToDefine += '<li>Tiendas de destino por calle</li>';
+      }
+      await this.intermediaryService.presentWarning('¡La plantilla que intenta aplicar no está correctamente definida! <br/> Para poder aplicarla asegúrese de haber asignado sus: <ul>' + elementsToDefine + '</ul>', null);
     } else {
       await this.intermediaryService.presentLoading('Aplicando plantilla...');
       this.sorterExecutionService
