@@ -28,18 +28,26 @@ export class StoreComponent implements OnInit {
     this.modalController.dismiss();
   }
 
-  submit(): void {
-    let payload = this.base.getValue()
+  async submit() {
+    await this.intermediaryService.presentLoading('Creando plantilla...');
+
+    let payload = this.base.getValue();
     payload = {
       active: true,
       ...payload
-    }
-    console.log(payload)
-    this.sorterTemplateService.postCreate(payload).subscribe((data) => {
-      console.log(data.data);
+    };
+
+    this.sorterTemplateService.postCreate(payload).subscribe(async (data) => {
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.presentToastSuccess('Plantilla creada.');
       this.close();
-    }, (err) => {
-      console.log(err);
+    }, async (err) => {
+      await this.intermediaryService.dismissLoading();
+      let errorMessage = 'Ha ocurrido un error al intentar crear la plantilla.';
+      if (err.error && err.error.errors) {
+        errorMessage = err.error.errors;
+      }
+      await this.intermediaryService.presentToastError(errorMessage);
     });
   }
 
