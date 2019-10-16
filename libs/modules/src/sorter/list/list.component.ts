@@ -574,8 +574,8 @@ export class ListComponent implements OnInit {
     //console.log("radioBlur");
   }
 
-  storeWays(data){
-    this.intermediaryService.presentLoading('Comprobando calles y prioridades a actualizar...');
+  async storeWays(data){
+    await this.intermediaryService.presentLoading('Comprobando calles y prioridades a actualizar...');
 
     let waysList: any = {};
     let existsConflict: boolean = false;
@@ -592,31 +592,33 @@ export class ListComponent implements OnInit {
       }
     }
 
+    await this.intermediaryService.dismissLoading();
     if (existsConflict) {
-      this.intermediaryService.presentWarning('¡Cuidado! Hay una o más calles a las que se les ha asignado más de una prioridad. Asegúrese de tener una prioridad por cada calle antes de guardar los cambios.', null);
+      await this.intermediaryService.presentWarning('¡Cuidado! Hay una o más calles a las que se les ha asignado más de una prioridad. Asegúrese de tener una prioridad por cada calle antes de guardar los cambios.', null);
     } else {
+      await this.intermediaryService.presentLoading('Actualizando calles y prioridades...');
       var info = {
         zones: data
       };
 
-      this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(() => {
-        this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
-        this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+      this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(async () => {
+        await this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
+        this.templateZonesService.getIndex(parseInt(this.id)).subscribe(async (data) => {
           this.zones = data.data;
           this.radioButton = this.zones[0].id;
           this.radioForm = this.formBuilder.group({
             selectRadio: [this.radioButton]
           });
           this.initRadioActive(this.zones);
-          this.intermediaryService.dismissLoading();
+          await this.intermediaryService.dismissLoading();
         });
-      }, (error) => {
+      }, async (error) => {
         let errorMessage = "Ha ocurrido un error al intentar actualizar las calles y sus prioridades.";
         if (error && error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }
         this.intermediaryService.presentToastError(errorMessage );
-        this.intermediaryService.dismissLoading();
+        await this.intermediaryService.dismissLoading();
       });
     }
   }
