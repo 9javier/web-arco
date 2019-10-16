@@ -332,7 +332,11 @@ export class MatrixSelectWaySorterComponent implements OnInit {
    */
 
   getBanSave(){
-    return this.band;
+    let totalColumnsSelectedByWay = this.selectWay.filter(way => {
+      let columnsSelected = way.columns.filter(column => column.color != '');
+      return columnsSelected && columnsSelected.length > 0;
+    });
+    return totalColumnsSelectedByWay && totalColumnsSelectedByWay.length > 0;
   }
 
   /**
