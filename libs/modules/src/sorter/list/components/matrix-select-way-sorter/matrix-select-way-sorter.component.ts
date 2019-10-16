@@ -41,7 +41,6 @@ export class MatrixSelectWaySorterComponent implements OnInit {
 
     this.waysMatrix.forEach(way => {
       var dataColumns = [];
-      console.log(way)
       way.columns.forEach(column => {
         var dataColumn = {
           column: '',
@@ -137,9 +136,6 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         }
       });
     });
-    
-    console.log(this.dataPriorities);
-    console.log(this.contZone);
   }
 
   getColumn(waySelect): void {
@@ -343,27 +339,22 @@ export class MatrixSelectWaySorterComponent implements OnInit {
    * cambiar input de carril
    */
 
-  onChangeWay(event, element){
-    /**validar que exista en la matrix */
-    if(parseInt(event) !== parseInt(element.ways_number)){
-      console.log(element)
-      if(event > this.SizeMatrix){
-        this.intermediaryService.presentToastError("Carril no válido");
-      } else {
-        var banExisteCarril = false;
-        this.selectWay.forEach(way => {
-          way.columns.forEach(column => {
-            if(column.ways_number === parseInt(event) && column.zone !== ''){
-              banExisteCarril = true;
-            }
-          });
-        });
-        if(!banExisteCarril){
+  onChangeWay(event, element) {
+    if (event.target.value) {
+      let newValue = parseInt(event.target.value);
+      let oldValue = parseInt(element.ways_number);
+
+      /**validar que exista en la matrix */
+      if (newValue !== oldValue) {
+        if (newValue > this.SizeMatrix) {
+          this.intermediaryService.presentToastError("¡El número de calle introducida es superior a las disponibles!", 2000);
+          event.target.value = oldValue;
+        } else {
           var priorityDelete = -1;
           this.selectWay.forEach(way => {
             way.columns.forEach(column => {
               /**eliminar anterior carril */
-              if(column.waysId === parseInt(element.waysId)){
+              if (column.waysId === parseInt(element.waysId)) {
                 this.dataPriorities.forEach(zone => {
                   if(zone.zone === column.zone){
                     var position = -1;
@@ -380,15 +371,14 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                 column.zone = '';
                 column.color = '';
               }
-            });  
-          });  
+            });
+          });
 
-          if(priorityDelete !== -1){
-
+          if (priorityDelete !== -1) {
             this.selectWay.forEach(way => {
               way.columns.forEach(column => {
                 /**agregar nuevo carril */
-                if(column.waysId === parseInt(event)){
+                if(column.waysId === newValue){
                   column.zone = this.zoneSelect.id;
                   column.color = this.zoneSelect.color.hex;
                   if(this.dataPriorities.length > 0){
@@ -412,29 +402,29 @@ export class MatrixSelectWaySorterComponent implements OnInit {
                     });
                   }
                 }
-              });  
-            });  
-            
-          }
-        } else {
-          this.intermediaryService.presentToastError("Carril ya tiene prioridad asignada");
-        }
-        this.data = [];
-        this.dataPriorities.forEach(priority => {
-          priority.ways = priority.ways.sort((priorityOne, priorityTwo) => priorityOne.priority - priorityTwo.priority);
-          if(priority.zone === this.zoneSelect.id){
-            priority.ways.forEach(way => {
-              this.data.push({
-                waysId: way.waysId,
-                ways_number: way.ways_number,
-                priority: way.priority
-              })
+              });
             });
           }
-        });
 
-        this.dataSource = new MatTableDataSource<Element>(this.data);
+          this.data = [];
+          this.dataPriorities.forEach(priority => {
+            priority.ways = priority.ways.sort((priorityOne, priorityTwo) => priorityOne.priority - priorityTwo.priority);
+            if (priority.zone === this.zoneSelect.id){
+              priority.ways.forEach(way => {
+                this.data.push({
+                  waysId: way.waysId,
+                  ways_number: way.ways_number,
+                  priority: way.priority
+                })
+              });
+            }
+          });
+
+          this.dataSource = new MatTableDataSource<Element>(this.data);
+        }
       }
+    } else {
+      event.target.value = element.ways_number;
     }
   }
 

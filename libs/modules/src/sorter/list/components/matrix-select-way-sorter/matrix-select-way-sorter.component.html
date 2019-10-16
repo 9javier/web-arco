@@ -16,7 +16,7 @@
     </div>
   </ion-col>
 
-  <ion-col size="6">
+  <ion-col size="6" *ngIf="zoneSelect && zoneSelect.id">
     <ion-row class="overAuto">
       <ion-col size="6">
         <div class="containerTable">
@@ -39,7 +39,7 @@
                 <ion-input
                   type="number"
                   value="{{element.ways_number}}"
-                  (ionBlur)='onChangeWay($event.target.value, element)'></ion-input>
+                  (ionBlur)='onChangeWay($event, element)'></ion-input>
               </mat-cell>
             </ng-container>
 

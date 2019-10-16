@@ -575,28 +575,51 @@ export class ListComponent implements OnInit {
   }
 
   storeWays(data){
-    this.intermediaryService.presentLoading();
-    var info = {
-      zones: data
+    this.intermediaryService.presentLoading('Comprobando calles y prioridades a actualizar...');
+
+    let waysList: any = {};
+    let existsConflict: boolean = false;
+    for (let zoneObj of data) {
+      let zoneWays = zoneObj.ways;
+      for (let way of zoneWays) {
+        if (!waysList[way.ways_number]) {
+          waysList[way.ways_number] = 0;
+        }
+        waysList[way.ways_number]++;
+        if (waysList[way.ways_number] > 1) {
+          existsConflict = true;
+        }
+      }
     }
-    this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(() => {
-      this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
-      this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
-        this.zones = data.data;
-        this.radioButton = this.zones[0].id;
-        this.radioForm = this.formBuilder.group({
-          selectRadio: [this.radioButton]
+
+    if (existsConflict) {
+      this.intermediaryService.presentWarning('¡Cuidado! Hay una o más calles a las que se les ha asignado más de una prioridad. Asegúrese de tener una prioridad por cada calle antes de guardar los cambios.', null);
+    } else {
+      var info = {
+        zones: data
+      };
+
+      this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(() => {
+        this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
+        this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+          this.zones = data.data;
+          this.radioButton = this.zones[0].id;
+          this.radioForm = this.formBuilder.group({
+            selectRadio: [this.radioButton]
+          });
+          this.initRadioActive(this.zones);
+          this.intermediaryService.dismissLoading();
         });
-        //this.initSelectActive(this.zones);
-        this.initRadioActive(this.zones);
+      }, (error) => {
+        let errorMessage = "Ha ocurrido un error al intentar actualizar las calles y sus prioridades.";
+        if (error && error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage );
         this.intermediaryService.dismissLoading();
       });
-    }, () => {
-      this.intermediaryService.presentToastError("Error al guardar, intente más tarde");
-      this.intermediaryService.dismissLoading();
-    });
+    }
   }
-
 }
 
 export class ExampleDataSource extends DataSource<any> {

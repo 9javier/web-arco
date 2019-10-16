@@ -82,7 +82,7 @@
     </div>
 
     <div *ngIf="validSave" style="float: left;">
-      <ion-fab-button *ngIf="matrixSelectWay.getBanSave()" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
+      <ion-fab-button *ngIf="matrixSelectWay.getBanSave() && zoneId" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
         <ion-icon name="save"></ion-icon>
       </ion-fab-button>
     </div>

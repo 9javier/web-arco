@@ -144,7 +144,6 @@ export class TemplateZonesService {
   }
 
   assignWays(data, idTemplate: number): Observable<any> {
-    console.log(data)
     return this.http.post<any>(this.assignWaysUrl.replace("{{idTemplate}}",String(idTemplate)), data)
     .pipe(map(response => {
       return response;
