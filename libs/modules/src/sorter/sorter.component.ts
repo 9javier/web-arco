@@ -51,7 +51,7 @@ import { switchMap } from 'rxjs/operators';
 })
 export class SorterComponent implements OnInit {
 
-  displayedColumns = ['delete', 'Ntemplate', 'zona', 'nombre', 'carriles', 'dropdown'];
+  displayedColumns = ['delete', 'nombre', 'zona', 'carriles', 'dropdown'];
   //dataSource = new ExampleDataSource();
   displayedColumnsWareHouse: any = ['check', 'name'];
   selectedForm: FormGroup;
@@ -66,7 +66,6 @@ export class SorterComponent implements OnInit {
     private modalController: ModalController,
     private sorterTemplateService: SorterTemplateService,
     private intermediaryService: IntermediaryService
-
   ) {
     this.selectedForm = this.formBuilder.group(
       {

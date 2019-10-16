@@ -27,8 +27,38 @@ mat-table {
     padding: 10px 10px 10px 0;
 }
 
+mat-header-cell.custom-col, mat-cell.custom-col {
+  display: flex;
+  flex: 1;
+}
+mat-header-cell.col-select-del, mat-cell.col-select-del {
+  flex: 1;
+}
+mat-header-cell.col-name, mat-cell.col-name {
+  flex: 8;
+}
+mat-header-cell.col-zones-qty, mat-cell.col-zones-qty {
+  flex: 3;
+}
+mat-header-cell.col-ways-qty, mat-cell.col-ways-qty {
+  flex: 3;
+}
+mat-header-cell.col-zones-show, mat-cell.col-zones-show {
+  flex: 2;
+}
+
+mat-cell.show-zones {
+  width: 100%;
+  color: #008aff;
+  text-decoration: underline;
+  cursor: pointer;
+  span {
+    width: 100%;
+    text-align: end;
+  }
+}
+
 .container {
-    margin-top: 1em;
     p{
         margin-left: 5px;
     }

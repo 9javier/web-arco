@@ -1,19 +1,14 @@
 <ion-content padding="true">
   <ion-grid>
-    <ion-text color="primary">
-      <suite-breadcrumb></suite-breadcrumb>
-    </ion-text>
     <div class="container" *ngIf="templates">
       <mat-table #table [dataSource]="templates">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm">
-          <mat-header-cell *matHeaderCellDef>
-
+          <mat-header-cell *matHeaderCellDef class="custom-col col-select-del">
             <ion-checkbox (ionChange)="selectAll($event)" [formControl]="selectedForm['controls']?.global">
             </ion-checkbox>
-            <i class="material-icons">delete</i>
           </mat-header-cell>
 
-          <mat-cell *matCellDef="let element; let i = index">
+          <mat-cell *matCellDef="let element; let i = index" class="custom-col col-select-del">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
               <ion-checkbox (click)="toDeleteTemplate(i)"
                 [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
@@ -21,42 +16,29 @@
           </mat-cell>
         </ng-container>
         <ng-container matColumnDef="Ntemplate">
-          <mat-header-cell *matHeaderCellDef> Plantilla </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.id}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef class="custom-col col-id">Plantilla</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="custom-col col-id"> {{element.id}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="zona">
-          <mat-header-cell *matHeaderCellDef>Cantidad </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.zones.length}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef class="custom-col col-zones-qty">Nº Zonas</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="custom-col col-zones-qty"> {{element.zones.length}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="nombre">
-          <mat-header-cell *matHeaderCellDef>Nombre </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef class="custom-col col-name">Nombre</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="custom-col col-name"> {{element.name}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="carriles">
-          <mat-header-cell *matHeaderCellDef>Carriles </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.zoneWays.length}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef class="custom-col col-ways-qty">Nº Calles</mat-header-cell>
+          <mat-cell *matCellDef="let element" class="custom-col col-ways-qty"> {{element.zoneWays.length}} </mat-cell>
         </ng-container>
-        <!-- <ng-container matColumnDef="active" [formGroup]="selectedFormActive">
-                <mat-header-cell *matHeaderCellDef>  
-                    <ion-checkbox (ionChange)="selectAllActive($event)"></ion-checkbox>
-                    <p>Active</p>     
-                </mat-header-cell>
-                <mat-cell *matCellDef="let element; let i = index"> 
-                    <ng-template [ngIf]="selectedFormActive['controls']?.toSelectActive">
-                        <ion-checkbox (click)="active(element, selectedFormActive['controls']?.toSelectActive['controls'][i])" [formControl]="selectedFormActive['controls']?.toSelectActive['controls'][i]"></ion-checkbox>
-                    </ng-template>
-                  </mat-cell>
-            </ng-container> -->
         <ng-container matColumnDef="dropdown">
-          <mat-header-cell *matHeaderCellDef></mat-header-cell>
-          <mat-cell *matCellDef="let element">
+          <mat-header-cell *matHeaderCellDef class="custom-col col-zones-show"></mat-header-cell>
+          <mat-cell *matCellDef="let element" class="custom-col col-zones-show show-zones" (click)="clickShowExpasion(element)">
             <span>
-              <i (click)="clickShowExpasion(element)" class="material-icons">send</i>
+              Gestionar zonas
             </span>
           </mat-cell>
         </ng-container>
-
-        <!-- Expanded Content Column - The detail row is made up of this one column -->
         <ng-container matColumnDef="expandedDetail">
           <mat-cell *matCellDef="let detail">
             <table mat-table [dataSource]="warehouses">
