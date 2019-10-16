@@ -217,7 +217,7 @@ export class MenuComponent implements OnInit {
       icon: 'apps',
       children: [
         {
-          title: 'Crear plantillas-zonas',
+          title: 'Plantillas',
           id: 'sorter-sga',
           url: '/sorter',
           icon: 'document'
@@ -372,13 +372,13 @@ export class MenuComponent implements OnInit {
           icon: 'apps'
         },
         {
-          title: 'Recepcionar',
+          title: 'Recepcionar embalaje',
           id: 'reception',
           url: 'reception',
           icon: 'archive'
         },
         {
-          title: 'Vaciar',
+          title: 'Recepcionar par a par',
           id: 'empty-carrier',
           url: 'reception/empty-carrier',
           icon: 'square-outline'
