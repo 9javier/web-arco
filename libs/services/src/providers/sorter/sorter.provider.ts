@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ColorSorterModel} from "../../models/endpoints/ColorSorter";
+import {TemplateSorterModel} from "../../models/endpoints/TemplateSorter";
 
 @Injectable({
   providedIn: 'root'
@@ -36,5 +37,13 @@ export class SorterProvider {
   }
   set colorActiveForUser(value: string) {
     this._colorActiveForUser = value;
+  }
+
+  private _templateToEditSelected: TemplateSorterModel.Template;
+  get templateToEditSelected(): TemplateSorterModel.Template {
+    return this._templateToEditSelected;
+  }
+  set templateToEditSelected(value: TemplateSorterModel.Template) {
+    this._templateToEditSelected = value;
   }
 }

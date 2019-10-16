@@ -31,6 +31,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { switchMap } from 'rxjs/operators';
 import { SorterService } from 'libs/services/src/lib/endpoint/sorter/sorter.service';
 import { MatrixSelectWaySorterComponent } from './components/matrix-select-way-sorter/matrix-select-way-sorter.component';
+import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
+import {TemplateSorterModel} from "../../../../services/src/models/endpoints/TemplateSorter";
 
 
 @Component({
@@ -99,6 +101,8 @@ export class ListComponent implements OnInit {
 
   public validSave: boolean = false;
 
+  public templateOpened: TemplateSorterModel.Template = null;
+
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
@@ -108,13 +112,15 @@ export class ListComponent implements OnInit {
     private templateColorsService: TemplateColorsService,
     private sorterService: SorterService,
     private changeDetectorRefs: ChangeDetectorRef,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private sorterProvider: SorterProvider
   ) {
+    this.templateOpened = this.sorterProvider.templateToEditSelected;
     this.id = this.route.snapshot.paramMap.get('id');
     this.equalParts = this.route.snapshot.paramMap.get('equalParts');
-    this.postRoute = `Plantilla ${this.id}`;
+    this.postRoute = this.templateOpened.name;
     if(this.equalParts === 'false'){
-      this.displayedColumns = ['delete', 'Ntemplate', 'nombre'/*, 'active'*/, /*'configurarCarriles',*/ 'warehoures', 'color', 'quantity', 'updateCarriles']
+      this.displayedColumns = ['delete', 'nombre', 'warehoures', 'color', 'quantity', 'updateCarriles']
       this.selectedForm = this.formBuilder.group(
         {
           selector: false,
@@ -125,7 +131,7 @@ export class ListComponent implements OnInit {
         }
       );
     } else {
-      this.displayedColumns = ['Ntemplate', 'nombre', 'warehoures', 'color', 'quantity', 'updateCarriles']
+      this.displayedColumns = ['nombre', 'warehoures', 'color', 'quantity', 'updateCarriles']
     }
     //console.log(this.selectedForm)
 

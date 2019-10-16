@@ -25,6 +25,7 @@ import { StoreComponent } from './modals/store/store.component';
 import { SorterTemplateService } from '../../../services/src/lib/endpoint/sorter-template/sorter-template.service';
 import { TemplateSorterModel } from '../../../services/src/models/endpoints/TemplateSorter';
 import { switchMap } from 'rxjs/operators';
+import {SorterProvider} from "../../../services/src/providers/sorter/sorter.provider";
 
 @Component({
   selector: 'suite-sorter',
@@ -65,7 +66,8 @@ export class SorterComponent implements OnInit {
     private router: Router,
     private modalController: ModalController,
     private sorterTemplateService: SorterTemplateService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private sorterProvider: SorterProvider
   ) {
     this.selectedForm = this.formBuilder.group(
       {
@@ -98,6 +100,7 @@ export class SorterComponent implements OnInit {
   templates: TemplateSorterModel.Template[] = [];
 
   ngOnInit() {
+    this.sorterProvider.templateToEditSelected = null;
     this.crudService
       .getIndex('Warehouses')
       .then(
@@ -130,8 +133,9 @@ export class SorterComponent implements OnInit {
     })
   }
 
-  clickShowExpasion(row: any) {
+  clickShowExpasion(row: TemplateSorterModel.Template) {
     event.stopPropagation();
+    this.sorterProvider.templateToEditSelected = row;
     this.router.navigate([`/sorter/plantilla/${row.id}/${row.equalParts}`]);
   }
 
