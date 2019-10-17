@@ -24,8 +24,8 @@ export class StoreComponent implements OnInit {
   ngOnInit() {
   }
 
-  close(): void {
-    this.modalController.dismiss();
+  close(reload) : void {
+    this.modalController.dismiss(reload);
   }
 
   async submit() {
@@ -40,7 +40,7 @@ export class StoreComponent implements OnInit {
     this.sorterTemplateService.postCreate(payload).subscribe(async (data) => {
       await this.intermediaryService.dismissLoading();
       await this.intermediaryService.presentToastSuccess('Plantilla creada.');
-      this.close();
+      this.close(true);
     }, async (err) => {
       await this.intermediaryService.dismissLoading();
       let errorMessage = 'Ha ocurrido un error al intentar crear la plantilla.';

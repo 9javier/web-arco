@@ -28,24 +28,35 @@ export class UpdateComponent implements OnInit {
     this.sorterTemplateService.getShow(this.templateId).subscribe(data =>{
       this.template = data.data;
     }, err => {
-      console.log(err)
+      console.error('Error::subscribe::sorterTemplateService::getShow', err);
     })
   }
 
-  close():void{
-    this.modalController.dismiss();
+  close(reload: boolean) : void{
+    this.modalController.dismiss(reload);
   }
 
-  submit():void{
-    let payload = this.base.getValue()
+  async submit() {
+    await this.intermediaryService.presentLoading('Actualizando plantilla...');
+
+    let payload = this.base.getValue();
+
     payload = {
-      active:true,
+      active: true,
       ...payload
-    }
-    console.log(payload)
-    this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe((data) => {
-      console.log(data.data);
-      this.close();
+    };
+
+    this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe(async (data) => {
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.presentToastSuccess('Plantilla actualizada.');
+      this.close(true);
+    }, async (error) => {
+      await this.intermediaryService.dismissLoading();
+      let errorMessage = 'Ha ocurrido un error al intentar actualizar la plantilla.';
+      if (error.error && error.error.errors) {
+        errorMessage = error.error.errors;
+      }
+      await this.intermediaryService.presentToastError(errorMessage);
     });
   }
 }

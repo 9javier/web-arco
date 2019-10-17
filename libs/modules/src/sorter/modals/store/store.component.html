@@ -1,7 +1,7 @@
 <ion-header>
     <ion-toolbar color="primary">
         <ion-buttons slot="start">
-            <ion-button (click)="close()">
+            <ion-button (click)="close(false)">
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
@@ -13,7 +13,7 @@
 </ion-content>
 <ion-footer>
     <ion-toolbar>
-        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="light" (click)="close(false)">Cancelar</ion-button>
         <ion-button slot="end" color="primary" [disabled]="base.form.invalid" (click)="submit()">Guardar</ion-button>
     </ion-toolbar>
 </ion-footer>

@@ -191,9 +191,11 @@ export class SorterComponent implements OnInit {
         templateId: row.id
       }
     }));
-    modal.onDidDismiss().then(() => {
-      this.getTemplates();
-    })
+    modal.onDidDismiss().then((response) => {
+      if (response.data) {
+        this.getTemplates();
+      }
+    });
     modal.present();
   }
 
@@ -201,9 +203,11 @@ export class SorterComponent implements OnInit {
     let modal = (await this.modalController.create({
       component: StoreComponent
     }));
-    modal.onDidDismiss().then(() => {
-      this.getTemplates();
-    })
+    modal.onDidDismiss().then((response) => {
+      if (response.data) {
+        this.getTemplates();
+      }
+    });
     modal.present();
   }
 
