@@ -342,6 +342,12 @@ export class MenuComponent implements OnInit {
           id: 'positioning-manual'
         },
         {
+          title: 'Traspasos',
+          id: 'picking-task-store',
+          icon: 'qr-scanner',
+          url: '/picking-tasks'
+        },
+        {
           title: 'Tareas de Picking',
           id: 'picking-task',
           icon: 'qr-scanner',
