@@ -575,8 +575,6 @@ export class ListComponent implements OnInit {
   }
 
   async storeWays(data){
-    await this.intermediaryService.presentLoading('Comprobando calles y prioridades a actualizar...');
-
     let waysList: any = {};
     let existsConflict: boolean = false;
     for (let zoneObj of data) {
@@ -591,8 +589,6 @@ export class ListComponent implements OnInit {
         }
       }
     }
-
-    await this.intermediaryService.dismissLoading();
     if (existsConflict) {
       await this.intermediaryService.presentWarning('¡Cuidado! Hay una o más calles a las que se les ha asignado más de una prioridad. Asegúrese de tener una prioridad por cada calle antes de guardar los cambios.', null);
     } else {
