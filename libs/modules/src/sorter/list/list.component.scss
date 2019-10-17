@@ -7,6 +7,40 @@ ion-content {
       overflow: auto;
       mat-table {
         height: 95%;
+        mat-header-cell.custom-col, mat-cell.custom-col {
+          display: flex;
+          flex: 1;
+        }
+        mat-header-cell.col-select-del, mat-cell.col-select-del {
+          flex: 1;
+        }
+        mat-header-cell.col-name, mat-cell.col-name {
+          flex: 8;
+        }
+        mat-header-cell.col-stores, mat-cell.col-stores {
+          flex: 2;
+        }
+        mat-header-cell.col-color, mat-cell.col-color {
+          flex: 3;
+        }
+        mat-header-cell.col-ways-qty, mat-cell.col-ways-qty {
+          flex: 3;
+        }
+        mat-header-cell.col-ways-edit, mat-cell.col-ways-edit {
+          flex: 2;
+        }
+        mat-cell.col-name {
+          cursor: pointer;
+          i {
+            font-size: 18px;
+            margin-left: 10px;
+          }
+        }
+        mat-cell.col-stores {
+          span i {
+            cursor: pointer;
+          }
+        }
       }
       p {
         margin-left: 5px;
@@ -47,19 +81,20 @@ mat-table {
     
 }
 
-mat-cell.color {
+mat-cell.col-color {
   div.color-zone {
-    width: 36px;
     height: 40px;
     position: relative;
     div {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
+      height: 30px;
+      border-radius: 5px;
       border: 1px solid var(--ion-color-primary-contrast);
       position: absolute;
-      top: 16px;
-      left: 16px;
+      top: 5px;
+      padding: 4px 8px;
+      span {
+        line-height: 22px;
+      }
     }
   }
 }

@@ -1,21 +1,11 @@
-import { Component, Input, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { Location } from "@angular/common";
-import { SelectionModel, DataSource } from "@angular/cdk/collections";
+import { DataSource } from "@angular/cdk/collections";
 import { RolModel, UserModel, WarehouseModel, IntermediaryService } from "@suite/services";
 import { Observable, of } from "rxjs";
-import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
-import { HallModel } from "../../../../services/src/models/endpoints/Hall";
-import { HallsService } from "../../../../services/src/lib/endpoint/halls/halls.service";
+import { HttpResponse } from "@angular/common/http";
 import { ActivatedRoute } from "@angular/router";
-import { ModalController, ToastController, NavParams } from "@ionic/angular";
-import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-/*import {UpdateComponent} from "../update/update.component";
-import { UpdateComponent as updateHall } from '../../halls/update/update.component';
-import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
-import {LocationsComponent} from "../locations.component";
-import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
-import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
+import { ModalController } from "@ionic/angular";
 import { CrudService } from '../../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
@@ -120,7 +110,7 @@ export class ListComponent implements OnInit {
     this.equalParts = this.route.snapshot.paramMap.get('equalParts');
     this.postRoute = this.templateOpened.name;
     if(this.equalParts === 'false'){
-      this.displayedColumns = ['delete', 'nombre', 'warehoures', 'color', 'quantity', 'updateCarriles']
+      this.displayedColumns = ['delete', 'nombre', 'color', 'quantity', 'warehoures', 'updateCarriles']
       this.selectedForm = this.formBuilder.group(
         {
           selector: false,
@@ -131,7 +121,7 @@ export class ListComponent implements OnInit {
         }
       );
     } else {
-      this.displayedColumns = ['nombre', 'warehoures', 'color', 'quantity', 'updateCarriles']
+      this.displayedColumns = ['nombre', 'color', 'quantity', 'warehoures', 'updateCarriles']
     }
     //console.log(this.selectedForm)
 
