@@ -65,14 +65,14 @@ export class TemplateZonesService {
     return this.http.delete<any>(this.deleteZoneTemplateUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
     .pipe(map(response => {
       return response;
-    }));;
+    }));
   }
 
   getShowTemplateZone(id: number, idTemplate: number): Observable<any> {
     return this.http.get<any>(this.getShowUrl.replace("{{idTemplate}}",String(idTemplate)).replace("{{id}}",String(id)))
     .pipe(map(response => {
       return response;
-    }));;
+    }));
   }
 
   getIndexZonesWarehouses(idTemplate: number): Observable<TemplateZoneModel.ResponseZone> {

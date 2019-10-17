@@ -306,21 +306,22 @@ export class MatrixSelectWaySorterComponent implements OnInit {
     }
   }
 
-  changeZone(element){
+  changeZone(element) {
     this.zoneSelect = element;
     this.data = [];
-    this.dataPriorities.forEach(priority => {
-      if(priority.zone === element.id){
-        priority.ways.forEach(way => {
-          this.data.push({
-            waysId: way.waysId,
-            ways_number: way.ways_number,
-            priority: way.priority
-          })
-        });
-      }
-    });
-
+    if (element) {
+      this.dataPriorities.forEach(priority => {
+        if (priority.zone === element.id) {
+          priority.ways.forEach(way => {
+            this.data.push({
+              waysId: way.waysId,
+              ways_number: way.ways_number,
+              priority: way.priority
+            })
+          });
+        }
+      });
+    }
     this.dataSource = new MatTableDataSource<Element>(this.data);
   }
 
@@ -456,6 +457,19 @@ export class MatrixSelectWaySorterComponent implements OnInit {
     let heightSpace = mainRow.offsetHeight;
     let heightForRow = heightSpace / this.selectWay.length;
     return heightForRow + 'px';
+  }
+
+  removeWaysFromZoneDeleted(idsZonesDeleted: number[]) {
+    for (let row of this.selectWay) {
+      for (let way of row.columns) {
+        let idZone = way.zone;
+        let zoneIsDeleted = !!idsZonesDeleted.find(id => id == idZone);
+        if (zoneIsDeleted) {
+          way.zone = null;
+          way.color = null;
+        }
+      }
+    }
   }
 }
 

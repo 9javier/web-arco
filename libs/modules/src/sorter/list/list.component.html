@@ -17,7 +17,7 @@
 
           <mat-cell *matCellDef="let element; let i = index" class="custom-col col-select-del">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-              <ion-checkbox (click)="toDeleteZone(i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]" [disabled]="templateOpened.active">
+              <ion-checkbox (click)="toDeleteZone($event, i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]" [disabled]="templateOpened.active">
               </ion-checkbox>
             </ng-template>
           </mat-cell>

@@ -459,21 +459,21 @@ export class ListComponent implements OnInit {
     console.log('active')
   }
 
-  toDeleteZone(index) {
+  toDeleteZone(event, index) {
     event.stopPropagation();
-    let repeat = false;
+
     let idToDelete = this.zones[index].id;
-    this.toDeleteIds.forEach(id => {
-      if (id == idToDelete) {
-        repeat = true;
-      }
-    })
-    if (!repeat) {
+    let indexOfElementSelected = this.toDeleteIds.indexOf(idToDelete);
+
+    if (indexOfElementSelected > -1) {
+      this.toDeleteIds.splice(indexOfElementSelected, 1);
+    } else {
       this.toDeleteIds.push(idToDelete);
     }
   }
 
   delete() {
+    let idsZoneToDelete = JSON.parse(JSON.stringify(this.toDeleteIds));
     let deletions: Observable<any> = new Observable(observer => observer.next());
     if (this.toDeleteIds.length > 0) {
       this.toDeleteIds.forEach(idZone => {
@@ -486,7 +486,10 @@ export class ListComponent implements OnInit {
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
 
-    deletions.subscribe(() => {
+    deletions.subscribe((res) => {
+      this.resetZoneSelection();
+      this.matrixSelectWay.removeWaysFromZoneDeleted(idsZoneToDelete);
+
       this.intermediaryService.dismissLoading();
       this.getZones();
       this.intermediaryService.presentToastSuccess("Plantillas eliminadas con exito");
@@ -592,6 +595,7 @@ export class ListComponent implements OnInit {
       this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(async () => {
         await this.intermediaryService.presentToastSuccess("Calles guardadas con éxito");
         this.templateZonesService.getIndex(parseInt(this.id)).subscribe(async (data) => {
+          this.resetZoneSelection();
           this.zones = data.data;
           this.radioButton = this.zones[0].id;
           this.radioForm = this.formBuilder.group({
@@ -609,6 +613,11 @@ export class ListComponent implements OnInit {
         await this.intermediaryService.dismissLoading();
       });
     }
+  }
+
+  private resetZoneSelection() {
+    this.zoneId = null;
+    this.matrixSelectWay.changeZone(null);
   }
 }
 
