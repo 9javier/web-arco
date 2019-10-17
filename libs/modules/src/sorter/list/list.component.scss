@@ -1,3 +1,23 @@
+ion-content {
+  ion-grid.grid-list-zones {
+    padding: 0;
+    height: calc(100vh - 56px - 32px - 61px); // 56px from toolbar - 32px from ion-content-padding-top-bottom - 61px from breadcrumb component
+    div.container {
+      height: 50%;
+      overflow: auto;
+      mat-table {
+        height: 95%;
+      }
+      p {
+        margin-left: 5px;
+      }
+    }
+    suite-matrix-select-way-sorter.matrix-box {
+      max-height: 50%;
+    }
+  }
+}
+
 .main-buttons {
     overflow: auto;
     width: 100%;
@@ -53,15 +73,6 @@ mat-cell.color {
     margin-left: -8px !important;
 }
 }
-
-
-.container {
-    margin-top: 1em;
-    p{
-        margin-left: 5px;
-    }
-}
-
 
 .row-icon-location {
     width: 80px;

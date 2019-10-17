@@ -2,7 +2,7 @@
 
   <suite-breadcrumb [post]="postRoute"></suite-breadcrumb>
 
-  <ion-grid>
+  <ion-grid class="grid-list-zones">
     <div class="container" *ngIf="zones">
       <mat-table #table [dataSource]="zones">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm" *ngIf="equalParts === 'false'">
@@ -48,7 +48,7 @@
           <mat-cell *matCellDef="let element"> {{element.quantity}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="updateCarriles">
-          <mat-header-cell *matHeaderCellDef> Actualizar Carriles</mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> Actualizar calles</mat-header-cell>
           <mat-cell *matCellDef="let element">
             <mat-radio-group name="rails">
               <mat-radio-button (click)="displayRailsRadio(element);  matrixSelectWay.changeZone(element)"
@@ -67,7 +67,9 @@
       </mat-table>
     </div>
 
-    <suite-matrix-select-way-sorter 
+    <suite-matrix-select-way-sorter
+      class="matrix-box"
+      [height]="'50%'"
       [waysMatrix]="waysMatrix"
       [equalParts]="equalParts" *ngIf="waysMatrix.length > 0">
     </suite-matrix-select-way-sorter>

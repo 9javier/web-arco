@@ -1,39 +1,99 @@
-div.matrix-main {
-    display: table;
-    height: calc(100vh - 56px - 152px - 76px);
-    width: 100%;
-    div.center-block {
-        display: table-cell;
-        vertical-align: middle;
+ion-row.main-row {
+  ion-col.matrix-box {
+    padding: 0;
+    div.containerWays {
+      position: absolute;
+      bottom: 0;
+      right: 5vw;
+      div.matrix-main {
+        div.center-block {
+          div.matrix {
+            div.height {
+              width: auto;
+              height: auto;
+              display: table;
+              margin: 0 auto;
+              div.column {
+                height: 40px;
+                width: 70px;
+                border: 1px solid black;
+                display: table-cell;
+                text-align: center;
+                cursor: pointer;
+                padding-top: 7px;
+              }
+            }
+          }
+        }
+      }
+    }
+    div.containerWays.center {
+      margin: 0 auto;
+      right: 0;
+      width: 100%;
+    }
+  }
+
+  ion-col.priorities-list {
+    padding: 0;
+    height: 100%;
+    div.containerTable {
+      height: 100%;
+      width: 50%;
+      overflow: auto;
+      position: absolute;
+      left: 5vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      mat-table.prioridad {
         height: 100%;
         width: 100%;
-        div.matrix {
-            div.height {
-                width: auto;
-                height: auto;
-                display: table;
-                margin: 0 auto;
-                div.column {
-                    height: 30px;
-                    width: 70px;
-                    border: 1px solid black;
-                    display: table-cell;
-                    text-align: center;
-                    cursor: pointer;
-                    padding-top: 5px;
-                }
-            }
+        mat-cell:first-of-type, mat-footer-cell:first-of-type, mat-header-cell:first-of-type {
+          padding-left: 0;
         }
+        mat-cell:last-of-type, mat-footer-cell:last-of-type, mat-header-cell:last-of-type {
+          padding-right: 0;
+        }
+        mat-header-row {
+          mat-header-cell {
+            text-align: center;
+            min-height: 48px;
+            height: 48px;
+            p {
+              width: 100%;
+              margin: 0;
+            }
+          }
+        }
+        mat-row {
+          mat-cell {
+            text-align: center;
+            p {
+              font-weight: bold;
+              width: 100%;
+              margin: 0;
+            }
+          }
+          mat-cell.cell-input {
+            position: relative;
+            i {
+              position: absolute;
+              left: 16px;
+              font-size: 16px;
+            }
+          }
+        }
+      }
     }
+    ion-row.overAuto {
+      height: 100%;
+      overflow: auto;
+    }
+  }
 }
 
-.containerTable {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
   .height {
     display: flex;
     flex-direction: row;
@@ -74,16 +134,7 @@ div.matrix-main {
       margin-left: 12px;
   }
   
-.overAuto {
-    max-height: calc(100vh - 278px) !important;
-    overflow: auto;
-}
-
-.containerWays {
-    margin: 0 auto;
-    width: 75%;
-}
-
 .title{
     font-weight: bold;
+  color: var(--ion-color-primary);
 }

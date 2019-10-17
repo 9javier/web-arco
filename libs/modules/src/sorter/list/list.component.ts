@@ -598,7 +598,7 @@ export class ListComponent implements OnInit {
       };
 
       this.templateZonesService.assignWays(info, parseInt(this.id)).subscribe(async () => {
-        await this.intermediaryService.presentToastSuccess("Carriles guardados con éxito");
+        await this.intermediaryService.presentToastSuccess("Calles guardadas con éxito");
         this.templateZonesService.getIndex(parseInt(this.id)).subscribe(async (data) => {
           this.zones = data.data;
           this.radioButton = this.zones[0].id;

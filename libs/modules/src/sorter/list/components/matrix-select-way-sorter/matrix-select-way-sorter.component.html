@@ -1,12 +1,15 @@
-<ion-row>
-  <ion-col size="6">
-    <div class="containerWays" >
+<ion-row [ngStyle]="{'height': height || 'auto'}" class="main-row" id="main-row">
+  <ion-col size="6" class="matrix-box" [size]="zoneSelect && zoneSelect.id ? '6' : '12'">
+    <div class="containerWays" [ngClass]="zoneSelect && zoneSelect.id ? '' : 'center'">
       <div class="matrix-main">
         <div class="center-block">
           <div class="matrix">
             <div class="height" *ngFor="let way of selectWay">
-              <div class="column" *ngFor="let column of way.columns; let i = index"
-                (click)="getColumn(column)" [ngStyle]="{'background-color': column.color !== '' ? column.color : '' }">
+              <div
+                class="column"
+                *ngFor="let column of way.columns; let i = index"
+                (click)="getColumn(column)"
+                [ngStyle]="{'background-color': column.color !== '' ? column.color : '', 'height': getHeightForRow()}">
                 <span>{{ column.ways_number }}</span>
               </div>
             </div>
@@ -16,30 +19,26 @@
     </div>
   </ion-col>
 
-  <ion-col size="6" *ngIf="zoneSelect && zoneSelect.id">
-    <ion-row class="overAuto">
-      <ion-col size="6">
+  <ion-col size="6" *ngIf="zoneSelect && zoneSelect.id" class="priorities-list">
         <div class="containerTable">
           <mat-table #table [dataSource]="dataSource" class="prioridad" multiTemplateDataRows>
-            
+
             <ng-container matColumnDef="prioridad" >
               <mat-header-cell *matHeaderCellDef class="title">
-                Prioridad
+                <p>Prioridad</p>
               </mat-header-cell>
-              <mat-cell *matCellDef="let element">
-                <p style="margin-left: 20px">{{element.priority}}</p> 
+              <mat-cell *matCellDef="let element" class="priority">
+                <p>{{element.priority}}</p>
               </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="carril">
               <mat-header-cell *matHeaderCellDef class="title">
-                 Carril
+                 <p>Calle</p>
               </mat-header-cell>
-              <mat-cell *matCellDef="let element"> 
-                <ion-input
-                  type="number"
-                  value="{{element.ways_number}}"
-                  (ionBlur)='onChangeWay($event, element)'></ion-input>
+              <mat-cell *matCellDef="let element" class="cell-input">
+                <i class="material-icons">edit</i>
+                <ion-input type="number" value="{{element.ways_number}}" (ionBlur)='onChangeWay($event, element)'></ion-input>
               </mat-cell>
             </ng-container>
 
@@ -52,7 +51,5 @@
             </mat-row>
           </mat-table>
         </div>
-      </ion-col>
-    </ion-row>
   </ion-col>
 </ion-row>

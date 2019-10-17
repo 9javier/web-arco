@@ -13,6 +13,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
 
   @Input() waysMatrix: any = [];
   @Input() equalParts: any;
+  @Input() height: string = null;
 
   data = [];
   dataSource = new MatTableDataSource<Element>(this.data);
@@ -428,6 +429,12 @@ export class MatrixSelectWaySorterComponent implements OnInit {
     }
   }
 
+  getHeightForRow() {
+    let mainRow = document.getElementById('main-row');
+    let heightSpace = mainRow.offsetHeight;
+    let heightForRow = heightSpace / this.selectWay.length;
+    return heightForRow + 'px';
+  }
 }
 
 export class ExampleDataSource2 extends DataSource<any> {
