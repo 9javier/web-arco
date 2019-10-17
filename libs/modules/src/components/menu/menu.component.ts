@@ -284,18 +284,6 @@ export class MenuComponent implements OnInit {
       icon: 'apps',
       children: [
         {
-          title: 'Sorter',
-          id: 'sorter-al',
-          url: '/sorter',
-          icon: 'logo-usd'
-        },
-        {
-          title: 'Código exposición',
-          id: 'print-price-tag',
-          url: 'print/tag/price',
-          icon: 'pricetags'
-        },
-        {
           title: 'Entrada',
           id: 'sorter-input',
           url: '/sorter/input',
