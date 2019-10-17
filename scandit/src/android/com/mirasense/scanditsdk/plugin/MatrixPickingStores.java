@@ -347,7 +347,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
       this.openSortItemsSpinner(resources, package_name, tvSortBy, filtersSortTypes, FILTER_SORT_TYPE, "Ordenar por");
     });
     tvFilterModel.setOnClickListener(view -> {
-      this.openSearchItemsSpinner(resources, package_name, tvFilterModel, filtersModels, FILTER_MODEL, "Modelos");
+      this.openSearchItemsSpinner(resources, package_name, tvFilterModel, filtersModels, FILTER_MODEL, "Referencias");
     });
     tvFilterBrand.setOnClickListener(view -> {
       this.openSearchItemsSpinner(resources, package_name, tvFilterBrand, filtersBrands, FILTER_BRAND, "Marcas");
@@ -392,7 +392,7 @@ public class MatrixPickingStores extends AppCompatActivity implements ProcessedP
           String defaultMessageFilter = "";
           switch (filterType) {
             case FILTER_MODEL:
-              defaultMessageFilter = "Filtro modelo";
+              defaultMessageFilter = "Filtro referencia";
               break;
             case FILTER_BRAND:
               defaultMessageFilter = "Filtro marca";
