@@ -19,12 +19,12 @@
         <ng-container matColumnDef="check" [formGroup]="selectedForm">
 
             <mat-header-cell *matHeaderCellDef (ionChange)="selectAll($event)">
-                <ion-checkbox></ion-checkbox>
+                <ion-checkbox [disabled]="templateOpened.active"></ion-checkbox>
             </mat-header-cell>
 
             <mat-cell *matCellDef="let element; let i = index">
                 <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
+                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]" [disabled]="templateOpened.active"></ion-checkbox>
                 </ng-template>
             </mat-cell>
 
@@ -36,7 +36,7 @@
 </ion-content>
 <ion-footer>
     <ion-toolbar>
-        <ion-button slot="end" color="light" (click)="close(false)">Cancelar</ion-button>
-        <ion-button slot="end" color="primary" (click)="submit()">Guardar</ion-button>
+        <ion-button [disabled]="templateOpened.active" slot="end" color="light" (click)="close(false)">Cancelar</ion-button>
+        <ion-button [disabled]="templateOpened.active" slot="end" color="primary" (click)="submit()">Guardar</ion-button>
     </ion-toolbar>
 </ion-footer>

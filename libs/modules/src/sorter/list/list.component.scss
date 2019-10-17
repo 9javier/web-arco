@@ -1,4 +1,18 @@
 ion-content {
+  div.warning-template-active {
+    text-align: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 8px 8px 0 0;
+    background: black;
+    color: white;
+    padding: 4px 8px;
+    max-width: 27vw;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
   ion-grid.grid-list-zones {
     padding: 0;
     height: calc(100vh - 56px - 32px - 61px); // 56px from toolbar - 32px from ion-content-padding-top-bottom - 61px from breadcrumb component

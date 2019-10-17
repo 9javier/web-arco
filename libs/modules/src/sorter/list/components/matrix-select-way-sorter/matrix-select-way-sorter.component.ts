@@ -3,6 +3,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DataSource } from '@angular/cdk/table';
 import { Observable, of } from 'rxjs';
 import { IntermediaryService } from '@suite/services';
+import {SorterProvider} from "../../../../../../services/src/providers/sorter/sorter.provider";
+import {TemplateSorterModel} from "../../../../../../services/src/models/endpoints/TemplateSorter";
 
 @Component({
   selector: 'suite-matrix-select-way-sorter',
@@ -30,8 +32,13 @@ export class MatrixSelectWaySorterComponent implements OnInit {
 
   public band: boolean = false;
   public SizeMatrix: number = 0;
+  public templateOpened: TemplateSorterModel.Template = null;
 
-  constructor(private intermediaryService: IntermediaryService) { 
+  constructor(
+    private intermediaryService: IntermediaryService,
+    private sorterProvider: SorterProvider
+  ) {
+    this.templateOpened = this.sorterProvider.templateToEditSelected;
   }
 
   ngOnInit() {
@@ -140,7 +147,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
   }
 
   getColumn(waySelect): void {
-    if(this.equalParts === 'false'){
+    if(this.equalParts === 'false' && !this.templateOpened.active){
       if(this.zoneSelect !== {}){
         this.band = true;
         this.selectWay.forEach(way => {

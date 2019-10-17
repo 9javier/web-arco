@@ -2,18 +2,22 @@
 
   <suite-breadcrumb [post]="postRoute"></suite-breadcrumb>
 
+  <div *ngIf="templateOpened.active" class="warning-template-active">
+    <p>La plantilla aplicada al sorter no puede ser modificada.</p>
+  </div>
+
   <ion-grid class="grid-list-zones">
     <div class="container" *ngIf="zones">
       <mat-table #table [dataSource]="zones">
         <ng-container matColumnDef="delete" [formGroup]="selectedForm" *ngIf="equalParts === 'false'">
           <mat-header-cell *matHeaderCellDef class="custom-col col-select-del">
-            <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
+            <ion-checkbox (ionChange)="selectAll($event)" [disabled]="templateOpened.active"></ion-checkbox>
             <i class="material-icons">delete</i>
           </mat-header-cell>
 
           <mat-cell *matCellDef="let element; let i = index" class="custom-col col-select-del">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-              <ion-checkbox (click)="toDeleteZone(i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]">
+              <ion-checkbox (click)="toDeleteZone(i)" [formControl]="selectedForm['controls']?.toSelect['controls'][i]" [disabled]="templateOpened.active">
               </ion-checkbox>
             </ng-template>
           </mat-cell>
@@ -83,19 +87,19 @@
   </ion-grid>
 
   <ion-fab vertical="bottom" horizontal="end">
-    <div *ngIf="!templateOpened.equalParts" style="float: left;">
+    <div *ngIf="!templateOpened.active && !templateOpened.equalParts" style="float: left;">
       <ion-fab-button style="padding: 5px;" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
         <ion-icon name="trash"></ion-icon>
       </ion-fab-button>
     </div>
 
     <div *ngIf="validSave" style="float: left;">
-      <ion-fab-button *ngIf="matrixSelectWay.getBanSave() && zoneId" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
+      <ion-fab-button *ngIf="!templateOpened.active && matrixSelectWay.getBanSave() && zoneId" style="float: right; padding: 5px;" (click)="storeWays(matrixSelectWay.getWays())">
         <ion-icon name="save"></ion-icon>
       </ion-fab-button>
     </div>
 
-    <ion-fab-button *ngIf="!templateOpened.equalParts" style="float: right; padding: 5px;" (click)="store()">
+    <ion-fab-button *ngIf="!templateOpened.active && !templateOpened.equalParts" style="float: right; padding: 5px;" (click)="store()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

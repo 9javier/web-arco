@@ -9,6 +9,8 @@ import { HttpResponse } from '@angular/common/http';
 import { UserModel, RolModel } from '@suite/services';
 import { TemplateZonesService } from 'libs/services/src/lib/endpoint/template-zones/template-zones.service';
 import { TemplateZoneModel } from 'libs/services/src/models/endpoints/TemplateZone';
+import {SorterProvider} from "../../../../../../services/src/providers/sorter/sorter.provider";
+import {TemplateSorterModel} from "../../../../../../services/src/models/endpoints/TemplateSorter";
 @Component({
   selector: 'suite-warehouses-modal',
   templateUrl: './warehouses-modal.component.html',
@@ -26,14 +28,18 @@ export class WarehousesModalComponent implements OnInit {
   idTemplate: number;
   id: number;
 
+  public templateOpened: TemplateSorterModel.Template = null;
+
   constructor(
     private intermediaryService:IntermediaryService,
     private modalController:ModalController,
     private navParams:NavParams,
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private templateZonesService: TemplateZonesService
+    private templateZonesService: TemplateZonesService,
+    private sorterProvider: SorterProvider
   ) {
+    this.templateOpened = this.sorterProvider.templateToEditSelected;
     this.warehousesFromZone = this.navParams.get("warehouses"); 
     this.idTemplate = this.navParams.get("idTemplate"); 
     this.id = this.navParams.get("id"); 

@@ -37,8 +37,8 @@
                  <p>Calle</p>
               </mat-header-cell>
               <mat-cell *matCellDef="let element" class="cell-input">
-                <i class="material-icons">edit</i>
-                <ion-input type="number" value="{{element.ways_number}}" (ionBlur)='onChangeWay($event, element)'></ion-input>
+                <i *ngIf="!templateOpened.active" class="material-icons">edit</i>
+                <ion-input type="number" value="{{element.ways_number}}" (ionBlur)='onChangeWay($event, element)' [disabled]="templateOpened.active"></ion-input>
               </mat-cell>
             </ng-container>
 
