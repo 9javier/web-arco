@@ -353,10 +353,11 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         } else {
           let currentZone = this.dataPriorities.find(dataPriority => dataPriority.zone == this.zoneSelect.id);
           let wayInZone = currentZone.ways.find(way => way.ways_number == newValue);
-          if (!wayInZone || wayInZone.length < 1) {
+          if (!wayInZone) {
             this.intermediaryService.presentToastError('¡La calle que intenta asignar no pertecene a esta zona!');
             event.target.value = oldValue;
           } else {
+            let currentZoneTemp = JSON.parse(JSON.stringify(currentZone));
             var priorityDelete = -1;
             var position = -1;
             this.selectWay.forEach(way => {
@@ -380,12 +381,11 @@ export class MatrixSelectWaySorterComponent implements OnInit {
               });
             });
 
-            let zoneWays = this.dataPriorities.find(dataPriority => dataPriority.zone == this.zoneSelect.id);
-            if (zoneWays) {
-              let wayToModify = zoneWays.ways.find(way => way.ways_number == newValue);
+            if (currentZone) {
+              let wayToModify = currentZone.ways.find(way => way.ways_number == newValue);
               if (wayToModify) {
-                wayToModify.waysId = priorityDelete;
-                wayToModify.ways_number = priorityDelete;
+                wayToModify.waysId = currentZoneTemp.ways[position].waysId;
+                wayToModify.ways_number = currentZoneTemp.ways[position].ways_number;
               }
             }
 
