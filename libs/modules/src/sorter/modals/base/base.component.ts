@@ -8,6 +8,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class BaseComponent implements OnInit {
 
+  @Input() isEdition: boolean = false;
   @Input() set template(template) {
     if (template)
       this.form.patchValue(template);

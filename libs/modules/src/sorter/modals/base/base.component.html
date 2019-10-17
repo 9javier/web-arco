@@ -4,11 +4,11 @@
         <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text>
         </ion-input>
     </ion-item>
-    <ion-item class="active">
+    <ion-item *ngIf="!isEdition" class="active">
         <ion-label position="floating">Partes Iguales</ion-label>
         <ion-checkbox formControlName="equalParts"></ion-checkbox>
     </ion-item>
-    <ion-item *ngIf="form.value.equalParts">
+    <ion-item *ngIf="!isEdition && form.value.equalParts">
         <ion-label position="floating">Cantidad de Zonas (Min:2 - Max:4)</ion-label>
         <ion-select placeholder="Seleccione" formControlName="quantityParts">
             <ion-select-option value="2">2</ion-select-option>
