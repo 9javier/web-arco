@@ -34,7 +34,7 @@ export class ScanditService {
   private scannerPaused: boolean = false;
 
   private postVerifyPackingUrl = environment.apiBase+"/processes/picking-main/packing";
-  private getPendingListByPickingUrl = environment.apiBase+"/processes/picking-main/shoes//{{id}}/pending";
+  private getPendingListByPickingUrl = environment.apiBase+"/processes/picking-main/shoes/{{id}}/pending";
   private putProductNotFoundUrl = environment.apiBase+"/processes/picking-main/shoes/{{workWaveOrderId}}/product-not-found/{{productId}}";
   private postCheckContainerProductUrl = environment.apiBase + "/inventory/check-container";
 
