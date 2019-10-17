@@ -79,18 +79,18 @@ export class WarehousesModalComponent implements OnInit {
       );
   }
 
-  close():void{
-    this.modalController.dismiss();
+  close(reload) : void{
+    this.modalController.dismiss(reload);
   }
 
-  submit():void{
+  async submit() {
+    await this.intermediaryService.presentLoading('Actualizando asignación de tiendas ...');
+
     const controlArray = <FormArray> this.selectedForm.get('toSelect');
     let warehousesToSend: number[] = [];
-    console.log(controlArray)
     controlArray.controls.forEach((control, index) => {
         for(let i = 0; i < this.warehouses.length; i++) {
           if(control.value && i == index) {
-            console.log(this.warehouses[i].id)
             warehousesToSend.push(this.warehouses[i].id);
           }
         }
@@ -103,13 +103,19 @@ export class WarehousesModalComponent implements OnInit {
 
     let dataToSend: TemplateZoneModel.ZonesWarehouses = {
       zones: zoneWarehouses
-    }
+    };
 
-    this.templateZonesService.assignZoneWarehouseSorter(dataToSend, this.idTemplate).subscribe((data) =>{
-      console.log(data);
-      this.close();
-    }, (err) => {
-      console.log(err);
+    this.templateZonesService.assignZoneWarehouseSorter(dataToSend, this.idTemplate).subscribe(async (data) =>{
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.presentToastSuccess('Asignación de tiendas actualizada.');
+      this.close(true);
+    }, async (err) => {
+      await this.intermediaryService.dismissLoading();
+      let errorMessage = 'Ha ocurrido un error al intentar actualizar la asignación de tiendas.';
+      if (err.error && err.error.errors) {
+        errorMessage = err.error.errors;
+      }
+      await this.intermediaryService.presentToastError(errorMessage);
     })
   }
 

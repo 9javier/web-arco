@@ -513,19 +513,21 @@ export class ListComponent implements OnInit {
         id: zoneByWarehouses[0].id
       }
     }));
-    modal.onDidDismiss().then(() => {
-      this.intermediaryService.presentLoading();
-      this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
-        this.zones = data.data;
-        this.radioButton = this.zones[0].id;
-        this.radioForm = this.formBuilder.group({
-          selectRadio: [this.radioButton]
+    modal.onDidDismiss().then((response) => {
+      if (response.data) {
+        this.intermediaryService.presentLoading();
+        this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
+          this.zones = data.data;
+          this.radioButton = this.zones[0].id;
+          this.radioForm = this.formBuilder.group({
+            selectRadio: [this.radioButton]
+          });
+          //this.initSelectActive(this.zones);
+          this.initRadioActive(this.zones);
+          this.intermediaryService.dismissLoading();
         });
-        //this.initSelectActive(this.zones);
-        this.initRadioActive(this.zones);
-        this.intermediaryService.dismissLoading();
-      });
-    })
+      }
+    });
     modal.present();
   }
 
