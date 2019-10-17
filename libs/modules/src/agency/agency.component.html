@@ -23,11 +23,11 @@
 											<mat-selection-list #warehousesSelection *ngFor="let warehouse of warehouses;">
 												
 											<mat-list-option *ngIf="!selectCheck(warehouse.id, agency.id)" [selected]="false" [value]="warehouse.name" (click)="assignToAgency(warehouse, agency)">
-												<p>{{ warehouse.name }}</p>
+												<p>{{ warehouse.reference }} {{ warehouse.name }}</p>
 											</mat-list-option>
 
 											<mat-list-option *ngIf="selectCheck(warehouse.id, agency.id)" [selected]="true" [value]="warehouse.name" (click)="removeToAgency(warehouse, agency)">
-												<p>{{ warehouse.name }}</p>
+												<p>{{ warehouse.reference }} {{ warehouse.name }}</p>
 											</mat-list-option>
 
 										</mat-selection-list>

@@ -9,7 +9,7 @@ import {ModalController} from "@ionic/angular";
 })
 export class WarehousesComponent implements OnInit {
   title = 'Almacenes';
-  displayedColumns: string[] = ['select', 'name', 'description', 'reference', 'buttons-warehouse'];
+  displayedColumns: string[] = ['select', 'reference', 'name', 'description', 'buttons-warehouse'];
   columns: any[] = [{name: 'Nombre', value: 'name'}, {name: 'Descripción', value: 'description'}, {name: 'Referencia', value: 'reference'}];
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses')
     .name;

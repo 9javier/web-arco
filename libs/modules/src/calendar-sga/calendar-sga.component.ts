@@ -320,9 +320,9 @@ export class CalendarSgaComponent implements OnInit {
                 name: destino.name
               });
               if (val2.destinos_label != '')
-                val2.destinos_label += ', ' + destino.name;
+                val2.destinos_label += ', ' + `${destino.reference} ${destino.name}`;
               else
-                val2.destinos_label = destino.name
+                val2.destinos_label = `${destino.reference} ${destino.name}`
             }
           });
         });

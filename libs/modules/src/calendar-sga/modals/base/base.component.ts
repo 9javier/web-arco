@@ -48,7 +48,8 @@ export class BaseComponent implements OnInit {
     else{
       var obj = {
         id: destination.id,
-        name: destination.name
+        name: destination.name,
+        reference: destination.reference
       };
       this.listCheck.push(obj);
     }
@@ -61,7 +62,8 @@ export class BaseComponent implements OnInit {
         if(isChecked){
           var obj = {
             id: destination.id,
-            name: destination.name
+            name: destination.name,
+            reference: destination.reference
           };
           this.listCheck.push(obj);
           destination.is_main = true;

@@ -1,8 +1,8 @@
 <ion-text color="primary">
   <h1>
-    <suite-breadcrumb *ngIf="warehouseSelected && !isMainWarehouseManagementSection()" [post]="warehouse?.name">
+    <suite-breadcrumb *ngIf="warehouseSelected && !isMainWarehouseManagementSection()" [post]="warehouse?.reference + ' ' + warehouse?.name">
     </suite-breadcrumb>
-    <suite-breadcrumb *ngIf="warehouseSelected && isMainWarehouseManagementSection()" [post]="warehouse?.name">
+    <suite-breadcrumb *ngIf="warehouseSelected && isMainWarehouseManagementSection()" [post]="warehouse?.reference + ' ' + warehouse?.name">
     </suite-breadcrumb>
   </h1>
 </ion-text>
@@ -22,7 +22,7 @@
           Seleccione un almacén
       </ion-label>  
       <ion-select (ionChange)="warehouseChange($event)" [(ngModel)]="warehouseSelected" placeholder="Location warehouse">
-      <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}
+      <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.reference}} {{warehouse.name}}
         </ion-select-option>
       </ion-select>
   </ion-item>

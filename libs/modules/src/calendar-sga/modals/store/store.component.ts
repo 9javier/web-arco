@@ -46,9 +46,9 @@ export class StoreComponent implements OnInit {
           id: destination.destinationWarehouse.id,
           name: destination.destinationWarehouse.name
         });
-      }
-      else  
+      } else {
         destination.destinationWarehouse.is_main = false;
+      }
 
       this.warehousesList.push(destination.destinationWarehouse);
     });

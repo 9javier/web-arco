@@ -66,7 +66,7 @@
                                     <ion-select class="ion-margin-horizontal" placeholder="Almacén" interface="popover"
                                         [(ngModel)]="warehouseSelected" (ngModelChange)="changeSelect(1)">
                                         <ion-select-option *ngFor="let warehouse of listWarehouses"
-                                            [value]="warehouse.id">{{warehouse.value}}</ion-select-option>
+                                            [value]="warehouse.id">{{warehouse.reference}} {{warehouse.value}}</ion-select-option>
                                     </ion-select>
                                 </div>
                             </ion-item>

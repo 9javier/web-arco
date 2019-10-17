@@ -13,12 +13,12 @@
             ">
 
                 <mat-list-option *ngIf="!warehouse.group || warehouse.group.id != group.id; else checked" [selected]="false" [value]="warehouse.name" (click)="assignGroupToWarehouse(warehouse, group)">
-                    <p>{{ warehouse.name }}</p>
+                    <p>{{ warehouse.reference }} {{ warehouse.name }}</p>
                 </mat-list-option>
 
                 <ng-template #checked>
                     <mat-list-option [selected]="true" [value]="warehouse.name" (click)="deleteGroupFromWarehouse(warehouse, group)">
-                        <p>{{ warehouse.name }}</p>
+                        <p>{{ warehouse.reference }} {{ warehouse.name }}</p>
                     </mat-list-option>
                 </ng-template>
 

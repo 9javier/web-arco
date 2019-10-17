@@ -21,7 +21,7 @@
                         </ion-item>
                         <ion-item *ngFor="let item of destinations; let j = index" no-padding lines="none">
                             <mat-checkbox [checked]="item.is_main" (click)="addValueArray(item)">
-                                {{ item.name }}
+                              {{ item.reference }} {{ item.name }}
                             </mat-checkbox>
                         </ion-item>
                     </div>

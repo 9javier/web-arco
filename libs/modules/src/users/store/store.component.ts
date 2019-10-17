@@ -97,7 +97,7 @@ export class StoreComponent implements OnInit {
       inputs: this.warehouses.map(warehouse => {
         return (<any>{
           name: "warehouse",
-          label: warehouse.name,
+          label: `${warehouse.reference} ${warehouse.name}`,
           type: "radio",
           value: warehouse.id
         })
@@ -119,8 +119,9 @@ export class StoreComponent implements OnInit {
    * @param warehouseId - id of warehouse to add
    */
   addWarehouseToUser(warehouseId: number): void {
+    let warehouseToAdd = this.warehouses.find(warehouse => warehouse.id == warehouseId);
     (<FormArray>this.createForm.get("permits")).push(this.formBuilder.group({
-      name: this.warehouses.find(warehouse => warehouse.id == warehouseId).name,
+      name: `${warehouseToAdd.reference} ${warehouseToAdd.name}`,
       warehouse: warehouseId,
       roles: (new FormArray(this.roles.map(rol => new FormControl(false))))
     }));    

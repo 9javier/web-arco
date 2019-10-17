@@ -9,7 +9,7 @@
         <ion-label position="floating">Almacén</ion-label>
         <!-- Input Select -->
         <ion-select placeholder="Almacén" formControlName="id">
-            <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.name}}</ion-select-option>
+            <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">{{warehouse.reference}} {{warehouse.name}}</ion-select-option>
         </ion-select>
     </ion-item>
     <br>

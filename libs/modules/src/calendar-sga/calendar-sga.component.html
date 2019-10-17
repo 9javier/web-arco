@@ -68,7 +68,7 @@
             <ion-item formArrayName="origins" *ngFor="let warehouse of warehousesOriginList;let i = index" lines="none">
               <ion-label lines="none" no-padding>
                 <mat-checkbox [formControlName]="i">
-                  {{ warehouse.name }}
+                  {{ warehouse.reference}} {{ warehouse.name }}
                 </mat-checkbox>
               </ion-label>
               <ion-icon name="arrow-forward" slot="end"></ion-icon>

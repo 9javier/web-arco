@@ -101,7 +101,7 @@ export class WarehouseService {
       .then((data: Observable<HttpResponse<any>>) => {
         data.subscribe((res: HttpResponse<any>) => {
           res.body.data.forEach(warehouse => {
-            this.listWarehouses.push({id: warehouse.id, value: warehouse.name, has_racks: warehouse.has_racks });
+            this.listWarehouses.push({id: warehouse.id, value: warehouse.name, has_racks: warehouse.has_racks, reference: warehouse.reference });
             warehouse.racks.forEach(hall => {
               if (typeof this.listHalls[warehouse.id] == 'undefined') {
                 this.listHalls[warehouse.id] = [];
