@@ -5,6 +5,8 @@ import {environment} from "../../../../environments/environment";
 import {switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
 import {ReceptionModel} from "../../../../models/endpoints/Reception";
+import {HttpRequestModel} from "../../../../models/endpoints/HttpRequest";
+import {RequestsProvider} from "../../../../providers/requests/requests.provider";
 
 @Injectable({
   providedIn: 'root'
@@ -20,24 +22,17 @@ export class ReceptionService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
   ) {}
 
-  postReceive(parameters: ReceptionModel.Reception) : Observable<ReceptionModel.ResponseReceive> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      parameters.force = true;
-
-      return this.http.post<ReceptionModel.ResponseReceive>(this.postReceiveUrl, parameters, { headers });
-    }));
+  postReceive(parameters: ReceptionModel.Reception) : Promise<HttpRequestModel.Response> {
+    parameters.force = true;
+    return this.requestsProvider.post(this.postReceiveUrl, parameters);
   }
 
-  getCheckPacking(packingReference: string) : Observable<ReceptionModel.ResponseCheckPacking> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.get<ReceptionModel.ResponseCheckPacking>(this.getCheckPackingUrl+packingReference, { headers });
-    }));
+  getCheckPacking(packingReference: string) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getCheckPackingUrl + packingReference);
   }
 
   getCheckProductsPacking(packingReference: string) : Observable<ReceptionModel.ResponseCheckProductsPacking> {
@@ -50,19 +45,11 @@ export class ReceptionService {
     }));
   }
 
-  postReceiveProduct(parameters: ReceptionModel.ReceptionProduct) : Observable<ReceptionModel.ResponseReceptionProduct> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.post<ReceptionModel.ResponseReceptionProduct>(this.postReceiveProductUrl, parameters, { headers });
-    }));
+  postReceiveProduct(parameters: ReceptionModel.ReceptionProduct) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postReceiveProductUrl, parameters);
   }
 
-  getNotReceivedProducts(packingReference: string) : Observable<ReceptionModel.ResponseNotReceivedProducts> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.get<ReceptionModel.ResponseNotReceivedProducts>(this.getNotReceivedProductsUrl+packingReference, { headers });
-    }));
+  getNotReceivedProducts(packingReference: string) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getNotReceivedProductsUrl + packingReference);
   }
 }

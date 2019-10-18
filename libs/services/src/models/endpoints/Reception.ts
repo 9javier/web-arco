@@ -1,4 +1,5 @@
 import {ProductModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace ReceptionModel {
   export interface ReceptionProduct {
@@ -11,7 +12,7 @@ export namespace ReceptionModel {
     packingReference: string,
   }
 
-  export interface ResponseReceive {
+  export interface ResponseReceive extends HttpRequestModel.Response {
     data: {
       pickingId: number,
       quantity: number
@@ -21,7 +22,7 @@ export namespace ReceptionModel {
     errors: any
   }
 
-  export interface ResponseCheckPacking {
+  export interface ResponseCheckPacking extends HttpRequestModel.Response {
     data: any,
     message: string,
     code: number,
@@ -38,7 +39,7 @@ export namespace ReceptionModel {
     errors: any
   }
 
-  export interface ResponseReceptionProduct {
+  export interface ResponseReceptionProduct extends HttpRequestModel.Response {
     data: {
       remainingProducts: number,
       inventoryPacking: any
@@ -48,7 +49,7 @@ export namespace ReceptionModel {
     errors: any
   }
 
-  export interface ResponseNotReceivedProducts {
+  export interface ResponseNotReceivedProducts extends HttpRequestModel.Response {
     data: string,
     message: string,
     code: number,

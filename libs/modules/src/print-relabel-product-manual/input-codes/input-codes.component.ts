@@ -85,7 +85,7 @@ export class InputCodesComponent implements OnInit {
   private getSizeListByReference(dataWrote: string) {
     this.productsService
       .getInfo(dataWrote)
-      .subscribe(async (res: ProductModel.ResponseInfo) => {
+      .then(async (res: ProductModel.ResponseInfo) => {
         if (res.code == 200) {
           let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
@@ -113,6 +113,10 @@ export class InputCodesComponent implements OnInit {
           this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
         }
       }, (error) => {
+        console.error('Error::Subscribe::GetInfo -> ', error);
+        this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+      })
+      .catch((error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
       });

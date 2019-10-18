@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import {from, Observable} from "rxjs";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {switchMap} from "rxjs/operators";
 import {AuthenticationService} from "@suite/services";
-import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
 
 @Injectable({
   providedIn: 'root'
@@ -15,17 +14,13 @@ export class PackingInventoryService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
   ) {}
 
-  getCarrierOfProduct(reference: string) : Observable<PackingInventoryModel.ResponseGetCarrierOfProduct> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      let url = this.getCarrierOfProductUrl.replace('{{reference}}', reference);
-
-      return this.http.get<PackingInventoryModel.ResponseGetCarrierOfProduct>(url, { headers });
-    }));
+  getCarrierOfProduct(reference: string) : Promise<HttpRequestModel.Response> {
+    let url = this.getCarrierOfProductUrl.replace('{{reference}}', reference);
+    return this.requestsProvider.get(url);
   }
 
 }

@@ -11,6 +11,8 @@ import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
 import { forEach } from '@angular/router/src/utils/collection';
 import {ProductModel} from "@suite/services";
+import {RequestsProvider} from "../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../models/endpoints/HttpRequest";
 
 declare let cordova: any;
 
@@ -27,8 +29,13 @@ export class PrinterService {
 
   private address: string;
 
-  constructor(private http:HttpClient,private toastController: ToastController, private settingsService: SettingsService,private priceService:PriceService) {
-  }
+  constructor(
+    private http: HttpClient,
+    private toastController: ToastController,
+    private settingsService: SettingsService,
+    private priceService: PriceService,
+    private requestsProvider: RequestsProvider)
+  {}
 
   public async openConnection(showAlert: boolean = false) {
     this.address = await this.getConfiguredAddress();
@@ -253,12 +260,9 @@ export class PrinterService {
    * Get products by reference in api
    * @returns an observable with the list of products needed
    */
-  getProductsByReference(references: string[]):Observable<Array<any>>{
+  getProductsByReference(references: string[]) : Promise<HttpRequestModel.Response> {
     console.debug("PRINT::getProductsByReference 1 [" + new Date().toJSON() + "]", references);
-    return this.http.post(this.getProductsByReferenceUrl,{references}).pipe(map((response:any)=>{
-      console.debug("PRINT::getProductsByReference 2 [" + new Date().toJSON() + "]", response);
-      return response.data;
-    }))
+    return this.requestsProvider.post(this.getProductsByReferenceUrl, { references });
   }
 
   /**
@@ -311,10 +315,10 @@ export class PrinterService {
    * Obtain product by reference and then print each of these products
    * @param listReferences references to print
    */
-   printTagBarcode(listReferences: string[]): Observable<Boolean> {
+   printTagBarcode(listReferences: string[]): Observable<Boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
     /** declare and obsevable to merge all print results */
-    let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+    let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
       }).pipe(flatMap((r) => {
@@ -324,7 +328,9 @@ export class PrinterService {
       }));
       /**obtain the products */
       console.debug("PRINT::printTagBarcode 2 [" + new Date().toJSON() + "]", listReferences);
-      return this.getProductsByReference(listReferences).pipe(flatMap((products) => {
+      return this.getProductsByReference(listReferences).then((response: HttpRequestModel.Response) => {
+        console.debug("PRINT::getProductsByReference 2 [" + new Date().toJSON() + "]", response);
+        let products = response.data;
         let dataToPrint = this.processProductToPrintTagBarcode(products);
 
         innerObservable = innerObservable.pipe(flatMap(product => {
@@ -332,7 +338,7 @@ export class PrinterService {
         }));
         console.debug("PRINT::printTagBarcode 3 [" + new Date().toJSON() + "]", listReferences);
         return innerObservable;
-      }));
+      });
     }));
     console.debug("PRINT::printTagBarcode 4 [" + new Date().toJSON() + "]", listReferences);
     return observable;

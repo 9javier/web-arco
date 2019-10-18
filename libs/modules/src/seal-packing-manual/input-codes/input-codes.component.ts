@@ -62,7 +62,7 @@ export class InputCodesComponent implements OnInit {
           .postSeal({
             reference: dataWrote
           })
-          .subscribe((res: CarrierModel.ResponseSeal) => {
+          .then((res: CarrierModel.ResponseSeal) => {
             this.intermediaryService.dismissLoading();
             if (res.code == 200) {
               let msgOk = 'El recipiente';
@@ -80,8 +80,11 @@ export class InputCodesComponent implements OnInit {
             this.intermediaryService.dismissLoading();
             let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
             this.presentToast(errorMsg, 'danger');
-          }, () => {
+          })
+          .catch((error) => {
             this.intermediaryService.dismissLoading();
+            let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+            this.presentToast(errorMsg, 'danger');
           });
       } else {
         this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');

@@ -1,6 +1,7 @@
 import {Request} from './request';
 import {ShoesPickingModel} from "./ShoesPicking";
 import {FiltersModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
 export namespace InventoryModel {
 
   export interface Picking {
@@ -90,7 +91,7 @@ export namespace InventoryModel {
     data: Inventory[];
   }
 
-  export interface ResponseStore {
+  export interface ResponseStore extends HttpRequestModel.Response {
     data: {
       "rollback": boolean,
       "validateBody": boolean,
@@ -143,7 +144,7 @@ export namespace InventoryModel {
     code: number;
   }
 
-  export interface ResponsePicking {
+  export interface ResponsePicking extends HttpRequestModel.Response {
     data?: {
       inventory?: ShoesPickingModel.ShoesPicking,
       shoePickingPending?: ShoesPickingModel.ShoesPicking[]
@@ -157,7 +158,7 @@ export namespace InventoryModel {
     inventoryId: number
   }
 
-  export interface ResponseCheckContainer {
+  export interface ResponseCheckContainer extends HttpRequestModel.Response {
     data?: {
       containerReference: string,
       inventory: Inventory

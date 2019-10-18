@@ -6,6 +6,8 @@ import { environment } from '../../../environments/environment';
 import {from} from "rxjs";
 import {map, switchMap} from "rxjs/operators";
 import {CarrierModel} from "../../../models/endpoints/Carrier";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +24,8 @@ export class CarriersService {
 
   constructor(
     private http: HttpClient,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
   ) {}
 
   postListByWarehouse(parameters: CarrierModel.ParamsListByWarehouse) : Observable<CarrierModel.ResponseListByWarehouse> {
@@ -41,18 +44,12 @@ export class CarriersService {
     }));
   }
 
-  postSeal(parameters: CarrierModel.ParamsSeal) : Observable<CarrierModel.ResponseSeal> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-
-      return this.http.post<CarrierModel.ResponseSeal>(this.postSealUrl, parameters, { headers });
-    }));
+  postSeal(parameters: CarrierModel.ParamsSeal) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postSealUrl, parameters);
   }
 
-  postTransferAmongPackings(params: CarrierModel.ParamsTransferAmongPackings): Observable<CarrierModel.ResponseTransferAmongPackings> {
-    return this.http.post<CarrierModel.ResponseTransferAmongPackings>(this.postTransferAmongPackingsUrl, params).pipe(map(response => {
-      return response;
-    }));
+  postTransferAmongPackings(params: CarrierModel.ParamsTransferAmongPackings): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postTransferAmongPackingsUrl, params);
   }
 
   getUpdatePackingStatusInPicking(pickingId: number) : Observable<any> {

@@ -1,4 +1,5 @@
 import {ProductModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace ShoesPickingModel {
   export interface Inventory {
@@ -51,14 +52,14 @@ export namespace ShoesPickingModel {
     product: ProductModel.ProductPicking;
   }
 
-  export interface ResponseListByPicking {
+  export interface ResponseListByPicking extends HttpRequestModel.Response {
     data: ShoesPicking[];
     message: string;
     code: number;
     errors: any;
   }
 
-  export interface ResponseProductNotFound {
+  export interface ResponseProductNotFound extends HttpRequestModel.Response {
     data: any,
     message: string,
     code: number,

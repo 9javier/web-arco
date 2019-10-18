@@ -3,9 +3,8 @@ import {InventoryService} from "../endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../models/endpoints/Inventory";
 import {WarehouseService} from "../endpoint/warehouse/warehouse.service";
 import {from, Observable} from "rxjs/index";
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
-import {PickingModel} from "../../models/endpoints/Picking";
 import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
 import {AuthenticationService} from "../endpoint/authentication/authentication.service";
@@ -13,6 +12,8 @@ import {Events} from "@ionic/angular";
 import {WarehouseModel} from "@suite/services";
 import {ScanditProvider} from "../../providers/scandit/scandit.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {RequestsProvider} from "../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../models/endpoints/HttpRequest";
 
 declare let Scandit;
 declare let GScandit;
@@ -53,7 +54,8 @@ export class ScanditService {
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
     private authenticationService: AuthenticationService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private requestsProvider: RequestsProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -126,7 +128,7 @@ export class ScanditService {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
           let productReference = code;
-          if (!this.isStoreUser && (!containerReference || !packingReference)) {
+          if (!this.isStoreUser && (!containerReference && !packingReference)) {
             this.positioningLog(3, "1.4.1", "no container!");
             ScanditMatrixSimple.setText(`Debe escanear una posición o embalaje para iniciar el posicionamiento`, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
             this.hideTextMessage(1500);
@@ -213,63 +215,51 @@ export class ScanditService {
   }
 
   private storeProductInContainer(params, responseScanning) {
-    this.inventoryService.postStore(params).then((data: Observable<HttpResponse<InventoryModel.ResponseStore>>) => {
-      data.subscribe((res: HttpResponse<InventoryModel.ResponseStore>) => {
-          ScanditMatrixSimple.hideLoadingDialog();
-          if (res.body.code == 200 || res.body.code == 201) {
-            this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
-            let msgSetText = '';
-            if (this.isStoreUser) {
-              msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
-            } else {
-              if (params.packingReference) {
-                msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
-              } else {
-                msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
-              }
-            }
-            ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
-            this.hideTextMessage(2000);
-          } else if (res.body.code == 428) {
-            this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
-            this.scannerPaused = true;
-            ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+    this.inventoryService
+      .postStore(params)
+      .then((res: InventoryModel.ResponseStore) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        if (res.code == 200 || res.code == 201) {
+          this.positioningLog(2, "1.4.2.2.2.1", "scan saved on server!!!!!");
+          let msgSetText = '';
+          if (this.isStoreUser) {
+            msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
           } else {
-            this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
-            let errorMessage = '';
-            if (res.body.errors.productReference && res.body.errors.productReference.message) {
-              errorMessage = res.body.errors.productReference.message;
+            if (params.packingReference) {
+              msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
             } else {
-              errorMessage = res.body.message;
+              msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
-            ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-            this.hideTextMessage(1500);
           }
-        }, (error) => {
-          ScanditMatrixSimple.hideLoadingDialog();
-          if (error.error.code == 428) {
-            this.positioningLog(3, "1.4.2.2.2.4", "error 428, stop pause!");
-            this.scannerPaused = true;
-            ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+          ScanditMatrixSimple.setText(msgSetText, BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
+          this.hideTextMessage(2000);
+        } else if (res.code == 428) {
+          this.positioningLog(3, "1.4.2.2.2.2", "error 428, stop pause!");
+          this.scannerPaused = true;
+          ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+        } else {
+          this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
+          let errorMessage = '';
+          if (res.errors.productReference && res.errors.productReference.message) {
+            errorMessage = res.errors.productReference.message;
           } else {
-            this.positioningLog(3, "1.4.2.2.2.5", "error unknown!!!");
-            ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-            this.hideTextMessage(1500);
+            errorMessage = res.message;
           }
+          ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
         }
-      );
-    }, (error: HttpErrorResponse) => {
-      ScanditMatrixSimple.hideLoadingDialog();
-      if (error.error.code == 428) {
-        this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
-        this.scannerPaused = true;
-        ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
-      } else {
-        this.positioningLog(3, "1.4.2.2.2.7", "error unknown!!!");
-        ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
-        this.hideTextMessage(1500);
-      }
-    });
+      }, (error) => {
+        ScanditMatrixSimple.hideLoadingDialog();
+        if (error.error.code == 428) {
+          this.positioningLog(3, "1.4.2.2.2.6", "error 428, stop pause!");
+          this.scannerPaused = true;
+          ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
+        } else {
+          this.positioningLog(3, "1.4.2.2.2.7", "error unknown!!!");
+          ScanditMatrixSimple.setText(error.message, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+          this.hideTextMessage(1500);
+        }
+      });
   }
 
   picking(pickingId: number, listProducts: ShoesPickingModel.ShoesPicking[], typePacking: number, typePicking: number) {
@@ -375,7 +365,7 @@ export class ScanditService {
                 pickingId: pickingId,
                 packingReference: code
               })
-                .subscribe((res) => {
+                .then((res) => {
                   ScanditMatrixSimple.hideLoadingDialog();
                   this.pickingLog(2, "9", ".subscribe((res) => {");
                   if (code.match(/J([0-9]){4}/)) {
@@ -443,6 +433,19 @@ export class ScanditService {
                     ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
                     this.hideTextMessage(2000);
                   }
+                })
+                .catch((error) => {
+                  ScanditMatrixSimple.hideLoadingDialog();
+                  this.pickingLog(2, "13", "}, (error) => {");
+                  if (error.error.code == 404) {
+                    this.pickingLog(2, "14", "if (error.error.code == 404) {");
+                    ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                    this.hideTextMessage(2000);
+                  } else {
+                    this.pickingLog(2, "15", "} else {");
+                    ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                    this.hideTextMessage(2000);
+                  }
                 });
             } else {
               this.pickingLog(2, "16", "} else {");
@@ -470,7 +473,7 @@ export class ScanditService {
               pickingId: pickingId,
               packingReference: code
             })
-              .subscribe((res) => {
+              .then((res) => {
                 ScanditMatrixSimple.hideLoadingDialog();
                 this.pickingLog(2, "21", ".subscribe((res) => {");
                 ScanditMatrixSimple.setText('Proceso finalizado correctamente.', BACKGROUND_COLOR_SUCCESS, TEXT_COLOR, 18);
@@ -483,6 +486,22 @@ export class ScanditService {
                   this.events.publish('picking:remove');
                 }, 1.5 * 1000);
               }, (error) => {
+                ScanditMatrixSimple.hideLoadingDialog();
+                this.pickingLog(2, "23", "}, (error) => {");
+                this.scannerPaused = false;
+                clearTimeout(scanUnlockTimeout);
+                this.clearTimeoutCleanLastCodeScanned();
+                if (error.error.code == 404) {
+                  this.pickingLog(2, "24", "if (error.error.code == 404) {");
+                  ScanditMatrixSimple.setText(literalsJailPallet[typePacking].not_registered, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                } else {
+                  this.pickingLog(2, "25", "} else {");
+                  ScanditMatrixSimple.setText(error.error.errors, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 16);
+                  this.hideTextMessage(2000);
+                }
+              })
+              .catch((error) => {
                 ScanditMatrixSimple.hideLoadingDialog();
                 this.pickingLog(2, "23", "}, (error) => {");
                 this.scannerPaused = false;
@@ -551,7 +570,7 @@ export class ScanditService {
                 this.hideTextMessage(2000);
                 ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                 this.getPendingListByPicking(pickingId)
-                  .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                  .then((res: ShoesPickingModel.ResponseListByPicking) => {
                     ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "37", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                     if (res.code == 200 || res.code == 201) {
@@ -571,7 +590,7 @@ export class ScanditService {
                         }, 2 * 1000);
                       }
                     }
-                  }, () => ScanditMatrixSimple.hideLoadingDialog());
+                  }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
               }
             };
             let subscribeError = (error) => {
@@ -581,7 +600,7 @@ export class ScanditService {
               this.hideTextMessage(2000);
               ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
               this.getPendingListByPicking(pickingId)
-                .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                .then((res: ShoesPickingModel.ResponseListByPicking) => {
                   ScanditMatrixSimple.hideLoadingDialog();
                   this.pickingLog(2, "43", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                   if (res.code == 200 || res.code == 201) {
@@ -602,14 +621,14 @@ export class ScanditService {
                     }
 
                   }
-                }, () => ScanditMatrixSimple.hideLoadingDialog());
+                }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
             };
 
             ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
             if (typePicking == 1) {
-              this.inventoryService.postPickingDirect(picking).subscribe(subscribeResponse, subscribeError);
+              this.inventoryService.postPickingDirect(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             } else {
-              this.inventoryService.postPickingConsolidated(picking).subscribe(subscribeResponse, subscribeError);
+              this.inventoryService.postPickingConsolidated(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             }
           } else {
             this.pickingLog(2, "48", "} else {");
@@ -623,13 +642,13 @@ export class ScanditService {
         if ((this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
           ScanditMatrixSimple.showLoadingDialog('Comprobando ubicación...');
           this.postCheckContainerProduct(code, productsToScan[0].inventory.id)
-            .subscribe((res: InventoryModel.ResponseCheckContainer) => {
+            .then((res: InventoryModel.ResponseCheckContainer) => {
               ScanditMatrixSimple.hideLoadingDialog();
               if (res.code == 200) {
                 let productNotFoundId = productsToScan[0].product.id;
                 ScanditMatrixSimple.showLoadingDialog('Marcando producto como no encontrado...');
                 this.putProductNotFound(pickingId, productNotFoundId)
-                  .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
+                  .then((res: ShoesPickingModel.ResponseProductNotFound) => {
                     ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "52", ".subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {");
                     if (res.code == 200 || res.code == 201) {
@@ -640,7 +659,7 @@ export class ScanditService {
                       this.hideTextMessage(1500);
                       ScanditMatrixSimple.showLoadingDialog('Consultando productos restantes...');
                       this.getPendingListByPicking(pickingId)
-                        .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
+                        .then((res: ShoesPickingModel.ResponseListByPicking) => {
                           ScanditMatrixSimple.hideLoadingDialog();
                           this.pickingLog(2, "54", ".subscribe((res: ShoesPickingModel.ResponseListByPicking) => {");
                           if (res.code == 200 || res.code == 201) {
@@ -661,13 +680,19 @@ export class ScanditService {
                             }
 
                           }
-                        }, () => ScanditMatrixSimple.hideLoadingDialog());
+                        }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
                     } else {
                       this.pickingLog(2, "59", "} else {");
                       ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
                       this.hideTextMessage(2000);
                     }
-                  }, error => {
+                  }, (error) => {
+                    ScanditMatrixSimple.hideLoadingDialog();
+                    this.pickingLog(2, "60", "}, error => {");
+                    ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
+                    this.hideTextMessage(2000);
+                  })
+                  .catch((error) => {
                     ScanditMatrixSimple.hideLoadingDialog();
                     this.pickingLog(2, "60", "}, error => {");
                     ScanditMatrixSimple.setText('Ha ocurrido un error al intentar reportar el producto como no encontrado.', BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
@@ -678,6 +703,12 @@ export class ScanditService {
                 this.hideTextMessage(1500);
               }
             }, (error) => {
+              ScanditMatrixSimple.hideLoadingDialog();
+              console.error('Error::Subscribe::CheckContainerProduct -> ', error);
+              ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
+              this.hideTextMessage(1500);
+            })
+            .catch((error) => {
               ScanditMatrixSimple.hideLoadingDialog();
               console.error('Error::Subscribe::CheckContainerProduct -> ', error);
               ScanditMatrixSimple.setText('El código escaneado no corresponde a la ubicación del producto.', this.scanditProvider.colorsMessage.error.color, this.scanditProvider.colorText.color, 16);
@@ -728,36 +759,24 @@ export class ScanditService {
     }, delay);
   }
 
-  private postVerifyPacking(packing) : Observable<any> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<any>(this.postVerifyPackingUrl, packing, { headers });
-    }));
+  private postVerifyPacking(params) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postVerifyPackingUrl, params);
   }
 
-  private getPendingListByPicking(pickingId: number) : Observable<ShoesPickingModel.ResponseListByPicking> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.get<ShoesPickingModel.ResponseListByPicking>(this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString()), { headers });
-    }));
+  private getPendingListByPicking(pickingId: number) : Promise<HttpRequestModel.Response> {
+    let url = this.getPendingListByPickingUrl.replace('{{id}}', pickingId.toString());
+    return this.requestsProvider.get(url);
   }
 
-  private putProductNotFound(pickingId: number, productId: number) : Observable<ShoesPickingModel.ResponseProductNotFound> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
-      putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
-      return this.http.put<ShoesPickingModel.ResponseProductNotFound>(putProductNotFoundUrl, { headers });
-    }));
+  private putProductNotFound(pickingId: number, productId: number) : Promise<HttpRequestModel.Response> {
+    let putProductNotFoundUrl = this.putProductNotFoundUrl.replace('{{workWaveOrderId}}', pickingId.toString());
+    putProductNotFoundUrl = putProductNotFoundUrl.replace('{{productId}}', productId.toString());
+    return this.requestsProvider.put(putProductNotFoundUrl, {});
   }
 
-  private postCheckContainerProduct(containerReference: string, inventoryId: number) : Observable<InventoryModel.ResponseCheckContainer> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      let params: InventoryModel.ParamsCheckContainer = { inventoryId, containerReference };
-
-      return this.http.post<InventoryModel.ResponseCheckContainer>(this.postCheckContainerProductUrl, params, { headers });
-    }));
+  private postCheckContainerProduct(containerReference: string, inventoryId: number) : Promise<HttpRequestModel.Response> {
+    let params: InventoryModel.ParamsCheckContainer = { inventoryId, containerReference };
+    return this.requestsProvider.post(this.postCheckContainerProductUrl, params);
   }
 
   positioningLog(type: 1|2|3, index, message, ...params: any[]) {

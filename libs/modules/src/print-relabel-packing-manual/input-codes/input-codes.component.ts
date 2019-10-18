@@ -70,22 +70,36 @@ export class InputCodesComponent implements OnInit {
   private getCarrierOfProductAndPrint(dataWrote: string) {
     this.packingInventorService
       .getCarrierOfProduct(dataWrote)
-      .subscribe((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
+      .then((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
         if (res.code == 200) {
           this.printerService.print({text: [res.data.reference], type: 0})
         } else {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
-          let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${dataWrote}.`;
-          if (res.message) {
-            msgError = res.message;
-          } else if (res.errors && typeof res.errors == 'string') {
+          let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
+          if (res.errors && typeof res.errors == 'string') {
             msgError = res.errors;
+          } else if (res.message) {
+            msgError = res.message;
           }
           this.presentToast(msgError, 'danger');
         }
       }, (error) => {
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
-        let msgError = `Ha ocurrido un error al intentar comprobar el recipiente del producto ${dataWrote}.`;
+        let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
+        if (error.error) {
+          if (error.error.message) {
+            msgError = error.error.message;
+          } else if (error.error.errors) {
+            msgError = error.error.errors;
+          } else if (typeof error.error == 'string') {
+            msgError = error.error;
+          }
+        }
+        this.presentToast(msgError, 'danger');
+      })
+      .catch((error) => {
+        console.error('Error::Subscribe::GetCarrierOfProduct::', error);
+        let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
         if (error.error) {
           if (error.error.message) {
             msgError = error.error.message;

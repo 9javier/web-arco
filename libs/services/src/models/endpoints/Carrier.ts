@@ -1,3 +1,5 @@
+import {HttpRequestModel} from "./HttpRequest";
+
 export namespace CarrierModel {
 
   export interface Carrier {
@@ -37,7 +39,7 @@ export namespace CarrierModel {
     code: number
   }
 
-  export interface ResponseSeal {
+  export interface ResponseSeal extends HttpRequestModel.Response {
     data: Carrier,
     message?: string,
     errors?: any,
@@ -49,7 +51,7 @@ export namespace CarrierModel {
     origin: string
   }
 
-  export interface ResponseTransferAmongPackings {
+  export interface ResponseTransferAmongPackings extends HttpRequestModel.Response {
     message: string,
     code: number
   }
