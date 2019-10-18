@@ -105,8 +105,13 @@ export class AuthenticationService {
 
   getCurrentUserId(): Promise<number> {
     return this.localStorageProvider.get(this.localStorageProvider.KEYS.USER_ID).then(res => {
-      if (res && typeof res == 'number') {
-        return res;
+      if (res && typeof res == 'string') {
+        let resAsInt = parseInt(res);
+        if (resAsInt) {
+          return resAsInt;
+        } else {
+          return null;
+        }
       } else {
         return null;
       }
