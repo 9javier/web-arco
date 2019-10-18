@@ -32,7 +32,8 @@ export class PickingTaskTemplateComponent implements OnInit {
 
     const popover = await this.popoverController.create({
       cssClass: 'popover-list-stores',
-      component: PopoverListStoresComponent
+      component: PopoverListStoresComponent,
+      event: event
     });
 
     await popover.present();
