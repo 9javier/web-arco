@@ -33,6 +33,8 @@ export class ListProductsComponent implements OnInit {
           return 'PENDIENTE';
         case 2:
           return 'ESCANEADO';
+        case 4:
+          return 'PREVENTILADO';
         default:
           return 'error';
       }
