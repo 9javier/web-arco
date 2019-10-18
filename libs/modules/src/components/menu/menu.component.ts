@@ -278,26 +278,6 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title: 'Sorter',
-      open: false,
-      type: 'wrapper',
-      icon: 'apps',
-      children: [
-        {
-          title: 'Entrada',
-          id: 'sorter-input',
-          url: '/sorter/input',
-          icon: 'log-in'
-        },
-        {
-          title: 'Salida',
-          id: 'sorter-output',
-          url: '/sorter/output',
-          icon: 'log-out'
-        }
-      ]
-    },
-    {
       title: 'Tarifas',
       open: false,
       type: 'wrapper',
@@ -406,6 +386,26 @@ export class MenuComponent implements OnInit {
           id: 'packing-transfer',
           url: '/packing/transfer',
           icon: 'redo'
+        }
+      ]
+    },
+    {
+      title: 'Sorter',
+      open: false,
+      type: 'wrapper',
+      icon: 'apps',
+      children: [
+        {
+          title: 'Entrada',
+          id: 'sorter-input',
+          url: '/sorter/input',
+          icon: 'log-in'
+        },
+        {
+          title: 'Salida',
+          id: 'sorter-output',
+          url: '/sorter/output',
+          icon: 'log-out'
         }
       ]
     },
