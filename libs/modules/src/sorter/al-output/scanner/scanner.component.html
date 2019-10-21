@@ -54,7 +54,8 @@
     *ngIf="firstProductScanned"
     [leftButton]="leftButtonText"
     [leftButtonDanger]="leftButtonDanger"
+    (leftButtonAction)="packingFull()"
     [rightButton]="rightButtonText"
-    (rightButtonAction)="emptyPacking()">
+    (rightButtonAction)="emptyWay()">
   </sorter-footer-buttons-scanner>
 </div>

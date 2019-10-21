@@ -22,7 +22,7 @@
     *ngIf="sorterProvider.colorActiveForUser"
     [userColorActive]="sorterProvider.colorActiveForUser"
     [actionButtonText]="'FINALIZAR'"
-    [message]="'el usuario ya tiene un proceso iniciado.'"
+    [message]="getMessageForNotificationActiveProcess()"
     (actionLaunched)="actionLaunched()">
   </sorter-notification-active-process>
 </ion-content>

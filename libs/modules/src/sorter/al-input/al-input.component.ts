@@ -1260,6 +1260,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
         await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
         this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
+        this.sorterProvider.processActiveForUser = 1;
         this.router.navigate(['sorter/input/scanner']);
         await this.intermediaryService.dismissLoading();
       }, async (error: HttpRequestModel.Error) => {
@@ -1277,6 +1278,16 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       'Va a finalizar el proceso activo actualmente para el usuario. <br/>¿Está seguro de querer hacerlo?',
       () => this.stopExecutionColor(true)
     );
+  }
+
+  getMessageForNotificationActiveProcess() : string {
+    if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser == 1) {
+      return 'el usuario ya tiene un proceso iniciado';
+    } else if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser == 2) {
+      return 'el usuario ya tiene un proceso de salida iniciado';
+    } else {
+      return '';
+    }
   }
 
   //region Endpoints requests
@@ -1301,16 +1312,20 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .then((res: ExecutionSorterModel.ResponseColorActive) => {
         if (res.code == 201) {
           this.sorterProvider.colorActiveForUser = res.data.color.hex;
+          this.sorterProvider.processActiveForUser = res.data.process;
         } else {
           this.sorterProvider.colorActiveForUser = null;
+          this.sorterProvider.processActiveForUser = null;
         }
       }, async (error) => {
         console.error('Error::Rejected::sorterExecutionService::getColorActive', error);
         this.sorterProvider.colorActiveForUser = null;
+        this.sorterProvider.processActiveForUser = null;
       })
       .catch(async (error) => {
         console.error('Error::Catch::sorterExecutionService::getColorActive', error);
         this.sorterProvider.colorActiveForUser = null;
+        this.sorterProvider.processActiveForUser = null;
       });
   }
 
@@ -1372,6 +1387,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
         this.sorterProvider.colorActiveForUser = null;
+        this.sorterProvider.processActiveForUser = null;
         if (waitingResponse) {
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess('Proceso finalizado', 1500);
