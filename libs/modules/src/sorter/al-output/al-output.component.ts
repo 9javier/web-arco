@@ -42,7 +42,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.stopExecutionColor(false);
+    if (this.sorterProvider.processActiveForUser == 2) {
+      this.stopExecutionColor(false);
+    }
   }
 
   private loadDefaultData() {

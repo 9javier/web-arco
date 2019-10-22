@@ -55,7 +55,9 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // Stop the execution color for user
-    this.stopExecutionColor(false);
+    if (this.sorterProvider.processActiveForUser == 1) {
+      this.stopExecutionColor(false);
+    }
   }
 
   private loadDefaultData() {
