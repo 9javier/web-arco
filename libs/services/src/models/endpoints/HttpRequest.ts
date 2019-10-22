@@ -5,7 +5,7 @@ export namespace HttpRequestModel {
     code?: number,
     data?: any,
     error?: any,
-    errors?: string
+    errors?: any
   }
 
   interface ApiError {
