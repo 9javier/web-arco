@@ -154,6 +154,10 @@ export * from './building/building.module';
 export * from './sorter/sorter.component';
 export * from './sorter/sorter.module';
 
+/**Racks */
+export * from './sorter/racks/racks.component';
+export * from './sorter/racks/racks.module';
+
 /**Sorter Create*/
 export * from './sorter-create/sorter-create.component';
 export * from './sorter-create/sorter-create.module';

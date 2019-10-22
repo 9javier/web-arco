@@ -1824,6 +1824,192 @@
 				}
 			]
 		},
+    {
+      "name": "Rack Sorter",
+      "item": [
+        {
+          "name": "Index",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/sorter/racks",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "sorter",
+                "racks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{url}}/api/sorter/racks/2",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "sorter",
+                "racks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"Sorter Rack 1\",\n\t\"reference\": \"E0002\",\n\t\"warehouse\": 2,\n\t\"belongWarehouse\": 2\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/sorter/racks",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "sorter",
+                "racks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n\t\"name\": \"Sorter Rack 1\",\n\t\"reference\": \"E0001\",\n\t\"warehouse\": 1,\n\t\"belongWarehouse\": 2\n}"
+            },
+            "url": {
+              "raw": "{{url}}/api/sorter/racks/2",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "sorter",
+                "racks",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Destroy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{access_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "name": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{url}}/api/sorter/racks/3",
+              "host": [
+                "{{url}}"
+              ],
+              "path": [
+                "api",
+                "sorter",
+                "racks",
+                "3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
 		{
 			"name": "Warehouses Group",
 			"item": [

@@ -287,6 +287,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'sorter/racks',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/sorter/racks/racks.module#RacksModule',
+    data: {
+      name: 'Estantes'
+    }
+  },
+  {
     path: 'sorter-new',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/sorter-create/sorter-create.module#SorterCreateModule',

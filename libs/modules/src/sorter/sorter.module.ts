@@ -28,6 +28,8 @@ import {SorterMatrixSelectedComponent} from "./template-selection/matrix-selecte
 import {SorterTemplateSelectionComponent} from "./template-selection/list-templates/template/template";
 import { MatrixSelectWaySorterComponent } from './list/components/matrix-select-way-sorter/matrix-select-way-sorter.component';
 import {NotificationActiveProcessSorterComponent} from "./notification-active-process/notification-active-process.component";
+import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { RacksComponent, RacksModule } from '@suite/common-modules';
 
 const routes:Routes = [
   {
@@ -42,6 +44,13 @@ const routes:Routes = [
     component: ListComponent,
     data: {
       name: 'Plantilla'
+    }
+  },
+  {
+    path: 'racks',
+    component: RacksComponent,
+    data: {
+      name: 'Estantes'
     }
   },
   {
@@ -115,7 +124,9 @@ const routes:Routes = [
     BreadcrumbModule,
     MatRadioModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    CommonUiCrudModule,
+    RacksModule
   ]
 })
 export class SorterModule { }
