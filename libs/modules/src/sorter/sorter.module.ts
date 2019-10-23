@@ -29,7 +29,8 @@ import {SorterTemplateSelectionComponent} from "./template-selection/list-templa
 import { MatrixSelectWaySorterComponent } from './list/components/matrix-select-way-sorter/matrix-select-way-sorter.component';
 import {NotificationActiveProcessSorterComponent} from "./notification-active-process/notification-active-process.component";
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
-import { RacksComponent, RacksModule } from '@suite/common-modules';
+import { RacksModule } from './racks/racks.module';
+import { RacksComponent } from './racks/racks.component';
 
 const routes:Routes = [
   {

@@ -43,8 +43,6 @@ import { HallModel } from "../../../../../../services/src/models/endpoints/Hall"
 import { WarehouseService } from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { PrinterService } from "../../../../../../services/src/lib/printer/printer.service";
 import { PdfGeneratorService } from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
-import { StoreComponent as storeSorterRack } from '../../../../../../modules/src/sorter/racks/store/store.component';
-// import { UpdateComponent as updateSorterRack } from '../../../../../../modules/src/sorter/racks/update/update.component';
 
 
 @Component({
@@ -116,7 +114,7 @@ export class ListComponent implements OnInit {
   }
 
   loadData() {
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets' || this.routePath == '/groups' || this.routePath == '/sorterRack') {
+    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets' || this.routePath == '/groups') {
       this.initUsers();
       this.parentPage = null;
     } else if (this.routePath == '/halls' || this.routePath == '/locations') {
@@ -216,8 +214,6 @@ export class ListComponent implements OnInit {
       storeComponent = storeGroup;
     } else if (this.routePath == '/pallets') {
       storeComponent = storePallet;
-    } else if (this.routePath == '/sorterRack') {
-      storeComponent = storeSorterRack;
     }
 
     if (storeComponent) {
@@ -252,8 +248,6 @@ export class ListComponent implements OnInit {
       updateComponent = updatePallet;
     } else if (this.routePath == '/groups') {
       updateComponent = updateGroup;
-    } else if (this.routePath == '/sorterRack') {
-      // updateComponent = updateSorterRack;
     }
 
     if (updateComponent) {

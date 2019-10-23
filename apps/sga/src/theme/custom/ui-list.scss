@@ -1,0 +1,13 @@
+.title-h3-table {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 20px;
+}
+
+.mat-checkbox-indeterminate.mat-primary .mat-checkbox-background, .mat-checkbox-checked.mat-primary .mat-checkbox-background {
+  background-color: #383838 !important;
+}
+
+mat-footer-row, mat-header-row, mat-row {
+  cursor: pointer;
+}

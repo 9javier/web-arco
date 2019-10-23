@@ -1,35 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { MatTableModule, MatCheckboxModule, MatInputModule, MatButtonModule, MatSelectModule, MatRadioModule, MatCardModule } from '@angular/material';
-import { CdkTableModule } from '@angular/cdk/table';
+
 import { RacksRoutingModule } from './racks-routing.module';
-import { CommonUiCrudModule } from '@suite/common/ui/crud';
-import { ComponentsModule } from '@suite/common-modules';
 import { RacksComponent } from './racks.component';
-import { StoreComponent } from './store/store.component';
+import { IonicModule } from '@ionic/angular';
+import { MatCheckboxModule, MatTableModule } from '@angular/material';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [RacksComponent, StoreComponent],
+  declarations: [RacksComponent],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    RacksRoutingModule,
     IonicModule,
     MatTableModule,
-    MatCheckboxModule,
-    RacksRoutingModule,
-    CdkTableModule,
-    CommonUiCrudModule,
-    ComponentsModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatRadioModule,
-    MatCardModule
-  ],
-  entryComponents: [
-    StoreComponent
+    ReactiveFormsModule,
+    MatCheckboxModule
   ]
 })
-export class RacksModule {}
+export class RacksModule { }

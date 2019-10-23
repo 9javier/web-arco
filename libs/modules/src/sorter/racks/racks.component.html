@@ -1,7 +1,53 @@
-<suite-ui-crud-list
-  padding
-  [dataColumns]="columns"
-  [displayedColumns]="displayedColumns"
-  [apiEndpoint]="apiEndpoint"
-  [routePath]="routePath"
-></suite-ui-crud-list>
+<ion-content>
+  <h3 class="title-h3-table" padding>{{title}}</h3>
+  <div class="table-container">
+    <mat-table multiTemplateDataRows [dataSource]="dataSource">
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox color='primary' (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()"
+                        [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox color='primary' (click)="$event.stopPropagation()"
+                        (change)="$event ? checkSelection(row) : null"
+                        [checked]="selection.isSelected(row)"
+                        [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef>Nombre</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.name}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="reference">
+        <mat-header-cell *matHeaderCellDef>Referencia</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.reference}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="warehouse">
+        <mat-header-cell *matHeaderCellDef>Almacén</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.warehouse.name}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="belongWarehouse">
+        <mat-header-cell *matHeaderCellDef>Pertenece</mat-header-cell>
+        <mat-cell *matCellDef="let element">{{element.belongWarehouse.name}}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToUpdate(row)"></mat-row>
+    </mat-table>
+  </div>
+</ion-content>
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button margin (click)="confirmDelete()" *ngIf="showDeleteButton" color="danger"><i class="material-icons">delete</i></ion-fab-button>
+    <ion-fab-button margin (click)="print()" *ngIf="showDeleteButton"><i class="material-icons">print</i></ion-fab-button>
+    <ion-fab-button margin (click)="goToStore()"><i class="material-icons">add</i></ion-fab-button>
+  </ion-fab>
+</ion-footer>
