@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthenticationService, environment, UserModel } from '@suite/services';
 import { RackModel } from '../../../models/endpoints/rack.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,12 @@ export class RackService {
       headers,
       observe: 'response'
     });
+  }
+
+  store(rack):Observable<RackModel.Rack>{
+    return this.http.post<RackModel.SingleRackResponse>(this.rackUrl,rack).pipe(map(response=>{
+      return response.data;
+    }));
   }
 
   delete(id: number):Observable<any>{

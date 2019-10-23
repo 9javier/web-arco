@@ -31,6 +31,7 @@ import {NotificationActiveProcessSorterComponent} from "./notification-active-pr
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import { RacksModule } from './racks/racks.module';
 import { RacksComponent } from './racks/racks.component';
+import { StoreComponent } from './racks/store/store.component';
 
 const routes:Routes = [
   {

@@ -1,4 +1,5 @@
 import { WarehouseModel } from '@suite/services';
+import { Request } from './request';
 
 export namespace RackModel {
     export interface Rack {
@@ -13,6 +14,10 @@ export namespace RackModel {
 
   export interface ResponseIndex {
     data: Rack[];
+  }
+
+  export interface SingleRackResponse extends Request.Success{
+    data:Rack
   }
 
   export interface ResponseDestroy {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { MatTableDataSource } from '@angular/material';
 import { RackModel } from '../../../../services/src/models/endpoints/rack.model';
 import { FormBuilder } from '@angular/forms';
@@ -9,6 +9,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Observable } from 'rxjs';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
+import { StoreComponent } from '../../jail/store/store.component';
 
 @Component({
   selector: 'suite-racks',
@@ -86,8 +87,14 @@ export class RacksComponent implements OnInit {
 
   }
 
-  goToStore() {
-
+  async goToStore() {
+    const modal = (await this.modalCtrl.create({
+      component: StoreComponent
+    }));
+    modal.onDidDismiss().then(async () => {
+      await this.getRacks();
+    });
+    modal.present();
   }
 
   goToUpdate(row?: RackModel.Rack) {
