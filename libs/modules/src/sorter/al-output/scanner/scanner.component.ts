@@ -136,7 +136,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   async emptyWay() {
     let showModalWithCount = async () => {
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
-      let countdown = 20;
+      let countdown = 10;
       let enableSetWayAsEmpty: boolean = false;
 
       let alertEmptyPacking = await this.alertController.create({
