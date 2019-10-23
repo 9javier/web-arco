@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{rackService.form.controls['id'].value ? "Actualizar Estante" : "Crear Estante"}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding>
+  <form [formGroup]="rackService.form" class="normal-form">
+    <div class="controls-container">
+      <input formControlName="id" type="hidden">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre*</mat-label>
+        <mat-icon matPrefix>text_format</mat-icon>
+        <input matInput formControlName="name" placeholder="Nombre">
+        <mat-error>Este campo es requerido.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Referencia*</mat-label>
+        <mat-icon matPrefix>text_format</mat-icon>
+        <input matInput type="text" placeholder="E0001" formControlName="reference" [specialCharacters]="['E']" mask="E0000">
+        <mat-error>Este campo es requerido.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Almacen*</mat-label>
+        <mat-icon matPrefix>format_line_spacing</mat-icon>
+        <mat-select formControlName="warehouse">
+          <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+            {{warehouse.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error>Este campo es requerido.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Pertenece*</mat-label>
+        <mat-icon matPrefix>format_line_spacing</mat-icon>
+        <mat-select formControlName="belongWarehouse">
+          <mat-option *ngFor="let belongWarehouse of belongWarehouses" [value]="belongWarehouse.id">
+            {{belongWarehouse.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error>Este campo es requerido.</mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="primary" type="submit" [disabled]="rackService.form.invalid" (click)="onSubmit()">Guardar</ion-button>
+  </ion-toolbar>
+</ion-footer>
+

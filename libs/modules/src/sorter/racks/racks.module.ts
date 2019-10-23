@@ -1,23 +1,35 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { RacksRoutingModule } from './racks-routing.module';
 import { RacksComponent } from './racks.component';
 import { IonicModule } from '@ionic/angular';
-import { MatCheckboxModule, MatTableModule } from '@angular/material';
+import {
+  MatCheckboxModule,
+  MatFormFieldModule,
+  MatGridListModule, MatIconModule,
+  MatInputModule, MatSelectModule,
+  MatTableModule
+} from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
-import { StoreComponent } from './store/store.component';
+import { StoreUpdateComponent } from './store-update/store-update.component';
+import { NgxMaskModule } from 'ngx-mask';
 
 @NgModule({
-  declarations: [RacksComponent, StoreComponent],
-  entryComponents: [StoreComponent],
+  declarations: [RacksComponent, StoreUpdateComponent],
+  entryComponents: [StoreUpdateComponent],
   imports: [
     CommonModule,
     RacksRoutingModule,
     IonicModule,
     MatTableModule,
     ReactiveFormsModule,
-    MatCheckboxModule
-  ],
+    MatCheckboxModule,
+    MatGridListModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    NgxMaskModule,
+    MatSelectModule
+  ]
 })
 export class RacksModule { }

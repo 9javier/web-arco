@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { MatTableDataSource } from '@angular/material';
-import { RackModel } from '../../../../services/src/models/endpoints/rack.model';
 import { FormBuilder } from '@angular/forms';
 import { IntermediaryService } from '@suite/services';
-import { RackService } from '../../../../services/src/lib/endpoint/rack/rack.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Observable } from 'rxjs';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { switchMap } from 'rxjs/operators';
-import { StoreComponent } from '../../jail/store/store.component';
+import { RackModel } from '../../../../services/src/models/endpoints/rack.model';
+import { RackService } from '../../../../services/src/lib/endpoint/rack/rack.service';
+import { StoreUpdateComponent } from './store-update/store-update.component';
 
 @Component({
   selector: 'suite-racks',
@@ -87,9 +87,12 @@ export class RacksComponent implements OnInit {
 
   }
 
-  async goToStore() {
+  async goToDialog() {
     const modal = (await this.modalCtrl.create({
-      component: StoreComponent
+      component: StoreUpdateComponent,
+      showBackdrop: true,
+      keyboardClose: false,
+      backdropDismiss: false,
     }));
     modal.onDidDismiss().then(async () => {
       await this.getRacks();
@@ -97,8 +100,9 @@ export class RacksComponent implements OnInit {
     modal.present();
   }
 
-  goToUpdate(row?: RackModel.Rack) {
-    console.log(row);
+  async goToUpdate(row?: RackModel.Rack) {
+    this.rackService.populateForm(row);
+    await this.goToDialog();
   }
 
   async presentDeleteAlert() {

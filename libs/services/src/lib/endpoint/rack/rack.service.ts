@@ -1,20 +1,48 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthenticationService, environment, UserModel } from '@suite/services';
+import { AuthenticationService, environment } from '@suite/services';
 import { RackModel } from '../../../models/endpoints/rack.model';
 import { map } from 'rxjs/operators';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RackService {
   private rackUrl:string = environment.apiBase+"/sorter/racks";
-  private singleRackUrl:string = environment.apiBase+"/sorter/racks/";
   constructor(
     private http:HttpClient,
     private auth: AuthenticationService
   ) { }
+
+  form: FormGroup = new FormGroup({
+    id: new FormControl(''),
+    name: new FormControl('', [Validators.required, Validators.minLength(5)]),
+    reference: new FormControl('', [Validators.required]),
+    warehouse: new FormControl('', Validators.required),
+    belongWarehouse: new FormControl('', Validators.required),
+  });
+
+  initializeFormGroup() {
+    this.form.setValue({
+      id: '',
+      name: '',
+      reference: '',
+      warehouse: '',
+      belongWarehouse: ''
+    });
+  }
+
+  populateForm(rack: RackModel.Rack) {
+    this.form.setValue({
+      id: rack.id,
+      name: rack.name,
+      reference: rack.reference,
+      warehouse: rack.warehouse,
+      belongWarehouse: rack.belongWarehouse
+    });
+  }
 
   async getIndex(): Promise<Observable<HttpResponse<RackModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
@@ -26,13 +54,21 @@ export class RackService {
     });
   }
 
-  store(rack):Observable<RackModel.Rack>{
+  delete(id: number):Observable<any>{
+    return this.http.delete(`${this.rackUrl}/${id}`);
+  }
+
+  store(rack: RackModel.Rack):Observable<RackModel.Rack> {
     return this.http.post<RackModel.SingleRackResponse>(this.rackUrl,rack).pipe(map(response=>{
       return response.data;
     }));
   }
 
-  delete(id: number):Observable<any>{
-    return this.http.delete(`${this.singleRackUrl}${id}`);
+  update(id: number, rack: RackModel.Rack) {
+    console.log(id);
+    console.log(rack);
+    return this.http.put<RackModel.SingleRackResponse>(`${this.rackUrl}/${id}`, rack).pipe(map((response) =>{
+      return response.data;
+    }));
   }
 }

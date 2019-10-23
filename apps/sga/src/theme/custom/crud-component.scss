@@ -5,3 +5,36 @@ suite-ui-crud-store {
 suite-ui-crud-update {
   height: 100%;
 }
+
+.controls-container {
+  width: 100%;
+
+  mat-form-field {
+    width: 100%;
+
+    .mat-form-field-empty.mat-form-field-label {
+      margin-top: 0;
+    }
+
+    input.mat-input-element {
+      margin-bottom: 5px;
+    }
+
+    .mat-select-trigger {
+      top: -2px;
+    }
+
+    .mat-form-field-suffix .mat-icon {
+      font-size: 180%;
+      margin-right: 10px;
+    }
+
+    .mat-form-field-prefix .mat-icon {
+      margin-right: 10px;
+    }
+  }
+}
+
+.controls-container > * {
+  width: 100%;
+}

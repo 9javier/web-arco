@@ -26,9 +26,9 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import localeEs from '@angular/common/locales/es';
 import {registerLocaleData} from "@angular/common";
 import {MondayStartingDateAdapterService} from "../../../../libs/services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
+import { NgxMaskModule } from 'ngx-mask';
 
 registerLocaleData(localeEs);
-
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
   entryComponents: [ErrordialogComponent],
@@ -47,7 +47,8 @@ registerLocaleData(localeEs);
     MatDatepickerModule,
     MatNativeDateModule,
     BreadcrumbModule,
-    MenuModule
+    MenuModule,
+    NgxMaskModule.forRoot()
   ],
   providers: [
     StatusBar,
