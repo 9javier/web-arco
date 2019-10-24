@@ -20,14 +20,18 @@ export namespace ScanditModel {
     },
     reasonId: number,
     requestReference: string,
-    response: boolean
+    response: boolean,
+    actionIonic?: string,
+    params?: string
   }
 
   export interface ResponsePrintTags extends Response {
     action: ActionsPrintTags,
     type_tags?: 1|2,
     size_selected?: number,
-    response: boolean
+    response: boolean,
+    actionIonic?: string,
+    params?: string
   }
 
   export interface ResponseProductInfo extends Response {

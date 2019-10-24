@@ -253,6 +253,9 @@ var ScanditMatrixSimple = {
    */
   hideInfoProductDialog: function () {
     exec(null, null, PLUGIN_NAME, "matrixPickingStoresHideInfoProductDialog", []);
+  },
+  setTimeout: function (actionIonic, delay, params) {
+    exec(null, null, PLUGIN_NAME, "setTimeout", [actionIonic, delay, params]);
   }
 }
 
