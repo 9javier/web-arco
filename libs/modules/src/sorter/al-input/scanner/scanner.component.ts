@@ -294,10 +294,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     }
 
     this.timeoutToQuickStarted = setTimeout(async () => {
-      console.debug('Test::timeout quick');
       await this.intermediaryService.presentLoading('Forzando la salida del usuario de la tarea...');
       setTimeout(() => {
-        console.debug('Test::timeout hide loading');
         this.stopExecutionInput();
       }, 3 * 1000);
     }, this.timeMillisToQuickUserFromSorterProcess);

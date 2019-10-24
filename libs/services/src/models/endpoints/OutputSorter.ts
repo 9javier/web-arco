@@ -4,6 +4,7 @@ export namespace OutputSorterModel {
 
   export interface OutputSorter {
     destinyWarehouse: ProductSorterModel.DestinyWarehouseSorter,
-    packingReference?: string
+    packingReference?: string,
+    wayId: number
   }
 }

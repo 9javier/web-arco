@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {ColorSorterModel} from "../../models/endpoints/ColorSorter";
 import {TemplateSorterModel} from "../../models/endpoints/TemplateSorter";
+import {OutputSorterModel} from "../../models/endpoints/OutputSorter";
 
 @Injectable({
   providedIn: 'root'
@@ -39,11 +40,27 @@ export class SorterProvider {
     this._colorActiveForUser = value;
   }
 
+  private _processActiveForUser: number;
+  get processActiveForUser(): number {
+    return this._processActiveForUser;
+  }
+  set processActiveForUser(value: number) {
+    this._processActiveForUser = value;
+  }
+
   private _templateToEditSelected: TemplateSorterModel.Template;
   get templateToEditSelected(): TemplateSorterModel.Template {
     return this._templateToEditSelected;
   }
   set templateToEditSelected(value: TemplateSorterModel.Template) {
     this._templateToEditSelected = value;
+  }
+
+  private _infoSorterOutputOperation: OutputSorterModel.OutputSorter;
+  get infoSorterOutputOperation(): OutputSorterModel.OutputSorter {
+    return this._infoSorterOutputOperation;
+  }
+  set infoSorterOutputOperation(value: OutputSorterModel.OutputSorter) {
+    this._infoSorterOutputOperation = value;
   }
 }

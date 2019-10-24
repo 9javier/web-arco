@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="info-product-wrong-code" *ngIf="firstProductScanned && wrongCodeScanned">
+  <div class="info-product-wrong-code" *ngIf="firstProductScanned && wrongCodeScanned && !packingIsFull">
     <div class="store">
       <span [ngClass]="infoSorterOperation.destinyWarehouse.id != lastProductScannedChecking.destinyWarehouse.id ? 'wrong-store' : ''">
         {{ lastProductScannedChecking.destinyWarehouse.reference + ' ' + lastProductScannedChecking.destinyWarehouse.name }}
@@ -32,10 +32,10 @@
     </div>
   </div>
 
-  <p *ngIf="firstProductScanned && !wrongCodeScanned" class="message-guide-finish">
+  <p *ngIf="firstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
     Escanea el último artículo del sorter para acabar.
   </p>
-  <p *ngIf="firstProductScanned && wrongCodeScanned" class="message-guide-wrong-code">
+  <p *ngIf="firstProductScanned && wrongCodeScanned && !packingIsFull" class="message-guide-wrong-code">
     ¡Escanea cada artículo y revisa destino!
   </p>
 
@@ -51,10 +51,11 @@
   <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
 
   <sorter-footer-buttons-scanner
-    *ngIf="firstProductScanned"
+    *ngIf="processStarted && infoSorterOperation.packingReference"
     [leftButton]="leftButtonText"
     [leftButtonDanger]="leftButtonDanger"
+    (leftButtonAction)="packingFull()"
     [rightButton]="rightButtonText"
-    (rightButtonAction)="emptyPacking()">
+    (rightButtonAction)="emptyWay()">
   </sorter-footer-buttons-scanner>
 </div>
