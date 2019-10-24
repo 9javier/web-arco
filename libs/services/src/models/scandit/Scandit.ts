@@ -20,7 +20,9 @@ export namespace ScanditModel {
     },
     reasonId: number,
     requestReference: string,
-    response: boolean
+    response: boolean,
+    actionIonic?: string,
+    params?: string
   }
 
   export interface ResponsePrintTags extends Response {
