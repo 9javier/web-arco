@@ -6,7 +6,6 @@ import {IntermediaryService} from "@suite/services";
 import {OutputSorterModel} from "../../../../../services/src/models/endpoints/OutputSorter";
 import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
 import {AlertController} from "@ionic/angular";
-import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints/ExecutionSorter";
 import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
 import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
@@ -51,7 +50,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     public sorterProvider: SorterProvider,
     private sorterOutputService: SorterOutputService,
     private scanditProvider: ScanditProvider,
-    private toolbarProvider: ToolbarProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
@@ -60,20 +58,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     },800); }
   
   ngOnInit() {
-    this.toolbarProvider.optionsActions.next([
-      {
-        icon: 'hand',
-        label: 'Finalizar',
-        action: async () => {
-          this.timeoutToQuickUser();
-          let callback = async () => {
-            await this.intermediaryService.presentLoading('Finalizando proceso de salida...');
-            this.stopExecutionOutput();
-          };
-          await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de salida en el sorter. ¿Está seguro?', callback);
-        }
-      }
-    ]);
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
   }
 
@@ -81,7 +65,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     if (this.timeoutToQuickStarted) {
       clearTimeout(this.timeoutToQuickStarted);
     }
-    this.toolbarProvider.optionsActions.next([]);
   }
 
   focusToInput() {
