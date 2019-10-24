@@ -37,7 +37,6 @@ export class StoreUpdateComponent implements OnInit {
   async onSubmit() {
     if (this.rackService.form.valid) {
       await this.intermediaryService.presentLoading();
-      this.rackService.form.value.reference = `E${this.rackService.form.value.reference.replace('E', '')}`;
 
       if (this.rackService.form.get('id').value === '') {
         this.rackService.form.removeControl('id');
@@ -55,13 +54,13 @@ export class StoreUpdateComponent implements OnInit {
           await this.intermediaryService.dismissLoading();
 
         });
-
+        this.rackService.form.addControl('id', new FormControl(''));
       } else {
-        const _id = this.rackService.form.get('id').value;
+        let _id = this.rackService.form.get('id').value;
         this.rackService.form.removeControl('id');
 
         this.rackService.update(_id, this.rackService.form.value).subscribe(async data => {
-          this.rackService.form.addControl('id', new FormControl(''));
+          _id = '';
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess('Estante actualizado con exito');
           await this.close();
@@ -71,11 +70,10 @@ export class StoreUpdateComponent implements OnInit {
           if (error.error.statusCode === ExceptionsType.ER_DUP_ENTRY && error.error.errors && error.error.errors.includes(ExceptionsType[ExceptionsType.ER_DUP_ENTRY])) {
             messageError = 'Ya existe un registro con los mismos datos';
           }
-          this.rackService.form.addControl('id', new FormControl(_id));
           await this.intermediaryService.presentToastError(messageError);
           await this.intermediaryService.dismissLoading();
-
         });
+        this.rackService.form.addControl('id', new FormControl(_id));
       }
     }
   }
