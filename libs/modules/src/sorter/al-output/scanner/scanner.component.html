@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="info-product-wrong-code" *ngIf="firstProductScanned && wrongCodeScanned && !packingIsFull">
+  <div class="info-product-wrong-code" *ngIf="wrongCodeScanned && !packingIsFull">
     <div class="store">
       <span [ngClass]="infoSorterOperation.destinyWarehouse.id != lastProductScannedChecking.destinyWarehouse.id ? 'wrong-store' : ''">
         {{ lastProductScannedChecking.destinyWarehouse.reference + ' ' + lastProductScannedChecking.destinyWarehouse.name }}
@@ -32,10 +32,10 @@
     </div>
   </div>
 
-  <p *ngIf="firstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
+  <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
     Escanea el último artículo del sorter para acabar.
   </p>
-  <p *ngIf="firstProductScanned && wrongCodeScanned && !packingIsFull" class="message-guide-wrong-code">
+  <p *ngIf="wrongCodeScanned && !packingIsFull" class="message-guide-wrong-code">
     ¡Escanea cada artículo y revisa destino!
   </p>
 

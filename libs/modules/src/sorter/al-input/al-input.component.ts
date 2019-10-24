@@ -1403,6 +1403,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         }
       }, async (error: HttpRequestModel.Error) => {
         if (waitingResponse) {
+          await this.intermediaryService.dismissLoading();
           let errorMessage = 'Ha ocurrido un error al intentar finalizar la ejecución actual del sorter par el usuario.';
           if (error.error && error.error.errors) {
             errorMessage = error.error.errors;

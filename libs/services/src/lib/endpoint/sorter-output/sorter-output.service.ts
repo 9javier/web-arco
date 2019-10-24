@@ -15,6 +15,7 @@ export class SorterOutputService {
   private postPackingFullUrl: string = environment.apiSorter + "/sorters/full-packing";
   private postBlockSorterWayUrl: string = environment.apiSorter + "/sorters/block-way";
   private postEmptyWayUrl: string = environment.apiSorter + "/sorters/empty-way-out";
+  private postGetIncidenceWayUrl: string = environment.apiSorter + "/sorter/execution/incidence/way";
   private getGetCurrentProcessWayUrl: string = environment.apiSorter + "/sorter/process/product/packing/get-way";
 
   constructor(
@@ -43,6 +44,10 @@ export class SorterOutputService {
 
   postEmptyWay(params: SorterOutputModel.ParamsEmptyWay) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postEmptyWayUrl, params);
+  }
+
+  postGetIncidenceWay(params: SorterOutputModel.ParamsGetIncidenceWay) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postGetIncidenceWayUrl, params);
   }
 
   getGetCurrentProcessWay() : Promise<HttpRequestModel.Response> {

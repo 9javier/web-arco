@@ -1,5 +1,5 @@
 import {ColorSorterModel} from "./ColorSorter";
-import {WarehouseModel} from "@suite/services";
+import {ProductModel, WarehouseModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
 import {ExecutionSorterModel} from "./ExecutionSorter";
 import {CarrierModel} from "./Carrier";
@@ -37,10 +37,15 @@ export namespace SorterOutputModel {
     wayId: number
   }
   export interface ScanProductPutInPacking {
-
+    productShoeUnit: ProductModel.Product,
+    packingId: number,
+    executionWays: ExecutionSorterModel.ExecutionWay,
+    createdAt: string,
+    updatedAt: string,
+    id: number
   }
   export interface ResponseScanProductPutInPacking extends HttpRequestModel.Response {
-    data: ScanProductPutInPacking
+    data: ScanProductPutInPacking[]
   }
 
   // Set the packing as full
@@ -76,5 +81,13 @@ export namespace SorterOutputModel {
   }
   export interface ResponseEmptyWay extends HttpRequestModel.Response {
     data: EmptyWay
+  }
+
+  // Check if way is with incidences
+  export interface ParamsGetIncidenceWay {
+    way: number
+  }
+  export interface ResponseGetIncidenceWay extends HttpRequestModel.Response {
+    data: boolean
   }
 }

@@ -24,7 +24,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   inputValue: string = null;
   lastCodeScanned: string = 'start';
   processStarted: boolean = false;
-  firstProductScanned: boolean = false;
+  isFirstProductScanned: boolean = false;
+  firstProductScannedReference: string = null;
+  lastProductScannedReference: string = null;
   wrongCodeScanned: boolean = false;
   lastProductScannedChecking: ProductSorterModel.ProductSorter = null;
   packingIsFull: boolean = false;
@@ -41,6 +43,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   infoSorterOperation: OutputSorterModel.OutputSorter = null;
 
   private timeoutToQuickStarted = null;
+  private checkByWrongCode: boolean = true;
 
   constructor(
     private location: Location,
@@ -62,6 +65,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.checkByWrongCode = false;
     if (this.timeoutToQuickStarted) {
       clearTimeout(this.timeoutToQuickStarted);
     }
@@ -269,15 +273,31 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
         if (res.code == 201) {
           await this.intermediaryService.dismissLoading();
-          await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`);
 
-          if (this.packingIsFull) {
-            this.lastProductScanned = true;
-            this.setPackingAsFull();
+          if (!this.firstProductScannedReference) {
+            this.firstProductScannedReference = productReference;
+          }
+
+          if (this.firstProductScannedReference == productReference && this.lastProductScannedReference == productReference) {
+            this.stopExecutionOutput();
           } else {
-            this.firstProductScanned = true;
-            this.messageGuide = 'ESCANEAR ARTÍCULO';
-            this.focusToInput();
+            this.lastProductScannedReference = productReference;
+            let scanProductPutInPacking = res.data;
+
+            if (this.wrongCodeScanned) {
+              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
+
+            } else {
+              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`);
+              if (this.packingIsFull) {
+                this.lastProductScanned = true;
+                this.setPackingAsFull();
+              } else {
+                this.isFirstProductScanned = true;
+                this.messageGuide = 'ESCANEAR ARTÍCULO';
+                this.focusToInput();
+              }
+            }
           }
         } else {
           let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
@@ -442,15 +462,24 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       someCounter++;
       let wayId = this.infoSorterOperation.wayId;
 
-      //  TODO Request to check if way have any incidence
-      let existIncidence = false;
-      if (existIncidence) {
-        this.timeoutToQuickUser();
-        this.wrongCodeDetected();
-        this.focusToInput();
-      } else {
-        setTimeout(() => checkWayWithIncidenceLocal(), 1000);
-      }
+      this.sorterOutputService
+        .postGetIncidenceWay({
+          way: wayId
+        })
+        .then(async (res: SorterOutputModel.ResponseGetIncidenceWay) => {
+          if (res.code == 201 && res.data) {
+            this.timeoutToQuickUser();
+            this.wrongCodeDetected();
+            this.focusToInput();
+          } else if (this.checkByWrongCode) {
+            setTimeout(() => checkWayWithIncidenceLocal(), 1000);
+          }
+        }, (error) => {
+          console.error('Error::onrejected::sorterOutputService::postGetIncidenceWay', error)
+        })
+        .catch((error) => {
+          console.error('Error::catch::sorterOutputService::postGetIncidenceWay', error)
+        });
     };
 
     checkWayWithIncidenceLocal();
@@ -460,6 +489,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     await this.intermediaryService.presentToastError('Se ha escaneado un código erróneo para la calle actual.');
     this.wrongCodeScanned = true;
     this.leftButtonDanger = false;
+    this.checkByWrongCode = false;
     this.lastProductScannedChecking = {
       reference: '001234567891234569',
       destinyWarehouse: {
@@ -482,6 +512,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
+        this.checkByWrongCode = false;
         this.location.back();
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
