@@ -266,13 +266,15 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       .postScanProductPutInPacking({
         productReference,
         packingReference: this.infoSorterOperation.packingReference,
-        wayId: this.infoSorterOperation.wayId
+        wayId: this.infoSorterOperation.wayId,
+        fullPacking: this.packingIsFull
       })
       .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
         if (res.code == 201) {
           await this.intermediaryService.dismissLoading();
 
           if (res.data.processStopped) {
+            await this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
             this.stopExecutionOutput();
           } else {
             if (this.wrongCodeScanned) {

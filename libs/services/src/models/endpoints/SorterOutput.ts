@@ -34,7 +34,8 @@ export namespace SorterOutputModel {
   export interface ParamsScanProductPutInPacking {
     productReference: string,
     packingReference: string,
-    wayId: number
+    wayId: number,
+    fullPacking: boolean
   }
   export interface ScanProductPutInPacking {
     processStopped?: boolean,
