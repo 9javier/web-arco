@@ -405,7 +405,6 @@ export class PickingScanditService {
     } catch (e) {
 
     }
-    console.log("TEST::PARAMS", params);
     switch (action){
       case 'lastCodeScannedStart':
         this.lastCodeScanned = 'start';
