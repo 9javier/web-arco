@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
@@ -123,11 +124,15 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String HIDE_LOADING_DIALOG = "hideLoadingDialog";
   private static final String MATRIX_PICKING_STORES_LOAD_REJECTION_REASONS = "matrixPickingStoresLoadRejectionReasons";
   private static final String MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG = "matrixPickingStoresHideInfoProductDialog";
+  private static final String SET_TIMEOUT = "setTimeout";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
 
   private CallbackContext mCallbackContext;
+  private Handler handlerAndroid;
+  private Runnable runHideText;
+  private Runnable runLastCodeScannedStart;
 
   private ScanditWorker mWorker = null;
   private boolean mRequestingCameraPermission = false;
@@ -162,6 +167,44 @@ public class ScanditSDK extends CordovaPlugin {
 
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
+    if(this.handlerAndroid == null){
+      this.handlerAndroid = new android.os.Handler();
+    }
+    if(this.runHideText == null){
+      this.runHideText = new Runnable() {
+        public void run() {
+          JSONObject jsonObject = new JSONObject();
+          try {
+            jsonObject.put("result", true);
+            jsonObject.put("actionIonic", "hideText");
+            jsonObject.put("params", "");
+          } catch (JSONException e) {
+
+          }
+          PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+          pResult.setKeepCallback(true);
+          mCallbackContextMatrixSimple.sendPluginResult(pResult);
+        }
+      };
+    }
+    if(this.runLastCodeScannedStart == null){
+      this.runLastCodeScannedStart = new Runnable() {
+        public void run() {
+          Log.i("tag", "This'll run last codeScannedStart");
+          JSONObject jsonObject = new JSONObject();
+          try {
+            jsonObject.put("result", true);
+            jsonObject.put("actionIonic", "lastCodeScannedStart");
+            jsonObject.put("params", "");
+          } catch (JSONException e) {
+
+          }
+          PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+          pResult.setKeepCallback(true);
+          mCallbackContextMatrixSimple.sendPluginResult(pResult);
+        }
+      };
+    }
     Log.d("CORDOVA_MATRIX", "execute action:" + action);
     packageName = cordova.getActivity().getApplication().getPackageName();
     resources = cordova.getActivity().getApplication().getResources();
@@ -1554,6 +1597,47 @@ public class ScanditSDK extends CordovaPlugin {
         loadingDialog.dismiss();
         loadingDialog = null;
       }
+    } else if (action.equals(SET_TIMEOUT)){
+      String actionIonic = "";
+      long delay = 2000;
+      String params = "";
+      try {
+        actionIonic = args.getString(0);
+        delay = args.getLong(1);
+        params = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      final String fActionIonic = actionIonic;
+      final long fDelay = delay;
+      final String fParams = params;
+
+      if (fActionIonic.equals("hideText")) {
+        this.handlerAndroid.removeCallbacks(this.runHideText);
+        this.handlerAndroid.postDelayed(this.runHideText, 2000);
+      } else if (fActionIonic.equals("lastCodeScannedStart")){
+        this.handlerAndroid.removeCallbacks(this.runLastCodeScannedStart);
+        this.handlerAndroid.postDelayed(this.runLastCodeScannedStart, 2000);
+      } else {
+        this.handlerAndroid.postDelayed(
+          new Runnable() {
+            public void run() {
+              JSONObject jsonObject = new JSONObject();
+              try {
+                jsonObject.put("result", true);
+                jsonObject.put("actionIonic", fActionIonic);
+                jsonObject.put("params", fParams);
+              } catch (JSONException e) {
+
+              }
+              PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+              pResult.setKeepCallback(true);
+              mCallbackContextMatrixSimple.sendPluginResult(pResult);
+            }
+          },
+          delay);
+      }
+
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

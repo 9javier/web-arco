@@ -274,7 +274,7 @@ export class TextareaComponent implements OnInit {
               } else {
                 this.inputPicking = null;
                 this.focusToInput();
-                this.presentToast(res.message, 2000, this.pickingProvider.colorsMessage.error.name);
+                this.presentToast(res.errors, 2000, this.pickingProvider.colorsMessage.error.name);
                 this.getPendingListByPicking(this.pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
                     if (res.code == 200 || res.code == 201) {

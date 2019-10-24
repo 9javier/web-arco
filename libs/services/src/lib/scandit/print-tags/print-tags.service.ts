@@ -80,17 +80,16 @@ export class PrintTagsScanditService {
     let timeoutStarted = null;
 
     ScanditMatrixSimple.initPrintTags(async (response: ScanditModel.ResponsePrintTags) => {
-      if (response && response.result) {
+      if(response && response.result && response.actionIonic){
+        this.executeAction(response.actionIonic, response.params);
+      } else if (response && response.result) {
         if (response.barcode && response.barcode.data != this.lastCodeScanned && !this.scannedPaused) {
 
           codeScanned = response.barcode.data;
           this.lastCodeScanned = codeScanned;
           this.lastProductReferenceScanned = codeScanned;
 
-          if (timeoutStarted) {
-            clearTimeout(timeoutStarted);
-          }
-          timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+          ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
 
           switch (this.scanditProvider.checkCodeValue(codeScanned)) {
             case this.scanditProvider.codeValue.PRODUCT:
@@ -441,12 +440,25 @@ export class PrintTagsScanditService {
   }
 
   private hideTextMessage(delay: number){
-    if(this.timeoutHideText){
-      clearTimeout(this.timeoutHideText);
+    ScanditMatrixSimple.setTimeout("hideText", delay, "");
+  }
+
+  private executeAction(action: string, paramsString: string){
+    let params = [];
+    try{
+      params = JSON.parse(paramsString);
+    } catch (e) {
+
     }
-    this.timeoutHideText = setTimeout(() => {
-      ScanditMatrixSimple.showText(false);
-    }, delay);
+
+    switch (action){
+      case 'lastCodeScannedStart':
+        this.lastCodeScanned = 'start';
+        break;
+      case 'hideText':
+        ScanditMatrixSimple.showText(false);
+        break;
+    }
   }
 
 }
