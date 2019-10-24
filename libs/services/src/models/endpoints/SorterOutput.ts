@@ -37,15 +37,12 @@ export namespace SorterOutputModel {
     wayId: number
   }
   export interface ScanProductPutInPacking {
-    productShoeUnit: ProductModel.Product,
-    packingId: number,
-    executionWays: ExecutionSorterModel.ExecutionWay,
-    createdAt: string,
-    updatedAt: string,
-    id: number
+    processStopped?: boolean,
+    product: any,
+    warehouse: any
   }
   export interface ResponseScanProductPutInPacking extends HttpRequestModel.Response {
-    data: ScanProductPutInPacking[]
+    data: ScanProductPutInPacking
   }
 
   // Set the packing as full

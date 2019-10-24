@@ -25,8 +25,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   lastCodeScanned: string = 'start';
   processStarted: boolean = false;
   isFirstProductScanned: boolean = false;
-  firstProductScannedReference: string = null;
-  lastProductScannedReference: string = null;
   wrongCodeScanned: boolean = false;
   lastProductScannedChecking: ProductSorterModel.ProductSorter = null;
   packingIsFull: boolean = false;
@@ -274,19 +272,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         if (res.code == 201) {
           await this.intermediaryService.dismissLoading();
 
-          if (!this.firstProductScannedReference) {
-            this.firstProductScannedReference = productReference;
-          }
-
-          if (this.firstProductScannedReference == productReference && this.lastProductScannedReference == productReference) {
+          if (res.data.processStopped) {
             this.stopExecutionOutput();
           } else {
-            this.lastProductScannedReference = productReference;
-            let scanProductPutInPacking = res.data;
-
             if (this.wrongCodeScanned) {
               await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
-
             } else {
               await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`);
               if (this.packingIsFull) {
