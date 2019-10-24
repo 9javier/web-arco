@@ -5,6 +5,7 @@ import { IntermediaryService, WarehouseModel, WarehousesService } from '@suite/s
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { ExceptionsType } from '../../../../../services/src/models/exceptions.type';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'suite-store-update',
@@ -37,7 +38,9 @@ export class StoreUpdateComponent implements OnInit {
     if (this.rackService.form.valid) {
       await this.intermediaryService.presentLoading();
       this.rackService.form.value.reference = `E${this.rackService.form.value.reference.replace('E', '')}`;
+
       if (this.rackService.form.get('id').value === '') {
+        this.rackService.form.removeControl('id');
         this.rackService.store(this.rackService.form.value).subscribe(async data => {
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess('Estante creado con exito');
@@ -55,7 +58,10 @@ export class StoreUpdateComponent implements OnInit {
 
       } else {
         const _id = this.rackService.form.get('id').value;
+        this.rackService.form.removeControl('id');
+
         this.rackService.update(_id, this.rackService.form.value).subscribe(async data => {
+          this.rackService.form.addControl('id', new FormControl(''));
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess('Estante actualizado con exito');
           await this.close();
@@ -65,6 +71,7 @@ export class StoreUpdateComponent implements OnInit {
           if (error.error.statusCode === ExceptionsType.ER_DUP_ENTRY && error.error.errors && error.error.errors.includes(ExceptionsType[ExceptionsType.ER_DUP_ENTRY])) {
             messageError = 'Ya existe un registro con los mismos datos';
           }
+          this.rackService.form.addControl('id', new FormControl(_id));
           await this.intermediaryService.presentToastError(messageError);
           await this.intermediaryService.dismissLoading();
 
