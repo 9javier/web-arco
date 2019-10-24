@@ -66,25 +66,29 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
         id: 1,
         name: "Yellow",
         hex: '#FFE600',
-        available: '1'
+        available: '1',
+        userId: null
       },
       {
         id: 2,
         name: "Green",
         hex: '#0C9D58',
-        available: '1'
+        available: '1',
+        userId: null
       },
       {
         id: 3,
         name: "Red",
         hex: '#DB4437',
-        available: '1'
+        available: '1',
+        userId: null
       },
       {
         id: 4,
         name: "Blue",
         hex: '#1B91FF',
-        available: '1'
+        available: '1',
+        userId: null
       }
     ];
     this.sorterTemplateMatrix = [
@@ -1218,7 +1222,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   }
 
   colorSelected(data) {
-    this.sorterProvider.colorSelected = data;
+    this.sorterProvider.colorSelected = data.color;
   }
 
   zoneSelected(data) {

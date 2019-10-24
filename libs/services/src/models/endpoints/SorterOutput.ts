@@ -10,7 +10,8 @@ export namespace SorterOutputModel {
   export interface NewProcessWay {
     way: ExecutionSorterModel.ExecutionWay,
     color: ColorSorterModel.ColorSorter,
-    warehouse: WarehouseModel.Warehouse
+    warehouse: WarehouseModel.Warehouse,
+    packing?: CarrierModel.Carrier
   }
   export interface ResponseNewProcessWay extends HttpRequestModel.Response {
     data: NewProcessWay

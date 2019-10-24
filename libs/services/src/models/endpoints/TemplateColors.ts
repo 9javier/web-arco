@@ -15,7 +15,8 @@ export namespace TemplateColorsModel{
     }
 
     export interface AvailableColorsByProcess extends ColorSorterModel.ColorSorter {
-      available: string
+      available: string,
+      userId: number
     }
 
     export interface ResponseAvailableColorsByProcess {

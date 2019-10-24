@@ -23,6 +23,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
   public colorsSelectors: TemplateColorsModel.AvailableColorsByProcess[] = [];
   public loadingSorterTemplateMatrix: boolean = true;
+  private resumeProcessForUser: boolean = false;
 
   constructor(
     private router: Router,
@@ -522,7 +523,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
     // loadAvailableColors
     this.colorsSelectors = [
-      {"createdAt":"2019-10-14T10:25:31.000Z","updatedAt":"2019-10-14T10:25:31.000Z","id":1,"name":"Rojo","hex":"#ff0000","available":"1"},{"createdAt":"2019-10-14T10:25:44.000Z","updatedAt":"2019-10-14T10:25:44.000Z","id":2,"name":"Amarillo","hex":"#ffff00","available":"1"},{"createdAt":"2019-10-14T10:25:53.000Z","updatedAt":"2019-10-14T10:25:53.000Z","id":3,"name":"Verde","hex":"#00ff00","available":"1"},{"createdAt":"2019-10-14T10:26:10.000Z","updatedAt":"2019-10-14T10:26:10.000Z","id":4,"name":"Azul","hex":"#0000ff","available":"0"}
+      {"createdAt":"2019-10-14T10:25:31.000Z","updatedAt":"2019-10-14T10:25:31.000Z","id":1,"name":"Rojo","hex":"#ff0000","available":"1", "userId": null},{"createdAt":"2019-10-14T10:25:44.000Z","updatedAt":"2019-10-14T10:25:44.000Z","id":2,"name":"Amarillo","hex":"#ffff00","available":"1", "userId": null},{"createdAt":"2019-10-14T10:25:53.000Z","updatedAt":"2019-10-14T10:25:53.000Z","id":3,"name":"Verde","hex":"#00ff00","available":"1", "userId": null},{"createdAt":"2019-10-14T10:26:10.000Z","updatedAt":"2019-10-14T10:26:10.000Z","id":4,"name":"Azul","hex":"#0000ff","available":"0", "userId": null}
       ];
 
     // loadActiveTemplate
@@ -536,7 +537,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   colorSelected(data) {
-    this.sorterProvider.colorSelected = data;
+    this.sorterProvider.colorSelected = data.color;
+    this.resumeProcessForUser = !!data.userId;
   }
 
   sorterOperationCancelled() {
@@ -549,69 +551,117 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    await this.intermediaryService.presentLoading('Iniciando proceso...');
+    if (this.resumeProcessForUser) {
+      await this.intermediaryService.presentLoading('Reanudando proceso...');
 
-    let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
-      color: this.sorterProvider.colorSelected.id,
-      type: 2
-    };
+      this.sorterOutputService
+        .getGetCurrentProcessWay()
+        .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
+          if (res.code == 201) {
+            await this.intermediaryService.dismissLoading();
+            let currentProcessWay = res.data;
+            this.sorterProvider.infoSorterOutputOperation = {
+              destinyWarehouse: {
+                id: currentProcessWay.warehouse.id,
+                name: currentProcessWay.warehouse.name,
+                reference: currentProcessWay.warehouse.reference
+              },
+              wayId: currentProcessWay.way.zoneWay.ways.id,
+              packingReference: currentProcessWay.packing ? currentProcessWay.packing.reference : null
+            };
+            await this.intermediaryService.presentToastSuccess(`Reanudando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
+            this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
+            this.sorterProvider.processActiveForUser = 2;
+            this.router.navigate(['sorter/output/scanner']);
+          } else {
+            let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajaba.';
+            if (res.errors) {
+              errorMessage = res.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage);
+            await this.intermediaryService.dismissLoading();
+          }
+        }, async (error) => {
+          let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajaba.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+        })
+        .catch(async (error) => {
+          let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajaba.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+        });
+    } else {
+      await this.intermediaryService.presentLoading('Iniciando proceso...');
 
-    this.sorterExecutionService
-      .postExecuteColor(paramsRequest)
-      .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
-        this.sorterOutputService
-          .getNewProcessWay()
-          .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
-            if (res.code == 201) {
-              await this.intermediaryService.dismissLoading();
-              let newProcessWay = res.data;
-              this.sorterProvider.infoSorterOutputOperation = {
-                destinyWarehouse: {
-                  id: newProcessWay.warehouse.id,
-                  name: newProcessWay.warehouse.name,
-                  reference: newProcessWay.warehouse.reference
-                },
-                wayId: newProcessWay.way.zoneWay.ways.id
-              };
-              await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
-              this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
-              this.sorterProvider.processActiveForUser = 2;
-              this.router.navigate(['sorter/output/scanner']);
-            } else {
+      let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+        color: this.sorterProvider.colorSelected.id,
+        type: 2
+      };
+
+      this.sorterExecutionService
+        .postExecuteColor(paramsRequest)
+        .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
+          this.sorterOutputService
+            .getNewProcessWay()
+            .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
+              if (res.code == 201) {
+                await this.intermediaryService.dismissLoading();
+                let newProcessWay = res.data;
+                this.sorterProvider.infoSorterOutputOperation = {
+                  destinyWarehouse: {
+                    id: newProcessWay.warehouse.id,
+                    name: newProcessWay.warehouse.name,
+                    reference: newProcessWay.warehouse.reference
+                  },
+                  wayId: newProcessWay.way.zoneWay.ways.id
+                };
+                await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
+                this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
+                this.sorterProvider.processActiveForUser = 2;
+                this.router.navigate(['sorter/output/scanner']);
+              } else {
+                this.stopExecutionColor(false);
+                let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajar.';
+                if (res.errors) {
+                  errorMessage = res.errors;
+                }
+                await this.intermediaryService.presentToastError(errorMessage);
+                await this.intermediaryService.dismissLoading();
+              }
+            }, async (error) => {
               this.stopExecutionColor(false);
               let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajar.';
-              if (res.errors) {
-                errorMessage = res.errors;
+              if (error.error && error.error.errors) {
+                errorMessage = error.error.errors;
               }
               await this.intermediaryService.presentToastError(errorMessage);
               await this.intermediaryService.dismissLoading();
-            }
-          }, async (error) => {
-            this.stopExecutionColor(false);
-            let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajar.';
-            if (error.error && error.error.errors) {
-              errorMessage = error.error.errors;
-            }
-            await this.intermediaryService.presentToastError(errorMessage);
-            await this.intermediaryService.dismissLoading();
-          })
-          .catch(async (error) => {
-            this.stopExecutionColor(false);
-            let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajar.';
-            if (error.error && error.error.errors) {
-              errorMessage = error.error.errors;
-            }
-            await this.intermediaryService.presentToastError(errorMessage);
-            await this.intermediaryService.dismissLoading();
-          });
-      }, async (error: HttpRequestModel.Error) => {
-        let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-      });
+            })
+            .catch(async (error) => {
+              this.stopExecutionColor(false);
+              let errorMessage = 'Ha ocurrido un error al intentar obtener la calle en la que trabajar.';
+              if (error.error && error.error.errors) {
+                errorMessage = error.error.errors;
+              }
+              await this.intermediaryService.presentToastError(errorMessage);
+              await this.intermediaryService.dismissLoading();
+            });
+        }, async (error: HttpRequestModel.Error) => {
+          let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+        });
+    }
   }
 
   actionLaunched() {

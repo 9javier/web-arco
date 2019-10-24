@@ -24,8 +24,6 @@ export class ColorSelectorSorterComponent implements OnInit {
   }
 
   selectColor(colorSelected: TemplateColorsModel.AvailableColorsByProcess) {
-    if (colorSelected.available != '0') {
-      this.colorSelected.next(colorSelected);
-    }
+    this.colorSelected.next({ color: colorSelected, userId: colorSelected.userId });
   }
 }
