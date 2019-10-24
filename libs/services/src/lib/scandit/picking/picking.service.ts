@@ -80,7 +80,7 @@ export class PickingScanditService {
                       listProductsProcessed = res.data.linesRequestFiltered.processed;
                       ScanditMatrixSimple.sendPickingStoresProducts(listProductsToStorePickings, listProductsProcessed, null);
                       ScanditMatrixSimple.setText(
-                        `Producto ${codeScanned} escaneado y añadido al picking.`,
+                        `Producto ${codeScanned} escaneado y añadido al traspaso.`,
                         this.scanditProvider.colorsMessage.info.color,
                         this.scanditProvider.colorText.color,
                         18);
@@ -88,7 +88,7 @@ export class PickingScanditService {
                       if (listProductsToStorePickings.length < 1) {
                         setTimeout(() => {
                           ScanditMatrixSimple.setText(
-                            `No hay más productos pendientes de añadir al picking.`,
+                            `No hay más productos pendientes de añadir al traspaso.`,
                             this.scanditProvider.colorsMessage.info.color,
                             this.scanditProvider.colorText.color,
                             16);
@@ -150,7 +150,7 @@ export class PickingScanditService {
                 ScanditMatrixSimple.hideLoadingDialog();
                 this.packingReferences.push(codeScanned);
                 ScanditMatrixSimple.setText(
-                  `Escaneado embalaje ${codeScanned} para añadir al picking`,
+                  `Escaneado embalaje ${codeScanned} para añadir al traspaso`,
                   this.scanditProvider.colorsMessage.info.color,
                   this.scanditProvider.colorText.color,
                   18);
@@ -166,7 +166,7 @@ export class PickingScanditService {
             }
           } else if (scanMode == 'products_disassociate') {
             if(this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
-              ScanditMatrixSimple.showLoadingDialog('Desasociando artículo del picking actual...');
+              ScanditMatrixSimple.showLoadingDialog('Desasociando artículo del traspaso actual...');
               this.pickingStoreService
                 .postLineRequestDisassociate({
                   filters: filtersToGetProducts,
@@ -181,7 +181,7 @@ export class PickingScanditService {
 
                   ScanditMatrixSimple.hideLoadingDialog();
                   ScanditMatrixSimple.setText(
-                    'El artículo ha sido desasociado del picking actual.',
+                    'El artículo ha sido desasociado del traspaso actual.',
                     this.scanditProvider.colorsMessage.success.color,
                     this.scanditProvider.colorText.color,
                     16);
@@ -190,7 +190,7 @@ export class PickingScanditService {
                   console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
                   ScanditMatrixSimple.hideLoadingDialog();
                   ScanditMatrixSimple.setText(
-                    'Ha ocurrido un error al intentar desasociar el artículo del picking actual.',
+                    'Ha ocurrido un error al intentar desasociar el artículo del traspaso actual.',
                     this.scanditProvider.colorsMessage.error.color,
                     this.scanditProvider.colorText.color,
                     16);
@@ -200,7 +200,7 @@ export class PickingScanditService {
                   console.error('Error::Subscribe::pickingStoreService::postLineRequestDisassociate', error);
                   ScanditMatrixSimple.hideLoadingDialog();
                   ScanditMatrixSimple.setText(
-                    'Ha ocurrido un error al intentar desasociar el artículo del picking actual.',
+                    'Ha ocurrido un error al intentar desasociar el artículo del traspaso actual.',
                     this.scanditProvider.colorsMessage.error.color,
                     this.scanditProvider.colorText.color,
                     16);
@@ -224,7 +224,7 @@ export class PickingScanditService {
             }, 1 * 1000);
             if (listProductsToStorePickings.length < 1) {
               ScanditMatrixSimple.setText(
-                `No hay más productos pendientes de añadir al picking.`,
+                `No hay más productos pendientes de añadir al traspaso.`,
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 16);
@@ -247,7 +247,7 @@ export class PickingScanditService {
                 18);
               this.hideTextMessage(2000);
             } else {
-              ScanditMatrixSimple.showWarning(true, '¿Le han quedado productos sin poder añadir a alguno de los embalajes escaneados? Si es así escanéelos para desasociarlos del picking actual.', 'products_out_of_packing', 'Finalizar', 'Escanear productos');
+              ScanditMatrixSimple.showWarning(true, '¿Le han quedado productos sin poder añadir a alguno de los embalajes escaneados? Si es así escanéelos para desasociarlos del traspaso actual.', 'products_out_of_packing', 'Finalizar', 'Escanear productos');
             }
           } else if (response.action == 'filters') {
             filtersToGetProducts = {
@@ -283,7 +283,7 @@ export class PickingScanditService {
                 }
               }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
           } else if (response.action == 'request_reject') {
-            ScanditMatrixSimple.showLoadingDialog('Rechazando artículo del picking...');
+            ScanditMatrixSimple.showLoadingDialog('Rechazando artículo del traspaso...');
 
             let reasonId = response.reasonId;
             let requestReference = response.requestReference;
@@ -303,7 +303,7 @@ export class PickingScanditService {
 
                 ScanditMatrixSimple.hideLoadingDialog();
                 ScanditMatrixSimple.setText(
-                  'El artículo ha sido rechazado del picking actual.',
+                  'El artículo ha sido rechazado del traspaso actual.',
                   this.scanditProvider.colorsMessage.success.color,
                   this.scanditProvider.colorText.color,
                   16);
@@ -313,7 +313,7 @@ export class PickingScanditService {
                 console.error('Error::Subscribe::pickingStoreService::postRejectRequest', error);
                 ScanditMatrixSimple.hideLoadingDialog();
                 ScanditMatrixSimple.setText(
-                  'Ha ocurrido un error al intentar rechazar el artículo en el picking actual.',
+                  'Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.',
                   this.scanditProvider.colorsMessage.error.color,
                   this.scanditProvider.colorText.color,
                   16);
@@ -323,7 +323,7 @@ export class PickingScanditService {
                 console.error('Error::Subscribe::pickingStoreService::postRejectRequest', error);
                 ScanditMatrixSimple.hideLoadingDialog();
                 ScanditMatrixSimple.setText(
-                  'Ha ocurrido un error al intentar rechazar el artículo en el picking actual.',
+                  'Ha ocurrido un error al intentar rechazar el artículo en el traspaso actual.',
                   this.scanditProvider.colorsMessage.error.color,
                   this.scanditProvider.colorText.color,
                   16);
@@ -355,7 +355,7 @@ export class PickingScanditService {
           if (listProductsToStorePickings.length < 1) {
             setTimeout(() => {
               ScanditMatrixSimple.setText(
-                `No hay más productos pendientes de añadir al picking.`,
+                `No hay más productos pendientes de añadir al traspaso.`,
                 this.scanditProvider.colorsMessage.info.color,
                 this.scanditProvider.colorText.color,
                 16);
