@@ -7,7 +7,16 @@
 
   <sorter-footer-buttons
     *ngIf="sorterProvider.colorSelected"
+    [overNotification]="!!sorterProvider.colorActiveForUser"
     (operationCancel)="sorterOperationCancelled()"
     (operationStart)="sorterOperationStarted()">
   </sorter-footer-buttons>
+
+  <sorter-notification-active-process
+    *ngIf="sorterProvider.colorActiveForUser"
+    [userColorActive]="sorterProvider.colorActiveForUser"
+    [actionButtonText]="'FINALIZAR'"
+    [message]="getMessageForNotificationActiveProcess()"
+    (actionLaunched)="actionLaunched()">
+  </sorter-notification-active-process>
 </ion-content>
