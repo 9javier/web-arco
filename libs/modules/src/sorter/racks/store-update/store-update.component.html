@@ -34,16 +34,6 @@
         </mat-select>
         <mat-error>Este campo es requerido.</mat-error>
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Pertenece*</mat-label>
-        <mat-icon matPrefix>format_line_spacing</mat-icon>
-        <mat-select formControlName="belongWarehouse">
-          <mat-option *ngFor="let belongWarehouse of belongWarehouses" [value]="belongWarehouse.id">
-            {{belongWarehouse.name}}
-          </mat-option>
-        </mat-select>
-        <mat-error>Este campo es requerido.</mat-error>
-      </mat-form-field>
     </div>
   </form>
 </ion-content>

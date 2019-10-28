@@ -20,8 +20,7 @@ export class RackService {
     id: new FormControl(''),
     name: new FormControl('', [Validators.required, Validators.minLength(5)]),
     reference: new FormControl('', [Validators.required, Validators.pattern('^E[0-9]{4}')]),
-    warehouse: new FormControl('', Validators.required),
-    belongWarehouse: new FormControl('', Validators.required),
+    warehouse: new FormControl('', Validators.required)
   });
 
   initializeFormGroup() {
@@ -29,8 +28,7 @@ export class RackService {
       id: '',
       name: '',
       reference: '',
-      warehouse: '',
-      belongWarehouse: ''
+      warehouse: ''
     });
   }
 
@@ -39,8 +37,7 @@ export class RackService {
       id: rack.id,
       name: rack.name,
       reference: rack.reference,
-      warehouse: rack.warehouse,
-      belongWarehouse: rack.belongWarehouse
+      warehouse: rack.warehouse
     });
   }
 
