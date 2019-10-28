@@ -15,7 +15,7 @@ export class StoreUpdateComponent implements OnInit {
   warehouses: WarehouseModel.Warehouse[];
   belongWarehouses: WarehouseModel.Warehouse[];
   constructor(
-    private rackService: RackService,
+    public rackService: RackService,
     private modalController:ModalController,
     private warehouseService:WarehousesService,
     private intermediaryService: IntermediaryService,
