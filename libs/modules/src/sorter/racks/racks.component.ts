@@ -83,10 +83,6 @@ export class RacksComponent implements OnInit {
     }
   }
 
-  print() {
-
-  }
-
   async goToDialog() {
     const modal = (await this.modalCtrl.create({
       component: StoreUpdateComponent,
