@@ -30,6 +30,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   public sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
   public loadingSorterTemplateMatrix: boolean = true;
   private isTemplateWithEqualZones: boolean = false;
+  private resumeProcessForUser: boolean = false;
 
   constructor(
     private router: Router,
@@ -1223,6 +1224,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 
   colorSelected(data) {
     this.sorterProvider.colorSelected = data.color;
+    this.resumeProcessForUser = !!data.userId;
   }
 
   zoneSelected(data) {
@@ -1250,33 +1252,71 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    await this.intermediaryService.presentLoading('Iniciando proceso...');
+    if (this.resumeProcessForUser) {
+      await this.intermediaryService.presentLoading('Reanudando proceso...');
 
-    let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
-      color: this.sorterProvider.colorSelected.id,
-      type: 1
-    };
+      this.sorterExecutionService
+        .getExecuteColor()
+        .then(async (res: ExecutionSorterModel.ResponseExecuteColor) => {
+          if (res.code == 200) {
+            await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
+            this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
+            this.sorterProvider.processActiveForUser = 1;
+            this.router.navigate(['sorter/input/scanner']);
+            await this.intermediaryService.dismissLoading();
+          } else {
+            let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
+            if (res.errors) {
+              errorMessage = res.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage);
+            await this.intermediaryService.dismissLoading();
+          }
+        }, async (error: HttpRequestModel.Error) => {
+          let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+        })
+        .catch(async (error: HttpRequestModel.Error) => {
+          let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+        });
+    } else {
+      await this.intermediaryService.presentLoading('Iniciando proceso...');
 
-    if (this.sorterProvider.idZoneSelected) {
-      paramsRequest.idZone = this.sorterProvider.idZoneSelected
+      let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+        color: this.sorterProvider.colorSelected.id,
+        type: 1
+      };
+
+      if (this.sorterProvider.idZoneSelected) {
+        paramsRequest.idZone = this.sorterProvider.idZoneSelected
+      }
+
+      this.sorterExecutionService
+        .postExecuteColor(paramsRequest)
+        .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
+          await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
+          this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
+          this.sorterProvider.processActiveForUser = 1;
+          this.router.navigate(['sorter/input/scanner']);
+          await this.intermediaryService.dismissLoading();
+        }, async (error: HttpRequestModel.Error) => {
+          let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+        });
     }
-
-    this.sorterExecutionService
-      .postExecuteColor(paramsRequest)
-      .subscribe(async (res: ExecutionSorterModel.ExecuteColor) => {
-        await this.intermediaryService.presentToastSuccess(`Comenzando proceso en el sorter con el color ${this.sorterProvider.colorSelected.name}`);
-        this.sorterProvider.colorActiveForUser = this.sorterProvider.colorSelected.hex;
-        this.sorterProvider.processActiveForUser = 1;
-        this.router.navigate(['sorter/input/scanner']);
-        await this.intermediaryService.dismissLoading();
-      }, async (error: HttpRequestModel.Error) => {
-        let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-      });
   }
 
   async actionLaunched() {
