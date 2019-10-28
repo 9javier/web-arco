@@ -12,6 +12,7 @@ import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/s
 import {Location} from "@angular/common";
 import {SorterOutputService} from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
 import {SorterOutputModel} from "../../../../../services/src/models/endpoints/SorterOutput";
+import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -43,6 +44,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   private timeoutToQuickStarted = null;
   private checkByWrongCode: boolean = true;
 
+  private launchIncidenceBeep: boolean = false;
+  private intervalIncidenceBeep = null;
+
   constructor(
     private location: Location,
     private alertController: AlertController,
@@ -51,6 +55,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     public sorterProvider: SorterProvider,
     private sorterOutputService: SorterOutputService,
     private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
@@ -64,6 +69,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkByWrongCode = false;
+    this.launchIncidenceBeep = false;
     if (this.timeoutToQuickStarted) {
       clearTimeout(this.timeoutToQuickStarted);
     }
@@ -479,6 +485,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   private async wrongCodeDetected() {
     await this.intermediaryService.presentToastError('Se ha escaneado un código erróneo para la calle actual.');
+    this.launchIncidenceBeep = true;
+    this.launchIncidenceSound();
     this.wrongCodeScanned = true;
     this.leftButtonDanger = false;
     this.checkByWrongCode = false;
@@ -496,6 +504,15 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         name: '41'
       }
     }
+  }
+
+  private launchIncidenceSound() {
+    this.intervalIncidenceBeep = setInterval(() => {
+      if (!this.launchIncidenceBeep) {
+        clearInterval(this.intervalIncidenceBeep);
+      }
+      this.audioProvider.play('incidenceBeep');
+    }, 1000);
   }
 
   private stopExecutionOutput() {
