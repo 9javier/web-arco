@@ -5,6 +5,7 @@ import { IntermediaryService, WarehouseModel, WarehousesService } from '@suite/s
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
 import { ExceptionsType } from '../../../../../services/src/models/exceptions.type';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'suite-store-update',
@@ -36,8 +37,9 @@ export class StoreUpdateComponent implements OnInit {
   async onSubmit() {
     if (this.rackService.form.valid) {
       await this.intermediaryService.presentLoading();
-      this.rackService.form.value.reference = `E${this.rackService.form.value.reference.replace('E', '')}`;
+
       if (this.rackService.form.get('id').value === '') {
+        this.rackService.form.removeControl('id');
         this.rackService.store(this.rackService.form.value).subscribe(async data => {
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess('Estante creado con exito');
@@ -52,10 +54,13 @@ export class StoreUpdateComponent implements OnInit {
           await this.intermediaryService.dismissLoading();
 
         });
-
+        this.rackService.form.addControl('id', new FormControl(''));
       } else {
-        const _id = this.rackService.form.get('id').value;
+        let _id = this.rackService.form.get('id').value;
+        this.rackService.form.removeControl('id');
+
         this.rackService.update(_id, this.rackService.form.value).subscribe(async data => {
+          _id = '';
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess('Estante actualizado con exito');
           await this.close();
@@ -67,8 +72,8 @@ export class StoreUpdateComponent implements OnInit {
           }
           await this.intermediaryService.presentToastError(messageError);
           await this.intermediaryService.dismissLoading();
-
         });
+        this.rackService.form.addControl('id', new FormControl(_id));
       }
     }
   }
