@@ -46,7 +46,7 @@
     <br/>
     <span>para comenzar</span>
   </div>
-  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted">{{messageGuide}}</p>
+  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted" [ngClass]="wrongCodeScanned ? 'align-bottom' : ''">{{messageGuide}}</p>
 
   <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
 
