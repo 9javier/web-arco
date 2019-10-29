@@ -267,18 +267,40 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         productReference,
         packingReference: this.infoSorterOperation.packingReference,
         wayId: this.infoSorterOperation.wayId,
-        fullPacking: this.packingIsFull
+        fullPacking: this.packingIsFull,
+        incidenceProcess: this.wrongCodeScanned
       })
       .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
         if (res.code == 201) {
           await this.intermediaryService.dismissLoading();
 
-          if (res.data.processStopped) {
+          if (res.data.processStopped && !this.wrongCodeScanned) {
             await this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
             this.stopExecutionOutput();
           } else {
             if (this.wrongCodeScanned) {
-              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
+              let resData = res.data;
+              this.lastProductScannedChecking = {
+                reference: resData.product.reference,
+                destinyWarehouse: {
+                  id: resData.warehouse.id,
+                  name: resData.warehouse.name,
+                  reference: resData.warehouse.reference
+                },
+                model: {
+                  reference: resData.product.model.reference
+                },
+                size: {
+                  name: resData.product.size.name
+                }
+              };
+              if (this.lastProductScannedChecking.destinyWarehouse.id != this.infoSorterOperation.destinyWarehouse.id) {
+                await this.intermediaryService.presentToastError(`¡El ${productReference} tiene asignado un destino diferente al de la calle actual!.`);
+                this.focusToInput();
+              } else {
+                await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
+                this.focusToInput();
+              }
             } else {
               await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`);
               if (this.packingIsFull) {
@@ -482,7 +504,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.wrongCodeScanned = true;
     this.leftButtonDanger = false;
     this.checkByWrongCode = false;
-    this.lastProductScannedChecking = {
+    /*this.lastProductScannedChecking = {
       reference: '001234567891234569',
       destinyWarehouse: {
         id: 1,
@@ -495,7 +517,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       size: {
         name: '41'
       }
-    }
+    }*/
   }
 
   private stopExecutionOutput() {
