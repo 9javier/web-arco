@@ -219,7 +219,7 @@ export class MenuComponent implements OnInit {
         {
           title: 'Plantillas',
           id: 'sorter-sga',
-          url: '/sorter',
+          url: '/sorter/templates',
           icon: 'document'
         },
         {

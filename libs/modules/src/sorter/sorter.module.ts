@@ -34,7 +34,7 @@ import { RacksModule } from './racks/racks.module';
 
 const routes:Routes = [
   {
-    path: '',
+    path: 'templates',
     component: SorterComponent,
     data: {
       name: 'Plantillas'
