@@ -1,8 +1,6 @@
 <ion-content padding>
-  <ion-grid
-    class="wrapper-login-form ion-justify-content-between ion-text-center"
-  >
-    <ion-row *ngIf="isMobileApp">
+  <ion-grid class="wrapper-login-form ion-justify-content-between ion-text-center">
+    <ion-row *ngIf="isNewVersion">
       <ion-col>
         <div>
           <a href="https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o" target="_blank">
@@ -14,9 +12,7 @@
     <ion-row class="logo-wrapper" id="logo">
       <ion-col>
         <div>
-          <img
-            src="assets/img/Krack-LogoMarktype.svg"
-            alt="Logotype of Krack Application"
+          <img src="assets/img/Krack-LogoMarktype.svg" alt="Logotype of Krack Application"
           />
         </div>
       </ion-col>
@@ -80,7 +76,7 @@
           <ion-button expand="full" (click)="login(user)" z>Entrar</ion-button>
           <a (click)="presentPasswordAlert()" color="dark">¿Contraseña?</a>
           <p class="version-number" *ngIf="isMobileApp">
-            v {{versionNumber}}
+            V {{versionNumber}}
           </p>
         </div>
       </ion-col>

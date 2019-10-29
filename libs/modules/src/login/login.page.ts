@@ -14,6 +14,10 @@ import { AuthenticationService } from '@suite/services';
 import {ToastController, AlertController, LoadingController, ModalController} from '@ionic/angular';
 import { AppInfo } from 'config/base';
 import { Platform } from '@ionic/angular';
+import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Observable } from 'rxjs';
+import { AppVersionService } from '../../../services/src/lib/endpoint/app-version/app-version.service';
+import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -30,7 +34,8 @@ export class LoginComponent implements OnInit {
 
   private loading = null;
   public versionNumber: string = null;
-  public isMobileApp: boolean = false;
+  public isMobileApp = false;
+  public isNewVersion = false;
 
   constructor(
     private loginService: Oauth2Service,
@@ -41,21 +46,43 @@ export class LoginComponent implements OnInit {
     private loadingController: LoadingController,
     private intermediaryService: IntermediaryService,
     private modalController: ModalController,
-    public platform: Platform
+    public platform: Platform,
+    private appVersion: AppVersion,
+    private appVersionService: AppVersionService
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.user.username = '';
     this.user.password = '';
     this.getLastUsername();
-    // Check if is mobile app and get appVersionNumber
-    if (window.cordova) {
+
+    if (this.platform.is('ios') || this.platform.is('android')) {
       this.isMobileApp = true;
-      (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
-        this.versionNumber = versionNumber;
+
+      await this.appVersion.getVersionNumber().then(
+        (versionNumber) => {
+          this.versionNumber = versionNumber;
+          console.log(versionNumber);
+        },
+        (error) => {
+          console.log(error);
+        });
+
+      await this.appVersionService.getVersion().then(async ( version: Observable<HttpResponse<AppVersionModel.ResponseIndex>>) => {
+        version.subscribe(async (res: HttpResponse<AppVersionModel.ResponseIndex>) => {
+          if (res.body.data) {
+            const resultCompare = this.compareVersions(`${res.body.data['majorRelease']}.${res.body.data['minorRelease']}.${res.body.data['patchRelease']}`, this.versionNumber);
+
+            if (resultCompare === 1) {
+              console.log('VERSION MAYOR');
+              this.isNewVersion = true;
+            }
+          }
+        }, async (err) => {
+          console.log(err);
+        }, () => {});
       });
-    } else {
-      this.isMobileApp = false;
+
     }
   }
 
@@ -66,6 +93,39 @@ export class LoginComponent implements OnInit {
     this.authenticationService.getUsername().subscribe(username=>{
       this.user.username = username;
     });
+  }
+
+  compareVersions(versionDataBase, versionApp) {
+    // Return 1 if versionDataBase > versionApp
+    // Return -1 if versionDataBase < versionApp
+    // Return 0 if versionDataBase == versionApp
+
+    if (versionDataBase === versionApp) {
+      return 0;
+    }
+
+    const a_components = versionDataBase.split(".");
+    const b_components = versionApp.split(".");
+    const len = Math.min(a_components.length, b_components.length);
+
+    for (let i = 0; i < len; i++) {
+      if (Number(a_components[i]) > Number(b_components[i])) {
+        return 1;
+      }
+
+      if (Number(a_components[i]) < Number(b_components[i])) {
+        return -1;
+      }
+    }
+
+    if (a_components.length > b_components.length) {
+      return 1;
+    }
+
+    if (a_components.length < b_components.length) {
+      return -1;
+    }
+    return 0;
   }
 
   login(user: RequestLogin) {
@@ -86,7 +146,7 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          if(errorResponse.status == 0) {
+          if(errorResponse.status === 0) {
             this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor");
           } else {
             this.intermediaryService.presentToastError("Error en usuario o contraseña");
@@ -129,14 +189,14 @@ export class LoginComponent implements OnInit {
   }
   hide() {
     if (this.platform.is('android') || this.platform.is('ios')) {
-      let logo: HTMLElement = document.getElementById('logo');
+      const logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: none;");
     }
   }
 
   recover() {
     if (this.platform.is('android') || this.platform.is('ios')) {
-      let logo: HTMLElement = document.getElementById('logo');
+      const logo: HTMLElement = document.getElementById('logo');
       logo.setAttribute("style", "display: flex;");
     }
   }
