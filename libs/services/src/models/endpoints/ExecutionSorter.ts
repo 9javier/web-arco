@@ -42,7 +42,7 @@ export namespace ExecutionSorterModel {
     zoneWay?: TemplateSorterModel.TemplateZone
   }
 
-  export interface ResponseExecuteColor {
+  export interface ResponseExecuteColor extends HttpRequestModel.Response {
     data: ExecuteColor
   }
 
