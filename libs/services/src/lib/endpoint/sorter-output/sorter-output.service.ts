@@ -18,6 +18,10 @@ export class SorterOutputService {
   private postGetIncidenceWayUrl: string = environment.apiSorter + "/sorter/execution/incidence/way";
   private getGetCurrentProcessWayUrl: string = environment.apiSorter + "/sorter/process/product/packing/get-way";
 
+  // Manual
+  private postGetProductsByWayUrl: string = environment.apiSorter + "/sorters/way-products";
+  private postChangeWayManualUrl: string = environment.apiSorter + "/sorters/change-ways-manual-status";
+
   constructor(
     private requestsProvider: RequestsProvider
   ) { }
@@ -52,5 +56,13 @@ export class SorterOutputService {
 
   getGetCurrentProcessWay() : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getGetCurrentProcessWayUrl);
+  }
+
+  postGetProductsByWay(params: SorterOutputModel.ParamsGetProductsByWay) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postGetProductsByWayUrl, params);
+  }
+
+  postChangeWayManual(params: SorterOutputModel.ParamsChangeWayManual) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postChangeWayManualUrl, params);
   }
 }

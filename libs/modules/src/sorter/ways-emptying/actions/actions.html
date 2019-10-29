@@ -1,0 +1,19 @@
+<div [ngStyle]="{'height': height || 'auto', 'width': width || 'auto'}" class="container">
+  <div class="emptying-types">
+    <div class="automatic">
+      <button (click)="emptyAuto()" [disabled]="disableAuto" [ngClass]="disableAuto ? 'disabled' : ''">
+        VACIADO AUTOMÁTICO
+      </button>
+    </div>
+    <div class="manual">
+      <button (click)="emptyManual()" [disabled]="disableManual" [ngClass]="disableManual ? 'disabled' : ''">
+        VACIADO MANUAL
+      </button>
+    </div>
+  </div>
+  <div class="save-btn">
+    <button (click)="save()">
+      GUARDAR CAMBIOS
+    </button>
+  </div>
+</div>

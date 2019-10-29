@@ -233,6 +233,12 @@ export class MenuComponent implements OnInit {
           id: 'sorter-template-selection',
           url: '/sorter/template/selection',
           icon: 'checkbox-outline'
+        },
+        {
+          title: 'Vaciado de calles',
+          id: 'sorter-ways-emptying',
+          url: '/sorter/ways/emptying',
+          icon: 'square-outline'
         }
       ]
     }

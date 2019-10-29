@@ -1,0 +1,38 @@
+div.container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  place-content: flex-end;
+  div.emptying-types {
+    display: flex;
+    flex-direction: row;
+    div.automatic, div.manual {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 8px;
+      button {
+        width: 100%;
+        height: 48px;
+        background-color: black;
+        color: white;
+        font-weight: 500;
+      }
+      button.disabled {
+        background-color: #979797;
+      }
+    }
+  }
+  div.save-btn {
+    padding: 8px;
+    display: flex;
+    flex-direction: row;
+    button {
+      width: 100%;
+      height: 48px;
+      background-color: black;
+      color: white;
+      font-weight: 500;
+    }
+  }
+}

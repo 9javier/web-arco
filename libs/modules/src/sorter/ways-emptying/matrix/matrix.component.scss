@@ -1,0 +1,75 @@
+div.matrix-main {
+  display: table;
+  div.center-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    p.msg-select-zone {
+      margin: 0 0 24px 0;
+      text-align: center;
+      font-weight: 500;
+    }
+    div.matrix {
+      flex: 1;
+      div.height {
+        width: auto;
+        height: auto;
+        display: table;
+        margin: 0 auto;
+        div.column {
+          height: 40px;
+          width: 70px;
+          border: 1px solid black;
+          display: table-cell;
+          cursor: pointer;
+          position: relative;
+          div.emptying-type {
+            height: 38px;
+            width: 68px;
+            display: flex;
+            align-items: center;
+            place-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            position: absolute;
+            font-weight: bold;
+          }
+          div.products-qty {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 10px;
+          }
+        }
+      }
+      div.footer {
+        margin: 0 auto;
+        height: 12px;
+        border-right: 1px solid black;
+        border-left: 1px solid black;
+      }
+    }
+    div.legend {
+      margin-top: 16px;
+      font-size: 14px;
+      div.zone {
+        display: block;
+        line-height: 18px;
+        div.color-zone {
+          width: 12px;
+          height: 12px;
+          display: inline-block;
+          margin-right: 8px;
+          margin-top: 8px;
+          padding-top: 3px;
+          border: 1px solid black;
+        }
+        span.name-zone {
+          display: inline-block;
+        }
+      }
+    }
+  }
+}

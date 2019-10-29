@@ -1,7 +1,8 @@
 export namespace ProductSorterModel {
 
   export interface ModelSorter {
-    reference: string
+    reference: string,
+    name?: string
   }
 
   export interface DestinyWarehouseSorter {

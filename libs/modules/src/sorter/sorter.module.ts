@@ -4,7 +4,7 @@ import { SorterComponent } from './sorter.component';
 import { Routes, RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatTableModule, MatIconModule } from '@angular/material';
+import {MatTableModule, MatIconModule, MatExpansionModule} from '@angular/material';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ListComponent } from './list/list.component';
@@ -31,6 +31,10 @@ import {NotificationActiveProcessSorterComponent} from "./notification-active-pr
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import { RacksComponent } from './racks/racks.component';
 import { RacksModule } from './racks/racks.module';
+import {WaysEmptyingComponent} from "./ways-emptying/ways-emptying";
+import {SorterActionsEmptyingComponent} from "./ways-emptying/actions/actions";
+import {MatrixEmptyingSorterComponent} from "./ways-emptying/matrix/matrix.component";
+import {SorterInfoWayEmptyingComponent} from "./ways-emptying/info-way/info-way.component";
 
 const routes:Routes = [
   {
@@ -88,6 +92,13 @@ const routes:Routes = [
     data: {
       name: 'Salida sorter'
     }
+  },
+  {
+    path: 'ways/emptying',
+    component: WaysEmptyingComponent,
+    data: {
+      name: 'Vaciado de calles'
+    }
   }
 ];
 
@@ -109,7 +120,11 @@ const routes:Routes = [
     SorterTemplateSelectionComponent,
     SorterMatrixSelectedComponent,
     MatrixSelectWaySorterComponent,
-    NotificationActiveProcessSorterComponent
+    NotificationActiveProcessSorterComponent,
+    WaysEmptyingComponent,
+    SorterActionsEmptyingComponent,
+    MatrixEmptyingSorterComponent,
+    SorterInfoWayEmptyingComponent
   ],
   imports: [
     CommonModule,
@@ -127,7 +142,8 @@ const routes:Routes = [
     MatFormFieldModule,
     MatSelectModule,
     CommonUiCrudModule,
-    RacksModule
+    RacksModule,
+    MatExpansionModule
   ]
 })
 export class SorterModule { }
