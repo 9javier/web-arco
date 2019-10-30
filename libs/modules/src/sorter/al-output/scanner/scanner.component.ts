@@ -493,24 +493,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private async wrongCodeDetected() {
-    await this.intermediaryService.presentToastError('Se ha escaneado un código erróneo para la calle actual.');
     this.wrongCodeScanned = true;
     this.leftButtonDanger = false;
     this.checkByWrongCode = false;
-    /*this.lastProductScannedChecking = {
-      reference: '001234567891234569',
-      destinyWarehouse: {
-        id: 1,
-        name: 'MADRIDES',
-        reference: '878'
-      },
-      model: {
-        reference: '123456'
-      },
-      size: {
-        name: '41'
-      }
-    }*/
   }
 
   private stopExecutionOutput() {
