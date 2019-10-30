@@ -46,16 +46,14 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
   async keyUpInput(event) {
     const dataWrote = (this.inputValue || "").trim();
     if (event.keyCode === 13 && dataWrote) {
-      await this.scanToRack(dataWrote)
+      await this.scanToRack()
     }
   }
 
-  private scanToRack(dataWrote: string) {
-    console.log(dataWrote);
+  private scanToRack() {
     this.sorterInputService
       .postRackScan({ productReference: this.productReference, rackReference: this.inputValue })
       .subscribe(async (res: InputSorterModel.RackScan) => {
-        console.log(res);
         await this.close()
       }, async (error: HttpRequestModel.Error) => {
         console.log(error);
