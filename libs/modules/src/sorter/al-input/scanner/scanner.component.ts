@@ -147,7 +147,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async scanToProduct(dataWrote) {
-    this.addScannerRackButton(true);
     if (dataWrote === this.lastCodeScanned) {
       this.inputValue = null;
       this.focusToInput();
@@ -171,6 +170,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       this.focusToInput();
     } else {
       if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
+        this.addScannerRackButton(true);
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);
       } else {
