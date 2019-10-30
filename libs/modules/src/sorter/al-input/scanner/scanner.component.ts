@@ -29,6 +29,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   isWaitingSorterFeedback = false;
   productToSetInSorter: string = null;
   idLastWaySet: number = null;
+  modalScannRack = false;
 
   productScanned: ProductSorterModel.ProductSorter = null;
 
@@ -80,6 +81,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   async presentScannerRackModal() {
     this.addScannerRackButton();
+    this.modalScannRack = true;
     const scannerModal = await this.modalCtrl.create({
       component: ScannerRackComponent,
       componentProps: {
@@ -91,11 +93,16 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     });
 
     scannerModal.onDidDismiss().then(async (data) => {
-      this.addScannerRackButton(true);
-      // if (data.data.close) {
-      //   const dataWrote = (data.data.productReference || "").trim();
-      //   await this.scanToProduct(dataWrote)
-      // }
+      if (data.data.close) {
+        this.isWaitingSorterFeedback = false;
+        this.modalScannRack = false;
+        this.addScannerRackButton(true);
+        this.checkProductInWay(this.productScanned.reference);
+      } else {
+        this.timeoutToQuickUser();
+        this.sorterNotifyAboutProductScanned();
+        this.focusToInput();
+      }
     });
 
     return await scannerModal.present();
@@ -290,7 +297,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           .postCheckProductInWay({ productReference, wayId })
           .subscribe((res: InputSorterModel.CheckProductInWay) => {
             if (!res.is_in_way && this.isWaitingSorterFeedback) {
-              setTimeout(() => checkProductInWayLocal(productReference), 1000);
+              setTimeout(() => {
+                if (!this.modalScannRack) {
+                  checkProductInWayLocal(productReference)
+                }
+              }, 1000);
             } else {
               this.timeoutToQuickUser();
               this.sorterNotifyAboutProductScanned();
