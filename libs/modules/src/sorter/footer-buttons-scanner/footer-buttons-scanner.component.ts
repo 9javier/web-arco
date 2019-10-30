@@ -10,6 +10,8 @@ export class FooterButtonsScannerSorterComponent implements OnInit {
   @Input() leftButton: string;
   @Input() rightButton: string;
   @Input() leftButtonDanger: boolean = false;
+  @Input() leftButtonDisabled: boolean = false;
+  @Input() rightButtonDisabled: boolean = false;
   @Output() leftButtonAction = new EventEmitter();
   @Output() rightButtonAction = new EventEmitter();
 

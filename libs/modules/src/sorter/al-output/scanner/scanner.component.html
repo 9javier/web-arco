@@ -54,8 +54,10 @@
     *ngIf="processStarted && infoSorterOperation.packingReference"
     [leftButton]="leftButtonText"
     [leftButtonDanger]="leftButtonDanger"
+    [leftButtonDisabled]="packingIsFull"
     (leftButtonAction)="packingFull()"
     [rightButton]="rightButtonText"
+    [rightButtonDisabled]="packingIsFull"
     (rightButtonAction)="emptyWay()">
   </sorter-footer-buttons-scanner>
 </div>

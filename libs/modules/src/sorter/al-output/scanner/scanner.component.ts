@@ -195,8 +195,12 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   async packingFull() {
     let callback = () => {
-      this.packingIsFull = true;
-      this.messageGuide = 'Escanea el primer artículo de la calle.';
+      if (this.wrongCodeScanned) {
+        this.setPackingAsFull();
+      } else {
+        this.packingIsFull = true;
+        this.messageGuide = 'Escanea el primer artículo de la calle.';
+      }
     };
     await this.intermediaryService.presentConfirm(`¿Quiere marcar el embalaje ${this.infoSorterOperation.packingReference} como lleno y continuar trabajando con otro embalaje?`, callback);
   }
@@ -221,6 +225,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.packingIsFull = false;
           this.lastProductScanned = false;
           this.infoSorterOperation.packingReference = packingReference;
+          this.isFirstProductScanned = false;
           await this.intermediaryService.dismissLoading();
           await this.intermediaryService.presentToastSuccess(`Iniciando proceso con el embalaje ${packingReference}.`);
           this.focusToInput();
@@ -275,7 +280,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
             if (this.wrongCodeScanned) {
               let resData = res.data;
               if (!resData.productInSorter) {
-                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
+                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`, 2000);
                 this.focusToInput();
               } else {
                 this.lastProductScannedChecking = {
@@ -293,15 +298,15 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                   }
                 };
                 if (this.lastProductScannedChecking.destinyWarehouse.id != this.infoSorterOperation.destinyWarehouse.id) {
-                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
+                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`, 2000);
                   this.focusToInput();
                 } else {
-                  await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
+                  await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
                   this.focusToInput();
                 }
               }
             } else {
-              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`);
+              await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
               if (this.packingIsFull) {
                 this.lastProductScanned = true;
                 this.setPackingAsFull();

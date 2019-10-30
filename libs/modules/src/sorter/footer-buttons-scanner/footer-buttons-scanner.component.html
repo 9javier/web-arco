@@ -1,8 +1,8 @@
 <div class="footer">
   <div class="button left" *ngIf="leftButton">
-    <button (click)="clickLeftButton()" [ngClass]="leftButtonDanger ? 'danger' : ''">{{leftButton}}</button>
+    <button (click)="clickLeftButton()" [ngClass]="leftButtonDanger ? 'danger' : ''" [disabled]="leftButtonDisabled">{{leftButton}}</button>
   </div>
   <div class="button right" *ngIf="rightButton">
-    <button (click)="clickRightButton()">{{rightButton}}</button>
+    <button (click)="clickRightButton()" [disabled]="rightButtonDisabled">{{rightButton}}</button>
   </div>
 </div>
