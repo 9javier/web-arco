@@ -32,7 +32,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
-  private readonly timeMillisToQuickUserFromSorterProcess: number = 10 * 60 * 1000;
 
   leftButtonText: string = 'JAULA LLENA.';
   rightButtonText: string = 'CALLE VACÍA';
@@ -40,7 +39,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   infoSorterOperation: OutputSorterModel.OutputSorter = null;
 
-  private timeoutToQuickStarted = null;
   private checkByWrongCode: boolean = true;
 
   constructor(
@@ -53,7 +51,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private scanditProvider: ScanditProvider,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
-    this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
     setTimeout(() => {
       document.getElementById('input').focus();
     },800); }
@@ -64,9 +61,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkByWrongCode = false;
-    if (this.timeoutToQuickStarted) {
-      clearTimeout(this.timeoutToQuickStarted);
-    }
   }
 
   focusToInput() {
@@ -482,7 +476,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         })
         .then(async (res: SorterOutputModel.ResponseGetIncidenceWay) => {
           if (res.code == 201 && res.data) {
-            this.timeoutToQuickUser();
             this.wrongCodeDetected();
             this.focusToInput();
           } else if (this.checkByWrongCode) {
@@ -537,18 +530,5 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         await this.intermediaryService.presentToastError(errorMessage, 2000);
         this.focusToInput();
       });
-  }
-
-  private timeoutToQuickUser() {
-    if (this.timeoutToQuickStarted) {
-      clearTimeout(this.timeoutToQuickStarted);
-    }
-
-    this.timeoutToQuickStarted = setTimeout(async () => {
-      await this.intermediaryService.presentLoading('Forzando la salida del usuario de la tarea...');
-      setTimeout(() => {
-        this.stopExecutionOutput();
-      }, 3 * 1000);
-    }, this.timeMillisToQuickUserFromSorterProcess);
   }
 }
