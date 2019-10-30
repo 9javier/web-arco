@@ -55,8 +55,7 @@ export class LoginComponent implements OnInit {
     this.user.username = '';
     this.user.password = '';
     this.getLastUsername();
-
-    if (this.platform.is('ios') || this.platform.is('android')) {
+    if (!this.platform.is('mobileweb')) {
       this.isMobileApp = true;
 
       await this.appVersion.getVersionNumber().then(

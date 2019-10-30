@@ -12,6 +12,7 @@ export class SorterInputService {
 
   private postProductScanUrl: string = environment.apiSorter + "/sorters/scanProduct";
   private postCheckProductInWayUrl: string = environment.apiSorter + "/sorter/execution/way/product/check";
+  private postRackScanUrl: string = environment.apiSorter + "/sorter/process/product/rack";
 
   constructor(
     private http: HttpClient
@@ -25,6 +26,12 @@ export class SorterInputService {
 
   postCheckProductInWay(params: InputSorterModel.ParamsCheckProductInWay): Observable<InputSorterModel.CheckProductInWay> {
     return this.http.post<InputSorterModel.ResponseCheckProductInWay>(this.postCheckProductInWayUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  postRackScan(params: InputSorterModel.ParamsRackScan): Observable<InputSorterModel.RackScan> {
+    return this.http.post<InputSorterModel.ResponseRackScan>(this.postRackScanUrl, params).pipe(map(response => {
       return response.data;
     }));
   }
