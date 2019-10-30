@@ -274,26 +274,31 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           } else {
             if (this.wrongCodeScanned) {
               let resData = res.data;
-              this.lastProductScannedChecking = {
-                reference: resData.product.reference,
-                destinyWarehouse: {
-                  id: resData.warehouse.id,
-                  name: resData.warehouse.name,
-                  reference: resData.warehouse.reference
-                },
-                model: {
-                  reference: resData.product.model.reference
-                },
-                size: {
-                  name: resData.product.size.name
-                }
-              };
-              if (this.lastProductScannedChecking.destinyWarehouse.id != this.infoSorterOperation.destinyWarehouse.id) {
-                await this.intermediaryService.presentToastError(`¡El ${productReference} tiene asignado un destino diferente al de la calle actual!.`);
+              if (!resData.productInSorter) {
+                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
                 this.focusToInput();
               } else {
-                await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
-                this.focusToInput();
+                this.lastProductScannedChecking = {
+                  reference: resData.product.reference,
+                  destinyWarehouse: {
+                    id: resData.warehouse.id,
+                    name: resData.warehouse.name,
+                    reference: resData.warehouse.reference
+                  },
+                  model: {
+                    reference: resData.product.model.reference
+                  },
+                  size: {
+                    name: resData.product.size.name
+                  }
+                };
+                if (this.lastProductScannedChecking.destinyWarehouse.id != this.infoSorterOperation.destinyWarehouse.id) {
+                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
+                  this.focusToInput();
+                } else {
+                  await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`);
+                  this.focusToInput();
+                }
               }
             } else {
               await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`);

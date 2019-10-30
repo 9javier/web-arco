@@ -40,6 +40,8 @@ export namespace SorterOutputModel {
   }
   export interface ScanProductPutInPacking {
     processStopped?: boolean,
+    productWithIncidence?: boolean,
+    productInSorter?: boolean,
     product: any,
     warehouse: any
   }
