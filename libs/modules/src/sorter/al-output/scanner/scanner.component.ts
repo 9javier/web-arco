@@ -28,6 +28,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   wrongCodeScanned: boolean = false;
   lastProductScannedChecking: ProductSorterModel.ProductSorter = null;
   packingIsFull: boolean = false;
+  hideLeftButtonFooter: boolean = true;
+  hideRightButtonFooter: boolean = true;
   lastProductScanned: boolean = false;
 
   private timeoutStarted = null;
@@ -118,25 +120,22 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       let countdown = 10;
       let enableSetWayAsEmpty: boolean = false;
 
+      let buttonCancel = {
+        text: 'Cancelar',
+        handler: () => this.unlockCurrentWay()
+      };
+
+      let buttonOk = {
+        text: 'Confirmar',
+        handler: () => this.setWayAsEmpty()
+      };
+
       let alertEmptyPacking = await this.alertController.create({
         header: '¿Está vacía?',
         message: textCountdown + '<h2>' + countdown + 's</h2>',
         backdropDismiss: false,
         buttons: [
-          {
-            text: 'Cancelar',
-            handler: () => this.unlockCurrentWay()
-          },
-          {
-            text: 'Confirmar',
-            handler: () => {
-              if (enableSetWayAsEmpty) {
-                this.setWayAsEmpty();
-              } else {
-                return false;
-              }
-            }
-          }
+          buttonCancel
         ]
       });
 
@@ -146,6 +145,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         countdown--;
         if (countdown == -1) {
           clearInterval(intervalChangeCountdown);
+          alertEmptyPacking.message = textCountdown + '<b>Ya puedes pulsar confirmar.</b>';
+          alertEmptyPacking.buttons = [ buttonCancel, buttonOk ];
           enableSetWayAsEmpty = true;
         } else {
           alertEmptyPacking.message = textCountdown + '<h2>' + countdown + 's</h2>';
@@ -199,6 +200,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         this.setPackingAsFull();
       } else {
         this.packingIsFull = true;
+        this.hideLeftButtonFooter = true;
+        this.hideRightButtonFooter = false;
         this.messageGuide = 'Escanea el primer artículo de la calle.';
       }
     };
@@ -312,6 +315,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                 this.lastProductScanned = true;
                 this.setPackingAsFull();
               } else {
+                this.hideLeftButtonFooter = false;
+                this.hideRightButtonFooter = false;
+
                 this.isFirstProductScanned = true;
                 this.messageGuide = 'ESCANEAR ARTÍCULO';
                 this.focusToInput();
@@ -360,6 +366,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           if (this.wrongCodeScanned) {
             this.lastProductScannedChecking = null;
           }
+          this.hideLeftButtonFooter = true;
+          this.hideRightButtonFooter = true;
           this.infoSorterOperation.packingReference = null;
           this.messageGuide = 'Escanea una jaula nueva para continuar';
           await this.intermediaryService.presentToastSuccess('Embalaje registrado como lleno en el sistema. Escanea un nuevo embalaje para continuar con el proceso.');
