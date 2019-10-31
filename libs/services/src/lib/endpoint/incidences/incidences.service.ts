@@ -33,8 +33,9 @@ export class IncidencesService {
     8: 'Producto no encontrado en picking',
     9: 'Producto no recibido',
     10: 'Producto retiquetado',
-    11: 'Sorter-calle erróneo',
-    12: 'Sorter-no entrada'
+    11: 'Sorter - calle erróneo',
+    12: 'Sorter - no entrada',
+    13: 'Sorter - producto eliminado sin jaula'
   };
   private _listIncidencesTypes: TypeModel.Type[] = [
     {id: 0, name: 'Todos los tipos'},
@@ -48,8 +49,9 @@ export class IncidencesService {
     {id: 8, name: 'Producto no encontrado en picking'},
     {id: 9, name: 'Producto no recibido'},
     {id: 10, name: 'Producto retiquetado'},
-    {id: 11, name: 'Sorter-calle erróneo'},
-    {id: 12, name: 'Sorter-no entrada'}
+    {id: 11, name: 'Sorter - calle erróneo'},
+    {id: 12, name: 'Sorter - no entrada'},
+    {id: 13, name: 'Sorter - producto eliminado sin jaula'}
   ];
   private _defaultFiltersPreview: IncidenceModel.SearchParameters = {
     order: 'DESC',
