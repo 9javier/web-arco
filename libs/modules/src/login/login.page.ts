@@ -11,7 +11,7 @@ import {
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import {ToastController, AlertController, LoadingController, ModalController} from '@ionic/angular';
+import { ToastController, AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { AppInfo } from 'config/base';
 import { Platform } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     public platform: Platform,
     private appVersion: AppVersion,
     private appVersionService: AppVersionService
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.user.username = '';
@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
           console.log(error);
         });
 
-      await this.appVersionService.getVersion().then(async ( version: Observable<HttpResponse<AppVersionModel.ResponseIndex>>) => {
+      await this.appVersionService.getVersion().then(async (version: Observable<HttpResponse<AppVersionModel.ResponseIndex>>) => {
         version.subscribe(async (res: HttpResponse<AppVersionModel.ResponseIndex>) => {
           if (res.body.data) {
             const resultCompare = this.compareVersions(`${res.body.data['majorRelease']}.${res.body.data['minorRelease']}.${res.body.data['patchRelease']}`, this.versionNumber);
@@ -80,7 +80,7 @@ export class LoginComponent implements OnInit {
           }
         }, async (err) => {
           console.log(err);
-        }, () => {});
+        }, () => { });
       });
 
     }
@@ -89,8 +89,8 @@ export class LoginComponent implements OnInit {
   /**
    * Get the last username thats been logged in the system
    */
-  getLastUsername():void{
-    this.authenticationService.getUsername().subscribe(username=>{
+  getLastUsername(): void {
+    this.authenticationService.getUsername().subscribe(username => {
       this.user.username = username;
     });
   }
@@ -138,7 +138,7 @@ export class LoginComponent implements OnInit {
           }
           const response: ResponseLogin = data.body;
 
-          this.authenticationService.login(data.body.data.access_token, data.body.data.user,data.body.data.accessPermitionsDictionary,data.body.data.refresh_token);
+          this.authenticationService.login(data.body.data.access_token, data.body.data.user, data.body.data.accessPermitionsDictionary, data.body.data.refresh_token);
           this.router.navigate(['/home']);
         },
         (errorResponse: HttpErrorResponse) => {
@@ -146,7 +146,7 @@ export class LoginComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          if(errorResponse.status === 0) {
+          if (errorResponse.status === 0) {
             this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor");
           } else {
             this.intermediaryService.presentToastError("Error en usuario o contraseña");

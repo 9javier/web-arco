@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Entrada</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="product-scanned">
+    <div class="model-data">
+      <span class="col-text">
+        {{ productReference }}
+      </span>
+      <span class="model">
+        {{ referenceModel }}
+      </span>
+      <span>
+        {{ sizeName ? 'T: ' + sizeName : '' }}
+      </span>
+      <div class="color-sorter">
+        <div [ngStyle]="{'background-color': colorHex}"></div>
+      </div>
+    </div>
+  </div>
+  <ion-input #input placeholder="Ingrese Referencia de estanteria" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue"></ion-input>
+  <ion-button class="round" padding color="primary" expand="block" (click)="close(true)">Cerrar</ion-button>
+</ion-content>

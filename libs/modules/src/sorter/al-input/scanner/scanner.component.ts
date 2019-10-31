@@ -11,6 +11,9 @@ import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 import {Location} from "@angular/common";
 import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
+import { Router } from '@angular/router';
+import { ModalController, NavController } from '@ionic/angular';
+import { ScannerRackComponent } from '../scanner-rack/scanner-rack.component';
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -19,13 +22,14 @@ import {HttpRequestModel} from "../../../../../services/src/models/endpoints/Htt
 })
 export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
-  messageGuide: string = 'ARTÍCULO';
+  messageGuide = 'ARTÍCULO';
   inputValue: string = null;
-  lastCodeScanned: string = 'start';
-  processStarted: boolean = false;
-  isWaitingSorterFeedback: boolean = false;
+  lastCodeScanned = 'start';
+  processStarted = false;
+  isWaitingSorterFeedback = false;
   productToSetInSorter: string = null;
   idLastWaySet: number = null;
+  modalScannRack = false;
 
   productScanned: ProductSorterModel.ProductSorter = null;
 
@@ -35,13 +39,14 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   private readonly timeMillisToQuickUserFromSorterProcess: number = 10 * 60 * 1000;
 
   // Footer buttons
-  leftButtonText: string = 'CARRIL. EQUIV.';
-  rightButtonText: string = 'NO CABE CAJA';
-  leftButtonDanger: boolean = true;
+  leftButtonText = 'CARRIL. EQUIV.';
+  rightButtonText = 'NO CABE CAJA';
+  leftButtonDanger = true;
 
   private timeoutToQuickStarted = null;
 
   constructor(
+    private modalCtrl: ModalController,
     private location: Location,
     private intermediaryService: IntermediaryService,
     private sorterInputService: SorterInputService,
@@ -57,20 +62,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     },800); }
   
   ngOnInit() {
-    this.toolbarProvider.optionsActions.next([
-      {
-        icon: 'hand',
-        label: 'Finalizar',
-        action: async () => {
-          this.timeoutToQuickUser();
-          let callback = async () => {
-            await this.intermediaryService.presentLoading('Finalizando proceso de entrada...');
-            this.stopExecutionInput();
-          };
-          await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de entrada en el sorter. ¿Está seguro?', callback);
-        }
-      }
-    ]);
+    this.addScannerRackButton();
     this.timeoutToQuickUser();
   }
 
@@ -87,49 +79,112 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
+  async presentScannerRackModal() {
+    this.addScannerRackButton();
+    this.modalScannRack = true;
+    const scannerModal = await this.modalCtrl.create({
+      component: ScannerRackComponent,
+      componentProps: {
+        'productReference': this.productScanned.reference,
+        'referenceModel': this.productScanned.model.reference,
+        'sizeName': this.productScanned.size.name,
+        'colorHex': this.sorterProvider.colorSelected.hex
+      }
+    });
+
+    scannerModal.onDidDismiss().then(async (data) => {
+      if (data.data.close) {
+        this.isWaitingSorterFeedback = false;
+        this.modalScannRack = false;
+        this.addScannerRackButton(true);
+        this.checkProductInWay(this.productScanned.reference);
+      } else {
+        this.timeoutToQuickUser();
+        this.sorterNotifyAboutProductScanned();
+        this.focusToInput();
+      }
+    });
+
+    return await scannerModal.present();
+  }
+
+  addScannerRackButton(addRack = false) {
+    const buttons = [{
+      icon: 'hand',
+      label: 'Finalizar',
+      action: async () => {
+        this.timeoutToQuickUser();
+        const callback = async () => {
+          await this.intermediaryService.presentLoading('Finalizando proceso de entrada...');
+          this.stopExecutionInput();
+        };
+        await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de entrada en el sorter. ¿Está seguro?', callback);
+      }
+    }];
+
+    if (addRack) {
+      buttons.unshift({
+        icon: 'apps',
+        label: 'Rack',
+        action: async () => {
+          this.toolbarProvider.optionsActions.next([]);
+          // this.isWaitingSorterFeedback = false;
+          await this.presentScannerRackModal();
+        }
+      });
+    }
+    this.toolbarProvider.optionsActions.next(buttons);
+    this.timeoutToQuickUser();
+  }
+
   async keyUpInput(event) {
     this.timeoutToQuickUser();
-    let dataWrote = (this.inputValue || "").trim();
+    const dataWrote = (this.inputValue || "").trim();
 
-    if (event.keyCode == 13 && dataWrote) {
-      if (dataWrote === this.lastCodeScanned) {
-        this.inputValue = null;
-        this.focusToInput();
-        return;
-      }
-      this.lastCodeScanned = dataWrote;
+    if (event.keyCode === 13 && dataWrote) {
+      await this.scanToProduct(dataWrote)
+    }
+  }
 
-      if (this.timeoutStarted) {
-        clearTimeout(this.timeoutStarted);
-      }
-      this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
-
+  async scanToProduct(dataWrote) {
+    if (dataWrote === this.lastCodeScanned) {
       this.inputValue = null;
+      this.focusToInput();
+      return;
+    }
+    this.lastCodeScanned = dataWrote;
 
-      if (this.isWaitingSorterFeedback) {
-        if (this.productToSetInSorter != dataWrote) {
-          await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
-        } else {
-          await this.intermediaryService.presentToastError(`¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`, 2000);
-        }
-        this.focusToInput();
+    if (this.timeoutStarted) {
+      clearTimeout(this.timeoutStarted);
+    }
+    this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+
+    this.inputValue = null;
+
+    if (this.isWaitingSorterFeedback) {
+      if (this.productToSetInSorter !== dataWrote) {
+        await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
       } else {
-        if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT) {
-          await this.intermediaryService.presentLoading('Registrando entrada de producto...');
-          this.inputProductInSorter(dataWrote);
-        } else {
-          await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
-          this.focusToInput();
-        }
+        await this.intermediaryService.presentToastError(`¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`, 2000);
+      }
+      this.focusToInput();
+    } else {
+      if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
+        this.addScannerRackButton(true);
+        await this.intermediaryService.presentLoading('Registrando entrada de producto...');
+        this.inputProductInSorter(dataWrote);
+      } else {
+        await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
+        this.focusToInput();
       }
     }
   }
 
   async wrongWay() {
     this.timeoutToQuickUser();
-    let setWayAsWrong = async () => {
+    const setWayAsWrong = async () => {
       // Request to server to notify that las product was set in a wrong way and reset the sorter notify led
-      let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      const productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
       if (productRef) {
         this.sorterExecutionService
           .postWrongWay({ way: this.idLastWaySet, productReference: productRef })
@@ -156,9 +211,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   async fullWay() {
     this.timeoutToQuickUser();
-    let setWayAsFull = async () => {
+    const setWayAsFull = async () => {
       // Request to server to set way as full, assign in sorter a new way and return info to notify to user
-      let productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
+      const productRef = this.productToSetInSorter || this.productScanned ? this.productScanned.reference : null;
       if (productRef) {
         this.sorterExecutionService
           .postFullWay({ way: this.idLastWaySet, productReference: productRef })
@@ -232,17 +287,21 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  private checkProductInWay(productReference: string) {
+  private checkProductInWay(productReference1: string) {
     if (!this.isWaitingSorterFeedback) {
       this.isWaitingSorterFeedback = true;
 
-      let checkProductInWayLocal = (productReference: string) => {
-        let wayId = this.idLastWaySet;
+      const checkProductInWayLocal = (productReference: string) => {
+        const wayId = this.idLastWaySet;
         this.sorterInputService
           .postCheckProductInWay({ productReference, wayId })
           .subscribe((res: InputSorterModel.CheckProductInWay) => {
             if (!res.is_in_way && this.isWaitingSorterFeedback) {
-              setTimeout(() => checkProductInWayLocal(productReference), 1000);
+              setTimeout(() => {
+                if (!this.modalScannRack) {
+                  checkProductInWayLocal(productReference)
+                }
+              }, 1000);
             } else {
               this.timeoutToQuickUser();
               this.sorterNotifyAboutProductScanned();
@@ -254,7 +313,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           });
       };
 
-      checkProductInWayLocal(productReference);
+      checkProductInWayLocal(productReference1);
     }
   }
 
