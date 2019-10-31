@@ -34,11 +34,6 @@
         <mat-cell *matCellDef="let element">{{element.warehouse.name}}</mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="belongWarehouse">
-        <mat-header-cell *matHeaderCellDef>Pertenece</mat-header-cell>
-        <mat-cell *matCellDef="let element">{{element.belongWarehouse.name}}</mat-cell>
-      </ng-container>
-
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToUpdate(row)"></mat-row>
     </mat-table>

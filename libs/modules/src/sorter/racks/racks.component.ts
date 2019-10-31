@@ -19,7 +19,7 @@ import { StoreUpdateComponent } from './store-update/store-update.component';
 export class RacksComponent implements OnInit {
   public title = 'Estantes';
   dataSource: MatTableDataSource<RackModel.Rack>;
-  displayedColumns: string[] = ['select', 'name', 'reference', 'warehouse', 'belongWarehouse'];
+  displayedColumns: string[] = ['select', 'name', 'reference', 'warehouse'];
   selection = new SelectionModel<RackModel.Rack>(true, []);
   showDeleteButton = false;
 

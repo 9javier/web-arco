@@ -25,7 +25,6 @@ export class StoreUpdateComponent implements OnInit {
   ngOnInit() {
     this.getWarehouses();
     this.rackService.form.get('warehouse').setValue(this.rackService.form.get('warehouse').value.id);
-    this.rackService.form.get('belongWarehouse').setValue(this.rackService.form.get('belongWarehouse').value.id);
   }
 
   async close() {
