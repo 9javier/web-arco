@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
 import {Router} from "@angular/router";
 import {IntermediaryService} from "@suite/services";
@@ -11,6 +11,12 @@ import {SorterService} from "../../../../services/src/lib/endpoint/sorter/sorter
 import {TemplateColorsService} from "../../../../services/src/lib/endpoint/template-colors/template-colors.service";
 import {SorterOutputService} from "../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
 import {SorterOutputModel} from "../../../../services/src/models/endpoints/SorterOutput";
+import {TemplateSorterModel} from "../../../../services/src/models/endpoints/TemplateSorter";
+import {MatrixSorterModel} from "../../../../services/src/models/endpoints/MatrixSorter";
+import {SorterTemplateService} from "../../../../services/src/lib/endpoint/sorter-template/sorter-template.service";
+import {TemplateZonesService} from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
+import {MatrixOutputSorterComponent} from "./matrix-output/matrix-output.component";
+import {WaySorterModel} from "../../../../services/src/models/endpoints/WaySorter";
 
 @Component({
   selector: 'sorter-output-al',
@@ -19,11 +25,17 @@ import {SorterOutputModel} from "../../../../services/src/models/endpoints/Sorte
 })
 export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
+  @ViewChild(MatrixOutputSorterComponent) matrixOutput: MatrixOutputSorterComponent;
+
   private activeDefaultData: boolean = false;
 
   public colorsSelectors: TemplateColorsModel.AvailableColorsByProcess[] = [];
   public loadingSorterTemplateMatrix: boolean = true;
   private resumeProcessForUser: boolean = false;
+
+  public sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[] = [];
+  public haveManualEmptying: boolean = false;
+  public waySelectedToEmptying: WaySorterModel.WaySorter = null;
 
   constructor(
     private router: Router,
@@ -32,6 +44,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     private sorterService: SorterService,
     private templateColorsService: TemplateColorsService,
     private sorterOutputService: SorterOutputService,
+    private sorterTemplateService: SorterTemplateService,
+    private templateZonesService: TemplateZonesService,
     public sorterProvider: SorterProvider
   ) { }
   
@@ -543,12 +557,17 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
   sorterOperationCancelled() {
     this.sorterProvider.colorSelected = null;
+    this.matrixOutput.resetWaySelected();
   }
 
   async sorterOperationStarted() {
     if (!this.sorterProvider.colorSelected) {
       await this.intermediaryService.presentToastError('Selecciona un color para comenzar.');
       return;
+    }
+
+    if (this.waySelectedToEmptying) {
+
     }
 
     if (this.resumeProcessForUser) {
@@ -681,12 +700,16 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
+  waySelected(data: WaySorterModel.WaySorter) {
+    this.waySelectedToEmptying = data;
+  }
+
   //region Endpoints requests
   private loadActiveSorter() {
     this.sorterService
       .getFirstSorter()
       .subscribe((res: SorterModel.FirstSorter) => {
-        this.loadAvailableColors();
+        this.loadAvailableColors(res.id);
       }, async (error: HttpRequestModel.Error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar los datos del sorter.';
         if (error.error && error.error.errors) {
@@ -720,13 +743,50 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadAvailableColors() {
+  private loadAvailableColors(idSorter: number) {
     this.templateColorsService
       .postAvailableColorsByProcess({ processType: 2 })
       .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
         this.colorsSelectors = res;
+        this.loadActiveTemplate(idSorter);
       }, async (error: HttpRequestModel.Error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar los datos del sorter.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
+        this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private loadActiveTemplate(idSorter: number) {
+    this.sorterTemplateService
+      .getActiveTemplate()
+      .subscribe((res: TemplateSorterModel.Template) => {
+        this.loadMatrixTemplateSorter(idSorter, res.id);
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
+        this.loadingSorterTemplateMatrix = false;
+      });
+  }
+
+  private loadMatrixTemplateSorter(idSorter: number, idTemplate: number) {
+    this.loadingSorterTemplateMatrix = true;
+    this.templateZonesService
+      .getMatrixTemplateSorter(idSorter, idTemplate)
+      .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
+        this.haveManualEmptying = !!res.find(height => !!height.columns.find(columnWay => !!columnWay.way.manual));
+        if (this.haveManualEmptying) {
+          this.sorterTemplateMatrix = res;
+          this.matrixOutput.processMatrix(this.sorterTemplateMatrix);
+        }
+        this.loadingSorterTemplateMatrix = false;
+      }, async (error: HttpRequestModel.Error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }

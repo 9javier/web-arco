@@ -36,6 +36,7 @@ import { SorterActionsEmptyingComponent } from "./ways-emptying/actions/actions"
 import { MatrixEmptyingSorterComponent } from "./ways-emptying/matrix/matrix.component";
 import { SorterInfoWayEmptyingComponent } from "./ways-emptying/info-way/info-way.component";
 import { ScannerRackComponent } from './al-input/scanner-rack/scanner-rack.component';
+import {MatrixOutputSorterComponent} from "./al-output/matrix-output/matrix-output.component";
 
 const routes: Routes = [
   {
@@ -133,7 +134,8 @@ const routes: Routes = [
     WaysEmptyingComponent,
     SorterActionsEmptyingComponent,
     MatrixEmptyingSorterComponent,
-    SorterInfoWayEmptyingComponent
+    SorterInfoWayEmptyingComponent,
+    MatrixOutputSorterComponent
   ],
   imports: [
     CommonModule,
