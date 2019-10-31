@@ -31,6 +31,10 @@ import { NotificationActiveProcessSorterComponent } from "./notification-active-
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import { RacksComponent } from './racks/racks.component';
 import { RacksModule } from './racks/racks.module';
+import { WaysEmptyingComponent } from "./ways-emptying/ways-emptying";
+import { SorterActionsEmptyingComponent } from "./ways-emptying/actions/actions";
+import { MatrixEmptyingSorterComponent } from "./ways-emptying/matrix/matrix.component";
+import { SorterInfoWayEmptyingComponent } from "./ways-emptying/info-way/info-way.component";
 import { ScannerRackComponent } from './al-input/scanner-rack/scanner-rack.component';
 
 const routes: Routes = [
