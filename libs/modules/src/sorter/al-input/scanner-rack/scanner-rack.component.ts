@@ -23,7 +23,7 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
     private intermediaryService: IntermediaryService,
   ) { }
 
-  @ViewChild('input')  inputElement: IonInput;
+  @ViewChild('input') inputElement: IonInput;
 
   ngOnInit() {
     this.productReference = this.navParams.data.productReference;
@@ -59,9 +59,9 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
         console.log(error);
         let errorMessage = 'Error desconocido, intente nuevamente';
         if (error.error.statusCode === 404) {
-          errorMessage = 'No se pudo encontrar la Jaula';
+          errorMessage = 'Estante Anexo incorrecto';
         } else if (error.error.statusCode === 405) {
-          errorMessage = 'El destino del producto no coincide con el del rack';
+          errorMessage = 'El Almacen del producto no coincide con la estanteria Anexa';
         }
         await this.intermediaryService.presentToastError(errorMessage, 1500);
       });
