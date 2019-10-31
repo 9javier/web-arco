@@ -357,6 +357,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       })
       .then(async (res: SorterOutputModel.ResponsePackingFull) => {
         if (res.code == 200) {
+          if (this.wrongCodeScanned) {
+            this.lastProductScannedChecking = null;
+          }
           this.infoSorterOperation.packingReference = null;
           this.messageGuide = 'Escanea una jaula nueva para continuar';
           await this.intermediaryService.presentToastSuccess('Embalaje registrado como lleno en el sistema. Escanea un nuevo embalaje para continuar con el proceso.');
