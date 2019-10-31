@@ -27,7 +27,7 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.productReference = this.navParams.data.productReference;
-    this.referenceModel = this.navParams.data.model;
+    this.referenceModel = this.navParams.data.referenceModel;
     this.sizeName = this.navParams.data.sizeName;
     this.colorHex = this.navParams.data.colorHex;
     this.inputElement.setFocus();

@@ -80,6 +80,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async presentScannerRackModal() {
+    console.log(this.productScanned);
     this.addScannerRackButton();
     this.modalScannRack = true;
     const scannerModal = await this.modalCtrl.create({
