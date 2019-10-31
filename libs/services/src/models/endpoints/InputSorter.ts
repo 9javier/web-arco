@@ -11,6 +11,11 @@ export namespace InputSorterModel {
     packingReference: string
   }
 
+  export interface ParamsRackScan {
+    productReference: string,
+    rackReference: string
+  }
+
   export interface ProductScan {
     warehouse: WarehouseModel.Warehouse,
     zone: ZoneSorterModel.ZoneSorter,
@@ -20,8 +25,21 @@ export namespace InputSorterModel {
     product: ProductModel.Product
   }
 
+  export interface RackScan {
+    logUser: number,
+    destinationWarehouse: WarehouseModel.Warehouse,
+    productShoeUnit: ProductModel.Product,
+    typeAction: number,
+    locationType: number,
+    id: number
+  }
+
   export interface ResponseProductScan {
     data: ProductScan
+  }
+
+  export interface ResponseRackScan {
+    data: RackScan
   }
 
   export interface ParamsCheckProductInWay {
