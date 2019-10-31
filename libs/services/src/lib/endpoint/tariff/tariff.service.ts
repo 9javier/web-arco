@@ -12,7 +12,7 @@ import { SortModel } from "../../../models/endpoints/Sort";
 export class TariffService {
 
   /**urls for tariff service */
-  private getIndexUrl: string = environment.apiBase + "/tariffs";
+  private getIndexUrl: string = environment.apiBase + "/tariffs/active";
   private getTariffIfSoftdeleteSGA: string = environment.apiBase + "/tariffs/";
   private isCalculatingSGA: string = environment.apiBase + "/tariffs/iscalculating";
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
