@@ -86,10 +86,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     const scannerModal = await this.modalCtrl.create({
       component: ScannerRackComponent,
       componentProps: {
-        'productReference': this.productScanned.reference,
-        'referenceModel': this.productScanned.model.reference,
-        'sizeName': this.productScanned.size.name,
-        'colorHex': this.sorterProvider.colorSelected.hex
+        'productScanned': this.productScanned
       }
     });
 

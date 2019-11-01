@@ -19,6 +19,11 @@
 <!--        <div [ngStyle]="{'background-color': colorHex}"></div>-->
 <!--      </div>-->
     </div>
+    <div *ngIf="destinyWarehouse">
+      <span class="col-store">
+        {{ destinyWarehouse.reference + ' ' + destinyWarehouse.name }}
+      </span>
+    </div>
   </div>
   <ion-input #input placeholder="Ingrese Referencia de estanteria" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue"></ion-input>
   <ion-button class="round" padding color="primary" expand="block" (click)="close(true)">Cerrar</ion-button>
