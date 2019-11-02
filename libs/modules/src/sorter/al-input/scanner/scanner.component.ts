@@ -80,15 +80,13 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async presentScannerRackModal() {
+    console.log(this.productScanned);
     this.addScannerRackButton();
     this.modalScannRack = true;
     const scannerModal = await this.modalCtrl.create({
       component: ScannerRackComponent,
       componentProps: {
-        'productReference': this.productScanned.reference,
-        'referenceModel': this.productScanned.model.reference,
-        'sizeName': this.productScanned.size.name,
-        'colorHex': this.sorterProvider.colorSelected.hex
+        'productScanned': this.productScanned
       }
     });
 
