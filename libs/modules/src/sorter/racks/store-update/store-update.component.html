@@ -29,7 +29,7 @@
         <mat-icon matPrefix>format_line_spacing</mat-icon>
         <mat-select formControlName="warehouse">
           <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-            {{warehouse.name}}
+            {{warehouse.reference}} - {{warehouse.name}}
           </mat-option>
         </mat-select>
         <mat-error>Este campo es requerido.</mat-error>
