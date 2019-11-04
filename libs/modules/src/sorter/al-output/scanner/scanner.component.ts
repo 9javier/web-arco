@@ -229,6 +229,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.checkWayWithIncidence();
 
     this.outputWithIncidencesClear = false;
+    this.launchIncidenceBeep = false;
   }
 
   private async assignPackingToProcess(packingReference: string) {
