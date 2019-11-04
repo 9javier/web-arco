@@ -15,9 +15,14 @@
       <span>
         {{ sizeName ? 'T: ' + sizeName : '' }}
       </span>
-      <div class="color-sorter">
-        <div [ngStyle]="{'background-color': colorHex}"></div>
-      </div>
+<!--      <div class="color-sorter">-->
+<!--        <div [ngStyle]="{'background-color': colorHex}"></div>-->
+<!--      </div>-->
+    </div>
+    <div *ngIf="destinyWarehouse">
+      <span class="col-store">
+        {{ destinyWarehouse.reference + ' ' + destinyWarehouse.name }}
+      </span>
     </div>
   </div>
   <ion-input #input placeholder="Ingrese Referencia de estanteria" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue"></ion-input>

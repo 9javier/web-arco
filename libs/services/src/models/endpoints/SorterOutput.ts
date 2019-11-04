@@ -37,10 +37,14 @@ export namespace SorterOutputModel {
     productReference: string,
     packingReference: string,
     wayId: number,
-    fullPacking: boolean
+    fullPacking: boolean,
+    incidenceProcess: boolean
   }
   export interface ScanProductPutInPacking {
     processStopped?: boolean,
+    productWithIncidence?: boolean,
+    wayWithIncidences?: boolean,
+    productInSorter?: boolean,
     product: any,
     warehouse: any
   }

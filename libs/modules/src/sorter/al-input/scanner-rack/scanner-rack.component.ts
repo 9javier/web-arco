@@ -14,7 +14,7 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
   productReference: '';
   referenceModel: '';
   sizeName: '';
-  colorHex: '';
+  destinyWarehouse: any;
   inputValue: '';
   constructor(
     private modalCtrl: ModalController,
@@ -26,10 +26,11 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
   @ViewChild('input') inputElement: IonInput;
 
   ngOnInit() {
-    this.productReference = this.navParams.data.productReference;
-    this.referenceModel = this.navParams.data.model;
-    this.sizeName = this.navParams.data.sizeName;
-    this.colorHex = this.navParams.data.colorHex;
+    console.log(this.navParams.data);
+    this.productReference = this.navParams.data.productScanned.reference;
+    this.referenceModel = this.navParams.data.productScanned.model.reference;
+    this.sizeName = this.navParams.data.productScanned.size.name;
+    this.destinyWarehouse = this.navParams.data.productScanned.destinyWarehouse;
     this.inputElement.setFocus();
   }
 
