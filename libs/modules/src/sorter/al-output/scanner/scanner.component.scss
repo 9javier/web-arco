@@ -26,6 +26,13 @@ div.content {
       span.store {
         font-weight: 500;
         flex: 2;
+        overflow: hidden;
+        p {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin: 0;
+        }
       }
       span.packing {
         text-align: end;

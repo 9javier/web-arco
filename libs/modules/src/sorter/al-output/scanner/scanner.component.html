@@ -2,7 +2,7 @@
   <div class="store-packing" *ngIf="infoSorterOperation">
     <div class="model-data">
       <span class="store">
-        {{ infoSorterOperation.destinyWarehouse.reference + ' ' + infoSorterOperation.destinyWarehouse.name }}
+        <p>{{ infoSorterOperation.destinyWarehouse.reference + ' ' + infoSorterOperation.destinyWarehouse.name }}</p>
       </span>
       <span class="packing">
         {{ infoSorterOperation.packingReference || '' }}
