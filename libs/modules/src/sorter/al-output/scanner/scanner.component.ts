@@ -301,6 +301,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                     name: resData.product.size.name
                   }
                 };
+                this.hideLeftButtonFooter = false;
+                this.hideRightButtonFooter = false;
                 if (this.lastProductScannedChecking.destinyWarehouse.id != this.infoSorterOperation.destinyWarehouse.id) {
                   await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`, 2000);
                   this.focusToInput();
