@@ -54,4 +54,5 @@
     <plugin name="cordova-plugin-zebra-printer" spec="file:plugin-zebra" />
     <plugin name="com.mirasense.scanditsdk.plugin" spec="file:scandit" />
     <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
+    <plugin name="cordova-plugin-nativeaudio" spec="^3.0.9" />
 </widget>

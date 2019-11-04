@@ -21,6 +21,7 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import localeEs from '@angular/common/locales/es';
 import {registerLocaleData} from "@angular/common";
 import {MondayStartingDateAdapterService} from "../../../../libs/services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
+import {NativeAudio} from "@ionic-native/native-audio/ngx";
 
 registerLocaleData(localeEs);
 
@@ -53,7 +54,8 @@ registerLocaleData(localeEs);
       provide: HTTP_INTERCEPTORS,
       useClass: AddTokenToRequestInterceptor,
       multi: true
-    }
+    },
+    NativeAudio
   ],
   bootstrap: [AppComponent]
 })

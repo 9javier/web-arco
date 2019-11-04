@@ -13,6 +13,7 @@ import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 export class SorterExecutionService {
 
   private postExecuteColorUrl: string = environment.apiSorter + "/sorter/execution/color";
+  private getExecuteColorUrl: string = environment.apiSorter + "/sorter/execution/color";
   private postStopExecuteColorUrl: string = environment.apiSorter + "/sorter/execution/color/stop";
   private postWrongWayUrl: string = environment.apiSorter + "/sorter/execution/incidence";
   private postFullWayUrl: string = environment.apiSorter + "/sorter/execution/way/full";
@@ -28,6 +29,10 @@ export class SorterExecutionService {
     return this.http.post<ExecutionSorterModel.ResponseExecuteColor>(this.postExecuteColorUrl, params).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  getExecuteColor(): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getExecuteColorUrl);
   }
 
   postStopExecuteColor(): Observable<ExecutionSorterModel.StopExecuteColor> {

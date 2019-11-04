@@ -12,6 +12,7 @@ import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/s
 import {Location} from "@angular/common";
 import {SorterOutputService} from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
 import {SorterOutputModel} from "../../../../../services/src/models/endpoints/SorterOutput";
+import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -44,6 +45,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   private checkByWrongCode: boolean = true;
 
+  private launchIncidenceBeep: boolean = false;
+  private intervalIncidenceBeep = null;
+
   constructor(
     private location: Location,
     private alertController: AlertController,
@@ -52,6 +56,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     public sorterProvider: SorterProvider,
     private sorterOutputService: SorterOutputService,
     private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -64,6 +69,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.checkByWrongCode = false;
+    this.launchIncidenceBeep = false;
   }
 
   focusToInput() {
@@ -537,9 +543,20 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private async wrongCodeDetected() {
+    this.launchIncidenceBeep = true;
+    this.launchIncidenceSound();
     this.wrongCodeScanned = true;
     this.leftButtonDanger = false;
     this.checkByWrongCode = false;
+  }
+
+  private launchIncidenceSound() {
+    this.intervalIncidenceBeep = setInterval(() => {
+      if (!this.launchIncidenceBeep) {
+        clearInterval(this.intervalIncidenceBeep);
+      }
+      this.audioProvider.play('incidenceBeep');
+    }, 1000);
   }
 
   private stopExecutionOutput() {
