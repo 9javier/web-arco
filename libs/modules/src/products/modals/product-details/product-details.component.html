@@ -49,7 +49,7 @@
             <ion-item>
                 <ion-label>
                     Ubicación:
-                    {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : ''}}
+                    {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : product.locationType == 3 ? 'Sorter': ''}}
                 </ion-label>
             </ion-item>
             <div padding *ngIf="isProductRelocationEnabled">
@@ -150,12 +150,12 @@
             <ion-item *ngFor="let historical of productHistorical; let i = index">
                 <div>
                     <p>
-                        Almacén {{ historical.destinationWarehouse.reference }} -
-                        {{ historical.destinationWarehouse.name }}
+                        Almacén {{ historical.destinationWarehouse?.reference }} -
+                        {{ historical.destinationWarehouse?.name }}
                     </p>
                     <p>
                         Ubicación:
-                        {{ historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
+                        {{ historical.locationType == 3 ? 'Sorter' : historical.destinationPacking ? historical.destinationPacking.reference : historical.destinationContainer ? historical.destinationContainer.reference: (historical.destinationCarrier ? historical.destinationCarrier.reference: historical.destinationPallet?.reference) }}
                     </p>
                     <p>
                         Fecha: {{dates[i]}} {{hours[i]}}
