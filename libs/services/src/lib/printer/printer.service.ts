@@ -472,7 +472,8 @@ export class PrinterService {
       let price = arrayPricesToProcess[iPrice];
 
       if (price.typeLabel) {
-        if (price.typeLabel == 7 && price.priceDiscount == price.priceDiscountOutlet) {
+        if (price.typeLabel == 7 && price.priceDiscount <= price.priceDiscountOutlet) {
+          price.priceDiscount = price.priceDiscountOutlet;
           price.typeLabel = 5;
         }
 
