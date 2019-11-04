@@ -161,6 +161,30 @@ div.content {
   input.output-sorter.wrong-code {
     background-color: var(--ion-color-danger);
   }
+  div.wrong-product-found {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    align-items: center;
+    p {
+      display: flex;
+      flex-direction: row;
+      text-align: center;
+      padding: 0 56px;
+    }
+    button {
+      display: flex;
+      flex-direction: row;
+      padding: 8px;
+      height: 36px;
+      background-color: var(--ion-color-tertiary);
+      color: white;
+    }
+  }
 }
 div.content.wrong-code {
   background-color: var(--ion-color-danger);

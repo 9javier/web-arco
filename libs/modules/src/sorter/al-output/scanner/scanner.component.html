@@ -50,6 +50,11 @@
 
   <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
 
+  <div *ngIf="outputWithIncidencesClear" class="wrong-product-found">
+    <p>Todos los artículos erróneos localizados. Presione para volver al escaneo sin incidencias.</p>
+    <button (click)="finishOutputWithIncidences()">CONTINUAR SALIDA</button>
+  </div>
+
   <sorter-footer-buttons-scanner
     *ngIf="processStarted && infoSorterOperation.packingReference"
     [leftButton]="leftButtonText"

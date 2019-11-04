@@ -31,6 +31,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   hideLeftButtonFooter: boolean = true;
   hideRightButtonFooter: boolean = true;
   lastProductScanned: boolean = false;
+  outputWithIncidencesClear: boolean = false;
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
@@ -208,6 +209,22 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     await this.intermediaryService.presentConfirm(`¿Quiere marcar el embalaje ${this.infoSorterOperation.packingReference} como lleno y continuar trabajando con otro embalaje?`, callback);
   }
 
+  finishOutputWithIncidences() {
+    this.wrongCodeScanned = false;
+
+    this.hideLeftButtonFooter = false;
+    this.hideRightButtonFooter = false;
+
+    this.isFirstProductScanned = false;
+    this.messageGuide = 'ESCANEAR 1º ARTÍCULO';
+    this.focusToInput();
+
+    this.checkByWrongCode = true;
+    this.checkWayWithIncidence();
+
+    this.outputWithIncidencesClear = false;
+  }
+
   private async assignPackingToProcess(packingReference: string) {
     await this.intermediaryService.presentLoading('Asignando embalaje al proceso...');
 
@@ -282,7 +299,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           } else {
             if (this.wrongCodeScanned) {
               let resData = res.data;
-              if (!resData.productInSorter) {
+              if (!resData.wayWithIncidences) {
+                this.outputWithIncidencesClear = true;
+                this.hideLeftButtonFooter = true;
+              } else if (!resData.productInSorter) {
                 this.lastProductScannedChecking = null;
                 await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`, 2000);
                 this.focusToInput();
