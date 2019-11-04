@@ -107,6 +107,7 @@ export class ReceptionScanditService {
                 // Force product scanning
                 this.setProductAsReceived(response.barcode, true);
               } else if (response.avoid) {
+                this.scannerPaused = false;
                 // Avoid product and don't make anything
               }
               break;
@@ -212,6 +213,7 @@ export class ReceptionScanditService {
     if (this.typeReception == 1) {
       // Warning message notice that this method is only to scan jail or pallet, not products
       ScanditMatrixSimple.showWarning(true, `Este método es para escanear únicamente jaulas o pallets, no productos.`, 'wrong_code_msg');
+      this.scannerPaused = false;
     } else {
       this.setProductAsReceived(code);
     }
@@ -303,6 +305,7 @@ export class ReceptionScanditService {
             this.scanditProvider.colorText.color,
             18);
           this.hideTextMessage(1500);
+          this.scannerPaused = false;
         } else if (response.code == 428) {
           this.scannerPaused = true;
           ScanditMatrixSimple.showWarningToForce(true, referenceProduct);
@@ -313,6 +316,7 @@ export class ReceptionScanditService {
             this.scanditProvider.colorText.color,
             16);
           this.hideTextMessage(1500);
+          this.scannerPaused = false;
         }
       }, (error) => {
         ScanditMatrixSimple.hideLoadingDialog();
@@ -326,6 +330,7 @@ export class ReceptionScanditService {
             this.scanditProvider.colorText.color,
             16);
           this.hideTextMessage(1500);
+          this.scannerPaused = false;
         }
       })
       .catch((error) => {
@@ -340,6 +345,7 @@ export class ReceptionScanditService {
             this.scanditProvider.colorText.color,
             16);
           this.hideTextMessage(1500);
+          this.scannerPaused = false;
         }
       });
   }

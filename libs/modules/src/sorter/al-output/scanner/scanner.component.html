@@ -2,7 +2,7 @@
   <div class="store-packing" *ngIf="infoSorterOperation">
     <div class="model-data">
       <span class="store">
-        {{ infoSorterOperation.destinyWarehouse.reference + ' ' + infoSorterOperation.destinyWarehouse.name }}
+        <p>{{ infoSorterOperation.destinyWarehouse.reference + ' ' + infoSorterOperation.destinyWarehouse.name }}</p>
       </span>
       <span class="packing">
         {{ infoSorterOperation.packingReference || '' }}
@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  <div class="info-product-wrong-code" *ngIf="wrongCodeScanned && !packingIsFull">
+  <div class="info-product-wrong-code" *ngIf="wrongCodeScanned && !packingIsFull && lastProductScannedChecking">
     <div class="store">
       <span [ngClass]="infoSorterOperation.destinyWarehouse.id != lastProductScannedChecking.destinyWarehouse.id ? 'wrong-store' : ''">
         {{ lastProductScannedChecking.destinyWarehouse.reference + ' ' + lastProductScannedChecking.destinyWarehouse.name }}
@@ -46,16 +46,23 @@
     <br/>
     <span>para comenzar</span>
   </div>
-  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted">{{messageGuide}}</p>
+  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted" [ngClass]="wrongCodeScanned ? 'align-bottom' : ''">{{messageGuide}}</p>
 
   <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
+
+  <div *ngIf="outputWithIncidencesClear" class="wrong-product-found">
+    <p>Todos los artículos erróneos localizados. Presione para volver al escaneo sin incidencias.</p>
+    <button (click)="finishOutputWithIncidences()">CONTINUAR SALIDA</button>
+  </div>
 
   <sorter-footer-buttons-scanner
     *ngIf="processStarted && infoSorterOperation.packingReference"
     [leftButton]="leftButtonText"
     [leftButtonDanger]="leftButtonDanger"
+    [leftButtonHidden]="hideLeftButtonFooter"
     (leftButtonAction)="packingFull()"
     [rightButton]="rightButtonText"
+    [rightButtonHidden]="hideRightButtonFooter"
     (rightButtonAction)="emptyWay()">
   </sorter-footer-buttons-scanner>
 </div>

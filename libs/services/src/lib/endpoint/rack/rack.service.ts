@@ -19,7 +19,7 @@ export class RackService {
   form: FormGroup = new FormGroup({
     id: new FormControl(''),
     name: new FormControl('', [Validators.required, Validators.minLength(5)]),
-    reference: new FormControl('', [Validators.required]),
+    reference: new FormControl('', [Validators.required, Validators.pattern('^E[0-9]{4}')]),
     warehouse: new FormControl('', Validators.required),
     belongWarehouse: new FormControl('', Validators.required),
   });

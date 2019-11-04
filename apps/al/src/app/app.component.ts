@@ -16,6 +16,7 @@ import {app} from "@suite/services";
 import {DateAdapter} from "@angular/material";
 import {PrinterConnectionService} from "../../../../libs/services/src/lib/printer-connection/printer-connection.service";
 import {ToolbarProvider} from "../../../../libs/services/src/providers/toolbar/toolbar.provider";
+import {AudioProvider} from "../../../../libs/services/src/providers/audio-provider/audio-provider.provider";
 
 interface MenuItem {
   title: string;
@@ -111,7 +112,8 @@ export class AppComponent implements OnInit {
     private scanditService: ScanditService,
     private typesService: TypesService,
     private printerConnectionService: PrinterConnectionService,
-    private toolbarProvider: ToolbarProvider
+    private toolbarProvider: ToolbarProvider,
+    private audioProvider: AudioProvider
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -132,6 +134,9 @@ export class AppComponent implements OnInit {
         this.statusBar.styleDefault();
       }
       this.splashScreen.hide();
+
+      // preload audio to sound when incidence success in sorter output-process
+      this.audioProvider.preload('incidenceBeep', 'assets/audio/incidence_beep.mp3');
 
       // Initialization of Scandit settings that app will display
       this.scannerConfigurationService.init();

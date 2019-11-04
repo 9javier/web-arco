@@ -217,16 +217,16 @@ export class MenuComponent implements OnInit {
       icon: 'apps',
       children: [
         {
-          title: 'Estantes',
-          id: 'sorter-sga',
-          url: '/sorter/racks',
-          icon: 'grid'
-        },
-        {
           title: 'Plantillas',
           id: 'sorter-sga',
           url: '/sorter',
           icon: 'document'
+        },
+        {
+          title: 'Estantería anexa',
+          id: 'sorter-racks',
+          url: '/sorter/racks',
+          icon: 'grid'
         },
         {
           title: 'Selección de plantilla',
