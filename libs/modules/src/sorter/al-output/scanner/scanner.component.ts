@@ -306,6 +306,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           } else {
             if (this.wrongCodeScanned) {
               let resData = res.data;
+              this.messageGuide = 'ESCANEAR ARTÍCULO';
               if (!resData.productInSorter) {
                 this.lastProductScannedChecking = null;
                 await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`, 2000);
