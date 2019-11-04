@@ -558,6 +558,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   sorterOperationCancelled() {
     this.sorterProvider.colorSelected = null;
     this.matrixOutput.resetWaySelected();
+    this.waySelectedToEmptying = null;
   }
 
   async sorterOperationStarted() {
@@ -566,8 +567,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       return;
     }
 
+    let idWayToWork = null;
     if (this.waySelectedToEmptying) {
-
+      idWayToWork = this.waySelectedToEmptying.id;
     }
 
     if (this.resumeProcessForUser) {
@@ -628,7 +630,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
         .postExecuteColor(paramsRequest)
         .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
           this.sorterOutputService
-            .getNewProcessWay()
+            .getNewProcessWay(idWayToWork)
             .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
               if (res.code == 201) {
                 await this.intermediaryService.dismissLoading();

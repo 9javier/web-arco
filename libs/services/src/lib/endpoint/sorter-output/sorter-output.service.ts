@@ -26,8 +26,12 @@ export class SorterOutputService {
     private requestsProvider: RequestsProvider
   ) { }
 
-  getNewProcessWay() : Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.get(this.getNewProcessWayUrl);
+  getNewProcessWay(idWaySelected: number) : Promise<HttpRequestModel.Response> {
+    let url = this.getNewProcessWayUrl;
+    if (idWaySelected) {
+      url += ('/' + idWaySelected);
+    }
+    return this.requestsProvider.get(url);
   }
 
   postAssignPackingToWay(params: SorterOutputModel.ParamsAssignPackingToWay) : Promise<HttpRequestModel.Response> {
