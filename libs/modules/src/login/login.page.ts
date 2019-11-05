@@ -200,4 +200,8 @@ export class LoginComponent implements OnInit {
       logo.setAttribute("style", "display: flex;");
     }
   }
+
+  loadUpdate() {
+    window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
+  }
 }

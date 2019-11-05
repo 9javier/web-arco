@@ -3,9 +3,7 @@
     <ion-row *ngIf="isNewVersion">
       <ion-col>
         <div>
-          <a href="https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o" target="_blank">
-            Actualización Disponible
-          </a>
+          <ion-button expand="full" (click)="loadUpdate()">Actualización Disponible</ion-button>
         </div>
       </ion-col>
     </ion-row>
