@@ -338,7 +338,12 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                   }
                 } else {
                   await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
-                  this.focusToInput();
+                  if (resData.wayWithIncidences) {
+                    this.focusToInput();
+                  } else {
+                    this.outputWithIncidencesClear = true;
+                    this.hideLeftButtonFooter = true;
+                  }
                 }
               }
             } else {
