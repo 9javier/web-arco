@@ -219,7 +219,7 @@ export class MenuComponent implements OnInit {
         {
           title: 'Plantillas',
           id: 'sorter-sga',
-          url: '/sorter',
+          url: '/sorter/templates',
           icon: 'document'
         },
         {
@@ -233,6 +233,12 @@ export class MenuComponent implements OnInit {
           id: 'sorter-template-selection',
           url: '/sorter/template/selection',
           icon: 'checkbox-outline'
+        },
+        {
+          title: 'Vaciado de calles',
+          id: 'sorter-ways-emptying',
+          url: '/sorter/ways/emptying',
+          icon: 'square-outline'
         }
       ]
     }

@@ -3,6 +3,8 @@ import {ProductModel, WarehouseModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
 import {ExecutionSorterModel} from "./ExecutionSorter";
 import {CarrierModel} from "./Carrier";
+import {WaySorterModel} from "./WaySorter";
+import {ProductSorterModel} from "./ProductSorter";
 
 export namespace SorterOutputModel {
 
@@ -91,5 +93,29 @@ export namespace SorterOutputModel {
   }
   export interface ResponseGetIncidenceWay extends HttpRequestModel.Response {
     data: boolean
+  }
+
+  // Get products by way
+  export interface ParamsGetProductsByWay {
+    wayId: number
+  }
+  export interface GetProductsByWay {
+    way: WaySorterModel.WaySorter,
+    warehouse: WarehouseModel.Warehouse,
+    products: ProductSorterModel.ProductSorter[]
+  }
+  export interface ResponseGetProductsByWay extends HttpRequestModel.Response {
+    data: GetProductsByWay
+  }
+
+  // Change way to manual
+  export interface ParamsChangeWayManual {
+    ways: {wayId: number, manual: boolean}[]
+  }
+  export interface ChangeWayManual {
+
+  }
+  export interface ResponseChangeWayManual extends HttpRequestModel.Response {
+    data: ChangeWayManual
   }
 }

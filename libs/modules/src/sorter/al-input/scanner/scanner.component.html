@@ -1,26 +1,24 @@
 <div class="content">
   <div class="product-scanned" *ngIf="processStarted && productScanned">
-    <div class="model-data">
-      <span class="col-text">
-        {{ productScanned.reference }}
-      </span>
-      <span class="model">
-        {{ productScanned.model?.reference }}
-      </span>
-      <span>
-        {{ productScanned.size ? 'T: ' + productScanned.size.name : '' }}
-      </span>
-      <div class="color-sorter">
-        <div [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div>
+    <ion-grid>
+      <ion-row>
+        <ion-col>{{ productScanned.model?.reference }}</ion-col>
+        <ion-col></ion-col>
+        <ion-col>{{ productScanned.size ? 'T: ' + productScanned.size.name : '' }}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>{{ productScanned.reference }}</ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div class="content-destiny-color" *ngIf="processStarted && productScanned">
+    <div class="content-color" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}">
+      <div class="content-labels">
+        <div id="label-reference" class="label-destiny">{{productScanned.destinyWarehouse.reference}}</div>
+        <div id="label-name" class="label-destiny">{{productScanned.destinyWarehouse.name}}</div>
       </div>
     </div>
-    <ion-row *ngIf="productScanned.destinyWarehouse">
-      <span class="col-store">
-        {{ productScanned.destinyWarehouse.reference + ' ' + productScanned.destinyWarehouse.name }}
-      </span>
-    </ion-row>
   </div>
-
   <div class="start-message-guide" (click)="focusToInput()" *ngIf="!inputValue && !processStarted">
     <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div><span>!</span>
     <br/>
@@ -28,16 +26,13 @@
     <br/>
     <span>para comenzar</span>
   </div>
-  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted">{{messageGuide}}</p>
+  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted && !productScanned">{{messageGuide}}</p>
 
-  <input id="input" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue">
-
-  <sorter-footer-buttons-scanner
-    *ngIf="processStarted && productScanned"
-    [leftButton]="leftButtonText"
-    [leftButtonDanger]="leftButtonDanger"
-    [rightButton]="rightButtonText"
-    (leftButtonAction)="wrongWay()"
-    (rightButtonAction)="fullWay()">
-  </sorter-footer-buttons-scanner>
+  <input *ngIf="!productScanned" id="input" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue">
 </div>
+
+<ion-footer *ngIf="processStarted && productScanned">
+  <ion-button expand="full" color="danger" (click)="wrongWay()"><span>CARRIL<br>EQUIV.</span></ion-button>
+  <ion-button expand="full" color="dark" (click)="presentScannerRackModal()"><span>SALTAR<br>SORTER</span></ion-button>
+  <ion-button expand="full" color="dark" (click)="fullWay()"><span>NO CABE<br>CAJA</span></ion-button>
+</ion-footer>

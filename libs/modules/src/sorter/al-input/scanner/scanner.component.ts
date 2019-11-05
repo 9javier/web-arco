@@ -74,7 +74,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   focusToInput() {
-    if (!this.isWaitingSorterFeedback) {
+    if (!this.isWaitingSorterFeedback && document.getElementById('input')) {
       setTimeout(() => document.getElementById('input').focus(), 500);
     }
   }
@@ -94,11 +94,15 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       if (data.data.close) {
         this.isWaitingSorterFeedback = false;
         this.modalScannRack = false;
-        this.addScannerRackButton(true);
+        this.addScannerRackButton();
         this.checkProductInWay(this.productScanned.reference);
       } else {
         this.timeoutToQuickUser();
+        if (this.timeoutStarted) {
+          clearTimeout(this.timeoutStarted);
+        }
         this.sorterNotifyAboutProductScanned();
+        this.resetLastScanProcess();
         this.focusToInput();
       }
     });
@@ -106,31 +110,27 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     return await scannerModal.present();
   }
 
-  addScannerRackButton(addRack = false) {
-    const buttons = [{
-      icon: 'hand',
-      label: 'Finalizar',
-      action: async () => {
-        this.timeoutToQuickUser();
-        const callback = async () => {
-          await this.intermediaryService.presentLoading('Finalizando proceso de entrada...');
-          this.stopExecutionInput();
-        };
-        await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de entrada en el sorter. ¿Está seguro?', callback);
-      }
-    }];
-
-    if (addRack) {
-      buttons.unshift({
-        icon: 'apps',
-        label: 'Rack',
+  addScannerRackButton() {
+    const buttons = [
+      {
+        icon: 'keypad',
+        label: 'Teclado',
         action: async () => {
-          this.toolbarProvider.optionsActions.next([]);
-          // this.isWaitingSorterFeedback = false;
-          await this.presentScannerRackModal();
+          // TODO: Functions keyboard
         }
-      });
-    }
+      },
+      {
+        icon: 'hand',
+        label: 'Finalizar',
+        action: async () => {
+          this.timeoutToQuickUser();
+          const callback = async () => {
+            await this.intermediaryService.presentLoading('Finalizando proceso de entrada...');
+            this.stopExecutionInput();
+          };
+          await this.intermediaryService.presentConfirm('Está a punto de finalizar el proceso de entrada en el sorter. ¿Está seguro?', callback);
+        }
+      }];
     this.toolbarProvider.optionsActions.next(buttons);
     this.timeoutToQuickUser();
   }
@@ -140,6 +140,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     const dataWrote = (this.inputValue || "").trim();
 
     if (event.keyCode === 13 && dataWrote) {
+      console.log('STEP: 1');
       await this.scanToProduct(dataWrote)
     }
   }
@@ -168,7 +169,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       this.focusToInput();
     } else {
       if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
-        this.addScannerRackButton(true);
+        this.addScannerRackButton();
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);
       } else {

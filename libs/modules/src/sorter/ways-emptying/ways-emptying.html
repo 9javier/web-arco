@@ -1,0 +1,27 @@
+<ion-content>
+  <div class="my-row">
+    <div class="my-col sorter">
+      <sorter-matrix-emptying
+        [height]="'50vh'"
+        [width]="'100%'"
+        (columnSelected)="columnSelected($event)">
+      </sorter-matrix-emptying>
+
+      <suite-sorter-actions-emptying
+        [height]="'40vh'"
+        [width]="'100%'"
+        [disableAuto]="disableAuto"
+        [disableManual]="disableManual"
+        (autoEmptying)="autoEmptying()"
+        (manualEmptying)="manualEmptying()"
+        (saveChanges)="saveChanges()">
+      </suite-sorter-actions-emptying>
+    </div>
+
+    <div class="my-col info">
+      <sorter-info-way-emptying
+        [height]="'100%'">
+      </sorter-info-way-emptying>
+    </div>
+  </div>
+</ion-content>

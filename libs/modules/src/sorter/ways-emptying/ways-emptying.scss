@@ -1,0 +1,16 @@
+ion-content {
+  div.my-row {
+    display: flex;
+    flex-direction: row;
+    div.my-col {
+      display: flex;
+      flex-direction: column;
+    }
+    div.my-col.sorter {
+      flex: 1;
+    }
+    div.my-col.info {
+      flex: 2;
+    }
+  }
+}

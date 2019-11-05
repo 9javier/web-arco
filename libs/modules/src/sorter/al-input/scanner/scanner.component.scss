@@ -1,13 +1,17 @@
 div.content {
   height: 100%;
   div.product-scanned {
-    position: absolute;
+    position: relative;
     width: 100%;
     color: var(--ion-color-white-tint);
     background-color: var(--ion-color-primary);
     font-size: 16px;
     margin: 0;
     padding: 18px 24px;
+
+    ion-col {
+      font-weight: 600;
+    }
     span {
       padding: 5px;
     }
@@ -82,5 +86,47 @@ div.content {
     text-align: center;
     font-size: 23px;
     font-weight: bold;
+  }
+
+  div.content-destiny-color {
+    padding: 15px;
+    height: 100%;
+    .content-color {
+      width: 100%;
+      height: calc(100% - 100px);
+      display: table;
+
+      .content-labels {
+        display: table-cell;
+        vertical-align: middle;
+
+        .label-destiny {
+          font-weight: 600;
+          text-align: center;
+        }
+        #label-reference {
+          font-size: 80px;
+        }
+
+        #label-name {
+          font-size: 40px;
+        }
+      }
+    }
+  }
+}
+
+ion-footer {
+  display: inline-flex;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 8px;
+
+  ion-button {
+    width: 33.33%;
+    height: 100px;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
   }
 }
