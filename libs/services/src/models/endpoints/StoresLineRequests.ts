@@ -23,7 +23,8 @@ export namespace StoresLineRequestsModel {
     requestDateTime: string,
     typeShippingOrderLineRequest: number,
     model: ModelModel.Model,
-    size: SizeModel.Size
+    size: SizeModel.Size,
+    selected: boolean
   }
 
 }

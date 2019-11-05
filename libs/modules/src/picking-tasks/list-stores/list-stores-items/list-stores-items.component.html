@@ -30,19 +30,16 @@
 
     <ion-list *ngIf="lineRequestByStore.lines">
       <ion-item *ngFor="let lineRequest of lineRequestByStore.lines">
+        <ion-checkbox [(ngModel)]="lineRequest.selected" (ngModelChange)="changeSelectRequest($event, lineRequest)"></ion-checkbox>
         <ion-label>
           <h2>
-            <ion-row class="row-title-item">
-              <ion-col size="6">
-                Referencia: {{lineRequest.model.reference}}
-              </ion-col>
-              <ion-col size="6">
-                Talla: {{lineRequest.size.name}}
-              </ion-col>
-            </ion-row>
+            Jose Luis Álvarez Costas
           </h2>
-          <p *ngIf="lineRequest.model.brand">
-            Marca: {{lineRequest.model.brand.name}}
+          <p>
+            05/11/2019 09:25
+          </p>
+          <p>
+            Cantidad: <b>25</b>
           </p>
         </ion-label>
       </ion-item>

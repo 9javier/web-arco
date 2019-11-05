@@ -118,11 +118,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
     } else {
       this.qtyStoresSelected--;
     }
-    if (this.qtyStoresSelected == this.lineRequestsByStores.length) {
-      this.allStoresSelected = true;
-    } else {
-      this.allStoresSelected = false;
-    }
+    this.allStoresSelected = this.qtyStoresSelected == this.lineRequestsByStores.length;
   }
 
   checkLineRequestSelected(): boolean {
@@ -194,9 +190,18 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
     }
   }
 
-  selectAllStores() {
+  selectAllStores(selected) {
+    if (selected) {
+      this.qtyStoresSelected = this.lineRequestsByStores.length;
+    } else {
+      this.qtyStoresSelected = 0;
+    }
+
     for (let iStore in this.lineRequestsByStores) {
-      this.lineRequestsByStores[iStore].selected = !this.allStoresSelected;
+      this.lineRequestsByStores[iStore].selected = selected;
+      for (let lineRequest of this.lineRequestsByStores[iStore].lines) {
+        lineRequest.selected = selected;
+      }
     }
   }
 

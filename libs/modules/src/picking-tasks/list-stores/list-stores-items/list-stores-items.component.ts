@@ -11,6 +11,8 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
   @Input() lineRequestByStore: StoresLineRequestsModel.StoresLineRequests = null;
   @Output() selectStore = new EventEmitter<StoresLineRequestsModel.StoresLineRequestsSelected>();
 
+  private totalRequestsSelected: number = 0;
+
   constructor() {}
 
   ngOnInit() {
@@ -22,7 +24,26 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
   }
 
   changeSelectStore() {
-    this.selectStore.next({store: this.lineRequestByStore, selected: this.lineRequestByStore.selected})
+    this.selectStore.next({store: this.lineRequestByStore, selected: this.lineRequestByStore.selected});
+    for (let request of this.lineRequestByStore.lines) {
+      request.selected = this.lineRequestByStore.selected;
+    }
+
+    if (this.lineRequestByStore.selected) {
+      this.totalRequestsSelected = this.lineRequestByStore.lines.length;
+    } else {
+      this.totalRequestsSelected = 0;
+    }
+  }
+
+  changeSelectRequest(data, lineRequest: StoresLineRequestsModel.LineRequests) {
+    if (data) {
+      this.totalRequestsSelected++;
+    } else {
+      this.totalRequestsSelected--;
+    }
+
+    this.lineRequestByStore.selected = this.totalRequestsSelected == this.lineRequestByStore.lines.length;
   }
 
 }
