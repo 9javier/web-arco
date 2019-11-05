@@ -48,6 +48,7 @@ export namespace StoresLineRequestsModel {
 
   export interface Request {
     date: string,
-    reference: number
+    reference: number,
+    id: number
   }
 }

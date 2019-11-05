@@ -105,28 +105,16 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   }
 
   initPicking() {
-    if (this.isPickingInitiated) {
-      this.pickingProvider.listLineRequestsToStorePickings = [];
-      this.pickingProvider.listProductsToStorePickings = this.lineRequests;
-      this.pickingProvider.listStoresIdsToStorePicking = this.stores.map((store) => {
-        return store.id;
-      });
-      this.pickingProvider.listProductsProcessedToStorePickings = [];
-    } else {
-      this.pickingProvider.listLineRequestsToStorePickings = this.lineRequestsByStores.filter((store) => {
-        return store.selected;
-      });
+    let listStoresIdsToStorePickings: number[] = [];
+    let listRequestsIdsToStorePickings: number[] = [];
 
-      let listProductsToStorePickings: StoresLineRequestsModel.LineRequests[] = [];
-      let listStoresIdsToStorePickings: number[] = [];
-      for (let storeLineRequest of this.pickingProvider.listLineRequestsToStorePickings) {
-        listProductsToStorePickings = listProductsToStorePickings.concat(storeLineRequest.lines);
-        listStoresIdsToStorePickings = listStoresIdsToStorePickings.concat(storeLineRequest.warehouse.id);
-      }
-      this.pickingProvider.listProductsToStorePickings = listProductsToStorePickings;
-      this.pickingProvider.listStoresIdsToStorePicking = listStoresIdsToStorePickings;
-      this.pickingProvider.listProductsProcessedToStorePickings = [];
+    let listOrdersRequestsToStorePickings = this.orderRequestsByStores.filter((store) => store.selected);
+    for (let storeLineRequest of listOrdersRequestsToStorePickings) {
+      listStoresIdsToStorePickings = listStoresIdsToStorePickings.concat(storeLineRequest.warehouse.id);
+      listRequestsIdsToStorePickings = listRequestsIdsToStorePickings.concat(storeLineRequest.lines.filter(orderRequest => orderRequest.selected).map(orderRequest => orderRequest.request.id));
     }
+    this.pickingProvider.listStoresIdsToStorePicking = listStoresIdsToStorePickings;
+    this.pickingProvider.listRequestsIdsToStorePicking = listRequestsIdsToStorePickings;
 
     let filtersToGetProducts: PickingStoreModel.ParamsFiltered = {
       orderbys: [],
@@ -140,7 +128,8 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
       this.pickingStoreService
         .postPickingStoreChangeStatus({
           status: 2,
-          warehouseIds: this.pickingProvider.listStoresIdsToStorePicking
+          warehouseIds: this.pickingProvider.listStoresIdsToStorePicking,
+          requestIds: this.pickingProvider.listRequestsIdsToStorePicking
         })
         .then((res: PickingStoreModel.ResponseChangeStatus) => {
           if (res.code == 200 || res.code == 201) {

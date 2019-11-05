@@ -148,14 +148,6 @@ export class PickingProvider {
     this._listPickingsHistory = value;
   }
 
-  private _listLineRequestsToStorePickings: StoresLineRequestsModel.StoresLineRequests[] = null;
-  get listLineRequestsToStorePickings(): StoresLineRequestsModel.StoresLineRequests[] {
-    return this._listLineRequestsToStorePickings;
-  }
-  set listLineRequestsToStorePickings(value: StoresLineRequestsModel.StoresLineRequests[]) {
-    this._listLineRequestsToStorePickings = value;
-  }
-
   private _listRejectionReasonsToStorePickings: PickingStoreModel.RejectionReasons[] = null;
   get listRejectionReasonsToStorePickings(): PickingStoreModel.RejectionReasons[] {
     return this._listRejectionReasonsToStorePickings;
@@ -194,6 +186,14 @@ export class PickingProvider {
   }
   set listStoresIdsToStorePicking(value: number[]) {
     this._listStoresIdsToStorePicking = value;
+  }
+
+  private _listRequestsIdsToStorePicking: number[] = null;
+  get listRequestsIdsToStorePicking(): number[] {
+    return this._listRequestsIdsToStorePicking;
+  }
+  set listRequestsIdsToStorePicking(value: number[]) {
+    this._listRequestsIdsToStorePicking = value;
   }
 
   private _listProductsFromPickingHistory: ShoesPickingModel.ShoesPicking[];
