@@ -98,7 +98,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         this.checkProductInWay(this.productScanned.reference);
       } else {
         this.timeoutToQuickUser();
+        if (this.timeoutStarted) {
+          clearTimeout(this.timeoutStarted);
+        }
         this.sorterNotifyAboutProductScanned();
+        this.resetLastScanProcess();
         this.focusToInput();
       }
     });
@@ -136,6 +140,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     const dataWrote = (this.inputValue || "").trim();
 
     if (event.keyCode === 13 && dataWrote) {
+      console.log('STEP: 1');
       await this.scanToProduct(dataWrote)
     }
   }
