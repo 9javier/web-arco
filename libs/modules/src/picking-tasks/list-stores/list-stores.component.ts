@@ -14,9 +14,9 @@ import {Events} from "@ionic/angular";
 })
 export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
-  public lineRequestsByStores: StoresLineRequestsModel.StoresLineRequests[] = [];
+  public orderRequestsByStores: StoresLineRequestsModel.StoresOrderRequests[] = [];
   public stores: WarehouseModel.Warehouse[] = [];
-  public lineRequests: StoresLineRequestsModel.LineRequests[] = [];
+  public lineRequests: StoresLineRequestsModel.OrderRequests[] = [];
   private allStoresSelected: boolean = false;
   private qtyStoresSelected: number = 0;
   public isLoadingData: boolean = true;
@@ -31,15 +31,7 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
   ngOnInit() {
     this.loadRejectionReasons();
-    this.loadPickingInitiated();
-
-    this.events.subscribe('picking-stores:refresh', () => {
-      this.loadPickingInitiated();
-    });
-  }
-
-  ngOnDestroy() {
-    this.events.unsubscribe('picking-stores:refresh');
+    this.loadPossibleLineRequestsByStores();
   }
 
   private loadRejectionReasons() {
@@ -56,54 +48,32 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
       });
   }
 
-  private loadPickingInitiated() {
-    this.isLoadingData = true;
-    this.pickingStoreService
-      .getInitiated()
-      .then((res: PickingStoreModel.ResponseInitiated) => {
-        if (res.code == 200 && res.data && res.data.status == 2 && res.data.destinationWarehouses && res.data.linesPending) {
-          this.lineRequestsByStores = [];
-          this.stores = res.data.destinationWarehouses;
-          this.lineRequests = res.data.linesPending.results;
-          this.isLoadingData = false;
-          this.isPickingInitiated = true;
-        } else {
-          this.loadPossibleLineRequestsByStores();
-        }
-      }, (error) => {
-        this.loadPossibleLineRequestsByStores();
-      })
-      .catch((error) => {
-        this.loadPossibleLineRequestsByStores();
-      });
-  }
-
   private loadPossibleLineRequestsByStores() {
     this.pickingStoreService
       .getLineRequests()
-      .then((res: PickingStoreModel.ResponseLineRequests) => {
+      .then((res: PickingStoreModel.ResponseOrderRequests) => {
         if ((res.code == 200 || res.code == 201) && res.data && res.data.length > 0) {
-          this.lineRequestsByStores = res.data;
+          this.orderRequestsByStores = res.data;
           this.stores = [];
           this.lineRequests = [];
           this.isLoadingData = false;
           this.isPickingInitiated = false;
         } else {
-          this.lineRequestsByStores = [];
+          this.orderRequestsByStores = [];
           this.stores = [];
           this.lineRequests = [];
           this.isLoadingData = false;
           console.error('Error Subscribe::List line-requests by store::', res);
         }
       }, (error) => {
-        this.lineRequestsByStores = [];
+        this.orderRequestsByStores = [];
         this.stores = [];
         this.lineRequests = [];
         this.isLoadingData = false;
         console.error('Error Subscribe::List line-requests by store::', error);
       })
       .catch((error) => {
-        this.lineRequestsByStores = [];
+        this.orderRequestsByStores = [];
         this.stores = [];
         this.lineRequests = [];
         this.isLoadingData = false;
@@ -111,19 +81,25 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
       });
   }
 
-  selectStore(data: StoresLineRequestsModel.StoresLineRequestsSelected) {
+  selectStore(data: StoresLineRequestsModel.StoresOrderRequestsSelected) {
     data.store.selected = data.selected;
     if (data.store.selected) {
       this.qtyStoresSelected++;
     } else {
       this.qtyStoresSelected--;
     }
-    this.allStoresSelected = this.qtyStoresSelected == this.lineRequestsByStores.length;
+    this.allStoresSelected = this.qtyStoresSelected == this.orderRequestsByStores.length;
   }
 
   checkLineRequestSelected(): boolean {
-    let someSelected = this.lineRequestsByStores.filter((store) => {
-      return store.selected;
+    let someSelected = this.orderRequestsByStores.filter((store) => {
+      let returnValue = false;
+      if (!store.selected) {
+        returnValue = !!store.lines.find(request => request.selected);
+      } else {
+        returnValue = store.selected;
+      }
+      return returnValue;
     });
     return this.isPickingInitiated || (!this.isPickingInitiated && !!(someSelected.length));
   }
@@ -192,14 +168,14 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
 
   selectAllStores(selected) {
     if (selected) {
-      this.qtyStoresSelected = this.lineRequestsByStores.length;
+      this.qtyStoresSelected = this.orderRequestsByStores.length;
     } else {
       this.qtyStoresSelected = 0;
     }
 
-    for (let iStore in this.lineRequestsByStores) {
-      this.lineRequestsByStores[iStore].selected = selected;
-      for (let lineRequest of this.lineRequestsByStores[iStore].lines) {
+    for (let iStore in this.orderRequestsByStores) {
+      this.orderRequestsByStores[iStore].selected = selected;
+      for (let lineRequest of this.orderRequestsByStores[iStore].lines) {
         lineRequest.selected = selected;
       }
     }

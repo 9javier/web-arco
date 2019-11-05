@@ -19,7 +19,8 @@ export namespace PickingStoreModel {
 
   export interface ChangeStatus {
     status: 1|2|3,
-    warehouseIds: number[]
+    warehouseIds: number[],
+    requestIds: number[]
   }
 
   export interface InitiatedPicking {
@@ -37,6 +38,13 @@ export namespace PickingStoreModel {
 
   export interface ResponseLineRequests extends HttpRequestModel.Response {
     data: StoresLineRequestsModel.StoresLineRequests[];
+    message: string;
+    code: number;
+    errors: any;
+  }
+
+  export interface ResponseOrderRequests extends HttpRequestModel.Response {
+    data: StoresLineRequestsModel.StoresOrderRequests[];
     message: string;
     code: number;
     errors: any;
