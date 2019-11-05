@@ -23,7 +23,7 @@
           <mat-panel-title>{{orderRequestByStore.warehouse.reference}} {{orderRequestByStore.warehouse.name}}</mat-panel-title>
         </ion-col>
         <ion-col size="4" class="qty-col centered-col">
-          <mat-panel-description>Peticiones: {{orderRequestByStore.lines.length}}</mat-panel-description>
+          <mat-panel-description>Peticiones: {{getRequestsSelected()}}</mat-panel-description>
         </ion-col>
       </ion-row>
     </mat-expansion-panel-header>

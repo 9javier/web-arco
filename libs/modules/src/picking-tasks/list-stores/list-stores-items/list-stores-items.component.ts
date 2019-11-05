@@ -22,6 +22,19 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
 
   }
 
+  getRequestsSelected() : string {
+    if (this.orderRequestByStore) {
+      let requestsSelected = this.orderRequestByStore.lines.filter(request => request.selected).length;
+      if (requestsSelected > 0) {
+        return `${this.orderRequestByStore.lines.filter(request => request.selected).length} / ${this.orderRequestByStore.lines.length}`;
+      } else {
+        return `${this.orderRequestByStore.lines.length}`;
+      }
+    } else {
+      return '0';
+    }
+  }
+
   avoidPropagation($event) {
     $event.stopPropagation();
   }
