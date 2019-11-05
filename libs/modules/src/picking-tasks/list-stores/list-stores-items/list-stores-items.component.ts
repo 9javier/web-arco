@@ -40,13 +40,14 @@ export class StoresPickingTaskTemplateComponent implements OnInit {
   }
 
   changeSelectRequest(data, lineRequest: StoresLineRequestsModel.OrderRequests) {
+    this.totalRequestsSelected = this.orderRequestByStore.lines.filter(orderRequest => orderRequest.selected).length;
     if (data) {
-      this.totalRequestsSelected++;
+      this.orderRequestByStore.selected = true;
     } else {
-      this.totalRequestsSelected--;
+      if (this.totalRequestsSelected == 0) {
+        this.orderRequestByStore.selected = false;
+      }
     }
-
-    this.orderRequestByStore.selected = this.totalRequestsSelected == this.orderRequestByStore.lines.length;
   }
 
 }
