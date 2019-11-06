@@ -68,7 +68,8 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     this.infoWayEmptying.newWaySelected(data.column.way);
   }
 
-  public autoEmptying() {
+  public async autoEmptying() {
+    await this.intermediaryService.presentLoading('Cambiando a vaciado automático...');
     this.matrix.changeEmptyingForWay(0, this.lastWaySelected.iHeight, this.lastWaySelected.iCol);
     this.disableAuto = true;
     this.disableManual = false;
@@ -81,9 +82,12 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       wayToUpdate.new_emptying = 0;
       this.waysToUpdate.push(wayToUpdate);
     }
+
+    await this.changeWayManual();
   }
 
-  public manualEmptying() {
+  public async manualEmptying() {
+    await this.intermediaryService.presentLoading('Cambiando a vaciado manual...');
     this.matrix.changeEmptyingForWay(1, this.lastWaySelected.iHeight, this.lastWaySelected.iCol);
     this.disableAuto = false;
     this.disableManual = true;
@@ -96,49 +100,56 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       wayToUpdate.new_emptying = 1;
       this.waysToUpdate.push(wayToUpdate);
     }
+
+    await this.changeWayManual();
   }
 
-  public async saveChanges() {
-    await this.intermediaryService.presentLoading('Guardando cambios...');
+  private async changeWayManual() {
     let waysToUpdate = this.waysToUpdate.filter(wayToUpdate => wayToUpdate.manual != wayToUpdate.new_emptying);
-    if (waysToUpdate.length > 0) {
-      let paramsChangeWayManual = waysToUpdate.map(wayToUpdate => {
-        return {
-          wayId: wayToUpdate.id,
-          manual: !!wayToUpdate.new_emptying
-        }
-      });
-      this.sorterOutputService
-        .postChangeWayManual({ ways: paramsChangeWayManual })
-        .then(async (res: SorterOutputModel.ResponseChangeWayManual) => {
-          if (res.code == 200) {
-            await this.intermediaryService.presentToastSuccess('¡Cambios guardados!');
-            await this.intermediaryService.dismissLoading();
-          } else {
-            let errorMessage = 'Ha ocurrido un error al intentar guardar los cambios.';
-            if (res.errors) {
-              errorMessage = res.errors;
+
+    let paramsChangeWayManual = waysToUpdate.map(wayToUpdate => {
+      return {
+        wayId: wayToUpdate.id,
+        manual: !!wayToUpdate.new_emptying
+      }
+    });
+    this.sorterOutputService
+      .postChangeWayManual({ ways: paramsChangeWayManual })
+      .then(async (res: SorterOutputModel.ResponseChangeWayManual) => {
+        if (res.code == 200) {
+          for (let way of paramsChangeWayManual) {
+            let wayToUpdateFound = this.waysToUpdate.find(wayToUpdate => wayToUpdate.id == way.wayId);
+            if (wayToUpdateFound) {
+              wayToUpdateFound.manual = (way.manual ? 1 : 0);
             }
-            await this.intermediaryService.presentToastError(errorMessage);
-            await this.intermediaryService.dismissLoading();
           }
-        }, async (error) => {
+
+          await this.intermediaryService.presentToastSuccess('¡Cambios guardados!');
+          await this.intermediaryService.dismissLoading();
+        } else {
           let errorMessage = 'Ha ocurrido un error al intentar guardar los cambios.';
-          if (error.error && error.error.errors) {
-            errorMessage = error.error.errors;
+          if (res.errors) {
+            errorMessage = res.errors;
           }
           await this.intermediaryService.presentToastError(errorMessage);
           await this.intermediaryService.dismissLoading();
-        })
-        .catch(async (error) => {
-          let errorMessage = 'Ha ocurrido un error al intentar guardar los cambios.';
-          if (error.error && error.error.errors) {
-            errorMessage = error.error.errors;
-          }
-          await this.intermediaryService.presentToastError(errorMessage);
-          await this.intermediaryService.dismissLoading();
-        });
-    }
+        }
+      }, async (error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar guardar los cambios.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
+        await this.intermediaryService.dismissLoading();
+      })
+      .catch(async (error) => {
+        let errorMessage = 'Ha ocurrido un error al intentar guardar los cambios.';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage);
+        await this.intermediaryService.dismissLoading();
+      });
   }
 
   private loadActiveSorter() {
