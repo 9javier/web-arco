@@ -10,6 +10,7 @@ import { switchMap } from 'rxjs/operators';
 import { RackModel } from '../../../../services/src/models/endpoints/rack.model';
 import { RackService } from '../../../../services/src/lib/endpoint/rack/rack.service';
 import { StoreUpdateComponent } from './store-update/store-update.component';
+import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 
 @Component({
   selector: 'suite-racks',
@@ -28,7 +29,8 @@ export class RacksComponent implements OnInit {
     private modalCtrl: ModalController,
     private intermediaryService: IntermediaryService,
     private rackService: RackService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private printerService:PrinterService
   ) { }
 
   async ngOnInit() {
@@ -80,6 +82,24 @@ export class RacksComponent implements OnInit {
   async confirmDelete() {
     if (this.selection.selected.length > 0) {
       await this.presentDeleteAlert();
+    }
+  }
+
+  async printRacks() {
+    if (this.selection.selected.length > 0) {
+      let listReferences: Array<string> = this.selection.selected.map(rack => rack.reference);
+
+      if (listReferences && listReferences.length > 0) {
+        this.printReferencesList(listReferences);
+      }
+    }
+  }
+
+  private async printReferencesList(listReferences: Array<string>) {
+    if ((<any>window).cordova) {
+      this.printerService.print({ text: listReferences, type: 0 });
+    } else {
+      return await this.printerService.printBarcodesOnBrowser(listReferences);
     }
   }
 

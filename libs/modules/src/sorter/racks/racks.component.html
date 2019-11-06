@@ -42,6 +42,7 @@
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
     <ion-fab-button margin (click)="confirmDelete()" *ngIf="showDeleteButton" color="danger"><i class="material-icons">delete</i></ion-fab-button>
+    <ion-fab-button margin (click)="printRacks()" *ngIf="showDeleteButton"><i class="material-icons">print</i></ion-fab-button>
     <ion-fab-button margin (click)="goToDialog()"><i class="material-icons">add</i></ion-fab-button>
   </ion-fab>
 </ion-footer>
