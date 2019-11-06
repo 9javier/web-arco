@@ -16,8 +16,10 @@ div.matrix-main {
       div.height {
         width: auto;
         height: auto;
-        display: table;
         margin: 0 auto;
+        display: flex;
+        flex-direction: row-reverse;
+        place-content: center;
         div.column {
           height: 24px;
           width: 40px;
