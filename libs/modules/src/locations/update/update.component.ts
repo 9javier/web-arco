@@ -368,11 +368,15 @@ export class UpdateComponent implements OnInit {
         } else if (res.code == 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
-          let errorMessage = '';
-          if (res.errors.productReference && res.errors.productReference.message) {
-            errorMessage = res.errors.productReference.message;
-          } else {
-            errorMessage = res.message;
+          let errorMessage = res.message;
+          if (res.errors) {
+            if (typeof res.errors == 'string') {
+              errorMessage = res.errors;
+            } else {
+              if (res.errors.productReference && res.errors.productReference.message) {
+                errorMessage = res.errors.productReference.message;
+              }
+            }
           }
           this.presentToast(errorMessage, 'danger');
         }
