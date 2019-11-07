@@ -239,11 +239,15 @@ export class ScanditService {
           ScanditMatrixSimple.showWarningToForce(true, responseScanning.barcode);
         } else {
           this.positioningLog(3, "1.4.2.2.2.3", "error unknown!!!");
-          let errorMessage = '';
-          if (res.errors.productReference && res.errors.productReference.message) {
-            errorMessage = res.errors.productReference.message;
-          } else {
-            errorMessage = res.message;
+          let errorMessage = res.message;
+          if (res.errors) {
+            if (typeof res.errors == 'string') {
+              errorMessage = res.errors;
+            } else {
+              if (res.errors.productReference && res.errors.productReference.message) {
+                errorMessage = res.errors.productReference.message;
+              }
+            }
           }
           ScanditMatrixSimple.setText(errorMessage, BACKGROUND_COLOR_ERROR, TEXT_COLOR, 18);
           this.hideTextMessage(1500);
