@@ -118,7 +118,7 @@ export namespace InventoryModel {
         message?: string,
         type?: string
       }
-    }
+    } | string
   }
 
   export interface ResponseProductsContainer {
