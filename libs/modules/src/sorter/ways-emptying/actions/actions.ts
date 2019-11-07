@@ -13,7 +13,6 @@ export class SorterActionsEmptyingComponent implements OnInit, OnDestroy {
   @Input() disableManual: boolean = false;
   @Output() autoEmptying = new EventEmitter();
   @Output() manualEmptying = new EventEmitter();
-  @Output() saveChanges = new EventEmitter();
 
   constructor() { }
 
@@ -31,9 +30,5 @@ export class SorterActionsEmptyingComponent implements OnInit, OnDestroy {
 
   public emptyManual() {
     this.manualEmptying.next();
-  }
-
-  public save() {
-    this.saveChanges.next();
   }
 }

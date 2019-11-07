@@ -19,9 +19,14 @@
         <mat-panel-title>Productos</mat-panel-title>
       </mat-expansion-panel-header>
 
-      <ion-list>
+      <ion-list class="list-products">
         <ion-item *ngFor="let product of listProducts">
-          {{product.model.reference}} - {{product.model.name}} / T-{{product.size.name}}
+          <span *ngIf="product">
+            {{product.model.reference}} - {{product.model.name}} / T-{{product.size.name}}
+          </span>
+          <span *ngIf="!product">
+            <b>Producto desconocido</b>
+          </span>
         </ion-item>
       </ion-list>
     </mat-expansion-panel>

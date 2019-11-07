@@ -312,6 +312,24 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  public getProductLocation(product) : string {
+    if (product) {
+      if (product.locationType == 3) {
+        return 'SORTER';
+      } else {
+        if (product.carrier && product.carrier.reference) {
+          return product.carrier.reference;
+        } else {
+          if (product.container && product.container.reference) {
+            return product.container.reference;
+          }
+        }
+      }
+    }
+
+    return '';
+  }
+
   private updateFilterSourceColors(colors: FiltersModel.Color[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("colors").value;
