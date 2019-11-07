@@ -17,6 +17,6 @@ export class AppVersionService {
   ) { }
 
   getVersion(): Promise<HttpRequestModel.Response> {
-    return this.http.get(this.appVersionUrl);
+    return this.http.getUnauthenticated(this.appVersionUrl);
   }
 }
