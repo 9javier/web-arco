@@ -56,33 +56,31 @@ export class LoginComponent implements OnInit {
     this.user.password = '';
     this.getLastUsername();
 
-    if (!this.platform.is('mobileweb')) {
+    // Check if is mobile app and get appVersionNumber
+    if (window.cordova) {
       this.isMobileApp = true;
+      (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
+        this.versionNumber = versionNumber;
 
-      await this.appVersion.getVersionNumber().then(
-        (versionNumber) => {
-          this.versionNumber = versionNumber;
-          console.log(versionNumber);
-        },
-        (error) => {
-          console.log(error);
-        });
-
-      await this.appVersionService.getVersion().then(async (version: Observable<HttpResponse<AppVersionModel.ResponseIndex>>) => {
-        version.subscribe(async (res: HttpResponse<AppVersionModel.ResponseIndex>) => {
-          if (res.body.data) {
-            const resultCompare = this.compareVersions(`${res.body.data['majorRelease']}.${res.body.data['minorRelease']}.${res.body.data['patchRelease']}`, this.versionNumber);
-
-            if (resultCompare === 1) {
-              console.log('VERSION MAYOR');
-              this.isNewVersion = true;
+        this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {
+          if(response && response.code == 200){
+            if (response.data) {
+              const resultCompare = this.compareVersions(`${response.data['majorRelease']}.${response.data['minorRelease']}.${response.data['patchRelease']}`, this.versionNumber);
+              if (resultCompare === 1) {
+                console.log('VERSION MAYOR');
+                this.isNewVersion = true;
+              }
             }
           }
-        }, async (err) => {
-          console.log(err);
-        }, () => { });
-      });
+        }, (error) => {
+          console.log("Error::getVersion", error)
+        }).catch((error) => {
+          console.log("Error::getVersion", error)
+        });
 
+      });
+    } else {
+      this.isMobileApp = false;
     }
   }
 

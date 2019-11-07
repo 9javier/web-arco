@@ -11,6 +11,19 @@ export class RequestsProvider {
     private auth: AuthenticationService,
   ) {}
 
+  public getUnauthenticated(url: string) : Promise<HttpRequestModel.Response> {
+    return new Promise((resolve, reject) => {
+        let req = new XMLHttpRequest();
+        req.open('GET', url, false);
+        req.send(null);
+        let response = { error: 'Error to make GET Request' };
+        if (req.responseText) {
+          response = JSON.parse(req.responseText)
+        }
+        resolve(response);
+    });
+  }
+
   public get(url: string) : Promise<HttpRequestModel.Response> {
     return new Promise((resolve, reject) => {
       this.auth.getCurrentToken().then((authToken) => {

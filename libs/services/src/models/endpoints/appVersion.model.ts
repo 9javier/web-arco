@@ -1,4 +1,5 @@
 import { Request } from './request';
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace AppVersionModel {
     export interface AppVersion {
@@ -10,7 +11,7 @@ export namespace AppVersionModel {
       patchRelease: number;
     }
 
-  export interface ResponseIndex {
+  export interface ResponseIndex extends HttpRequestModel.Response{
     data: AppVersion[];
   }
 
