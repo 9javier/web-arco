@@ -3,7 +3,7 @@
         <suite-breadcrumb></suite-breadcrumb>
     </ion-text>
     <ion-row style="float: right; padding: 5px; width: 100%;">
-        <ion-button end [disabled]="processing" (click)="startSync()">Aptualizar Tarifas</ion-button>
+        <ion-button [disabled]="processing" (click)="startSync()">Aptualizar Tarifas</ion-button>
     </ion-row>
 
     <div class="processing" *ngIf="processing">
