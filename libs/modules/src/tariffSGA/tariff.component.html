@@ -2,18 +2,14 @@
     <ion-text color="primary">
         <suite-breadcrumb></suite-breadcrumb>
     </ion-text>
-    <ion-row>
-        <ion-col size="4" [formGroup]="filters">
-            <!--<ion-select formControlName="warehouseId" (ionChange)="filterByWarehouse($event)">
-                <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-                    {{warehouse.name}}
-                </ion-select-option>
-            </ion-select>-->
-        </ion-col>
+    <ion-row style="float: right; padding: 5px; width: 100%;">
+        <ion-button end [disabled]="processing" (click)="startSync()">Aptualizar Tarifas</ion-button>
     </ion-row>
+
     <div class="processing" *ngIf="processing">
-      Se están recalculando los precios porque se está procesando la tarifa <strong>{{tarifProcessing?.name}}</strong>.
-      <br>Por favor, espere a que finalice para activar/desactivar tarifas
+        Se están recalculando los precios porque se está procesando la tarifa
+        <strong>{{tarifProcessing?.name}}</strong>.
+        <br>Por favor, espere a que finalice para activar/desactivar tarifas
     </div>
     <table mat-table [dataSource]="dataSource">
 
@@ -54,7 +50,8 @@
             </th>
             <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)" class="check">
                 <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-                    <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                    <ion-checkbox [disabled]="processing"
+                        [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
                         (ngModelChange)="onChecked(i, $event)"></ion-checkbox>
                 </ng-template>
             </td>

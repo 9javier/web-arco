@@ -73,13 +73,13 @@ export class TariffSGAComponent implements OnInit {
     this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     this.listenChanges();
     this.isCalculating();
-    if(!this.intervalIsCalculation){
+    if (!this.intervalIsCalculation) {
       this.intervalIsCalculation = setInterval(() => { this.isCalculating() }, 10000);
     }
   }
 
-  ngOnDestroy(){
-    if(this.intervalIsCalculation){
+  ngOnDestroy() {
+    if (this.intervalIsCalculation) {
       clearInterval(this.intervalIsCalculation);
       this.intervalIsCalculation = null;
     }
@@ -219,7 +219,7 @@ export class TariffSGAComponent implements OnInit {
    * Update Enabled/Disabled the selected labels
    * @param items - Reference items to extract he ids
    */
-  updateEnabled(warehouseId: number = 49): void {
+  updateEnabled(): void {
     // let list = this.tariffs.map((item, i) => {
     //   let enabled = this.selectedForm.value.toSelect[i];
 
@@ -250,6 +250,24 @@ export class TariffSGAComponent implements OnInit {
 
   }
 
+  startSync(): void {
+
+
+    this.intermediaryService.presentLoading("Modificando los seleccionados");
+    this.tariffService.syncTariff().subscribe(result => {
+      this.intermediaryService.dismissLoading();
+      this.listenChanges();
+      this.isCalculating();
+    }, error => {
+      this.intermediaryService.dismissLoading();
+    }, () => {
+      this.tariffsUpdate = [];
+      //this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+      this.isCalculating();
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
   /**
    * Select or unselect all visible labels
    * @param event to check the status
@@ -270,6 +288,7 @@ export class TariffSGAComponent implements OnInit {
     this.selectedForm.addControl(
       "toSelect",
       this.formBuilder.array(items.map(item => new FormControl(Boolean(item.enabled))))
+
     );
   }
 

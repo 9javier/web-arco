@@ -16,6 +16,7 @@ export class TariffService {
   private getTariffIfSoftdeleteSGA: string = environment.apiBase + "/tariffs/";
   private isCalculatingSGA: string = environment.apiBase + "/tariffs/iscalculating";
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
+  private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
   constructor(private http: HttpClient) { }
 
   /**
@@ -41,6 +42,12 @@ export class TariffService {
 
   updateEnabled(list: any) {
     return this.http.put(this.putTariffEnabledUrl, list).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  syncTariff() {
+    return this.http.get(this.syncTariffUrl, {}).pipe(map(response => {
       return response;
     }));
   }
