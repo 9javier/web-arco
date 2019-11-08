@@ -74,9 +74,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   focusToInput() {
-    if (!this.isWaitingSorterFeedback && document.getElementById('input')) {
-      setTimeout(() => document.getElementById('input').focus(), 500);
-    }
+    setTimeout(() => {
+        if (!this.isWaitingSorterFeedback && document.getElementById('input')) {
+          document.getElementById('input').focus()
+        }
+      }, 500);
   }
 
   async presentScannerRackModal() {
@@ -326,6 +328,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
+    this.focusToInput();
   }
 
   private stopExecutionInput() {
