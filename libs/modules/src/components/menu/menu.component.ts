@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { app } from '../../../../services/src/environments/environment';
-import { AuthenticationService, Oauth2Service } from '@suite/services';
+import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
@@ -24,6 +24,7 @@ interface MenuSectionItem {
   id: string,
   url: string,
   icon: string,
+  notification?: boolean
 }
 
 @Component({
@@ -37,6 +38,7 @@ export class MenuComponent implements OnInit {
     this.filterPages(allowed || { logout: true });
   }
 
+  isNewTariff: boolean;
 
   private app = app;
 
@@ -291,6 +293,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Tarifas',
+      id: 'tarifas',
       open: false,
       type: 'wrapper',
       icon: 'logo-usd',
@@ -299,7 +302,8 @@ export class MenuComponent implements OnInit {
           title: 'Tarifas',
           id: 'tariff-al',
           url: '/tariff',
-          icon: 'logo-usd'
+          icon: 'logo-usd',
+          notification: this.isNewTariff
         },
         {
           title: 'Código exposición',
@@ -445,7 +449,6 @@ export class MenuComponent implements OnInit {
   menuPagesFiltered: MenuItemList = [];
   @Output() menuTitle = new EventEmitter();
 
-
   constructor(
     private loginService: Oauth2Service,
     private router: Router,
@@ -456,8 +459,24 @@ export class MenuComponent implements OnInit {
     private sealScanditService: SealScanditService,
     private productInfoScanditService: ProductInfoScanditService,
     private menuController: MenuController,
-    private toolbarProvider: ToolbarProvider
-  ) { }
+    private toolbarProvider: ToolbarProvider,
+    private tariffService: TariffService,
+
+  ) {
+    this.tariffService.getNewTariff().subscribe(tariff=>{
+      /**save the data and format the dates */
+      this.alPages.forEach((item, i) => {
+        if ((<any>item).id == "tarifas"){
+          (<any>item).children.forEach((child, j) => {
+            if ((<any>child).id == "tariff-al"){
+              (<any>child).notification = tariff['data'];
+            }
+          });
+        }
+      });
+    },()=>{
+    })
+   }
 
   returnTitle(item: MenuSectionItem) {
     this.currentRoute = item.title
