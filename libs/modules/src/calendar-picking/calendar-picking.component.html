@@ -4,12 +4,13 @@
         <ion-row>
             <ion-col size="6" class="ion-datepicker">
                 <div class="append">
-                    <dp-date-picker [(ngModel)]="dates" [config]="calendarConfiguration" theme="dp-material"></dp-date-picker>
+                    <dp-date-picker [(ngModel)]="dates" [config]="calendarConfiguration" theme="dp-material">
+                    </dp-date-picker>
                 </div>
-                <ion-card class="legend-card">                    
+                <ion-card class="legend-card">
                     <ion-card-content>
                         <p class="legend-card-text">
-														<span class="legend-card-color" style="background-color: #2196f3"></span>
+                            <span class="legend-card-color" style="background-color: #2196f3"></span>
                             Datos almacenados
                         </p>
                         <p class="legend-card-text">
@@ -19,7 +20,7 @@
                         <p class="legend-card-text">
                             <span class="legend-card-color" style="background-color: #ea5348"></span>
                             No hay información
-                        </p>            
+                        </p>
                     </ion-card-content>
                 </ion-card>
                 <ion-button class="clean-button" color="danger" (click)="clear()">Limpiar calendario</ion-button>
@@ -30,10 +31,11 @@
                     <ion-label>
                         Plantilla
                     </ion-label>
-                    <ion-select formControlName="template" (ionChange)="selectTemplate(templates[$event.detail.value],null)">
+                    <ion-select formControlName="template"
+                        (ionChange)="selectTemplate(templates[$event.detail.value],null)">
                         <ion-select-option *ngFor="let template of templates;let i = index" [value]="i">
-														{{template.name}}
-												</ion-select-option>
+                            <!-- {{template.name}} -->
+                        </ion-select-option>
                     </ion-select>
                 </ion-item>
 
@@ -46,18 +48,20 @@
 
                 <div *ngIf="selectDates.length">
                     <ion-label>
-                       Almacenes
+                        Almacenes
                     </ion-label>
                 </div>
                 <div class="overAuto" [formGroup]="form" style="margin-top: 3%">
-                    <mat-accordion multi="false" *ngFor="let warehouse of form['controls']?.warehouses['controls'];let i = index">
-                        <mat-expansion-panel [expanded]="warehouse.value.openModal" (opened)="openeds[i] = true" (closed)="openeds[i] = false">
+                    <mat-accordion multi="false"
+                        *ngFor="let warehouse of form['controls']?.warehouses['controls'];let i = index">
+                        <mat-expansion-panel [expanded]="warehouse.value.openModal" (opened)="openeds[i] = true"
+                            (closed)="openeds[i] = false">
                             <mat-expansion-panel-header>
                                 <ion-grid>
                                     <ion-row>
                                         <ion-col size="3">
                                             <mat-panel-title>
-																								{{ warehouse.value.originWarehouse.name }}
+                                                {{ warehouse.value.originWarehouse.name }}
                                             </mat-panel-title>
                                         </ion-col>
                                         <ion-col size="7">
@@ -72,17 +76,23 @@
 
                             <div *ngIf="openeds[i]">
                                 <ion-col size="2" size-xs="12" size-md="4">
-																	<ion-label>
-																			Almacenes
-																	</ion-label>
-																	<suite-tags-input placeholder="Almacenes" [options]="warehousesList" formControlName="warehousesInput" notShow="true" multiple="false" (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
-																</ion-col>
-																<div [formGroup]="destination" *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
-																		<ion-item *ngIf="destination.value.selected">
-																			<i *ngIf="destination.value.selected" slot="end" class="deleteWarehouse material-icons" (click)="deletedWarehouseOfTemplate(destination.value.id, warehouse.value.originWarehouse.id)">delete</i>
-																			<ion-label *ngIf="destination.value.selected">{{destination.value.name}}</ion-label>
-																		</ion-item>
-																</div>
+                                    <ion-label>
+                                        Almacenes
+                                    </ion-label>
+                                    <suite-tags-input placeholder="Almacenes" [options]="warehousesList"
+                                        formControlName="warehousesInput" notShow="true" multiple="false"
+                                        (click)="addWarehouse(warehouse.value.originWarehouse.id)"></suite-tags-input>
+                                </ion-col>
+                                <div [formGroup]="destination"
+                                    *ngFor="let destination of warehouse['controls'].destinationsWarehouses['controls']">
+                                    <ion-item *ngIf="destination.value.selected">
+                                        <i *ngIf="destination.value.selected" slot="end"
+                                            class="deleteWarehouse material-icons"
+                                            (click)="deletedWarehouseOfTemplate(destination.value.id, warehouse.value.originWarehouse.id)">delete</i>
+                                        <ion-label *ngIf="destination.value.selected">{{destination.value.name}}
+                                        </ion-label>
+                                    </ion-item>
+                                </div>
                             </div>
                             <mat-list style="display: flex; justify-content:center;"></mat-list>
                         </mat-expansion-panel>
@@ -94,7 +104,8 @@
 </ion-content>
 <ion-footer>
     <ion-button [disabled]="!date || !validToStore() " (click)="store()">GUARDAR</ion-button>
-    <ion-button [disabled]="!formatValue(form.value).warehouses.length" (click)="storeTemplate(formatValue(form.value))">PLANTILLA</ion-button>
+    <ion-button [disabled]="!formatValue(form.value).warehouses.length"
+        (click)="storeTemplate(formatValue(form.value))">PLANTILLA</ion-button>
     <ion-button *ngIf="formatValue(form.value).warehouses.length" color="danger" (click)="clearData()">
         <ion-icon name="trash"></ion-icon> CLEAR
     </ion-button>

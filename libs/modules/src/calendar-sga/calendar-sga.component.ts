@@ -24,6 +24,7 @@ export class CalendarSgaComponent implements OnInit {
   public cantDates: boolean = false;
   private isCheckedOrigin: boolean = false;
   private selectTem: boolean = false;
+  listaFechas:string[] = [];
 
 
   public calendarConfiguration: IDatePickerConfig = {
@@ -73,6 +74,7 @@ export class CalendarSgaComponent implements OnInit {
     this.getCalendarDates();
     this.changeValues();
 
+
     this.datePicker.onLeftNav.subscribe(changes => {
       this.getCalendarDates();
     });
@@ -88,14 +90,19 @@ export class CalendarSgaComponent implements OnInit {
     this.datePicker.onSelect.subscribe((changes) => {
       this.cantDates = false;
       let selectDates = this.dates.map(_ => {
+
         return _.format("YYYY-MM-DD");
       });
+      this.deleteDates(selectDates);
+
       let auxDates = [{
         date: 'todas las fechas seleccionadas',
         warehouses: [],
         value: null
       }];
       selectDates.forEach(date => {
+        // console.log({date});
+
         let aux = this.selectDates.find(_date => { return (_date.date == date) });
         if (!aux) {
           auxDates.push(
@@ -222,6 +229,8 @@ export class CalendarSgaComponent implements OnInit {
    */
   getCalendarDates(): void {
     this.calendarService.getCalendarDates().subscribe(dates => {
+      console.log(dates);
+
       this.manageHaveClass(dates);
     });
   }
@@ -460,6 +469,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   clear() {
+    this.listaFechas = [];
     this.selectTem = false;
     this.intermediaryService.presentLoading();
     this.warehousesOriginList.sort((unaCadena, otraCadena) => unaCadena.id - otraCadena.id);
@@ -638,6 +648,48 @@ export class CalendarSgaComponent implements OnInit {
         }
       });
     }
+  }
+
+  /**
+   * @author "Gaetano Sabino"
+   * @description "Delete dates"
+   */
+  private deleteDates(dates:string[]){
+    console.log(dates);
+    this.listaFechas = dates;
+
+  }
+
+  get ListaFechas$(){
+    return this.listaFechas;
+  }
+
+  /**
+   * Borrar las fechas selectionadas
+   */
+  deleteAllFechasSelect(){
+
+    this.calendarService.postDateDelete(this.ListaFechas$).subscribe(data=>{
+      console.log(data);
+      if(data.length > 0){
+        this.clear();
+        this.intermediaryService.presentToastSuccess("Fechas eliminada con éxito");
+        this.intermediaryService.dismissLoading();
+        this.getCalendarDates();
+        this.getTemplates();
+        return;
+      }
+      if(data.length === 0){
+        this.intermediaryService.presentToastError("Ninguna fecha incontrada");
+        this.intermediaryService.dismissLoading();
+        return;
+      }
+
+
+    },error=>{
+      this.intermediaryService.presentToastError("Error en borrar las Fechas");
+      this.intermediaryService.dismissLoading();
+    });
   }
 
 

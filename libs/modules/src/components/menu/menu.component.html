@@ -1,6 +1,6 @@
 <div *ngFor="let p of menuPagesFiltered">
   <ion-menu-toggle *ngIf="p.url" auto-hide="false">
-    <ion-list no-padding lines="none">
+    <ion-list class="ion-no-padding" lines="none">
       <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="tapOption(p)">
         <ion-icon [slot]="iconsDirection" [name]="p.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
