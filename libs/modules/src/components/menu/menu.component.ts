@@ -243,7 +243,13 @@ export class MenuComponent implements OnInit {
           icon: 'square-outline'
         }
       ]
-    }
+    },
+    {
+      title:'Regiones',
+      id:'regions',
+      url:'/regions',
+      icon: 'map' 
+    },
   ];
 
   alPages: MenuItemList = [

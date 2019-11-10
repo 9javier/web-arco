@@ -124,3 +124,19 @@ export * from './models/endpoints/agency.model';
 /**Global variables */
  export * from './lib/endpoint/global-variable/global-variable.service';
  export * from './models/endpoints/global-variable.model';
+
+ /**Postal Codes */
+// export * from './lib/endpoint/postal-code/postal-code.service';
+export * from './models/endpoints/postal-code.model';
+
+ /**Province  */
+ export * from './lib/endpoint/province/province.service';
+ export * from './models/endpoints/province.model';
+ 
+  /**Countries */
+export * from './lib/endpoint/country/country.service';
+export * from './models/endpoints/country.model';
+
+ /**Regions */
+ export * from './lib/endpoint/region/region.service';
+ export * from './models/endpoints/regions.model';

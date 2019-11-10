@@ -229,3 +229,8 @@ export * from './components/toolbar-al/toolbar-al.module';
 /** Popover Menu Toolbar */
 export * from './components/popover-menu-toolbar/popover-menu-toolbar.component';
 export * from './components/popover-menu-toolbar/popover-menu-toolbar.module';
+
+// /**Regions */
+export  * from './regions/regions.component';
+export  * from './regions/regions.module';
+// export * from './regions/regions-routing.module'

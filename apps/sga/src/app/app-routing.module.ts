@@ -293,6 +293,14 @@ const routes: Routes = [
     data: {
       name: 'Crear Sorter'
     }
+  },
+  {
+    path:'regions',
+    canActivate:[AuthGuard],
+    loadChildren: '@suite/common-modules#RegionsModule',
+    data: {
+      name: 'regiones'
+    }
   }
 ];
 
