@@ -17,6 +17,7 @@ export class TariffService {
   private isCalculatingSGA: string = environment.apiBase + "/tariffs/iscalculating";
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
   private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
+  private getNewTariffUrl: string = environment.apiBase + "/tariffs/getNewTariff";
   constructor(private http: HttpClient) { }
 
   /**
@@ -80,6 +81,12 @@ export class TariffService {
       return response;
     })).pipe(map(response => {
       return response.data;
+    }));
+  }
+
+  getNewTariff() {
+    return this.http.get(this.getNewTariffUrl, {}).pipe(map(response => {
+      return response;
     }));
   }
 
