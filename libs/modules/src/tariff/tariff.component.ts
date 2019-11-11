@@ -16,6 +16,7 @@ import { validators } from '../utils/validators';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import {SortModel} from "../../../services/src/models/endpoints/Sort";
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
   selector: 'suite-tariff',
@@ -36,11 +37,12 @@ export class TariffComponent implements OnInit {
   /**Quantity of items for show in any page */
   pagerValues = [50, 100, 500];
 
-    private page:number = 0;
+    private page:number = 1;
     private limit:number = this.pagerValues[0];
     private sortValues: SortModel.Sort = { field: null, type: null };
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
 
     displayedColumns: string[] = ['name', 'initDate', 'endDate', 'quantity', 'select'];
@@ -84,12 +86,12 @@ export class TariffComponent implements OnInit {
   listenChanges(): void {
     let previousPageSize = this.limit;
     /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
+    this.paginatorComponent.page.subscribe(page => {
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag?page.pageIndex+1:1;
+      this.page = flag?page.pageIndex:1;
       this.getTariffs(this.page, this.limit, this.sortValues);
     });
   }
@@ -114,9 +116,9 @@ export class TariffComponent implements OnInit {
   /**
    * Get labels to show
    */
-  getTariffs(page: number, limit: number, sort: SortModel.Sort) {
+  getTariffs(selectPage: number, limit: number, sort: SortModel.Sort) {
     this.intermediaryService.presentLoading();
-    this.tariffService.getIndex(page, limit, sort).subscribe(tariffs=>{
+    this.tariffService.getIndex(selectPage, limit, sort).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
       /**save the data and format the dates */
       this.tariffs = tariffs.results.map(result=>{
@@ -126,8 +128,9 @@ export class TariffComponent implements OnInit {
       });
       this.dataSource = new MatTableDataSource<any>(this.tariffs);
       let paginator = tariffs.pagination;
-      this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.page - 1;
+      this.paginatorComponent.length = paginator.totalResults;
+      this.paginatorComponent.pageIndex = paginator.selectPage;
+      this.paginatorComponent.lastPage = paginator.lastPage;
     },()=>{
       this.intermediaryService.dismissLoading();
     })

@@ -10,7 +10,9 @@ export namespace TariffModel{
     export interface ResponseTariffPaginator{
         results:Array<Tariff>;
         pagination:{
-            page:number;
+            selectPage:number;
+            fisrtPage:number;
+            lastPage:number;
             limit:number;
             totalResults:number;
         }
