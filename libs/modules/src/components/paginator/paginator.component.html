@@ -1,5 +1,5 @@
 <div>
-  <ion-select>
+  <ion-select [interfaceOptions]="customPopoverOptions" interface="popover">
     <ion-select-option *ngFor="let cant of pagerValues;" [value]="cant">
         {{ cant }}
     </ion-select-option>

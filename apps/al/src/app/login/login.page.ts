@@ -13,6 +13,7 @@ import { AuthenticationService } from '@suite/services';
 
 import {ToastController, AlertController, LoadingController} from '@ionic/angular';
 import { AppInfo } from 'config/base';
+import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -34,7 +35,8 @@ export class LoginComponent implements OnInit {
     public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
-    private intermediaryService:IntermediaryService
+    private intermediaryService:IntermediaryService,
+    private toolbarProvider: ToolbarProvider
   ) {}
 
   ngOnInit() {}
