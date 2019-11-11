@@ -1,0 +1,36 @@
+<div class="main-element">
+  <h2 class="title-table">Asignaciones del Equipo</h2>
+
+  <div class="legend">
+    <div>
+      <div class="picking other"></div>
+      <p>Pickings en curso</p>
+    </div>
+    <div>
+      <div class="picking new"></div>
+      <p>Nueva asignación</p>
+    </div>
+  </div>
+
+  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListTeamAssignations && pickingParametrizationProvider.loadingListTeamAssignations > 0">
+    <div class="spinner">
+      <p class="message">Cargando asignaciones del equipo</p>
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
+  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListTeamAssignations || pickingParametrizationProvider.loadingListTeamAssignations < 1) && listTeamAssignations.length < 1">
+    <p class="message-empty">No hay asignaciones del equipo cargadas</p>
+  </div>
+
+  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListTeamAssignations || pickingParametrizationProvider.loadingListTeamAssignations < 1">
+    <mat-grid-list *ngFor="let teamAssignation of listTeamAssignations; let i = index" class="team-assignations-line" [cols]="maxSizeForCols" rowHeight="48px">
+      <mat-grid-tile class="employee" [colspan]="maxSizeForNameCol">
+        <div class="tile-value">{{teamAssignation.user.name}}</div>
+      </mat-grid-tile>
+      <mat-grid-tile class="assignation" *ngFor="let assignation of teamAssignation.pickingShoes" [ngClass]="assignation.temporary ? 'temporal' : 'fixed'" [colspan]="stringToInt(assignation.quantityShoes)">
+        <div class="tile-value">{{assignation.quantityShoes}}</div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</div>

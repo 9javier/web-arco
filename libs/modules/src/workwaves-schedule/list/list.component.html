@@ -6,6 +6,16 @@
 
 <ion-footer class="footer-products">
     <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-        <ion-fab-button (click)="addWorkWave()"><i class="material-icons">add</i></ion-fab-button>
+      <ion-fab-button><i class="material-icons">add</i></ion-fab-button>
+      <ion-fab-list side="top" class="list-fabs">
+        <div class="custom-fab">
+          <ion-button>Peticiones online/tienda</ion-button>
+          <ion-fab-button size="small" (click)="addWorkWaveOnlineStore()"><i class="material-icons">add</i></ion-fab-button>
+        </div>
+        <div class="custom-fab">
+          <ion-button>Picking directo/consolidado</ion-button>
+          <ion-fab-button size="small" color="primary" (click)="addWorkWave()"><i class="material-icons">add</i></ion-fab-button>
+        </div>
+      </ion-fab-list>
     </ion-fab>
 </ion-footer>

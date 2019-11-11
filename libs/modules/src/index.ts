@@ -229,3 +229,7 @@ export * from './components/toolbar-al/toolbar-al.module';
 /** Popover Menu Toolbar */
 export * from './components/popover-menu-toolbar/popover-menu-toolbar.component';
 export * from './components/popover-menu-toolbar/popover-menu-toolbar.module';
+
+// Workwave Template Online-Store Requests
+export * from './workwave-template-online-store/workwave-template-online-store.component';
+export * from './workwave-template-online-store/workwave-template-online-store.module';

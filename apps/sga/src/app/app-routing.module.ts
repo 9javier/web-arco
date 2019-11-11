@@ -216,6 +216,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'workwave/online-store',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwave-template-online-store/workwave-template-online-store.module#WorkwaveTemplateOnlineStoreModule',
+    data: {
+      name: 'Plantilla'
+    }
+  },
+  {
     path: 'workwaves-history',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwaves-history/workwaves-history.module#WorkwavesHistoryModule',
