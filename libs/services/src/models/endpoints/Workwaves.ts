@@ -298,4 +298,16 @@ export namespace WorkwaveModel {
   export interface ResponseConfirmMatchLineRequestOnlineStore extends HttpRequestModel.Response {
     data: ConfirmMatchLineRequestOnlineStore
   }
+
+  // Change status for product in online-store verification
+  export interface ParamsChangeStatusProductOnlineStore {
+    productReference: string,
+    defective: boolean
+  }
+  export interface ChangeStatusProductOnlineStore {
+
+  }
+  export interface ResponseChangeStatusProductOnlineStore extends HttpRequestModel.Response {
+    data: ChangeStatusProductOnlineStore
+  }
 }

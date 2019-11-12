@@ -79,6 +79,7 @@ export class WorkwavesService {
   private postMatchLineRequestOnlineStoreUrl: string = environment.apiBase + "/workwaves/matchlinerequest-ot";
   private postAssignUserToMatchLineOnlineStoreRequestUrl: string = environment.apiBase + "/workwaves/assign/matchlinerequest-ot";
   private postConfirmMatchLineRequestOnlineStoreUrl: string = environment.apiBase + "/workwaves/confirm/matchlinerequest-ot";
+  private postChangeStatusProductOnlineStoreUrl: string = environment.apiBase + "/workwaves/change/status-assigned-defective";
 
   private _lastWorkwaveEdited: any = null;
   private _lastWorkwaveRebuildEdited: any = null;
@@ -217,6 +218,10 @@ export class WorkwavesService {
 
   postConfirmMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsConfirmMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postConfirmMatchLineRequestOnlineStoreUrl, params);
+  }
+
+  postChangeStatusProductOnlineStore(params: WorkwaveModel.ParamsChangeStatusProductOnlineStore) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postChangeStatusProductOnlineStoreUrl, params);
   }
 
   postDeletePickings(params: WorkwaveModel.ParamsDeletePickings): Observable<WorkwaveModel.DeletedPickings> {
