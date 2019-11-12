@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { FormGroup, FormBuilder, FormArray } from '@angular/forms';
-import { validators } from '..';
+import { validators } from '../utils/validators';
 import { ModalController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-// import { RegionsModel, RegionService, IntermediaryService } from '@suite/services';
+import { RegionsModel, RegionService, IntermediaryService } from '@suite/services';
 import { StoreComponent } from './modal/store/store.component';
 import { UpdateComponent } from './modal/update/update.component';
-import { RegionsModel } from '../../../services/src/models/endpoints/regions.model';
-import { RegionService } from '../../../services/src/lib/endpoint/region/region.service';
-import { IntermediaryService } from '../../../services/src/lib/endpoint/intermediary/intermediary.service';
+
 
 @Component({
   selector: 'suite-regions',
@@ -21,7 +19,7 @@ export class RegionsComponent implements OnInit {
 
   regiones: Array<RegionsModel.Regions>
   
-  columns:Array<string> = ['code', 'country', 'province', 'postalCode', 'select'];
+  columns:Array<string> = ['name', 'country', 'province', 'postalCode', 'select'];
   
   dataSource:MatTableDataSource<RegionsModel.Regions>;
   

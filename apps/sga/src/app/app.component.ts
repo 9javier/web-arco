@@ -170,9 +170,7 @@ export class AppComponent implements OnInit {
     this.currentRoute = title;
   }
 
-  initializeApp() {
-    console.log(';inicie');
-    
+  initializeApp() {    
     this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.showSidebar = false;
@@ -224,7 +222,8 @@ export class AppComponent implements OnInit {
               )
               .catch((possibleMainWarehouse404Error) => {})
               .then(() => this.router.navigate(
-                [this.dictionary['user-time']?'user-time/products':'/products']
+                // [this.dictionary['user-time']?'user-time/products':'/products']
+                [this.dictionary['regions']?'regions':'/regions']
                 ).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
@@ -256,9 +255,7 @@ export class AppComponent implements OnInit {
     app.name = "sga";
     /**Set the dictionary of access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
-      this.dictionary = state;
-      console.log(this.dictionary);
-      
+      this.dictionary = state; 
     },e =>console.log(e)
     );
   this.initializeApp()

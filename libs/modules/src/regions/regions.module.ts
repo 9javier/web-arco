@@ -5,17 +5,24 @@ import { MatTableModule, MatCheckboxModule, MatPaginatorModule, MatListModule, M
 import { CdkTableModule } from '@angular/cdk/table';
 import { IonicModule } from '@ionic/angular';
 import { RegionsComponent } from './regions.component';
+import { RouterModule, Routes } from '@angular/router';
 import { StoreComponent } from './modal/store/store.component';
 import { UpdateComponent } from './modal/update/update.component';
 import { InfoComponent } from './modal/info/info.component';
-import { RegionsRoutingModule } from './regions-routing.module';
 
+
+const routes: Routes = [
+  {
+    path: '',
+    component: RegionsComponent,
+  }
+];
 @NgModule({
-  declarations: [RegionsComponent,StoreComponent, UpdateComponent, InfoComponent],
+  declarations: [RegionsComponent, StoreComponent,UpdateComponent, InfoComponent],
+  entryComponents: [RegionsComponent, StoreComponent,UpdateComponent, InfoComponent],
   imports: [
     IonicModule,
     CommonModule,
-    RegionsRoutingModule,
     ReactiveFormsModule,
     MatTableModule,
     MatCheckboxModule,
@@ -23,7 +30,8 @@ import { RegionsRoutingModule } from './regions-routing.module';
     MatPaginatorModule,
     MatListModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    RouterModule.forChild(routes),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

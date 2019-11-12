@@ -21,7 +21,13 @@ export class InfoComponent implements OnInit {
   /**for send the data of the value */
   @Output() submit = new EventEmitter();
   // tslint:disable-next-line: no-input-rename
-  @Input('region') region: any;
+  @Input('region') region: any = {
+    id: null,
+    name: null,
+    country: {name: ''},
+    province: {name: ''},
+    postalCode: {name: ''}
+  };
 
 
   countries: Array<CountryModel.Country> = [];
@@ -31,9 +37,10 @@ export class InfoComponent implements OnInit {
 
   form: FormGroup = this.formBuilder.group({
     id: new FormControl(),
-    country: new FormControl({ value: 0 }, [Validators.required]),
-    province: new FormControl({ value: 0 }, [Validators.required]),
-    postalCode: new FormControl({ value: 0 }, [Validators.required]),
+    name: new FormControl('', [Validators.required]),
+    country: new FormControl(0, [Validators.required]),
+    province: new FormControl(0, [Validators.required]),
+    postalCode: new FormControl(0, [Validators.required]),
   });
 
   constructor(
@@ -46,17 +53,7 @@ export class InfoComponent implements OnInit {
 
   ngOnInit() {
     this.init();
-    if (this.region) {
-      console.log(this.region.id);
-      this.form.patchValue({
-        id: this.region.id,
-        country: this.region.country.id,
-        province: this.region.province.id,
-        postalCode: this.region.postalCode.id,
-      });
-    }
-
-    console.log(this.form.value)
+    console.log(this.region);
 
   }
 
@@ -80,6 +77,13 @@ export class InfoComponent implements OnInit {
       console.log(this.provinces);
       if(this.region){
         this.initforms()
+        this.form.patchValue({
+          id: this.region.id,
+          name: this.region.name,
+          country: this.region.country.id,
+          province: this.region.province.id,
+          postalCode: this.region.postalCode.id,
+        });
       }
 
     },
@@ -91,9 +95,6 @@ export class InfoComponent implements OnInit {
     this.form.controls['country'].enable();
     this.form.controls['province'].disable();
     this.form.controls['postalCode'].disable();
-
-    
-
   }
 
 
@@ -115,6 +116,7 @@ export class InfoComponent implements OnInit {
    * Send the data to the parent component
    */
   submitData(): void {
+    // console.log(this.form.value)
     this.submit.emit(this.form.value);
   }
   changeCountry(e) {

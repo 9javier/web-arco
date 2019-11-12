@@ -233,4 +233,3 @@ export * from './components/popover-menu-toolbar/popover-menu-toolbar.module';
 // /**Regions */
 export  * from './regions/regions.component';
 export  * from './regions/regions.module';
-// export * from './regions/regions-routing.module'
