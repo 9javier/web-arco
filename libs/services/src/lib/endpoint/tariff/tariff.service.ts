@@ -29,6 +29,7 @@ export class TariffService {
    */
   getIndex(page: number = 1, limit: number = 1, sort: SortModel.Sort): Observable<TariffModel.ResponseTariffPaginator> {
     let params = {
+      warehouseId: 49,
       pagination: {
         page: page,
         limit: limit,

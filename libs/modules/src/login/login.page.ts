@@ -18,6 +18,7 @@ import { AppVersion } from '@ionic-native/app-version/ngx';
 import { Observable } from 'rxjs';
 import { AppVersionService } from '../../../services/src/lib/endpoint/app-version/app-version.service';
 import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
+import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -48,7 +49,8 @@ export class LoginComponent implements OnInit {
     private modalController: ModalController,
     public platform: Platform,
     private appVersion: AppVersion,
-    private appVersionService: AppVersionService
+    private appVersionService: AppVersionService,
+    private toolbarProvider: ToolbarProvider
   ) { }
 
   async ngOnInit() {
@@ -137,6 +139,7 @@ export class LoginComponent implements OnInit {
           const response: ResponseLogin = data.body;
 
           this.authenticationService.login(data.body.data.access_token, data.body.data.user, data.body.data.accessPermitionsDictionary, data.body.data.refresh_token);
+          this.toolbarProvider.currentPage.next('Registro horario');
           this.router.navigate(['/home']);
         },
         (errorResponse: HttpErrorResponse) => {
