@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { AlertController } from "@ionic/angular";
 import * as _ from 'lodash';
 
 import {
@@ -62,7 +63,8 @@ export class TariffSGAComponent implements OnInit {
     private formBuilder: FormBuilder,
     private tariffService: TariffService,
     private router: Router,
-    private warehousesService: WarehousesService
+    private warehousesService: WarehousesService,
+    private alertController: AlertController,
   ) {
     this.processing = false;
   }
@@ -250,22 +252,35 @@ export class TariffSGAComponent implements OnInit {
 
   }
 
-  startSync(): void {
+  async startSync() {
 
-
-    this.intermediaryService.presentLoading("Modificando los seleccionados");
-    this.tariffService.syncTariff().subscribe(result => {
-      this.intermediaryService.dismissLoading();
-      this.listenChanges();
-      this.isCalculating();
-    }, error => {
-      this.intermediaryService.dismissLoading();
-    }, () => {
-      this.tariffsUpdate = [];
-      //this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
-      this.isCalculating();
-      this.intermediaryService.dismissLoading();
+    let alertConfirm = await this.alertController.create({
+      header: 'Atención',
+      message: 'Va a ejecutarse la actualización de tarifas. ¿Está seguro?',
+      buttons: [
+        'Cancelar',
+        {
+          text: 'Confirmar',
+          handler: () => {
+            this.intermediaryService.presentLoading("Modificando los seleccionados");
+            this.tariffService.syncTariff().subscribe(result => {
+              this.intermediaryService.dismissLoading();
+              this.listenChanges();
+              this.isCalculating();
+            }, error => {
+              this.intermediaryService.dismissLoading();
+            }, () => {
+              this.tariffsUpdate = [];
+              //this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+              this.isCalculating();
+              this.intermediaryService.dismissLoading();
+            });
+          }
+        }
+      ]
     });
+
+    await alertConfirm.present();
   }
 
   /**
