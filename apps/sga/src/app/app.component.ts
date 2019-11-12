@@ -222,8 +222,7 @@ export class AppComponent implements OnInit {
               )
               .catch((possibleMainWarehouse404Error) => {})
               .then(() => this.router.navigate(
-                // [this.dictionary['user-time']?'user-time/products':'/products']
-                [this.dictionary['regions']?'regions':'/regions']
+                [this.dictionary['user-time']?'user-time/products':'/products']
                 ).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
