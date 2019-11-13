@@ -139,7 +139,7 @@ export class LoginComponent implements OnInit {
           const response: ResponseLogin = data.body;
 
           this.authenticationService.login(data.body.data.access_token, data.body.data.user, data.body.data.accessPermitionsDictionary, data.body.data.refresh_token);
-          this.toolbarProvider.currentPage.next('Registro horario');
+          this.toolbarProvider.currentPage.next('');
           this.router.navigate(['/home']);
         },
         (errorResponse: HttpErrorResponse) => {

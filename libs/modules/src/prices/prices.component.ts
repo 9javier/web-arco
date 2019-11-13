@@ -22,6 +22,7 @@ import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import {environment} from "../../../services/src/environments/environment";
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
   selector: 'suite-prices',
@@ -31,7 +32,7 @@ import {environment} from "../../../services/src/environments/environment";
 export class PricesComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
+  @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
   filterTypes: Array<PriceModel.StatusType> = [];
 
@@ -52,6 +53,7 @@ export class PricesComponent implements OnInit {
   form: FormGroup = this.formBuilder.group({
     models: [],
     brands: [],
+    sizes: [],
     seasons: [],
     colors: [],
     families: [],
@@ -71,6 +73,7 @@ export class PricesComponent implements OnInit {
   /**Filters */
   models: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
+  sizes: Array<TagsInputOption> = [];
   seasons: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
   families: Array<TagsInputOption> = [];
@@ -172,12 +175,12 @@ export class PricesComponent implements OnInit {
   listenChanges(): void {
     let previousPageSize = this.limit
     /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
+    this.paginatorComponent.page.subscribe(page => {
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag ? page.pageIndex + 1 : 1;
+      this.page = flag?page.pageIndex:1;
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
@@ -307,6 +310,7 @@ export class PricesComponent implements OnInit {
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
       this.colors = filters.colors;
       this.brands = filters.brands;
+      this.sizes = filters.sizes;
       this.seasons = filters.seasons;
       this.models = filters.models;
       this.families = filters.families;
@@ -322,14 +326,16 @@ export class PricesComponent implements OnInit {
    */
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
+    parameters.warehouseId = 49;
     this.priceService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
       this.prices = prices.results;
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
       let paginator = prices.pagination;
-      this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.page - 1;
+      this.paginatorComponent.length = paginator.totalResults;
+      this.paginatorComponent.pageIndex = paginator.selectPage;
+      this.paginatorComponent.lastPage = paginator.lastPage;
       this.groups = prices.filters.ordertypes;
       this.intermediaryService.dismissLoading();
     }, () => {
@@ -422,7 +428,7 @@ export class PricesComponent implements OnInit {
   applyFilters() {
     if (this.pauseListenFormChange) return;
     clearTimeout(this.requestTimeout);
-    this.paginator.pageIndex = 0;
+    this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, 100);
@@ -432,11 +438,13 @@ export class PricesComponent implements OnInit {
     this.form = this.formBuilder.group({
       models: [],
       brands: [],
+      sizes: [],
       seasons: [],
       colors: [],
       families: [],
       lifestyles: [],
       status: 0,
+      size: 0,
       tariffId: 0,
       pagination: this.formBuilder.group({
         page: this.page || 1,

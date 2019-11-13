@@ -44,9 +44,11 @@ export namespace PriceModel{
     export interface ResponsePricePaginated{
         results:Array<Price>;
         pagination: {
-            page: number,
-            limit: number,
-            totalResults: number
+            selectPage:number;
+            fisrtPage:number;
+            lastPage:number;
+            limit:number;
+            totalResults:number;
         }
         filters: {
             ordertypes: Array<{
