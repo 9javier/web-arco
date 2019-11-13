@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="end">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Actualizar Region</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <suite-info [region]="region" title="Actualizar Region" action="Guardar" (submit)="update($event)"></suite-info>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="information.form.invalid" (click)="information.submitData()">Actualizar</ion-button>
+    </ion-toolbar>
+</ion-footer>

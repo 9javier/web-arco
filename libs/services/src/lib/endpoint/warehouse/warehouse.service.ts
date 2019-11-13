@@ -37,7 +37,7 @@ export class WarehouseService {
     private hallsService: HallsService
   ) {}
 
-  async init() {
+  async init() { 
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({Authorization: currentToken});
         
@@ -86,6 +86,10 @@ export class WarehouseService {
           this.warehousesWithRacks = res.body.data.filter((warehouse) => {
             return warehouse.is_store;
           });
+        },
+        e => {
+          console.log(e);
+          
         });
       });
   }
@@ -96,8 +100,8 @@ export class WarehouseService {
     this.listRows = {};
     this.listColumns = {};
     this.listReferences = {};
-
-    this.getFullIndex()
+    try {
+      this.getFullIndex()
       .then((data: Observable<HttpResponse<any>>) => {
         data.subscribe((res: HttpResponse<any>) => {
           res.body.data.forEach(warehouse => {
@@ -154,6 +158,11 @@ export class WarehouseService {
           });
         });
       });
+    } catch (error) {
+      console.log(error);
+      
+    }
+    
   }
 
   get idWarehouseMain(): number {

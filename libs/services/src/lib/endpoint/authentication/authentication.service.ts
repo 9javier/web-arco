@@ -78,7 +78,7 @@ export class AuthenticationService {
 
   isAuthenticated() {
     return this.authenticationState.getValue();
-  }
+  } 
 
   getCurrentToken(): Promise<string> {
     return this.localStorageProvider.get(this.localStorageProvider.KEYS.ACCESS_TOKEN).then(res => {
