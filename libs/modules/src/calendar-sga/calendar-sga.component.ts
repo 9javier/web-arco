@@ -24,7 +24,8 @@ export class CalendarSgaComponent implements OnInit {
   public cantDates: boolean = false;
   private isCheckedOrigin: boolean = false;
   private selectTem: boolean = false;
-  listaFechas:string[] = [];
+  private listaFechas:string[] = [];
+  private listaFescasDb$:string[];
 
 
   public calendarConfiguration: IDatePickerConfig = {
@@ -60,13 +61,7 @@ export class CalendarSgaComponent implements OnInit {
       isChecked: [false, []],
       origins: new FormArray([])
     });
-
-
-
-
   }
-
-
 
   ngOnInit() {
     this.getBase();
@@ -230,6 +225,7 @@ export class CalendarSgaComponent implements OnInit {
   getCalendarDates(): void {
     this.calendarService.getCalendarDates().subscribe(dates => {
       console.log(dates);
+      this.listaFescasDb$ = dates;
 
       this.manageHaveClass(dates);
     });
@@ -652,20 +648,32 @@ export class CalendarSgaComponent implements OnInit {
 
   /**
    * @author "Gaetano Sabino"
-   * @description "Delete dates"
+   * @description "Seleciona las fechas presentes en la BD con la fechas selecionadas"
    */
   private deleteDates(dates:string[]){
-    console.log(dates);
-    this.listaFechas = dates;
-
+    let data:string;
+    const listaDatesdb:string[]=[];
+    dates.forEach(ele =>{
+      data = this.listaFescasDb$.find(date => date === ele );
+      if(data){
+        listaDatesdb.push(data);
+      }
+    })
+    this.listaFechas = listaDatesdb
   }
 
+  /**
+   * @author Gaetano Sabino
+   * @description Retorna las fechas que solo estan presente en la BD
+   */
   get ListaFechas$(){
     return this.listaFechas;
   }
 
   /**
-   * Borrar las fechas selectionadas
+   * @description Envia las fechas que ya existen en la Bd
+   * @method delete
+   * @author "Gaetano Sabino"
    */
   deleteAllFechasSelect(){
 
@@ -687,7 +695,7 @@ export class CalendarSgaComponent implements OnInit {
 
 
     },error=>{
-      this.intermediaryService.presentToastError("Error en borrar las Fechas");
+      this.intermediaryService.presentToastError("Error en eliminar las Fechas");
       this.intermediaryService.dismissLoading();
     });
   }
