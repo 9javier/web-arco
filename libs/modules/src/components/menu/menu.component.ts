@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
 import { Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { MenuController } from "@ionic/angular";
 import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
+import { LoginComponent } from '../../login/login.page';
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -469,19 +470,7 @@ export class MenuComponent implements OnInit {
     private tariffService: TariffService,
 
   ) {
-    this.tariffService.getNewTariff().subscribe(tariff=>{
-      /**save the data and format the dates */
-      this.alPages.forEach((item, i) => {
-        if ((<any>item).id == "tarifas"){
-          (<any>item).children.forEach((child, j) => {
-            if ((<any>child).id == "tariff-al"){
-              (<any>child).notification = tariff['data'];
-            }
-          });
-        }
-      });
-    },()=>{
-    })
+    
    }
 
   returnTitle(item: MenuSectionItem) {
@@ -496,6 +485,7 @@ export class MenuComponent implements OnInit {
    */
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
+    this.newTarifff();
     let logoutItem = dictionary['user-time'] ? ({
       title: 'Cerrar sesión',
       id: 'logout',
@@ -630,6 +620,29 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit(): void {
+    //this.listenChanges();
+  }
+
+  /**
+   * Listen changes in form to resend the request for search
+   */
+  newTarifff() {
+    this.tariffService.getNewTariff().subscribe(tariff=>{
+      /**save the data and format the dates */
+      this.alPages.forEach((item, i) => {
+        if ((<any>item).id == "tarifas"){
+          (<any>item).children.forEach((child, j) => {
+            if ((<any>child).id == "tariff-al"){
+              (<any>child).notification = tariff['data'];
+            }
+          });
+        }
+      });
+    },()=>{
+    })
   }
 
 }
