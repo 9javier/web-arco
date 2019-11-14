@@ -84,4 +84,26 @@ export class PickingParametrizationProvider {
     this._listTeamAssignations = value;
   }
 
+
+  // Online-Stores section
+
+  private _listRequestOrdersOnlineStore: WorkwaveModel.MatchLineRequestOnlineStore[] = [];
+  get listRequestOrdersOnlineStore(): WorkwaveModel.MatchLineRequestOnlineStore[] {
+    return this._listRequestOrdersOnlineStore;
+  }
+  set listRequestOrdersOnlineStore(value: WorkwaveModel.MatchLineRequestOnlineStore[]) {
+    this._listRequestOrdersOnlineStore = value;
+  }
+
+  private _loadingListRequestOrdersOnlineStore: number = 0;
+  get loadingListRequestOrdersOnlineStore(): number {
+    return this._loadingListRequestOrdersOnlineStore;
+  }
+  set loadingListRequestOrdersOnlineStore(value: number) {
+    if (value < 0) {
+      value = 0;
+    }
+    this._loadingListRequestOrdersOnlineStore = value;
+  }
+
 }

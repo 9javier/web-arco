@@ -216,6 +216,14 @@ const routes: Routes = [
     data: {
       name: 'sorter'
     }
+  },
+  {
+    path: 'picking/online-store/verify',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/picking-online-store-verify/picking-online-store-verify.module#PickingOnlineStoreVerifyModule',
+    data: {
+      name: 'Verificación de artículos'
+    }
   }
 ];
 

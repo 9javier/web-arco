@@ -318,8 +318,10 @@ export class TextareaComponent implements OnInit {
 
             if (this.typePicking == 1) {
               this.inventoryService.postPickingDirect(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
-            } else {
+            } else if (this.typePicking == 2) {
               this.inventoryService.postPickingConsolidated(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
+            } else {
+              this.inventoryService.postPickingOnlineStore(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             }
           } else {
             this.inputPicking = null;
@@ -445,18 +447,14 @@ export class TextareaComponent implements OnInit {
 
   private showTextStartScanPacking(show: boolean, typePacking: number, packingReference?: string) {
     if (show) {
-      if (typePacking == 1) {
-        if (packingReference) {
+      if (packingReference) {
+        if (typePacking == 1) {
           this.scanJail = "Escanea la Jaula " + packingReference + " para continuar con el proceso de picking ya iniciado.";
         } else {
-          this.scanJail = "Escanea una Jaula para dar comienzo al proceso de picking.";
+          this.scanJail = "Escanea el Pallet " + packingReference + " para continuar con el proceso de picking ya iniciado.";
         }
       } else {
-        if (packingReference) {
-          this.scanJail = "Escanea el Pallet " + packingReference + " para continuar con el proceso de picking ya iniciado.";
-        } else {
-          this.scanJail = "Escanea un Pallet para dar comienzo al proceso de picking.";
-        }
+        this.scanJail = "Escanea un embalaje para dar comienzo al proceso de picking.";
       }
     } else {
       this.scanJail = null;

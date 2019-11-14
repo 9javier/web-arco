@@ -1,5 +1,7 @@
 import {FormControl} from "@angular/forms";
-import {GroupWarehousePickingModel, UserModel, WarehouseModel} from "@suite/services";
+import {GroupWarehousePickingModel, ProductModel, UserModel, WarehouseModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
+import {ShoesPickingModel} from "./ShoesPicking";
 
 export namespace WorkwaveModel {
   export interface Workwave {
@@ -232,5 +234,86 @@ export namespace WorkwaveModel {
     errors: string;
     message: string;
     code: number;
+  }
+
+  // Get lineRequests Matched for online and store requests
+  export interface ParamsMatchLineRequestOnlineStore {
+    preparationLinesTypes: number[]
+  }
+  export interface MatchLineRequestOnlineStore {
+    workwave: Workwave,
+    typePicking: number,
+    typeGeneration: number,
+    status: number,
+    originWarehouse: WarehouseModel.Warehouse,
+    packingType: number,
+    orderHall: number,
+    packingId: number,
+    requestNotifyAvelon: any,
+    resultTextNotifyAvelon: any,
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    resultNotifyAvelon: boolean,
+    avelonNotificationAttemptFinished: boolean,
+    destinyWarehouse: WarehouseModel.Warehouse,
+    quantityMatchWarehouse: number,
+    quantityOrder: string,
+    request: {
+      id: number,
+      requestId: number,
+      date: string
+    },
+    preparationLinesTypes: {
+      id: number,
+      name: string,
+      priority: number
+    }
+  }
+  export interface ResponseMatchLineRequestOnlineStore extends HttpRequestModel.Response {
+    data: MatchLineRequestOnlineStore[]
+  }
+
+  // Get users-assignations for online and store requests
+  export interface ParamsAssignUserToMatchLineRequestOnlineStore {
+    requestIds: number[],
+    userIds: number[]
+  }
+  export interface AssignUserToMatchLineRequestOnlineStore {
+    assignations: TeamAssignations[],
+    quantities: AssignationsByRequests[]
+  }
+  export interface ResponseAssignUserToMatchLineRequestOnlineStore extends HttpRequestModel.Response {
+    data: AssignUserToMatchLineRequestOnlineStore
+  }
+
+  // Create work-wave for online and store requests
+  export interface ParamsConfirmMatchLineRequestOnlineStore {
+    type: number,
+    requestIds: number[],
+    userIds: number[]
+  }
+  export interface ConfirmMatchLineRequestOnlineStore {
+
+  }
+  export interface ResponseConfirmMatchLineRequestOnlineStore extends HttpRequestModel.Response {
+    data: ConfirmMatchLineRequestOnlineStore
+  }
+
+  // Change status for product in online-store verification
+  export interface ParamsChangeStatusProductOnlineStore {
+    productReference: string,
+    defective: boolean
+  }
+  export interface ChangeStatusProductOnlineStore {
+    product: ProductModel.Product,
+    defective: boolean,
+    newProduct: ProductModel.Product,
+    containerReference: string,
+    workwaveOrder: ShoesPickingModel.WorkwaveOrder,
+    status: string
+  }
+  export interface ResponseChangeStatusProductOnlineStore extends HttpRequestModel.Response {
+    data: ChangeStatusProductOnlineStore
   }
 }

@@ -59,4 +59,8 @@ export class ListWorkwavesScheduleComponent implements OnInit {
     this.router.navigate(['workwave-template-rebuild'], navigationExtras);
   }
 
+  addWorkWaveOnlineStore() {
+    this.router.navigate(['workwave/online-store']);
+  }
+
 }
