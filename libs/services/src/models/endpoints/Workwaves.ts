@@ -1,6 +1,7 @@
 import {FormControl} from "@angular/forms";
-import {GroupWarehousePickingModel, UserModel, WarehouseModel} from "@suite/services";
+import {GroupWarehousePickingModel, ProductModel, UserModel, WarehouseModel} from "@suite/services";
 import {HttpRequestModel} from "./HttpRequest";
+import {ShoesPickingModel} from "./ShoesPicking";
 
 export namespace WorkwaveModel {
   export interface Workwave {
@@ -305,7 +306,12 @@ export namespace WorkwaveModel {
     defective: boolean
   }
   export interface ChangeStatusProductOnlineStore {
-
+    product: ProductModel.Product,
+    defective: boolean,
+    newProduct: ProductModel.Product,
+    containerReference: string,
+    workwaveOrder: ShoesPickingModel.WorkwaveOrder,
+    status: string
   }
   export interface ResponseChangeStatusProductOnlineStore extends HttpRequestModel.Response {
     data: ChangeStatusProductOnlineStore

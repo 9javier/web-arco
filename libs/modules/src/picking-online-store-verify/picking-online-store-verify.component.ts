@@ -36,7 +36,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    setTimeout(() => this.scannerManual.focusToInput(), 1000);
   }
 
   public async newValueScanner(data) {
@@ -44,10 +44,12 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
       // if code scanned not correspond to product reference, throw error
       this.scannerManual.setValue(null);
       await this.intermediaryService.presentToastError('El código escaneado no corresponde a un producto.');
+      this.scannerManual.focusToInput();
     } else {
       if (data == this.lastCodeScanned) {
         // if code scanned is the same that last code scanned, do not anything
         this.scannerManual.setValue(null);
+        this.scannerManual.focusToInput();
       } else {
         this.lastCodeScanned = data;
 
@@ -59,7 +61,16 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
 
         this.scannerManual.setValue(null);
 
-        this.processProductScanned(data);
+        if (this.showAlternativeProductInfo) {
+          if (data == this.alternativeProductInfo.product.reference) {
+            this.processProductScanned(data);
+          } else {
+            await this.intermediaryService.presentToastError('El producto escaneado no corresponde con el que se le solicitó escanear.');
+            this.scannerManual.focusToInput();
+          }
+        } else {
+          this.processProductScanned(data);
+        }
       }
     }
   }
@@ -72,13 +83,6 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
     await this.intermediaryService.presentConfirm(`Al marcar el par como APTO se notificará a Avelon del movimiento. ¿Está seguro de que quiere marcar como apto el par ${this.productInfo.model.reference}?`, () => this.requestSetProductAsOk(), () => this.scannerManual.focusToInput());
   }
 
-  public oldReference(inventory: ShoesPickingModel.Inventory) {
-    let alphabet = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
-    return 'P' + inventory.rack.hall.toString().padStart(2, '0')
-      + alphabet[inventory.container.row-1]
-      + inventory.container.column.toString().padStart(2, '0');
-  }
-
   private async processProductScanned(productReference: string) {
     await this.intermediaryService.presentLoading();
     this.productsService
@@ -87,6 +91,8 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
         await this.intermediaryService.dismissLoading();
         this.scannerManual.focusToInput();
         if (res.code == 200) {
+          this.showAlternativeProductInfo = false;
+          this.alternativeProductInfo = null;
           this.showProductInfo = true;
           this.productInfo = {
             reference: res.data.reference,
@@ -121,8 +127,78 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
       .then(async (res: WorkwaveModel.ResponseChangeStatusProductOnlineStore) => {
         await this.intermediaryService.dismissLoading();
         if (res.code == 201) {
-          // TODO search new product equivalent
+          const resData = res.data;
           await this.intermediaryService.presentToastSuccess('Producto marcado como defectuoso.', 2000);
+          this.showProductInfo = false;
+          this.productInfo = null;
+          if (resData.newProduct) {
+            setTimeout(async () => {
+              await this.intermediaryService.presentToastSuccess('Cargando producto alternativo a recoger.', 2000);
+              this.showAlternativeProductInfo = true;
+              this.alternativeProductInfo = {
+                inventory: {
+                  container: {
+                    reference: resData.containerReference,
+                    column: null,
+                    enabled: null,
+                    id: null,
+                    items: null,
+                    lock: null,
+                    on_right_side: null,
+                    row: null
+                  },
+                  id: null,
+                  createdAt: null,
+                  packingId: null,
+                  packingType: null,
+                  rack: null,
+                  status: null,
+                  updatedAt: null
+                },
+                product: {
+                  model: {
+                    reference: resData.newProduct.model.reference,
+                    color: null,
+                    createdAt: null,
+                    datasetHash: null,
+                    hash: null,
+                    id: null,
+                    name: null,
+                    updatedAt: null,
+                    brand: {
+                      name: resData.newProduct.model.brand.name
+                    }
+                  },
+                  size: {
+                    name: resData.newProduct.size.name,
+                    createdAt: null,
+                    datasetHash: null,
+                    description: null,
+                    id: null,
+                    number: null,
+                    reference: null,
+                    updatedAt: null
+                  },
+                  id: null,
+                  reference: resData.newProduct.reference,
+                  initialWarehouseReference: null
+                },
+                createdAt: null,
+                updatedAt: null,
+                id: null,
+                status: null,
+                typeSelectionCriteria: null,
+                typeGeneration: null,
+                typePreparationLine: null,
+                workWaveOrder: null
+              };
+              this.scannerManual.focusToInput();
+            }, 2 * 1000);
+            this.scannerManual.focusToInput();
+          }
+        } else if (res.code == 404) {
+          await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
+          this.scannerManual.focusToInput();
           this.showProductInfo = false;
           this.productInfo = null;
         } else {
@@ -155,17 +231,22 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
           await this.intermediaryService.presentToastSuccess('Producto marcado como apto.', 2000);
           this.showProductInfo = false;
           this.productInfo = null;
+        } else if (res.code == 404) {
+          await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
+          this.scannerManual.focusToInput();
+          this.showProductInfo = false;
+          this.productInfo = null;
         } else {
           await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como apto.');
         }
       }, async (error) => {
         await this.intermediaryService.dismissLoading();
-        await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como apto.')
+        await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como apto.');
         this.scannerManual.focusToInput();
       })
       .catch(async (error) => {
         await this.intermediaryService.dismissLoading();
-        await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como apto.')
+        await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como apto.');
         this.scannerManual.focusToInput();
       })
   }
