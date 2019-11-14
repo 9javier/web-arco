@@ -362,6 +362,12 @@ export class MenuComponent implements OnInit {
           id: 'picking-tasks-manual'
         },
         {
+          title: 'Verificación de artículos',
+          icon: 'checkmark-circle-outline',
+          url: '/picking/online-store/verify',
+          id: 'picking-tasks-manual'
+        },
+        {
           title: 'Gestión de almacén',
           id: 'warehouses-management',
           url: '/warehouse/manage',

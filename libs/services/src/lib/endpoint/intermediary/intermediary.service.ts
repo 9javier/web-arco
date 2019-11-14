@@ -71,16 +71,22 @@ export class IntermediaryService {
       });
   }
 
-  async presentConfirm(message:string,callbak) {
+  async presentConfirm(message:string,callbackOK, callbackCancel?) {
+    let buttonsAlert: any = [{
+      text: "Cancelar"
+    }, {
+      text: "Ok",
+      handler: callbackOK
+    }];
+
+    if (callbackCancel) {
+      buttonsAlert[0].handler = callbackCancel;
+    }
+
     const alert = await this.alertController.create({
       header: 'Confirmar',
       message: message,
-      buttons: [{
-        text:"Ok",
-        handler:callbak
-      },{
-        text:"Cancelar"
-      }]
+      buttons: buttonsAlert
     });
     return await alert.present();
   }
