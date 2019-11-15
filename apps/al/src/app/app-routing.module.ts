@@ -218,6 +218,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'audits',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/audits-mobile/audits-mobile.module#AuditsMobileModule',
+    data: {
+      name: 'Auditoria'
+    }
+  },
+  {
     path: 'picking/online-store/verify',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-online-store-verify/picking-online-store-verify.module#PickingOnlineStoreVerifyModule',

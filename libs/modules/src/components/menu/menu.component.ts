@@ -246,6 +246,20 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Auditorias',
+      open: true,
+      type: 'wrapper',
+      icon: 'ribbon',
+      children: [
+        {
+          title: 'Lista de auditorias',
+          id: 'audit-sga',
+          url: '/audits',
+          icon: 'list-box'
+        }
+      ]
+    },
+    {
       title:'Regiones',
       id:'regions',
       url:'/regions',
@@ -435,6 +449,20 @@ export class MenuComponent implements OnInit {
           id: 'sorter-output',
           url: '/sorter/output',
           icon: 'log-out'
+        }
+      ]
+    },
+    {
+      title: 'Auditorias',
+      open: true,
+      type: 'wrapper',
+      icon: 'ribbon',
+      children: [
+        {
+          title: 'Lista de auditorias',
+          id: 'audit-al',
+          url: '/audits',
+          icon: 'list-box'
         }
       ]
     },
