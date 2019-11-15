@@ -21,7 +21,7 @@ import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
-import {environment} from "../../../services/src/environments/environment";
+import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
@@ -101,15 +101,15 @@ export class PricesComponent implements OnInit {
   selectedForm: FormGroup = this.formBuilder.group({
     selector: false
   }, {
-      validators: validators.haveItems("toSelect")
-    });
+    validators: validators.haveItems("toSelect")
+  });
 
   displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
   public disableExpansionPanel: boolean = true;
 
-  public mobileVersionTypeList: 'list'|'table' = 'list';
+  public mobileVersionTypeList: 'list' | 'table' = 'list';
   public showFiltersMobileVersion: boolean = false;
 
   private isStoreUser: boolean = false;
@@ -180,7 +180,7 @@ export class PricesComponent implements OnInit {
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag?page.pageIndex:1;
+      this.page = flag ? page.pageIndex : 1;
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
@@ -214,6 +214,7 @@ export class PricesComponent implements OnInit {
    * @param items - Reference items to extract he ids
    */
   async printPrices(items, warehouseId: number) {
+    this.initSelectForm(this.prices);
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -238,7 +239,8 @@ export class PricesComponent implements OnInit {
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
-      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      this.initSelectForm(this.prices);
+      //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
     });
@@ -386,7 +388,7 @@ export class PricesComponent implements OnInit {
     return null;
   }
 
-  getPhotoUrl(priceObj: PriceModel.Price): string|boolean {
+  getPhotoUrl(priceObj: PriceModel.Price): string | boolean {
     let isPhotoTestUrl: boolean = false;
 
     if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
