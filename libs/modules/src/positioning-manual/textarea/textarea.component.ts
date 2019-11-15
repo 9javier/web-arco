@@ -6,6 +6,7 @@ import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel,
 import {AlertController, ToastController} from "@ionic/angular";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-textarea',
@@ -35,7 +36,8 @@ export class TextareaComponent implements OnInit {
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
     private intermediaryService: IntermediaryService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -75,6 +77,7 @@ export class TextareaComponent implements OnInit {
 
       this.processInitiated = true;
       if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+        this.audioProvider.playDefaultOk();
         this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
         this.containerReference = dataWrited;
         this.packingReference = null;
@@ -99,6 +102,7 @@ export class TextareaComponent implements OnInit {
         this.inputPositioning = null;
         this.errorMessage = null;
       } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.JAIL)) {
+        this.audioProvider.playDefaultOk();
         this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
         this.containerReference = null;
         this.packingReference = dataWrited;
@@ -107,10 +111,12 @@ export class TextareaComponent implements OnInit {
         this.errorMessage = null;
         this.processInitiated = false;
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
+        this.audioProvider.playDefaultError();
         this.inputPositioning = null;
         this.errorMessage = '¡Referencia del contenedor/embalaje errónea!';
         this.processInitiated = false;
       } else {
+        this.audioProvider.playDefaultError();
         this.inputPositioning = null;
         if (this.isStoreUser) {
           this.errorMessage = '¡Referencia del producto errónea!';
@@ -129,6 +135,7 @@ export class TextareaComponent implements OnInit {
       .then((res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
+          this.audioProvider.playDefaultOk();
           let msgSetText = '';
           if (this.isStoreUser) {
             msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
@@ -142,8 +149,10 @@ export class TextareaComponent implements OnInit {
           this.presentToast(msgSetText, 2000, 'success');
           this.processInitiated = false;
         } else if (res.code == 428) {
+          this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
         } else {
+          this.audioProvider.playDefaultError();
           let errorMessage = res.message;
           if (res.errors) {
             if (typeof res.errors == 'string') {
@@ -159,6 +168,7 @@ export class TextareaComponent implements OnInit {
         }
       }, (error) => {
         this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         if (error.error.code == 428) {
           this.showWarningToForce(params);
         } else {
