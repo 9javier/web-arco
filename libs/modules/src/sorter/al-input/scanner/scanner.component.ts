@@ -302,7 +302,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                 if (!this.modalScannRack) {
                   checkProductInWayLocal(productReference)
                 }
-              }, 1000);
+              }, 0.5 * 1000);
             } else {
               this.timeoutToQuickUser();
               this.sorterNotifyAboutProductScanned();

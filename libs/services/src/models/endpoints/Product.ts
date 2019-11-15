@@ -44,7 +44,10 @@ export namespace ProductModel {
         name: string;
         colorHex: string;
         description: string;
-      };
+      },
+      brand: {
+        name
+      }
     };
     size: {
       createdAt: string;
@@ -76,6 +79,16 @@ export namespace ProductModel {
     errors?: string,
     message: string,
     code: number
+  }
+
+  export interface InfoVerificationOnlineStore {
+    reference: string,
+    model: ModelModel.Model,
+    size: SizeModel.Size
+  }
+
+  export interface ResponseInfoVerificationOnlineStore extends HttpRequestModel.Response {
+    data: InfoVerificationOnlineStore
   }
 
   export interface ResponseExtendedInfo {

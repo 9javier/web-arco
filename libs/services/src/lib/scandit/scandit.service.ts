@@ -631,8 +631,10 @@ export class ScanditService {
             ScanditMatrixSimple.showLoadingDialog('Comprobando producto...');
             if (typePicking == 1) {
               this.inventoryService.postPickingDirect(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
-            } else {
+            } else if (typePicking == 2) {
               this.inventoryService.postPickingConsolidated(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
+            } else {
+              this.inventoryService.postPickingOnlineStore(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             }
           } else {
             this.pickingLog(2, "48", "} else {");
