@@ -85,7 +85,8 @@ export class TextareaComponent implements OnInit {
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
         let params: any = {
           productReference: dataWrited,
-          warehouseId: warehouseId
+          warehouseId: warehouseId,
+          force: false
         };
 
         if (!this.isStoreUser && this.containerReference) {
@@ -127,6 +128,8 @@ export class TextareaComponent implements OnInit {
     this.inventoryService
       .postStore(params)
       .then((res: InventoryModel.ResponseStore) => {
+        console.log(res);
+        
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
           let msgSetText = '';
@@ -144,6 +147,12 @@ export class TextareaComponent implements OnInit {
         } else if (res.code == 428) {
           this.showWarningToForce(params);
         } else {
+          if( res.code === 405 && res.message === "ActionNotAllowedException"){
+            params.force = true            
+            this.warningToForce(params)
+          }
+          
+
           let errorMessage = res.message;
           if (res.errors) {
             if (typeof res.errors == 'string') {
@@ -158,6 +167,8 @@ export class TextareaComponent implements OnInit {
           this.processInitiated = false;
         }
       }, (error) => {
+        console.log(error);
+
         this.intermediaryService.dismissLoading();
         if (error.error.code == 428) {
           this.showWarningToForce(params);
@@ -167,6 +178,33 @@ export class TextareaComponent implements OnInit {
         }
       });
   }
+  
+
+private async warningToForce(params) {
+    const alertWarning = await this.alertController.create({
+      header: 'Atención',
+      subHeader: 'El destino del producto es diferente al destino del contenedor ¿Desea forzar la operacion? ',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Cancelar',
+          handler: () => {
+            this.processInitiated = false;
+          }
+        },
+        {
+          text: 'Forzar',
+          handler: () => {
+            params.force = true;
+            this.storeProductInContainer(params);
+            this.processInitiated = false;
+          }
+        }]
+    });
+
+    return await alertWarning.present();
+  }
+
 
   private async showWarningToForce(params) {
     const alertWarning = await this.alertController.create({
