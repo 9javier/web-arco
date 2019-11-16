@@ -40,6 +40,7 @@ export class MenuComponent implements OnInit {
   }
 
   isNewTariff: boolean;
+  versionUpdate : any;;
 
   private app = app;
 
@@ -47,7 +48,7 @@ export class MenuComponent implements OnInit {
   displaySmallSidebar = false;
   currentRoute: string = "";
   sgaPages: MenuItemList = [
-    {
+    { 
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
@@ -504,7 +505,9 @@ export class MenuComponent implements OnInit {
     private tariffService: TariffService,
 
   ) {
-    
+    this.loginService.availableVersion.subscribe(res=>{
+      this.versionUpdate = res;
+    })
    }
 
   returnTitle(item: MenuSectionItem) {
@@ -512,6 +515,10 @@ export class MenuComponent implements OnInit {
     this.toolbarProvider.currentPage.next(item.title);
     this.toolbarProvider.optionsActions.next([]);
     this.menuTitle.emit(item.title);
+  }
+
+  loadUpdate() {
+    window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
   }
 
   /**
