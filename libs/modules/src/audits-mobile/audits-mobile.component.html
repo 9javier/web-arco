@@ -1,0 +1,20 @@
+<ion-content padding>
+  <!--  -->
+  <ion-list>
+    <ion-item *ngFor="let item of Auditories">
+      <ion-label>JOO10</ion-label>
+
+      <span *ngIf="item.status === 1" slot="end">
+        <ion-icon class="icon-close" (click)="closeAuditoria(item)"  name="close-circle-outline"></ion-icon>
+      </span>
+
+    </ion-item>
+  </ion-list>
+
+  <ion-fab routerLink="/audits/add" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
