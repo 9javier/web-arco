@@ -19,6 +19,7 @@ import {MatrixOutputSorterComponent} from "./matrix-output/matrix-output.compone
 import {WaySorterModel} from "../../../../services/src/models/endpoints/WaySorter";
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-output-al',
   templateUrl: './al-output.component.html',
   styleUrls: ['./al-output.component.scss']
@@ -50,23 +51,32 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit() {
+    if(this.sorterProvider.colorSelected){
+      console.log(this.sorterProvider.colorSelected);
+    }
+    console.log(this.sorterProvider.colorSelected);
+    
     if (this.activeDefaultData) {
       this.loadDefaultData();
     } else {
       this.loadingSorterTemplateMatrix = true;
       this.loadData();
+      if(this.sorterProvider.colorSelected ){
+        console.log(this.sorterProvider.colorSelected);
+        
+      }
     }
   }
 
   ngOnDestroy() {
-    if (this.sorterProvider.processActiveForUser == 2) {
+    if (this.sorterProvider.processActiveForUser === 2) {
       this.stopExecutionColor(false);
     }
   }
 
   private loadDefaultData() {
     // loadActiveSorter
-    let resFirstSorter = {
+    const resFirstSorter = {
       "createdAt": "2019-10-10T11:20:24.000Z",
       "updatedAt": "2019-10-10T11:20:24.000Z",
       "id": 1,
@@ -491,10 +501,10 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
         "packingType": 1
       }
     };
-    let sorterId = resFirstSorter.id;
+    const sorterId = resFirstSorter.id;
 
     // checkActiveColor
-    let resActiveColor = {
+    const resActiveColor = {
       "statusCode": 201,
       "statusMessage": "Created",
       "statusDescription": "Resource created",
@@ -541,7 +551,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       ];
 
     // loadActiveTemplate
-    let resActiveTemplate = {"createdAt":"2019-10-10T11:23:21.000Z","updatedAt":"2019-10-10T11:23:21.000Z","id":2,"name":"Not Equals 1","active":true,"equalParts":false,"executions":[{"createdAt":"2019-10-14T11:59:36.000Z","updatedAt":"2019-10-14T11:59:36.000Z","id":4,"status":1}]};
+    const resActiveTemplate = {"createdAt":"2019-10-10T11:23:21.000Z","updatedAt":"2019-10-10T11:23:21.000Z","id":2,"name":"Not Equals 1","active":true,"equalParts":false,"executions":[{"createdAt":"2019-10-14T11:59:36.000Z","updatedAt":"2019-10-14T11:59:36.000Z","id":4,"status":1}]};
     let templateId = resActiveTemplate.id;
   }
 
@@ -578,7 +588,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       this.sorterOutputService
         .getGetCurrentProcessWay()
         .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
-          if (res.code == 201) {
+          if (res.code === 201) {
             await this.intermediaryService.dismissLoading();
             let currentProcessWay = res.data;
             this.sorterProvider.infoSorterOutputOperation = {
@@ -631,8 +641,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
         .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
           this.sorterOutputService
             .getNewProcessWay(idWayToWork)
+            // tslint:disable-next-line:no-shadowed-variable
             .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
-              if (res.code == 201) {
+              if (res.code === 201) {
                 await this.intermediaryService.dismissLoading();
                 let newProcessWay = res.data;
                 this.sorterProvider.infoSorterOutputOperation = {
@@ -693,9 +704,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   getMessageForNotificationActiveProcess() : string {
-    if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser == 1) {
+    if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser === 1) {
       return 'el usuario ya tiene un proceso de entrada iniciado';
-    } else if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser == 2) {
+    } else if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser === 2) {
       return 'el usuario ya tiene un proceso iniciado';
     } else {
       return '';
@@ -726,7 +737,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterExecutionService
       .getColorActive()
       .then((res: ExecutionSorterModel.ResponseColorActive) => {
-        if (res.code == 201) {
+        console.log(res);
+        
+        if (res.code === 201) {
           this.sorterProvider.colorActiveForUser = res.data.color.hex;
           this.sorterProvider.processActiveForUser = res.data.process;
         } else {

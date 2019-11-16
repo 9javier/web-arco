@@ -69,7 +69,7 @@ export class RoleFormComponent implements OnInit {
     object = JSON.parse(JSON.stringify(object));
     /**convert complex group to form format*/
     if(object.groups)
-      object.groups = this.permissions.map(permission=>!!object.groups.find(_permission=>permission.id == _permission.id));
+      object.groups = this.permissions.map(permission=>!!object.groups.find(_permission=>permission.id === _permission.id));
     return object;
   }
 

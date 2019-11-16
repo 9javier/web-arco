@@ -114,10 +114,10 @@ export class ListComponent implements OnInit {
   }
 
   loadData() {
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets' || this.routePath == '/groups') {
+    if (this.routePath === '/roles' || this.routePath === '/users' || this.routePath === '/warehouses' || this.routePath === '/jails' || this.routePath === '/pallets' || this.routePath === '/groups') {
       this.initUsers();
       this.parentPage = null;
-    } else if (this.routePath == '/halls' || this.routePath == '/locations') {
+    } else if (this.routePath === '/halls' || this.routePath === '/locations') {
       this.warehouseSelected = this.paramsReceived.params.id;
       this.initHalls();
       this.parentPage = 'Almacenes';
@@ -199,20 +199,20 @@ export class ListComponent implements OnInit {
     let storeComponent = null;
     let componentProps: any = { routePath: this.routePath };
 
-    if (this.routePath == '/roles') {
+    if (this.routePath === '/roles') {
       storeComponent = storeRol;
-    } else if (this.routePath == '/users') {
+    } else if (this.routePath === '/users') {
       storeComponent = storeUser;
-    } else if (this.routePath == '/halls') {
+    } else if (this.routePath === '/halls') {
       storeComponent = storeHall;
       componentProps.warehouse = this.warehouseSelected;
-    } else if (this.routePath == '/warehouses') {
+    } else if (this.routePath === '/warehouses') {
       storeComponent = storeWarehouse;
-    } else if (this.routePath == '/jails') {
+    } else if (this.routePath === '/jails') {
       storeComponent = storeJail;
-    } else if (this.routePath == '/groups') {
+    } else if (this.routePath === '/groups') {
       storeComponent = storeGroup;
-    } else if (this.routePath == '/pallets') {
+    } else if (this.routePath === '/pallets') {
       storeComponent = storePallet;
     }
 
@@ -234,19 +234,19 @@ export class ListComponent implements OnInit {
   async goToUpdate(row) {
     let updateComponent = null;
 
-    if (this.routePath == '/roles') {
+    if (this.routePath === '/roles') {
       updateComponent = updateRol;
-    } else if (this.routePath == '/users') {
+    } else if (this.routePath === '/users') {
       updateComponent = updateUser;
-    } else if (this.routePath == '/halls') {
+    } else if (this.routePath === '/halls') {
       updateComponent = updateHall;
-    } else if (this.routePath == '/warehouses') {
+    } else if (this.routePath === '/warehouses') {
       updateComponent = updateWarehouse;
-    } else if (this.routePath == '/jails') {
+    } else if (this.routePath === '/jails') {
       updateComponent = updateJail;
-    } else if (this.routePath == '/pallets') {
+    } else if (this.routePath === '/pallets') {
       updateComponent = updatePallet;
-    } else if (this.routePath == '/groups') {
+    } else if (this.routePath === '/groups') {
       updateComponent = updateGroup;
     }
 
@@ -259,7 +259,7 @@ export class ListComponent implements OnInit {
       modal.onDidDismiss()
         .then(() => {
           this.loadData();
-          if (this.routePath == '/warehouses') {
+          if (this.routePath === '/warehouses') {
             this.warehouseService
               .init()
               .then((data: Observable<HttpResponse<any>>) => {

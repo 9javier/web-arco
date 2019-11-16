@@ -10,7 +10,7 @@ export class MyApp {
   public rootPage: any = TabsPage;
 
   constructor(
-    private platform: Platform,
+    private platform: Platform
   ) {
     this.platform.ready().then(() => {
       // console.log('Platform is ready.');
