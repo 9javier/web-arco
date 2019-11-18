@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment';
 import {map} from "rxjs/operators";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import { BehaviorSubject } from 'rxjs';
 
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
@@ -60,6 +61,34 @@ export class WorkwaveWeeklyPlan {
   providedIn: 'root'
 })
 export class WorkwavesService {
+
+  buttonAvailability = new BehaviorSubject<any>({status:false});
+  requestUser = new BehaviorSubject<any>(
+    {
+      data:{
+        table:{
+          listSelected:[],
+          listThreshold:{}
+        },
+        user:[]
+      },
+      table:false,
+      user: false
+    }
+  );
+  orderAssignment = new BehaviorSubject<any>(
+    {
+      data:{
+        store : {
+          groupsWarehousePickingId: '',
+          thresholdConsolidated: '',
+        },
+        typesShippingOrders:[]
+      },
+      store:false,
+      type:false
+    }
+  );
 
 
   /**Urls for the workwaves service */

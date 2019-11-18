@@ -7,7 +7,7 @@ import {
   MatCheckboxModule,
   MatGridListModule,
   MatRadioModule,
-  MatDatepickerModule, MatNativeDateModule, DateAdapter
+  MatDatepickerModule, MatNativeDateModule, DateAdapter, MatButtonModule
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { WorkwaveTemplateRebuildRoutingModule } from "./workwave-template-rebuild-routing.module";
@@ -36,6 +36,7 @@ import {FilterButtonModule} from "../components/filter-button/filter-button.modu
     CdkTableModule,
     FormsModule,
     MatGridListModule,
+    MatButtonModule,
     MatRadioModule,
     MatDatepickerModule,
     MatNativeDateModule,

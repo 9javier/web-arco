@@ -31,7 +31,7 @@
   <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListEmployees || pickingParametrizationProvider.loadingListEmployees < 1">
     <mat-grid-list *ngFor="let employee of listEmployees.usersActive; let iActive = index" class="employee-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
-        <ion-checkbox [(ngModel)]="employeesSelection[employee.id]" (ngModelChange)="selectEmployee()"></ion-checkbox>
+        <ion-checkbox [(ngModel)]="employeesSelection[employee.id]" (ngModelChange)="selectEmployee('change')"></ion-checkbox>
       </mat-grid-tile>
 
       <mat-grid-tile class="name" colspan="5">
@@ -51,7 +51,7 @@
 
     <mat-grid-list *ngFor="let employee of listEmployees.usersInactive; let iInactive = index" class="employee-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1" rowspan="1">
-        <ion-checkbox [(ngModel)]="employeesSelection[employee.id]" (ngModelChange)="selectEmployee()"></ion-checkbox>
+        <ion-checkbox [(ngModel)]="employeesSelection[employee.id]" (ngModelChange)="selectEmployee('change')"></ion-checkbox>
       </mat-grid-tile>
 
       <mat-grid-tile class="name" colspan="5">
