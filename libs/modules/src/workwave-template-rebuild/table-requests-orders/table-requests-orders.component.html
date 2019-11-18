@@ -1,5 +1,17 @@
 <div class="main-element">
-  <h2 class="title-table">Operaciones de Envío</h2>
+  <ion-row>
+    <ion-col size="6">
+      <h2 class="title-table">
+        Operaciones de Envío
+      </h2>
+    </ion-col>
+
+    <ion-col class="buttons" align-self-end size="6">
+      <button [disabled]="!buttonAvailability" (click)="userSelected()" [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}" class="config-button " mat-raised-button >Asignación de usuarios</button>
+      <button [disabled]="!buttonAvailability" (click)="orderAssignment()" [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}" mat-raised-button>Asignación de ordenes</button>
+    </ion-col>
+  </ion-row>
+
 
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
     <mat-grid-tile class="checkbox" colspan="1">
@@ -11,12 +23,8 @@
     <mat-grid-tile class="reference border-right" colspan="2">
       <div class="tile-value">
         <span class="title">Referencia</span>
-        <suite-filter-button
-          class="filter"
-          [title]="'Referencia'"
-          [listItems]="listRequestsFilters"
-          [isFiltering]="isFilteringRequests != this.listRequestsFilters.length"
-          (applyFilters)="applyFilters($event)">
+        <suite-filter-button class="filter" [title]="'Referencia'" [listItems]="listRequestsFilters"
+          [isFiltering]="isFilteringRequests != this.listRequestsFilters.length" (applyFilters)="applyFilters($event)">
         </suite-filter-button>
       </div>
     </mat-grid-tile>
@@ -24,12 +32,8 @@
     <mat-grid-tile class="date border-right" colspan="3">
       <div class="tile-value">
         <span class="title">Fecha</span>
-        <suite-filter-button
-          class="filter"
-          [title]="'Fecha'"
-          [listItems]="listDateFilters"
-          [isFiltering]="isFilteringDate != this.listDateFilters.length"
-          (applyFilters)="applyFilters($event)">
+        <suite-filter-button class="filter" [title]="'Fecha'" [listItems]="listDateFilters"
+          [isFiltering]="isFilteringDate != this.listDateFilters.length" (applyFilters)="applyFilters($event)">
         </suite-filter-button>
       </div>
     </mat-grid-tile>
@@ -37,12 +41,8 @@
     <mat-grid-tile class="origin border-right" colspan="4">
       <div class="tile-value">
         <span class="title">Origen</span>
-        <suite-filter-button
-          class="filter"
-          [title]="'Origen'"
-          [listItems]="listOriginFilters"
-          [isFiltering]="isFilteringOrigin != this.listOriginFilters.length"
-          (applyFilters)="applyFilters($event)">
+        <suite-filter-button class="filter" [title]="'Origen'" [listItems]="listOriginFilters"
+          [isFiltering]="isFilteringOrigin != this.listOriginFilters.length" (applyFilters)="applyFilters($event)">
         </suite-filter-button>
       </div>
     </mat-grid-tile>
@@ -50,12 +50,8 @@
     <mat-grid-tile class="destiny border-right" colspan="4">
       <div class="tile-value">
         <span class="title">Destino</span>
-        <suite-filter-button
-          class="filter"
-          [title]="'Destino'"
-          [listItems]="listDestinyFilters"
-          [isFiltering]="isFilteringDestiny != this.listDestinyFilters.length"
-          (applyFilters)="applyFilters($event)">
+        <suite-filter-button class="filter" [title]="'Destino'" [listItems]="listDestinyFilters"
+          [isFiltering]="isFilteringDestiny != this.listDestinyFilters.length" (applyFilters)="applyFilters($event)">
         </suite-filter-button>
       </div>
     </mat-grid-tile>
@@ -67,12 +63,8 @@
     <mat-grid-tile class="type border-right" colspan="4">
       <div class="tile-value">
         <span class="title">Tipo</span>
-        <suite-filter-button
-          class="filter"
-          [title]="'Tipo'"
-          [listItems]="listTypeFilters"
-          [isFiltering]="isFilteringType != this.listTypeFilters.length"
-          (applyFilters)="applyFilters($event)">
+        <suite-filter-button class="filter" [title]="'Tipo'" [listItems]="listTypeFilters"
+          [isFiltering]="isFilteringType != this.listTypeFilters.length" (applyFilters)="applyFilters($event)">
         </suite-filter-button>
       </div>
     </mat-grid-tile>
@@ -90,22 +82,27 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders && pickingParametrizationProvider.loadingListRequestOrders > 0">
+  <div class="loader"
+    *ngIf="pickingParametrizationProvider.loadingListRequestOrders && pickingParametrizationProvider.loadingListRequestOrders > 0">
     <div class="spinner">
       <p class="message">Cargando operaciones de envío</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1) && listRequestOrders.length < 1">
+  <div class="empty-list"
+    *ngIf="(!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1) && listRequestOrders.length < 1">
     <p class="message-empty">No hay operaciones de envío cargadas</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1">
-    <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
+  <div class="scroll-list"
+    *ngIf="!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1">
+    <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24"
+      rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]"
+            (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
         </div>
       </mat-grid-tile>
 

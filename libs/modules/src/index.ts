@@ -31,6 +31,13 @@ export * from './groups/groups.module';
 export * from './products/products.component';
 export * from './products/products.module';
 
+export * from './audits/audits.component';
+export * from './audits/audits.module';
+
+export * from './audits-mobile/audits-mobile.component';
+export * from './audits-mobile/audits-mobile.module';
+
+
 // Incidences Button
 export * from './incidences-button/incidences-button.component';
 export * from './incidences-button/incidences-button.module';

@@ -3,6 +3,7 @@ import {PickingParametrizationProvider} from "../../../../services/src/providers
 import {Events} from "@ionic/angular";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
 import * as moment from 'moment';
+import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
   selector: 'table-requests-orders',
@@ -45,18 +46,25 @@ export class TableRequestsOrdersComponent implements OnInit {
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
+  public buttonAvailability : boolean = false;
 
   constructor(
     public events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider
-  ) { }
+    public pickingParametrizationProvider: PickingParametrizationProvider,
+    private serviceG : WorkwavesService
+  ) {
+    this.serviceG.buttonAvailability.subscribe(res=>{
+      this.buttonAvailability = res.status;
+    })
+
+   }
 
   ngOnInit() {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
       this.listRequestOrders = this.pickingParametrizationProvider.listRequestOrders;
       this.listRequestOrdersFinal = this.pickingParametrizationProvider.listRequestOrders;
-
       if (this.listRequestOrders.length > 0) {
+        this.serviceG.buttonAvailability.next({status:true});
         for (let request of this.listRequestOrders) {
           this.requestOrdersSelection[request.request.id] = true;
           if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
@@ -171,6 +179,21 @@ export class TableRequestsOrdersComponent implements OnInit {
   ngOnDestroy() {
     this.events.unsubscribe(this.REQUEST_ORDERS_LOADED);
     this.events.unsubscribe(this.DRAW_CONSOLIDATED_MATCHES);
+    this.serviceG.buttonAvailability.unsubscribe();
+  }
+
+  userSelected(){
+    let aux = this.serviceG.requestUser.value;
+    aux.user = true;
+    aux.table = true;
+    this.serviceG.requestUser.next(aux);
+  }
+
+  orderAssignment(){
+    let aux = this.serviceG.orderAssignment.value;
+    aux.store = true; 
+    aux.type = true;
+    this.serviceG.orderAssignment.next(aux);
   }
 
   selectAllRequestOrder() {
@@ -201,7 +224,12 @@ export class TableRequestsOrdersComponent implements OnInit {
 
     this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
 
-    this.changeRequestOrder.next({listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty});
+    let aux = this.serviceG.requestUser.value;
+    aux.data.table = {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty};
+    aux.table = incrementTeamCounter === false ?  true : false;
+    this.serviceG.requestUser.next(aux);
+
+    //this.changeRequestOrder.next({listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty});
   }
 
   applyFilters(data: any) {

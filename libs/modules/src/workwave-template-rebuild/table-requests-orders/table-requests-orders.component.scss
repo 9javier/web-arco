@@ -2,10 +2,29 @@ div.main-element {
   height: 100%;
 
   h2.title-table {
-    text-align: center;
+    text-align: right;
     font-size: 16px;
     line-height: 20px;
     margin-bottom: 10px;
+  }
+
+  .config-button{
+    margin-right: 10px;
+  }
+
+  .buttons{
+    padding: 10px;
+    text-align: right;
+  }
+
+  .buttons-news{
+    background:#222428;
+    color:white;
+  }
+
+  .buttons-news-disabled{
+    background:gray;
+    color:white;
   }
 
   .loader, .empty-list {
@@ -28,7 +47,7 @@ div.main-element {
   }
 
   .scroll-list {
-    height: calc(100% - 48px - 30px); // 48px from table header - 30px from table title
+    height: calc(100% - 74px - 30px); // 48px from table header - 30px from table title
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
