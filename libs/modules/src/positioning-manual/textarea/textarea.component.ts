@@ -127,7 +127,7 @@ export class TextareaComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.inventoryService
       .postStore(params)
-      .then((res: InventoryModel.ResponseStore) => {
+      .then(async (res: InventoryModel.ResponseStore) => {
         console.log(res);
         
         this.intermediaryService.dismissLoading();
@@ -149,13 +149,19 @@ export class TextareaComponent implements OnInit {
         } else {
 
           if( res.code === 401){
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions()
             /** Forzado de empaquetado */
-            this.warningToForce(params, res.errors)
+            if(permission.data){
+              this.warningToForce(params, res.errors)              
+            } else {
+              this.presentAlert('El usuario no tiene permisos para posicionar')
+            }
           }
           
           let errorMessage = res.message;
           if (res.errors) {
-            if (typeof res.errors == 'string') {
+            if (typeof res.errors === 'string') {
               errorMessage = res.errors;
             } else {
               if (res.errors.productReference && res.errors.productReference.message) {
