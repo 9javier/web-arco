@@ -142,17 +142,17 @@ export class TextareaComponent implements OnInit {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
           }
-          this.presentToast(msgSetText, 2000, 'success');
+          this.presentAlert(msgSetText);
           this.processInitiated = false;
         } else if (res.code == 428) {
           this.showWarningToForce(params);
         } else {
-          if( res.code === 405 && res.message === "ActionNotAllowedException"){
-            params.force = true            
-            this.warningToForce(params)
+
+          if( res.code === 401){
+            /** Forzado de empaquetado */
+            this.warningToForce(params, res.errors)
           }
           
-
           let errorMessage = res.message;
           if (res.errors) {
             if (typeof res.errors == 'string') {
@@ -163,7 +163,7 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 1500, 'danger');
+          // this.presentToast(errorMessage, 1500, 'danger');
           this.processInitiated = false;
         }
       }, (error) => {
@@ -180,10 +180,10 @@ export class TextareaComponent implements OnInit {
   }
   
 
-private async warningToForce(params) {
+private async warningToForce(params,subHeader) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      subHeader: 'El destino del producto es diferente al destino del contenedor ¿Desea forzar la operacion? ',
+      subHeader,
       backdropDismiss: false,
       buttons: [
         {
@@ -194,10 +194,19 @@ private async warningToForce(params) {
         },
         {
           text: 'Forzar',
-          handler: () => {
-            params.force = true;
-            this.storeProductInContainer(params);
-            this.processInitiated = false;
+          handler: async () => {
+            // Consultando si el usuario tiene permisos para forzar
+            const permissions = await this.inventoryService.checkUserPermissions()
+            if (permissions.data) {
+              params.force = true;
+              this.storeProductInContainer(params);
+              this.processInitiated = false;
+            } else {
+              this. alertController.dismiss()
+              this.presentAlert('El usuario no tiene permisos para realizar el forzado')
+            }
+            
+
           }
         }]
     });
@@ -205,6 +214,15 @@ private async warningToForce(params) {
     return await alertWarning.present();
   }
 
+  async presentAlert(subHeader) {
+    const alert = await this.alertController.create({
+      header: 'Atencion',
+      subHeader,
+      buttons: ['OK']
+    });
+  
+    await alert.present();
+  }
 
   private async showWarningToForce(params) {
     const alertWarning = await this.alertController.create({
