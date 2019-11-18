@@ -592,7 +592,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         clearInterval(this.intervalIncidenceBeep);
       }
       this.audioProvider.play('incidenceBeep');
-    }, 1000);
+    }, 3 * 1000);
   }
 
   private stopExecutionOutput() {
