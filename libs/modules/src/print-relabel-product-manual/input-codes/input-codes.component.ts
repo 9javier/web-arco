@@ -4,6 +4,7 @@ import {PrinterService} from "../../../../services/src/lib/printer/printer.servi
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-input-codes',
@@ -32,7 +33,8 @@ export class InputCodesComponent implements OnInit {
     private priceService: PriceService,
     private productsService: ProductsService,
     private authService: AuthenticationService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -69,6 +71,7 @@ export class InputCodesComponent implements OnInit {
           if (this.isStoreUser) {
             this.postRelabelProduct(dataWrote);
           } else {
+            this.audioProvider.playDefaultOk();
             this.printerService.printTagBarcode([dataWrote]);
           }
           break;
@@ -76,6 +79,7 @@ export class InputCodesComponent implements OnInit {
           this.getSizeListByReference(dataWrote);
           break;
         default:
+          this.audioProvider.playDefaultError();
           this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
           break;
       }
@@ -93,9 +97,11 @@ export class InputCodesComponent implements OnInit {
               if (this.isStoreUser) {
                 this.postRelabelProduct(this.lastProductReferenceScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               } else {
+                this.audioProvider.playDefaultOk();
                 this.presentAlertInput(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               }
             } else {
+              this.audioProvider.playDefaultOk();
               let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
 
               let listItems = responseSizeAndModel.sizes.map((size, iSize) => {
@@ -110,14 +116,17 @@ export class InputCodesComponent implements OnInit {
             }
           }
         } else {
+          this.audioProvider.playDefaultError();
           this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
         }
       }, (error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
+        this.audioProvider.playDefaultError();
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
       })
       .catch((error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
+        this.audioProvider.playDefaultError();
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
       });
   }
@@ -148,12 +157,15 @@ export class InputCodesComponent implements OnInit {
       .then((res: ProductModel.ResponseRelabel) => {
         if (res.code == 200) {
           // Do product print
+          this.audioProvider.playDefaultOk();
           this.printerService.printTagBarcodeUsingProduct(res.data);
         } else {
+          this.audioProvider.playDefaultError();
           this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
         }
       }, (error) => {
         console.error('Error::Subscribe::Relabel -> ', error);
+        this.audioProvider.playDefaultError();
         this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
       });
   }
@@ -229,5 +241,4 @@ export class InputCodesComponent implements OnInit {
 
     await alert.present();
   }
-
 }

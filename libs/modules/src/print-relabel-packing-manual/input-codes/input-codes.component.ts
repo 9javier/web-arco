@@ -6,6 +6,7 @@ import {PriceService} from "@suite/services";
 import {PackingInventoryModel} from "../../../../services/src/models/endpoints/PackingInventory";
 import {PackingInventoryService} from "../../../../services/src/lib/endpoint/packing-inventory/packing-inventory.service";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-input-codes',
@@ -28,7 +29,8 @@ export class InputCodesComponent implements OnInit {
     private printerService: PrinterService,
     private priceService: PriceService,
     private scanditProvider: ScanditProvider,
-    private packingInventorService: PackingInventoryService
+    private packingInventorService: PackingInventoryService,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -61,6 +63,7 @@ export class InputCodesComponent implements OnInit {
           this.getCarrierOfProductAndPrint(dataWrote);
           break;
         default:
+          this.audioProvider.playDefaultError();
           this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
           break;
       }
@@ -72,8 +75,10 @@ export class InputCodesComponent implements OnInit {
       .getCarrierOfProduct(dataWrote)
       .then((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
         if (res.code == 200) {
+          this.audioProvider.playDefaultOk();
           this.printerService.print({text: [res.data.reference], type: 0})
         } else {
+          this.audioProvider.playDefaultError();
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
           if (res.errors && typeof res.errors == 'string') {
@@ -84,6 +89,7 @@ export class InputCodesComponent implements OnInit {
           this.presentToast(msgError, 'danger');
         }
       }, (error) => {
+        this.audioProvider.playDefaultError();
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
         let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
         if (error.error) {
@@ -98,6 +104,7 @@ export class InputCodesComponent implements OnInit {
         this.presentToast(msgError, 'danger');
       })
       .catch((error) => {
+        this.audioProvider.playDefaultError();
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
         let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
         if (error.error) {
