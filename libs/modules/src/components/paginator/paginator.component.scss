@@ -1,0 +1,100 @@
+div.paginator {
+  font-size: 11px;
+  float: right;
+  color: #8e8e8e;
+  padding: 18px 16px;
+  width: 100%;
+
+  div.paginator-content {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    div.column {
+      display: flex;
+      flex-direction: column;
+      flex: 2;
+      height: 28px;
+      line-height: 28px;
+      div {
+        display: flex;
+        flex-direction: row;
+        height: 28px;
+      }
+    }
+    div.qty-selector {
+      div {
+        p {
+          margin: 0;
+          padding-right: 8px;
+        }
+        span.select {
+          border-bottom: 1px solid #949494;
+          margin-right: 5px;
+          ion-icon {
+            padding-left: 10px;
+            font-size: 19px;
+            vertical-align: middle;
+            margin-top: -4px;
+          }
+        }
+      }
+    }
+    div.records, div.page, div.arrows {
+      div {
+        justify-content: flex-end;
+        span.value {
+          padding: 0 4px;
+          font-size: 13px;
+          font-weight: bold;
+        }
+      }
+    }
+    div.records {
+      padding: 0 4px;
+      div {
+        span.divider {
+          padding-left: 4px;
+          font-weight: 500;
+        }
+      }
+    }
+    div.page, div.arrows {
+      flex: 1;
+    }
+    div.arrows {
+      div {
+        svg.button-icon {
+          vertical-align: middle;
+          width: 28px;
+          fill: currentColor;
+          cursor: pointer;
+        }
+        svg.button-icon.disabled {
+          color:#cbc9c9
+        }
+      }
+    }
+  }
+
+  ion-list.panel-select {
+    width: 100px;
+    opacity: 1;
+    border: none;
+    margin-top: -10px;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+    -webkit-transform: translateX(24px) translateY(5px);
+    transform: translateX(24px) translateY(5px);
+    border-radius: 4px;
+    padding: 0;
+
+    ion-item.panel-select-items {
+      --border-style: none;
+      --border-width: 0px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    ion-item.panel-select-items:hover {
+      background: red;
+    }
+  }
+}
