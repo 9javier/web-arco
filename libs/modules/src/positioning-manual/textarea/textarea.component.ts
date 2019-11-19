@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {Observable} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
-import {AlertController, ToastController} from "@ionic/angular";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
-import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { Component, OnInit } from '@angular/core';
+import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { Observable } from "rxjs";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
+import { AlertController, ToastController } from "@ionic/angular";
+import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-textarea',
@@ -42,7 +42,7 @@ export class TextareaComponent implements OnInit {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
-    },500);
+    }, 500);
   }
 
   async ngOnInit() {
@@ -133,7 +133,9 @@ export class TextareaComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.inventoryService
       .postStore(params)
-      .then((res: InventoryModel.ResponseStore) => {
+      .then(async (res: InventoryModel.ResponseStore) => {
+        console.log(res);
+
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
           this.audioProvider.playDefaultOk();
@@ -147,23 +149,27 @@ export class TextareaComponent implements OnInit {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
           }
-          this.presentToast(msgSetText, 2000, 'success');
+          this.presentAlert(msgSetText);
           this.processInitiated = false;
         } else if (res.code == 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
         } else {
-          this.audioProvider.playDefaultError();
 
-          if( res.code === 405 && res.message === "ActionNotAllowedException"){
-            params.force = true
-            this.warningToForce(params)
+          if (res.code === 401) {
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions()
+            /** Forzado de empaquetado */
+            if (permission.data) {
+              this.warningToForce(params, res.errors)
+            } else {
+              this.presentAlert(`${res.errors}, El usuario no tiene permisos para realizar el forzado`)
+            }
           }
-
 
           let errorMessage = res.message;
           if (res.errors) {
-            if (typeof res.errors == 'string') {
+            if (typeof res.errors === 'string') {
               errorMessage = res.errors;
             } else {
               if (res.errors.productReference && res.errors.productReference.message) {
@@ -171,7 +177,7 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 1500, 'danger');
+          // this.presentToast(errorMessage, 1500, 'danger');
           this.processInitiated = false;
         }
       }, (error) => {
@@ -187,10 +193,10 @@ export class TextareaComponent implements OnInit {
   }
 
 
-private async warningToForce(params) {
+  private async warningToForce(params, subHeader) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      subHeader: 'El destino del producto es diferente al destino del contenedor ¿Desea forzar la operacion? ',
+      subHeader,
       backdropDismiss: false,
       buttons: [
         {
@@ -201,10 +207,19 @@ private async warningToForce(params) {
         },
         {
           text: 'Forzar',
-          handler: () => {
-            params.force = true;
-            this.storeProductInContainer(params);
-            this.processInitiated = false;
+          handler: async () => {
+            // Consultando si el usuario tiene permisos para forzar
+            const permissions = await this.inventoryService.checkUserPermissions()
+            if (permissions.data) {
+              params.force = true;
+              this.storeProductInContainer(params);
+              this.processInitiated = false;
+            } else {
+              this.alertController.dismiss()
+              this.presentAlert('El usuario no tiene permisos para realizar el forzado')
+            }
+
+
           }
         }]
     });
@@ -212,6 +227,15 @@ private async warningToForce(params) {
     return await alertWarning.present();
   }
 
+  async presentAlert(subHeader) {
+    const alert = await this.alertController.create({
+      header: 'Atencion',
+      subHeader,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
 
   private async showWarningToForce(params) {
     const alertWarning = await this.alertController.create({
@@ -250,7 +274,7 @@ private async warningToForce(params) {
       .then(() => {
         setTimeout(() => {
           document.getElementById('input-ta').focus();
-        },500);
+        }, 500);
       });
   }
 }
