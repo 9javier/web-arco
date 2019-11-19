@@ -239,7 +239,8 @@ export class PricesComponent implements OnInit {
    * @param items - Reference items to extract he ids
    */
   async printPrices(items, warehouseId: number) {
-    this.initSelectForm(this.prices);
+    //console.log("dame los items", items);
+    //this.initSelectForm(this.prices);
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -357,11 +358,11 @@ export class PricesComponent implements OnInit {
    */
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
-    parameters.warehouseId = 49;
     this.priceService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
       this.prices = prices.results;
       this.initSelectForm(this.prices);
+      console.log(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
       let paginator = prices.pagination;
       this.paginatorComponent.length = paginator.totalResults;
