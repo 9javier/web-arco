@@ -5,14 +5,14 @@ import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable,from } from 'rxjs';
-import { map,switchMap, flatMap } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { map, switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
 import { forEach } from '@angular/router/src/utils/collection';
-import {ProductModel} from "@suite/services";
-import {RequestsProvider} from "../../providers/requests/requests.provider";
-import {HttpRequestModel} from "../../models/endpoints/HttpRequest";
+import { ProductModel } from "@suite/services";
+import { RequestsProvider } from "../../providers/requests/requests.provider";
+import { HttpRequestModel } from "../../models/endpoints/HttpRequest";
 
 declare let cordova: any;
 
@@ -24,8 +24,8 @@ export class PrinterService {
   private static readonly MAX_PRINT_ATTEMPTS = 5;
 
   /**urls for printer service */
-  private getProductsByReferenceUrl:string = environment.apiBase+"/products/references";
-  private printNotifyUrl:string = environment.apiBase+"/tariffs/printReferences";
+  private getProductsByReferenceUrl: string = environment.apiBase + "/products/references";
+  private printNotifyUrl: string = environment.apiBase + "/tariffs/printReferences";
 
   private address: string;
 
@@ -34,38 +34,37 @@ export class PrinterService {
     private toastController: ToastController,
     private settingsService: SettingsService,
     private priceService: PriceService,
-    private requestsProvider: RequestsProvider)
-  {}
+    private requestsProvider: RequestsProvider) { }
 
   public async openConnection(showAlert: boolean = false) {
     this.address = await this.getConfiguredAddress();
     console.debug("PRINT::openConnection 1 [" + new Date().toJSON() + "]", this.address);
     return new Promise((resolve, reject) => {
-      if(this.address){
+      if (this.address) {
         if (cordova.plugins.zbtprinter) {
           cordova.plugins.zbtprinter.openConnection(this.address,
             (result) => {
-                if(showAlert){
-                  this.presentToast('Conectado a la impresora', 'success');
-                }
-                console.debug("PRINT::openConnection 2 [" + new Date().toJSON() + "]", result);
-                resolve();
+              if (showAlert) {
+                this.presentToast('Conectado a la impresora', 'success');
+              }
+              console.debug("PRINT::openConnection 2 [" + new Date().toJSON() + "]", result);
+              resolve();
             }, (error) => {
-              if(showAlert) {
+              if (showAlert) {
                 this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
               }
               console.debug("PRINT::openConnection 3 [" + new Date().toJSON() + "]", error);
               reject();
             });
         } else {
-          if(showAlert) {
+          if (showAlert) {
             this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
           }
           console.debug("PRINT::openConnection 4 [" + new Date().toJSON() + "]");
           reject();
         }
       } else {
-        if(showAlert) {
+        if (showAlert) {
           this.presentToast('No está configurada la impresora', 'danger');
         }
         console.debug("PRINT::openConnection 5 [" + new Date().toJSON() + "]");
@@ -117,7 +116,7 @@ export class PrinterService {
         cordova.plugins.zbtprinter.checkConnection(
           (result) => {
             console.debug("PRINT::reConnect 2 [" + new Date().toJSON() + "]", result);
-            if(result == "connect"){
+            if (result == "connect") {
               resolve(result);
             } else {
               resolve(this.openConnection());
@@ -173,7 +172,7 @@ export class PrinterService {
   }
 
   public async print(printOptions: PrintModel.Print, macAddress?: string) {
-    console.debug("PRINT::print 1 [" + new Date().toJSON() + "]", {printOptions, macAddress});
+    console.debug("PRINT::print 1 [" + new Date().toJSON() + "]", { printOptions, macAddress });
     printOptions.type = 0;
 
     if (macAddress) {
@@ -181,11 +180,11 @@ export class PrinterService {
     } else {
       this.address = await this.getConfiguredAddress();
     }
-    console.debug("PRINT::print 2 [" + new Date().toJSON() + "]", {printOptions, macAddress: this.address});
+    console.debug("PRINT::print 2 [" + new Date().toJSON() + "]", { printOptions, macAddress: this.address });
     if (this.address) {
       return await this.toPrint(printOptions);
     } else {
-      console.debug("PRINT::print 3 [" + new Date().toJSON() + "]", {printOptions, macAddress: this.address});
+      console.debug("PRINT::print 3 [" + new Date().toJSON() + "]", { printOptions, macAddress: this.address });
       return await this.connect()
         .then(() => this.toPrint(printOptions));
     }
@@ -198,17 +197,17 @@ export class PrinterService {
    * @param macAddress
    */
   public async printProductBoxTag(strToPrint: string, macAddress?: string) {
-    console.debug("PRINT::printProductBoxTag 1 [" + new Date().toJSON() + "]", {strToPrint, macAddress: macAddress});
+    console.debug("PRINT::printProductBoxTag 1 [" + new Date().toJSON() + "]", { strToPrint, macAddress: macAddress });
     if (macAddress) {
       this.address = macAddress;
     } else {
       this.address = await this.getConfiguredAddress();
     }
-    console.debug("PRINT::printProductBoxTag 2 [" + new Date().toJSON() + "]", {strToPrint, macAddress: this.address});
+    console.debug("PRINT::printProductBoxTag 2 [" + new Date().toJSON() + "]", { strToPrint, macAddress: this.address });
     if (this.address) {
       return await this.toPrintFromString(strToPrint);
     } else {
-      console.debug("PRINT::printProductBoxTag 3 [" + new Date().toJSON() + "]", {strToPrint, macAddress: this.address});
+      console.debug("PRINT::printProductBoxTag 3 [" + new Date().toJSON() + "]", { strToPrint, macAddress: this.address });
       return await this.connect()
         .then(() => this.toPrintFromString(strToPrint));
     }
@@ -218,13 +217,13 @@ export class PrinterService {
    * Turn an array of objects into string ready to be printed
    * @param options - the options to be converted in the needed string
    */
-  buildString(options:Array<PrintModel.Print>):string{
+  buildString(options: Array<PrintModel.Print>): string {
     console.debug("PRINT::buildString 1 [" + new Date().toJSON() + "]", options);
-    let strToPrint:string = "";
+    let strToPrint: string = "";
     /**If need separator between labels */
-    let separator:string = "";
-    options.forEach(option=>{
-      strToPrint+=this.getTextToPrinter(option)+separator;
+    let separator: string = "";
+    options.forEach(option => {
+      strToPrint += this.getTextToPrinter(option) + separator;
     });
     console.debug("PRINT::buildString 2 [" + new Date().toJSON() + "]", strToPrint);
     return strToPrint;
@@ -239,17 +238,17 @@ export class PrinterService {
    * así que por ahora haré un diccionario y ustedes modifíquenlo a su conveniencia
    */
   public async printPricesInZebra(strToPrint: string, macAddress?: string) {
-    console.debug("PRINT::printPricesInZebra 1 [" + new Date().toJSON() + "]", {strToPrint, macAddress});
+    console.debug("PRINT::printPricesInZebra 1 [" + new Date().toJSON() + "]", { strToPrint, macAddress });
     if (macAddress) {
       this.address = macAddress;
     } else {
       this.address = await this.getConfiguredAddress();
     }
-    console.debug("PRINT::printPricesInZebra 2 [" + new Date().toJSON() + "]", {strToPrint, macAddress: this.address});
+    console.debug("PRINT::printPricesInZebra 2 [" + new Date().toJSON() + "]", { strToPrint, macAddress: this.address });
     if (this.address) {
       return await this.toPrintFromString(strToPrint);
     } else {
-      console.debug("PRINT::printPricesInZebra 3 [" + new Date().toJSON() + "]", {strToPrint, macAddress: this.address});
+      console.debug("PRINT::printPricesInZebra 3 [" + new Date().toJSON() + "]", { strToPrint, macAddress: this.address });
       return await this.connect()
         .then(() => this.toPrintFromString(strToPrint));
     }
@@ -260,7 +259,7 @@ export class PrinterService {
    * Get products by reference in api
    * @returns an observable with the list of products needed
    */
-  getProductsByReference(references: string[]) : Promise<HttpRequestModel.Response> {
+  getProductsByReference(references: string[]): Promise<HttpRequestModel.Response> {
     console.debug("PRINT::getProductsByReference 1 [" + new Date().toJSON() + "]", references);
     return this.requestsProvider.post(this.getProductsByReferenceUrl, { references });
   }
@@ -269,27 +268,29 @@ export class PrinterService {
    * Obtain the prices by reference and then print each of these prices
    * @param referencesObject - object with the array of references to be sended
    */
-  printPrices(referencesObject){
+  printPrices(referencesObject) {
+
+    console.log("para impirmir", referencesObject);
     console.debug("PRINT::printPrices 1 [" + new Date().toJSON() + "]", referencesObject);
-    let observable:Observable<boolean> = new Observable(observer=>observer.next(true)).pipe(flatMap(dummyValue=>{
-      let innerObservable:Observable<any> = new Observable(observer=>{
+    let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+      let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
-      }).pipe(flatMap((r)=>{
-        return new Observable(s=>{
+      }).pipe(flatMap((r) => {
+        return new Observable(s => {
           console.debug("PRINT::printPrices 2 [" + new Date().toJSON() + "]", referencesObject);
           return s.next();
         })
       }));
       /**obtain the products */
       console.debug("PRINT::printPrices 3 [" + new Date().toJSON() + "]", referencesObject);
-      return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices)=>{
+      return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices) => {
         let dataToPrint = this.processProductToPrintTagPrice(prices);
         console.debug("PRINT::printPrices 4 [" + new Date().toJSON() + "]", prices);
-        innerObservable = innerObservable.pipe(flatMap(product=>{
-            return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_=>{})));
-        })).pipe(flatMap(response=>{
+        innerObservable = innerObservable.pipe(flatMap(product => {
+          return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
+        })).pipe(flatMap(response => {
           console.debug("PRINT::printPrices 5 [" + new Date().toJSON() + "]", response);
-          return this.printNotify(dataToPrint.options.map(option=>option.price.id));
+          return this.printNotify(dataToPrint.options.map(option => option.price.id));
         }));
         console.debug("PRINT::printPrices 6 [" + new Date().toJSON() + "]");
         return innerObservable;
@@ -303,9 +304,10 @@ export class PrinterService {
    * Send notification to server after print any labels
    * @param ids - the ids of printed labels
    */
-  printNotify(ids:Array<Number>):Observable<boolean>{
+  printNotify(ids: Array<Number>): Observable<boolean> {
+    console.log("okis doqui", ids);
     console.debug("PRINT::printNotify 1 [" + new Date().toJSON() + "]", ids);
-    return this.http.post(this.printNotifyUrl,{references:ids}).pipe(map(response=>{
+    return this.http.post(this.printNotifyUrl, { references: ids }).pipe(map(response => {
       console.debug("PRINT::printNotify 2 [" + new Date().toJSON() + "]", ids);
       return true;
     }));
@@ -315,7 +317,7 @@ export class PrinterService {
    * Obtain product by reference and then print each of these products
    * @param listReferences references to print
    */
-   printTagBarcode(listReferences: string[]): Observable<Boolean | Observable<any>> {
+  printTagBarcode(listReferences: string[]): Observable<Boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
     /** declare and obsevable to merge all print results */
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
@@ -346,16 +348,16 @@ export class PrinterService {
 
   public printTagBarcodeUsingProduct(product: ProductModel.Product) {
     console.debug("PRINT::printTagBarcodeUsingProduct 1 [" + new Date().toJSON() + "]", product);
-     let dataToPrint = this.processProductToPrintTagBarcode(product);
+    let dataToPrint = this.processProductToPrintTagBarcode(product);
     console.debug("PRINT::printTagBarcodeUsingProduct 2 [" + new Date().toJSON() + "]", dataToPrint);
-     if (dataToPrint) {
-       this.toPrintFromString(dataToPrint);
-     }
+    if (dataToPrint) {
+      this.toPrintFromString(dataToPrint);
+    }
   }
 
   private processProductToPrintTagBarcode(dataToProcess: (ProductModel.Product | Array<ProductModel.Product>)): string {
     console.debug("PRINT::processProductToPrintTagBarcode 1 [" + new Date().toJSON() + "]", dataToProcess);
-    let options:Array<PrintModel.Print> = [];
+    let options: Array<PrintModel.Print> = [];
     let arrayProductsToProcess: Array<ProductModel.Product> = [];
 
     if (!Array.isArray(dataToProcess)) {
@@ -411,9 +413,9 @@ export class PrinterService {
    * Print the prices of products
    * @param listReferences references of products
    */
-  printTagPrices(listReferences: string[]): Observable<Boolean|Observable<any>> {
+  printTagPrices(listReferences: string[]): Observable<Boolean | Observable<any>> {
     console.debug("PRINT::printTagPrices 1 [" + new Date().toJSON() + "]", listReferences);
-    let observable: Observable<boolean|Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
+    let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
         observer.next(true);
       }).pipe(flatMap((r) => {
@@ -422,13 +424,13 @@ export class PrinterService {
         })
       }));
       console.debug("PRINT::printTagPrices 2 [" + new Date().toJSON() + "]", listReferences);
-      return this.priceService.postPricesByProductsReferences({references: listReferences}).then((prices) => {
+      return this.priceService.postPricesByProductsReferences({ references: listReferences }).then((prices) => {
         let dataToPrint = this.processProductToPrintTagPrice(prices);
         console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices);
-        innerObservable = innerObservable.pipe(flatMap(product=>{
-          return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_=>{})));
-        })).pipe(flatMap(response=>{
-          return this.printNotify(dataToPrint.options.map(option=>option.price.id));
+        innerObservable = innerObservable.pipe(flatMap(product => {
+          return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
+        })).pipe(flatMap(response => {
+          return this.printNotify(dataToPrint.options.map(option => option.price.id));
         }));
         return innerObservable;
       });
@@ -458,7 +460,7 @@ export class PrinterService {
       "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
     };
 
-    let options:Array<PrintModel.Print> = [];
+    let options: Array<PrintModel.Print> = [];
     let arrayPricesToProcess: Array<any> = [];
 
     if (!Array.isArray(dataToProcess)) {
@@ -504,7 +506,7 @@ export class PrinterService {
             priceOriginal: price.priceOriginal.toString().replace('.', ','),
             priceDiscount: price.priceDiscount.toString().replace('.', ','),
             priceDiscountOutlet: price.priceDiscountOutlet.toString().replace('.', ','),
-            typeLabel:price.typeLabel,
+            typeLabel: price.typeLabel,
             numRange: price.range ? price.range.numRange : 0,
             valueRange: this.getCorrectValueRange(price)
           }
@@ -539,9 +541,9 @@ export class PrinterService {
     }
   }
 
-  tail:Array<string>=[];
+  tail: Array<string> = [];
   /**es el texto que se va a imprimir, pero también funciona a modo de bandera que nos dice si algo está imprimiéndose */
-  tailStr:string="";
+  tailStr: string = "";
   printInterval;
   failed = false;
 
@@ -551,47 +553,47 @@ export class PrinterService {
    * @param textToPrint - string to be printed
    * @param failed - the solicitude comes from a failed request
    */
-  private async toPrintFromString(textToPrint:string,macAddress?) {
-    console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", {textToPrint, macAddress});
+  private async toPrintFromString(textToPrint: string, macAddress?) {
+    console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
     /**añadimos esto a la lógica del toPrint */
     if (macAddress) {
       this.address = macAddress;
-      console.debug("PRINT::toPrintFromString 2 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+      console.debug("PRINT::toPrintFromString 2 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
     } else {
       this.address = await this.getConfiguredAddress();
-      console.debug("PRINT::toPrintFromString 3 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+      console.debug("PRINT::toPrintFromString 3 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
     }
 
-    console.debug("PRINT::toPrintFromString 4 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
-    if (!this.address){
+    console.debug("PRINT::toPrintFromString 4 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
+    if (!this.address) {
       await this.connect();
-      console.debug("PRINT::toPrintFromString 5 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+      console.debug("PRINT::toPrintFromString 5 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
     }
 
-    console.debug("PRINT::toPrintFromString 6 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+    console.debug("PRINT::toPrintFromString 6 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
-        console.debug("PRINT::toPrintFromString 7 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+        console.debug("PRINT::toPrintFromString 7 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
         return new Promise((resolve, reject) => {
           let printAttempts = 0;
-          console.debug("PRINT::toPrintFromString 8 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
+          console.debug("PRINT::toPrintFromString 8 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
           let tryToPrintFn = () => {
             printAttempts++;
-            console.debug("PRINT::toPrintFromString 9 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
+            console.debug("PRINT::toPrintFromString 9 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
             cordova.plugins.zbtprinter.printWithConnection(this.address, textToPrint,
               (success) => {
-                console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
+                console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                 resolve();
               }, (fail) => {
-                console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
+                console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
-                  console.debug("PRINT::toPrintFromString 12 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
+                  console.debug("PRINT::toPrintFromString 12 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                   //console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                   this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
                   reject();
                 } else {
-                  console.debug("PRINT::toPrintFromString 13 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address, printAttempts});
+                  console.debug("PRINT::toPrintFromString 13 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                   //console.debug("Zbtprinter print attempt " + printAttempts + " fail:" + fail + ", retrying...", { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                   setTimeout(tryToPrintFn, 1000);
                 }
@@ -601,10 +603,10 @@ export class PrinterService {
           tryToPrintFn();
         });
       } else {
-        console.debug("PRINT::toPrintFromString 14 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+        console.debug("PRINT::toPrintFromString 14 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
       }
     } else {
-      console.debug("PRINT::toPrintFromString 15 [" + new Date().toJSON() + "]", {textToPrint, macAddress: this.address});
+      console.debug("PRINT::toPrintFromString 15 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address });
     }
   }
 
@@ -616,21 +618,21 @@ export class PrinterService {
         let textToPrint = this.getTextToPrinter(printOptions);
         return new Promise((resolve, reject) => {
           let printAttempts = 0;
-          console.debug("PRINT::toPrint 2 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts});
+          console.debug("PRINT::toPrint 2 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
           let tryToPrintFn = () => {
             printAttempts++;
-            console.debug("PRINT::toPrint 3 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts});
+            console.debug("PRINT::toPrint 3 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
             cordova.plugins.zbtprinter.printWithConnection(this.address, textToPrint,
               (success) => {
-                console.debug("PRINT::toPrint 4 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts, success});
+                console.debug("PRINT::toPrint 4 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts, success });
                 resolve();
               }, (fail) => {
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
-                  console.debug("PRINT::toPrint 5 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts});
+                  console.debug("PRINT::toPrint 5 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
                   this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
                   reject();
                 } else {
-                  console.debug("PRINT::toPrint 6 [" + new Date().toJSON() + "]", {printOptions, address: this.address, printAttempts});
+                  console.debug("PRINT::toPrint 6 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
                   setTimeout(tryToPrintFn, 1000);
                 }
               }
@@ -639,10 +641,10 @@ export class PrinterService {
           tryToPrintFn();
         });
       } else {
-        console.debug("PRINT::toPrint 7 [" + new Date().toJSON() + "]", {printOptions, address: this.address});
+        console.debug("PRINT::toPrint 7 [" + new Date().toJSON() + "]", { printOptions, address: this.address });
       }
     } else {
-      console.debug("PRINT::toPrint 8 [" + new Date().toJSON() + "]", {printOptions, address: this.address});
+      console.debug("PRINT::toPrint 8 [" + new Date().toJSON() + "]", { printOptions, address: this.address });
     }
   }
 
@@ -650,19 +652,19 @@ export class PrinterService {
     console.debug("PRINT::getTextToPrinter 1 [" + new Date().toJSON() + "]", printOptions);
     let toPrint = '';
     let toPrintReturn = '';
-    if (printOptions.text){
+    if (printOptions.text) {
       for (let i = 0; i < printOptions.text.length; i++) {
         toPrintReturn += this.addTextToPrint(toPrint, printOptions.text[i], printOptions);
       }
     } else {
       toPrintReturn += this.addTextToPrint(toPrint, printOptions.product.productShoeUnit.reference, printOptions);
     }
-    console.debug("PRINT::getTextToPrinter 2 [" + new Date().toJSON() + "]", {printOptions, toPrintReturn});
+    console.debug("PRINT::getTextToPrinter 2 [" + new Date().toJSON() + "]", { printOptions, toPrintReturn });
     return toPrintReturn;
   }
 
   private addTextToPrint(toPrint, stringToBarcode, printOptions) {
-    console.debug("PRINT::addTextToPrint 1 [" + new Date().toJSON() + "]", {toPrint, stringToBarcode, printOptions});
+    console.debug("PRINT::addTextToPrint 1 [" + new Date().toJSON() + "]", { toPrint, stringToBarcode, printOptions });
     switch (printOptions.type) {
       case PrintModel.LabelTypes.LABEL_BARCODE_TEXT: // Test with Barcode and string of data below
         let size = '';
@@ -728,20 +730,20 @@ export class PrinterService {
           toPrint += printOptions.price.priceOriginal + ' €';
         }
         toPrint += "^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,123^FD";
-          if(printOptions.product.productShoeUnit.model.lifestyle && printOptions.product.productShoeUnit.model.lifestyle.reference && printOptions.product.productShoeUnit.model.category){
-            toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0,1) + printOptions.product.productShoeUnit.model.category.reference;
-          }
-          toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
+        if (printOptions.product.productShoeUnit.model.lifestyle && printOptions.product.productShoeUnit.model.lifestyle.reference && printOptions.product.productShoeUnit.model.category) {
+          toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0, 1) + printOptions.product.productShoeUnit.model.category.reference;
+        }
+        toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
           + printOptions.product.productShoeUnit.model.reference
           + "^FS^AAN^FO0,145^FB330,1,0,R,0^FD"
           + printOptions.product.productShoeUnit.manufacturer.name
           + "^FS^AAN^FO10,190^FB315,1,0,L,0^FD"
           + printOptions.product.productShoeUnit.model.name
           + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD";
-          if(printOptions.product.productShoeUnit.model.detailColor){
-            toPrint += printOptions.product.productShoeUnit.model.detailColor;
-          }
-          toPrint += "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
+        if (printOptions.product.productShoeUnit.model.detailColor) {
+          toPrint += printOptions.product.productShoeUnit.model.detailColor;
+        }
+        toPrint += "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
           + "^FS^ADN^FO0,157^FB330,1,0,R,0^FD";
         if (printOptions.price.valueRange) {
           toPrint += printOptions.price.valueRange;
@@ -847,7 +849,7 @@ export class PrinterService {
         toPrint += "^FS^XZ";
         break;
     }
-    console.debug("PRINT::addTextToPrint 2 [" + new Date().toJSON() + "]", {toPrint, stringToBarcode, printOptions});
+    console.debug("PRINT::addTextToPrint 2 [" + new Date().toJSON() + "]", { toPrint, stringToBarcode, printOptions });
     return toPrint;
   }
 
@@ -875,7 +877,7 @@ export class PrinterService {
       newImage.id = reference;
       newImage.className = 'barcode';
       divBarcodes.appendChild(newImage);
-      JsBarcode("#"+reference, reference);
+      JsBarcode("#" + reference, reference);
     }
 
     return Promise.all(imageLoadPromises)
