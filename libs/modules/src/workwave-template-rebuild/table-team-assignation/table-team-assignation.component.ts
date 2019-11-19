@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import {Events} from "@ionic/angular";
 import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
   selector: 'table-team-assignation',
@@ -21,7 +22,8 @@ export class TableTeamAssignationComponent implements OnInit {
 
   constructor(
     public events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider
+    public pickingParametrizationProvider: PickingParametrizationProvider,
+    private serviceG : WorkwavesService
   ) { }
 
   ngOnInit() {
@@ -31,6 +33,7 @@ export class TableTeamAssignationComponent implements OnInit {
      this.maxQuantityAssignations = 0;
 
        if (this.listTeamAssignations.length > 0) {
+         this.serviceG.buttonAvailability.next({status:true});
          for (let teamAssignation of this.listTeamAssignations) {
            let tempMaxCount = 0;
            for (let assignation of teamAssignation.pickingShoes) {

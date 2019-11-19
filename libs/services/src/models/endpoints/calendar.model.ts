@@ -22,7 +22,7 @@ export namespace CalendarModel{
             createAt:string;
             updateAt:string;
             id:number;
-            destinationWarehouse:WarehouseModel.Warehouse;    
+            destinationWarehouse:WarehouseModel.Warehouse;
         }>;
     }
 
@@ -41,6 +41,16 @@ export namespace CalendarModel{
             originWarehouseId:number;
             destinationWarehouseIds:number;
         }>
+    }
+
+    export interface ResponseHeader{
+      statusCode: number,
+      statusMessage: string,
+      statusDescription: string,
+      result: {},
+      data: {id:number,data:string,idCal:number}[],
+      message: string,
+      code: number
     }
 
     export interface CollectionTemplateRequest extends Request.Success{

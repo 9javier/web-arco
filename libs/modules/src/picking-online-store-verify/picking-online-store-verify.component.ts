@@ -6,6 +6,7 @@ import {IntermediaryService, ProductModel, ProductsService} from "@suite/service
 import {WorkwaveModel} from "../../../services/src/models/endpoints/Workwaves";
 import {WorkwavesService} from "../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {ShoesPickingModel} from "../../../services/src/models/endpoints/ShoesPicking";
+import {AudioProvider} from "../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'app-picking-online-store-verify',
@@ -30,7 +31,8 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private productsService: ProductsService,
     private workwavesService: WorkwavesService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -43,6 +45,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
     if (this.scanditProvider.checkCodeValue(data) != this.scanditProvider.codeValue.PRODUCT) {
       // if code scanned not correspond to product reference, throw error
       this.scannerManual.setValue(null);
+      this.audioProvider.playDefaultError();
       await this.intermediaryService.presentToastError('El código escaneado no corresponde a un producto.');
       this.scannerManual.focusToInput();
     } else {
@@ -65,6 +68,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
           if (data == this.alternativeProductInfo.product.reference) {
             this.processProductScanned(data);
           } else {
+            this.audioProvider.playDefaultError();
             await this.intermediaryService.presentToastError('El producto escaneado no corresponde con el que se le solicitó escanear.');
             this.scannerManual.focusToInput();
           }
@@ -91,6 +95,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
         await this.intermediaryService.dismissLoading();
         this.scannerManual.focusToInput();
         if (res.code == 200) {
+          this.audioProvider.playDefaultOk();
           this.showAlternativeProductInfo = false;
           this.alternativeProductInfo = null;
           this.showProductInfo = true;
@@ -103,15 +108,18 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
             }
           };
         } else {
+          this.audioProvider.playDefaultError();
           await this.showErrorMessage(res, 'No se ha podido consultar la información del producto escaneado.');
         }
       }, async (error) => {
         await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         await this.showErrorMessage(error, 'No se ha podido consultar la información del producto escaneado.');
         this.scannerManual.focusToInput();
       })
       .catch(async (error) => {
         await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         await this.showErrorMessage(error, 'No se ha podido consultar la información del producto escaneado.');
         this.scannerManual.focusToInput();
       });
@@ -132,6 +140,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
           this.showProductInfo = false;
           this.productInfo = null;
           if (resData.newProduct) {
+            this.audioProvider.playDefaultOk();
             setTimeout(async () => {
               await this.intermediaryService.presentToastSuccess('Cargando producto alternativo a recoger.', 2000);
               this.showAlternativeProductInfo = true;
@@ -198,20 +207,24 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
           }
         } else if (res.code == 404) {
           await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
+          this.audioProvider.playDefaultError();
           this.scannerManual.focusToInput();
           this.showProductInfo = false;
           this.productInfo = null;
         } else {
           await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
+          this.audioProvider.playDefaultError();
           this.scannerManual.focusToInput();
         }
       }, async (error) => {
         await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
         this.scannerManual.focusToInput();
       })
       .catch(async (error) => {
         await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
         this.scannerManual.focusToInput();
       })
@@ -229,23 +242,28 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
         this.scannerManual.focusToInput();
         if (res.code == 201) {
           await this.intermediaryService.presentToastSuccess('Producto marcado como apto.', 2000);
+          this.audioProvider.playDefaultOk();
           this.showProductInfo = false;
           this.productInfo = null;
         } else if (res.code == 404) {
           await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como defectuoso.');
+          this.audioProvider.playDefaultError();
           this.scannerManual.focusToInput();
           this.showProductInfo = false;
           this.productInfo = null;
         } else {
+          this.audioProvider.playDefaultError();
           await this.showErrorMessage(res, 'Ha ocurrido un error al intentar marcar el producto como apto.');
         }
       }, async (error) => {
         await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como apto.');
         this.scannerManual.focusToInput();
       })
       .catch(async (error) => {
         await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         await this.showErrorMessage(error, 'Ha ocurrido un error al intentar marcar el producto como apto.');
         this.scannerManual.focusToInput();
       })

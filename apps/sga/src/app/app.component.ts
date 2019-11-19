@@ -127,6 +127,8 @@ export class AppComponent implements OnInit {
       url: 'logout',
       icon: 'log-out'
     }
+    
+
   ];
 
   // Presentation layer
@@ -168,7 +170,7 @@ export class AppComponent implements OnInit {
     this.currentRoute = title;
   }
 
-  initializeApp() {
+  initializeApp() {    
     this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.showSidebar = false;
@@ -219,7 +221,9 @@ export class AppComponent implements OnInit {
                 })
               )
               .catch((possibleMainWarehouse404Error) => {})
-              .then(() => this.router.navigate([this.dictionary['user-time']?'user-time/products':'/products']).then(sucess => {
+              .then(() => this.router.navigate(
+                [this.dictionary['user-time']?'user-time/products':'/products']
+                ).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
                 })
@@ -250,9 +254,10 @@ export class AppComponent implements OnInit {
     app.name = "sga";
     /**Set the dictionary of access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
-      this.dictionary = state;
-    });
-    this.initializeApp();
+      this.dictionary = state; 
+    },e =>console.log(e)
+    );
+  this.initializeApp()
   }
 
   tapOption(p: MenuItem) {

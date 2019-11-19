@@ -1,0 +1,31 @@
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+td, th {
+    width: 25%;
+    text-align: center;
+}
+
+.title-column{
+    text-align: center;
+}
+
+.inactive-check{
+    color : red;
+}
+
+.active-check{
+    color: green;
+}
+
+.clearfix{
+    text-align: right;
+}
+
+.mat-elevation-z8{
+  position: relative;
+  max-height: 400px;
+  overflow: auto;
+}

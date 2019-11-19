@@ -32,6 +32,7 @@ export class InventoryService {
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
+  private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`
 
   constructor(
     private http: HttpClient,
@@ -65,6 +66,11 @@ export class InventoryService {
   postStore(params: InventoryModel.Inventory) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postStoreUrl, params);
   }
+
+  checkUserPermissions(): Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.get(this.userPermissionUrl);
+  }
+
 
   async productsByContainer(
     containerId: number

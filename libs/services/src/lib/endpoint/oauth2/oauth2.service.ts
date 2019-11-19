@@ -27,6 +27,7 @@ import {
 } from '../../../../../../config/base';
 import { environment, app } from '../../../environments/environment';
 import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
+import { BehaviorSubject } from 'rxjs';
 
 export const HEADERS_LOGIN: any[] = HEADERS('OAuth2', 'Login');
 export const AUTH_LOGIN: Auth1 = AUTH('OAuth2', 'Login');
@@ -40,6 +41,8 @@ export const ACCESS_TOKEN_LOGOUT = ACCESS_TOKEN;
   providedIn: 'root'
 })
 export class Oauth2Service {
+
+  availableVersion = new BehaviorSubject<any>({status:false,version:0});
   
   /**Urls for the oauth2 service */
   private refreshTokenUrl:string = environment.apiBase+"/oauth2/access_token";

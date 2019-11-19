@@ -1,18 +1,20 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
-import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
-import {ScanditProvider} from "../../../../../services/src/providers/scandit/scandit.provider";
-import {IntermediaryService} from "@suite/services";
-import {OutputSorterModel} from "../../../../../services/src/models/endpoints/OutputSorter";
-import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
-import {AlertController} from "@ionic/angular";
-import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints/ExecutionSorter";
-import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
-import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
-import {Location} from "@angular/common";
-import {SorterOutputService} from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
-import {SorterOutputModel} from "../../../../../services/src/models/endpoints/SorterOutput";
-import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
+import { SorterProvider } from "../../../../../services/src/providers/sorter/sorter.provider";
+import { ScanditProvider } from "../../../../../services/src/providers/scandit/scandit.provider";
+import { IntermediaryService } from "@suite/services";
+import { OutputSorterModel } from "../../../../../services/src/models/endpoints/OutputSorter";
+import { ProductSorterModel } from "../../../../../services/src/models/endpoints/ProductSorter";
+import { AlertController } from "@ionic/angular";
+import { ExecutionSorterModel } from "../../../../../services/src/models/endpoints/ExecutionSorter";
+import { HttpRequestModel } from "../../../../../services/src/models/endpoints/HttpRequest";
+import { SorterExecutionService } from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
+import { Location } from "@angular/common";
+import { SorterOutputService } from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
+import { SorterOutputModel } from "../../../../../services/src/models/endpoints/SorterOutput";
+import { AudioProvider } from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
+import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -42,6 +44,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   leftButtonDanger: boolean = true;
 
   infoSorterOperation: OutputSorterModel.OutputSorter = null;
+  public waySelectedToEmptying: WaySorterModel.WaySorter = null;
 
   private checkByWrongCode: boolean = true;
 
@@ -50,6 +53,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   constructor(
     private location: Location,
+    private router: Router,
+    private activate: ActivatedRoute,
     private alertController: AlertController,
     private intermediaryService: IntermediaryService,
     private sorterExecutionService: SorterExecutionService,
@@ -61,10 +66,13 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input').focus();
-    },800); }
-  
+    }, 800);
+  }
+
   ngOnInit() {
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
+
+
   }
 
   ngOnDestroy() {
@@ -79,7 +87,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   async keyUpInput(event) {
     let dataWrote = (this.inputValue || "").trim();
 
-    if (event.keyCode == 13 && dataWrote) {
+    if (event.keyCode === 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputValue = null;
         this.focusToInput();
@@ -94,26 +102,30 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       this.inputValue = null;
 
-      if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
-        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {
+      if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.JAIL
+        || this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PALLET) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
+          this.audioProvider.playDefaultError();
           await this.intermediaryService.presentToastError('Código de producto erróneo.', 2000);
           this.focusToInput();
         } else {
           this.assignPackingToProcess(dataWrote);
         }
-      } else if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT) {
+      } else if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
           this.outputProductFromSorter(dataWrote);
         } else if (this.packingIsFull) {
+          this.audioProvider.playDefaultError();
           await this.intermediaryService.presentToastError('Escanea el nuevo embalaje a utilizar antes de continuar con los productos.', 2000);
           this.focusToInput();
         } else {
+          this.audioProvider.playDefaultError();
           await this.intermediaryService.presentToastError('Escanea el embalaje a utilizar antes de comenzar con los productos.', 2000);
           this.focusToInput();
         }
       } else {
         if (!this.processStarted) {
+          this.audioProvider.playDefaultError();
           await this.intermediaryService.presentToastError('Escanea un embalaje para comenzar las operaciones.');
           this.focusToInput();
         }
@@ -125,7 +137,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     let showModalWithCount = async () => {
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
       let countdown = 10;
-      let enableSetWayAsEmpty: boolean = false;
+      let enableSetWayAsEmpty = false;
 
       let buttonCancel = {
         text: 'Cancelar',
@@ -150,10 +162,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       let intervalChangeCountdown = setInterval(() => {
         countdown--;
-        if (countdown == -1) {
+        if (countdown === -1) {
           clearInterval(intervalChangeCountdown);
           alertEmptyPacking.message = textCountdown + '<b>Ya puedes pulsar confirmar.</b>';
-          alertEmptyPacking.buttons = [ buttonCancel, buttonOk ];
+          alertEmptyPacking.buttons = [buttonCancel, buttonOk];
           enableSetWayAsEmpty = true;
         } else {
           alertEmptyPacking.message = textCountdown + '<h2>' + countdown + 's</h2>';
@@ -169,7 +181,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseBlockSorterWay) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           await this.intermediaryService.dismissLoading();
           showModalWithCount();
         } else {
@@ -241,7 +253,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseAssignPackingToWay) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           // If output process is not started yet (first packing scanned) start here to check if current way have incidences
           if (!this.processStarted) {
             this.checkWayWithIncidence();
@@ -254,9 +266,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.infoSorterOperation.packingReference = packingReference;
           this.isFirstProductScanned = false;
           await this.intermediaryService.dismissLoading();
+          this.audioProvider.playDefaultOk();
           await this.intermediaryService.presentToastSuccess(`Iniciando proceso con el embalaje ${packingReference}.`);
           this.focusToInput();
         } else {
+          this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
           if (res.errors) {
             errorMessage = res.errors;
@@ -266,6 +280,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.focusToInput();
         }
       }, async (error) => {
+        this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
@@ -275,6 +290,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         this.focusToInput();
       })
       .catch(async (error) => {
+        this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
@@ -297,10 +313,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         incidenceProcess: this.wrongCodeScanned
       })
       .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
-        if (res.code == 201) {
+        if (res.code === 201) {
           await this.intermediaryService.dismissLoading();
 
           if (res.data.processStopped && !this.wrongCodeScanned) {
+            this.audioProvider.playDefaultOk();
             await this.intermediaryService.presentToastSuccess('Proceso de salida finalizado.', 2000);
             this.stopExecutionOutput();
           } else {
@@ -309,6 +326,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
               this.messageGuide = 'ESCANEAR ARTÍCULO';
               if (!resData.productInSorter) {
                 this.lastProductScannedChecking = null;
+                this.audioProvider.playDefaultError();
                 await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`, 2000);
                 this.focusToInput();
               } else {
@@ -328,7 +346,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                 };
                 this.hideLeftButtonFooter = false;
                 this.hideRightButtonFooter = false;
-                if (this.lastProductScannedChecking.destinyWarehouse.id != this.infoSorterOperation.destinyWarehouse.id) {
+                if (this.lastProductScannedChecking.destinyWarehouse.id !== this.infoSorterOperation.destinyWarehouse.id) {
+                  this.audioProvider.playDefaultError();
                   await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`, 2000);
                   if (resData.wayWithIncidences) {
                     this.focusToInput();
@@ -337,6 +356,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                     this.hideLeftButtonFooter = true;
                   }
                 } else {
+                  this.audioProvider.playDefaultOk();
                   await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido. Puede añadirlo al embalaje.`, 2000);
                   if (resData.wayWithIncidences) {
                     this.focusToInput();
@@ -347,6 +367,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                 }
               }
             } else {
+              this.audioProvider.playDefaultOk();
               await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
               if (this.packingIsFull) {
                 this.lastProductScanned = true;
@@ -362,6 +383,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
             }
           }
         } else {
+          this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
           if (res.errors) {
             errorMessage = res.errors;
@@ -371,6 +393,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.focusToInput();
         }
       }, async (error) => {
+        this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
@@ -380,6 +403,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         this.focusToInput();
       })
       .catch(async (error) => {
+        this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar comprobar el producto escaneado.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
@@ -399,7 +423,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponsePackingFull) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
+          this.audioProvider.playDefaultOk();
           if (this.wrongCodeScanned) {
             this.lastProductScannedChecking = null;
           }
@@ -411,6 +436,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           await this.intermediaryService.dismissLoading();
           this.focusToInput();
         } else {
+          this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar registrar el embalaje como lleno.';
           if (res.errors) {
             errorMessage = res.errors;
@@ -420,6 +446,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.focusToInput();
         }
       }, async (error) => {
+        this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar registrar el embalaje como lleno.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
@@ -429,6 +456,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         this.focusToInput();
       })
       .catch(async (error) => {
+        this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar registrar el embalaje como lleno.';
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
@@ -442,43 +470,49 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   private async setWayAsEmpty() {
     await this.intermediaryService.presentLoading('Comprobando que la calle esté vacía...');
 
-    this.sorterOutputService
-      .postEmptyWay({
-        wayId: this.infoSorterOperation.wayId.toString()
-      })
-      .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
-        if (res.code == 200) {
-          this.sorterProvider.colorActiveForUser = null;
-          await this.intermediaryService.dismissLoading();
-          await this.intermediaryService.presentToastSuccess(`Registrada la calle como vacía.`);
-          this.stopExecutionOutput();
-        } else {
+    setTimeout(() => {
+      this.sorterOutputService
+        .postEmptyWay({
+          wayId: this.infoSorterOperation.wayId.toString()
+        })
+        .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
+          if (res.code === 200) {
+            this.audioProvider.playDefaultOk();
+            this.sorterProvider.colorActiveForUser = null;
+            await this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentToastSuccess(`Registrada la calle como vacía.`);
+            this.stopExecutionOutput();
+          } else {
+            this.audioProvider.playDefaultError();
+            let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
+            if (res.errors) {
+              errorMessage = res.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage);
+            await this.intermediaryService.dismissLoading();
+            this.focusToInput();
+          }
+        }, async (error) => {
+          this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
-          if (res.errors) {
-            errorMessage = res.errors;
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
           }
           await this.intermediaryService.presentToastError(errorMessage);
           await this.intermediaryService.dismissLoading();
           this.focusToInput();
-        }
-      }, async (error) => {
-        let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      })
-      .catch(async (error) => {
-        let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      });
+        })
+        .catch(async (error) => {
+          this.audioProvider.playDefaultError();
+          let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+          this.focusToInput();
+        });
+    }, 2 * 1000);
   }
 
   private async unlockCurrentWay() {
@@ -490,7 +524,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         block: false
       })
       .then(async (res: SorterOutputModel.ResponseBlockSorterWay) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           await this.intermediaryService.presentToastSuccess('Calle desbloqueada para continuar con su uso.');
           await this.intermediaryService.dismissLoading();
           this.focusToInput();
@@ -534,7 +568,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           way: wayId
         })
         .then(async (res: SorterOutputModel.ResponseGetIncidenceWay) => {
-          if (res.code == 201 && res.data) {
+          if (res.code === 201 && res.data) {
             this.wrongCodeDetected();
             this.focusToInput();
           } else if (this.checkByWrongCode) {
@@ -565,17 +599,67 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         clearInterval(this.intervalIncidenceBeep);
       }
       this.audioProvider.play('incidenceBeep');
-    }, 1000);
+    }, 3 * 1000);
   }
 
   private stopExecutionOutput() {
     this.sorterExecutionService
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
+        let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+          color: this.sorterProvider.colorSelected.id,
+          type: 2
+        };
+        if (paramsRequest) {
+          this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
+            let idWayToWork = null;
+            if (this.waySelectedToEmptying) {
+              idWayToWork = this.waySelectedToEmptying.id;
+            }
+
+            let lastWarehouse: number;
+            if (this.sorterProvider.infoSorterOutputOperation) {
+              lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
+            }
+
+            this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
+              .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
+                if (res2.code === 201) {
+                  this.inputValue = null;
+                  this.processStarted = null;
+                  this.isFirstProductScanned = false;
+                  this.wrongCodeScanned = false;
+                  this.packingIsFull = false;
+
+                  let id = this.sorterProvider.id_wareHouse;
+
+                  let newProcessWay = res2.data;
+                  this.infoSorterOperation = {
+                    destinyWarehouse: {
+                      id: newProcessWay.warehouse.id,
+                      name: newProcessWay.warehouse.name,
+                      reference: newProcessWay.warehouse.reference
+                    },
+                    wayId: newProcessWay.way.zoneWay.ways.id
+                  };
+
+                  this.focusToInput();
+                } else {
+                  let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
+                  if (res2.errors) {
+                    errorMessage = res2.errors;
+                  }
+                  await this.intermediaryService.presentToastError(errorMessage);
+                  this.location.back();
+                }
+
+              }).catch(error => { this.location.back() })
+          })
+        }
+
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
-        this.checkByWrongCode = false;
-        this.location.back();
+        this.checkByWrongCode = true;
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';

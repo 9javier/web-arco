@@ -15,9 +15,14 @@ import { ToastController, AlertController, LoadingController, ModalController } 
 import { AppInfo } from 'config/base';
 import { Platform } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Observable } from 'rxjs';
+import { Observable, interval } from 'rxjs';
 import { AppVersionService } from '../../../services/src/lib/endpoint/app-version/app-version.service';
 import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
+import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
+import { stringify } from '@angular/core/src/render3/util';
+
+const interUpdateVersion = interval(300000);
+
 @Component({
   selector: 'suite-login',
   templateUrl: './login.page.html',
@@ -48,40 +53,50 @@ export class LoginComponent implements OnInit {
     private modalController: ModalController,
     public platform: Platform,
     private appVersion: AppVersion,
-    private appVersionService: AppVersionService
+    private appVersionService: AppVersionService,
+    private toolbarProvider: ToolbarProvider
   ) { }
 
   async ngOnInit() {
     this.user.username = '';
     this.user.password = '';
     this.getLastUsername();
-
+    this.verifyNewVersion();
+    interUpdateVersion.subscribe(x => this.verifyNewVersion());
     // Check if is mobile app and get appVersionNumber
+  }
+
+  verifyNewVersion(){
     if (window.cordova) {
       this.isMobileApp = true;
       (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
+        
         this.versionNumber = versionNumber;
-
         this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {
-          if(response && response.code == 200){
+          if (response && response.code == 200) {
             if (response.data) {
+
               const resultCompare = this.compareVersions(`${response.data['majorRelease']}.${response.data['minorRelease']}.${response.data['patchRelease']}`, this.versionNumber);
               if (resultCompare === 1) {
                 console.log('VERSION MAYOR');
                 this.isNewVersion = true;
-              }
+                this.loginService.availableVersion.next({status:true,version:response.data['majorRelease']});
+              }else{
+                this.loginService.availableVersion.next({status:false,version:0});                }
             }
           }
         }, (error) => {
+          alert('inside-E1');
           console.log("Error::getVersion", error)
         }).catch((error) => {
+          alert('inside-E2');
           console.log("Error::getVersion", error)
         });
 
       });
     } else {
       this.isMobileApp = false;
-    }
+   }
   }
 
   /**
@@ -137,6 +152,7 @@ export class LoginComponent implements OnInit {
           const response: ResponseLogin = data.body;
 
           this.authenticationService.login(data.body.data.access_token, data.body.data.user, data.body.data.accessPermitionsDictionary, data.body.data.refresh_token);
+          this.toolbarProvider.currentPage.next('');
           this.router.navigate(['/home']);
         },
         (errorResponse: HttpErrorResponse) => {

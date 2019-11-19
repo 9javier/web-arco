@@ -22,6 +22,7 @@ export class CalendarService {
   private getBaseUrl:string = environment.apiBase+"/processes/picking-calendar/warehouses";
   private getCalendarDatesUrl:string = environment.apiBase+"/processes/picking-calendar/calendar-dates";
   private deleteTemplateUrl:string = environment.apiBase+"/processes/picking-calendar/template/{{id}}";
+  private deleteDates:string = environment.apiBase+"/processes/picking-calendar/delete-calendar-dates";
 
 
   constructor(private http: HttpClient) {}
@@ -66,6 +67,18 @@ export class CalendarService {
         return response.data;
     }));
   }
+  /**
+   * Retrieve a list of dates
+   * @return objec data {id:sting,data:dataString,idTableRelacion:number}
+   * @param dates:string[]
+   */
+
+  postDateDelete(dates:string[]){
+    const body = {date:dates}
+    return this.http.post<CalendarModel.ResponseHeader>(this.deleteDates,body).pipe(map(response=>{
+      return response.data;
+    }))
+  }
 
   /**
    * Get the warehouses templates by url
@@ -103,7 +116,7 @@ export class CalendarService {
    */
   getBase():Observable<CalendarModel.Template>{
     return (of<any>(
-        
+
             {
                 createdAt: "2019-07-16T18:37:52.000Z",
                 updatedAt: "2019-07-16T18:37:52.000Z",

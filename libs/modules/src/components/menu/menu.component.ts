@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { app } from '../../../../services/src/environments/environment';
-import { AuthenticationService, Oauth2Service } from '@suite/services';
+import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
 import { Router } from '@angular/router';
 import { ScanditService } from "../../../../services/src/lib/scandit/scandit.service";
 import { ReceptionScanditService } from "../../../../services/src/lib/scandit/reception/reception.service";
@@ -9,6 +9,7 @@ import { MenuController } from "@ionic/angular";
 import { SealScanditService } from "../../../../services/src/lib/scandit/seal/seal.service";
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
+import { LoginComponent } from '../../login/login.page';
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -24,6 +25,7 @@ interface MenuSectionItem {
   id: string,
   url: string,
   icon: string,
+  notification?: boolean
 }
 
 @Component({
@@ -37,6 +39,8 @@ export class MenuComponent implements OnInit {
     this.filterPages(allowed || { logout: true });
   }
 
+  isNewTariff: boolean;
+  versionUpdate : any;
 
   private app = app;
 
@@ -44,7 +48,7 @@ export class MenuComponent implements OnInit {
   displaySmallSidebar = false;
   currentRoute: string = "";
   sgaPages: MenuItemList = [
-    {
+    { 
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
@@ -241,7 +245,27 @@ export class MenuComponent implements OnInit {
           icon: 'square-outline'
         }
       ]
-    }
+    },
+    {
+      title: 'Auditorias',
+      open: true,
+      type: 'wrapper',
+      icon: 'ribbon',
+      children: [
+        {
+          title: 'Lista de auditorias',
+          id: 'audit-sga',
+          url: '/audits',
+          icon: 'list-box'
+        }
+      ]
+    },
+    {
+      title:'Regiones',
+      id:'regions',
+      url:'/regions',
+      icon: 'map' 
+    },
   ];
 
   alPages: MenuItemList = [
@@ -291,15 +315,18 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Tarifas',
+      id: 'tarifas',
       open: false,
       type: 'wrapper',
       icon: 'logo-usd',
+      notification: this.isNewTariff,
       children: [
         {
           title: 'Tarifas',
           id: 'tariff-al',
           url: '/tariff',
-          icon: 'logo-usd'
+          icon: 'logo-usd',
+          notification: this.isNewTariff
         },
         {
           title: 'Código exposición',
@@ -428,6 +455,20 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Auditorias',
+      open: true,
+      type: 'wrapper',
+      icon: 'ribbon',
+      children: [
+        {
+          title: 'Lista de auditorias',
+          id: 'audit-al',
+          url: '/audits',
+          icon: 'list-box'
+        }
+      ]
+    },
+    {
       title: 'Configuración',
       open: false,
       type: 'wrapper',
@@ -451,7 +492,6 @@ export class MenuComponent implements OnInit {
   menuPagesFiltered: MenuItemList = [];
   @Output() menuTitle = new EventEmitter();
 
-
   constructor(
     private loginService: Oauth2Service,
     private router: Router,
@@ -462,8 +502,14 @@ export class MenuComponent implements OnInit {
     private sealScanditService: SealScanditService,
     private productInfoScanditService: ProductInfoScanditService,
     private menuController: MenuController,
-    private toolbarProvider: ToolbarProvider
-  ) { }
+    private toolbarProvider: ToolbarProvider,
+    private tariffService: TariffService,
+
+  ) {
+    this.loginService.availableVersion.subscribe(res=>{
+      this.versionUpdate = res;
+    })
+   }
 
   returnTitle(item: MenuSectionItem) {
     this.currentRoute = item.title
@@ -472,11 +518,16 @@ export class MenuComponent implements OnInit {
     this.menuTitle.emit(item.title);
   }
 
+  loadUpdate() {
+    window.open('https://drive.google.com/open?id=1p8wdD1FpXD_aiUA5U6JsOENNt0Ocp3_o', '_blank')
+  }
+
   /**
    * Select the links that be shown depends of dictionary paramethers
    */
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
+    this.newTarifff();
     let logoutItem = dictionary['user-time'] ? ({
       title: 'Cerrar sesión',
       id: 'logout',
@@ -611,6 +662,30 @@ export class MenuComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngAfterViewInit(): void {
+    //this.listenChanges();
+  }
+
+  /**
+   * Listen changes in form to resend the request for search
+   */
+  newTarifff() {
+    this.tariffService.getNewTariff().subscribe(tariff=>{
+      /**save the data and format the dates */
+      this.alPages.forEach((item, i) => {
+        if ((<any>item).id == "tarifas"){
+          (<any>item).notification = tariff['data'];
+          (<any>item).children.forEach((child, j) => {
+            if ((<any>child).id == "tariff-al"){
+              (<any>child).notification = tariff['data'];
+            }
+          });
+        }
+      });
+    },()=>{
+    })
   }
 
 }

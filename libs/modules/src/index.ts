@@ -31,6 +31,13 @@ export * from './groups/groups.module';
 export * from './products/products.component';
 export * from './products/products.module';
 
+export * from './audits/audits.component';
+export * from './audits/audits.module';
+
+export * from './audits-mobile/audits-mobile.component';
+export * from './audits-mobile/audits-mobile.module';
+
+
 // Incidences Button
 export * from './incidences-button/incidences-button.component';
 export * from './incidences-button/incidences-button.module';
@@ -241,3 +248,7 @@ export * from './picking-online-store-verify/picking-online-store-verify.module'
 // Scanner item for manual input or laser scanners
 export * from './components/scanner-manual/scanner-manual.component';
 export * from './components/scanner-manual/scanner-manual.module';
+
+// /**Regions */
+export  * from './regions/regions.component';
+export  * from './regions/regions.module';

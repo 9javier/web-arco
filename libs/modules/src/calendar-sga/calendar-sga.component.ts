@@ -24,6 +24,8 @@ export class CalendarSgaComponent implements OnInit {
   public cantDates: boolean = false;
   private isCheckedOrigin: boolean = false;
   private selectTem: boolean = false;
+  private listaFechas:string[] = [];
+  private listaFescasDb$:string[];
 
 
   public calendarConfiguration: IDatePickerConfig = {
@@ -59,19 +61,14 @@ export class CalendarSgaComponent implements OnInit {
       isChecked: [false, []],
       origins: new FormArray([])
     });
-
-
-
-
   }
-
-
 
   ngOnInit() {
     this.getBase();
     this.getTemplates();
     this.getCalendarDates();
     this.changeValues();
+
 
     this.datePicker.onLeftNav.subscribe(changes => {
       this.getCalendarDates();
@@ -88,14 +85,19 @@ export class CalendarSgaComponent implements OnInit {
     this.datePicker.onSelect.subscribe((changes) => {
       this.cantDates = false;
       let selectDates = this.dates.map(_ => {
+
         return _.format("YYYY-MM-DD");
       });
+      this.deleteDates(selectDates);
+
       let auxDates = [{
         date: 'todas las fechas seleccionadas',
         warehouses: [],
         value: null
       }];
       selectDates.forEach(date => {
+        // console.log({date});
+
         let aux = this.selectDates.find(_date => { return (_date.date == date) });
         if (!aux) {
           auxDates.push(
@@ -222,6 +224,9 @@ export class CalendarSgaComponent implements OnInit {
    */
   getCalendarDates(): void {
     this.calendarService.getCalendarDates().subscribe(dates => {
+      console.log(dates);
+      this.listaFescasDb$ = dates;
+
       this.manageHaveClass(dates);
     });
   }
@@ -460,6 +465,7 @@ export class CalendarSgaComponent implements OnInit {
   }
 
   clear() {
+    this.listaFechas = [];
     this.selectTem = false;
     this.intermediaryService.presentLoading();
     this.warehousesOriginList.sort((unaCadena, otraCadena) => unaCadena.id - otraCadena.id);
@@ -638,6 +644,60 @@ export class CalendarSgaComponent implements OnInit {
         }
       });
     }
+  }
+
+  /**
+   * @author "Gaetano Sabino"
+   * @description "Seleciona las fechas presentes en la BD con la fechas selecionadas"
+   */
+  private deleteDates(dates:string[]){
+    let data:string;
+    const listaDatesdb:string[]=[];
+    dates.forEach(ele =>{
+      data = this.listaFescasDb$.find(date => date === ele );
+      if(data){
+        listaDatesdb.push(data);
+      }
+    })
+    this.listaFechas = listaDatesdb
+  }
+
+  /**
+   * @author Gaetano Sabino
+   * @description Retorna las fechas que solo estan presente en la BD
+   */
+  get ListaFechas$(){
+    return this.listaFechas;
+  }
+
+  /**
+   * @description Envia las fechas que ya existen en la Bd
+   * @method delete
+   * @author "Gaetano Sabino"
+   */
+  deleteAllFechasSelect(){
+
+    this.calendarService.postDateDelete(this.ListaFechas$).subscribe(data=>{
+      console.log(data);
+      if(data.length > 0){
+        this.clear();
+        this.intermediaryService.presentToastSuccess("Fechas eliminada con éxito");
+        this.intermediaryService.dismissLoading();
+        this.getCalendarDates();
+        this.getTemplates();
+        return;
+      }
+      if(data.length === 0){
+        this.intermediaryService.presentToastError("Ninguna fecha incontrada");
+        this.intermediaryService.dismissLoading();
+        return;
+      }
+
+
+    },error=>{
+      this.intermediaryService.presentToastError("Error en eliminar las Fechas");
+      this.intermediaryService.dismissLoading();
+    });
   }
 
 

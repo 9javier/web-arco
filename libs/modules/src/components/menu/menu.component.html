@@ -1,6 +1,13 @@
+<div (click)="loadUpdate()" *ngIf="versionUpdate.status === true" class="update-version">
+  <p>
+    <span matBadge="{{versionUpdate.version}}" matBadgeOverlap="false">Actualización disponible</span>
+  </p>
+</div>
+
+
 <div *ngFor="let p of menuPagesFiltered">
   <ion-menu-toggle *ngIf="p.url" auto-hide="false">
-    <ion-list no-padding lines="none">
+    <ion-list class="ion-no-padding" lines="none">
       <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="tapOption(p)">
         <ion-icon [slot]="iconsDirection" [name]="p.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
@@ -10,19 +17,23 @@
     </ion-list>
   </ion-menu-toggle>
   <!-- Item with Children -->
-  <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none" class="parent-subitems">
+  <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open"
+    detail="false" lines="none" class="parent-subitems">
     <ion-icon slot="start" [name]="p.icon"></ion-icon>
     <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
+    <ion-icon slot="end" name="information-circle" *ngIf="p.notification" class="color-notification"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-down" *ngIf="!p.open"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-up" *ngIf="p.open"></ion-icon>
   </ion-item>
   <!-- Children List for clicked Item -->
   <ion-list *ngIf="p.open" lines="none">
-    <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)">
+    <ion-item *ngFor="let sub of p.children" class="sub-item" [routerLink]="sub.url" routerDirection="root"
+      routerLinkActive="active" (click)="tapOptionSubitem(sub)">
       <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
       <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
         {{ sub.title }}
       </ion-label>
+      <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
     </ion-item>
   </ion-list>
 </div>

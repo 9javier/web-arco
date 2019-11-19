@@ -2,6 +2,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import {Events} from "@ionic/angular";
 import {GroupWarehousePickingModel} from "@suite/services";
+import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
   selector: 'table-stores',
@@ -13,14 +14,13 @@ export class TableStoresComponent implements OnInit {
   private GROUPS_WAREHOUSES_LOADED = "groups-warehouses-loaded";
   private DEFAULT_THRESHOLD_CONSOLIDATED: number = 100;
 
-  @Output() changeGroupWarehouses = new EventEmitter();
-
   listGroupsWarehouses: Array<GroupWarehousePickingModel.GroupWarehousePicking> = new Array<GroupWarehousePickingModel.GroupWarehousePicking>();
   groupWarehousesSelected: GroupWarehousesSelected = { groupsWarehousePickingId: 0, thresholdConsolidated: {} };
 
   constructor(
     private events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider
+    public pickingParametrizationProvider: PickingParametrizationProvider,
+    private serviceG : WorkwavesService
   ) {}
 
   ngOnInit() {
@@ -33,7 +33,7 @@ export class TableStoresComponent implements OnInit {
       } else {
         this.groupWarehousesSelected = { groupsWarehousePickingId: 0, thresholdConsolidated: {} };
       }
-      this.selectGroupWarehouses();
+      this.selectGroupWarehouses(undefined,'init');
     });
   }
 
@@ -41,7 +41,7 @@ export class TableStoresComponent implements OnInit {
     this.events.unsubscribe(this.GROUPS_WAREHOUSES_LOADED);
   }
 
-  selectGroupWarehouses(idGroupWarehouse?: number) {
+  selectGroupWarehouses(idGroupWarehouse?: number,validation?:String) {
     if (idGroupWarehouse) {
       if (!this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse]) {
         this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse] = 0;
@@ -69,7 +69,12 @@ export class TableStoresComponent implements OnInit {
         groupsWarehousePickingId: this.groupWarehousesSelected.groupsWarehousePickingId,
         thresholdConsolidated: this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId]
       };
-      this.changeGroupWarehouses.next(localGroupWarehousesSelected);
+      
+      let aux = this.serviceG.orderAssignment.value;
+      aux.data.store = localGroupWarehousesSelected;
+      aux.store = validation === 'init' ?  true : false;
+      this.serviceG.orderAssignment.next(aux);
+
     } else {
       if (this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId] == 0) {
 

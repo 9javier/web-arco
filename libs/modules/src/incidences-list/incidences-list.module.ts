@@ -7,6 +7,7 @@ import {IncidenceComplexModule} from "../incidence-complex/incidence-complex.mod
 import {MatListModule, MatPaginatorModule, MatTableModule} from "@angular/material";
 import {RouterModule, Routes} from "@angular/router";
 import {FiltersIncidencesComponent} from "./filters/filters.component";
+import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 
 const routes: Routes = [
   {
@@ -26,7 +27,8 @@ const routes: Routes = [
     MatPaginatorModule,
     MatListModule,
     RouterModule.forChild(routes),
-    FormsModule
+    FormsModule,
+    PaginatorComponentModule
   ], entryComponents: [IncidencesListComponent, FiltersIncidencesComponent]
 })
 export class IncidencesListModule { }

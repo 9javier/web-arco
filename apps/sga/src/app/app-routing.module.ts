@@ -158,6 +158,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'audits',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/audits/audits.module#AuditsModule',
+    data: {
+      name: 'Auditorias'
+    }
+  },
+  {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule',
@@ -300,6 +308,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/sorter-create/sorter-create.module#SorterCreateModule',
     data: {
       name: 'Crear Sorter'
+    }
+  },
+  {
+    path:'regions',
+    canActivate:[AuthGuard],
+    loadChildren: '@suite/common-modules#RegionsModule',
+    data: {
+      name: 'regiones'
     }
   }
 ];

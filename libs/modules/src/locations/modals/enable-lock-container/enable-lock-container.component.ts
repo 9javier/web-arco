@@ -52,7 +52,7 @@ export class EnableLockContainerComponent implements OnInit {
    */
   assignStatus(option:number):{processTypeId:1|2,status:boolean}{
     /**the processId must be 1 or 2 depending of type, and their estatus can be active or inactive */
-    return {processTypeId:option<3?1:2,status:1==option%2}
+    return {processTypeId:option<3?1:2,status:1 === option%2}
   }
 
   /**

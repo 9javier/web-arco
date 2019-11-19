@@ -29,12 +29,13 @@
     "no-bitwise": true,
     "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
     "no-construct": true,
+
     "no-debugger": true,
     "no-duplicate-super": true,
     "no-empty": false,
     "no-empty-interface": true,
     "no-eval": true,
-    "no-inferrable-types": [true, "ignore-params"],
+    "no-inferrable-types": [true, "ignore-params","ignore-properties"],
     "no-misused-new": true,
     "no-non-null-assertion": true,
     "no-shadowed-variable": true,
@@ -46,13 +47,14 @@
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "object-literal-sort-keys": false,
-    "prefer-const": true,
+    "prefer-const": false,
     "radix": true,
     "triple-equals": [true, "allow-null-check"],
     "unified-signatures": true,
     "variable-name": false,
+    
     "nx-enforce-module-boundaries": [
-      true,
+      false,
       {
         "allow": [],
         "depConstraints": [
@@ -64,7 +66,8 @@
       }
     ],
     "directive-selector": [true, "attribute", "app", "camelCase"],
-    "component-selector": [true, "element", "app", "kebab-case"],
+    "component-selector": [true, "element", "app", "kebab-case"," "],
+    
     "no-output-on-prefix": true,
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,

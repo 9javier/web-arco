@@ -1,0 +1,49 @@
+<ion-content padding="true">
+  <ion-text color="primary">
+      <suite-breadcrumb></suite-breadcrumb>
+  </ion-text>
+
+  <mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda">
+  </mat-form-field>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+  
+      <ng-container matColumnDef="user">
+        <th class="title-column" mat-header-cell *matHeaderCellDef> Usuario </th>
+        <td mat-cell *matCellDef="let element"> {{element.logUser.email}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="status">
+        <th class="title-column" mat-header-cell *matHeaderCellDef> Estatus </th>
+        <td mat-cell *matCellDef="let element"> {{element.status === 1 ? 'Abierto' : 'Cerrado'}} </td>
+      </ng-container>
+  
+      <ng-container matColumnDef="packingId">
+        <th class="title-column" mat-header-cell *matHeaderCellDef> Estatus </th>
+        <td mat-cell *matCellDef="let element"> {{element.packingId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="products">
+        <th class="title-column" mat-header-cell *matHeaderCellDef> Cantidad de productos </th>
+        <td mat-cell *matCellDef="let element"> {{element.sorterAuditPackingProducts.length}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="options">
+        <th class="title-column" mat-header-cell *matHeaderCellDef> Opciones </th>
+        <td mat-cell *matCellDef="let element">
+          <button (click)="showProducts(element)" matTooltip="Ver Productos" mat-icon-button>
+            <mat-icon>remove_red_eye</mat-icon>
+          </button>
+        </td>
+        <!-- <td mat-cell *matCellDef="let element"> {{element.sorterAuditPackingProducts.length}} </td> -->
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </div>
+</ion-content>

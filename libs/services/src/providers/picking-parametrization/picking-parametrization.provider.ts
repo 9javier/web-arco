@@ -9,6 +9,7 @@ import {WorkwaveModel} from "../../models/endpoints/Workwaves";
 export class PickingParametrizationProvider {
 
   private _loadingListGroupsWarehouses: number = 0;
+  
   get loadingListGroupsWarehouses(): number {
     return this._loadingListGroupsWarehouses;
   }

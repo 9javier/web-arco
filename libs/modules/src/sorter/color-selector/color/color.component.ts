@@ -4,6 +4,7 @@ import {TemplateColorsModel} from "../../../../../services/src/models/endpoints/
 import {AuthenticationService} from "@suite/services";
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-color-item',
   templateUrl: './color.component.html',
   styleUrls: ['./color.component.scss']
@@ -25,7 +26,7 @@ export class ColorItemSorterComponent implements OnInit {
 
   getColorClass() : string {
     if (this.sorterProvider.colorSelected) {
-      if (this.sorterProvider.colorSelected.id == this.color.id) {
+      if (this.sorterProvider.colorSelected.id === this.color.id) {
         return 'selected';
       } else {
         return 'no-selected';

@@ -1,0 +1,32 @@
+<div class="paginator" (click)="defaultClick()">
+  <div class="paginator-content">
+    <div class="column qty-selector">
+      <div>
+        <p>Ver</p>
+        <span (click)="setOpenPanel($event)" class="select"> {{ cantSelect }} <ion-icon name="arrow-dropdown"></ion-icon></span>
+      </div>
+    </div>
+    <div class="column records">
+      <div>
+        <span class="value">{{ length }}</span> resultados <span class="divider">/</span>
+      </div>
+    </div>
+    <div class="column page">
+      <div>
+        pág. <span class="value">{{ pageIndex }}</span> de <span class="value">{{ lastPage }}</span>
+      </div>
+    </div>
+    <div class="column arrows">
+      <div>
+        <svg (click)="previousPage($event)" [ngClass]="pageIndex == 1 ? 'disabled' : '' " class="button-icon" focusable="false" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+        <svg (click)="nextPage($event)" [ngClass]="pageIndex == lastPage ? 'disabled' : '' " class="button-icon" focusable="false" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <ion-list *ngIf="openPanel" class="panel-select">
+    <ion-item *ngFor="let cant of pagerValues;" class="panel-select-items" (click)="changePageSize($event, cant)">
+      <span [ngClass]="cant == cantSelect ? 'selected' : ''">{{ cant }}</span>
+    </ion-item>
+  </ion-list>
+</div>

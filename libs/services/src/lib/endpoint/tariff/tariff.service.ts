@@ -17,6 +17,7 @@ export class TariffService {
   private isCalculatingSGA: string = environment.apiBase + "/tariffs/iscalculating";
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
   private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
+  private getNewTariffUrl: string = environment.apiBase + "/tariffs/getNewTariff";
   constructor(private http: HttpClient) { }
 
   /**
@@ -28,6 +29,7 @@ export class TariffService {
    */
   getIndex(page: number = 1, limit: number = 1, sort: SortModel.Sort): Observable<TariffModel.ResponseTariffPaginator> {
     let params = {
+      warehouseId: 49,
       pagination: {
         page: page,
         limit: limit,
@@ -55,10 +57,13 @@ export class TariffService {
   getTariffIfSoftdelete() {
     return this.http.get<{
       data: {
-        name: string;
-        activeFrom: string;
-        activeTill: string;
-      }[]
+        results: {
+          name: string;
+          activeFrom: string;
+          activeTill: string;
+        }[],
+        pagination?: any
+      }
     }>(this.getTariffIfSoftdeleteSGA, {}).pipe(map(response => {
       return response;
     })).pipe(map(response => {
@@ -80,6 +85,12 @@ export class TariffService {
       return response;
     })).pipe(map(response => {
       return response.data;
+    }));
+  }
+
+  getNewTariff() {
+    return this.http.get(this.getNewTariffUrl, {}).pipe(map(response => {
+      return response;
     }));
   }
 
