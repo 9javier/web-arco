@@ -62,10 +62,13 @@ export class LoginComponent implements OnInit {
     this.user.password = '';
     this.getLastUsername();
     this.verifyNewVersion();
+    // await this.provaLog()
+
     interUpdateVersion.subscribe(x => this.verifyNewVersion());
     // Check if is mobile app and get appVersionNumber
   }
 
+  
   verifyNewVersion(){
     if (window.cordova) {
       this.isMobileApp = true;
@@ -73,7 +76,7 @@ export class LoginComponent implements OnInit {
         
         this.versionNumber = versionNumber;
         this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {
-          if (response && response.code == 200) {
+          if (response && response.code === 200) {
             if (response.data) {
 
               const resultCompare = this.compareVersions(`${response.data['majorRelease']}.${response.data['minorRelease']}.${response.data['patchRelease']}`, this.versionNumber);
