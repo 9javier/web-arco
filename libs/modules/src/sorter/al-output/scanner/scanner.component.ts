@@ -480,49 +480,51 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   private async setWayAsEmpty() {
     await this.intermediaryService.presentLoading('Comprobando que la calle esté vacía...');
 
-    this.sorterOutputService
-      .postEmptyWay({
-        wayId: this.infoSorterOperation.wayId.toString()
-      })
-      .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
+    setTimeout(() => {
+      this.sorterOutputService
+        .postEmptyWay({
+          wayId: this.infoSorterOperation.wayId.toString()
+        })
+        .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
 
 
-        if (res.code === 200) {
-          this.audioProvider.playDefaultOk();
-          this.sorterProvider.colorActiveForUser = null;
-          await this.intermediaryService.dismissLoading();
-          await this.intermediaryService.presentToastSuccess(`Registrada la calle como vacía.`);
-          this.stopExecutionOutput();
-        } else {
+          if (res.code === 200) {
+            this.audioProvider.playDefaultOk();
+            this.sorterProvider.colorActiveForUser = null;
+            await this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentToastSuccess(`Registrada la calle como vacía.`);
+            this.stopExecutionOutput();
+          } else {
+            this.audioProvider.playDefaultError();
+            let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
+            if (res.errors) {
+              errorMessage = res.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage);
+            await this.intermediaryService.dismissLoading();
+            this.focusToInput();
+          }
+        }, async (error) => {
           this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
-          if (res.errors) {
-            errorMessage = res.errors;
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
           }
           await this.intermediaryService.presentToastError(errorMessage);
           await this.intermediaryService.dismissLoading();
           this.focusToInput();
-        }
-      }, async (error) => {
-        this.audioProvider.playDefaultError();
-        let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      })
-      .catch(async (error) => {
-        this.audioProvider.playDefaultError();
-        let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        await this.intermediaryService.presentToastError(errorMessage);
-        await this.intermediaryService.dismissLoading();
-        this.focusToInput();
-      });
+        })
+        .catch(async (error) => {
+          this.audioProvider.playDefaultError();
+          let errorMessage = 'Ha ocurrido un error al intentar marcar como vacía la calle.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+          await this.intermediaryService.dismissLoading();
+          this.focusToInput();
+        });
+    }, 2 * 1000);
   }
 
   private async unlockCurrentWay() {
