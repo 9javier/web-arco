@@ -63,4 +63,19 @@ export class SorterProvider {
   set infoSorterOutputOperation(value: OutputSorterModel.OutputSorter) {
     this._infoSorterOutputOperation = value;
   }
+
+  private idWareHouse: number;
+  /**
+   * @description Return a Id of wareHouse
+   */
+  get id_wareHouse():number{
+    return this.idWareHouse;
+  }
+  /**
+   * @description Set id WareHouse
+   * @param id Number
+   */
+  set id_wareHouse(id:number){
+    this.idWareHouse = id;
+  }
 }

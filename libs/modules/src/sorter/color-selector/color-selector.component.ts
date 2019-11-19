@@ -3,6 +3,7 @@ import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.p
 import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-color-selector',
   templateUrl: './color-selector.component.html',
   styleUrls: ['./color-selector.component.scss']

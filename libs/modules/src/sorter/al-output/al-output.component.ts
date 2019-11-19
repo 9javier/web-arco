@@ -561,6 +561,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   colorSelected(data) {
+    console.log('color'+data.colorSelected);
+    
     this.sorterProvider.colorSelected = data.color;
     this.resumeProcessForUser = !!data.userId;
   }
@@ -572,6 +574,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   async sorterOperationStarted() {
+    console.log('Tasto Start');
+    
     if (!this.sorterProvider.colorSelected) {
       await this.intermediaryService.presentToastError('Selecciona un color para comenzar.');
       return;
@@ -584,10 +588,12 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
     if (this.resumeProcessForUser) {
       await this.intermediaryService.presentLoading('Reanudando proceso...');
-
+      // TODO questo el get del color
       this.sorterOutputService
         .getGetCurrentProcessWay()
         .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
+          console.log(res);
+          
           if (res.code === 201) {
             await this.intermediaryService.dismissLoading();
             let currentProcessWay = res.data;
@@ -639,10 +645,16 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       this.sorterExecutionService
         .postExecuteColor(paramsRequest)
         .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
+          console.log(res);
+          
           this.sorterOutputService
             .getNewProcessWay(idWayToWork)
             // tslint:disable-next-line:no-shadowed-variable
             .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
+              console.log(res);
+              // TODO tenemos el primer id warehouse
+              this.sorterProvider.id_wareHouse = res.data.warehouse.id;
+              
               if (res.code === 201) {
                 await this.intermediaryService.dismissLoading();
                 let newProcessWay = res.data;
@@ -705,8 +717,13 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
   getMessageForNotificationActiveProcess() : string {
     if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser === 1) {
+      // console.log(this.sorterProvider.colorActiveForUser);
+      // console.log(this.sorterProvider.processActiveForUser);
+      
       return 'el usuario ya tiene un proceso de entrada iniciado';
     } else if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser === 2) {
+      // console.log(this.sorterProvider.colorActiveForUser);
+      // console.log(this.sorterProvider.processActiveForUser);
       return 'el usuario ya tiene un proceso iniciado';
     } else {
       return '';
@@ -714,6 +731,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   waySelected(data: WaySorterModel.WaySorter) {
+    console.log(data);
+    
     this.waySelectedToEmptying = data;
   }
 
@@ -722,6 +741,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterService
       .getFirstSorter()
       .subscribe((res: SorterModel.FirstSorter) => {
+        console.log(res);
+        
         this.loadAvailableColors(res.id);
       }, async (error: HttpRequestModel.Error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar los datos del sorter.';
@@ -762,6 +783,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.templateColorsService
       .postAvailableColorsByProcess({ processType: 2 })
       .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
+        console.log(res);
+        
         this.colorsSelectors = res;
         this.loadActiveTemplate(idSorter);
       }, async (error: HttpRequestModel.Error) => {
@@ -778,6 +801,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterTemplateService
       .getActiveTemplate()
       .subscribe((res: TemplateSorterModel.Template) => {
+        console.log(res);
+        
         this.loadMatrixTemplateSorter(idSorter, res.id);
       }, async (error: HttpRequestModel.Error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
@@ -794,6 +819,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.templateZonesService
       .getMatrixTemplateSorter(idSorter, idTemplate)
       .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
+        console.log(res);
+        
         this.haveManualEmptying = !!res.find(height => !!height.columns.find(columnWay => !!columnWay.way.manual));
         if (this.haveManualEmptying) {
           this.sorterTemplateMatrix = res;
