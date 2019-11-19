@@ -10,6 +10,7 @@ import { MatPaginatorModule } from '@angular/material';
 import { ProductDetailsModule } from './modals/product-details/product-details.module';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
+import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 
 
 const routes: Routes = [
@@ -30,8 +31,8 @@ const routes: Routes = [
     BreadcrumbModule,
     RouterModule.forChild(routes),
     ProductDetailsModule,
-    TagsInputModule
-    
+    TagsInputModule,
+    PaginatorComponentModule,
   ],
   declarations: [ProductsComponent]
 })

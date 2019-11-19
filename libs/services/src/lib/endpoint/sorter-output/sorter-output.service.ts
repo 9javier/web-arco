@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import {RequestsProvider} from "../../../providers/requests/requests.provider";
-import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
-import {SorterOutputModel} from "../../../models/endpoints/SorterOutput";
+import { RequestsProvider } from "../../../providers/requests/requests.provider";
+import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
+import { SorterOutputModel } from "../../../models/endpoints/SorterOutput";
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,9 @@ export class SorterOutputService {
   private postGetIncidenceWayUrl: string = environment.apiSorter + "/sorter/execution/incidence/way";
   private getGetCurrentProcessWayUrl: string = environment.apiSorter + "/sorter/process/product/packing/get-way";
 
+  // TODO new Enpoint "new-way/warehouse"
+  private getNewProcessWayUrlId: string = environment.apiSorter + "/sorter/process/product/packing/new-way/warehouse"
+
   // Manual
   private postGetProductsByWayUrl: string = environment.apiSorter + "/sorters/way-products";
   private postChangeWayManualUrl: string = environment.apiSorter + "/sorters/change-ways-manual-status";
@@ -26,47 +30,62 @@ export class SorterOutputService {
     private requestsProvider: RequestsProvider
   ) { }
 
-  getNewProcessWay(idWaySelected: number) : Promise<HttpRequestModel.Response> {
+  getNewProcessWay(idWaySelected: number, idWalOldSelected?: number): Promise<HttpRequestModel.Response> {
     let url = this.getNewProcessWayUrl;
     if (idWaySelected) {
       url += ('/' + idWaySelected);
     }
-    return this.requestsProvider.get(url);
+
+    if (idWalOldSelected) {
+      return this.getNewProcessWayID(idWalOldSelected);
+    } else {
+      return this.requestsProvider.get(url);
+    }
+
   }
 
-  postAssignPackingToWay(params: SorterOutputModel.ParamsAssignPackingToWay) : Promise<HttpRequestModel.Response> {
+  /**
+   * @author "Gaetano Sabino"
+   * @param idWalOldSelected 
+   * @description Get warehouse with selectId old
+   */
+  getNewProcessWayID(idWalOldSelected: number): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(`${this.getNewProcessWayUrlId}/${idWalOldSelected}`);
+  }
+
+  postAssignPackingToWay(params: SorterOutputModel.ParamsAssignPackingToWay): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postAssignPackingToWayUrl, params);
   }
 
-  postScanProductPutInPacking(params: SorterOutputModel.ParamsScanProductPutInPacking) : Promise<HttpRequestModel.Response> {
+  postScanProductPutInPacking(params: SorterOutputModel.ParamsScanProductPutInPacking): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postScanProductPutInPackingUrl, params);
   }
 
-  postPackingFull(params: SorterOutputModel.ParamsPackingFull) : Promise<HttpRequestModel.Response> {
+  postPackingFull(params: SorterOutputModel.ParamsPackingFull): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postPackingFullUrl, params);
   }
 
-  postBlockSorterWay(params: SorterOutputModel.ParamsBlockSorterWay) : Promise<HttpRequestModel.Response> {
+  postBlockSorterWay(params: SorterOutputModel.ParamsBlockSorterWay): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postBlockSorterWayUrl, params);
   }
 
-  postEmptyWay(params: SorterOutputModel.ParamsEmptyWay) : Promise<HttpRequestModel.Response> {
+  postEmptyWay(params: SorterOutputModel.ParamsEmptyWay): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postEmptyWayUrl, params);
   }
 
-  postGetIncidenceWay(params: SorterOutputModel.ParamsGetIncidenceWay) : Promise<HttpRequestModel.Response> {
+  postGetIncidenceWay(params: SorterOutputModel.ParamsGetIncidenceWay): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postGetIncidenceWayUrl, params);
   }
 
-  getGetCurrentProcessWay() : Promise<HttpRequestModel.Response> {
+  getGetCurrentProcessWay(): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getGetCurrentProcessWayUrl);
   }
 
-  postGetProductsByWay(params: SorterOutputModel.ParamsGetProductsByWay) : Promise<HttpRequestModel.Response> {
+  postGetProductsByWay(params: SorterOutputModel.ParamsGetProductsByWay): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postGetProductsByWayUrl, params);
   }
 
-  postChangeWayManual(params: SorterOutputModel.ParamsChangeWayManual) : Promise<HttpRequestModel.Response> {
+  postChangeWayManual(params: SorterOutputModel.ParamsChangeWayManual): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postChangeWayManualUrl, params);
   }
 }

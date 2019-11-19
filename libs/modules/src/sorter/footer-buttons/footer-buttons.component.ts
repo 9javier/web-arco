@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-footer-buttons',
   templateUrl: './footer-buttons.component.html',
   styleUrls: ['./footer-buttons.component.scss']

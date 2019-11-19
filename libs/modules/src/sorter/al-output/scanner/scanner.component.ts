@@ -1,19 +1,20 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
-import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
-import {ScanditProvider} from "../../../../../services/src/providers/scandit/scandit.provider";
-import {IntermediaryService} from "@suite/services";
-import {OutputSorterModel} from "../../../../../services/src/models/endpoints/OutputSorter";
-import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
-import {AlertController} from "@ionic/angular";
-import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints/ExecutionSorter";
-import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
-import {SorterExecutionService} from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
-import {Location} from "@angular/common";
-import {SorterOutputService} from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
-import {SorterOutputModel} from "../../../../../services/src/models/endpoints/SorterOutput";
-import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
+import { SorterProvider } from "../../../../../services/src/providers/sorter/sorter.provider";
+import { ScanditProvider } from "../../../../../services/src/providers/scandit/scandit.provider";
+import { IntermediaryService } from "@suite/services";
+import { OutputSorterModel } from "../../../../../services/src/models/endpoints/OutputSorter";
+import { ProductSorterModel } from "../../../../../services/src/models/endpoints/ProductSorter";
+import { AlertController } from "@ionic/angular";
+import { ExecutionSorterModel } from "../../../../../services/src/models/endpoints/ExecutionSorter";
+import { HttpRequestModel } from "../../../../../services/src/models/endpoints/HttpRequest";
+import { SorterExecutionService } from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
+import { Location } from "@angular/common";
+import { SorterOutputService } from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
+import { SorterOutputModel } from "../../../../../services/src/models/endpoints/SorterOutput";
+import { AudioProvider } from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
+import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -43,6 +44,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   leftButtonDanger: boolean = true;
 
   infoSorterOperation: OutputSorterModel.OutputSorter = null;
+  public waySelectedToEmptying: WaySorterModel.WaySorter = null;
 
   private checkByWrongCode: boolean = true;
 
@@ -64,10 +66,13 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input').focus();
-    },800); }
-  
+    }, 800);
+  }
+
   ngOnInit() {
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
+
+
   }
 
   ngOnDestroy() {
@@ -104,6 +109,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           await this.intermediaryService.presentToastError('Código de producto erróneo.', 2000);
           this.focusToInput();
         } else {
+          console.log(dataWrote);
+
           this.assignPackingToProcess(dataWrote);
         }
       } else if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
@@ -160,7 +167,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         if (countdown === -1) {
           clearInterval(intervalChangeCountdown);
           alertEmptyPacking.message = textCountdown + '<b>Ya puedes pulsar confirmar.</b>';
-          alertEmptyPacking.buttons = [ buttonCancel, buttonOk ];
+          alertEmptyPacking.buttons = [buttonCancel, buttonOk];
           enableSetWayAsEmpty = true;
         } else {
           alertEmptyPacking.message = textCountdown + '<h2>' + countdown + 's</h2>';
@@ -241,6 +248,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   private async assignPackingToProcess(packingReference: string) {
     await this.intermediaryService.presentLoading('Asignando embalaje al proceso...');
+    console.log(this.infoSorterOperation);
+    console.log(packingReference);
+
+
 
     this.sorterOutputService
       .postAssignPackingToWay({
@@ -248,6 +259,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseAssignPackingToWay) => {
+        console.log(res);
+
         if (res.code === 200) {
           // If output process is not started yet (first packing scanned) start here to check if current way have incidences
           if (!this.processStarted) {
@@ -297,6 +310,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private async outputProductFromSorter(productReference: string) {
+    console.log(productReference);
+
     await this.intermediaryService.presentLoading('Comprobando producto escaneado...');
 
     this.sorterOutputService
@@ -470,6 +485,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
+
+
         if (res.code === 200) {
           this.audioProvider.playDefaultOk();
           this.sorterProvider.colorActiveForUser = null;
@@ -599,12 +616,62 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterExecutionService
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
+        console.log(res);
+        // console.log(this.router);
+        let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
+          color: this.sorterProvider.colorSelected.id,
+          type: 2
+        };
+        if (paramsRequest) {
+          console.log(paramsRequest);
+          this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
+            console.log(data);
+            let idWayToWork = null;
+            if (this.waySelectedToEmptying) {
+              idWayToWork = this.waySelectedToEmptying.id;
+            }
+
+            let lastWarehouse: number;
+            if (this.sorterProvider.infoSorterOutputOperation) {
+              lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
+            }
+            this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
+              .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
+                console.log(res2)
+                if (res2.code === 201) {
+                  this.inputValue = null;
+                  this.processStarted = null;
+                  let id = this.sorterProvider.id_wareHouse;
+                  console.log(id);
+
+                  let newProcessWay = res2.data;
+                  this.infoSorterOperation = {
+                    destinyWarehouse: {
+                      id: newProcessWay.warehouse.id,
+                      name: newProcessWay.warehouse.name,
+                      reference: newProcessWay.warehouse.reference
+                    },
+                    wayId: newProcessWay.way.zoneWay.ways.id
+                  }
+
+                  this.focusToInput();
+                } else {
+
+                  this.location.back();
+                }
+
+              }).catch(error => { this.location.back() })
+
+          })
+
+        }
+
+
+
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
         this.checkByWrongCode = false;
-        // this.location.back();
-        this.inputValue = null;
-        this.processStarted = null;
+
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';

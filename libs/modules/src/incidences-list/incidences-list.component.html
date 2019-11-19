@@ -53,6 +53,6 @@
         </tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
     </table>
-
-    <mat-paginator [length]="incidencesService.incidencesQuantityList" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator>
+    <suite-paginator [pagerValues]="[10, 20, 50]"></suite-paginator>
+    <!-- <mat-paginator  [length]="incidencesService.incidencesQuantityList" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator> -->
 </div>

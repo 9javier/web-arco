@@ -9,6 +9,7 @@ import {MatPaginator, PageEvent} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {TypeModel} from "@suite/services";
 import AttendedOption = IncidenceModel.AttendedOption;
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
   selector: 'incidences-list',
@@ -31,8 +32,8 @@ export class IncidencesListComponent implements OnInit {
   public listAttendedOptions: AttendedOption[];
   public attendedSelected: AttendedOption;
   public textToSearch: string;
-
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     public incidencesService: IncidencesService,
@@ -42,9 +43,11 @@ export class IncidencesListComponent implements OnInit {
 
   ngOnInit() {
     this.incidencesService.init();
+    this.incidencesService.incidencesQuantityList
     this.typeSelected = this.incidencesService.listIncidencesTypes[0];
     this.listenPaginatorChanges();
     this.actualPageFilter = this.incidencesService.defaultFilters;
+    
 
     this.listAttendedOptions = [
       {
@@ -69,6 +72,7 @@ export class IncidencesListComponent implements OnInit {
 
       this.searchIncidences(this.actualPageFilter);
     });
+    this.searchIncidences(this.actualPageFilter);
   }
 
   attendIncidence(event, incidence: IncidenceModel.Incidence) {
@@ -133,6 +137,9 @@ export class IncidencesListComponent implements OnInit {
       .postSearch(parameters)
       .subscribe((res: IncidenceModel.ResponseSearch) => {
         this.incidencesService.incidencesQuantityList = res.data.count_search;
+        this.paginator.length = res.data.count
+        this.paginator.pageIndex = this.actualPageFilter.page
+        this.paginator.lastPage = Math.ceil(res.data.count/this.actualPageFilter.size)
         this.incidencesService.incidencesUnattendedQuantity = res.data.count;
         this.incidencesService.incidencesList = res.data.incidences;
       }, error => {

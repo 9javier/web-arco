@@ -1,15 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Location} from "@angular/common";
+import { Component, Input, OnInit } from '@angular/core';
+import { Location } from "@angular/common";
 import {
   GroupWarehousePickingModel,
   GroupWarehousePickingService,
   UserTimeModel,
   UserTimeService
 } from "@suite/services";
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
-import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
-import {AlertController, Events, LoadingController, ToastController} from "@ionic/angular";
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { WorkwavesService } from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
+import { AlertController, Events, LoadingController, ToastController } from "@ionic/angular";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -28,7 +28,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
   template: any;
-  public userReques : any = [];
+  public userReques: any = [];
   disableEdition: boolean = false;
 
   listTypesToUpdate: Array<number> = new Array<number>();
@@ -51,14 +51,14 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     private workwavesService: WorkwavesService,
     private pickingParametrizationProvider: PickingParametrizationProvider,
   ) {
-    this.workwavesService.requestUser.subscribe(res=>{
-      if(res.user === true && res.table == true) this.employeeChanged(res.data);
+    this.workwavesService.requestUser.subscribe(res => {
+      if (res.user === true && res.table == true) this.employeeChanged(res.data);
     })
 
-    this.workwavesService.orderAssignment.subscribe(res=>{
-      if(res.store == true && res.type == true){
+    this.workwavesService.orderAssignment.subscribe(res => {
+      if (res.store == true && res.type == true) {
         this.groupWarehousesChanged(res.data);
-      } 
+      }
     })
   }
 
@@ -68,7 +68,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.disableEdition = true;
       }
       this.template = {
-        name: this.templateToEdit.name || 'Ola de trabajo // '+this.templateToEdit.id,
+        name: this.templateToEdit.name || 'Ola de trabajo // ' + this.templateToEdit.id,
         id: this.templateToEdit.id
       };
     } else {
@@ -82,7 +82,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.workwavesService.orderAssignment.unsubscribe();
     this.workwavesService.requestUser.unsubscribe();
   }
@@ -122,7 +122,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.pickingParametrizationProvider.loadingListEmployees--;
       }, (error) => {
         console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
-        this.pickingParametrizationProvider.listEmployees = {usersActive: [], usersInactive: []};
+        this.pickingParametrizationProvider.listEmployees = { usersActive: [], usersInactive: [] };
         this.events.publish(this.EMPLOYEES_LOADED);
         this.pickingParametrizationProvider.loadingListEmployees--;
       });
@@ -212,7 +212,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     }
   }
 
-  goPreviousPage () {
+  goPreviousPage() {
     this.location.back();
   }
 
@@ -241,13 +241,10 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     this.loadTeamAssignations();
   }
 
-  // requestOrderChanged(data) {
-  //   console.log(data);
-  //   this.listWarehousesThresholdAndSelectedQty = data.listThreshold;
-  //   this.listRequestOrdersToUpdate = data.listSelected;
-  //   this.loadTeamAssignations();
-  // }
-  //endregion
+  requestOrderChanged(data) {
+
+  }
+
 
   private generateWorkWave() {
     this.workwavesService
@@ -285,7 +282,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     const alert = await this.alertController.create({
       header: '¡Umbral máximo superado!',
       message: msg,
-      buttons: [ 'Cerrar' ]
+      buttons: ['Cerrar']
     });
 
     await alert.present();
