@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
@@ -126,7 +126,8 @@ export class PricesComponent implements OnInit {
     private warehousesService: WarehousesService,
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private cd : ChangeDetectorRef
   ) {
 
   }
@@ -223,6 +224,8 @@ export class PricesComponent implements OnInit {
   }
 
   changeStatusImpress(){
+    this.selectedForm.get('selector').setValue(false);
+    this.cd.detectChanges();
     this.itemIdSelected.map( (itemF,idx) =>{
       for (let index = 0; index < this.prices.length; index++) {
        if(itemF == this.prices[index].id) {
@@ -262,14 +265,11 @@ export class PricesComponent implements OnInit {
     })
       .filter(price => price);
 
-      console.log(prices);
-
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
-      console.log(result);
       this.intermediaryService.dismissLoading();
       this.initSelectForm(this.prices);
-      this.changeStatusImpress()
+      this.changeStatusImpress();
       //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
@@ -362,7 +362,6 @@ export class PricesComponent implements OnInit {
       this.showFiltersMobileVersion = false;
       this.prices = prices.results;
       this.initSelectForm(this.prices);
-      console.log(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
       let paginator = prices.pagination;
       this.paginatorComponent.length = paginator.totalResults;
