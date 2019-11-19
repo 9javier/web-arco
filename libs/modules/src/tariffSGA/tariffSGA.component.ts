@@ -135,6 +135,8 @@ export class TariffSGAComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.tariffService.getTariffIfSoftdelete().subscribe(
       tariffs => {
+        console.log(tariffs);
+        
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
         this.tariffs = tariffs.map(result => {
@@ -145,8 +147,9 @@ export class TariffSGAComponent implements OnInit {
         this.initSelectForm(this.tariffs);
         this.dataSource = new MatTableDataSource<any>(this.tariffs);
         let paginator = 1;
-        this.paginator.length = 2;
-        this.paginator.pageIndex = 0;
+        this.paginator.length = tariffs.length;
+        this.paginator.pageIndex = page;
+        this.paginator.lastPage =Math.ceil(tariffs.length/limit)
       },
       () => {
         this.intermediaryService.dismissLoading();

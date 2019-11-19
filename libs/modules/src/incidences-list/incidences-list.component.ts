@@ -139,7 +139,7 @@ export class IncidencesListComponent implements OnInit {
         this.incidencesService.incidencesQuantityList = res.data.count_search;
         this.paginator.length = res.data.count
         this.paginator.pageIndex = this.actualPageFilter.page
-        this.paginator.lastPage = res.data.count/this.actualPageFilter.size
+        this.paginator.lastPage = Math.ceil(res.data.count/this.actualPageFilter.size)
         this.incidencesService.incidencesUnattendedQuantity = res.data.count;
         this.incidencesService.incidencesList = res.data.incidences;
       }, error => {
