@@ -109,8 +109,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           await this.intermediaryService.presentToastError('Código de producto erróneo.', 2000);
           this.focusToInput();
         } else {
-          console.log(dataWrote);
-
           this.assignPackingToProcess(dataWrote);
         }
       } else if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
@@ -248,10 +246,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   private async assignPackingToProcess(packingReference: string) {
     await this.intermediaryService.presentLoading('Asignando embalaje al proceso...');
-    console.log(this.infoSorterOperation);
-    console.log(packingReference);
-
-
 
     this.sorterOutputService
       .postAssignPackingToWay({
@@ -259,8 +253,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseAssignPackingToWay) => {
-        console.log(res);
-
         if (res.code === 200) {
           // If output process is not started yet (first packing scanned) start here to check if current way have incidences
           if (!this.processStarted) {
@@ -310,8 +302,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private async outputProductFromSorter(productReference: string) {
-    console.log(productReference);
-
     await this.intermediaryService.presentLoading('Comprobando producto escaneado...');
 
     this.sorterOutputService
@@ -486,8 +476,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           wayId: this.infoSorterOperation.wayId.toString()
         })
         .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
-
-
           if (res.code === 200) {
             this.audioProvider.playDefaultOk();
             this.sorterProvider.colorActiveForUser = null;
@@ -618,16 +606,12 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterExecutionService
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
-        console.log(res);
-        // console.log(this.router);
         let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
           color: this.sorterProvider.colorSelected.id,
           type: 2
         };
         if (paramsRequest) {
-          console.log(paramsRequest);
           this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
-            console.log(data);
             let idWayToWork = null;
             if (this.waySelectedToEmptying) {
               idWayToWork = this.waySelectedToEmptying.id;
@@ -637,14 +621,17 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
             if (this.sorterProvider.infoSorterOutputOperation) {
               lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
             }
+
             this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
               .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
-                console.log(res2)
                 if (res2.code === 201) {
                   this.inputValue = null;
                   this.processStarted = null;
+                  this.isFirstProductScanned = false;
+                  this.wrongCodeScanned = false;
+                  this.packingIsFull = false;
+
                   let id = this.sorterProvider.id_wareHouse;
-                  console.log(id);
 
                   let newProcessWay = res2.data;
                   this.infoSorterOperation = {
@@ -654,26 +641,25 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                       reference: newProcessWay.warehouse.reference
                     },
                     wayId: newProcessWay.way.zoneWay.ways.id
-                  }
+                  };
 
                   this.focusToInput();
                 } else {
-
+                  let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
+                  if (res2.errors) {
+                    errorMessage = res2.errors;
+                  }
+                  await this.intermediaryService.presentToastError(errorMessage);
                   this.location.back();
                 }
 
               }).catch(error => { this.location.back() })
-
           })
-
         }
-
-
 
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
-        this.checkByWrongCode = false;
-
+        this.checkByWrongCode = true;
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';
