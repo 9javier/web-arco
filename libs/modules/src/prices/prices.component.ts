@@ -23,6 +23,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
   selector: 'suite-prices',
@@ -40,6 +41,7 @@ export class PricesComponent implements OnInit {
   pagerValues: Array<number> = [50, 100, 500];
 
   page: number = 0;
+  public itemIdSelected : any = [];
 
   limit: number = this.pagerValues[0];
 
@@ -195,6 +197,9 @@ export class PricesComponent implements OnInit {
    */
   selectAll(event): void {
     let value = event.detail.checked;
+    for (let index = 0; index < this.prices.length; index++) {
+      this.itemSelected(this.prices[index].id);
+    }
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
     });
@@ -208,6 +213,26 @@ export class PricesComponent implements OnInit {
     return this.filterTypes.find(status => {
       return status.id == id
     }).name;
+  }
+
+  // Item seleccionados
+  itemSelected(item){
+    let aux =  this.itemIdSelected.findIndex( id => item === id );
+    if(aux === -1) this.itemIdSelected.push(item);
+    if(aux !== -1) this.itemIdSelected.splice(aux,1);
+  }
+
+  changeStatusImpress(){
+    this.itemIdSelected.map( (itemF,idx) =>{
+      for (let index = 0; index < this.prices.length; index++) {
+       if(itemF == this.prices[index].id) {
+        this.prices[index].status = 4;
+        break;
+       }
+      }
+    })
+
+    this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
   }
   /**
    * Print the selected labels
@@ -236,10 +261,14 @@ export class PricesComponent implements OnInit {
     })
       .filter(price => price);
 
+      console.log(prices);
+
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
+      console.log(result);
       this.intermediaryService.dismissLoading();
       this.initSelectForm(this.prices);
+      this.changeStatusImpress()
       //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
