@@ -1,22 +1,22 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
-import {Router} from "@angular/router";
-import {IntermediaryService} from "@suite/services";
-import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
-import {SorterModel} from "../../../../services/src/models/endpoints/Sorter";
-import {HttpRequestModel} from "../../../../services/src/models/endpoints/HttpRequest";
-import {ExecutionSorterModel} from "../../../../services/src/models/endpoints/ExecutionSorter";
-import {SorterExecutionService} from "../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
-import {SorterService} from "../../../../services/src/lib/endpoint/sorter/sorter.service";
-import {TemplateColorsService} from "../../../../services/src/lib/endpoint/template-colors/template-colors.service";
-import {SorterOutputService} from "../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
-import {SorterOutputModel} from "../../../../services/src/models/endpoints/SorterOutput";
-import {TemplateSorterModel} from "../../../../services/src/models/endpoints/TemplateSorter";
-import {MatrixSorterModel} from "../../../../services/src/models/endpoints/MatrixSorter";
-import {SorterTemplateService} from "../../../../services/src/lib/endpoint/sorter-template/sorter-template.service";
-import {TemplateZonesService} from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
-import {MatrixOutputSorterComponent} from "./matrix-output/matrix-output.component";
-import {WaySorterModel} from "../../../../services/src/models/endpoints/WaySorter";
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { SorterProvider } from "../../../../services/src/providers/sorter/sorter.provider";
+import { Router } from "@angular/router";
+import { IntermediaryService } from "@suite/services";
+import { TemplateColorsModel } from "../../../../services/src/models/endpoints/TemplateColors";
+import { SorterModel } from "../../../../services/src/models/endpoints/Sorter";
+import { HttpRequestModel } from "../../../../services/src/models/endpoints/HttpRequest";
+import { ExecutionSorterModel } from "../../../../services/src/models/endpoints/ExecutionSorter";
+import { SorterExecutionService } from "../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
+import { SorterService } from "../../../../services/src/lib/endpoint/sorter/sorter.service";
+import { TemplateColorsService } from "../../../../services/src/lib/endpoint/template-colors/template-colors.service";
+import { SorterOutputService } from "../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
+import { SorterOutputModel } from "../../../../services/src/models/endpoints/SorterOutput";
+import { TemplateSorterModel } from "../../../../services/src/models/endpoints/TemplateSorter";
+import { MatrixSorterModel } from "../../../../services/src/models/endpoints/MatrixSorter";
+import { SorterTemplateService } from "../../../../services/src/lib/endpoint/sorter-template/sorter-template.service";
+import { TemplateZonesService } from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
+import { MatrixOutputSorterComponent } from "./matrix-output/matrix-output.component";
+import { WaySorterModel } from "../../../../services/src/models/endpoints/WaySorter";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -49,21 +49,21 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     private templateZonesService: TemplateZonesService,
     public sorterProvider: SorterProvider
   ) { }
-  
+
   ngOnInit() {
-    if(this.sorterProvider.colorSelected){
+    if (this.sorterProvider.colorSelected) {
       console.log(this.sorterProvider.colorSelected);
     }
     console.log(this.sorterProvider.colorSelected);
-    
+
     if (this.activeDefaultData) {
       this.loadDefaultData();
     } else {
       this.loadingSorterTemplateMatrix = true;
       this.loadData();
-      if(this.sorterProvider.colorSelected ){
+      if (this.sorterProvider.colorSelected) {
         console.log(this.sorterProvider.colorSelected);
-        
+
       }
     }
   }
@@ -547,11 +547,11 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
     // loadAvailableColors
     this.colorsSelectors = [
-      {"createdAt":"2019-10-14T10:25:31.000Z","updatedAt":"2019-10-14T10:25:31.000Z","id":1,"name":"Rojo","hex":"#ff0000","available":"1", "userId": null},{"createdAt":"2019-10-14T10:25:44.000Z","updatedAt":"2019-10-14T10:25:44.000Z","id":2,"name":"Amarillo","hex":"#ffff00","available":"1", "userId": null},{"createdAt":"2019-10-14T10:25:53.000Z","updatedAt":"2019-10-14T10:25:53.000Z","id":3,"name":"Verde","hex":"#00ff00","available":"1", "userId": null},{"createdAt":"2019-10-14T10:26:10.000Z","updatedAt":"2019-10-14T10:26:10.000Z","id":4,"name":"Azul","hex":"#0000ff","available":"0", "userId": null}
-      ];
+      { "createdAt": "2019-10-14T10:25:31.000Z", "updatedAt": "2019-10-14T10:25:31.000Z", "id": 1, "name": "Rojo", "hex": "#ff0000", "available": "1", "userId": null }, { "createdAt": "2019-10-14T10:25:44.000Z", "updatedAt": "2019-10-14T10:25:44.000Z", "id": 2, "name": "Amarillo", "hex": "#ffff00", "available": "1", "userId": null }, { "createdAt": "2019-10-14T10:25:53.000Z", "updatedAt": "2019-10-14T10:25:53.000Z", "id": 3, "name": "Verde", "hex": "#00ff00", "available": "1", "userId": null }, { "createdAt": "2019-10-14T10:26:10.000Z", "updatedAt": "2019-10-14T10:26:10.000Z", "id": 4, "name": "Azul", "hex": "#0000ff", "available": "0", "userId": null }
+    ];
 
     // loadActiveTemplate
-    const resActiveTemplate = {"createdAt":"2019-10-10T11:23:21.000Z","updatedAt":"2019-10-10T11:23:21.000Z","id":2,"name":"Not Equals 1","active":true,"equalParts":false,"executions":[{"createdAt":"2019-10-14T11:59:36.000Z","updatedAt":"2019-10-14T11:59:36.000Z","id":4,"status":1}]};
+    const resActiveTemplate = { "createdAt": "2019-10-10T11:23:21.000Z", "updatedAt": "2019-10-10T11:23:21.000Z", "id": 2, "name": "Not Equals 1", "active": true, "equalParts": false, "executions": [{ "createdAt": "2019-10-14T11:59:36.000Z", "updatedAt": "2019-10-14T11:59:36.000Z", "id": 4, "status": 1 }] };
     let templateId = resActiveTemplate.id;
   }
 
@@ -561,8 +561,8 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   colorSelected(data) {
-    console.log('color'+data.colorSelected);
-    
+    console.log('color' + data.colorSelected);
+
     this.sorterProvider.colorSelected = data.color;
     this.resumeProcessForUser = !!data.userId;
   }
@@ -575,7 +575,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
   async sorterOperationStarted() {
     console.log('Tasto Start');
-    
+
     if (!this.sorterProvider.colorSelected) {
       await this.intermediaryService.presentToastError('Selecciona un color para comenzar.');
       return;
@@ -589,11 +589,12 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     if (this.resumeProcessForUser) {
       await this.intermediaryService.presentLoading('Reanudando proceso...');
       // TODO questo el get del color
+      console.log("se muestra el color", this.sorterProvider.infoSorterOutputOperation);
       this.sorterOutputService
         .getGetCurrentProcessWay()
         .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
           console.log(res);
-          
+
           if (res.code === 201) {
             await this.intermediaryService.dismissLoading();
             let currentProcessWay = res.data;
@@ -646,15 +647,21 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
         .postExecuteColor(paramsRequest)
         .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
           console.log(res);
-          
+
+          let lastWarehouse: number;
+          console.log("here22222", this.sorterProvider.infoSorterOutputOperation);
+          if (this.sorterProvider.infoSorterOutputOperation) {
+            console.log("llegue aqui", this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id);
+          }
+
           this.sorterOutputService
-            .getNewProcessWay(idWayToWork)
+            .getNewProcessWay(idWayToWork, lastWarehouse)
             // tslint:disable-next-line:no-shadowed-variable
             .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
               console.log(res);
               // TODO tenemos el primer id warehouse
               this.sorterProvider.id_wareHouse = res.data.warehouse.id;
-              
+
               if (res.code === 201) {
                 await this.intermediaryService.dismissLoading();
                 let newProcessWay = res.data;
@@ -715,11 +722,11 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     );
   }
 
-  getMessageForNotificationActiveProcess() : string {
+  getMessageForNotificationActiveProcess(): string {
     if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser === 1) {
       // console.log(this.sorterProvider.colorActiveForUser);
       // console.log(this.sorterProvider.processActiveForUser);
-      
+
       return 'el usuario ya tiene un proceso de entrada iniciado';
     } else if (this.sorterProvider.colorActiveForUser && this.sorterProvider.processActiveForUser === 2) {
       // console.log(this.sorterProvider.colorActiveForUser);
@@ -732,7 +739,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
   waySelected(data: WaySorterModel.WaySorter) {
     console.log(data);
-    
+
     this.waySelectedToEmptying = data;
   }
 
@@ -742,7 +749,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       .getFirstSorter()
       .subscribe((res: SorterModel.FirstSorter) => {
         console.log(res);
-        
+
         this.loadAvailableColors(res.id);
       }, async (error: HttpRequestModel.Error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar los datos del sorter.';
@@ -759,7 +766,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       .getColorActive()
       .then((res: ExecutionSorterModel.ResponseColorActive) => {
         console.log(res);
-        
+
         if (res.code === 201) {
           this.sorterProvider.colorActiveForUser = res.data.color.hex;
           this.sorterProvider.processActiveForUser = res.data.process;
@@ -784,7 +791,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       .postAvailableColorsByProcess({ processType: 2 })
       .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
         console.log(res);
-        
+
         this.colorsSelectors = res;
         this.loadActiveTemplate(idSorter);
       }, async (error: HttpRequestModel.Error) => {
@@ -802,7 +809,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       .getActiveTemplate()
       .subscribe((res: TemplateSorterModel.Template) => {
         console.log(res);
-        
+
         this.loadMatrixTemplateSorter(idSorter, res.id);
       }, async (error: HttpRequestModel.Error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
@@ -820,7 +827,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       .getMatrixTemplateSorter(idSorter, idTemplate)
       .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
         console.log(res);
-        
+
         this.haveManualEmptying = !!res.find(height => !!height.columns.find(columnWay => !!columnWay.way.manual));
         if (this.haveManualEmptying) {
           this.sorterTemplateMatrix = res;
@@ -858,7 +865,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
           let errorMessage = 'Ha ocurrido un error al intentar finalizar la ejecución actual del sorter par el usuario.';
           if (error.error && error.error.errors) {
             errorMessage = error.error.errors;
-          }await this.intermediaryService.presentToastError(errorMessage);
+          } await this.intermediaryService.presentToastError(errorMessage);
         }
       });
   }

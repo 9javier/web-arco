@@ -611,7 +611,12 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
             if (this.waySelectedToEmptying) {
               idWayToWork = this.waySelectedToEmptying.id;
             }
-            this.sorterOutputService.getNewProcessWay(idWayToWork)
+
+            let lastWarehouse: number;
+            if (this.sorterProvider.infoSorterOutputOperation) {
+              lastWarehouse = this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id;
+            }
+            this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
               .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
                 console.log(res2)
                 if (res2.code === 201) {
@@ -620,36 +625,15 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                   let id = this.sorterProvider.id_wareHouse;
                   console.log(id);
 
-                  await this.sorterOutputService.getNewProcessWayID(this.sorterProvider.id_wareHouse)
-                    .then(async res3 => {
-                      console.log(res3);
-                      let newProcessWay = res3.data;
-                      if (!newProcessWay) {
-                        this.location.back();
-                        await this.intermediaryService.presentWarning('ya no hay mas calles para vaciar',()=>{
-                          this.location.back();
-                        });
-                        await this.intermediaryService.dismissLoading();
-                        return;
-                      }
-                      console.log(newProcessWay);
-
-
-                      this.infoSorterOperation = {
-                        destinyWarehouse: {
-                          id: newProcessWay.warehouse.id,
-                          name: newProcessWay.warehouse.name,
-                          reference: newProcessWay.warehouse.reference
-                        },
-                        wayId: newProcessWay.way.zoneWay.ways.id
-                      }
-                      console.log(this.infoSorterOperation);
-
-                    }).catch(error => {
-                      console.log(error)
-                      this.location.back()
-                    })
-
+                  let newProcessWay = res2.data;
+                  this.infoSorterOperation = {
+                    destinyWarehouse: {
+                      id: newProcessWay.warehouse.id,
+                      name: newProcessWay.warehouse.name,
+                      reference: newProcessWay.warehouse.reference
+                    },
+                    wayId: newProcessWay.way.zoneWay.ways.id
+                  }
 
                   this.focusToInput();
                 } else {
@@ -657,7 +641,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                   this.location.back();
                 }
 
-              })
+              }).catch(error => { this.location.back() })
 
           })
 
