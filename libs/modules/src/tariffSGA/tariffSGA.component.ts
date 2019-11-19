@@ -15,6 +15,7 @@ import { validators } from '../utils/validators';
 
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
   selector: 'suite-tariff',
@@ -35,8 +36,9 @@ export class TariffSGAComponent implements OnInit {
 
   private page: number = 0;
   private limit: number = this.pagerValues[0];
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
 
   displayedColumns: string[] = ['name', 'initDate', 'endDate', 'select'];
   dataSource: any;

@@ -26,6 +26,7 @@ import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 
 @Component({
@@ -43,6 +44,9 @@ export class ProductsComponent implements OnInit {
   /**previous reference to detect changes */
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
+
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+
 
   form:FormGroup = this.formBuilder.group({
     containers: [],
@@ -84,7 +88,7 @@ export class ProductsComponent implements OnInit {
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
   //@ViewChild(MatSort) sort: MatSort;
 
   constructor(
@@ -250,9 +254,12 @@ export class ProductsComponent implements OnInit {
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      let paginator = searchsInContainer.data.pagination;
+      let paginator: any = searchsInContainer.data.pagination;
+
       this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.page - 1;
+      this.paginator.pageIndex = paginator.selectPage - 1;
+      this.paginator.lastPage = paginator.lastPage;
+
     },()=>{
       this.intermediaryService.dismissLoading();
     });
