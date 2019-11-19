@@ -127,7 +127,6 @@ export class IncidencesListComponent implements OnInit {
     }
 
     this.actualPageFilter.page = 0;
-    this.paginator.pageIndex = 0;
 
     this.searchIncidences(this.actualPageFilter);
   }
@@ -138,8 +137,8 @@ export class IncidencesListComponent implements OnInit {
       .subscribe((res: IncidenceModel.ResponseSearch) => {
         this.incidencesService.incidencesQuantityList = res.data.count_search;
         this.paginator.length = res.data.count
-        this.paginator.pageIndex = this.actualPageFilter.page
-        this.paginator.lastPage = Math.ceil(res.data.count/this.actualPageFilter.size)
+        this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.actualPageFilter.page;
+        this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count/this.actualPageFilter.size)
         this.incidencesService.incidencesUnattendedQuantity = res.data.count;
         this.incidencesService.incidencesList = res.data.incidences;
       }, error => {
