@@ -11,7 +11,7 @@ import {TemplateColorsModel} from "../../../../services/src/models/endpoints/Tem
 export class ColorSelectorSorterComponent implements OnInit {
 
   @Input() colors: TemplateColorsModel.AvailableColorsByProcess[] = [];
-  @Input() title: string = 'Organiza los artículos en el sorter. Pulsa un color.';
+  @Input() title: string = null;
   @Output() colorSelected = new EventEmitter();
 
   constructor(

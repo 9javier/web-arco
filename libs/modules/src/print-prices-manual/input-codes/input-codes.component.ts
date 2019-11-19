@@ -5,6 +5,7 @@ import {ScanditProvider} from "../../../../services/src/providers/scandit/scandi
 import {PriceModel, PriceService} from "@suite/services";
 import {PrintModel} from "../../../../services/src/models/endpoints/Print";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-input-codes',
@@ -28,7 +29,8 @@ export class InputCodesComponent implements OnInit {
     private alertController: AlertController,
     private printerService: PrinterService,
     private priceService: PriceService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -66,6 +68,7 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT:
           switch (this.typeTags) {
             case 1:
+              this.audioProvider.playDefaultOk();
               this.printerService.printTagBarcode([dataWrote])
                 .subscribe((res) => {
                   console.log('Printed product tag ... ', res);
@@ -82,11 +85,13 @@ export class InputCodesComponent implements OnInit {
                   if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                     this.presentAlertWarningPriceWithoutTariff(price);
                   } else {
+                    this.audioProvider.playDefaultOk();
                     this.printerService.printTagPriceUsingPrice(price);
                   }
                 });
               break;
             default:
+              this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               break;
           }
@@ -94,6 +99,7 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           switch (this.typeTags) {
             case 1:
+              this.audioProvider.playDefaultError();
               this.presentToast('Escanea un código de caja para reimprimir la etiqueta de caja del producto.', 'danger');
               break;
             case 2:
@@ -103,6 +109,7 @@ export class InputCodesComponent implements OnInit {
                 .then((response) => {
                   let responseData = response.data;
                   if (responseData && responseData.length == 1) {
+                    this.audioProvider.playDefaultOk();
                     let price = responseData[0];
                     if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                       this.presentAlertWarningPriceWithoutTariff(price);
@@ -110,6 +117,7 @@ export class InputCodesComponent implements OnInit {
                       this.printerService.printTagPriceUsingPrice(price);
                     }
                   } else if (responseData && responseData.length > 1) {
+                    this.audioProvider.playDefaultOk();
                     // Request user select size to print
                     let listItems = responseData.map((productPrice, iProductPrice) => {
                       let label = productPrice.rangesNumbers.sizeRangeNumberMin;
@@ -125,17 +133,23 @@ export class InputCodesComponent implements OnInit {
                       }
                     });
                     this.presentAlertSelect(listItems, responseData);
-                  }
-                }, (error) => {
+                  } else {
+                    this.lastCodeScanned = 'start';
+                    this.audioProvider.playDefaultError();
+                    this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                  }                }, (error) => {
                   this.lastCodeScanned = 'start';
+                  this.audioProvider.playDefaultError();
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                 })
                 .catch((error) => {
                   this.lastCodeScanned = 'start';
+                  this.audioProvider.playDefaultError();
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                 });
               break;
             default:
+              this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               break;
           }
@@ -148,6 +162,7 @@ export class InputCodesComponent implements OnInit {
             msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
           }
 
+          this.audioProvider.playDefaultError();
           this.presentToast(msg, 'danger');
           break;
       }
@@ -192,6 +207,7 @@ export class InputCodesComponent implements OnInit {
             if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
               this.presentAlertWarningPriceWithoutTariff(price);
             } else {
+              this.audioProvider.playDefaultOk();
               this.printerService.printTagPriceUsingPrice(price);
             }
           }
@@ -220,6 +236,7 @@ export class InputCodesComponent implements OnInit {
           text: 'Sí',
           handler: () => {
             price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+            this.audioProvider.playDefaultOk();
             this.printerService.printTagPriceUsingPrice(price);
           }
         }

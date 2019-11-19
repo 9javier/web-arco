@@ -137,6 +137,8 @@ export class AppComponent implements OnInit {
 
       // preload audio to sound when incidence success in sorter output-process
       this.audioProvider.preload('incidenceBeep', 'assets/audio/incidence_beep.mp3');
+      this.audioProvider.preload('responseRequestError', 'assets/audio/response_request_error.wav');
+      this.audioProvider.preload('responseRequestOk', 'assets/audio/response_request_ok.wav');
 
       // Initialization of Scandit settings that app will display
       this.scannerConfigurationService.init();

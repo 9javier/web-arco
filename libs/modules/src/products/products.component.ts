@@ -195,7 +195,7 @@ export class ProductsComponent implements OnInit {
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
         limit:page.pageSize,
-        page:flag?page.pageIndex+1:1
+        page:flag?page.pageIndex:1
       });
     });
 
@@ -214,7 +214,6 @@ export class ProductsComponent implements OnInit {
         },1000);
       }else{
         /**reset the paginator to the 0 page */
-        this.paginator.pageIndex = 0;
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
       }
       /**assign the current reference to the previous reference */
@@ -257,7 +256,7 @@ export class ProductsComponent implements OnInit {
       let paginator: any = searchsInContainer.data.pagination;
 
       this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.selectPage - 1;
+      this.paginator.pageIndex = paginator.selectPage;
       this.paginator.lastPage = paginator.lastPage;
 
     },()=>{

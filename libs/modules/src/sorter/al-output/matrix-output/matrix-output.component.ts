@@ -80,7 +80,14 @@ export class MatrixOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column) {
-    this.columnWaySelected = column;
-    this.waySelected.next(this.columnWaySelected.way);
+    let waySelected = null;
+    if (column.way.manual && column.way.qty_products > 0) {
+      this.columnWaySelected = column;
+      waySelected = this.columnWaySelected.way;
+    } else {
+      this.columnWaySelected = null;
+      waySelected = null;
+    }
+    this.waySelected.next(waySelected);
   }
 }

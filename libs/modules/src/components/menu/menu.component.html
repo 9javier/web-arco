@@ -21,6 +21,7 @@
     detail="false" lines="none" class="parent-subitems">
     <ion-icon slot="start" [name]="p.icon"></ion-icon>
     <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
+    <ion-icon slot="end" name="information-circle" *ngIf="p.notification" class="color-notification"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-down" *ngIf="!p.open"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-up" *ngIf="p.open"></ion-icon>
   </ion-item>
