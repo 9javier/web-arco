@@ -35,6 +35,14 @@ export class ListProductsComponent implements OnInit {
           return 'ESCANEADO';
         case 4:
           return 'PREVENTILADO';
+        case 7:
+          return 'PREVERIFICADO';
+        case 8:
+          return 'DEFECTUSOSO';
+        case 9:
+          return 'NO APTO ONLINE';
+        case 10:
+          return 'VERIFICADO';
         default:
           return 'error';
       }
