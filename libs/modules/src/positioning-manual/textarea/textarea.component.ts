@@ -134,8 +134,6 @@ export class TextareaComponent implements OnInit {
     this.inventoryService
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
-        console.log(res);
-
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
           this.audioProvider.playDefaultOk();
@@ -149,24 +147,22 @@ export class TextareaComponent implements OnInit {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
           }
-          this.presentAlert(msgSetText);
+          this.presentToast(msgSetText, 2000, 'success');
           this.processInitiated = false;
         } else if (res.code == 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
-        } else {
-
-          if (res.code === 401) {
-            /** Comprobando si tienes permisos para el forzado */
-            const permission = await this.inventoryService.checkUserPermissions()
-            /** Forzado de empaquetado */
-            if (permission.data) {
-              this.warningToForce(params, res.errors)
-            } else {
-              this.presentAlert(`${res.errors}, El usuario no tiene permisos para realizar el forzado`)
-            }
+        } else if (res.code == 401) {
+          /** Comprobando si tienes permisos para el forzado */
+          const permission = await this.inventoryService.checkUserPermissions();
+          /** Forzado de empaquetado */
+          if (permission.data) {
+            this.warningToForce(params, res.errors);
+          } else {
+            this.presentAlert(res.errors);
+            this.processInitiated = false;
           }
-
+        } else {
           let errorMessage = res.message;
           if (res.errors) {
             if (typeof res.errors === 'string') {
@@ -177,7 +173,7 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          // this.presentToast(errorMessage, 1500, 'danger');
+          this.presentToast(errorMessage, 2000, 'danger');
           this.processInitiated = false;
         }
       }, (error) => {
@@ -192,7 +188,6 @@ export class TextareaComponent implements OnInit {
       });
   }
 
-
   private async warningToForce(params, subHeader) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
@@ -202,6 +197,7 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Cancelar',
           handler: () => {
+            this.presentToast('El producto no se ha ubicado.', 2000, 'danger');
             this.processInitiated = false;
           }
         },
@@ -209,17 +205,16 @@ export class TextareaComponent implements OnInit {
           text: 'Forzar',
           handler: async () => {
             // Consultando si el usuario tiene permisos para forzar
-            const permissions = await this.inventoryService.checkUserPermissions()
+            const permissions = await this.inventoryService.checkUserPermissions();
             if (permissions.data) {
               params.force = true;
               this.storeProductInContainer(params);
               this.processInitiated = false;
             } else {
-              this.alertController.dismiss()
-              this.presentAlert('El usuario no tiene permisos para realizar el forzado')
+              this.alertController.dismiss();
+              this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
+              this.processInitiated = false;
             }
-
-
           }
         }]
     });
