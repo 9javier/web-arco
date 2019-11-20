@@ -201,10 +201,18 @@ export class LoginComponent implements OnInit {
     await alert.present();
   }
 
-  // TODO ERROR MODAL
+  
   ionViewWillEnter() {
-    // this.modalController.dismiss();
+
+    this.modalController.dismiss().catch(error=>{
+      console.log(error);
+      return;
+      
+    })
+    
+    
   }
+  
   hide() {
     if (this.platform.is('android') || this.platform.is('ios')) {
       const logo: HTMLElement = document.getElementById('logo');
