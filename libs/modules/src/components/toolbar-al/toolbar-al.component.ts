@@ -2,8 +2,9 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Router} from "@angular/router";
 import {ToolbarProvider} from "../../../../services/src/providers/toolbar/toolbar.provider";
 import {ActionToolbarModel} from "../../../../services/src/models/endpoints/ActionToolbar";
-import {PopoverController} from "@ionic/angular";
+import {PopoverController, Platform} from "@ionic/angular";
 import {PopoverMenuToolbarComponent} from "../popover-menu-toolbar/popover-menu-toolbar.component";
+import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.service';
 
 @Component({
   selector: 'toolbar',
@@ -16,17 +17,25 @@ export class ToolbarAlComponent implements OnInit {
   @Output() windowResize = new EventEmitter();
   @Output() toggleSideMenuSga = new EventEmitter();
   @Output() toggleSideMenuAl = new EventEmitter();
-
+  
   public currentPage: string = 'Registro horario';
   public optionsActions: ActionToolbarModel.ActionToolbar[] = [];
-
+  color: string
+  isAndroid: boolean;
   constructor(
     private router: Router,
     private popoverController: PopoverController,
-    private toolbarProvider: ToolbarProvider
+    private toolbarProvider: ToolbarProvider,
+    private keyboard: KeyboardService,
+    private plt: Platform
   ) { }
 
   ngOnInit() {
+    this.color = 'danger'
+    this.keyboard.disabled()
+
+    this.isAndroid = this.plt.is('android');
+
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
     });
@@ -66,5 +75,18 @@ export class ToolbarAlComponent implements OnInit {
     });
 
     await popover.present();
+  }
+
+
+  onActiveKeyboard() {
+    const state = this.keyboard.isEneabled();
+    console.log(state)
+    if (state === true) {
+      this.keyboard.disabled()
+      this.color = 'danger'
+    } else {
+      this.keyboard.eneabled()
+      this.color = 'success'
+    }
   }
 }
