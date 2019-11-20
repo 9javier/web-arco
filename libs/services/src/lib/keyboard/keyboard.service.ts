@@ -1,37 +1,59 @@
 import { Injectable } from '@angular/core';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Subscription } from 'rxjs';
-
+/**
+ * @author Daniel Salazar
+ * @type servicio
+ * @description Servicio para inhabilitar el teclado en la version movil AL en el reetiquetado
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class KeyboardService {
-  private $event: Subscription;
+  private event;
   private state: boolean
+  input: HTMLElement;
   constructor(private keyboard: Keyboard) { 
     this.state = false
-    console.log(this.keyboard.isVisible)
+    
   }
 
   disabled() {
     this.state = false;
-    this.keyboard.hide()
-    this.$event = this.keyboard.onKeyboardWillShow().subscribe(resp => {
-      // this.ke
-      // console.log('onKeyboardWillShow',resp);
-      // console.log(resp.currentTarget.close());
-      this.keyboard.hide();
-    }); 
+    window.addEventListener('focusin',this.disabledKeyboard, true)
+
   }
 
   eneabled() {
+    window.removeEventListener('focusin',this.disabledKeyboard,true);
     this.state = true;
-    this.$event.unsubscribe();
-    this.keyboard.show()
+    if(this.input) {
+      this.input.focus();
+      this.keyboard.show();
+    }
   }
 
   isEneabled() {
     return this.state;
+  }
+  
+
+  private disabledKeyboard(ev) {
+    console.log('ev');
+    const id = document.activeElement.id;
+    this.input = document.getElementById(id);
+    console.log('input', this.input);
+    if(this.input !== null) {
+      this.input.blur();
+      this.input.setAttribute('readonly','');
+    }
+    setTimeout(()=> {
+      if(this.input !== null) {
+        console.log('remove readonly');
+        this.input.removeAttribute('readonly');
+      }
+    
+    },500)
   }
   
 

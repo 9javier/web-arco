@@ -31,8 +31,11 @@ export class ToolbarAlComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+
     this.color = 'danger'
-    this.keyboard.disabled()
+    if(this.plt.is('android')) {
+      this.keyboard.disabled()
+    }
 
     this.isAndroid = this.plt.is('android');
 
@@ -80,7 +83,6 @@ export class ToolbarAlComponent implements OnInit {
 
   onActiveKeyboard() {
     const state = this.keyboard.isEneabled();
-    console.log(state)
     if (state === true) {
       this.keyboard.disabled()
       this.color = 'danger'
