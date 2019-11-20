@@ -40,7 +40,7 @@ export class MenuComponent implements OnInit {
   }
 
   isNewTariff: boolean;
-  versionUpdate : any;;
+  versionUpdate : any;
 
   private app = app;
 
@@ -319,6 +319,7 @@ export class MenuComponent implements OnInit {
       open: false,
       type: 'wrapper',
       icon: 'logo-usd',
+      notification: this.isNewTariff,
       children: [
         {
           title: 'Tarifas',
@@ -675,6 +676,7 @@ export class MenuComponent implements OnInit {
       /**save the data and format the dates */
       this.alPages.forEach((item, i) => {
         if ((<any>item).id == "tarifas"){
+          (<any>item).notification = tariff['data'];
           (<any>item).children.forEach((child, j) => {
             if ((<any>child).id == "tariff-al"){
               (<any>child).notification = tariff['data'];

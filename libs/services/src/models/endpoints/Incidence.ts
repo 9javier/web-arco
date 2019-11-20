@@ -71,7 +71,8 @@ export namespace IncidenceModel {
     data: {
       count: number,
       count_search: number,
-      incidences: Incidence[]
+      incidences: Incidence[],
+      pagination?: any
     };
     message: string;
     code: number;

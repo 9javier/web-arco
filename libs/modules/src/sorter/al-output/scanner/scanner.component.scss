@@ -61,27 +61,51 @@ div.content {
     position: absolute;
     top: 66px;
     width: 100%;
-    height: 84px;
+    height: 80px;
     color: var(--ion-color-primary);
     background-color: var(--ion-color-white-tint);
     font-size: 16px;
     margin: 0;
-    padding: 18px 24px;
+    padding: 16px 16px 14px;
     div.store {
       line-height: 20px;
       margin: 0;
       padding: 0;
-      span {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      span.store {
         color: var(--ion-color-store-ok);
         font-weight: bold;
         margin: 0;
         padding: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 3;
+        overflow: hidden;
+        p {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin: 0;
+        }
       }
-      span.wrong-store {
+      span.store.wrong-store {
         color: var(--ion-color-store-wrong);
       }
+      span.model {
+        font-weight: 500;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: hidden;
+        p {
+          text-align: end;
+          margin: 0;
+        }
+      }
     }
-    div.model-info {
+    div.product-info {
       line-height: 20px;
       margin: 8px 0 0 0;
       padding: 0;

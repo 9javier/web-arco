@@ -57,10 +57,13 @@ export class TariffService {
   getTariffIfSoftdelete() {
     return this.http.get<{
       data: {
-        name: string;
-        activeFrom: string;
-        activeTill: string;
-      }[]
+        results: {
+          name: string;
+          activeFrom: string;
+          activeTill: string;
+        }[],
+        pagination?: any
+      }
     }>(this.getTariffIfSoftdeleteSGA, {}).pipe(map(response => {
       return response;
     })).pipe(map(response => {

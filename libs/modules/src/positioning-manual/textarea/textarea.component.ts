@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {Observable} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService} from "@suite/services";
-import {AlertController, ToastController} from "@ionic/angular";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import { Component, OnInit } from '@angular/core';
+import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
+import { Observable } from "rxjs";
+import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
+import { AlertController, ToastController } from "@ionic/angular";
+import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-textarea',
@@ -35,12 +36,13 @@ export class TextareaComponent implements OnInit {
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
     private intermediaryService: IntermediaryService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
-    },500);
+    }, 500);
   }
 
   async ngOnInit() {
@@ -75,6 +77,7 @@ export class TextareaComponent implements OnInit {
 
       this.processInitiated = true;
       if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+        this.audioProvider.playDefaultOk();
         this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
         this.containerReference = dataWrited;
         this.packingReference = null;
@@ -100,6 +103,7 @@ export class TextareaComponent implements OnInit {
         this.inputPositioning = null;
         this.errorMessage = null;
       } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.JAIL)) {
+        this.audioProvider.playDefaultOk();
         this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
         this.containerReference = null;
         this.packingReference = dataWrited;
@@ -108,10 +112,12 @@ export class TextareaComponent implements OnInit {
         this.errorMessage = null;
         this.processInitiated = false;
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
+        this.audioProvider.playDefaultError();
         this.inputPositioning = null;
         this.errorMessage = '¡Referencia del contenedor/embalaje errónea!';
         this.processInitiated = false;
       } else {
+        this.audioProvider.playDefaultError();
         this.inputPositioning = null;
         if (this.isStoreUser) {
           this.errorMessage = '¡Referencia del producto errónea!';
@@ -127,11 +133,12 @@ export class TextareaComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.inventoryService
       .postStore(params)
-      .then((res: InventoryModel.ResponseStore) => {
+      .then(async (res: InventoryModel.ResponseStore) => {
         console.log(res);
-        
+
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
+          this.audioProvider.playDefaultOk();
           let msgSetText = '';
           if (this.isStoreUser) {
             msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
@@ -145,17 +152,24 @@ export class TextareaComponent implements OnInit {
           this.presentAlert(msgSetText);
           this.processInitiated = false;
         } else if (res.code == 428) {
+          this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
         } else {
 
-          if( res.code === 401){
+          if (res.code === 401) {
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions()
             /** Forzado de empaquetado */
-            this.warningToForce(params, res.errors)
+            if (permission.data) {
+              this.warningToForce(params, res.errors)
+            } else {
+              this.presentAlert(`${res.errors}, El usuario no tiene permisos para realizar el forzado`)
+            }
           }
-          
+
           let errorMessage = res.message;
           if (res.errors) {
-            if (typeof res.errors == 'string') {
+            if (typeof res.errors === 'string') {
               errorMessage = res.errors;
             } else {
               if (res.errors.productReference && res.errors.productReference.message) {
@@ -167,9 +181,8 @@ export class TextareaComponent implements OnInit {
           this.processInitiated = false;
         }
       }, (error) => {
-        console.log(error);
-
         this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
         if (error.error.code == 428) {
           this.showWarningToForce(params);
         } else {
@@ -178,9 +191,9 @@ export class TextareaComponent implements OnInit {
         }
       });
   }
-  
 
-private async warningToForce(params,subHeader) {
+
+  private async warningToForce(params, subHeader) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
       subHeader,
@@ -202,10 +215,10 @@ private async warningToForce(params,subHeader) {
               this.storeProductInContainer(params);
               this.processInitiated = false;
             } else {
-              this. alertController.dismiss()
+              this.alertController.dismiss()
               this.presentAlert('El usuario no tiene permisos para realizar el forzado')
             }
-            
+
 
           }
         }]
@@ -220,7 +233,7 @@ private async warningToForce(params,subHeader) {
       subHeader,
       buttons: ['OK']
     });
-  
+
     await alert.present();
   }
 
@@ -261,7 +274,7 @@ private async warningToForce(params,subHeader) {
       .then(() => {
         setTimeout(() => {
           document.getElementById('input-ta').focus();
-        },500);
+        }, 500);
       });
   }
 }

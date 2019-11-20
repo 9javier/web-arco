@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
@@ -23,6 +23,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
   selector: 'suite-prices',
@@ -40,6 +41,7 @@ export class PricesComponent implements OnInit {
   pagerValues: Array<number> = [50, 100, 500];
 
   page: number = 0;
+  public itemIdSelected : any = [];
 
   limit: number = this.pagerValues[0];
 
@@ -124,7 +126,8 @@ export class PricesComponent implements OnInit {
     private warehousesService: WarehousesService,
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private cd : ChangeDetectorRef
   ) {
 
   }
@@ -195,6 +198,9 @@ export class PricesComponent implements OnInit {
    */
   selectAll(event): void {
     let value = event.detail.checked;
+    for (let index = 0; index < this.prices.length; index++) {
+      this.itemSelected(this.prices[index].id);
+    }
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
     });
@@ -209,12 +215,35 @@ export class PricesComponent implements OnInit {
       return status.id == id
     }).name;
   }
+
+  // Item seleccionados
+  itemSelected(item){
+    let aux =  this.itemIdSelected.findIndex( id => item === id );
+    if(aux === -1) this.itemIdSelected.push(item);
+    if(aux !== -1) this.itemIdSelected.splice(aux,1);
+  }
+
+  changeStatusImpress(){
+    this.selectedForm.get('selector').setValue(false);
+    this.cd.detectChanges();
+    this.itemIdSelected.map( (itemF,idx) =>{
+      for (let index = 0; index < this.prices.length; index++) {
+       if(itemF == this.prices[index].id) {
+        this.prices[index].status = 4;
+        break;
+       }
+      }
+    })
+
+    this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+  }
   /**
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
   async printPrices(items, warehouseId: number) {
-    this.initSelectForm(this.prices);
+    //console.log("dame los items", items);
+    //this.initSelectForm(this.prices);
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -240,6 +269,7 @@ export class PricesComponent implements OnInit {
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
       this.initSelectForm(this.prices);
+      this.changeStatusImpress();
       //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
@@ -328,7 +358,6 @@ export class PricesComponent implements OnInit {
    */
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
-    parameters.warehouseId = 49;
     this.priceService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
       this.prices = prices.results;
