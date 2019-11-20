@@ -66,11 +66,11 @@ export class LoginComponent implements OnInit {
     // Check if is mobile app and get appVersionNumber
   }
 
-  verifyNewVersion(){
+  verifyNewVersion() {
     if (window.cordova) {
       this.isMobileApp = true;
       (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
-        
+
         this.versionNumber = versionNumber;
         this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {
           if (response && response.code == 200) {
@@ -80,23 +80,22 @@ export class LoginComponent implements OnInit {
               if (resultCompare === 1) {
                 console.log('VERSION MAYOR');
                 this.isNewVersion = true;
-                this.loginService.availableVersion.next({status:true,version:response.data['majorRelease']});
-              }else{
-                this.loginService.availableVersion.next({status:false,version:0});                }
+                this.loginService.availableVersion.next({ status: true, version: response.data['majorRelease'] });
+              } else {
+                this.loginService.availableVersion.next({ status: false, version: 0 });
+              }
             }
           }
         }, (error) => {
-          alert('inside-E1');
           console.log("Error::getVersion", error)
         }).catch((error) => {
-          alert('inside-E2');
           console.log("Error::getVersion", error)
         });
 
       });
     } else {
       this.isMobileApp = false;
-   }
+    }
   }
 
   /**
