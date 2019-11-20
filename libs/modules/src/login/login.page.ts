@@ -201,8 +201,9 @@ export class LoginComponent implements OnInit {
     await alert.present();
   }
 
+  // TODO ERROR MODAL
   ionViewWillEnter() {
-    this.modalController.dismiss();
+    // this.modalController.dismiss();
   }
   hide() {
     if (this.platform.is('android') || this.platform.is('ios')) {
