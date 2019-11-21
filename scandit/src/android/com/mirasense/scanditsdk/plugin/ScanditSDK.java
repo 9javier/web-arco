@@ -47,6 +47,7 @@ import android.widget.TextView;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.HashMap;
@@ -126,6 +127,15 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG = "matrixPickingStoresHideInfoProductDialog";
   private static final String SET_TIMEOUT = "setTimeout";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
+
+  // REGISTER HERE ACTIONS THAT OPEN THE SCANDIT CAMERA TO REQUEST PERMISSION TO USE CAMERA IF IT IS NECESSARY
+  private String[] actionsToRequestCameraPermission = {
+    MATRIX_SIMPLE,
+    MATRIX_PICKING_STORES,
+    MATRIX_PRINT_TAGS,
+    MATRIX_PRODUCT_INFO,
+    SWITCH_TO_IONIC
+  };
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
 
@@ -219,7 +229,7 @@ public class ScanditSDK extends CordovaPlugin {
     }
 
     // check if we have to request camera permission before executing commands.
-    if (!mRequestingCameraPermission && !isQueuedCommand && (action.equals(SHOW_COMMAND) || action.equals("matrixWithData") || action.equals("matrix_bubble") || action.equals(MATRIX_SIMPLE))) {
+    if (!mRequestingCameraPermission && !isQueuedCommand && (action.equals(SHOW_COMMAND) || action.equals("matrixWithData") || action.equals("matrix_bubble") || Arrays.asList(actionsToRequestCameraPermission).contains(action))) {
       mRequestingCameraPermission =
         !PermissionHelper.hasPermission(this, Manifest.permission.CAMERA);
       if (mRequestingCameraPermission) {
