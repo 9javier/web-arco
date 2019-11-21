@@ -1,6 +1,11 @@
 <div class="main-element">
   <h2 class="title-table">Operaciones de Envío</h2>
 
+  <div class="toggle">
+    <span>Expandir</span>
+    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
+  </div>
+
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
     <mat-grid-tile class="checkbox" colspan="1">
       <div class="tile-value left-value">
