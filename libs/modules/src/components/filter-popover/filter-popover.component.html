@@ -1,8 +1,21 @@
 <div class="popover-filters main-element">
-  <mat-form-field appearance="outline" class="search">
+  <mat-form-field appearance="outline" class="search" *ngIf="filterType == 'search'">
     <mat-label>{{title}}</mat-label>
     <input matInput placeholder="Buscar..." [(ngModel)]="typedFilter" (ngModelChange)="searchInFilterList($event)">
   </mat-form-field>
+
+  <div *ngIf="filterType == 'slider'">
+    <ion-item>
+      <ion-range *ngIf="getMin() != getMax()" #slider dualKnobs="true" pin [min]="getMin()" [max]="getMax()" [value]="getMax()" (ionChange)="updateSelection($event)">
+        <ion-label slot="start">{{getCurrentMin(slider)}}</ion-label>
+        <ion-label slot="end">{{getCurrentMax(slider)}}</ion-label>
+      </ion-range>
+      <ion-range *ngIf="getMin() == getMax()" disabled="true" #slider dualKnobs="true" pin [min]="getMin()" [max]="getMax()" [value]="getMax()" (ionChange)="updateSelection($event)">
+        <ion-label slot="start">{{getCurrentMin(slider)}}</ion-label>
+        <ion-label slot="end">{{getCurrentMax(slider)}}</ion-label>
+      </ion-range>
+    </ion-item>
+  </div>
 
   <div class="scroll-list">
     <div *ngFor="let item of getOrderedList()">

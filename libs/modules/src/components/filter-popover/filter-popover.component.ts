@@ -10,6 +10,7 @@ import {PopoverController} from "@ionic/angular";
 })
 export class FilterPopoverComponent implements OnInit {
 
+  public filterType: string = '';
   public title: string = '';
   public listItems: Array<any> = new Array<any>();
   private listItemsFinal: Array<any> = new Array<any>();
@@ -73,6 +74,7 @@ export class FilterPopoverComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.filterType = this.filterPopoverProvider.filterType;
     this.title = this.filterPopoverProvider.title;
     this.listItems = this.filterPopoverProvider.listItems;
     this.checkAllSelected();
