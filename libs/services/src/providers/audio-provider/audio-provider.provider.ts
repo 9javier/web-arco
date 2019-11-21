@@ -68,4 +68,12 @@ export class AudioProvider {
       });
     }
   }
+
+  playDefaultError() {
+    this.play('responseRequestError');
+  }
+
+  playDefaultOk() {
+    this.play('responseRequestOk');
+  }
 }

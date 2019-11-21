@@ -1,0 +1,42 @@
+table {
+    width: 100%;
+  }
+
+  div.table-container {
+    table.table-incidences {
+        width: 100%;
+        tr.incidence-row:not(.incidence-expanded-row):hover {
+            background: #EEEEEE;
+        }
+        tr.incidence-row:not(.incidence-expanded-row):active {
+            background: #efefef;
+        }
+        .incidence-row td {
+            border-bottom-width: 0;
+        }
+        tr.incidence-detail-row {
+            height: 0px !important;
+        }
+        td.incidence-column {
+            padding: 0 0 0 64px;
+            .incidence-detail {
+                overflow: hidden;
+                display: flex;
+            }
+            .example-element-description {
+                padding: 0 10px;
+            }
+            .example-element-description-attribution {
+                opacity: 0.5;
+            }
+        }
+        td.btn-attend {
+            text-align: end;
+            p.time-text {
+                font-size: 0.8em;
+                margin-top: 0;
+                color: var(--ion-color-secondary-shade);
+            }
+        }
+    }
+}

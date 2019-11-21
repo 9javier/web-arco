@@ -121,6 +121,26 @@ export * from './models/endpoints/user-time.model';
 export * from './lib/endpoint/agency/agency.service';
 export * from './models/endpoints/agency.model';
 
+/**Auditorias */
+export * from './lib/endpoint/audits/audits.service';
+//export * from './models/endpoints/audits.model';
+
 /**Global variables */
  export * from './lib/endpoint/global-variable/global-variable.service';
  export * from './models/endpoints/global-variable.model';
+
+ /**Postal Codes */
+// export * from './lib/endpoint/postal-code/postal-code.service';
+export * from './models/endpoints/postal-code.model';
+
+ /**Province  */
+ export * from './lib/endpoint/province/province.service';
+ export * from './models/endpoints/province.model';
+ 
+  /**Countries */
+export * from './lib/endpoint/country/country.service';
+export * from './models/endpoints/country.model';
+
+ /**Regions */
+ export * from './lib/endpoint/region/region.service';
+ export * from './models/endpoints/regions.model';

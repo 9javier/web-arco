@@ -9,6 +9,7 @@ import {WorkwaveModel} from "../../models/endpoints/Workwaves";
 export class PickingParametrizationProvider {
 
   private _loadingListGroupsWarehouses: number = 0;
+  
   get loadingListGroupsWarehouses(): number {
     return this._loadingListGroupsWarehouses;
   }
@@ -82,6 +83,28 @@ export class PickingParametrizationProvider {
   }
   set listTeamAssignations(value: Array<WorkwaveModel.TeamAssignations>) {
     this._listTeamAssignations = value;
+  }
+
+
+  // Online-Stores section
+
+  private _listRequestOrdersOnlineStore: WorkwaveModel.MatchLineRequestOnlineStore[] = [];
+  get listRequestOrdersOnlineStore(): WorkwaveModel.MatchLineRequestOnlineStore[] {
+    return this._listRequestOrdersOnlineStore;
+  }
+  set listRequestOrdersOnlineStore(value: WorkwaveModel.MatchLineRequestOnlineStore[]) {
+    this._listRequestOrdersOnlineStore = value;
+  }
+
+  private _loadingListRequestOrdersOnlineStore: number = 0;
+  get loadingListRequestOrdersOnlineStore(): number {
+    return this._loadingListRequestOrdersOnlineStore;
+  }
+  set loadingListRequestOrdersOnlineStore(value: number) {
+    if (value < 0) {
+      value = 0;
+    }
+    this._loadingListRequestOrdersOnlineStore = value;
   }
 
 }

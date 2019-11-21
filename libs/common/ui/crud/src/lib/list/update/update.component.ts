@@ -83,9 +83,9 @@ export class UpdateComponent implements OnInit {
     this.routePath = this.navParams.data.routePath;
     let id = this.navParams.data.id;
     let row = this.navParams.data.row;
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/jails' || this.routePath == '/pallets' || this.routePath == '/groups') {
+    if (this.routePath === '/roles' || this.routePath === '/users' || this.routePath === '/warehouses' || this.routePath === '/jails' || this.routePath === '/pallets' || this.routePath === '/groups') {
       this.getUser(id);
-    } else if (this.routePath == '/halls' || this.routePath == "/locations") {
+    } else if (this.routePath === '/halls' || this.routePath === "/locations") {
       this.getHalls(row);
     }
 
@@ -184,9 +184,9 @@ export class UpdateComponent implements OnInit {
 
     this.presentLoading();
 
-    if (this.routePath == '/roles' || this.routePath == '/users' || this.routePath == '/warehouses' || this.routePath == '/groups' || this.routePath == '/jails' || this.routePath == '/pallets') {
+    if (this.routePath === '/roles' || this.routePath === '/users' || this.routePath === '/warehouses' || this.routePath === '/groups' || this.routePath === '/jails' || this.routePath === '/pallets') {
       this.postUpdate(dataToUpdate);
-    } else if (this.routePath == '/halls' || this.routePath == '/locations') {
+    } else if (this.routePath === '/halls' || this.routePath === '/locations') {
       this.postUpdateHall(dataToUpdate);
     }
   }

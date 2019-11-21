@@ -31,6 +31,13 @@ export * from './groups/groups.module';
 export * from './products/products.component';
 export * from './products/products.module';
 
+export * from './audits/audits.component';
+export * from './audits/audits.module';
+
+export * from './audits-mobile/audits-mobile.component';
+export * from './audits-mobile/audits-mobile.module';
+
+
 // Incidences Button
 export * from './incidences-button/incidences-button.component';
 export * from './incidences-button/incidences-button.module';
@@ -229,3 +236,19 @@ export * from './components/toolbar-al/toolbar-al.module';
 /** Popover Menu Toolbar */
 export * from './components/popover-menu-toolbar/popover-menu-toolbar.component';
 export * from './components/popover-menu-toolbar/popover-menu-toolbar.module';
+
+// Workwave Template Online-Store Requests
+export * from './workwave-template-online-store/workwave-template-online-store.component';
+export * from './workwave-template-online-store/workwave-template-online-store.module';
+
+// Products verification for online/store requests pickings
+export * from './picking-online-store-verify/picking-online-store-verify.component';
+export * from './picking-online-store-verify/picking-online-store-verify.module';
+
+// Scanner item for manual input or laser scanners
+export * from './components/scanner-manual/scanner-manual.component';
+export * from './components/scanner-manual/scanner-manual.module';
+
+// /**Regions */
+export  * from './regions/regions.component';
+export  * from './regions/regions.module';

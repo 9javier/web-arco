@@ -1,5 +1,9 @@
 <ion-content>
-  <sorter-color-selector [colors]="colorsSelectors" (colorSelected)="colorSelected($event)"></sorter-color-selector>
+  <sorter-color-selector
+    [colors]="colorsSelectors"
+    [title]="'Organiza los artículos del sorter. Pulsa un color.'"
+    (colorSelected)="colorSelected($event)">
+  </sorter-color-selector>
 
   <div *ngIf="loadingSorterTemplateMatrix" class="loader-template-matrix">
     <div>

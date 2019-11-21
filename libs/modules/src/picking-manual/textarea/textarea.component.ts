@@ -11,6 +11,7 @@ import {PickingProvider} from "../../../../services/src/providers/picking/pickin
 import {Location} from "@angular/common";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-textarea',
@@ -59,7 +60,8 @@ export class TextareaComponent implements OnInit {
     private inventoryService: InventoryService,
     private pickingProvider: PickingProvider,
     private scanditProvider: ScanditProvider,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
@@ -139,6 +141,7 @@ export class TextareaComponent implements OnInit {
                     if (res.code == 200 || res.code == 201) {
                       if(res.data.packingStatus == 2){
                         this.processInitiated = true;
+                        this.audioProvider.playDefaultOk();
                         this.inputPicking = null;
                         this.focusToInput();
                         this.jailReference = dataWrited;
@@ -151,6 +154,7 @@ export class TextareaComponent implements OnInit {
                         this.showTextStartScanPacking(false, this.typePacking, '');
                       } else if(res.data.packingStatus == 3){
                         this.processInitiated = false;
+                        this.audioProvider.playDefaultOk();
                         this.inputPicking = null;
                         this.focusToInput();
                         this.jailReference = null;
@@ -161,17 +165,20 @@ export class TextareaComponent implements OnInit {
                         this.showTextStartScanPacking(true, this.typePacking, '');
                       } else {
                         this.processInitiated = false;
+                        this.audioProvider.playDefaultError();
                         this.inputPicking = null;
                         this.focusToInput();
                         this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
                       }
                     } else {
                       this.processInitiated = false;
+                      this.audioProvider.playDefaultError();
                       this.inputPicking = null;
                       this.focusToInput();
                       this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
                     }
                   } else {
+                    this.audioProvider.playDefaultOk();
                     this.processInitiated = false;
                     this.inputPicking = null;
                     this.focusToInput();
@@ -185,6 +192,7 @@ export class TextareaComponent implements OnInit {
                 }, (error) => {
                   this.inputPicking = null;
                   this.intermediaryService.dismissLoading();
+                  this.audioProvider.playDefaultError();
                   if (error.error.code == 404) {
                     this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
                   } else {
@@ -196,16 +204,19 @@ export class TextareaComponent implements OnInit {
                 });
             } else {
               this.inputPicking = null;
+              this.audioProvider.playDefaultError();
               this.focusToInput();
               this.presentToast(this.literalsJailPallet[this.typePacking].wrong_packing, 2000, this.pickingProvider.colorsMessage.error.name);
             }
           } else {
             this.inputPicking = null;
+            this.audioProvider.playDefaultError();
             this.focusToInput();
             this.presentToast(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, 2000, this.pickingProvider.colorsMessage.error.name);
           }
         } else if (this.jailReference && this.jailReference != dataWrited) {
           this.inputPicking = null;
+          this.audioProvider.playDefaultError();
           this.focusToInput();
           this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
@@ -216,6 +227,7 @@ export class TextareaComponent implements OnInit {
             packingReference: dataWrited
           })
             .subscribe((res) => {
+              this.audioProvider.playDefaultOk();
               this.intermediaryService.dismissLoading();
               this.inputPicking = null;
               this.presentToast('Proceso finalizado correctamente.', 1500, this.pickingProvider.colorsMessage.success.name);
@@ -227,6 +239,7 @@ export class TextareaComponent implements OnInit {
               }, 1.5 * 1000);
             }, (error) => {
               this.intermediaryService.dismissLoading();
+              this.audioProvider.playDefaultError();
               this.inputPicking = null;
               this.focusToInput();
               this.clearTimeoutCleanLastCodeScanned();
@@ -241,6 +254,7 @@ export class TextareaComponent implements OnInit {
         }
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
         if (!this.processInitiated) {
+          this.audioProvider.playDefaultError();
           this.inputPicking = null;
           this.focusToInput();
           this.presentToast(this.literalsJailPallet[this.typePacking].scan_before_products, 2000, this.pickingProvider.colorsMessage.error.name);
@@ -256,6 +270,7 @@ export class TextareaComponent implements OnInit {
             let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
               this.intermediaryService.dismissLoading();
               if (res.code == 200 || res.code == 201) {
+                this.audioProvider.playDefaultOk();
                 this.listProducts = res.data.shoePickingPending;
                 this.productsScanned.push(dataWrited);
                 this.inputPicking = null;
@@ -272,6 +287,7 @@ export class TextareaComponent implements OnInit {
                   }, 2 * 1000);
                 }
               } else {
+                this.audioProvider.playDefaultError();
                 this.inputPicking = null;
                 this.focusToInput();
                 this.presentToast(res.errors, 2000, this.pickingProvider.colorsMessage.error.name);
@@ -294,6 +310,7 @@ export class TextareaComponent implements OnInit {
               }
             };
             let subscribeError = (error) => {
+              this.audioProvider.playDefaultError();
               this.intermediaryService.dismissLoading();
               this.inputPicking = null;
               this.focusToInput();
@@ -318,11 +335,14 @@ export class TextareaComponent implements OnInit {
 
             if (this.typePicking == 1) {
               this.inventoryService.postPickingDirect(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
-            } else {
+            } else if (this.typePicking == 2) {
               this.inventoryService.postPickingConsolidated(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
+            } else {
+              this.inventoryService.postPickingOnlineStore(picking).then(subscribeResponse, subscribeError).catch(subscribeError);
             }
           } else {
             this.inputPicking = null;
+            this.audioProvider.playDefaultOk();
             this.focusToInput();
             this.showNexProductToScan(false);
             this.showTextEndScanPacking(true, this.typePacking, this.jailReference);
@@ -337,6 +357,7 @@ export class TextareaComponent implements OnInit {
             .subscribe((res: InventoryModel.ResponseCheckContainer) => {
               this.intermediaryService.dismissLoading();
               if (res.code == 200) {
+                this.audioProvider.playDefaultOk();
                 let productNotFoundId = this.nexProduct.product.id;
                 this.putProductNotFound(this.pickingId, productNotFoundId)
                   .subscribe((res: ShoesPickingModel.ResponseProductNotFound) => {
@@ -363,20 +384,24 @@ export class TextareaComponent implements OnInit {
                           }
                         });
                     } else {
+                      this.audioProvider.playDefaultError();
                       this.focusToInput();
                       this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
                     }
                   }, error => {
+                    this.audioProvider.playDefaultError();
                     this.focusToInput();
                     this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
                   });
               } else {
+                this.audioProvider.playDefaultError();
                 this.focusToInput();
                 this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
               }
             }, (error) => {
               this.intermediaryService.dismissLoading();
               console.error('Error::Subscribe::CheckContainerProduct -> ', error);
+              this.audioProvider.playDefaultError();
               this.focusToInput();
               this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
             }, () => {
@@ -384,6 +409,7 @@ export class TextareaComponent implements OnInit {
             });
         } else {
           this.focusToInput();
+          this.audioProvider.playDefaultError();
           this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
         }
       } else {
@@ -392,6 +418,7 @@ export class TextareaComponent implements OnInit {
           this.focusToInput();
         } else {
           this.inputPicking = null;
+          this.audioProvider.playDefaultError();
           this.focusToInput();
           this.presentToast('Referencia errónea', 1500, this.pickingProvider.colorsMessage.error.name);
         }
@@ -445,18 +472,14 @@ export class TextareaComponent implements OnInit {
 
   private showTextStartScanPacking(show: boolean, typePacking: number, packingReference?: string) {
     if (show) {
-      if (typePacking == 1) {
-        if (packingReference) {
+      if (packingReference) {
+        if (typePacking == 1) {
           this.scanJail = "Escanea la Jaula " + packingReference + " para continuar con el proceso de picking ya iniciado.";
         } else {
-          this.scanJail = "Escanea una Jaula para dar comienzo al proceso de picking.";
+          this.scanJail = "Escanea el Pallet " + packingReference + " para continuar con el proceso de picking ya iniciado.";
         }
       } else {
-        if (packingReference) {
-          this.scanJail = "Escanea el Pallet " + packingReference + " para continuar con el proceso de picking ya iniciado.";
-        } else {
-          this.scanJail = "Escanea un Pallet para dar comienzo al proceso de picking.";
-        }
+        this.scanJail = "Escanea un embalaje para dar comienzo al proceso de picking.";
       }
     } else {
       this.scanJail = null;
@@ -500,6 +523,7 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Cancelar',
           handler: () => {
+            this.audioProvider.playDefaultError();
             this.scanContainerToNotFound = null;
             this.dataToWrite = "PRODUCTO";
           }
@@ -507,6 +531,7 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Reportar',
           handler: () => {
+            this.audioProvider.playDefaultOk();
             this.scanContainerToNotFound = "Escanea la ubicación que estás revisando para comprobar que sea la correcta. Escanea el producto si lo encuentra.";
             this.dataToWrite = "UBICACIÓN";
           }

@@ -158,6 +158,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'audits',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/audits/audits.module#AuditsModule',
+    data: {
+      name: 'Auditorias'
+    }
+  },
+  {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule',
@@ -178,7 +186,7 @@ const routes: Routes = [
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: '@suite/common-modules#LocationsModule',
+    loadChildren: '../../../../libs/modules/src/locations/locations.module#LocationsModule',
     data: {
       name: 'Almacenes'
     }
@@ -211,6 +219,14 @@ const routes: Routes = [
     path: 'workwave-template-rebuild',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/workwave-template-rebuild/workwave-template-rebuild.module#WorkwaveTemplateRebuildModule',
+    data: {
+      name: 'Plantilla'
+    }
+  },
+  {
+    path: 'workwave/online-store',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/workwave-template-online-store/workwave-template-online-store.module#WorkwaveTemplateOnlineStoreModule',
     data: {
       name: 'Plantilla'
     }
@@ -292,6 +308,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/sorter-create/sorter-create.module#SorterCreateModule',
     data: {
       name: 'Crear Sorter'
+    }
+  },
+  {
+    path:'regions',
+    canActivate:[AuthGuard],
+    loadChildren: '@suite/common-modules#RegionsModule',
+    data: {
+      name: 'regiones'
     }
   }
 ];

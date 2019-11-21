@@ -19,7 +19,7 @@
             </ion-header>
             <ion-content>
                 <!--ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-                    <ion-list no-padding lines="none">
+                    <ion-list class="ion-no-padding" lines="none">
                         <ion-item [routerDirection]="'root'" [routerLink]="[p.url]" (click)="tapOption(p)">
                             <ion-icon [slot]="iconsDirection" [name]="p.icon"></ion-icon>
                             <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">

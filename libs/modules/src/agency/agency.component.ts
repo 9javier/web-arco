@@ -161,11 +161,11 @@ export class AgencyComponent implements OnInit {
   updateAgency(warehouseToUpdate, action: boolean): void {
     this.agencies.forEach(agency => {
       if(action) {
-        if(warehouseToUpdate.manageAgencyId.id == agency.id) {
+        if(warehouseToUpdate.manageAgencyId.id === agency.id) {
           agency.warehouses.push(warehouseToUpdate);
         }
       } else {
-        let warehosuesAgency = agency.warehouses.filter(warehouse => warehouse.id != warehouseToUpdate.id);
+        let warehosuesAgency = agency.warehouses.filter(warehouse => warehouse.id !== warehouseToUpdate.id);
         agency.warehouses = warehosuesAgency;
       }
     })
@@ -176,13 +176,13 @@ export class AgencyComponent implements OnInit {
    */
   activateDelete(id: number) {
     this.toDeleteAgency = true;
-    let exits: boolean = this.agenciesToDelete.some(agencyId => agencyId == id);
+    let exits: boolean = this.agenciesToDelete.some(agencyId => agencyId === id);
     if(!exits) {
       this.agenciesToDelete.push(id);
     } else {
       this.agenciesToDelete.splice( this.agenciesToDelete.indexOf(id), 1 );
     }
-    if(this.agenciesToDelete.length == 0) {
+    if(this.agenciesToDelete.length === 0) {
       this.toDeleteAgency = false;
     }
   }
@@ -212,11 +212,11 @@ export class AgencyComponent implements OnInit {
    }
 
    selectCheck(warehouseId: number, agencyId: number): boolean {
-     let checkValue: boolean = false;
+     let checkValue = false;
 
     this.agencies.forEach(agency => {
       agency.warehouses.forEach(warehosue => {
-        if(warehouseId == warehosue.id && agency.id == agencyId){
+        if(warehouseId === warehosue.id && agency.id === agencyId){
           checkValue = true;
         }
       })

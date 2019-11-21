@@ -3,6 +3,7 @@ import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.p
 import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-color-selector',
   templateUrl: './color-selector.component.html',
   styleUrls: ['./color-selector.component.scss']
@@ -10,7 +11,7 @@ import {TemplateColorsModel} from "../../../../services/src/models/endpoints/Tem
 export class ColorSelectorSorterComponent implements OnInit {
 
   @Input() colors: TemplateColorsModel.AvailableColorsByProcess[] = [];
-  @Input() title: string = 'Organiza los artículos en el sorter. Pulsa un color.';
+  @Input() title: string = null;
   @Output() colorSelected = new EventEmitter();
 
   constructor(

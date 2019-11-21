@@ -28,9 +28,11 @@ export class InventoryService {
   private postGlobalUrl:string = environment.apiBase+"/processes/positioner-main/global";
   private postPickingDirectUrl:string = environment.apiBase+"/processes/picking-main/direct";
   private postPickingConsolidatedUrl: string = environment.apiBase + '/processes/picking-main/consolidated';
+  private postPickingOnlineStoreUrl: string = environment.apiBase + '/processes/picking-main/ot';
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
+  private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`
 
   constructor(
     private http: HttpClient,
@@ -65,6 +67,11 @@ export class InventoryService {
     return this.requestsProvider.post(this.postStoreUrl, params);
   }
 
+  checkUserPermissions(): Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.get(this.userPermissionUrl);
+  }
+
+
   async productsByContainer(
     containerId: number
   ): Promise<Observable<HttpResponse<InventoryModel.ResponseProductsContainer>>> {
@@ -98,5 +105,9 @@ export class InventoryService {
 
   postPickingConsolidated(picking: InventoryModel.Picking) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postPickingConsolidatedUrl, picking);
+  }
+
+  postPickingOnlineStore(picking: InventoryModel.Picking) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPickingOnlineStoreUrl, picking);
   }
 }

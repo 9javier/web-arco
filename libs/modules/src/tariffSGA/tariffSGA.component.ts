@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { AlertController } from "@ionic/angular";
 import * as _ from 'lodash';
 
 import {
@@ -14,6 +15,7 @@ import { validators } from '../utils/validators';
 
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
   selector: 'suite-tariff',
@@ -34,8 +36,9 @@ export class TariffSGAComponent implements OnInit {
 
   private page: number = 0;
   private limit: number = this.pagerValues[0];
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
 
   displayedColumns: string[] = ['name', 'initDate', 'endDate', 'select'];
   dataSource: any;
@@ -62,7 +65,8 @@ export class TariffSGAComponent implements OnInit {
     private formBuilder: FormBuilder,
     private tariffService: TariffService,
     private router: Router,
-    private warehousesService: WarehousesService
+    private warehousesService: WarehousesService,
+    private alertController: AlertController,
   ) {
     this.processing = false;
   }
@@ -102,7 +106,7 @@ export class TariffSGAComponent implements OnInit {
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag ? page.pageIndex + 1 : 1;
+      this.page = flag ? page.pageIndex: 1;
       this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     });
   }
@@ -130,19 +134,21 @@ export class TariffSGAComponent implements OnInit {
   getTariffs(page: number, limit: number, id: number = 49): void {
     this.intermediaryService.presentLoading();
     this.tariffService.getTariffIfSoftdelete().subscribe(
-      tariffs => {
+      data => {
+        console.log(data);
+
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
-        this.tariffs = tariffs.map(result => {
+        this.tariffs = data.results.map(result => {
           result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
           result.activeTill = new Date(result.activeTill).toLocaleDateString();
           return result;
         });
         this.initSelectForm(this.tariffs);
         this.dataSource = new MatTableDataSource<any>(this.tariffs);
-        let paginator = 1;
-        this.paginator.length = 2;
-        this.paginator.pageIndex = 0;
+        this.paginator.length = data && data.pagination ? data.pagination.totalResults : 0;
+        this.paginator.pageIndex = data && data.pagination ? data.pagination.selectPage: 1;
+        this.paginator.lastPage = data && data.pagination ? data.pagination.lastPage : 1;
       },
       () => {
         this.intermediaryService.dismissLoading();
@@ -250,22 +256,35 @@ export class TariffSGAComponent implements OnInit {
 
   }
 
-  startSync(): void {
+  async startSync() {
 
-
-    this.intermediaryService.presentLoading("Modificando los seleccionados");
-    this.tariffService.syncTariff().subscribe(result => {
-      this.intermediaryService.dismissLoading();
-      this.listenChanges();
-      this.isCalculating();
-    }, error => {
-      this.intermediaryService.dismissLoading();
-    }, () => {
-      this.tariffsUpdate = [];
-      //this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
-      this.isCalculating();
-      this.intermediaryService.dismissLoading();
+    let alertConfirm = await this.alertController.create({
+      header: 'Atención',
+      message: 'Va a ejecutarse la actualización de tarifas. ¿Está seguro?',
+      buttons: [
+        'Cancelar',
+        {
+          text: 'Confirmar',
+          handler: () => {
+            this.intermediaryService.presentLoading("Modificando los seleccionados");
+            this.tariffService.syncTariff().subscribe(result => {
+              this.intermediaryService.dismissLoading();
+              this.listenChanges();
+              this.isCalculating();
+            }, error => {
+              this.intermediaryService.dismissLoading();
+            }, () => {
+              this.tariffsUpdate = [];
+              //this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+              this.isCalculating();
+              this.intermediaryService.dismissLoading();
+            });
+          }
+        }
+      ]
     });
+
+    await alertConfirm.present();
   }
 
   /**

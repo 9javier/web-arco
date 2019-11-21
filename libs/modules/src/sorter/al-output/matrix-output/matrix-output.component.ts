@@ -5,6 +5,7 @@ import {MatrixSorterModel} from "../../../../../services/src/models/endpoints/Ma
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-matrix-output',
   templateUrl: './matrix-output.component.html',
   styleUrls: ['./matrix-output.component.scss']
@@ -71,7 +72,7 @@ export class MatrixOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   isWaySelected(column: MatrixSorterModel.Column) : boolean {
-    return this.columnWaySelected && this.columnWaySelected.way.id == column.way.id;
+    return this.columnWaySelected && this.columnWaySelected.way.id === column.way.id;
   }
 
   resetWaySelected() {
@@ -79,7 +80,14 @@ export class MatrixOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column) {
-    this.columnWaySelected = column;
-    this.waySelected.next(this.columnWaySelected.way);
+    let waySelected = null;
+    if (column.way.manual && column.way.qty_products > 0) {
+      this.columnWaySelected = column;
+      waySelected = this.columnWaySelected.way;
+    } else {
+      this.columnWaySelected = null;
+      waySelected = null;
+    }
+    this.waySelected.next(waySelected);
   }
 }

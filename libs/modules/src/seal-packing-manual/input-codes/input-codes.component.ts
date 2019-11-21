@@ -5,6 +5,7 @@ import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/ca
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import { IntermediaryService } from '@suite/services';
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-input-codes',
@@ -26,7 +27,8 @@ export class InputCodesComponent implements OnInit {
     private toastController: ToastController,
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -65,28 +67,26 @@ export class InputCodesComponent implements OnInit {
           .then((res: CarrierModel.ResponseSeal) => {
             this.intermediaryService.dismissLoading();
             if (res.code == 200) {
-              let msgOk = 'El recipiente';
-              if (res.data.packingType == 1) {
-                msgOk = 'La jaula';
-              } else if (res.data.packingType == 2) {
-                msgOk = 'El pallet';
-              }
-              msgOk += ' se ha precintado correctamente.';
-              this.presentToast(msgOk, 'primary');
+              this.audioProvider.playDefaultOk();
+              this.presentToast('El embalaje se ha precintado correctamente.', 'primary');
             } else {
+              this.audioProvider.playDefaultError();
               this.presentToast('Ha ocurrido un error al intentar precintar el recipiente.', 'danger');
             }
           }, (error) => {
             this.intermediaryService.dismissLoading();
+            this.audioProvider.playDefaultError();
             let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
             this.presentToast(errorMsg, 'danger');
           })
           .catch((error) => {
             this.intermediaryService.dismissLoading();
+            this.audioProvider.playDefaultError();
             let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
             this.presentToast(errorMsg, 'danger');
           });
       } else {
+        this.audioProvider.playDefaultError();
         this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
       }
     }

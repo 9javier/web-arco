@@ -81,9 +81,11 @@
           <ion-item lines="none">
           </ion-item>
           <ion-item *ngFor="let warehouse of warehousesDestinationList;let i = index" lines="none">
-            <ion-label lines="none" no-padding *ngIf="warehouse.destinos_label != ''">{{ warehouse.destinos_label }}
+            <ion-label lines="none" class="ion-no-padding" *ngIf="warehouse.destinos_label != ''">
+              {{ warehouse.destinos_label }}
             </ion-label>
-            <ion-label lines="none" no-padding *ngIf="warehouse.destinos_label == ''">Seleccione destino</ion-label>
+            <ion-label lines="none" class="ion-no-padding" *ngIf="warehouse.destinos_label == ''">Seleccione destino
+            </ion-label>
             <ion-icon name="create" slot="end" (click)="store(warehouse.id)"></ion-icon>
           </ion-item>
         </ion-list>
@@ -104,5 +106,9 @@
   <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="cantChecks().length > 0"
     (click)="openModalDestination()">
     <ion-icon name="albums"></ion-icon>
+  </ion-fab-button>
+  <ion-fab-button style="float: right; padding: 5px;" color="light" *ngIf="ListaFechas$?.length > 0"
+    (click)="deleteAllFechasSelect()">
+    <ion-icon name="trash"></ion-icon>
   </ion-fab-button>
 </ion-footer>

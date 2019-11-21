@@ -104,7 +104,7 @@ export class ProductDetailsComponent implements OnInit {
       this.productHistorical = historical;
 
       for (let i = 0; i < historical.length; i++) {
-        this.dates[i] = moment(historical[i].updatedAt).format('L');
+        this.dates[i] = moment(historical[i].updatedAt).format('DD/MM/YYYY');
         this.hours[i] = moment(historical[i].updatedAt).format('HH:mm:ss');
       }
     });

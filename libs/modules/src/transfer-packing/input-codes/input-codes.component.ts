@@ -4,6 +4,8 @@ import {ScanditProvider} from "../../../../services/src/providers/scandit/scandi
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {SettingsService} from "../../../../services/src/lib/storage/settings/settings.service";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 
 @Component({
   selector: 'suite-input-codes',
@@ -32,6 +34,7 @@ export class InputCodesComponent implements OnInit {
     private settingsService: SettingsService,
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
+    private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -65,6 +68,7 @@ export class InputCodesComponent implements OnInit {
         if (this.isProcessStarted) {
           this.transferAmongPackings(dataWrote);
         } else {
+          this.audioProvider.playDefaultOk();
           this.isProcessStarted = true;
           this.packingReferenceOrigin = dataWrote;
           this.msgTop = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
@@ -74,12 +78,15 @@ export class InputCodesComponent implements OnInit {
         || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
         if (this.isProcessStarted) {
           if (this.disableTransferProductByProduct) {
+            this.audioProvider.playDefaultError();
             this.presentToast('Funcionalidad de traspaso de producto por producto no disponible actualmente.', 'danger');
           }
         } else {
+          this.audioProvider.playDefaultError();
           this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
         }
       } else {
+        this.audioProvider.playDefaultError();
         this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
       }
     }
@@ -89,21 +96,30 @@ export class InputCodesComponent implements OnInit {
     this.showLoading('Traspasando productos...').then(() => {
       this.carriersService
         .postTransferAmongPackings({ origin: this.packingReferenceOrigin, destiny: destinyPacking })
-        .then(() => {
-          this.hideLoading();
-          this.presentToast('Traspaso de productos entre embalajes realizado.', 'success');
-          this.packingReferenceOrigin = null;
-          this.isProcessStarted = false;
-          this.msgTop = "Escanea el embalaje de origen";
-          this.placeholderDataToWrite = "EMBALAJE";
-          this.lastCodeScanned = null;
+        .then((res: CarrierModel.ResponseTransferAmongPackings) => {
+          if (res.code == 200 || res.code == 201) {
+            this.hideLoading();
+            this.audioProvider.playDefaultOk();
+            this.presentToast('Traspaso de productos entre embalajes realizado.', 'success');
+            this.packingReferenceOrigin = null;
+            this.isProcessStarted = false;
+            this.msgTop = "Escanea el embalaje de origen";
+            this.placeholderDataToWrite = "EMBALAJE";
+            this.lastCodeScanned = null;
+          } else {
+            this.hideLoading();
+            this.audioProvider.playDefaultError();
+            this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+          }
         }, (error) => {
           this.hideLoading();
+          this.audioProvider.playDefaultError();
           console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
           this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
         })
         .catch((error) => {
           this.hideLoading();
+          this.audioProvider.playDefaultError();
           console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
           this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
         });

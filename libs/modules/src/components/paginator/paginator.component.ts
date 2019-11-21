@@ -20,7 +20,7 @@ export declare class PageEventPaginator {
 @Component({
   selector: 'suite-paginator',
   templateUrl: './paginator.component.html',
-  styleUrls: ['./paginator.component.css'],
+  styleUrls: ['./paginator.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
 export class PaginatorComponent implements OnInit {
@@ -42,24 +42,32 @@ export class PaginatorComponent implements OnInit {
     this.cantSelect = this.pagerValues[0];
   }
 
-  setOpenPanel(){
+  defaultClick() {
+    this.openPanel = false;
+  }
+
+  setOpenPanel(event){
+    event.stopPropagation();
     this.openPanel = !this.openPanel;
   }
 
-  changePageSize(cant: number): void{
+  changePageSize(event, cant: number): void{
+    event.stopPropagation();
     this.cantSelect = cant;
     this.openPanel = false;
     this._emitChanges();
   }
 
-  nextPage(): void{
+  nextPage(event): void{
+    event.stopPropagation();
     if((this.pageIndex+1) <= this.lastPage){
       this.pageIndex ++;
       this._emitChanges();
     }
   }
 
-  previousPage(): void{
+  previousPage(event): void{
+    event.stopPropagation();
     if((this.pageIndex-1) > 0){
       this.pageIndex --;
       this._emitChanges();

@@ -69,7 +69,7 @@ export class CalendarPickingComponent implements OnInit {
   loadingDates:boolean = false;
 
   compareDate(obj1,obj2){
-    return obj1.date == obj2.date;
+    return obj1.date === obj2.date;
   }
 
   ngOnInit() {
@@ -101,7 +101,7 @@ export class CalendarPickingComponent implements OnInit {
       }];
       selectDates.forEach(date=>{
         this.loadingDates = true;
-        let aux = this.selectDates.find(_date=>{return (_date.date == date)});
+        let aux = this.selectDates.find(_date=> _date.date === date);
         if(!aux){
           auxDates.push(
             {
@@ -123,7 +123,7 @@ export class CalendarPickingComponent implements OnInit {
         this.intermediaryService.dismissLoading();
         templates.forEach(template=>{
           this.selectDates.forEach(date=>{
-            if(template.date == date.date){
+            if(template.date === date.date){
               date.warehouses = template.warehouses;
             }
           });
@@ -132,11 +132,11 @@ export class CalendarPickingComponent implements OnInit {
         for(let i = 1; i < this.selectDates.length; i++) {
           for(let j = 0; j < this.selectDates[i].warehouses.length; j++) {
             if(i+1 <= this.selectDates.length && this.selectDates[i+1]) {
-              if(this.selectDates[i].warehouses.length == this.selectDates[i+1].warehouses.length){
+              if(this.selectDates[i].warehouses.length === this.selectDates[i+1].warehouses.length){
                 if(_.isEqual(this.selectDates[i].warehouses[j].originWarehouse, this.selectDates[i+1].warehouses[j].originWarehouse)) {
                   let currentWarehouses = this.selectDates[i].warehouses[j].destinationsWarehouses;
                   let nextWarehouses = this.selectDates[i+1].warehouses[j].destinationsWarehouses;
-                  if(currentWarehouses.length == nextWarehouses.length) {
+                  if(currentWarehouses.length === nextWarehouses.length) {
                     for(let k = 0; k < currentWarehouses.length; k++) {
                       if(!_.isEqual(currentWarehouses[k].destinationWarehouse, nextWarehouses[k].destinationWarehouse)) {
                         equals = false;
@@ -149,11 +149,11 @@ export class CalendarPickingComponent implements OnInit {
           }
         }
         
-        if(equals && this.selectDates.length != 1) {
+        if(equals && this.selectDates.length !== 1) {
 
           this.setWarehousesOfDate(this.selectDates[1].warehouses, true);
 
-        } else if(this.selectDates.length != 1){
+        } else if(this.selectDates.length !== 1){
           this.setWarehousesOfDate(this.selectDates[1].warehouses, false);
         }
         else{
@@ -177,10 +177,10 @@ export class CalendarPickingComponent implements OnInit {
   setWarehousesOfDate(selectDateWarehouses, valueDate: boolean) {
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       selectDateWarehouses.forEach(templateWarehouse=>{
-        if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
+        if(templateWarehouse.originWarehouse.id === warehouseControl.get("originWarehouse").value.id){
           templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
+              if(destinationControl.get("id").value === templateDestination.destinationWarehouse.id){
                 if(valueDate) {
                   destinationControl.get("selected").setValue(true);
                   warehouseControl.get("openModal").setValue(true);
@@ -219,7 +219,7 @@ export class CalendarPickingComponent implements OnInit {
     this.form.patchValue(this.initialValue,{emitEvent:false});
     this.resetAcordeons();
     this.selectDates.forEach(date=>{
-      if(this.date.date == date.date || this.date.date == 'todas las fechas seleccionadas')
+      if(this.date.date === date.date || this.date.date === 'todas las fechas seleccionadas')
         date.value = this.initialValue;
       this.manageSelectedClass();
     })
@@ -230,7 +230,7 @@ export class CalendarPickingComponent implements OnInit {
     for(let i=0;i<days.length;i++){
       let day = days[i];
       this.selectDates.forEach(date=>{
-        if(date.date.split("-").reverse().join("-") == day.dataset.date){
+        if(date.date.split("-").reverse().join("-") === day.dataset.date){
           if((date.warehouses.length) || (date.value && this.formatValue(date.value).warehouses.length)){
             day.className+= ' tselected'; 
           }else{
@@ -248,7 +248,7 @@ export class CalendarPickingComponent implements OnInit {
     for(let i=0;i<days.length;i++){
       let day = days[i];
       dates.forEach(date=>{
-        if(date.split("-").reverse().join("-") == day.dataset.date){
+        if(date.split("-").reverse().join("-") === day.dataset.date){
           day.className+= ' haveDate'; 
         }
       });
@@ -265,7 +265,7 @@ export class CalendarPickingComponent implements OnInit {
       setTimeout(()=>{
         if(this.date){
           this.selectDates.forEach(date=>{
-            if(date.date == this.date.date || this.date.date == 'todas las fechas seleccionadas'){
+            if(date.date === this.date.date || this.date.date === 'todas las fechas seleccionadas'){
               date.value = JSON.parse(JSON.stringify(this.form.value));
             }
           })
@@ -310,10 +310,10 @@ export class CalendarPickingComponent implements OnInit {
       calendars:[]
     }
     this.selectDates.forEach((date,i)=>{
-      if(i==0)
+      if(i===0)
         return false;
       let value;
-      if(this.date.date != 'todas las fechas seleccionadas')
+      if(this.date.date !== 'todas las fechas seleccionadas')
         value = this.formatValue((date.value));
       else
         value = this.formatValue(this.form.value);
@@ -406,7 +406,7 @@ export class CalendarPickingComponent implements OnInit {
    */
   validToStore(){
     let flag = true;
-    if(this.date.date == 'todas las fechas seleccionadas' && this.formatValue(this.form.value).warehouses.length )
+    if(this.date.date === 'todas las fechas seleccionadas' && this.formatValue(this.form.value).warehouses.length )
       return true;
     this.selectDates.forEach((date,i)=>{
       if(!i)
@@ -433,10 +433,10 @@ export class CalendarPickingComponent implements OnInit {
 
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       warehouses.forEach(templateWarehouse=>{
-        if(templateWarehouse.originWarehouse.id == warehouseControl.get("originWarehouse").value.id){
+        if(templateWarehouse.originWarehouse.id === warehouseControl.get("originWarehouse").value.id){
           templateWarehouse.destinationsWarehouses.forEach(templateDestination=>{
             (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-              if(destinationControl.get("id").value == templateDestination.destinationWarehouse.id){
+              if(destinationControl.get("id").value === templateDestination.destinationWarehouse.id){
                 destinationControl.get("selected").setValue(true);
                 warehouseControl.get("openModal").setValue(true);
               }
@@ -473,7 +473,7 @@ export class CalendarPickingComponent implements OnInit {
             name:warehouse.originWarehouse.name
           }),
           destinationsWarehouses:(this.formBuilder.array(
-            warehouse.destinationsWarehouses.map(warehouse=>{
+            warehouse.destinationsWarehouses.map(warehouse => {
               this.warehouses.push(warehouse.destinationWarehouse);
               let group = (this.formBuilder.group({
                 id:warehouse.destinationWarehouse.id,
@@ -566,7 +566,7 @@ export class CalendarPickingComponent implements OnInit {
     if(value) {
       (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
         (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-          if(destinationControl.get("id").value == value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id == warehouseId){
+          if(destinationControl.get("id").value === value.slice(-1).pop() && warehouseControl.get("originWarehouse").value.id === warehouseId){
             destinationControl.get("selected").setValue(true);
             this.form.get("warehousesInput").setValue([]);
             warehouseControl.get("openModal").setValue(true);
@@ -585,8 +585,8 @@ export class CalendarPickingComponent implements OnInit {
   deletedWarehouseOfTemplate(id: number, warehouseId: number) {
     (<FormArray>this.form.get("warehouses")).controls.forEach(warehouseControl=>{
       (<FormArray>warehouseControl.get("destinationsWarehouses")).controls.forEach(destinationControl=>{
-        if(destinationControl.get("id").value == id && destinationControl.get("selected").value
-        && warehouseControl.get("originWarehouse").value.id == warehouseId){          
+        if(destinationControl.get("id").value === id && destinationControl.get("selected").value
+        && warehouseControl.get("originWarehouse").value.id === warehouseId){          
           destinationControl.get("selected").setValue(false);
         }
       });

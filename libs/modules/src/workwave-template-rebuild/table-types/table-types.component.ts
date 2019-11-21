@@ -1,4 +1,5 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
   selector: 'table-types',
@@ -7,20 +8,20 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class TableTypesComponent implements OnInit {
 
-  @Output() changeType = new EventEmitter();
-
   receptionSelected: boolean = false;
   distributionSelected: boolean = false;
 
-  constructor() {}
+  constructor(
+    private serviceG : WorkwavesService
+  ) {}
 
   ngOnInit() {
     this.receptionSelected = true;
     this.distributionSelected = true;
-    this.selectType();
+    this.selectType('init');
   }
 
-  selectType() {
+  selectType(validation:String) {
     let fields: number[] = [];
     if (this.receptionSelected) {
       fields.push(1);
@@ -28,7 +29,12 @@ export class TableTypesComponent implements OnInit {
     if (this.distributionSelected) {
       fields.push(2);
     }
-    this.changeType.next(fields);
+
+    let aux = this.serviceG.orderAssignment.value;
+      aux.data.typesShippingOrders = fields;
+      aux.type = validation === 'init' ?  true : false;
+      this.serviceG.orderAssignment.next(aux);
+
   }
 
 }

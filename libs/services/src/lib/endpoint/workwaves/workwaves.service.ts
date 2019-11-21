@@ -8,6 +8,9 @@ import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
 
 import { environment } from '../../../environments/environment';
 import {map} from "rxjs/operators";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import { BehaviorSubject } from 'rxjs';
 
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
 export const PATH_GET_LIST_TEMPLATES: string = PATH('Workwaves', 'List Templates');
@@ -59,6 +62,34 @@ export class WorkwaveWeeklyPlan {
 })
 export class WorkwavesService {
 
+  buttonAvailability = new BehaviorSubject<any>({status:false});
+  requestUser = new BehaviorSubject<any>(
+    {
+      data:{
+        table:{
+          listSelected:[],
+          listThreshold:{}
+        },
+        user:[]
+      },
+      table:false,
+      user: false
+    }
+  );
+  orderAssignment = new BehaviorSubject<any>(
+    {
+      data:{
+        store : {
+          groupsWarehousePickingId: '',
+          thresholdConsolidated: '',
+        },
+        typesShippingOrders:[]
+      },
+      store:false,
+      type:false
+    }
+  );
+
 
   /**Urls for the workwaves service */
   private postStoreUrl:string = environment.apiBase+"/workwaves";
@@ -74,13 +105,19 @@ export class WorkwavesService {
   private postConfirmMatchLineRequestUrl: string = environment.apiBase + "/workwaves/confirm/matchlinerequest/";
   private postDeleteMatchLineRequestUrl: string = environment.apiBase + "/workwaves/matchlinerequest/delete";
 
+  private postMatchLineRequestOnlineStoreUrl: string = environment.apiBase + "/workwaves/matchlinerequest-ot";
+  private postAssignUserToMatchLineOnlineStoreRequestUrl: string = environment.apiBase + "/workwaves/assign/matchlinerequest-ot";
+  private postConfirmMatchLineRequestOnlineStoreUrl: string = environment.apiBase + "/workwaves/confirm/matchlinerequest-ot";
+  private postChangeStatusProductOnlineStoreUrl: string = environment.apiBase + "/workwaves/change/status-assigned-defective";
+
   private _lastWorkwaveEdited: any = null;
   private _lastWorkwaveRebuildEdited: any = null;
   private _lastWorkwaveHistoryQueried: any = null;
 
   constructor(
     private http: HttpClient,
-    private auth: AuthenticationService
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
   ) {}
 
   async getListTemplates() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListTemplates>>> {
@@ -188,16 +225,32 @@ export class WorkwavesService {
     }));
   }
 
+  postMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postMatchLineRequestOnlineStoreUrl, params);
+  }
+
   postAssignUserToMatchLineRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequest): Observable<WorkwaveModel.UsersAndAssignationsQuantities> {
     return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequest>(this.postAssignUserToMatchLineRequestUrl, params).pipe(map(response => {
       return response.data;
     }));
   }
 
+  postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params);
+  }
+
   postConfirmMatchLineRequest(params: WorkwaveModel.ParamsConfirmMatchLineRequest): Observable<WorkwaveModel.DataConfirmMatchLineRequest> {
     return this.http.post<WorkwaveModel.ResponseConfirmMatchLineRequest>(this.postConfirmMatchLineRequestUrl, params).pipe(map(response => {
       return response.data;
     }));
+  }
+
+  postConfirmMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsConfirmMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postConfirmMatchLineRequestOnlineStoreUrl, params);
+  }
+
+  postChangeStatusProductOnlineStore(params: WorkwaveModel.ParamsChangeStatusProductOnlineStore) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postChangeStatusProductOnlineStoreUrl, params);
   }
 
   postDeletePickings(params: WorkwaveModel.ParamsDeletePickings): Observable<WorkwaveModel.DeletedPickings> {

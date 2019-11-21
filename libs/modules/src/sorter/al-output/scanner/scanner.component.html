@@ -15,16 +15,18 @@
 
   <div class="info-product-wrong-code" *ngIf="wrongCodeScanned && !packingIsFull && lastProductScannedChecking">
     <div class="store">
-      <span [ngClass]="infoSorterOperation.destinyWarehouse.id != lastProductScannedChecking.destinyWarehouse.id ? 'wrong-store' : ''">
-        {{ lastProductScannedChecking.destinyWarehouse.reference + ' ' + lastProductScannedChecking.destinyWarehouse.name }}
-      </span>
-    </div>
-    <div class="model-info">
-      <span class="product">
-        {{ lastProductScannedChecking.reference }}
+      <span class="store" [ngClass]="infoSorterOperation.destinyWarehouse.id != lastProductScannedChecking.destinyWarehouse.id ? 'wrong-store' : ''">
+        <p>{{ lastProductScannedChecking.destinyWarehouse.reference + ' ' + lastProductScannedChecking.destinyWarehouse.name }}</p>
       </span>
       <span class="model">
-        {{ lastProductScannedChecking.model?.reference }}
+        <p>
+          {{ lastProductScannedChecking.model?.reference }}
+        </p>
+      </span>
+    </div>
+    <div class="product-info">
+      <span class="product">
+        {{ lastProductScannedChecking.reference }}
       </span>
       <span class="size">
         {{ lastProductScannedChecking.size ? 'T: ' + lastProductScannedChecking.size.name : '' }}

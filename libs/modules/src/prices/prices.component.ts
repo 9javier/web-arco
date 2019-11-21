@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
@@ -21,7 +21,9 @@ import { validators } from '../utils/validators';
 import { NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
-import {environment} from "../../../services/src/environments/environment";
+import { environment } from "../../../services/src/environments/environment";
+import { PaginatorComponent } from '../components/paginator/paginator.component';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
   selector: 'suite-prices',
@@ -31,7 +33,7 @@ import {environment} from "../../../services/src/environments/environment";
 export class PricesComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-
+  @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
   filterTypes: Array<PriceModel.StatusType> = [];
 
@@ -39,6 +41,7 @@ export class PricesComponent implements OnInit {
   pagerValues: Array<number> = [50, 100, 500];
 
   page: number = 0;
+  public itemIdSelected : any = [];
 
   limit: number = this.pagerValues[0];
 
@@ -52,6 +55,7 @@ export class PricesComponent implements OnInit {
   form: FormGroup = this.formBuilder.group({
     models: [],
     brands: [],
+    sizes: [],
     seasons: [],
     colors: [],
     families: [],
@@ -71,6 +75,7 @@ export class PricesComponent implements OnInit {
   /**Filters */
   models: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
+  sizes: Array<TagsInputOption> = [];
   seasons: Array<TagsInputOption> = [];
   colors: Array<TagsInputOption> = [];
   families: Array<TagsInputOption> = [];
@@ -98,15 +103,15 @@ export class PricesComponent implements OnInit {
   selectedForm: FormGroup = this.formBuilder.group({
     selector: false
   }, {
-      validators: validators.haveItems("toSelect")
-    });
+    validators: validators.haveItems("toSelect")
+  });
 
   displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
   public disableExpansionPanel: boolean = true;
 
-  public mobileVersionTypeList: 'list'|'table' = 'list';
+  public mobileVersionTypeList: 'list' | 'table' = 'list';
   public showFiltersMobileVersion: boolean = false;
 
   private isStoreUser: boolean = false;
@@ -121,7 +126,8 @@ export class PricesComponent implements OnInit {
     private warehousesService: WarehousesService,
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private cd : ChangeDetectorRef
   ) {
 
   }
@@ -172,12 +178,12 @@ export class PricesComponent implements OnInit {
   listenChanges(): void {
     let previousPageSize = this.limit
     /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
+    this.paginatorComponent.page.subscribe(page => {
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag ? page.pageIndex + 1 : 1;
+      this.page = flag ? page.pageIndex : 1;
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
@@ -192,6 +198,9 @@ export class PricesComponent implements OnInit {
    */
   selectAll(event): void {
     let value = event.detail.checked;
+    for (let index = 0; index < this.prices.length; index++) {
+      this.itemSelected(this.prices[index].id);
+    }
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
     });
@@ -206,11 +215,35 @@ export class PricesComponent implements OnInit {
       return status.id == id
     }).name;
   }
+
+  // Item seleccionados
+  itemSelected(item){
+    let aux =  this.itemIdSelected.findIndex( id => item === id );
+    if(aux === -1) this.itemIdSelected.push(item);
+    if(aux !== -1) this.itemIdSelected.splice(aux,1);
+  }
+
+  changeStatusImpress(){
+    this.selectedForm.get('selector').setValue(false);
+    this.cd.detectChanges();
+    this.itemIdSelected.map( (itemF,idx) =>{
+      for (let index = 0; index < this.prices.length; index++) {
+       if(itemF == this.prices[index].id) {
+        this.prices[index].status = 4;
+        break;
+       }
+      }
+    })
+
+    this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+  }
   /**
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
   async printPrices(items, warehouseId: number) {
+    //console.log("dame los items", items);
+    //this.initSelectForm(this.prices);
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -235,7 +268,9 @@ export class PricesComponent implements OnInit {
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
-      this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      this.initSelectForm(this.prices);
+      this.changeStatusImpress();
+      //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
     });
@@ -307,6 +342,7 @@ export class PricesComponent implements OnInit {
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
       this.colors = filters.colors;
       this.brands = filters.brands;
+      this.sizes = filters.sizes;
       this.seasons = filters.seasons;
       this.models = filters.models;
       this.families = filters.families;
@@ -328,8 +364,9 @@ export class PricesComponent implements OnInit {
       this.initSelectForm(this.prices);
       this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
       let paginator = prices.pagination;
-      this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.page - 1;
+      this.paginatorComponent.length = paginator.totalResults;
+      this.paginatorComponent.pageIndex = paginator.selectPage;
+      this.paginatorComponent.lastPage = paginator.lastPage;
       this.groups = prices.filters.ordertypes;
       this.intermediaryService.dismissLoading();
     }, () => {
@@ -380,7 +417,7 @@ export class PricesComponent implements OnInit {
     return null;
   }
 
-  getPhotoUrl(priceObj: PriceModel.Price): string|boolean {
+  getPhotoUrl(priceObj: PriceModel.Price): string | boolean {
     let isPhotoTestUrl: boolean = false;
 
     if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
@@ -422,7 +459,7 @@ export class PricesComponent implements OnInit {
   applyFilters() {
     if (this.pauseListenFormChange) return;
     clearTimeout(this.requestTimeout);
-    this.paginator.pageIndex = 0;
+    this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, 100);
@@ -432,11 +469,13 @@ export class PricesComponent implements OnInit {
     this.form = this.formBuilder.group({
       models: [],
       brands: [],
+      sizes: [],
       seasons: [],
       colors: [],
       families: [],
       lifestyles: [],
       status: 0,
+      size: 0,
       tariffId: 0,
       pagination: this.formBuilder.group({
         page: this.page || 1,
