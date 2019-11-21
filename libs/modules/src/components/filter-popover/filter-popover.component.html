@@ -5,7 +5,7 @@
   </mat-form-field>
 
   <div class="scroll-list">
-    <div *ngFor="let item of listItems">
+    <div *ngFor="let item of getOrderedList()">
       <ion-item lines="none" *ngIf="!item.hide">
         <ion-checkbox [(ngModel)]="item.checked" (ngModelChange)="checkAllSelected()"></ion-checkbox>
         <ion-label>{{item.value}}</ion-label>
