@@ -66,37 +66,36 @@ export class LoginComponent implements OnInit {
     // Check if is mobile app and get appVersionNumber
   }
 
-  verifyNewVersion(){
+  verifyNewVersion() {
     if (window.cordova) {
       this.isMobileApp = true;
       (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
-        
+
         this.versionNumber = versionNumber;
         this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {
-          if (response && response.code == 200) {
+          if (response && response.code === 200) {
             if (response.data) {
 
               const resultCompare = this.compareVersions(`${response.data['majorRelease']}.${response.data['minorRelease']}.${response.data['patchRelease']}`, this.versionNumber);
               if (resultCompare === 1) {
                 console.log('VERSION MAYOR');
                 this.isNewVersion = true;
-                this.loginService.availableVersion.next({status:true,version:response.data['majorRelease']});
-              }else{
-                this.loginService.availableVersion.next({status:false,version:0});                }
+                this.loginService.availableVersion.next({ status: true, version: response.data['majorRelease'] });
+              } else {
+                this.loginService.availableVersion.next({ status: false, version: 0 });
+              }
             }
           }
         }, (error) => {
-          alert('inside-E1');
           console.log("Error::getVersion", error)
         }).catch((error) => {
-          alert('inside-E2');
           console.log("Error::getVersion", error)
         });
 
       });
     } else {
       this.isMobileApp = false;
-   }
+    }
   }
 
   /**
@@ -199,8 +198,12 @@ export class LoginComponent implements OnInit {
   }
 
   ionViewWillEnter() {
-    this.modalController.dismiss();
+    this.modalController.dismiss().catch(error=>{
+      console.log(error);
+      return;
+    })
   }
+
   hide() {
     if (this.platform.is('android') || this.platform.is('ios')) {
       const logo: HTMLElement = document.getElementById('logo');

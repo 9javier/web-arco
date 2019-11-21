@@ -174,6 +174,7 @@ export class AppComponent implements OnInit {
     this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.showSidebar = false;
+    // TODO ERROR EN ESTA FUNCTION
     this.platform.ready().then(async () => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
@@ -257,6 +258,7 @@ export class AppComponent implements OnInit {
       this.dictionary = state; 
     },e =>console.log(e)
     );
+    // TODO ERROR LOGIN ESTA EN ESTA FUNCION
   this.initializeApp()
   }
 
