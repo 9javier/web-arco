@@ -186,7 +186,7 @@ const routes: Routes = [
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: '@suite/common-modules#LocationsModule',
+    loadChildren: '../../../../libs/modules/src/locations/locations.module#LocationsModule',
     data: {
       name: 'Almacenes'
     }
