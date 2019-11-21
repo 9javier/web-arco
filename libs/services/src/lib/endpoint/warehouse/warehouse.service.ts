@@ -6,7 +6,7 @@ import {from, Observable} from "rxjs";
 
 import {HallsService} from "../halls/halls.service";
 import {WarehouseModel} from "@suite/services";
-import {map, switchMap} from 'rxjs/operators';
+import {map, switchMap, filter} from 'rxjs/operators';
 
 import { environment } from '../../../environments/environment';
 
@@ -55,7 +55,9 @@ export class WarehouseService {
    * @param id - the warehouse id
    */
   getShow(id:number):Observable<WarehouseModel.Warehouse>{
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+    return from(this.auth.getCurrentToken()).pipe(
+     
+      switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get(this.getShowUrl.replace("{{id}}",id.toString()), {headers}).pipe(map((response:any)=>response.data));
     }));
@@ -71,7 +73,12 @@ export class WarehouseService {
   }
 
   async getFullIndex() {
+
     const currentToken = await this.auth.getCurrentToken();
+    if(currentToken === null){
+      return;
+    }
+    
     const headers = new HttpHeaders({Authorization: currentToken});
     return this.http.get(this.getFullIndexUrl, {
       headers: headers,
@@ -89,7 +96,6 @@ export class WarehouseService {
         },
         e => {
           console.log(e);
-          
         });
       });
   }
@@ -103,51 +109,54 @@ export class WarehouseService {
     try {
       this.getFullIndex()
       .then((data: Observable<HttpResponse<any>>) => {
+        if(data === undefined){
+          return;
+        }
         data.subscribe((res: HttpResponse<any>) => {
           res.body.data.forEach(warehouse => {
             this.listWarehouses.push({id: warehouse.id, value: warehouse.name, has_racks: warehouse.has_racks, reference: warehouse.reference });
             warehouse.racks.forEach(hall => {
-              if (typeof this.listHalls[warehouse.id] == 'undefined') {
+              if (typeof this.listHalls[warehouse.id] === 'undefined') {
                 this.listHalls[warehouse.id] = [];
               }
               if (hall.containers.length > 0) {
-                if (!this.listHalls[warehouse.id].find(searchHall => searchHall.id == hall.id)) {
+                if (!this.listHalls[warehouse.id].find(searchHall => searchHall.id === hall.id)) {
                   this.listHalls[warehouse.id].push({id: hall.id, value: hall.hall, containers: hall.containers.length > 0});
                 }
               }
               let lastRow = 0;
               hall.containers.forEach(container => {
-                if (typeof this.listRows[warehouse.id] == 'undefined') {
+                if (typeof this.listRows[warehouse.id] === 'undefined') {
                   this.listRows[warehouse.id] = {};
                 }
-                if (typeof this.listColumns[warehouse.id] == 'undefined') {
+                if (typeof this.listColumns[warehouse.id] === 'undefined') {
                   this.listColumns[warehouse.id] = {};
                 }
-                if (typeof this.listReferences[warehouse.id] == 'undefined') {
+                if (typeof this.listReferences[warehouse.id] === 'undefined') {
                   this.listReferences[warehouse.id] = {};
                 }
-                if (typeof this.listColumns[warehouse.id] == 'undefined') {
+                if (typeof this.listColumns[warehouse.id] === 'undefined') {
                   this.listColumns[warehouse.id] = {};
                 }
-                if (typeof this.listRows[warehouse.id][hall.id] == 'undefined') {
+                if (typeof this.listRows[warehouse.id][hall.id] === 'undefined') {
                   this.listRows[warehouse.id][hall.id] = [];
                 }
-                if (typeof this.listColumns[warehouse.id][hall.id] == 'undefined') {
+                if (typeof this.listColumns[warehouse.id][hall.id] === 'undefined') {
                   this.listColumns[warehouse.id][hall.id] = [];
                 }
-                if (typeof this.listReferences[warehouse.id][hall.id] == 'undefined') {
+                if (typeof this.listReferences[warehouse.id][hall.id] === 'undefined') {
                   this.listReferences[warehouse.id][hall.id] = [];
                 }
-                if (typeof this.listColumns[warehouse.id][hall.id][container.row] == 'undefined') {
+                if (typeof this.listColumns[warehouse.id][hall.id][container.row] === 'undefined') {
                   this.listColumns[warehouse.id][hall.id][container.row] = [];
                 }
-                if (typeof this.listReferences[warehouse.id][hall.id][container.row] == 'undefined') {
+                if (typeof this.listReferences[warehouse.id][hall.id][container.row] === 'undefined') {
                   this.listReferences[warehouse.id][hall.id][container.row] = [];
                 }
-                if (typeof this.listReferences[warehouse.id][hall.id][container.row][container.column] == 'undefined') {
+                if (typeof this.listReferences[warehouse.id][hall.id][container.row][container.column] === 'undefined') {
                   this.listReferences[warehouse.id][hall.id][container.row][container.column] = [];
                 }
-                if (container.row != lastRow) {
+                if (container.row !== lastRow) {
                   this.listRows[warehouse.id][hall.id].push({id: container.id, value: container.row, row: container.row});
                   lastRow = container.row;
                 }
@@ -162,6 +171,7 @@ export class WarehouseService {
       console.log(error);
       
     }
+  
     
   }
 
