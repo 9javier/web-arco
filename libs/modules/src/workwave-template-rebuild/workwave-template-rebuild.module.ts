@@ -7,7 +7,7 @@ import {
   MatCheckboxModule,
   MatGridListModule,
   MatRadioModule,
-  MatDatepickerModule, MatNativeDateModule, DateAdapter
+  MatDatepickerModule, MatNativeDateModule, DateAdapter, MatTooltipModule
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { WorkwaveTemplateRebuildRoutingModule } from "./workwave-template-rebuild-routing.module";
@@ -40,7 +40,8 @@ import {FilterButtonModule} from "../components/filter-button/filter-button.modu
     MatDatepickerModule,
     MatNativeDateModule,
     NgxMaterialTimepickerModule,
-    FilterButtonModule
+    FilterButtonModule,
+    MatTooltipModule
   ],
   providers: [
     { provide: DateAdapter, useClass: MondayStartingDateAdapterService },

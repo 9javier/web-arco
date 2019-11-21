@@ -19,6 +19,8 @@ export class TableTeamAssignationComponent implements OnInit {
   maxSizeForNameCol: number = 2;
   private columnsMultiple: number = 10;
 
+  tooltipValue: string = null;
+
   constructor(
     public events: Events,
     public pickingParametrizationProvider: PickingParametrizationProvider
@@ -76,6 +78,40 @@ export class TableTeamAssignationComponent implements OnInit {
 
   stringToInt(value: string): number {
     return parseInt(value) * this.columnsMultiple;
+  }
+
+  showConsolidatedBreakdown() {
+    this.tooltipValue = '';
+
+    let selectedOperations = document.getElementsByClassName('requests-orders-line');
+    let operationsBreakdown = [];
+
+    for(let i = 0; i < selectedOperations.length; i++){
+      let iOperation = selectedOperations[i] as HTMLElement;
+      if(this.isChecked(iOperation) && this.getLaunchPairs(iOperation) > 0){
+        if(typeof operationsBreakdown[this.getDestiny(iOperation)] != "number") operationsBreakdown[this.getDestiny(iOperation)] = this.getLaunchPairs(iOperation);
+        else operationsBreakdown[this.getDestiny(iOperation)] += this.getLaunchPairs(iOperation);
+      }
+    }
+
+    for(let destiny in operationsBreakdown){
+      this.tooltipValue += destiny+' -> '+operationsBreakdown[destiny]+'\n';
+    }
+
+    let htmlTooltip = document.getElementsByClassName('mat-tooltip')[0] as HTMLElement;
+    htmlTooltip.style.whiteSpace = 'pre';
+  }
+
+  isChecked(operation: HTMLElement){
+    return operation.children[0].children[0].children[0].children[0].children[0].getAttribute('aria-checked') == 'true';
+  }
+
+  getLaunchPairs(operation: HTMLElement){
+    return parseInt(operation.children[0].children[8].children[0].children[0].innerHTML);
+  }
+
+  getDestiny(operation: HTMLElement){
+    return operation.children[0].children[4].children[0].children[0].innerHTML;
   }
 
 }
