@@ -30,7 +30,7 @@ export class AuditsMobileComponent implements OnInit {
   }
 
   closeAuditoria(data){
-    this.audit.create({packingReference:'J0018',status:2}).subscribe(res =>{
+    this.audit.create({packingReference:data,status:2}).subscribe(res =>{
       console.log(res);
       this.presentToast('Auditoria Cerrada!!','success');
       this.getAllAudits();

@@ -7,7 +7,6 @@
     </ion-col>
 
     <ion-col class="buttons" align-self-end size="6">
-      <button [disabled]="!buttonAvailability" (click)="userSelected()" [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}" class="config-button " mat-raised-button >Asignación de usuarios</button>
       <button [disabled]="!buttonAvailability" (click)="orderAssignment()" [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}" mat-raised-button>Asignación de ordenes</button>
     </ion-col>
   </ion-row>

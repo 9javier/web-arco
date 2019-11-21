@@ -1,11 +1,13 @@
 <ion-content padding>
-  <!--  -->
   <ion-list>
     <ion-item *ngFor="let item of Auditories">
-      <ion-label>JOO10</ion-label>
+      <ion-label>
+        <span> {{item.packing.reference}}</span>
+        <p>Productos : {{item.sorterAuditPackingProducts.length}}</p>
+      </ion-label>
 
-      <span *ngIf="item.status === 1" slot="end">
-        <ion-icon class="icon-close" (click)="closeAuditoria(item)"  name="close-circle-outline"></ion-icon>
+      <span *ngIf="item.packing.status === 1" slot="end">
+        <ion-icon class="icon-close" (click)="closeAuditoria(item.packing.reference)"  name="close-circle-outline"></ion-icon>
       </span>
 
     </ion-item>

@@ -182,13 +182,6 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.serviceG.buttonAvailability.unsubscribe();
   }
 
-  userSelected(){
-    let aux = this.serviceG.requestUser.value;
-    aux.user = true;
-    aux.table = true;
-    this.serviceG.requestUser.next(aux);
-  }
-
   orderAssignment(){
     let aux = this.serviceG.orderAssignment.value;
     aux.store = true; 

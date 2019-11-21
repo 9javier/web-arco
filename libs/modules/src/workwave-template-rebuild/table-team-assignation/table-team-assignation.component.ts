@@ -19,12 +19,17 @@ export class TableTeamAssignationComponent implements OnInit {
   maxSizeForCols: number = 12;
   maxSizeForNameCol: number = 2;
   private columnsMultiple: number = 10;
+  public buttonAvailability : boolean = false;
 
   constructor(
     public events: Events,
     public pickingParametrizationProvider: PickingParametrizationProvider,
     private serviceG : WorkwavesService
-  ) { }
+  ) {
+      this.serviceG.buttonAvailability.subscribe(res=>{
+        this.buttonAvailability = res.status;
+      })
+   }
 
   ngOnInit() {
    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
@@ -54,6 +59,14 @@ export class TableTeamAssignationComponent implements OnInit {
        }
      }
    );
+  }
+
+  userSelected(){
+    let aux = this.serviceG.requestUser.value;
+    aux.user = true;
+    aux.table = true;
+    aux.init = false;
+    this.serviceG.requestUser.next(aux);
   }
 
   ngOnDestroy() {

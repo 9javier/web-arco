@@ -55,6 +55,7 @@ export class TableEmployeesComponent implements OnInit {
     let aux = this.serviceG.requestUser.value;
     aux.data.user = this.listEmployeesSelected;
     aux.user = validation === 'init' ?  true : false;
+    aux.init = validation === 'init' ?  true : false;
     this.serviceG.requestUser.next(aux);
   }
 

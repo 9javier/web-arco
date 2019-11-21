@@ -465,6 +465,12 @@ export class MenuComponent implements OnInit {
           id: 'audit-al',
           url: '/audits',
           icon: 'list-box'
+        },
+        {
+          title : 'Revisiones Pendientes',
+          id: 'audit-rv',
+          url: '/audits/pending-revisions',
+          icon: 'list-box'
         }
       ]
     },

@@ -52,12 +52,22 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     private pickingParametrizationProvider: PickingParametrizationProvider,
   ) {
     this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table == true) this.employeeChanged(res.data);
+      if (res.user === true && res.table == true){
+        //if(res.init ===true) 
+        this.employeeChanged(res.data);
+        // if(res.init === false) {
+        //   let aux = this.workwavesService.orderAssignment.value;
+        //   console.log(aux);
+        //   this.groupWarehousesChanged(aux.data,res.data);
+        // }
+        
+        
+      } 
     })
 
     this.workwavesService.orderAssignment.subscribe(res => {
       if (res.store == true && res.type == true) {
-        this.groupWarehousesChanged(res.data);
+        this.groupWarehousesChanged(res.data,undefined);
       }
     })
   }
@@ -128,7 +138,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       });
   }
 
-  private loadRequestOrders() {
+  private loadRequestOrders(params) {
+    //console.log(params);
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     if (this.listTypesToUpdate.length > 0 && this.listGroupsWarehousesToUpdate.length > 0) {
       this.workwavesService
@@ -142,6 +153,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.pickingParametrizationProvider.loadingListRequestOrders--;
           this.pickingParametrizationProvider.loadingListRequestOrders--;
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
+          //if(params !== undefined) console.log('entro con params');
+          //this.employeeChanged(params);
         }, (error) => {
           console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
           this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
@@ -223,20 +236,19 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   //   this.loadRequestOrders();
   // }
 
-  groupWarehousesChanged(data) {
-    this.listTypesToUpdate = data.typesShippingOrders;
+  groupWarehousesChanged(data,dataUser) {
+    console.log(data);
+    this.listTypesToUpdate = data['typesShippingOrders'];   
     this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.store);
     this.pickingParametrizationProvider.loadingListRequestOrders++;
     this.pickingParametrizationProvider.loadingListRequestOrders++;
-    this.loadRequestOrders();
+    this.loadRequestOrders(dataUser);
   }
 
   employeeChanged(data) {
     this.listEmployeesToUpdate = data.user;
-
     this.listWarehousesThresholdAndSelectedQty = data.table.listThreshold;
     this.listRequestOrdersToUpdate = data.table.listSelected;
-
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
