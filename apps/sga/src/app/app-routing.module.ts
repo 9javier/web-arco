@@ -317,6 +317,14 @@ const routes: Routes = [
     data: {
       name: 'regiones'
     }
+  },
+  {
+    path:'receptions-avelon',
+    canActivate:[AuthGuard],
+    loadChildren: '@suite/common-modules#ReceptionsAvelonModule',
+    data: {
+      name: 'recepciones'
+    }
   }
 ];
 

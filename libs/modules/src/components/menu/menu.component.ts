@@ -48,7 +48,7 @@ export class MenuComponent implements OnInit {
   displaySmallSidebar = false;
   currentRoute: string = "";
   sgaPages: MenuItemList = [
-    { 
+    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
@@ -264,7 +264,13 @@ export class MenuComponent implements OnInit {
       title:'Regiones',
       id:'regions',
       url:'/regions',
-      icon: 'map' 
+      icon: 'map'
+    },
+    {
+      title:'Recepciones',
+      id:'receptions-avelon',
+      url:'/receptions-avelon',
+      icon: 'archive'
     },
   ];
 
