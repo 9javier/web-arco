@@ -56,6 +56,137 @@ export class TableRequestsOrdersComponent implements OnInit {
     public pickingParametrizationProvider: PickingParametrizationProvider
   ) { }
 
+  showArrow(colNumber, dirDown){
+    let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
+    if(dirDown) htmlColumn.innerHTML += ' 🡇';
+    else htmlColumn.innerHTML += ' 🡅';
+  }
+
+  sort(column){
+
+    for(let i = 0; i < document.getElementsByClassName('title').length; i++){
+      let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
+      if(iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')){
+        iColumn.innerHTML = iColumn.innerHTML.slice(0,-2);
+      }
+    }
+
+    switch(column){
+      case 'reference':{
+        if(this.lastOrder[0]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.request.requestId - a.request.requestId});
+          this.showArrow(0, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.request.requestId - b.request.requestId});
+          this.showArrow(0, true);
+        }
+        this.lastOrder[0] = !this.lastOrder[0];
+        break;
+      }
+      case 'date':{
+        if(this.lastOrder[1]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.request.date).format('X'))});
+          this.showArrow(1, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.request.date).format('X'))});
+          this.showArrow(1, true);
+        }
+        this.lastOrder[1] = !this.lastOrder[1];
+        break;
+      }
+      case 'origin':{
+        if(this.lastOrder[2]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.originWarehouse.reference) - parseInt(a.originWarehouse.reference)});
+          this.showArrow(2, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.originWarehouse.reference) - parseInt(b.originWarehouse.reference)});
+          this.showArrow(2, true);
+        }
+        this.lastOrder[2] = !this.lastOrder[2];
+        break;
+      }
+      case 'destiny':{
+        if(this.lastOrder[3]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.destinyWarehouse.reference) - parseInt(a.destinyWarehouse.reference)});
+          this.showArrow(3, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.destinyWarehouse.reference) - parseInt(b.destinyWarehouse.reference)});
+          this.showArrow(3, true);
+        }
+        this.lastOrder[3] = !this.lastOrder[3];
+        break;
+      }
+      case 'destiny-max':{
+        if(this.lastOrder[4]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.destinyWarehouse.thresholdShippingStore - a.destinyWarehouse.thresholdShippingStore});
+          this.showArrow(4, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.destinyWarehouse.thresholdShippingStore - b.destinyWarehouse.thresholdShippingStore});
+          this.showArrow(4, true);
+        }
+        this.lastOrder[4] = !this.lastOrder[4];
+        break;
+      }
+      case 'type':{
+        if(this.lastOrder[5]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.preparationLinesTypes.name) - parseInt(a.preparationLinesTypes.name)});
+          this.showArrow(5, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.preparationLinesTypes.name) - parseInt(b.preparationLinesTypes.name)});
+          this.showArrow(5, true);
+        }
+        this.lastOrder[5] = !this.lastOrder[5];
+        break;
+      }
+      case 'quantity':{
+        if(this.lastOrder[6]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.quantityOrder) - parseInt(a.quantityOrder)});
+          this.showArrow(6, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.quantityOrder) - parseInt(b.quantityOrder)});
+          this.showArrow(6, true);
+        }
+        this.lastOrder[6] = !this.lastOrder[6];
+        break;
+      }
+      case 'quantity-launch':{
+        if(this.lastOrder[7]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.quantityMatchWarehouse - a.quantityMatchWarehouse});
+          this.showArrow(7, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.quantityMatchWarehouse - b.quantityMatchWarehouse});
+          this.showArrow(7, true);
+        }
+        this.lastOrder[7] = !this.lastOrder[7];
+        break;
+      }
+    }
+  }
+
+  enlarge(){
+    if(this.enlarged){
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
+      top.style.display = 'block';
+      middle.style.height = '25vh';
+      this.enlarged = !this.enlarged;
+    }else{
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
+      top.style.display = 'none';
+      middle.style.height = 'calc(100vh - 52px - 56px)';
+      this.enlarged = !this.enlarged;
+    }
+  }
+
   ngOnInit() {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
       this.listRequestOrders = this.pickingParametrizationProvider.listRequestOrders;

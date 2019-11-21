@@ -10,7 +10,7 @@
 
     <mat-grid-tile class="reference border-right" colspan="2">
       <div class="tile-value">
-        <span class="title">Referencia</span>
+        <span class="title" (click)="sort('reference')">Referencia 🡇</span>
         <suite-filter-button
           class="filter"
           [title]="'Referencia'"
@@ -23,7 +23,7 @@
 
     <mat-grid-tile class="date border-right" colspan="3">
       <div class="tile-value">
-        <span class="title">Fecha</span>
+        <span class="title" (click)="sort('date')">Fecha</span>
         <suite-filter-button
           class="filter"
           [title]="'Fecha'"
@@ -36,7 +36,7 @@
 
     <mat-grid-tile class="origin border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Origen</span>
+        <span class="title" (click)="sort('origin')">Origen</span>
         <suite-filter-button
           class="filter"
           [title]="'Origen'"
@@ -49,7 +49,7 @@
 
     <mat-grid-tile class="destiny border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Destino</span>
+        <span class="title" (click)="sort('destiny')">Destino</span>
         <suite-filter-button
           class="filter"
           [title]="'Destino'"
@@ -61,12 +61,14 @@
     </mat-grid-tile>
 
     <mat-grid-tile class="destiny-max border-right" colspan="2">
-      <div class="tile-value">Máximo</div>
+      <div class="tile-value">
+        <span class="title" (click)="sort('destiny-max')">Máximo</span>
+      </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="type border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Tipo</span>
+        <span class="title" (click)="sort('type')">Tipo</span>
         <suite-filter-button
           class="filter"
           [title]="'Tipo'"
