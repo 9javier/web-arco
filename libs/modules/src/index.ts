@@ -253,6 +253,6 @@ export * from './components/scanner-manual/scanner-manual.module';
 export  * from './regions/regions.component';
 export  * from './regions/regions.module';
 
-// /**Receptions avelon */
+// // /**Receptions avelon */
 export  * from './receptions-avelon/receptions-avelon.component'
 export  * from './receptions-avelon/receptions-avelon.module';

@@ -1,3 +1,4 @@
+import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
@@ -11,10 +12,13 @@ const routes: Routes = [
   }
 ];
 @NgModule({
-  declarations: [ListsComponent],
+  declarations: [ReceptionsAvelonComponent, ListsComponent],
+  entryComponents: [ReceptionsAvelonComponent, ListsComponent],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    IonicModule,
+    RouterModule.forChild(routes),
   ]
 })
 export class ReceptionsAvelonModule { }
