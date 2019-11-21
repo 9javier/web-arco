@@ -44,7 +44,6 @@ export class KeyboardService {
     this.input = document.getElementById(id);
     console.log('input', this.input);
     if(this.input !== null) {
-      this.input.blur();
       this.input.setAttribute('readonly','');
     }
     setTimeout(()=> {
