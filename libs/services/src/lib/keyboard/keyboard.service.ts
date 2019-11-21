@@ -39,16 +39,16 @@ export class KeyboardService {
   
 
   private disabledKeyboard(ev) {
-    console.log('ev');
+    // console.log('ev');
     const id = document.activeElement.id;
     this.input = document.getElementById(id);
-    console.log('input', this.input);
+    // console.log('input', this.input);
     if(this.input !== null) {
       this.input.setAttribute('readonly','');
     }
     setTimeout(()=> {
       if(this.input !== null) {
-        console.log('remove readonly');
+        // console.log('remove readonly');
         this.input.removeAttribute('readonly');
       }
     
