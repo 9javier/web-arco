@@ -42,6 +42,11 @@ export class TableRequestsOrdersComponent implements OnInit {
   isFilteringOrigin: number = 0;
   isFilteringDestiny: number = 0;
   isFilteringType: number = 0;
+  isFilteringQuantities: number = 0;
+  isFilteringQuantitiesLaunch: number = 0;
+
+  lastOrder = [true, true, true, true, true, true, true, true];
+  enlarged = false;
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
@@ -150,12 +155,47 @@ export class TableRequestsOrdersComponent implements OnInit {
           return tempArray;
         }
       }, []);
+      this.listQuantitiesFilters = this.listRequestOrders.map((item) => {
+        return {
+          checked: true,
+          value: item.quantityOrder,
+          id: item.id,
+          type: this.FILTER_QUANTITY,
+          hide: false
+        };
+      }).reduce((tempArray, currentItem) => {
+        const x = tempArray.find(item => item.value === currentItem.value);
+        if (!x) {
+          return tempArray.concat([currentItem]);
+        } else {
+          return tempArray;
+        }
+      }, []);
+      this.listQuantitiesLaunchFilters = this.listRequestOrders.map((item) => {
+        return {
+          checked: true,
+          value: item.quantityMatchWarehouse,
+          id: item.id,
+          type: this.FILTER_QUANTITY_LAUNCH,
+          hide: false
+        };
+      }).reduce((tempArray, currentItem) => {
+        const x = tempArray.find(item => item.value === currentItem.value);
+        if (!x) {
+          return tempArray.concat([currentItem]);
+        } else {
+          return tempArray;
+        }
+      }, []);
 
       this.isFilteringRequests = this.listRequestsFilters.length;
       this.isFilteringDate = this.listDateFilters.length;
       this.isFilteringOrigin = this.listOriginFilters.length;
       this.isFilteringDestiny = this.listDestinyFilters.length;
       this.isFilteringType = this.listTypeFilters.length;
+      this.isFilteringQuantities = this.listQuantitiesFilters.length;
+      this.isFilteringQuantitiesLaunch = this.listQuantitiesLaunchFilters.length;
+
     });
 
     this.events.subscribe(this.DRAW_CONSOLIDATED_MATCHES, (data: Array<WorkwaveModel.AssignationsByRequests>) => {
@@ -220,12 +260,19 @@ export class TableRequestsOrdersComponent implements OnInit {
     } else if (data[0].type == this.FILTER_TYPE) {
       this.listTypeFilters = data;
     }
+    else if (data[0].type == this.FILTER_QUANTITY) {
+      this.listQuantitiesFilters = data;
+    }else if (data[0].type == this.FILTER_QUANTITY_LAUNCH) {
+      this.listQuantitiesLaunchFilters = data;
+    }
 
     this.isFilteringRequests = 0;
     this.isFilteringDate = 0;
     this.isFilteringOrigin = 0;
     this.isFilteringDestiny = 0;
     this.isFilteringType = 0;
+    this.isFilteringQuantities = 0;
+    this.isFilteringQuantitiesLaunch = 0;
 
     let listRequestOrdersTemp = this.listRequestOrdersFinal.filter((item) => {
       let isOk = false;
@@ -287,12 +334,38 @@ export class TableRequestsOrdersComponent implements OnInit {
 
       return isOk;
     });
+    listRequestOrdersTemp = listRequestOrdersTemp.filter((item) => {
+      let isOk = false;
+
+      for (let filter in this.listQuantitiesFilters) {
+        if (this.listQuantitiesFilters[filter].value == item.quantityOrder && this.listQuantitiesFilters[filter].checked) {
+          isOk = true;
+          break;
+        }
+      }
+
+      return isOk;
+    });
+    listRequestOrdersTemp = listRequestOrdersTemp.filter((item) => {
+      let isOk = false;
+
+      for (let filter in this.listQuantitiesLaunchFilters) {
+        if (this.listQuantitiesLaunchFilters[filter].value == item.quantityMatchWarehouse && this.listQuantitiesLaunchFilters[filter].checked) {
+          isOk = true;
+          break;
+        }
+      }
+
+      return isOk;
+    });
 
     this.isFilteringRequests = (this.listRequestsFilters.filter(filter => filter.checked)).length;
     this.isFilteringDate = (this.listDateFilters.filter(filter => filter.checked)).length;
     this.isFilteringOrigin = (this.listOriginFilters.filter(filter => filter.checked)).length;
     this.isFilteringDestiny = (this.listDestinyFilters.filter(filter => filter.checked)).length;
     this.isFilteringType = (this.listTypeFilters.filter(filter => filter.checked)).length;
+    this.isFilteringQuantities = (this.listQuantitiesFilters.filter(filter => filter.checked)).length;
+    this.isFilteringQuantitiesLaunch = (this.listQuantitiesLaunchFilters.filter(filter => filter.checked)).length;
 
     this.listRequestOrders = listRequestOrdersTemp;
 

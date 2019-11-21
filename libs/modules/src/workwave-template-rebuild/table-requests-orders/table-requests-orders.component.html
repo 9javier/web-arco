@@ -79,13 +79,29 @@
 
     <mat-grid-tile class="quantity border-right" colspan="2">
       <div class="tile-value">
-        Pares
+        <span class="title" (click)="sort('quantity')">Pares</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Pares'"
+          [listItems]="listQuantitiesFilters"
+          [isFiltering]="isFilteringQuantities != this.listQuantitiesFilters.length"
+          (applyFilters)="applyFilters($event)"
+          [filterType]="'slider'">
+        </suite-filter-button>
       </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="quantity-launch" colspan="2">
       <div class="tile-value">
-        Pares Lanzar
+        <span class="title" (click)="sort('quantity-launch')">Pares Lanzar</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Pares Lanzar'"
+          [listItems]="listQuantitiesLaunchFilters"
+          [isFiltering]="isFilteringQuantitiesLaunch != this.listQuantitiesLaunchFilters.length"
+          (applyFilters)="applyFilters($event)"
+          [filterType]="'slider'">
+        </suite-filter-button>
       </div>
     </mat-grid-tile>
   </mat-grid-list>
