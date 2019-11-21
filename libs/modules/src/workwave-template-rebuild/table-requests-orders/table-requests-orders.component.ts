@@ -295,6 +295,11 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.isFilteringType = (this.listTypeFilters.filter(filter => filter.checked)).length;
 
     this.listRequestOrders = listRequestOrdersTemp;
+
+    for (let iRequest in this.requestOrdersSelection) {
+      this.requestOrdersSelection[iRequest] = true;
+    }
+    this.selectRequestOrder(true);
   }
 
   dateCreatedParsed(requestOrder) : string {
