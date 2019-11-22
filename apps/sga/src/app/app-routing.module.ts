@@ -321,7 +321,7 @@ const routes: Routes = [
   {
     path:'receptions-avelon',
     canActivate:[AuthGuard],
-    loadChildren: '@suite/common-modules#ReceptionsAvelonModule',
+    loadChildren: '../../../../libs/modules/src/receptions-avelon/receptions-avelon.module#ReceptionsAvelonModule',
     data: {
       name: 'Recepciones'
     }
