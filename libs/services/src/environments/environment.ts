@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   apiBase: 'http://localhost:8081/api',
-  apiSorter: 'http://localhost:3000/api',
+  apiSorter: 'http://localhost:8082/api',
   urlBase: 'http://localhost:8081',
   sga: {
     client_id: "krack-client-sga",
