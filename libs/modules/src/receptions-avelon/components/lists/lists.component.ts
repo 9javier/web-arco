@@ -1,3 +1,4 @@
+import { ReceptionAvelonModel } from '@suite/services';
 import { Component, OnInit, Input } from '@angular/core';
 
 
@@ -9,17 +10,15 @@ import { Component, OnInit, Input } from '@angular/core';
 export class ListsComponent implements OnInit {
 
 
-  @Input('data') datos: Array<Datos>
+  @Input('data') datos: Array<ReceptionAvelonModel.Data>
 
   constructor() { }
 
   ngOnInit() {
   }
 
-}
-
-interface Datos {
-  id: string;
-  name: string;
-  selected: string;
+  selected(dato: ReceptionAvelonModel.Data) {
+     dato.selected = !dato.selected
+     console.log(dato.selected)
+  }
 }

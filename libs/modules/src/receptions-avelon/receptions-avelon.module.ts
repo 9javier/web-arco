@@ -4,6 +4,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { ReceptionsAvelonComponent } from './receptions-avelon.component';
 import { ListsComponent } from './components/lists/lists.component';
+import { SizesComponent } from './components/sizes/sizes.component';
 
 const routes: Routes = [
   {
@@ -12,8 +13,8 @@ const routes: Routes = [
   }
 ];
 @NgModule({
-  declarations: [ReceptionsAvelonComponent, ListsComponent],
-  entryComponents: [ReceptionsAvelonComponent, ListsComponent],
+  declarations: [ReceptionsAvelonComponent, ListsComponent, SizesComponent],
+  entryComponents: [ReceptionsAvelonComponent, ListsComponent, SizesComponent],
   imports: [
     CommonModule,
     RouterModule,
