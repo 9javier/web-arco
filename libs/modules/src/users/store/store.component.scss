@@ -63,6 +63,11 @@ ion-select {
     right: 5px;
 }
 
+
+ion-item {
+  --border-style: none !important;
+}
+
 ion-icon {
     font-size: 24px;
 }

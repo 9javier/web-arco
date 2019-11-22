@@ -15,7 +15,9 @@
 ion-grid {
     --ion-grid-column-padding: 32px;
 }
-
+ion-item {
+  --border-style: none !important;
+}
 .advise {
     color: red;
 }
@@ -31,16 +33,16 @@ ion-grid {
 // ion-footer:before {
 //   height: 0;
 // }
-ion-item {
-    --border-style: none;
-    ion-input,
-    ion-select {
-        --background: var(--ion-color-white);
-        --color: var(--ion-color-dark);
-        border: 2px solid var(--ion-color-tertiary);
-        --padding-start: 8px;
-    }
-}
+// ion-item {
+//     --border-style: none;
+//     ion-input,
+//     ion-select {
+//         --background: var(--ion-color-white);
+//         --color: var(--ion-color-dark);
+//         border: 2px solid var(--ion-color-tertiary);
+//         --padding-start: 8px;
+//     }
+// }
 
 ion-select {
     max-width: 100%;
