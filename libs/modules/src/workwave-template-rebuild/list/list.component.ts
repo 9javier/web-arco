@@ -40,6 +40,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   private loading: HTMLIonLoadingElement = null;
 
+  enlarged = false;
+
   constructor(
     private location: Location,
     private events: Events,
@@ -245,6 +247,17 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   }
 
+  enlarge(){
+    if(this.enlarged){
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = '25vh';
+      this.enlarged = !this.enlarged;
+    }else{
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = 'calc(100vh - 52px - 56px - 8px)';
+      this.enlarged = !this.enlarged;
+    }
+  }
 
   private generateWorkWave() {
     this.workwavesService

@@ -20,4 +20,13 @@ export class FilterPopoverProvider {
   set listItems(value: Array<any>) {
     this._listItems = value;
   }
+
+  private _filterType: string = '';
+  get filterType(): string {
+    return this._filterType;
+  }
+  set filterType(value: string) {
+    this._filterType = value;
+  }
+
 }
