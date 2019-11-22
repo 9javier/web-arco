@@ -1,11 +1,25 @@
 div.main-element {
   height: 100%;
 
+  .buttons-news{
+    margin-left: 16%;
+    color: white;
+    background: #222428;
+  }
+
+  .buttons-news-disabled{
+    margin-left: 16%;
+    background:gray;
+    color:white;
+  }
+
   h2.title-table {
     text-align: center;
     font-size: 16px;
     line-height: 20px;
     margin-bottom: 10px;
+    display: inline-block;
+    margin-left: 44%;
   }
 
   div.legend {

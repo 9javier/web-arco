@@ -353,13 +353,6 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.serviceG.buttonAvailability.unsubscribe();
   }
 
-  userSelected(){
-    let aux = this.serviceG.requestUser.value;
-    aux.user = true;
-    aux.table = true;
-    this.serviceG.requestUser.next(aux);
-  }
-
   orderAssignment(){
     let aux = this.serviceG.orderAssignment.value;
     aux.store = true; 
@@ -375,10 +368,6 @@ export class TableRequestsOrdersComponent implements OnInit {
   }
 
   selectRequestOrder(incrementTeamCounter: boolean) {
-    if (incrementTeamCounter) {
-      this.pickingParametrizationProvider.loadingListTeamAssignations++;
-    }
-
     for (let iObj in this.listWarehousesThresholdAndSelectedQty) {
       this.listWarehousesThresholdAndSelectedQty[iObj].selected = 0;
     }
@@ -397,10 +386,8 @@ export class TableRequestsOrdersComponent implements OnInit {
 
     let aux = this.serviceG.requestUser.value;
     aux.data.table = {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty};
-    aux.table = incrementTeamCounter === false ?  true : false;
+    aux.table = incrementTeamCounter === false;
     this.serviceG.requestUser.next(aux);
-
-    //this.changeRequestOrder.next({listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty});
   }
 
   applyFilters(data: any) {

@@ -21,16 +21,22 @@ export class TableTeamAssignationComponent implements OnInit {
   private columnsMultiple: number = 10;
 
   tooltipValue: string = null;
+  public buttonAvailability : boolean = false;
 
   constructor(
     public events: Events,
     public pickingParametrizationProvider: PickingParametrizationProvider,
     private serviceG : WorkwavesService
-  ) { }
+  )  {
+    this.serviceG.buttonAvailability.subscribe(res=>{
+      this.buttonAvailability = res.status;
+    })
+
+  }
 
   ngOnInit() {
    this.events.subscribe(this.TEAM_ASSIGNATIONS_LOADED, () => {
-       this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
+     this.listTeamAssignations = this.pickingParametrizationProvider.listTeamAssignations;
 
      this.maxQuantityAssignations = 0;
 
@@ -54,12 +60,12 @@ export class TableTeamAssignationComponent implements OnInit {
          this.maxSizeForCols = 12;
          this.maxSizeForNameCol = 2;
        }
-     }
-   );
+   });
   }
 
   ngOnDestroy() {
     this.events.unsubscribe(this.TEAM_ASSIGNATIONS_LOADED);
+    this.serviceG.buttonAvailability.unsubscribe();
   }
 
   private teamAssignationsLoaded() {
@@ -81,6 +87,13 @@ export class TableTeamAssignationComponent implements OnInit {
 
   stringToInt(value: string): number {
     return parseInt(value) * this.columnsMultiple;
+  }
+
+  userSelected(){
+    let aux = this.serviceG.requestUser.value;
+    aux.user = true;
+    aux.table = true;
+    this.serviceG.requestUser.next(aux);
   }
 
   showConsolidatedBreakdown() {

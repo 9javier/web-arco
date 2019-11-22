@@ -1,5 +1,14 @@
 <div class="main-element">
+
   <h2 class="title-table">Asignaciones del Equipo</h2>
+
+  <button
+    [disabled]="!buttonAvailability"
+    (click)="userSelected()"
+    [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}"
+    class="config-button"
+    mat-raised-button
+  >Actualizar asignaciones</button>
 
   <div class="legend">
     <div>
