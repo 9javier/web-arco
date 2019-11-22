@@ -281,6 +281,8 @@
     <source-file src="src/android/layout/product_info_picking_store.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
     <source-file src="src/android/styles.xml" target-dir="res/values"/>
+    <source-file src="src/android/raw/response_request_error.wav" target-dir="res/raw"/>
+    <source-file src="src/android/raw/response_request_ok.wav" target-dir="res/raw"/>
 
   </platform>
   <platform name="windows">
