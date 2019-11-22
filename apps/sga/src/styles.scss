@@ -87,6 +87,10 @@ ion-item.item-label-floating {
   }
 
 
+.item {
+    --border-style: none !important;
+}
+
 .input {
     border: 1px solid;
     border-radius: 1px;
@@ -126,8 +130,13 @@ ion-item.item-label-floating {
     top: 3px !important;
 }
 
+.large {
+    max-width: 30% !important
+}
+
 .icon {
     color: darkgray;
     margin-top: 36px;
     margin-right: 12px;
 }
+
