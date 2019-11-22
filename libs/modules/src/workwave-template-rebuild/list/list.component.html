@@ -1,5 +1,9 @@
 <h2 class="workwave-title">
-    <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
+  <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
+  <div id="top" class="toggle">
+    <span>Expandir</span>
+    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
+  </div>
 </h2>
 <p *ngIf="disableEdition" class="error-edit-text"><i>Ola de trabajo en ejecución. Imposible editar.</i></p>
 

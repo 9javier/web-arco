@@ -8,6 +8,21 @@ h2.workwave-title {
   }
 }
 
+ion-toggle{
+  vertical-align: top;
+  padding-top: 3px;
+  padding-bottom: 5px;
+}
+
+.toggle{
+  float: right;
+  span{
+    display: inline-block;
+    font-size: 16px;
+    font-weight: normal;
+  }
+}
+
 p.error-edit-text {
   padding: 0 0 5px 20px;
   font-size: 14px;

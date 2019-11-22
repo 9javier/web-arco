@@ -137,6 +137,7 @@ export class TableTeamAssignationComponent implements OnInit {
       let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
       let bottom = document.getElementsByClassName('team-assignation')[0] as HTMLElement;
       let empty = document.getElementsByClassName('empty-list')[0] as HTMLElement;
+      document.getElementById('top').style.display = 'block';
       top.style.display = 'block';
       middle.style.display = 'block';
       bottom.style.height = 'calc(45vh - 52px - 56px - 8px);';
@@ -147,6 +148,7 @@ export class TableTeamAssignationComponent implements OnInit {
       let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
       let bottom = document.getElementsByClassName('team-assignation')[0] as HTMLElement;
       let empty = document.getElementsByClassName('empty-list')[0] as HTMLElement;
+      document.getElementById('top').style.display = 'none';
       top.style.display = 'none';
       middle.style.display = 'none';
       bottom.style.height = 'calc(100vh - 52px - 56px)';
