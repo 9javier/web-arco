@@ -2,6 +2,11 @@ div.popover-filters.main-element {
   height: 100%;
   padding: 8px;
 
+  div:nth-child(1) > ion-item > ion-range {
+    padding-top: 23px;
+    padding-bottom: 0px;
+  }
+
   mat-form-field.search, ion-item.search {
     height: 67px;
     width: 100%;

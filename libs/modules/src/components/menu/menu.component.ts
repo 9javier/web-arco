@@ -10,6 +10,7 @@ import { SealScanditService } from "../../../../services/src/lib/scandit/seal/se
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
+import {AuditMultipleScanditService} from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -465,6 +466,12 @@ export class MenuComponent implements OnInit {
           id: 'audit-al',
           url: '/audits',
           icon: 'list-box'
+        },
+        {
+          title: 'Escaneo múltiple',
+          id: 'audit-al-multiple',
+          url: 'audits/multiple',
+          icon: 'list'
         }
       ]
     },
@@ -501,9 +508,10 @@ export class MenuComponent implements OnInit {
     private printTagsScanditService: PrintTagsScanditService,
     private sealScanditService: SealScanditService,
     private productInfoScanditService: ProductInfoScanditService,
+    private auditMultipleScanditService: AuditMultipleScanditService,
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
-    private tariffService: TariffService,
+    private tariffService: TariffService
 
   ) {
     this.loginService.availableVersion.subscribe(res=>{
@@ -635,6 +643,8 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
+    } else if (p.url === 'audits/multiple') {
+      this.auditMultipleScanditService.init();
     } else {
       this.returnTitle(p);
     }

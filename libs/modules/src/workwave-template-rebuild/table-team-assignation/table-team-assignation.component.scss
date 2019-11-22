@@ -1,11 +1,39 @@
 div.main-element {
   height: 100%;
 
+  .buttons-news{
+    margin-left: 16%;
+    color: white;
+    background: #222428;
+  }
+
+  .buttons-news-disabled{
+    margin-left: 16%;
+    background:gray;
+    color:white;
+  }
+
   h2.title-table {
     text-align: center;
     font-size: 16px;
     line-height: 20px;
     margin-bottom: 10px;
+    display: inline-block;
+    margin-left: 44%;
+  }
+
+  ion-toggle{
+    vertical-align: top;
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .toggle{
+    float: right;
+    span{
+      display: inline-block;
+      margin-top: 18px;
+    }
   }
 
   div.legend {
@@ -58,7 +86,7 @@ div.main-element {
   }
 
   .loader, .empty-list {
-    height: calc(30vh - 30px - 24px); // 30px from table title - 24px from legend
+    height: calc(45vh - 52px - 56px - 8px - 72px);
     width: 100%;
     display: table;
     p {

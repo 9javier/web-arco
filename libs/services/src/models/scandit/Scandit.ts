@@ -42,6 +42,11 @@ export namespace ScanditModel {
     action?: string
   }
 
+  export interface ResponseAuthMultiple extends Response {
+    exit?: boolean,
+    manual?: boolean
+  }
+
   interface Filters {
     id: number,
     name: string,
