@@ -59,6 +59,16 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initAuditMultiple: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixInitAuditMultiple", [title, titleBackground, titleColor]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color
@@ -256,6 +266,28 @@ var ScanditMatrixSimple = {
   },
   setTimeout: function (actionIonic, delay, params) {
     exec(null, null, PLUGIN_NAME, "setTimeout", [actionIonic, delay, params]);
+  },
+  /**
+   *
+   * @param type
+   */
+  sound: function (type) {
+    exec(null, null, PLUGIN_NAME, "launchSound", [type]);
+  },
+  /**
+   *
+   * @param message
+   */
+  wrongCodeAuditMultiple: function (message) {
+    exec(null, null, PLUGIN_NAME, "wrongCodeAuditMultiple", [message]);
+  },
+  /**
+   *
+   * @param message
+   * @param type
+   */
+  changeNoticeAuditMultiple: function (message, type) {
+    exec(null, null, PLUGIN_NAME, "changeNoticeAuditMultiple", [message, type]);
   }
 }
 
