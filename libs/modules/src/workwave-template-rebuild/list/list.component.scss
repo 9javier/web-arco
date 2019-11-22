@@ -57,8 +57,7 @@ div.requests-orders {
 }
 
 div.team-assignation {
-  height: auto;
-  max-height: 35vh;
+  height: calc(45vh - 52px - 56px - 8px);;
   border-bottom: 2px solid var(--ion-color-dark);
 }
 

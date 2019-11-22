@@ -22,6 +22,7 @@ export class TableTeamAssignationComponent implements OnInit {
 
   tooltipValue: string = null;
   public buttonAvailability : boolean = false;
+  enlarged = false;
 
   constructor(
     public events: Events,
@@ -128,6 +129,30 @@ export class TableTeamAssignationComponent implements OnInit {
 
   getDestiny(operation: HTMLElement){
     return operation.children[0].children[4].children[0].children[0].innerHTML;
+  }
+
+  enlarge(){
+    if(this.enlarged){
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
+      let bottom = document.getElementsByClassName('team-assignation')[0] as HTMLElement;
+      let empty = document.getElementsByClassName('empty-list')[0] as HTMLElement;
+      top.style.display = 'block';
+      middle.style.display = 'block';
+      bottom.style.height = 'calc(45vh - 52px - 56px - 8px);';
+      if(document.getElementsByClassName('empty-list').length > 0) empty.style.height = 'calc(45vh - 52px - 56px - 8px - 72px)';
+      this.enlarged = !this.enlarged;
+    }else{
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
+      let bottom = document.getElementsByClassName('team-assignation')[0] as HTMLElement;
+      let empty = document.getElementsByClassName('empty-list')[0] as HTMLElement;
+      top.style.display = 'none';
+      middle.style.display = 'none';
+      bottom.style.height = 'calc(100vh - 52px - 56px)';
+      if(document.getElementsByClassName('empty-list').length > 0) empty.style.height = 'calc(100vh - 52px - 56px - 72px)';
+      this.enlarged = !this.enlarged;
+    }
   }
 
 }

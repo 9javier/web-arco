@@ -184,7 +184,7 @@ export class TableRequestsOrdersComponent implements OnInit {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
       let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
       top.style.display = 'block';
-      middle.style.height = '25vh';
+      middle.style.height = '30vh';
       this.enlarged = !this.enlarged;
     }else{
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
