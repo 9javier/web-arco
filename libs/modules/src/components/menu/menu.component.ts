@@ -23,10 +23,12 @@ interface MenuSectionGroupItem {
 
 interface MenuSectionItem {
   title: string,
-  id: string,
+  id?: string,
   url: string,
   icon: string,
   notification?: boolean
+  children?: MenuSectionItem[];
+  header?:boolean
 }
 
 @Component({
@@ -98,6 +100,27 @@ export class MenuComponent implements OnInit {
           id: 'workwaves-scheduled',
           url: '/workwaves-scheduled',
           icon: 'code'
+        },
+        {
+          title: 'Crear Olas',
+          id: 'workwaves-create',
+          url: '',
+          icon: 'code',
+          header: true,
+          children: [
+            {
+              title: 'Picking directo/consolidado',
+              id: 'workwaves-scheduled-1',
+              url: '/workwave-template-rebuild',
+              icon: 'add-circle'
+            },
+            {
+              title: 'Peticiones online/tienda',
+              id: 'workwave-online-store',
+              url: '/workwave/online-store',
+              icon: 'add-circle-outline'
+            },
+          ]
         },
         {
           title: 'Historial',
@@ -653,6 +676,9 @@ export class MenuComponent implements OnInit {
       this.auditMultipleScanditService.init();
     } else {
       this.returnTitle(p);
+    }
+    if(p.id === 'workwaves-scheduled-1'){
+      this.router.navigate([p.url], {queryParams: {type: 1}})
     }
   }
 
