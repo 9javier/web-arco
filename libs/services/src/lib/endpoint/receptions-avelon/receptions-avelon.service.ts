@@ -1,7 +1,6 @@
 import { map } from 'rxjs/operators';
 import { ReceptionAvelonModel } from '@suite/services';
 import { of } from 'rxjs';
-import { reception } from './mock';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
