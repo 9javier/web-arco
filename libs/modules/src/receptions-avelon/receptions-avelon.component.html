@@ -16,37 +16,44 @@
     </ion-row>
     <ion-row class="ion-margin-top">
       <ion-col size="4">
-        <ion-title> Marcas </ion-title>
-        <suite-lists [data]="marca"></suite-lists>
+        <ion-item>
+          <ion-title> Marcas </ion-title>
+          <i slot="end" class="material-icons">keyboard</i>
+        </ion-item>
+        <suite-lists [data]="response.brands"></suite-lists>
       </ion-col>
       <ion-col size="4">
-        <ion-title> Modelos </ion-title>
-        <suite-lists [data]="modelo"></suite-lists>
+        <ion-item>
+          <ion-title> Modelos </ion-title>
+          <i slot="end" class="material-icons">keyboard</i>
+        </ion-item>
+
+        <suite-lists [data]="response.models"></suite-lists>
       </ion-col>
       <ion-col size="4">
-        <ion-title>Colores</ion-title>
-        <suite-lists [data]="color"></suite-lists>
+        <ion-item>
+          <ion-title> Colores </ion-title>
+          <i slot="end" class="material-icons">keyboard</i>
+        </ion-item>
+
+        <suite-lists [data]="response.colors"></suite-lists>
       </ion-col>
       <ion-col class="ion-margin-top" size="4">
-        <ion-button>
-          buscar
-        </ion-button>
+        <ion-button> buscar </ion-button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size="12">
         <ion-title>Talla</ion-title>
-        <suite-sizes [data]="talla"></suite-sizes>
+        <suite-sizes [data]="response.sizes"></suite-sizes>
       </ion-col>
       <ion-col size="12">
-          <ion-item lines="none">
-            <ion-label>EAN:</ion-label>
-            <ion-input type="text"></ion-input>
-            <ion-button slot="end" >
-              imprimir
-            </ion-button>
-          </ion-item>
-        </ion-col>
+        <ion-item lines="none">
+          <ion-label>EAN:</ion-label>
+          <ion-input type="text" [value]="response.ean"></ion-input>
+          <ion-button slot="end"> imprimir </ion-button>
+        </ion-item>
+      </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>
