@@ -1,9 +1,11 @@
+import { map } from 'rxjs/operators';
 import { ReceptionAvelonModel } from '@suite/services';
 import { of } from 'rxjs';
 import { reception } from './mock';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { HttpRequestModel } from '../../../models/endpoints/HttpRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,6 @@ export class ReceptionsAvelonService {
   }
 
   getReceptions() {
-    return this.http.get<ReceptionAvelonModel.Reception>(this.url);
+    return this.http.get<HttpRequestModel.Response>(this.url).pipe(map(resp => resp.data));
   }
 }

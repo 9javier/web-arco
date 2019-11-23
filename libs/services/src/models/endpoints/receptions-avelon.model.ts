@@ -8,9 +8,10 @@ export namespace ReceptionAvelonModel {
   }
 
   export interface Reception {
-    marca: Array<Data>;
-    modelo: Array<Data>;
-    colores: Array<Data>;
-    talla: Array<Data>;
+    brands: Array<Data>;
+    models: Array<Data>;
+    colors: Array<Data>;
+    sizes: Array<Data>;
+    ean: string
   }
 }
