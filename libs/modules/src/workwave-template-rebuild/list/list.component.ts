@@ -183,6 +183,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
           this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
+        }, () => {
+           this.loadRequestOrders()
         });
     } else {
       this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
