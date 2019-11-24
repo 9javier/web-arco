@@ -9,85 +9,85 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path:'logout',
-    redirectTo:'login',
-    pathMatch:'full'
+    path: 'logout',
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
   {
     path: 'user-time/:redirect',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
-    data:{
-      name:'Registro horario'
+    data: {
+      name: 'Registro horario'
     }
-  },{
+  }, {
     path: 'user-time',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/user-time/user-time.module#UserTimeModule',
-    data:{
-      name:'Registro horario'
+    data: {
+      name: 'Registro horario'
     }
   },
   {
     path: 'welcome',
     canActivate: [AuthGuard],
     loadChildren: './welcome/welcome.module#WelcomePageModule',
-    data:{
-      name:'Bienvenido'
+    data: {
+      name: 'Bienvenido'
     }
   },
   {
     path: 'home',
     canActivate: [AuthGuard],
     loadChildren: './home/home.module#HomePageModule',
-    data:{
-      name:'Principal'
+    data: {
+      name: 'Principal'
     }
   },
   {
     path: 'login',
     loadChildren: '../../../../libs/modules/src/login/login.module#LoginPageModule',
-    data:{
-      name:'Login'
+    data: {
+      name: 'Login'
     }
   },
   {
     path: 'products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule',
-    data:{
-      name:'Productos'
+    data: {
+      name: 'Productos'
     }
-  },{
+  }, {
     path: 'building',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',
-    data:{
-      name:'Building'
+    data: {
+      name: 'Building'
     }
   },
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: '@suite/common-modules#LocationsModule',
-    data:{
-      name:'Almacenes'
+    loadChildren: '../../../../libs/modules/src/locations/locations.module#LocationsModule  ',
+    data: {
+      name: 'Almacenes'
     }
   },
   {
     path: 'jails',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/jail/jail.module#JailModule',
-    data:{
-      name:'Jails'
+    data: {
+      name: 'Jails'
     }
   },
   {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
-    data:{
-      name:'Pallets'
+    data: {
+      name: 'Pallets'
     }
   },
   {
@@ -99,24 +99,24 @@ const routes: Routes = [
     path: 'warehouses',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/warehouses/warehouses.module#WarehousesModule',
-    data:{
-      name:'Almacenes'
+    data: {
+      name: 'Almacenes'
     }
   },
   {
     path: 'warehouses/locations',
     canActivate: [AuthGuard],
     loadChildren: '@suite/common-modules#LocationsModule',
-    data:{
-      name:'Ubicaciones'
+    data: {
+      name: 'Ubicaciones'
     }
   },
   {
     path: 'settings',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/settings/settings.module#SettingsModule',
-    data:{
-      name:'Ajustes'
+    data: {
+      name: 'Ajustes'
     }
   },
   {
@@ -133,71 +133,71 @@ const routes: Routes = [
     path: 'tariff',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/tariff/tariff.module#TariffModule',
-    data:{
+    data: {
       name: 'Tarifas'
     }
   },
   {
     path: 'prices/:tariffId',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/prices/prices.module#PricesModule',
-    data:{
-      name:'Prices'
-    }
-  },
-  {
-    path: 'print-tag/manual',
-    canActivate:[AuthGuard],
-    loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
-    data:{
+    data: {
       name: 'Prices'
     }
   },
   {
     path: 'print-tag/manual',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
-    data:{
+    data: {
+      name: 'Prices'
+    }
+  },
+  {
+    path: 'print-tag/manual',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/print-prices-manual/print-prices-manual.module#PrintPricesManualModule',
+    data: {
       name: 'Prices'
     }
   },
   {
     path: 'print/packing',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-relabel-packing/print-relabel-packing.module#PrintRelabelPackingModule',
-    data:{
+    data: {
       name: 'Prices'
     }
   },
   {
     path: 'print/packing/manual',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-relabel-packing-manual/print-relabel-packing-manual.module#PrintRelabelPackingManualModule',
-    data:{
+    data: {
       name: 'Prices'
     }
   },
   {
     path: 'packing/seal/manual',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/seal-packing-manual/seal-packing-manual.module#SealPackingManualModule',
-    data:{
+    data: {
       name: 'Precintar'
     }
   },
   {
     path: 'print/product/relabel',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-relabel-product-manual/print-relabel-product-manual.module#PrintRelabelProductManualModule',
-    data:{
+    data: {
       name: 'Retiquetación'
     }
   },
   {
     path: 'print/product/received',
-    canActivate:[AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-received-product/print-received-product.module#PrintReceivedProductModule',
-    data:{
+    data: {
       name: 'Recibidos'
     }
   },
@@ -241,4 +241,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
