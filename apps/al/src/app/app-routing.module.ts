@@ -69,7 +69,7 @@ const routes: Routes = [
   {
     path: 'warehouse',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/locations/locations.module#LocationsModule  ',
+    loadChildren: '../../../../libs/modules/src/locations/locations.module#LocationsModule',
     data: {
       name: 'Almacenes'
     }
