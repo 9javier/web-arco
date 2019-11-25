@@ -272,7 +272,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Auditorias',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'ribbon',
       children: [
@@ -486,7 +486,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Auditorias',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'ribbon',
       children: [
