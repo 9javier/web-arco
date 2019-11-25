@@ -17,11 +17,13 @@ export class ToolbarAlComponent implements OnInit {
   @Output() windowResize = new EventEmitter();
   @Output() toggleSideMenuSga = new EventEmitter();
   @Output() toggleSideMenuAl = new EventEmitter();
-  
+
   public currentPage: string = 'Registro horario';
   public optionsActions: ActionToolbarModel.ActionToolbar[] = [];
   color: string
   isAndroid: boolean;
+  state: boolean;
+  showKeyboard: boolean
   constructor(
     private router: Router,
     private popoverController: PopoverController,
@@ -35,12 +37,20 @@ export class ToolbarAlComponent implements OnInit {
     this.color = 'danger'
     if(this.plt.is('android')) {
       this.keyboard.disabled()
+      this.state =this.state =false
     }
 
     this.isAndroid = this.plt.is('android');
 
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
+      // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
+      if(this.currentPage.includes('manual') || this.currentPage.includes('Manual')) {
+        this.showKeyboard = true;
+      }
+      else{
+        this.showKeyboard = false
+      }
     });
     this.toolbarProvider.showAlMenu.subscribe((show) => {
       this.showAlMenu = show;
@@ -83,6 +93,7 @@ export class ToolbarAlComponent implements OnInit {
 
   onActiveKeyboard() {
     const state = this.keyboard.isEneabled();
+    this.state = state
     if (state === true) {
       this.keyboard.disabled()
       this.color = 'danger'
