@@ -16,86 +16,67 @@
         <ion-grid class="wrapper-form">
             <ion-row class="input-wrapper">
                 <!--Name-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="person"></ion-icon>
-                    </div>
-                    <ion-label position="floating">Nombre</ion-label>
-                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+                <ion-item class="item" lines="none">
+                    <ion-icon slot="start" class="icon" color="medium" name="person"></ion-icon>
+                    <ion-label class="label" position="stacked">Nombre</ion-label>
+                    <ion-input class="input" formControlName="name" type="text" text></ion-input>
                 </ion-item>
                 <!--Email-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="finger-print"></ion-icon>
-                    </div>
-                    <ion-label position="floating">Usuario</ion-label>
-                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
-                </ion-item>
+                <ion-item class="item" lines="none">
+                  <ion-icon slot="start" class="icon" color="medium" name="finger-print"></ion-icon>
+                  <ion-label class="label" position="stacked">Usuario</ion-label>
+                  <ion-input class="input"  formControlName="email" type="text" text></ion-input>
+              </ion-item>
                 <!--Password-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="lock"></ion-icon>
-                    </div>
-                    <ion-label position="floating">Nueva contraseña</ion-label>
-                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
-
-                        <ion-icon class="icon-show-password" color="medium"
-                            [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                <ion-item class="item" lines="none">
+                  <ion-icon slot="start" class="icon" color="medium" name="lock"></ion-icon>
+                  <ion-label class="label large" position="stacked">Nueva contraseña</ion-label>
+                  <ion-input class="input"  formControlName="password" type="password"  #passwordInput></ion-input>
+                  <ion-icon slot="end" class="icon-show-password icon" color="medium" [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
                       passwordInput.type === 'password'
                         ? (passwordInput.type = 'text')
                         : (passwordInput.type = 'password')
                     "></ion-icon>
-                    </ion-input>
+              </ion-item>
 
-                </ion-item>
                 <!--Repeat password-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="lock"></ion-icon>
-                    </div>
-                    <ion-label position="floating">Repetir contraseña</ion-label>
-                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
-                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
-                    repeatPasswordInput.type === 'password'
-                        ? (repeatPasswordInput.type = 'text')
-                        : (repeatPasswordInput.type = 'password')
-                    "></ion-icon>
-                    </ion-input>
-                </ion-item>
+                <ion-item class="item" lines="none">
+                  <ion-icon slot="start" class="icon" color="medium" name="lock"></ion-icon>
+                  <ion-label class="label large" position="stacked">Repetir contraseña</ion-label>
+                  <ion-input class="input"  formControlName="password" type="text" #repeatPasswordInput></ion-input>
+                  <ion-icon  slot="end" class="icon-show-password icon" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                  repeatPasswordInput.type === 'password'
+                      ? (repeatPasswordInput.type = 'text')
+                      : (repeatPasswordInput.type = 'password')
+                  "></ion-icon>
+              </ion-item>
                 <!--Direction-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="home"></ion-icon>
-                    </div>
-                    <ion-label position="floating">Dirección</ion-label>
-                    <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address"
-                        type="text" text></ion-input>
-                </ion-item>
+                <ion-item class="item" lines="none">
+                  <ion-icon slot="start" class="icon" color="medium" name="home"></ion-icon>
+                  <ion-label class="label" position="stacked">Dirección</ion-label>
+                  <ion-input class="input"  formControlName="address" type="text" text></ion-input>
+              </ion-item>
                 <!--Employee Id-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="lock"></ion-icon>
-                    </div>
-                    <ion-label position="floating">Id empleado Avelon</ion-label>
-                    <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal"
-                        formControlName="employedId" type="number" number></ion-input>
-                </ion-item>
+                <ion-item class="item" lines="none">
+                  <ion-icon slot="start" class="icon" color="medium" name="lock"></ion-icon>
+                  <ion-label class="label large" position="stacked">Id empleado Avelon</ion-label>
+                  <ion-input class="input"  formControlName="employedId" type="number" text></ion-input>
+              </ion-item>
                  <!--Tiene tienda-->
-                 <ion-item class="inner-item">
-                    <ion-label>
-                        Empleado de tienda
-                    </ion-label>
-                    <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
-                </ion-item>
+                 <ion-item class="item" lines="none">
+                  <ion-icon slot="start" class="icon" color="medium" name=""></ion-icon>
+                  <ion-label class="label large" position="stacked">Id empleado Avelon</ion-label>
+                  <ion-checkbox  formControlName="hasWarehouse"></ion-checkbox>
+              </ion-item>
                 <!--Tienda-->
-                
-                <ion-item class="inner-item" style="display: none;">
+
+                <ion-item class="inner-item item" style="display: none;">
                     <ion-select placeholder="Tienda" formControlName="warehouseId" [value]="warehouse_id">
                         <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
                             {{warehouse.name}}</ion-select-option>
                     </ion-select>
                 </ion-item>
-            
+
                 <!--Warehouses permissions-->
                 <div class="container-permits">
                     Permisos:

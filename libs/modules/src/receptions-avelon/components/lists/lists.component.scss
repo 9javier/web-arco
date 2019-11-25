@@ -1,0 +1,13 @@
+.list-wrapper {
+  height: 250px;
+  max-height: 250px;
+  overflow-y: scroll;
+}
+
+.selected {
+  --background: #249f29;
+  color: #ffffff;
+}
+.unselected {
+  --background: #00000000;
+}

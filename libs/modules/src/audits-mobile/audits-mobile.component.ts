@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'suite-audits-mobile',
@@ -14,9 +15,11 @@ export class AuditsMobileComponent implements OnInit {
   constructor(
     private audit : AuditsService,
     private toast : ToastController,
+    private toolbarProvider: ToolbarProvider
   ) { }
 
   ngOnInit() {
+    this.toolbarProvider.currentPage.next('Auditorías');
     this.getAllAudits();
   }
 

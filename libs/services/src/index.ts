@@ -136,7 +136,7 @@ export * from './models/endpoints/postal-code.model';
  /**Province  */
  export * from './lib/endpoint/province/province.service';
  export * from './models/endpoints/province.model';
- 
+
   /**Countries */
 export * from './lib/endpoint/country/country.service';
 export * from './models/endpoints/country.model';
@@ -144,3 +144,7 @@ export * from './models/endpoints/country.model';
  /**Regions */
  export * from './lib/endpoint/region/region.service';
  export * from './models/endpoints/regions.model';
+
+/**Reception avelon */
+  export * from './lib/endpoint/receptions-avelon/receptions-avelon.service';
+  export * from './models/endpoints/receptions-avelon.model';

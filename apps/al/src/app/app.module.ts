@@ -23,6 +23,8 @@ import {registerLocaleData} from "@angular/common";
 import {MondayStartingDateAdapterService} from "../../../../libs/services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
 import {NativeAudio} from "@ionic-native/native-audio/ngx";
 import { AppVersion } from '@ionic-native/app-version/ngx';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+
 
 registerLocaleData(localeEs);
 
@@ -57,7 +59,8 @@ registerLocaleData(localeEs);
       multi: true
     },
     NativeAudio,
-    AppVersion
+    AppVersion,
+    Keyboard
   ],
   bootstrap: [AppComponent]
 })

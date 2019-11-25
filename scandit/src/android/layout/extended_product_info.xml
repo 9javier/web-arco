@@ -33,14 +33,14 @@
           android:layout_height="wrap_content"
           android:orientation="vertical">
           <TextView
-            android:id="@+id/tvModelName"
+            android:id="@+id/tvModelReference"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/transparentWhite"/>
           <TextView
-            android:id="@+id/tvModelReference"
+            android:id="@+id/tvModelName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"

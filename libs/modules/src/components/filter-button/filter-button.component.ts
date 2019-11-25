@@ -13,6 +13,7 @@ export class FilterButtonComponent implements OnInit {
   @Input() title: string;
   @Input() listItems: Array<any>;
   @Input() isFiltering: boolean;
+  @Input() filterType: string = 'search';
   @Output() applyFilters = new EventEmitter();
 
   tooltipHaveValues: string = null;
@@ -27,6 +28,7 @@ export class FilterButtonComponent implements OnInit {
   async openFilterPopover(ev: any) {
     this.filterPopoverProvider.title = this.title;
     this.filterPopoverProvider.listItems = JSON.parse(JSON.stringify(this.listItems));
+    this.filterPopoverProvider.filterType  = this.filterType;
 
     const popover = await this.popoverController.create({
       cssClass: 'popover-filter',

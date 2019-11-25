@@ -20,7 +20,7 @@
     </div>
   </div>
   <div class="start-message-guide" (click)="focusToInput()" *ngIf="!inputValue && !processStarted">
-    <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}"></div><span>!</span>
+    <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected ? sorterProvider.colorSelected.hex : '#000'}"></div><span>!</span>
     <br/>
     <span>Escanea un artículo</span>
     <br/>

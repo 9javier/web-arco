@@ -30,6 +30,10 @@ const routes: Routes = [
   {
     path: 'scanner-product/:id/:jaula/:back',
     component: SccanerProductComponent
+  },
+  {
+    path: 'multiple',
+    component: AuditsMobileComponent
   }
 ];
 
