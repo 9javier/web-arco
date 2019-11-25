@@ -73,8 +73,7 @@ export class WorkwavesService {
         user:[]
       },
       table:false,
-      user: false,
-      init:false
+      user: false
     }
   );
   orderAssignment = new BehaviorSubject<any>(

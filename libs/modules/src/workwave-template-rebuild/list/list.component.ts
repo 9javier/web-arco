@@ -40,6 +40,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   private loading: HTMLIonLoadingElement = null;
 
+  enlarged = false;
+
   constructor(
     private location: Location,
     private events: Events,
@@ -52,22 +54,12 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     private pickingParametrizationProvider: PickingParametrizationProvider,
   ) {
     this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table == true){
-        //if(res.init ===true) 
-        this.employeeChanged(res.data);
-        // if(res.init === false) {
-        //   let aux = this.workwavesService.orderAssignment.value;
-        //   console.log(aux);
-        //   this.groupWarehousesChanged(aux.data,res.data);
-        // }
-        
-        
-      } 
+      if (res.user === true && res.table == true) this.employeeChanged(res.data);
     })
 
     this.workwavesService.orderAssignment.subscribe(res => {
       if (res.store == true && res.type == true) {
-        this.groupWarehousesChanged(res.data,undefined);
+        this.groupWarehousesChanged(res.data);
       }
     })
   }
@@ -138,8 +130,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       });
   }
 
-  private loadRequestOrders(params) {
-    //console.log(params);
+  private loadRequestOrders() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     if (this.listTypesToUpdate.length > 0 && this.listGroupsWarehousesToUpdate.length > 0) {
       this.workwavesService
@@ -153,8 +144,6 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.pickingParametrizationProvider.loadingListRequestOrders--;
           this.pickingParametrizationProvider.loadingListRequestOrders--;
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
-          //if(params !== undefined) console.log('entro con params');
-          //this.employeeChanged(params);
         }, (error) => {
           console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
           this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
@@ -194,6 +183,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
           this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
           this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
+        }, () => {
+
         });
     } else {
       this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
@@ -236,19 +227,20 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   //   this.loadRequestOrders();
   // }
 
-  groupWarehousesChanged(data,dataUser) {
-    console.log(data);
-    this.listTypesToUpdate = data['typesShippingOrders'];   
+  groupWarehousesChanged(data) {
+    this.listTypesToUpdate = data.typesShippingOrders;
     this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.store);
     this.pickingParametrizationProvider.loadingListRequestOrders++;
     this.pickingParametrizationProvider.loadingListRequestOrders++;
-    this.loadRequestOrders(dataUser);
+    this.loadRequestOrders();
   }
 
   employeeChanged(data) {
     this.listEmployeesToUpdate = data.user;
+
     this.listWarehousesThresholdAndSelectedQty = data.table.listThreshold;
     this.listRequestOrdersToUpdate = data.table.listSelected;
+
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
@@ -257,6 +249,17 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   }
 
+  enlarge(){
+    if(this.enlarged){
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = '25vh';
+      this.enlarged = !this.enlarged;
+    }else{
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = 'calc(100vh - 52px - 56px - 8px)';
+      this.enlarged = !this.enlarged;
+    }
+  }
 
   private generateWorkWave() {
     this.workwavesService

@@ -43,6 +43,11 @@ export class TableRequestsOrdersComponent implements OnInit {
   isFilteringOrigin: number = 0;
   isFilteringDestiny: number = 0;
   isFilteringType: number = 0;
+  isFilteringQuantities: number = 0;
+  isFilteringQuantitiesLaunch: number = 0;
+
+  lastOrder = [true, true, true, true, true, true, true, true];
+  enlarged = false;
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
@@ -58,6 +63,139 @@ export class TableRequestsOrdersComponent implements OnInit {
     })
 
    }
+
+  showArrow(colNumber, dirDown){
+    let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
+    if(dirDown) htmlColumn.innerHTML += ' 🡇';
+    else htmlColumn.innerHTML += ' 🡅';
+  }
+
+  sort(column){
+
+    for(let i = 0; i < document.getElementsByClassName('title').length; i++){
+      let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
+      if(iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')){
+        iColumn.innerHTML = iColumn.innerHTML.slice(0,-2);
+      }
+    }
+
+    switch(column){
+      case 'reference':{
+        if(this.lastOrder[0]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.request.requestId - a.request.requestId});
+          this.showArrow(0, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.request.requestId - b.request.requestId});
+          this.showArrow(0, true);
+        }
+        this.lastOrder[0] = !this.lastOrder[0];
+        break;
+      }
+      case 'date':{
+        if(this.lastOrder[1]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.request.date).format('X'))});
+          this.showArrow(1, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.request.date).format('X'))});
+          this.showArrow(1, true);
+        }
+        this.lastOrder[1] = !this.lastOrder[1];
+        break;
+      }
+      case 'origin':{
+        if(this.lastOrder[2]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.originWarehouse.reference) - parseInt(a.originWarehouse.reference)});
+          this.showArrow(2, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.originWarehouse.reference) - parseInt(b.originWarehouse.reference)});
+          this.showArrow(2, true);
+        }
+        this.lastOrder[2] = !this.lastOrder[2];
+        break;
+      }
+      case 'destiny':{
+        if(this.lastOrder[3]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.destinyWarehouse.reference) - parseInt(a.destinyWarehouse.reference)});
+          this.showArrow(3, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.destinyWarehouse.reference) - parseInt(b.destinyWarehouse.reference)});
+          this.showArrow(3, true);
+        }
+        this.lastOrder[3] = !this.lastOrder[3];
+        break;
+      }
+      case 'destiny-max':{
+        if(this.lastOrder[4]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.destinyWarehouse.thresholdShippingStore - a.destinyWarehouse.thresholdShippingStore});
+          this.showArrow(4, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.destinyWarehouse.thresholdShippingStore - b.destinyWarehouse.thresholdShippingStore});
+          this.showArrow(4, true);
+        }
+        this.lastOrder[4] = !this.lastOrder[4];
+        break;
+      }
+      case 'type':{
+        if(this.lastOrder[5]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.preparationLinesTypes.name) - parseInt(a.preparationLinesTypes.name)});
+          this.showArrow(5, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.preparationLinesTypes.name) - parseInt(b.preparationLinesTypes.name)});
+          this.showArrow(5, true);
+        }
+        this.lastOrder[5] = !this.lastOrder[5];
+        break;
+      }
+      case 'quantity':{
+        if(this.lastOrder[6]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.quantityOrder) - parseInt(a.quantityOrder)});
+          this.showArrow(6, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.quantityOrder) - parseInt(b.quantityOrder)});
+          this.showArrow(6, true);
+        }
+        this.lastOrder[6] = !this.lastOrder[6];
+        break;
+      }
+      case 'quantity-launch':{
+        if(this.lastOrder[7]){
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.quantityMatchWarehouse - a.quantityMatchWarehouse});
+          this.showArrow(7, false);
+        }
+        else{
+          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.quantityMatchWarehouse - b.quantityMatchWarehouse});
+          this.showArrow(7, true);
+        }
+        this.lastOrder[7] = !this.lastOrder[7];
+        break;
+      }
+    }
+  }
+
+  enlarge(){
+    if(this.enlarged){
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
+      document.getElementById('top').style.display = 'block';
+      top.style.display = 'block';
+      middle.style.height = '30vh';
+      this.enlarged = !this.enlarged;
+    }else{
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
+      document.getElementById('top').style.display = 'none';
+      top.style.display = 'none';
+      middle.style.height = 'calc(100vh - 52px - 56px)';
+      this.enlarged = !this.enlarged;
+    }
+  }
 
   ngOnInit() {
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
@@ -158,12 +296,47 @@ export class TableRequestsOrdersComponent implements OnInit {
           return tempArray;
         }
       }, []);
+      this.listQuantitiesFilters = this.listRequestOrders.map((item) => {
+        return {
+          checked: true,
+          value: item.quantityOrder,
+          id: item.id,
+          type: this.FILTER_QUANTITY,
+          hide: false
+        };
+      }).reduce((tempArray, currentItem) => {
+        const x = tempArray.find(item => item.value === currentItem.value);
+        if (!x) {
+          return tempArray.concat([currentItem]);
+        } else {
+          return tempArray;
+        }
+      }, []);
+      this.listQuantitiesLaunchFilters = this.listRequestOrders.map((item) => {
+        return {
+          checked: true,
+          value: item.quantityMatchWarehouse,
+          id: item.id,
+          type: this.FILTER_QUANTITY_LAUNCH,
+          hide: false
+        };
+      }).reduce((tempArray, currentItem) => {
+        const x = tempArray.find(item => item.value === currentItem.value);
+        if (!x) {
+          return tempArray.concat([currentItem]);
+        } else {
+          return tempArray;
+        }
+      }, []);
 
       this.isFilteringRequests = this.listRequestsFilters.length;
       this.isFilteringDate = this.listDateFilters.length;
       this.isFilteringOrigin = this.listOriginFilters.length;
       this.isFilteringDestiny = this.listDestinyFilters.length;
       this.isFilteringType = this.listTypeFilters.length;
+      this.isFilteringQuantities = this.listQuantitiesFilters.length;
+      this.isFilteringQuantitiesLaunch = this.listQuantitiesLaunchFilters.length;
+
     });
 
     this.events.subscribe(this.DRAW_CONSOLIDATED_MATCHES, (data: Array<WorkwaveModel.AssignationsByRequests>) => {
@@ -197,10 +370,6 @@ export class TableRequestsOrdersComponent implements OnInit {
   }
 
   selectRequestOrder(incrementTeamCounter: boolean) {
-    if (incrementTeamCounter) {
-      this.pickingParametrizationProvider.loadingListTeamAssignations++;
-    }
-
     for (let iObj in this.listWarehousesThresholdAndSelectedQty) {
       this.listWarehousesThresholdAndSelectedQty[iObj].selected = 0;
     }
@@ -219,10 +388,8 @@ export class TableRequestsOrdersComponent implements OnInit {
 
     let aux = this.serviceG.requestUser.value;
     aux.data.table = {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty};
-    aux.table = incrementTeamCounter === false ?  true : false;
+    aux.table = incrementTeamCounter === false;
     this.serviceG.requestUser.next(aux);
-
-    //this.changeRequestOrder.next({listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty});
   }
 
   applyFilters(data: any) {
@@ -241,12 +408,19 @@ export class TableRequestsOrdersComponent implements OnInit {
     } else if (data[0].type == this.FILTER_TYPE) {
       this.listTypeFilters = data;
     }
+    else if (data[0].type == this.FILTER_QUANTITY) {
+      this.listQuantitiesFilters = data;
+    }else if (data[0].type == this.FILTER_QUANTITY_LAUNCH) {
+      this.listQuantitiesLaunchFilters = data;
+    }
 
     this.isFilteringRequests = 0;
     this.isFilteringDate = 0;
     this.isFilteringOrigin = 0;
     this.isFilteringDestiny = 0;
     this.isFilteringType = 0;
+    this.isFilteringQuantities = 0;
+    this.isFilteringQuantitiesLaunch = 0;
 
     let listRequestOrdersTemp = this.listRequestOrdersFinal.filter((item) => {
       let isOk = false;
@@ -308,14 +482,45 @@ export class TableRequestsOrdersComponent implements OnInit {
 
       return isOk;
     });
+    listRequestOrdersTemp = listRequestOrdersTemp.filter((item) => {
+      let isOk = false;
+
+      for (let filter in this.listQuantitiesFilters) {
+        if (this.listQuantitiesFilters[filter].value == item.quantityOrder && this.listQuantitiesFilters[filter].checked) {
+          isOk = true;
+          break;
+        }
+      }
+
+      return isOk;
+    });
+    listRequestOrdersTemp = listRequestOrdersTemp.filter((item) => {
+      let isOk = false;
+
+      for (let filter in this.listQuantitiesLaunchFilters) {
+        if (this.listQuantitiesLaunchFilters[filter].value == item.quantityMatchWarehouse && this.listQuantitiesLaunchFilters[filter].checked) {
+          isOk = true;
+          break;
+        }
+      }
+
+      return isOk;
+    });
 
     this.isFilteringRequests = (this.listRequestsFilters.filter(filter => filter.checked)).length;
     this.isFilteringDate = (this.listDateFilters.filter(filter => filter.checked)).length;
     this.isFilteringOrigin = (this.listOriginFilters.filter(filter => filter.checked)).length;
     this.isFilteringDestiny = (this.listDestinyFilters.filter(filter => filter.checked)).length;
     this.isFilteringType = (this.listTypeFilters.filter(filter => filter.checked)).length;
+    this.isFilteringQuantities = (this.listQuantitiesFilters.filter(filter => filter.checked)).length;
+    this.isFilteringQuantitiesLaunch = (this.listQuantitiesLaunchFilters.filter(filter => filter.checked)).length;
 
     this.listRequestOrders = listRequestOrdersTemp;
+
+    for (let iRequest in this.requestOrdersSelection) {
+      this.requestOrdersSelection[iRequest] = true;
+    }
+    this.selectRequestOrder(true);
   }
 
   dateCreatedParsed(requestOrder) : string {
