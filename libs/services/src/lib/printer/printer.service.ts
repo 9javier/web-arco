@@ -5,7 +5,7 @@ import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
+import {Observable, from, of} from 'rxjs';
 import { map, switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
@@ -269,8 +269,6 @@ export class PrinterService {
    * @param referencesObject - object with the array of references to be sended
    */
   printPrices(referencesObject) {
-
-    console.log("para impirmir", referencesObject);
     console.debug("PRINT::printPrices 1 [" + new Date().toJSON() + "]", referencesObject);
     let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
@@ -290,7 +288,11 @@ export class PrinterService {
           return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
         })).pipe(flatMap(response => {
           console.debug("PRINT::printPrices 5 [" + new Date().toJSON() + "]", response);
-          return this.printNotify(dataToPrint.options.map(option => option.price.id));
+          if (response) {
+            return this.printNotify(dataToPrint.options.map(option => option.price.id));
+          } else {
+            return of(false);
+          }
         }));
         console.debug("PRINT::printPrices 6 [" + new Date().toJSON() + "]");
         return innerObservable;
@@ -305,7 +307,6 @@ export class PrinterService {
    * @param ids - the ids of printed labels
    */
   printNotify(ids: Array<Number>): Observable<boolean> {
-    console.log("okis doqui", ids);
     console.debug("PRINT::printNotify 1 [" + new Date().toJSON() + "]", ids);
     return this.http.post(this.printNotifyUrl, { references: ids }).pipe(map(response => {
       console.debug("PRINT::printNotify 2 [" + new Date().toJSON() + "]", ids);
@@ -430,7 +431,11 @@ export class PrinterService {
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
         })).pipe(flatMap(response => {
-          return this.printNotify(dataToPrint.options.map(option => option.price.id));
+          if (response) {
+            return this.printNotify(dataToPrint.options.map(option => option.price.id));
+          } else {
+            return of(false);
+          }
         }));
         return innerObservable;
       });
@@ -584,14 +589,14 @@ export class PrinterService {
               (success) => {
                 console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-                resolve();
+                resolve(true);
               }, (fail) => {
                 console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
                   console.debug("PRINT::toPrintFromString 12 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                   //console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                   this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
-                  reject();
+                  reject(false);
                 } else {
                   console.debug("PRINT::toPrintFromString 13 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                   //console.debug("Zbtprinter print attempt " + printAttempts + " fail:" + fail + ", retrying...", { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
