@@ -18,13 +18,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
+import com.galvintec.krack.logistica.dev.R;
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.PickingStoreRejectionReason;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
@@ -47,6 +51,7 @@ import android.widget.TextView;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.HashMap;
@@ -62,6 +67,7 @@ import android.widget.TableRow;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.util.TypedValue;
+import android.widget.Toast;
 
 public class ScanditSDK extends CordovaPlugin {
 
@@ -78,7 +84,6 @@ public class ScanditSDK extends CordovaPlugin {
   public static final String DID_CHANGE_PROPERTY = "didChangeProperty";
   public static final String DID_FAIL_TO_VALIDATE_LICENSE = "didFailToValidateLicense";
   public static final String DID_PROCESS_FRAME = "didProcessFrame";
-
 
   private static final String INIT_LICENSE_COMMAND = "initLicense";
   private static final String SHOW_COMMAND = "show";
@@ -125,7 +130,27 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_LOAD_REJECTION_REASONS = "matrixPickingStoresLoadRejectionReasons";
   private static final String MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG = "matrixPickingStoresHideInfoProductDialog";
   private static final String SET_TIMEOUT = "setTimeout";
+  private static final String MATRIX_INIT_AUDIT_MULTIPLE = "matrixInitAuditMultiple";
+  private static final String WRONG_CODE_AUDIT_MULTIPLE = "wrongCodeAuditMultiple";
+  private static final String CHANGE_NOTICE_AUDIT_MULTIPLE = "changeNoticeAuditMultiple";
+  private static final String LAUNCH_SOUND = "launchSound";
   private static final int REQUEST_CAMERA_PERMISSION = 505;
+
+  // REGISTER HERE ACTIONS THAT OPEN THE SCANDIT CAMERA TO REQUEST PERMISSION TO USE CAMERA IF IT IS NECESSARY
+  private String[] actionsToRequestCameraPermission = {
+    MATRIX_SIMPLE,
+    MATRIX_PICKING_STORES,
+    MATRIX_PRINT_TAGS,
+    MATRIX_PRODUCT_INFO,
+    SWITCH_TO_IONIC,
+    MATRIX_INIT_AUDIT_MULTIPLE
+  };
+
+  // REGISTER THE REQUEST_CODE USED TO START EACH NEW SCANDIT ACTIVITY
+  private static final int RC_ACTIVITY_AUDIT_MULTIPLE = 6;
+
+  private static final int CUSTOM_SOUND_OK = 1;
+  private static final int CUSTOM_SOUND_ERROR = 2;
 
   private static final int COLOR_TRANSPARENT = 0x00000000;
 
@@ -164,6 +189,10 @@ public class ScanditSDK extends CordovaPlugin {
 
   private static Activity activityStarted = null;
   private ProgressDialog loadingDialog = null;
+  private boolean alertAlreadyShowed = false;
+
+  private MediaPlayer mediaPlayerError = null;
+  private MediaPlayer mediaPlayerOk =null;
 
   @Override
   public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -219,7 +248,7 @@ public class ScanditSDK extends CordovaPlugin {
     }
 
     // check if we have to request camera permission before executing commands.
-    if (!mRequestingCameraPermission && !isQueuedCommand && (action.equals(SHOW_COMMAND) || action.equals("matrixWithData") || action.equals("matrix_bubble") || action.equals(MATRIX_SIMPLE))) {
+    if (!mRequestingCameraPermission && !isQueuedCommand && (action.equals(SHOW_COMMAND) || action.equals("matrixWithData") || action.equals("matrix_bubble") || Arrays.asList(actionsToRequestCameraPermission).contains(action))) {
       mRequestingCameraPermission =
         !PermissionHelper.hasPermission(this, Manifest.permission.CAMERA);
       if (mRequestingCameraPermission) {
@@ -1597,7 +1626,7 @@ public class ScanditSDK extends CordovaPlugin {
         loadingDialog.dismiss();
         loadingDialog = null;
       }
-    } else if (action.equals(SET_TIMEOUT)){
+    } else if (action.equals(SET_TIMEOUT)) {
       String actionIonic = "";
       long delay = 2000;
       String params = "";
@@ -1615,7 +1644,7 @@ public class ScanditSDK extends CordovaPlugin {
       if (fActionIonic.equals("hideText")) {
         this.handlerAndroid.removeCallbacks(this.runHideText);
         this.handlerAndroid.postDelayed(this.runHideText, 2000);
-      } else if (fActionIonic.equals("lastCodeScannedStart")){
+      } else if (fActionIonic.equals("lastCodeScannedStart")) {
         this.handlerAndroid.removeCallbacks(this.runLastCodeScannedStart);
         this.handlerAndroid.postDelayed(this.runLastCodeScannedStart, 2000);
       } else {
@@ -1637,7 +1666,82 @@ public class ScanditSDK extends CordovaPlugin {
           },
           delay);
       }
+    } else if (action.equals(MATRIX_INIT_AUDIT_MULTIPLE)) {
+      alertAlreadyShowed = false;
+      mCallbackContextMatrixSimple = callbackContext;
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixAuditMultipleActivity.class);
+      this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_AUDIT_MULTIPLE);
+    } else if (action.equals(WRONG_CODE_AUDIT_MULTIPLE)) {
+      if (!alertAlreadyShowed) {
+        alertAlreadyShowed = true;
+        MatrixAuditMultipleActivity auditMultipleActivity = (MatrixAuditMultipleActivity) activityStarted;
+        auditMultipleActivity.changeNoticeBubble("Detectado código de producto erróneo", auditMultipleActivity.NOTICE_BUBBLE_ERROR);
 
+        String message = null;
+        try {
+          message = args.getString(0);
+        } catch (JSONException e) {
+          e.printStackTrace();
+        }
+
+        if (message == null || message.isEmpty() || message.equals("null")) {
+          message = "Ha escaneado un producto que no debería de estar en el embalaje procesado. Revise uno a uno los productos para localizarlo.";
+        }
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activityStarted);
+        alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("Revisar", (dialogInterface, i) -> {
+          alertAlreadyShowed = false;
+          auditMultipleActivity.exitFromAuditMultiple(true);
+        });
+        alertDialogBuilder.create().show();
+      } else {
+      }
+    } else if (action.equals(CHANGE_NOTICE_AUDIT_MULTIPLE)) {
+      try {
+        String message = args.getString(0);
+        int type = args.getInt(1);
+
+        if (!message.isEmpty()) {
+          MatrixAuditMultipleActivity auditMultipleActivity = (MatrixAuditMultipleActivity) activityStarted;
+          auditMultipleActivity.changeNoticeBubble(message, type);
+        } else {
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+    } else if (action.equals(LAUNCH_SOUND)) {
+      try {
+        int typeSound = args.getInt(0);
+        int resourceId;
+        MediaPlayer mediaPlayer = null;
+
+        switch (typeSound) {
+          case CUSTOM_SOUND_OK:
+            resourceId = resources.getIdentifier("response_request_ok", "raw", packageName);
+            if (mediaPlayerError == null) {
+              mediaPlayerError = MediaPlayer.create(activityStarted, resourceId);
+            }
+            mediaPlayer = mediaPlayerError;
+            break;
+          case CUSTOM_SOUND_ERROR:
+            resourceId = resources.getIdentifier("response_request_error", "raw", packageName);
+            if (mediaPlayerOk == null) {
+              mediaPlayerOk = MediaPlayer.create(activityStarted, resourceId);
+            }
+            mediaPlayer = mediaPlayerOk;
+            break;
+          default:
+            resourceId = 0;
+        }
+
+        if (resourceId != 0) {
+          mediaPlayer.start();
+        }
+      } catch (JSONException | IllegalStateException e) {
+        e.printStackTrace();
+      }
     } else {
       callbackContext.error("Invalid Action: " + action);
       return false;

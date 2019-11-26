@@ -10,6 +10,7 @@ import { SealScanditService } from "../../../../services/src/lib/scandit/seal/se
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
+import {AuditMultipleScanditService} from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -22,10 +23,12 @@ interface MenuSectionGroupItem {
 
 interface MenuSectionItem {
   title: string,
-  id: string,
+  id?: string,
   url: string,
   icon: string,
   notification?: boolean
+  children?: MenuSectionItem[];
+  header?:boolean
 }
 
 @Component({
@@ -48,7 +51,7 @@ export class MenuComponent implements OnInit {
   displaySmallSidebar = false;
   currentRoute: string = "";
   sgaPages: MenuItemList = [
-    { 
+    {
       title: 'Registro horario',
       id: 'user-time',
       url: '/user-time',
@@ -97,6 +100,27 @@ export class MenuComponent implements OnInit {
           id: 'workwaves-scheduled',
           url: '/workwaves-scheduled',
           icon: 'code'
+        },
+        {
+          title: 'Crear Olas',
+          id: 'workwaves-create',
+          url: '',
+          icon: 'code',
+          header: true,
+          children: [
+            {
+              title: 'Picking directo/consolidado',
+              id: 'workwaves-scheduled-1',
+              url: '/workwave-template-rebuild',
+              icon: 'add-circle'
+            },
+            {
+              title: 'Peticiones online/tienda',
+              id: 'workwave-online-store',
+              url: '/workwave/online-store',
+              icon: 'add-circle-outline'
+            },
+          ]
         },
         {
           title: 'Historial',
@@ -248,7 +272,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Auditorias',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'ribbon',
       children: [
@@ -264,7 +288,13 @@ export class MenuComponent implements OnInit {
       title:'Regiones',
       id:'regions',
       url:'/regions',
-      icon: 'map' 
+      icon: 'map'
+    },
+    {
+      title:'Recepciones',
+      id:'receptions-avelon',
+      url:'/receptions-avelon',
+      icon: 'archive'
     },
   ];
 
@@ -456,7 +486,7 @@ export class MenuComponent implements OnInit {
     },
     {
       title: 'Auditorias',
-      open: true,
+      open: false,
       type: 'wrapper',
       icon: 'ribbon',
       children: [
@@ -465,6 +495,12 @@ export class MenuComponent implements OnInit {
           id: 'audit-al',
           url: '/audits',
           icon: 'list-box'
+        },
+        {
+          title: 'Escaneo múltiple',
+          id: 'audit-al-multiple',
+          url: 'audits/multiple',
+          icon: 'list'
         }
       ]
     },
@@ -501,9 +537,10 @@ export class MenuComponent implements OnInit {
     private printTagsScanditService: PrintTagsScanditService,
     private sealScanditService: SealScanditService,
     private productInfoScanditService: ProductInfoScanditService,
+    private auditMultipleScanditService: AuditMultipleScanditService,
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
-    private tariffService: TariffService,
+    private tariffService: TariffService
 
   ) {
     this.loginService.availableVersion.subscribe(res=>{
@@ -635,8 +672,13 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
+    } else if (p.url === 'audits/multiple') {
+      this.auditMultipleScanditService.init();
     } else {
       this.returnTitle(p);
+    }
+    if(p.id === 'workwaves-scheduled-1'){
+      this.router.navigate([p.url], {queryParams: {type: 1}})
     }
   }
 

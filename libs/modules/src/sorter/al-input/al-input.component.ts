@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {MatrixSorterModel} from "../../../../services/src/models/endpoints/MatrixSorter";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
 import {Router} from "@angular/router";
-import {IntermediaryService} from "@suite/services";
+import {AuthenticationService, IntermediaryService} from "@suite/services";
 import {SorterService} from "../../../../services/src/lib/endpoint/sorter/sorter.service";
 import {SorterModel} from "../../../../services/src/models/endpoints/Sorter";
 import {TemplateZonesService} from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
@@ -41,6 +41,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     private sorterTemplateService: SorterTemplateService,
     private sorterExecutionService: SorterExecutionService,
     private templateColorsService: TemplateColorsService,
+    private authenticationService: AuthenticationService,
     public sorterProvider: SorterProvider
   ) { }
   
@@ -1308,6 +1309,11 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
           this.sorterProvider.processActiveForUser = 1;
           this.router.navigate(['sorter/input/scanner']);
           await this.intermediaryService.dismissLoading();
+
+          const userId = await this.authenticationService.getCurrentUserId();
+          const color = this.colorsSelectors.find(c => c.id == this.sorterProvider.colorSelected.id);
+          color.userId = userId;
+          this.resumeProcessForUser = true;
         }, async (error: HttpRequestModel.Error) => {
           let errorMessage = `Ha ocurrido un error al intentar iniciar el proceso con el color ${this.sorterProvider.colorSelected.name}`;
           if (error.error && error.error.errors) {

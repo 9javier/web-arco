@@ -2,17 +2,18 @@
   <ion-grid class="wrapper-form">
     <ion-row class="input-wrapper">
       <ion-col>
-    <ion-item >
-            <ion-icon name="book"></ion-icon>
-        <ion-input type="text" formControlName="name" placeholder="Nombre" ></ion-input>
-    </ion-item>            
+    <ion-item class="item" lines="none">
+            <ion-icon class="icon" slot="start" name="book"></ion-icon>
+            <ion-label class="label" position="stacked">Nombre</ion-label>
+            <ion-input class="input" type="text" formControlName="name"></ion-input>
+    </ion-item>
 
-        <ion-item *ngIf="region.country.name !== ''">
+        <ion-item lines="none" class="item" *ngIf="region.country.name !== ''">
           <ion-label>País: {{ region.country.name }}</ion-label>
         </ion-item>
-        <ion-item>
-            <ion-icon name="map"></ion-icon>
-          <ion-select
+        <ion-item lines="none" class="item">
+            <ion-icon slot="start" class="icon" name="map"></ion-icon>
+          <ion-select class="select"
             [value]="region.country.id"
             (ionChange)="changeCountry($event)"
             placeholder="Selecciona un país"
@@ -27,12 +28,12 @@
             </ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item *ngIf="region.province.name !== ''">
+        <ion-item class="item" lines="none" *ngIf="region.province.name !== ''">
           <ion-label>Provincia: {{ region.province.name }}</ion-label>
         </ion-item>
-        <ion-item>
-            <ion-icon name="square-outline"></ion-icon>
-          <ion-select
+        <ion-item class="item" lines="none">
+            <ion-icon class="icon" slot="start" name="square-outline"></ion-icon>
+          <ion-select class="select"
             [value]="region.province.id"
             (ionChange)="changeProvincia($event)"
             placeholder="Selecciona una provincia"
@@ -46,12 +47,13 @@
             </ion-select-option>
           </ion-select>
         </ion-item>
-        <ion-item *ngIf="region.postalCode.name !== ''">
+        <ion-item class="item" lines="none" *ngIf="region.postalCode.name !== ''">
           <ion-label>Código postal: {{ region.postalCode.name }}</ion-label>
         </ion-item>
-        <ion-item>
-                <ion-icon name="code"></ion-icon>
+        <ion-item class="item" lines="none">
+                <ion-icon class="icon" slot="start" name="code"></ion-icon>
           <ion-select
+          class="select"
             [value]="region.postalCode.id"
             placeholder="Selecciona Código postal"
             formControlName="postalCode"

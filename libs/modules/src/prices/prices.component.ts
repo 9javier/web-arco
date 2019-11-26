@@ -242,7 +242,6 @@ export class PricesComponent implements OnInit {
    * @param items - Reference items to extract he ids
    */
   async printPrices(items, warehouseId: number) {
-    //console.log("dame los items", items);
     //this.initSelectForm(this.prices);
     if (!warehouseId) {
       if (this.isStoreUser) {
@@ -269,7 +268,9 @@ export class PricesComponent implements OnInit {
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
       this.initSelectForm(this.prices);
-      this.changeStatusImpress();
+      if (result) {
+        this.changeStatusImpress();
+      }
       //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();

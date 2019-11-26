@@ -3,32 +3,28 @@
         <ion-row class="input-wrapper">
             <ion-col>
                 <!--Name-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name=""></ion-icon>
-                    </div>
-                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+                <ion-item lines="none">
+                    <ion-label position="stacked" class="label">Nombre</ion-label>
+                    <ion-icon slot="start" class="icon" color="medium" name=""></ion-icon>
+                    <ion-input class="input" formControlName="name" type="text"></ion-input>
                 </ion-item>
                 <!--Phone-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="call"></ion-icon>
-                    </div>
-                    <ion-input placeholder="Teléfono" class="ion-margin-horizontal" formControlName="phone" type="number" number></ion-input>
+                <ion-item lines="none">
+                        <ion-label position="stacked" class="label">Telefono</ion-label>
+                        <ion-icon slot="start" class="icon" color="medium" name="call"></ion-icon>
+                        <ion-input class="input" formControlName="phone" type="text"></ion-input>
                 </ion-item>
                 <!--Address-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name="pin"></ion-icon>
-                    </div>
-                    <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address" type="text" text></ion-input>
+                <ion-item lines="none">
+                        <ion-label position="stacked" class="label">Dirección</ion-label>
+                        <ion-icon slot="start" class="icon" color="medium" name="pin"></ion-icon>
+                        <ion-input class="input" formControlName="address" type="text"></ion-input>
                 </ion-item>
                 <!--Agency-->
-                <ion-item>
-                    <div slot="start" class="slot-start-icon">
-                        <ion-icon color="medium" name=""></ion-icon>
-                    </div>
-                    <ion-select formControlName="manageAgencyId">
+                <ion-item lines="none">
+                    <ion-label position="stacked" class="label">Agencia</ion-label>
+                    <ion-icon class="icon" slot="start" color="medium" name=""></ion-icon>
+                    <ion-select class="select" formControlName="manageAgencyId">
                         <ion-select-option *ngFor="let agency of agencies" [value]="agency.id">
                             {{ agency.name }}
                         </ion-select-option>

@@ -17,6 +17,7 @@ import {DateAdapter} from "@angular/material";
 import {PrinterConnectionService} from "../../../../libs/services/src/lib/printer-connection/printer-connection.service";
 import {ToolbarProvider} from "../../../../libs/services/src/providers/toolbar/toolbar.provider";
 import {AudioProvider} from "../../../../libs/services/src/providers/audio-provider/audio-provider.provider";
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 interface MenuItem {
   title: string;
@@ -113,7 +114,8 @@ export class AppComponent implements OnInit {
     private typesService: TypesService,
     private printerConnectionService: PrinterConnectionService,
     private toolbarProvider: ToolbarProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboard: Keyboard
   ) {
     this.initializeApp();
     this.menu.enable(false, 'sidebar');
@@ -133,9 +135,7 @@ export class AppComponent implements OnInit {
       } else {
         this.statusBar.styleDefault();
       }
-      this.splashScreen.hide();
-
-      // preload audio to sound when incidence success in sorter output-process
+      this.splashScreen.hide();      // preload audio to sound when incidence success in sorter output-process
       this.audioProvider.preload('incidenceBeep', 'assets/audio/incidence_beep.mp3');
       this.audioProvider.preload('responseRequestError', 'assets/audio/response_request_error.wav');
       this.audioProvider.preload('responseRequestOk', 'assets/audio/response_request_ok.wav');
