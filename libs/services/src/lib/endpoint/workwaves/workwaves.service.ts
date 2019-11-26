@@ -3,13 +3,13 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
-import {PATH} from "../../../../../../config/base";
-import {WorkwaveModel} from "../../../models/endpoints/Workwaves";
+import { PATH } from "../../../../../../config/base";
+import { WorkwaveModel } from "../../../models/endpoints/Workwaves";
 
 import { environment } from '../../../environments/environment';
-import {map} from "rxjs/operators";
-import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
-import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import { map } from "rxjs/operators";
+import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
+import { RequestsProvider } from "../../../providers/requests/requests.provider";
 import { BehaviorSubject } from 'rxjs';
 
 export const PATH_POST_STORE_WORKWAVE: string = PATH('Workwaves', 'Store');
@@ -29,11 +29,11 @@ export class WorkwaveWeeklyPlan {
   friday: boolean;
   saturday: boolean;
 
-  public static getDefault(){
+  public static getDefault() {
     return this.fromString("0123456")
   }
 
-  public static fromString(weeklyPlanString: string){
+  public static fromString(weeklyPlanString: string) {
     const workwaveWeeklyPlan = new WorkwaveWeeklyPlan();
     workwaveWeeklyPlan.sunday = weeklyPlanString.indexOf("0") !== -1;
     workwaveWeeklyPlan.monday = weeklyPlanString.indexOf("1") !== -1;
@@ -62,43 +62,43 @@ export class WorkwaveWeeklyPlan {
 })
 export class WorkwavesService {
 
-  buttonAvailability = new BehaviorSubject<any>({status:false});
+  buttonAvailability = new BehaviorSubject<any>({ status: false });
   requestUser = new BehaviorSubject<any>(
     {
-      data:{
-        table:{
-          listSelected:[],
-          listThreshold:{}
+      data: {
+        table: {
+          listSelected: [],
+          listThreshold: {}
         },
-        user:[]
+        user: []
       },
-      table:false,
+      table: false,
       user: false
     }
   );
   orderAssignment = new BehaviorSubject<any>(
     {
-      data:{
-        store : {
+      data: {
+        store: {
           groupsWarehousePickingId: '',
           thresholdConsolidated: '',
         },
-        typesShippingOrders:[]
+        typesShippingOrders: []
       },
-      store:false,
-      type:false
+      store: false,
+      type: false
     }
   );
 
 
   /**Urls for the workwaves service */
-  private postStoreUrl:string = environment.apiBase+"/workwaves";
-  private getListTemplatesUrl:string = environment.apiBase+"/workwaves/templates";
-  private getListScheduledUrl:string = environment.apiBase+"/workwaves";
-  private putUpdateWorkwaveUrl:string = environment.apiBase+"/workwaves/{{id}}";
-  private getListExecutedUrl:string = environment.apiBase+"/workwaves/executed";
-  private deleteDestroyTaskUrl:string = environment.apiBase+"/workwaves/tasks/{{id}}";
-  private deleteDestroyTemplateUrl:string = environment.apiBase+"/workwaves/templates/{{id}}";
+  private postStoreUrl: string = environment.apiBase + "/workwaves";
+  private getListTemplatesUrl: string = environment.apiBase + "/workwaves/templates";
+  private getListScheduledUrl: string = environment.apiBase + "/workwaves";
+  private putUpdateWorkwaveUrl: string = environment.apiBase + "/workwaves/{{id}}";
+  private getListExecutedUrl: string = environment.apiBase + "/workwaves/executed";
+  private deleteDestroyTaskUrl: string = environment.apiBase + "/workwaves/tasks/{{id}}";
+  private deleteDestroyTemplateUrl: string = environment.apiBase + "/workwaves/templates/{{id}}";
 
   private postMatchLineRequestUrl: string = environment.apiBase + "/workwaves/matchlinerequest/";
   private postAssignUserToMatchLineRequestUrl: string = environment.apiBase + "/workwaves/assign/matchlinerequest/";
@@ -118,9 +118,9 @@ export class WorkwavesService {
     private http: HttpClient,
     private auth: AuthenticationService,
     private requestsProvider: RequestsProvider
-  ) {}
+  ) { }
 
-  async getListTemplates() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListTemplates>>> {
+  async getListTemplates(): Promise<Observable<HttpResponse<WorkwaveModel.ResponseListTemplates>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
@@ -131,7 +131,7 @@ export class WorkwavesService {
       });
   }
 
-  async getListScheduled() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>> {
+  async getListScheduled(): Promise<Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
@@ -142,7 +142,7 @@ export class WorkwavesService {
       });
   }
 
-  async getListExecuted() : Promise<Observable<HttpResponse<WorkwaveModel.ResponseListExecuted>>> {
+  async getListExecuted(): Promise<Observable<HttpResponse<WorkwaveModel.ResponseListExecuted>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
 
@@ -183,7 +183,7 @@ export class WorkwavesService {
     this.filterWorkwave(workwave);
 
     return this.http.put<WorkwaveModel.ResponseStore>(
-      this.putUpdateWorkwaveUrl.replace("{{id}}",String(workwaveId)),
+      this.putUpdateWorkwaveUrl.replace("{{id}}", String(workwaveId)),
       workwave,
       {
         headers: headers,
@@ -198,7 +198,7 @@ export class WorkwavesService {
     const headers = new HttpHeaders({ Authorization: currentToken });
 
     return this.http.delete<WorkwaveModel.ResponseDestroyTask>(
-      this.deleteDestroyTaskUrl.replace("{{id}}",String(workwaveId)),
+      this.deleteDestroyTaskUrl.replace("{{id}}", String(workwaveId)),
       {
         headers: headers,
         observe: 'response'
@@ -212,7 +212,7 @@ export class WorkwavesService {
     const headers = new HttpHeaders({ Authorization: currentToken });
 
     return this.http.delete<WorkwaveModel.ResponseDestroyTemplate>(
-      this.deleteDestroyTemplateUrl.replace("{{id}}",String(workwaveId)),
+      this.deleteDestroyTemplateUrl.replace("{{id}}", String(workwaveId)),
       {
         headers: headers,
         observe: 'response'
@@ -225,7 +225,7 @@ export class WorkwavesService {
     }));
   }
 
-  postMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
+  postMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsMatchLineRequestOnlineStore): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postMatchLineRequestOnlineStoreUrl, params);
   }
 
@@ -241,7 +241,7 @@ export class WorkwavesService {
   //   }));
   // }
 
-  postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
+  postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params);
   }
 
@@ -251,11 +251,11 @@ export class WorkwavesService {
     }));
   }
 
-  postConfirmMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsConfirmMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
+  postConfirmMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsConfirmMatchLineRequestOnlineStore): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postConfirmMatchLineRequestOnlineStoreUrl, params);
   }
 
-  postChangeStatusProductOnlineStore(params: WorkwaveModel.ParamsChangeStatusProductOnlineStore) : Promise<HttpRequestModel.Response> {
+  postChangeStatusProductOnlineStore(params: WorkwaveModel.ParamsChangeStatusProductOnlineStore): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postChangeStatusProductOnlineStoreUrl, params);
   }
 

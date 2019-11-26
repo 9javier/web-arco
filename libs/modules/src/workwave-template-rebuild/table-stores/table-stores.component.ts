@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {Events} from "@ionic/angular";
-import {GroupWarehousePickingModel} from "@suite/services";
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { Events } from "@ionic/angular";
+import { GroupWarehousePickingModel } from "@suite/services";
 import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
@@ -20,8 +20,8 @@ export class TableStoresComponent implements OnInit {
   constructor(
     private events: Events,
     public pickingParametrizationProvider: PickingParametrizationProvider,
-    private serviceG : WorkwavesService
-  ) {}
+    private serviceG: WorkwavesService
+  ) { }
 
   ngOnInit() {
     this.events.subscribe(this.GROUPS_WAREHOUSES_LOADED, () => {
@@ -33,7 +33,7 @@ export class TableStoresComponent implements OnInit {
       } else {
         this.groupWarehousesSelected = { groupsWarehousePickingId: 0, thresholdConsolidated: {} };
       }
-      this.selectGroupWarehouses(undefined,'init');
+      this.selectGroupWarehouses(undefined, 'init');
     });
   }
 
@@ -41,7 +41,7 @@ export class TableStoresComponent implements OnInit {
     this.events.unsubscribe(this.GROUPS_WAREHOUSES_LOADED);
   }
 
-  selectGroupWarehouses(idGroupWarehouse?: number,validation?:String) {
+  selectGroupWarehouses(idGroupWarehouse?: number, validation?: String) {
     if (idGroupWarehouse) {
       if (!this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse]) {
         this.groupWarehousesSelected.thresholdConsolidated[idGroupWarehouse] = 0;
@@ -69,10 +69,10 @@ export class TableStoresComponent implements OnInit {
         groupsWarehousePickingId: this.groupWarehousesSelected.groupsWarehousePickingId,
         thresholdConsolidated: this.groupWarehousesSelected.thresholdConsolidated[this.groupWarehousesSelected.groupsWarehousePickingId]
       };
-      
+
       let aux = this.serviceG.orderAssignment.value;
       aux.data.store = localGroupWarehousesSelected;
-      aux.store = validation === 'init' ?  true : false;
+      aux.store = validation === 'init' ? true : false;
       this.serviceG.orderAssignment.next(aux);
 
     } else {
