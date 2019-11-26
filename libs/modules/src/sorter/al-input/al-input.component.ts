@@ -22,6 +22,7 @@ import {HttpRequestModel} from "../../../../services/src/models/endpoints/HttpRe
 })
 export class AlInputSorterComponent implements OnInit, OnDestroy {
 
+  private LOAD_DATA_INPUT_SORTER: string = 'load_data_input_sorter';
   private DRAW_TEMPLATE_MATRIX: string = 'draw_template_matrix';
 
   private activeDefaultData: boolean = false;
@@ -46,19 +47,28 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   ) { }
   
   ngOnInit() {
-    this.isTemplateWithEqualZones = false;
-    if (this.activeDefaultData) {
-      this.loadDefaultData();
-    } else {
-      this.loadingSorterTemplateMatrix = true;
-      this.loadData();
-    }
+    this.loadDataOnInit();
+    this.events.subscribe(this.LOAD_DATA_INPUT_SORTER, () => {
+      this.sorterOperationCancelled();
+      this.loadDataOnInit();
+    });
   }
 
   ngOnDestroy() {
     // Stop the execution color for user
     if (this.sorterProvider.processActiveForUser == 1) {
       this.stopExecutionColor(false);
+    }
+    this.events.unsubscribe(this.LOAD_DATA_INPUT_SORTER);
+  }
+
+  private loadDataOnInit() {
+    this.isTemplateWithEqualZones = false;
+    if (this.activeDefaultData) {
+      this.loadDefaultData();
+    } else {
+      this.loadingSorterTemplateMatrix = true;
+      this.loadData();
     }
   }
 
@@ -1235,6 +1245,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   sorterOperationCancelled() {
     this.sorterProvider.colorSelected = null;
     this.sorterProvider.idZoneSelected = null;
+    this.resumeProcessForUser = false;
   }
 
   showButtonsFooter() : boolean {

@@ -10,7 +10,7 @@ import { SealScanditService } from "../../../../services/src/lib/scandit/seal/se
 import { ProductInfoScanditService } from "../../../../services/src/lib/scandit/product-info/product-info.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 import { LoginComponent } from '../../login/login.page';
-import {AuditMultipleScanditService} from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import { AuditMultipleScanditService } from "../../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
 
 type MenuItemList = (MenuSectionGroupItem | MenuSectionItem)[];
 
@@ -28,7 +28,7 @@ interface MenuSectionItem {
   icon: string,
   notification?: boolean
   children?: MenuSectionItem[];
-  header?:boolean
+  header?: boolean
 }
 
 @Component({
@@ -43,7 +43,7 @@ export class MenuComponent implements OnInit {
   }
 
   isNewTariff: boolean;
-  versionUpdate : any;
+  versionUpdate: any;
 
   private app = app;
 
@@ -285,15 +285,15 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
-      title:'Regiones',
-      id:'regions',
-      url:'/regions',
+      title: 'Regiones',
+      id: 'regions',
+      url: '/regions',
       icon: 'map'
     },
     {
-      title:'Recepciones',
-      id:'receptions-avelon',
-      url:'/receptions-avelon',
+      title: 'Recepciones',
+      id: 'receptions-avelon',
+      url: '/receptions-avelon',
       icon: 'archive'
     },
   ];
@@ -497,6 +497,12 @@ export class MenuComponent implements OnInit {
           icon: 'list-box'
         },
         {
+          title: 'Revisiones Pendientes',
+          id: 'audit-rv',
+          url: '/audits/pending-revisions',
+          icon: 'list-box'
+        },
+        {
           title: 'Escaneo múltiple',
           id: 'audit-al-multiple',
           url: 'audits/multiple',
@@ -543,10 +549,10 @@ export class MenuComponent implements OnInit {
     private tariffService: TariffService
 
   ) {
-    this.loginService.availableVersion.subscribe(res=>{
+    this.loginService.availableVersion.subscribe(res => {
       this.versionUpdate = res;
     })
-   }
+  }
 
   returnTitle(item: MenuSectionItem) {
     this.currentRoute = item.title
@@ -677,8 +683,8 @@ export class MenuComponent implements OnInit {
     } else {
       this.returnTitle(p);
     }
-    if(p.id === 'workwaves-scheduled-1'){
-      this.router.navigate([p.url], {queryParams: {type: 1}})
+    if (p.id === 'workwaves-scheduled-1') {
+      this.router.navigate([p.url], { queryParams: { type: 1 } })
     }
   }
 
@@ -714,19 +720,19 @@ export class MenuComponent implements OnInit {
    * Listen changes in form to resend the request for search
    */
   newTarifff() {
-    this.tariffService.getNewTariff().subscribe(tariff=>{
+    this.tariffService.getNewTariff().subscribe(tariff => {
       /**save the data and format the dates */
       this.alPages.forEach((item, i) => {
-        if ((<any>item).id == "tarifas"){
+        if ((<any>item).id == "tarifas") {
           (<any>item).notification = tariff['data'];
           (<any>item).children.forEach((child, j) => {
-            if ((<any>child).id == "tariff-al"){
+            if ((<any>child).id == "tariff-al") {
               (<any>child).notification = tariff['data'];
             }
           });
         }
       });
-    },()=>{
+    }, () => {
     })
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "krack2020-suite",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -63,6 +63,7 @@
     "cordova-plugin-zebra-printer": "file:plugin-zebra",
     "core-js": "^2.6.10",
     "hammerjs": "^2.0.8",
+    "hide-keyboard": "^0.2.1",
     "ionic": "^4.12.0",
     "jsbarcode": "^3.11.0",
     "lodash": "^4.17.15",

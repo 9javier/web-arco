@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'suite-add-audits',
@@ -15,7 +15,8 @@ export class AddAuditsComponent implements OnInit {
   constructor(
     private audit : AuditsService,
     private toast : ToastController,
-    private router: Router
+    private router: Router,
+    private activeRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -31,7 +32,7 @@ export class AddAuditsComponent implements OnInit {
     this.audit.create({packingReference:this.inputValue,status:1}).subscribe(res =>{
       console.log(res);
       this.presentToast('Creada con exito!!','success');
-      this.router.navigateByUrl('/audits/scanner-product/'+res.data.id+'/'+this.inputValue);
+      this.router.navigateByUrl('/audits/scanner-product/'+res.data.id+'/'+this.inputValue+'/'+this.activeRoute.snapshot.routeConfig.path);
     },err=>{
       this.presentToast(err.error.result.reason,'danger');
     })
