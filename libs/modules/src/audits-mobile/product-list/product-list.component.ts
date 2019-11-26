@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 export class ProductListComponent implements OnInit {
 
   public Products : any = [{name:'yui'}];
+  public add : any ;
   public jaula : any ;
   public id : any ;
   public back : any ;
@@ -20,6 +21,7 @@ export class ProductListComponent implements OnInit {
     private toast : ToastController,
     private activeRoute: ActivatedRoute
   ) { 
+    this.add = this.activeRoute.snapshot.params.add;
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
     this.back = this.activeRoute.snapshot.url[0].path;

@@ -24,7 +24,7 @@ const routes: Routes = [
     component: PendingRevisionsComponent
   },
   {
-    path: 'list-products/:id/:jaula',
+    path: 'list-products/:id/:jaula/:add',
     component: ProductListComponent
   },
   {

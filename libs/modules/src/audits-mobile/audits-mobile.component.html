@@ -6,8 +6,9 @@
         <p>Productos : {{item.sorterAuditPackingProducts.length}}</p>
       </ion-label>
 
-      <span *ngIf="item.packing.status === 1" slot="end">
-        <ion-icon class="icon-close" (click)="closeAuditoria(item.packing.reference)"  name="close-circle-outline"></ion-icon>
+      <span  slot="end">
+        <ion-icon class="icon-close distance-button" (click)="SeeProducts(item)"  name="eye"></ion-icon>
+        <ion-icon *ngIf="item.packing.status === 1" class="icon-close" (click)="closeAuditoria(item.packing.reference)"  name="close-circle-outline"></ion-icon>
       </span>
 
     </ion-item>

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -36,8 +37,8 @@ export class SccanerProductComponent implements OnInit {
   }
 
   backView(){ 
-    if(this.back === 'list-products') this.router.navigateByUrl('/audits/'+this.back+'/'+this.id+'/'+this.jaula)
-    else this.router.navigateByUrl('/audits/'+this.back);
+    AuditsMobileComponent.returned.next(false);
+    this.router.navigate(['audits']); 
   }
 
   addProduct(){

@@ -1,7 +1,7 @@
 <input id="input" class="input-audit" placeholder="Cod. Referencia" (keyup.enter)="userTyping($event)" [(ngModel)]="inputValueScanner">
 
 <div class="footer">
-  <div (click)="backView()" class="button cancel">
+  <div routerDirection="'root'" routerLink="/audits" (click)="backView()" class="button cancel">
     <button>CERRAR</button>
   </div>
   <div *ngIf="buttonStatus === true" class="button start">

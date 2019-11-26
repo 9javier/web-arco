@@ -35,7 +35,7 @@ export class PendingRevisionsComponent implements OnInit {
   }
 
   SeeProducts(data){
-    this.router.navigateByUrl('/audits/list-products/'+data.id+'/'+data.packing.reference);
+    this.router.navigateByUrl('/audits/list-products/'+data.id+'/'+data.packing.reference+'/true');
   }
 
   OpenAudits(data){
