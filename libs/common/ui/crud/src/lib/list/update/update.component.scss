@@ -1,105 +1,52 @@
 .wrapper-form {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-  ion-row.input-wrapper {
-     display: flex;
-     flex-direction: column;
-     flex: 0 1 18rem;
-     ion-col {
-       padding-left: 0px;
-       padding-right: 0px;
-     }
-  }
- }
+ion-row.input-wrapper {
+   display: flex;
+   flex-direction: column;
+   flex: 0 1 18rem;
+   ion-col {
+     padding-left: 0px;
+     padding-right: 0px;
+   }
+}
+}
 ion-grid {
-  --ion-grid-column-padding: 32px;
+--ion-grid-column-padding: 32px;
 }
 // ion-footer:before {
 //   height: 0;
 // }
-// ion-item {
-//   --border-style: none;
-//   ion-input, ion-select {
-//     --background: var(--ion-color-white);
-//     --color: var(--ion-color-dark);
-//     border: 2px solid var(--ion-color-tertiary);
-//     --padding-start: 8px;
-//   }
-// }
+ion-item {
+--border-style: none;
+ion-input, ion-select {
+  --background: var(--ion-color-white);
+  --color: var(--ion-color-dark);
+  border: 2px solid var(--ion-color-tertiary);
+  --padding-start: 8px;
+}
+}
 ion-select {
-  max-width: 100%;
-  width: 100%;
+max-width: 100%;
+width: 100%;
 }
 .slot-start-icon {
-  margin-inline-end: 0px;
-  margin-right: 10px;
-  margin-top: 10px;
+margin-inline-end: 0px;
+margin-right: 10px;
+margin-top: 10px;
 }
 .slot-end-icon {
-  margin-inline-start: 0px;
+margin-inline-start: 0px;
 }
 .icon-show-password {
-  position: absolute;
-  z-index: 1200;
-  right: 5px;
+position: absolute;
+z-index: 1200;
+right: 5px;
 }
 ion-icon {
-  font-size: 24px;
+font-size: 24px;
 }
 ion-content{
-  height: calc(100% - 112px);
-}
-
-.item {
-  --border-style: none !important;
-}
-
-.input {
-  border: 1px solid;
-  border-radius: 1px;
-  border-color: darkgray;
-  height: 60px;
-  font-size: 15px;
-  --padding-start: 20px !important;
-  --padding-top: 20px !important;
-  --padding-bottom: 20px !important;
-}
-
-.select {
-  border: 1px solid;
-  border-radius: 1px;
-  border-color: darkgray;
-  height: 60px;
-  font-size: 15px;
-  max-width: 100%;
-  width: 100%;
-  // margin-left: 16px !important;
-  // margin-right: 16px !important;
-  --padding-start: 20px !important;
-  --padding-top: 20px !important;
-  --padding-bottom: 20px !important;
-}
-
-.label {
-  z-index: 3 !important;
-  margin-left: 20px !important;
-  background: #fff !important;
-  min-width: 50px !important;
-  width: 100% !important;
-  max-width: 15% !important;
-  position: relative !important;
-  text-align: center !important;
-  color: darkgray !important;
-  top: 3px !important;
-}
-
-.large {
-  max-width: 30% !important
-}
-
-.icon {
-  color: darkgray;
-  margin-top: 36px;
-  margin-right: 12px;
+height: calc(100% - 112px);
 }
