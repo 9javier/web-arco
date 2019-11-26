@@ -12,10 +12,6 @@
   }
 }
 
-ion-grid {
-  --ion-grid-column-padding: 32px;
-}
-
 .advise {
   color: red;
 }
@@ -26,6 +22,10 @@ ion-grid {
 
 .inner-item {
   padding: 0px 20px 0px 40px;
+}
+
+ion-grid {
+  --ion-grid-column-padding: 32px;
 }
 
 // ion-footer:before {
