@@ -7,5 +7,5 @@
     </ion-item>
   </div>
   <input hideKeyboard id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
-    [(ngModel)]="inputProduct">
+    [(ngModel)]="inputProduct" (focus)="onFocus($event)">
 </div>

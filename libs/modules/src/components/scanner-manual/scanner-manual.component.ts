@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'scanner-manual',
@@ -11,7 +12,9 @@ export class ScannerManualComponent implements OnInit {
   @Input() value: string = null;
   @Output() newValue = new EventEmitter();
 
-  constructor() {
+  constructor(
+    private keyboardService: KeyboardService
+  ) {
     this.focusToInput();
   }
 
@@ -40,4 +43,11 @@ export class ScannerManualComponent implements OnInit {
   public setValue(newValue: string) {
     this.value = newValue;
   }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
+  }
+
 }

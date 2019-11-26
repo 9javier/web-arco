@@ -28,7 +28,7 @@
   </div>
   <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted && !productScanned">{{messageGuide}}</p>
 
-  <input *ngIf="!productScanned" id="input" class="input-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue">
+  <input hideKeyboard *ngIf="!productScanned" id="input" class="input-sorter" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue">
 </div>
 
 <ion-footer *ngIf="processStarted && productScanned">

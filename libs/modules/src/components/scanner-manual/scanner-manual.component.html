@@ -1,4 +1,4 @@
 <div class="content-ta">
-  <input hideKeyboard id="input-ta" class="input-ta" [placeholder]="placeholder" (keyup)="keyUpInput($event)"
+  <input hideKeyboard id="input-ta" class="input-ta" [placeholder]="placeholder" (keyup)="keyUpInput($event)" (focus)="onFocus($event)"
     [(ngModel)]="value">
 </div>

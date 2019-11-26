@@ -11,16 +11,17 @@ import { Subscription } from 'rxjs';
 })
 export class KeyboardService {
   private event;
-  private state: boolean
+  private state: boolean;
+  private inputFocused: string;
+
   input: HTMLElement;
   constructor(private keyboard: Keyboard) {
     this.state = false
-
   }
 
   disabled() {
     this.state = false;
-    const id = document.activeElement.id;
+    const id = this.getInputFocused();
     this.input = document.getElementById(id);
     if (this.input) {
       this.input.setAttribute('hideKeyboard', "");
@@ -29,13 +30,15 @@ export class KeyboardService {
   }
 
   eneabled() {
-    const id = document.activeElement.id;
+    const id = this.getInputFocused();
     this.input = document.getElementById(id);
     this.state = true;
     if (this.input) {
       this.input.removeAttribute('hideKeyboard');
       this.input.focus();
-      this.keyboard.show();
+      setTimeout(()=>{
+        this.keyboard.show();
+      }, 500);
     }
   }
 
@@ -61,5 +64,12 @@ export class KeyboardService {
     }, 500)
   }
 
+  setInputFocused(id: string): void{
+    this.inputFocused = id;
+  }
+
+  getInputFocused() :string{
+    return this.inputFocused;
+  }
 
 }

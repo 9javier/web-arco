@@ -45,7 +45,7 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual')) {
+      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Salida')) {
         this.showKeyboard = true;
       }
       else {
@@ -95,10 +95,12 @@ export class ToolbarAlComponent implements OnInit {
     const state = this.keyboard.isEneabled();
     this.state = state
     if (state === true) {
-      this.keyboard.disabled()
-      this.color = 'danger'
+      this.keyboard.disabled();
+      this.state = false;
+      this.color = 'danger';
     } else {
-      this.keyboard.eneabled()
+      this.keyboard.eneabled();
+      this.state = true;
       this.color = 'success'
     }
   }
