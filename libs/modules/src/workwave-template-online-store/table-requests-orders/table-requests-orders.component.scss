@@ -1,11 +1,55 @@
 div.main-element {
   height: 100%;
 
+  button{
+    margin-left: 17%;
+    margin-bottom: 11px;
+  }
+
   h2.title-table {
-    text-align: center;
+    text-align: right;
     font-size: 16px;
     line-height: 20px;
     margin-bottom: 10px;
+    display: inline-block;
+    margin-left: 45%;
+  }
+
+  .title{
+    cursor: pointer;
+  }
+
+  ion-toggle{
+    vertical-align: top;
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .toggle{
+    float: right;
+    span{
+      display: inline-block;
+      margin-top: 18px;
+    }
+  }
+
+  .config-button{
+    margin-right: 10px;
+  }
+
+  .buttons{
+    padding: 10px;
+    text-align: right;
+  }
+
+  .buttons-news{
+    background:#222428;
+    color:white;
+  }
+
+  .buttons-news-disabled{
+    background:gray;
+    color:white;
   }
 
   .loader, .empty-list {
@@ -28,7 +72,7 @@ div.main-element {
   }
 
   .scroll-list {
-    height: calc(100% - 48px - 30px); // 48px from table header - 30px from table title
+    height: calc(100% - 48px - 58px); // 48px from table header - 58px from table title
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;
@@ -66,7 +110,7 @@ div.main-element {
     div.tile-value {
       font-size: 14px;
     }
-    mat-grid-tile.reference, mat-grid-tile.date, mat-grid-tile.origin, mat-grid-tile.destiny, mat-grid-tile.type {
+    mat-grid-tile.reference, mat-grid-tile.date, mat-grid-tile.origin, mat-grid-tile.destiny, mat-grid-tile.type, mat-grid-tile.quantity, mat-grid-tile.quantity-launch {
       div.tile-value {
         width: 100%;
         font-size: 14px;
