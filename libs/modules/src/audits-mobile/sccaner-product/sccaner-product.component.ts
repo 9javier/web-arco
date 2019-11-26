@@ -3,6 +3,7 @@ import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -11,7 +12,7 @@ import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.compone
 })
 export class SccanerProductComponent implements OnInit {
 
-  public inputValueScanner: String = '';
+  public inputValueScanner: string = '';
   public jaula : string = '';
   public id : any = '';
   public back : any = ''; 
@@ -22,18 +23,27 @@ export class SccanerProductComponent implements OnInit {
     private toast : ToastController,
     private activeRoute: ActivatedRoute,
     private router : Router,
+    private audioProvider: AudioProvider
   ) {
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
     this.back = this.activeRoute.snapshot.params.back;
-    console.log(this.activeRoute.snapshot.params);
-   }
+    this.focusToInput();
+  }
 
   ngOnInit() {
   }
 
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-prod').focus();
+    }, 800);
+  }
+
   userTyping(event: any){
-    this.addProduct();
+    const codeScanned = this.inputValueScanner;
+    this.inputValueScanner = null;
+    this.addProduct(codeScanned);
   }
 
   backView(){ 
@@ -41,18 +51,22 @@ export class SccanerProductComponent implements OnInit {
     this.router.navigate(['audits']); 
   }
 
-  addProduct(){
+  addProduct(codeScanned: string){
     let data : any = {
       auditId:this.id,
-      productReference: this.inputValueScanner,
+      productReference: codeScanned,
       packingReference: this.jaula
-    }
+    };
     this.audit.addProduct(data).subscribe(res=>{
-      this.presentToast('Producto agregado!!','success');
-      this.inputValueScanner = '';
-    },err=>{
+      this.presentToast('Producto válido', 'success');
+      this.buttonStatus = false;
+      this.focusToInput();
+      this.audioProvider.playDefaultOk();
+    },err => {
       this.buttonStatus = true;
-      this.presentToast('Ah ocurrido un error en el registro','danger');
+      this.focusToInput();
+      this.audioProvider.playDefaultError();
+      this.presentToast(err.error.errors,'danger');
     })
   }
 
