@@ -13,21 +13,27 @@ export class KeyboardService {
   private event;
   private state: boolean
   input: HTMLElement;
-  constructor(private keyboard: Keyboard) { 
+  constructor(private keyboard: Keyboard) {
     this.state = false
-    
+
   }
 
   disabled() {
     this.state = false;
-    window.addEventListener('focusin',this.disabledKeyboard, true)
+    const id = document.activeElement.id;
+    this.input = document.getElementById(id);
+    if (this.input) {
+      this.input.setAttribute('hideKeyboard', "");
+    }
 
   }
 
   eneabled() {
-    window.removeEventListener('focusin',this.disabledKeyboard,true);
+    const id = document.activeElement.id;
+    this.input = document.getElementById(id);
     this.state = true;
-    if(this.input) {
+    if (this.input) {
+      this.input.removeAttribute('hideKeyboard');
       this.input.focus();
       this.keyboard.show();
     }
@@ -36,24 +42,24 @@ export class KeyboardService {
   isEneabled() {
     return this.state;
   }
-  
+
 
   private disabledKeyboard(ev) {
     // console.log('ev');
     const id = document.activeElement.id;
     this.input = document.getElementById(id);
     // console.log('input', this.input);
-    if(this.input !== null) {
-      this.input.setAttribute('readonly','');
+    if (this.input !== null) {
+      this.input.setAttribute('readonly', '');
     }
-    setTimeout(()=> {
-      if(this.input !== null) {
+    setTimeout(() => {
+      if (this.input !== null) {
         // console.log('remove readonly');
         this.input.removeAttribute('readonly');
       }
-    
-    },500)
+
+    }, 500)
   }
-  
+
 
 }

@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { SealPackingManualComponent } from './seal-packing-manual.component';
-import {SealPackingManualRoutingModule} from "./seal-packing-manual-routing.module";
-import {CdkTableModule} from "@angular/cdk/table";
-import {InputCodesComponent} from "./input-codes/input-codes.component";
+import { SealPackingManualRoutingModule } from "./seal-packing-manual-routing.module";
+import { CdkTableModule } from "@angular/cdk/table";
+import { InputCodesComponent } from "./input-codes/input-codes.component";
+import { HideKeyboardModule } from 'hide-keyboard';
 
 @NgModule({
   declarations: [SealPackingManualComponent, InputCodesComponent],
@@ -15,8 +16,9 @@ import {InputCodesComponent} from "./input-codes/input-codes.component";
     IonicModule,
     SealPackingManualRoutingModule,
     CdkTableModule,
-    FormsModule
+    FormsModule,
+    HideKeyboardModule
   ],
   entryComponents: [SealPackingManualComponent, InputCodesComponent]
 })
-export class SealPackingManualModule {}
+export class SealPackingManualModule { }
