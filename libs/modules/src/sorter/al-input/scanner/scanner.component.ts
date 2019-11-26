@@ -14,6 +14,7 @@ import {HttpRequestModel} from "../../../../../services/src/models/endpoints/Htt
 import {Events, ModalController} from '@ionic/angular';
 import { ScannerRackComponent } from '../scanner-rack/scanner-rack.component';
 import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -52,14 +53,15 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     public sorterProvider: SorterProvider,
     private scanditProvider: ScanditProvider,
     private toolbarProvider: ToolbarProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
     setTimeout(() => {
       document.getElementById('input').focus();
     },800); }
-  
+
   ngOnInit() {
     this.addScannerRackButton();
     this.timeoutToQuickUser();
@@ -373,5 +375,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         this.stopExecutionInput();
       }, 3 * 1000);
     }, this.timeMillisToQuickUserFromSorterProcess);
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }

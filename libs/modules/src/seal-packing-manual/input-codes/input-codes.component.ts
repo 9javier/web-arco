@@ -6,6 +6,7 @@ import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import { IntermediaryService } from '@suite/services';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-input-codes',
@@ -28,7 +29,8 @@ export class InputCodesComponent implements OnInit {
     private carriersService: CarriersService,
     private scanditProvider: ScanditProvider,
     private intermediaryService: IntermediaryService,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -106,6 +108,12 @@ export class InputCodesComponent implements OnInit {
           document.getElementById('input-ta').focus();
         },500);
       });
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 
 }
