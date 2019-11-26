@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Router} from "@angular/router";
-import {ToolbarProvider} from "../../../../services/src/providers/toolbar/toolbar.provider";
-import {ActionToolbarModel} from "../../../../services/src/models/endpoints/ActionToolbar";
-import {PopoverController, Platform} from "@ionic/angular";
-import {PopoverMenuToolbarComponent} from "../popover-menu-toolbar/popover-menu-toolbar.component";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from "@angular/router";
+import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
+import { ActionToolbarModel } from "../../../../services/src/models/endpoints/ActionToolbar";
+import { PopoverController, Platform } from "@ionic/angular";
+import { PopoverMenuToolbarComponent } from "../popover-menu-toolbar/popover-menu-toolbar.component";
 import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.service';
 
 @Component({
@@ -35,9 +35,9 @@ export class ToolbarAlComponent implements OnInit {
   ngOnInit() {
 
     this.color = 'danger'
-    if(this.plt.is('android')) {
-      this.keyboard.disabled()
-      this.state =this.state =false
+    if (this.plt.is('android')) {
+      //this.keyboard.disabled()
+      this.state = this.state = false
     }
 
     this.isAndroid = this.plt.is('android');
@@ -45,10 +45,10 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if(this.currentPage.includes('manual') || this.currentPage.includes('Manual')) {
+      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual')) {
         this.showKeyboard = true;
       }
-      else{
+      else {
         this.showKeyboard = false
       }
     });
@@ -61,7 +61,7 @@ export class ToolbarAlComponent implements OnInit {
     });
   }
 
-  hideByUrl() : boolean {
+  hideByUrl(): boolean {
     return this.router.url == '/login';
   }
 
