@@ -91,6 +91,12 @@ export class TableTeamAssignationComponent implements OnInit {
   }
 
   userSelected(){
+    let groups = document.getElementsByClassName('store-line');
+    let iGroup = groups[0] as HTMLElement;
+    let iSelected = parseInt(iGroup.children[0].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
+    let iSelectedGroup = groups[iSelected-1] as HTMLElement;
+    this.serviceG.orderAssignment.value.data.store.thresholdConsolidated = parseInt(iSelectedGroup.children[0].children[2].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
+
     let aux = this.serviceG.requestUser.value;
     aux.user = true;
     aux.table = true;
@@ -115,8 +121,10 @@ export class TableTeamAssignationComponent implements OnInit {
       this.tooltipValue += destiny+' -> '+operationsBreakdown[destiny]+'\n';
     }
 
-    let htmlTooltip = document.getElementsByClassName('mat-tooltip')[0] as HTMLElement;
-    htmlTooltip.style.whiteSpace = 'pre';
+    if(document.getElementsByClassName('mat-tooltip').length > 0) {
+      let htmlTooltip = document.getElementsByClassName('mat-tooltip')[0] as HTMLElement;
+      htmlTooltip.style.whiteSpace = 'pre';
+    }
   }
 
   isChecked(operation: HTMLElement){

@@ -235,6 +235,12 @@ export class WorkwavesService {
     }));
   }
 
+  // postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore) : Observable<WorkwaveModel.UsersAndAssignationsQuantities> {
+  //   return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequestOnlineStore>(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params).pipe(map(response => {
+  //     return response.data;
+  //   }));
+  // }
+
   postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params);
   }

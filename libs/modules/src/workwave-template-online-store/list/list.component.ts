@@ -12,6 +12,7 @@ import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves
 import {AlertController, Events, LoadingController, ToastController} from "@ionic/angular";
 import {TableTypesOSComponent} from "../table-types/table-types.component";
 import {TableRequestsOrdersOSComponent} from "../table-requests-orders/table-requests-orders.component";
+import {TableEmployeesOSComponent} from "../table-employees/table-employees.component";
 
 @Component({
   selector: 'list-workwave-template-online-store',
@@ -30,6 +31,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   @Input() typeWorkwave: number;
   @ViewChild(TableTypesOSComponent) tableTypes: TableTypesOSComponent;
   @ViewChild(TableRequestsOrdersOSComponent) tableRequests: TableRequestsOrdersOSComponent;
+  @ViewChild(TableEmployeesOSComponent) tableEmployees: TableEmployeesOSComponent;
 
   template: any;
   disableEdition: boolean = false;
@@ -42,6 +44,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   private checkRequestsSelectedIsOverThreshold: boolean = false;
 
   private loading: HTMLIonLoadingElement = null;
+  enlarged = false;
 
   constructor(
     private location: Location,
@@ -53,7 +56,20 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     private userTimeService: UserTimeService,
     private workwavesService: WorkwavesService,
     private pickingParametrizationProvider: PickingParametrizationProvider,
-  ) {}
+  ) {
+    this.workwavesService.requestUser.subscribe(res => {
+      if (res.user === true && res.table == true){
+        res.data.user = this.tableEmployees.getSelectedEmployees();
+        this.employeeChanged(res.data);
+      }
+    })
+
+    this.workwavesService.orderAssignment.subscribe(res => {
+      if (res.store == true && res.type == true) {
+        this.typeChanged(res.data.typesShippingOrders);
+      }
+    })
+  }
 
   ngOnInit() {
     this.pickingParametrizationProvider.loadingListEmployees = 0;
@@ -66,7 +82,8 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
       id: null
     };
     // this.tableTypes.loadListTypes([{name: 'Online', value: 20, selected: true}, {name: 'Peticiones tienda', value: 30, selected: true}], true);
-    this.loadDefaultWorkWaveData()
+    this.loadDefaultWorkWaveData();
+    this.typeChanged([20, 30]);
   }
 
   private loadDefaultWorkWaveData() {
@@ -212,7 +229,8 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   }
 
   employeeChanged(data) {
-    this.listEmployeesToUpdate = data;
+    this.listEmployeesToUpdate = data.user;
+    this.listRequestOrdersToUpdate = data.table.listSelected;
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
@@ -223,6 +241,18 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.loadTeamAssignations();
   }
   //endregion
+
+  enlarge(){
+    if(this.enlarged){
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = '25vh';
+      this.enlarged = !this.enlarged;
+    }else{
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = 'calc(100vh - 52px - 56px - 8px)';
+      this.enlarged = !this.enlarged;
+    }
+  }
 
   private generateWorkWave() {
     this.workwavesService
