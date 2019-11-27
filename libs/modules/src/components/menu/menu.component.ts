@@ -229,7 +229,7 @@ export class MenuComponent implements OnInit {
           id: 'jails',
           url: '/jails/menu',
           icon: 'grid'
-        },
+        }
       ]
     },
     {
@@ -237,6 +237,12 @@ export class MenuComponent implements OnInit {
       id: 'tariff-sga',
       url: '/tariff',
       icon: 'logo-usd'
+    },
+    {
+      title: 'StateExpeditionAvelon',
+      id: 'state-expedition-avelon',
+      url: '/state-expedition-avelon/menu',
+      icon: 'apps'
     },
     {
       title: 'Sorter',

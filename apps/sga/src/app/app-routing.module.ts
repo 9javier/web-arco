@@ -103,6 +103,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'state-expedition-avelon',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/state-expedition-avelon/state-expedition-avelon.module#StateExpeditionAvelonModule',
+    data: {
+      name: 'State Expedition Avelon'
+    }
+  },
+  {
     path: 'pallets',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/pallets/pallets.module#PalletsModule',
