@@ -6,6 +6,7 @@ import {PriceModel, PriceService} from "@suite/services";
 import {PrintModel} from "../../../../services/src/models/endpoints/Print";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { range } from 'rxjs';
 
 @Component({
   selector: 'suite-input-codes',
@@ -17,6 +18,7 @@ export class InputCodesComponent implements OnInit {
   dataToWrite: string = 'PRODUCTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
+  stampe:number = 1;
 
   @Input() typeTags: number = 1;
   public typeTagsBoolean: boolean = false;
@@ -40,6 +42,23 @@ export class InputCodesComponent implements OnInit {
 
   async ngOnInit() {
     this.typeTagsBoolean = this.typeTags != 1;
+  }
+
+  mas(){
+    this.stampe = this.stampe + 1;
+  }
+
+  menos(){
+    if(this.stampe === 1){
+      return;
+    }else{
+      this.stampe = this.stampe - 1;
+    }
+  }
+  enviar_Veces(res){
+    range(0,this.stampe).subscribe(data => {
+      console.log('Printed product tag ... ', res);
+    })
   }
 
   keyUpInput(event) {
@@ -71,7 +90,8 @@ export class InputCodesComponent implements OnInit {
               this.audioProvider.playDefaultOk();
               this.printerService.printTagBarcode([dataWrote])
                 .subscribe((res) => {
-                  console.log('Printed product tag ... ', res);
+                  // console.log('Printed product tag ... ', res);
+                  this.enviar_Veces(res);
                 }, (error) => {
                   console.warn('Error to print tag ... ', error);
                 });

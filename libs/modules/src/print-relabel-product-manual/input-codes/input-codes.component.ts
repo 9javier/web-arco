@@ -5,6 +5,7 @@ import {ScanditProvider} from "../../../../services/src/providers/scandit/scandi
 import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { range, interval } from 'rxjs';
 
 @Component({
   selector: 'suite-input-codes',
@@ -17,6 +18,8 @@ export class InputCodesComponent implements OnInit {
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
   private lastProductReferenceScanned: string = 'start';
+
+  stampe:number=1;
 
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
@@ -47,6 +50,29 @@ export class InputCodesComponent implements OnInit {
     if (this.isStoreUser) {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
     }
+
+    console.log('pagina principañe');
+    
+    
+  }
+
+  mas(){
+    this.stampe = this.stampe + 1 ;
+  }
+  menos(){
+    if(this.stampe === 1){
+      this.audioProvider.playDefaultError();
+      return;
+    }else{
+      this.stampe = this.stampe -1;
+    }
+  }
+
+  invioStampe(evento){
+    range(0,this.stampe).subscribe(data =>{
+      this.postRelabelProduct(evento);
+      console.log(data)
+    });
   }
 
   keyUpInput(event) {
@@ -69,7 +95,9 @@ export class InputCodesComponent implements OnInit {
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
         case this.scanditProvider.codeValue.PRODUCT:
           if (this.isStoreUser) {
-            this.postRelabelProduct(dataWrote);
+            console.log('enviado datos');
+            this.invioStampe(dataWrote);
+            // this.postRelabelProduct(dataWrote);
           } else {
             this.audioProvider.playDefaultOk();
             this.printerService.printTagBarcode([dataWrote]);
@@ -132,6 +160,8 @@ export class InputCodesComponent implements OnInit {
   }
 
   private async postRelabelProduct(productReference: string, modelId?: number, sizeId?: number, locationReference?: string) {
+    console.log('invio'+ productReference);
+    
     let paramsRelabel: ProductModel.ParamsRelabel = {
       productReference
     };
