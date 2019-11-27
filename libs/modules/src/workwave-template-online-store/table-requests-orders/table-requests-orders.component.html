@@ -1,6 +1,18 @@
 <div class="main-element">
   <h2 class="title-table">Operaciones de Envío</h2>
 
+  <button
+    [disabled]="!buttonAvailability"
+    (click)="orderAssignment()"
+    [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}"
+    mat-raised-button
+  >Actualizar operaciones</button>
+
+  <div id="middle" class="toggle">
+    <span>Expandir</span>
+    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
+  </div>
+
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
     <mat-grid-tile class="checkbox" colspan="1">
       <div class="tile-value left-value">
@@ -10,7 +22,7 @@
 
     <mat-grid-tile class="reference border-right" colspan="2">
       <div class="tile-value">
-        <span class="title">Referencia</span>
+        <span class="title" (click)="sort('reference')">Ref. 🡇</span>
         <suite-filter-button
           class="filter"
           [title]="'Referencia'"
@@ -23,7 +35,7 @@
 
     <mat-grid-tile class="date border-right" colspan="3">
       <div class="tile-value">
-        <span class="title">Fecha</span>
+        <span class="title" (click)="sort('date')">Fecha</span>
         <suite-filter-button
           class="filter"
           [title]="'Fecha'"
@@ -36,7 +48,7 @@
 
     <mat-grid-tile class="origin border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Origen</span>
+        <span class="title" (click)="sort('origin')">Origen</span>
         <suite-filter-button
           class="filter"
           [title]="'Origen'"
@@ -49,7 +61,7 @@
 
     <mat-grid-tile class="destiny border-right" colspan="6">
       <div class="tile-value">
-        <span class="title">Destino</span>
+        <span class="title" (click)="sort('destiny')">Destino</span>
         <suite-filter-button
           class="filter"
           [title]="'Destino'"
@@ -62,7 +74,7 @@
 
     <mat-grid-tile class="type border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Tipo</span>
+        <span class="title" (click)="sort('type')">Tipo</span>
         <suite-filter-button
           class="filter"
           [title]="'Tipo'"
@@ -75,13 +87,29 @@
 
     <mat-grid-tile class="quantity border-right" colspan="2">
       <div class="tile-value">
-        Pares
+        <span class="title" (click)="sort('quantity')">Pares</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Pares'"
+          [listItems]="listQuantitiesFilters"
+          [isFiltering]="isFilteringQuantities != this.listQuantitiesFilters.length"
+          (applyFilters)="applyFilters($event)"
+          [filterType]="'slider'">
+        </suite-filter-button>
       </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="quantity-launch" colspan="2">
       <div class="tile-value">
-        Pares Lanzar
+        <span class="title" (click)="sort('quantity-launch')">Pares Lanzar</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Pares Lanzar'"
+          [listItems]="listQuantitiesLaunchFilters"
+          [isFiltering]="isFilteringQuantitiesLaunch != this.listQuantitiesLaunchFilters.length"
+          (applyFilters)="applyFilters($event)"
+          [filterType]="'slider'">
+        </suite-filter-button>
       </div>
     </mat-grid-tile>
   </mat-grid-list>

@@ -4,6 +4,7 @@ import { SorterInputService } from '../../../../../services/src/lib/endpoint/sor
 import { InputSorterModel } from '../../../../../services/src/models/endpoints/InputSorter';
 import { HttpRequestModel } from '../../../../../services/src/models/endpoints/HttpRequest';
 import { IntermediaryService } from '@suite/services';
+import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-scanner-rack',
@@ -21,6 +22,7 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
     private navParams: NavParams,
     private sorterInputService: SorterInputService,
     private intermediaryService: IntermediaryService,
+    private keyboardService: KeyboardService,
   ) { }
 
   @ViewChild('input') inputElement: IonInput;
@@ -66,5 +68,11 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
         }
         await this.intermediaryService.presentToastError(errorMessage, 1500);
       });
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }

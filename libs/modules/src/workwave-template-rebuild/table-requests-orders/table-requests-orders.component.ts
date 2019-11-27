@@ -359,6 +359,11 @@ export class TableRequestsOrdersComponent implements OnInit {
     let aux = this.serviceG.orderAssignment.value;
     aux.store = true; 
     aux.type = true;
+    let groups = document.getElementsByClassName('store-line');
+    let iGroup = groups[0] as HTMLElement;
+    let iSelected = parseInt(iGroup.children[0].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
+    let iSelectedGroup = groups[iSelected-1] as HTMLElement;
+    aux.data.store.thresholdConsolidated = parseInt(iSelectedGroup.children[0].children[2].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
     this.serviceG.orderAssignment.next(aux);
   }
 

@@ -54,7 +54,9 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     private pickingParametrizationProvider: PickingParametrizationProvider,
   ) {
     this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table == true) this.employeeChanged(res.data);
+      if (res.user === true && res.table == true){
+        this.employeeChanged(res.data);
+      }
     })
 
     this.workwavesService.orderAssignment.subscribe(res => {

@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -10,38 +12,61 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SccanerProductComponent implements OnInit {
 
-  public inputValueScanner: String = '';
+  public inputValueScanner: string = '';
   public jaula : string = '';
   public id : any = '';
+  public back : any = ''; 
+  public buttonStatus : boolean = false;
 
   constructor(
     private audit : AuditsService,
     private toast : ToastController,
     private activeRoute: ActivatedRoute,
+    private router : Router,
+    private audioProvider: AudioProvider
   ) {
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
-    console.log(this.activeRoute.snapshot.params);
-   }
+    this.back = this.activeRoute.snapshot.params.back;
+    this.focusToInput();
+  }
 
   ngOnInit() {
   }
 
-  userTyping(event: any){
-    this.addProduct();
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-prod').focus();
+    }, 800);
   }
 
-  addProduct(){
+  userTyping(event: any){
+    const codeScanned = this.inputValueScanner;
+    this.inputValueScanner = null;
+    this.addProduct(codeScanned);
+  }
+
+  backView(){ 
+    AuditsMobileComponent.returned.next(false);
+    this.router.navigate(['audits']); 
+  }
+
+  addProduct(codeScanned: string){
     let data : any = {
       auditId:this.id,
-      productReference: this.inputValueScanner,
+      productReference: codeScanned,
       packingReference: this.jaula
-    }
+    };
     this.audit.addProduct(data).subscribe(res=>{
-      this.presentToast('Producto agregado!!','success');
-      this.inputValueScanner = '';
-    },err=>{
-      this.presentToast('Ah ocurrido un error en el registro','danger');
+      this.presentToast('Producto válido', 'success');
+      this.buttonStatus = false;
+      this.focusToInput();
+      this.audioProvider.playDefaultOk();
+    },err => {
+      this.buttonStatus = true;
+      this.focusToInput();
+      this.audioProvider.playDefaultError();
+      this.presentToast(err.error.errors,'danger');
     })
   }
 

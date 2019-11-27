@@ -43,7 +43,8 @@
 
   <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListTeamAssignations || pickingParametrizationProvider.loadingListTeamAssignations < 1">
     <mat-grid-list
-      *ngFor="let teamAssignation of listTeamAssignations; let i = index" class="team-assignations-line"
+      *ngFor="let teamAssignation of listTeamAssignations; let i = index"
+      class="team-assignations-line"
       [cols]="maxSizeForCols"
       rowHeight="48px"
       matTooltipPosition="above"

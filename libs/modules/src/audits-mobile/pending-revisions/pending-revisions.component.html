@@ -1,0 +1,13 @@
+<ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let item of Auditories">
+      <ion-label>{{item.packing.reference}}</ion-label>
+
+      <span slot="end">
+        <ion-icon class="icon-close distance-button" (click)="SeeProducts(item)"  name="eye"></ion-icon>
+        <ion-icon class="icon-close" (click)="OpenAudits(item)"  name="open"></ion-icon>
+      </span>
+
+    </ion-item>
+  </ion-list>
+</ion-content>
