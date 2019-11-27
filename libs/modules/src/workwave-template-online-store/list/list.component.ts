@@ -15,6 +15,7 @@ import { TableRequestsOrdersOSComponent } from "../table-requests-orders/table-r
 import { TableEmployeesOSComponent } from "../table-employees/table-employees.component";
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwave-template-online-store',
@@ -53,6 +54,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   constructor(
     private location: Location,
     private events: Events,
+    private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -231,7 +233,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   }
 
   goPreviousPage() {
-    this.location.back();
+    this.router.navigate(['workwaves-scheduled'], { replaceUrl: true });
   }
 
   //region Response from table components

@@ -12,6 +12,7 @@ import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwav
 import { AlertController, Events, LoadingController, ToastController } from "@ionic/angular";
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -52,6 +53,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   constructor(
     private location: Location,
     private events: Events,
+    private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -256,7 +258,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   goPreviousPage() {
-    this.location.back();
+    this.router.navigate(['workwaves-scheduled'], { replaceUrl: true });
   }
 
   typeChanged(data) {
