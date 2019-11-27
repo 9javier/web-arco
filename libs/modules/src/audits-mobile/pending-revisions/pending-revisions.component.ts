@@ -28,7 +28,6 @@ export class PendingRevisionsComponent implements OnInit {
   getAllAudits(){
     this.audit.getAllPendintPacking().subscribe(res =>{
       this.Auditories = res.data;
-      console.log(res);
     },err =>{
       this.presentToast(err.error.result.reason,'danger');
     })

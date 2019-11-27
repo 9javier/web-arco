@@ -34,7 +34,6 @@ export class ProductListComponent implements OnInit {
   listProducts(){
     this.audit.getProducts({packingReference:this.jaula}).subscribe(res =>{
       this.Products = res.data;
-      console.log(res);
     },err =>{
       this.presentToast(err.error.result.reason,'danger');
     })

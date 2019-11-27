@@ -35,7 +35,6 @@ export class AuditsMobileComponent implements OnInit {
   getAllAudits(){
     this.audit.getAll().subscribe(res =>{
       this.Auditories = res.data;
-      console.log(res);
     },err =>{
       this.presentToast(err.error.result.reason,'danger');
     })
@@ -43,7 +42,6 @@ export class AuditsMobileComponent implements OnInit {
 
   closeAuditoria(data){
     this.audit.create({packingReference:data,status:2}).subscribe(res =>{
-      console.log(res);
       this.presentToast('Auditoria Cerrada!!','success');
       this.getAllAudits();
     })
