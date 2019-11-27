@@ -116,13 +116,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   addScannerRackButton() {
     const buttons = [
       {
-        icon: 'keypad',
-        label: 'Teclado',
-        action: async () => {
-          // TODO: Functions keyboard
-        }
-      },
-      {
         icon: 'hand',
         label: 'Finalizar',
         action: async () => {
