@@ -115,11 +115,6 @@ export class TableTeamAssignationComponent implements OnInit {
     for (let destiny in operationsBreakdown) {
       this.tooltipValue += destiny + ' -> ' + operationsBreakdown[destiny] + '\n';
     }
-
-    if (document.getElementsByClassName('mat-tooltip').length > 0) {
-      let htmlTooltip = document.getElementsByClassName('mat-tooltip')[0] as HTMLElement;
-      htmlTooltip.style.whiteSpace = 'pre';
-    }
   }
 
   isChecked(operation: HTMLElement) {

@@ -515,7 +515,10 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.listRequestOrders = listRequestOrdersTemp;
 
     for (let iRequest in this.requestOrdersSelection) {
-      this.requestOrdersSelection[iRequest] = true;
+      this.requestOrdersSelection[iRequest] = false;
+    }
+    for (let iRequest of listRequestOrdersTemp) {
+      this.requestOrdersSelection[iRequest.request.id] = true;
     }
     this.selectRequestOrder(false, true);
   }
