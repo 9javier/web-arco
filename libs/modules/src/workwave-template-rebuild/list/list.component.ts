@@ -26,6 +26,10 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded";
   private DRAW_CONSOLIDATED_MATCHES = "draw-consolidated-matches";
   private TYPE_EXECUTION_ID = 1;
+  private BLOCK_BUTTONS = 'block_button';
+  private ENABLED_BUTTONS = 'enabled_button';
+  private BLOCK_BUTTONS_TEAM = 'block_button_team';
+  private ENABLED_BUTTONS_TEAM = 'enabled_button_team';
 
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
@@ -61,6 +65,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     this.workwavesService.requestUser.subscribe(res => {
       if (res.user === true && res.table == true) {
         this.employeeChanged(res.data);
+
       }
     })
 
@@ -88,26 +93,24 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       };
     }
 
-    //this.loadDefaultWorkWaveData()
+    this.loadDefaultWorkWaveData()
   }
 
 
   ngOnDestroy() {
-    // this.workwavesService.orderAssignment.unsubscribe();
-    // this.workwavesService.requestUser.unsubscribe();
+
+
+    //this.workwavesService.orderAssignment.unsubscribe();
+    //this.workwavesService.requestUser.unsubscribe();
     // this.ngUnsubscribe.next();
     // this.ngUnsubscribe.complete();
-    // console.log("que tal", this.ObservablePendings);
-    // this.ObservablePendings.map(obs => {
-    //   console.log("how manybien");
-    //   try {
-    //     <Observable<any>>obs.unsubscribe();
-    //   } catch (error) {
-    //     console.log("errores", error);
-    //   }
 
-
-    // })
+    this.ObservablePendings.map(obs => {
+      try {
+        <Observable<any>>obs.unsubscribe();
+      } catch (error) {
+      }
+    })
   }
 
   private loadDefaultWorkWaveData() {
@@ -165,6 +168,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.pickingParametrizationProvider.loadingListRequestOrders--;
         this.pickingParametrizationProvider.loadingListRequestOrders--;
         this.pickingParametrizationProvider.loadingListTeamAssignations--;
+        this.events.publish(this.ENABLED_BUTTONS);
+        this.events.publish(this.ENABLED_BUTTONS_TEAM);
       }, (error) => {
         console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
         this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
@@ -172,6 +177,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.pickingParametrizationProvider.loadingListRequestOrders--;
         this.pickingParametrizationProvider.loadingListRequestOrders--;
         this.pickingParametrizationProvider.loadingListTeamAssignations--;
+        this.events.publish(this.ENABLED_BUTTONS);
+        this.events.publish(this.ENABLED_BUTTONS_TEAM);
       });
     } else {
       this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
@@ -179,6 +186,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       this.pickingParametrizationProvider.loadingListRequestOrders--;
       this.pickingParametrizationProvider.loadingListRequestOrders--;
       this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      this.events.publish(this.ENABLED_BUTTONS);
+      this.events.publish(this.ENABLED_BUTTONS_TEAM);
     }
   }
 
@@ -211,12 +220,15 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
         this.pickingParametrizationProvider.loadingListTeamAssignations--;
       }, () => {
-
+        this.events.publish(this.ENABLED_BUTTONS);
+        this.events.publish(this.ENABLED_BUTTONS_TEAM);
       });
     } else {
       this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
       this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
       this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      this.events.publish(this.ENABLED_BUTTONS);
+      this.events.publish(this.ENABLED_BUTTONS_TEAM);
     }
   }
 
@@ -247,14 +259,11 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     this.location.back();
   }
 
-  //region Response from table components
-  // typeChanged(data) {
-  //   this.listTypesToUpdate = data;
-  //   this.pickingParametrizationProvider.loadingListRequestOrders++;
-  //   this.loadRequestOrders();
-  // }
+
 
   groupWarehousesChanged(data) {
+    this.events.publish(this.BLOCK_BUTTONS);
+    this.events.publish(this.BLOCK_BUTTONS_TEAM);
     this.listTypesToUpdate = data.typesShippingOrders;
     this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.store);
     this.pickingParametrizationProvider.loadingListRequestOrders++;
@@ -263,6 +272,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   employeeChanged(data) {
+
     this.listEmployeesToUpdate = data.user;
 
     this.listWarehousesThresholdAndSelectedQty = data.table.listThreshold;

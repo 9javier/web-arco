@@ -23,20 +23,20 @@
     </ion-row>
   </div>
 
-  <!--  <div class="requests-orders">
+  <div class="requests-orders">
     <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)"></table-requests-orders>
+  </div>
+
+  <div class="team-assignation">
+    <table-team-assignation></table-team-assignation>
+  </div>
+
 </div>
 
-<div class="team-assignation">
-  <table-team-assignation></table-team-assignation>
-</div>
-
-</div> -->
-
-  <ion-footer class="footer-products">
-    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-      <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
-        <i class="material-icons">play_arrow</i>
-      </ion-fab-button>
-    </ion-fab>
-  </ion-footer>
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
+      <i class="material-icons">play_arrow</i>
+    </ion-fab-button>
+  </ion-fab>
+</ion-footer>
