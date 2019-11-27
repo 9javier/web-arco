@@ -9,6 +9,7 @@ import { AddAuditsComponent } from './add-audits/add-audits.component';
 import { SccanerProductComponent } from './sccaner-product/sccaner-product.component';
 import { PendingRevisionsComponent } from './pending-revisions/pending-revisions.component';
 import { ProductListComponent } from './product-list/product-list.component';
+import {ScannerManualModule} from "../components/scanner-manual/scanner-manual.module";
 
 const routes: Routes = [
   {
@@ -50,7 +51,8 @@ const routes: Routes = [
     IonicModule,
     FormsModule,
     BreadcrumbModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ScannerManualModule
   ]
 })
 export class AuditsMobileModule { }
