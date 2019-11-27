@@ -46,7 +46,7 @@
       </ion-label>
       <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
     </ion-item>
-    <ion-list lines="none">
+    <ion-list lines="none" *ngIf="sub.children">
           <ng-container *ngFor="let sub1 of sub.children">
             <ion-item  *ngIf="sub.id === 'workwaves-scheduled-1'" class="sub-item" routerDirection="root"
               routerLinkActive="active" (click)="tapOptionSubitem(sub1)">
