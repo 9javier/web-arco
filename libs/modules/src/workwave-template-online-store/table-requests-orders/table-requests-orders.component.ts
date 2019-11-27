@@ -535,4 +535,8 @@ export class TableRequestsOrdersOSComponent implements OnInit {
     moment.locale('es');
     return moment(requestOrder.request.date).format('LT');
   }
+
+  requestsOrdersAreLoading() : boolean {
+    return this.loadingListRequestOrdersOnlineStore && this.loadingListRequestOrdersOnlineStore > 0;
+  }
 }

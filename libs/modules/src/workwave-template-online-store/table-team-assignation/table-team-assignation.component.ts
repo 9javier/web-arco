@@ -112,9 +112,6 @@ export class TableTeamAssignationOSComponent implements OnInit {
     for (let destiny in operationsBreakdown) {
       this.tooltipValue += destiny + ' -> ' + operationsBreakdown[destiny] + '\n';
     }
-
-    let htmlTooltip = document.getElementsByClassName('mat-tooltip')[0] as HTMLElement;
-    htmlTooltip.style.whiteSpace = 'pre';
   }
 
   isChecked(operation: HTMLElement) {
@@ -122,7 +119,7 @@ export class TableTeamAssignationOSComponent implements OnInit {
   }
 
   getLaunchPairs(operation: HTMLElement) {
-    return parseInt(operation.children[0].children[8].children[0].children[0].innerHTML);
+    return parseInt(operation.children[0].children[7].children[0].children[0].innerHTML);
   }
 
   getDestiny(operation: HTMLElement) {
@@ -138,8 +135,7 @@ export class TableTeamAssignationOSComponent implements OnInit {
       document.getElementById('top').style.display = 'block';
       top.style.display = 'block';
       middle.style.display = 'block';
-      bottom.style.height = 'calc(45vh - 52px - 56px - 8px);';
-      if (document.getElementsByClassName('empty-list').length > 0) empty.style.height = 'calc(45vh - 52px - 56px - 8px - 72px)';
+      bottom.style.height = 'calc(45vh - 52px - 56px - 18px - 18px - 8px)';
       this.enlarged = !this.enlarged;
     } else {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
@@ -150,9 +146,12 @@ export class TableTeamAssignationOSComponent implements OnInit {
       top.style.display = 'none';
       middle.style.display = 'none';
       bottom.style.height = 'calc(100vh - 52px - 56px)';
-      if (document.getElementsByClassName('empty-list').length > 0) empty.style.height = 'calc(100vh - 52px - 56px - 72px)';
       this.enlarged = !this.enlarged;
     }
+  }
+
+  userAssignationsAreLoading() : boolean {
+    return this.pickingParametrizationProvider.loadingListTeamAssignations && this.pickingParametrizationProvider.loadingListTeamAssignations > 0;
   }
 
 }
