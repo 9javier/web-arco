@@ -10,6 +10,7 @@ export class ScannerManualComponent implements OnInit {
 
   @Input() placeholder: string = 'NUEVO CÓDIGO';
   @Input() value: string = null;
+  @Input() height: string = null;
   @Output() newValue = new EventEmitter();
 
   constructor(
