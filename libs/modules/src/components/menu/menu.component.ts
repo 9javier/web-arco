@@ -96,31 +96,22 @@ export class MenuComponent implements OnInit {
       icon: 'hammer',
       children: [
         {
+          title: 'Picking directo/consolidado',
+          id: 'workwaves-scheduled-1',
+          url: '/workwave-template-rebuild',
+          icon: 'add-circle'
+        },
+        {
+          title: 'Peticiones online/tienda',
+          id: 'workwave-online-store',
+          url: '/workwave/online-store',
+          icon: 'add-circle-outline'
+        },
+        {
           title: 'Listado',
           id: 'workwaves-scheduled',
           url: '/workwaves-scheduled',
           icon: 'code'
-        },
-        {
-          title: 'Crear Olas',
-          id: 'workwaves-create',
-          url: '',
-          icon: 'code',
-          header: true,
-          children: [
-            {
-              title: 'Picking directo/consolidado',
-              id: 'workwaves-scheduled-1',
-              url: '/workwave-template-rebuild',
-              icon: 'add-circle'
-            },
-            {
-              title: 'Peticiones online/tienda',
-              id: 'workwave-online-store',
-              url: '/workwave/online-store',
-              icon: 'add-circle-outline'
-            },
-          ]
         },
         {
           title: 'Historial',
