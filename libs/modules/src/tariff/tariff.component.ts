@@ -120,17 +120,35 @@ export class TariffComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.tariffService.getIndex(selectPage, limit, sort).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
-      /**save the data and format the dates */
-      this.tariffs = tariffs.results.map(result=>{
-        result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
-        result.activeTill = new Date(result.activeTill).toLocaleDateString();
-        return result;
-      });
-      this.dataSource = new MatTableDataSource<any>(this.tariffs);
-      let paginator = tariffs.pagination;
-      this.paginatorComponent.length = paginator.totalResults;
-      this.paginatorComponent.pageIndex = paginator.selectPage;
-      this.paginatorComponent.lastPage = paginator.lastPage;
+      /** consult updates tariffs */
+      var ids = tariffs.results.map(r => r.tariffId);
+      this.tariffService.getTariffUpdates(ids).subscribe(updates=>{
+        this.intermediaryService.dismissLoading();
+        /**save the data and format the dates */
+        this.tariffs = tariffs.results.map(result=>{
+          result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
+          result.activeTill = new Date(result.activeTill).toLocaleDateString();
+
+          return result;
+        });
+
+        this.tariffs.forEach(item => {
+          updates.results.forEach(r => {
+            if(r.id === item.tariffId){
+              item.updated = r.updated;
+            }
+          });
+        });
+
+        this.dataSource = new MatTableDataSource<any>(this.tariffs);
+        let paginator = tariffs.pagination;
+        this.paginatorComponent.length = paginator.totalResults;
+        this.paginatorComponent.pageIndex = paginator.selectPage;
+        this.paginatorComponent.lastPage = paginator.lastPage;
+      },()=>{
+        this.intermediaryService.dismissLoading();
+      })
+      
     },()=>{
       this.intermediaryService.dismissLoading();
     })

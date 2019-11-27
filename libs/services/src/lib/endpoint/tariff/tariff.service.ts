@@ -18,6 +18,7 @@ export class TariffService {
   private putTariffEnabledUrl: string = environment.apiBase + "/tariffs/updateState";
   private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
   private getNewTariffUrl: string = environment.apiBase + "/tariffs/getNewTariff";
+  private getTariffUpdatesUrl: string = environment.apiBase + "/tariffs/get-tariff-updates";
   constructor(private http: HttpClient) { }
 
   /**
@@ -91,6 +92,16 @@ export class TariffService {
   getNewTariff() {
     return this.http.get(this.getNewTariffUrl, {}).pipe(map(response => {
       return response;
+    }));
+  }
+
+  getTariffUpdates(data: any[]) {
+    let params = {
+      warehouseId: 49,
+      data: data
+    };
+    return this.http.post<TariffModel.ResponseTariffUpdates>(this.getTariffUpdatesUrl, params).pipe(map(response => {
+      return response.data;
     }));
   }
 
