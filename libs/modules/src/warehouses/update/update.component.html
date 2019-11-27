@@ -1,217 +1,217 @@
 <!--View to update an user-->
 <ion-header>
-    <ion-toolbar color="primary">
-        <ion-buttons slot="start">
-            <ion-button (click)="close()">
-                <ion-icon  class="icon" name="close" class="toogleArrow"></ion-icon>
-            </ion-button>
-        </ion-buttons>
-        <ion-title>Actualizar almacén</ion-title>
-    </ion-toolbar>
+  <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+          <ion-button (click)="close()">
+              <ion-icon name="close" class="toogleArrow"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title>Actualizar almacén</ion-title>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
-    <suite-utils></suite-utils>
-    <!--Form to update the user-->
-    <form [formGroup]="updateForm">
-        <!--Nombre del almacen-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <i class="icon" color="medium" class="material-icons">title</i>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Nombre</ion-label>
-            <!-- Input Text -->
-            <ion-input class="input" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
-        </ion-item>
-        <!--Descripción del almacen-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <i class="icon" color="medium" class="material-icons">description</i>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Descripción</ion-label>
-            <!-- Input Text -->
-            <ion-input class="input"  class="ion-margin-horizontal" formControlName="description" type="text" text></ion-input>
-        </ion-item>
-        <!--Manage agency-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name="barcode"></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Gestion de agencias</ion-label>
-            <!-- Input Select -->
-            <ion-select  class="select"   formControlName="manageAgencyId">
-                <ion-select-option *ngFor="let agency of agencies" [value]="agency.id">{{agency.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <!--Packing type-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name="barcode"></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Tipo de embalaje</ion-label>
-            <!-- Input Select -->
-            <ion-select  class="select"  formControlName="TypePackingId">
-                <ion-select-option *ngFor="let packingType of packingTypes" [value]="packingType.id">{{packingType.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <!--MthresholdShippingStore-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name="barcode"></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Máximo de envíos</ion-label>
-            <!-- Input Text -->
-            <ion-input style="text-transform: uppercase" (keypress)="onlyNumbers($event)" cass="ion-margin-horizontal input" formControlName="thresholdShippingStore" type="text" text></ion-input>
-        </ion-item>
+  <suite-utils></suite-utils>
+  <!--Form to update the user-->
+  <form [formGroup]="updateForm">
+      <!--Nombre del almacen-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <i color="medium" class="material-icons">title</i>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Nombre</ion-label>
+          <!-- Input Text -->
+          <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+      </ion-item>
+      <!--Descripción del almacen-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <i color="medium" class="material-icons">description</i>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Descripción</ion-label>
+          <!-- Input Text -->
+          <ion-input placeholder="Descripción" class="ion-margin-horizontal" formControlName="description" type="text" text></ion-input>
+      </ion-item>
+      <!--Manage agency-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name="barcode"></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Gestion de agencias</ion-label>
+          <!-- Input Select -->
+          <ion-select placeholder="Gestion de agencias" formControlName="manageAgencyId">
+              <ion-select-option *ngFor="let agency of agencies" [value]="agency.id">{{agency.name}}</ion-select-option>
+          </ion-select>
+      </ion-item>
+      <!--Packing type-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name="barcode"></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Tipo de embalaje</ion-label>
+          <!-- Input Select -->
+          <ion-select placeholder="Tipo de embalaje" formControlName="TypePackingId">
+              <ion-select-option *ngFor="let packingType of packingTypes" [value]="packingType.id">{{packingType.name}}</ion-select-option>
+          </ion-select>
+      </ion-item>
+      <!--MthresholdShippingStore-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name="barcode"></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Máximo de envíos</ion-label>
+          <!-- Input Text -->
+          <ion-input style="text-transform: uppercase" (keypress)="onlyNumbers($event)" placeholder="Máximo de envíos" class="ion-margin-horizontal" formControlName="thresholdShippingStore" type="text" text></ion-input>
+      </ion-item>
 
-        <!--Prefijo-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name="barcode"></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Prefijo, Ej: ABCD</ion-label>
-            <!-- Input Text -->
-            <ion-input style="text-transform: uppercase" (keypress)="onlyUpperLetters($event)" class="ion-margin-horizontal input" formControlName="prefix_container" type="text" text></ion-input>
-        </ion-item>
-        <!--Referencia-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name="barcode"></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Referencia, Ej: 001</ion-label>
-            <!-- Input Text -->
-            <ion-input class="ion-margin-horizontal input" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
-        </ion-item>
-        <!--Group warehouse picking-->
-        <ion-item lines="none" class="item">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name="barcode"></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Grupos de almacenes para picking</ion-label>
-            <!-- Input Select -->
-            <ion-select  class="select"  formControlName="groupsWarehousePicking" multiple="true">
-                <ion-select-option *ngFor="let group of groupWarehousesPicking" [value]="group.id">{{group.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <!--Tiene building-->
-        <ion-item lines="none" class="item" lines="none" class="item"*ngIf="buildings && buildings.length">
-            <ion-label class="label large" lines="none" no-padding>
-                <div inset lines="none">
-                    <ion-item lines="none" class="item" lines="none" class="item"no-padding>
-                        <mat-checkbox formControlName="hasBuilding">posee edificio</mat-checkbox>
-                    </ion-item>
-                </div>
-            </ion-label>
-        </ion-item>
-        <!--buildings-->
-        <ion-item lines="none" class="item" lines="none" class="item"*ngIf="updateForm.value.hasBuilding && buildings && buildings.length">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name=""></ion-icon>
-            </div>
-            <!-- Input Label -->
-            <ion-label class="label large" position="stacked">Edificio</ion-label>
-            <!-- Input Select -->
-            <ion-select  class="select"  formControlName="buildingId" okText="Ok" cancelText="Cancelar">
-                <ion-select-option *ngFor="let building of buildings" [value]="building.id">{{building.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <!--Es tienda-->
-        <ion-item lines="none" class="item">
-            <ion-label class="label large" lines="none" no-padding>
-                <div inset lines="none">
-                    <ion-item lines="none" class="item" lines="none" class="item"no-padding>
-                        <mat-checkbox formControlName="is_store">Es tienda</mat-checkbox>
-                    </ion-item>
-                </div>
-            </ion-label>
-        </ion-item>
-        <!--Tiendas-->
-        <ion-item lines="none" class="item" lines="none" class="item"*ngIf="updateForm.value.is_store && groups && groups.length">
-            <div slot="start" class="slot-start-icon">
-                <ion-icon  class="icon" color="medium" name=""></ion-icon>
-            </div>
-            <!-- Input Label -->
-                <ion-label class="label large" position="stacked">Grupo</ion-label>
-            <!-- Input Select -->
-            <ion-select class="select" formControlName="groupId" okText="Ok" cancelText="Cancelar">
-                <ion-select-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <!--Es outlet-->
-        <ion-item lines="none" class="item" lines="none" class="item"*ngIf="updateForm.value.is_store">
-            <ion-label class="label large" lines="none" no-padding>
-                <div inset lines="none">
-                    <ion-item lines="none" class="item" lines="none" class="item"no-padding>
-                        <mat-checkbox formControlName="is_outlet">Es outlet</mat-checkbox>
-                    </ion-item>
-                </div>
-            </ion-label>
-        </ion-item>
+      <!--Prefijo-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name="barcode"></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Prefijo, Ej: ABCD</ion-label>
+          <!-- Input Text -->
+          <ion-input style="text-transform: uppercase" (keypress)="onlyUpperLetters($event)" placeholder="Prefijo, Ej: ABCD" class="ion-margin-horizontal" formControlName="prefix_container" type="text" text></ion-input>
+      </ion-item>
+      <!--Referencia-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name="barcode"></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Referencia, Ej: 001</ion-label>
+          <!-- Input Text -->
+          <ion-input placeholder="Referencia, Ej: 001" class="ion-margin-horizontal" formControlName="reference" type="text" pattern="[0-9]*" inputmode="numeric" number></ion-input>
+      </ion-item>
+      <!--Group warehouse picking-->
+      <ion-item>
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name="barcode"></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Grupos de almacenes para picking</ion-label>
+          <!-- Input Select -->
+          <ion-select placeholder="Grupos de almacenes para picking" formControlName="groupsWarehousePicking" multiple="true">
+              <ion-select-option *ngFor="let group of groupWarehousesPicking" [value]="group.id">{{group.name}}</ion-select-option>
+          </ion-select>
+      </ion-item>
+      <!--Tiene building-->
+      <ion-item *ngIf="buildings && buildings.length">
+          <ion-label lines="none" no-padding>
+              <div inset lines="none">
+                  <ion-item no-padding>
+                      <mat-checkbox formControlName="hasBuilding">posee edificio</mat-checkbox>
+                  </ion-item>
+              </div>
+          </ion-label>
+      </ion-item>
+      <!--buildings-->
+      <ion-item *ngIf="updateForm.value.hasBuilding && buildings && buildings.length">
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name=""></ion-icon>
+          </div>
+          <!-- Input Label -->
+          <ion-label position="floating">Edificio</ion-label>
+          <!-- Input Select -->
+          <ion-select placeholder="Edificio" formControlName="buildingId" okText="Ok" cancelText="Cancelar">
+              <ion-select-option *ngFor="let building of buildings" [value]="building.id">{{building.name}}</ion-select-option>
+          </ion-select>
+      </ion-item>
+      <!--Es tienda-->
+      <ion-item>
+          <ion-label lines="none" no-padding>
+              <div inset lines="none">
+                  <ion-item no-padding>
+                      <mat-checkbox formControlName="is_store">Es tienda</mat-checkbox>
+                  </ion-item>
+              </div>
+          </ion-label>
+      </ion-item>
+      <!--Tiendas-->
+      <ion-item *ngIf="updateForm.value.is_store && groups && groups.length">
+          <div slot="start" class="slot-start-icon">
+              <ion-icon color="medium" name=""></ion-icon>
+          </div>
+          <!-- Input Label -->
+              <ion-label position="floating">Grupo</ion-label>
+          <!-- Input Select -->
+          <ion-select placeholder="Grupo" formControlName="groupId" okText="Ok" cancelText="Cancelar">
+              <ion-select-option *ngFor="let group of groups" [value]="group.id">{{group.name}}</ion-select-option>
+          </ion-select>
+      </ion-item>
+      <!--Es outlet-->
+      <ion-item *ngIf="updateForm.value.is_store">
+          <ion-label lines="none" no-padding>
+              <div inset lines="none">
+                  <ion-item no-padding>
+                      <mat-checkbox formControlName="is_outlet">Es outlet</mat-checkbox>
+                  </ion-item>
+              </div>
+          </ion-label>
+      </ion-item>
 
-        <!--Establecer como almacén principal-->
-        <ion-item lines="none" class="item">
-            <ion-label class="label large" lines="none" no-padding>
-                <div inset lines="none">
-                    <ion-item lines="none" class="item" lines="none" class="item"no-padding>
-                        <mat-checkbox formControlName="is_main">Establecer como almacen principal</mat-checkbox>
-                    </ion-item>
-                </div>
-            </ion-label>
-        </ion-item>
-        <!--Tiene pasillos-->
-        <ion-item lines="none" class="item" lines="none">
-            <ion-label class="label large"  no-padding>
-                <div inset lines="none">
-                    <ion-item lines="none" class="item" lines="none" class="item" no-padding>
-                        <mat-checkbox formControlName="has_racks">Tiene almacén con mapa</mat-checkbox>
-                    </ion-item>
-                </div>
-            </ion-label>
-        </ion-item>
-        <ion-item-group lines="none" class="item" *ngIf="updateForm.value.has_racks">
-            <!--Pasillo-->
-            <ion-item lines="none" class="item">
-                <div slot="start" class="slot-start-icon">
-                    <i class="icon" class="material-icons">view_module</i>
-                </div>
-                <!-- Input Label -->
-                    <ion-label class="label large" position="stacked">Pasillos</ion-label>
-                <!-- Input Text -->
-                <ion-input  class="ion-margin-horizontal input" formControlName="halls" type="number" number></ion-input>
-            </ion-item>
-            <!--Altura-->
-            <ion-item lines="none" class="item" lines="none" class="item"*ngIf="!currentHasRacks">
-                <div slot="start" class="slot-start-icon">
-                    <i class="icon" class="material-icons">view_stream</i>
-                </div>
-                <!-- Input Label -->
-                    <ion-label class="label large" position="stacked">Alturas</ion-label>
-                <!-- Input Text -->
-                <ion-input class="ion-margin-horizontal input" formControlName="rows" type="number" number></ion-input>
-            </ion-item>
-            <!--Columna-->
-            <ion-item lines="none" class="item" lines="none" class="item"*ngIf="!currentHasRacks">
-                <div slot="start" class="slot-start-icon">
-                    <i class="icon" class="material-icons">view_column</i>
-                </div>
-                <!-- Input Label -->
-                <ion-label class="label large" position="stacked">Columnas</ion-label>
-                <!-- Input Text -->
-                <ion-input class="ion-margin-horizontal input" formControlName="columns" type="number" number></ion-input>
-            </ion-item>
-        </ion-item-group>
-    </form>
+      <!--Establecer como almacén principal-->
+      <ion-item>
+          <ion-label lines="none" no-padding>
+              <div inset lines="none">
+                  <ion-item no-padding>
+                      <mat-checkbox formControlName="is_main">Establecer como almacen principal</mat-checkbox>
+                  </ion-item>
+              </div>
+          </ion-label>
+      </ion-item>
+      <!--Tiene pasillos-->
+      <ion-item>
+          <ion-label lines="none" no-padding>
+              <div inset lines="none">
+                  <ion-item no-padding>
+                      <mat-checkbox formControlName="has_racks">Tiene almacén con mapa</mat-checkbox>
+                  </ion-item>
+              </div>
+          </ion-label>
+      </ion-item>
+      <ion-item-group *ngIf="updateForm.value.has_racks">
+          <!--Pasillo-->
+          <ion-item>
+              <div slot="start" class="slot-start-icon">
+                  <i class="material-icons">view_module</i>
+              </div>
+              <!-- Input Label -->
+                  <ion-label position="floating">Pasillos</ion-label>
+              <!-- Input Text -->
+              <ion-input placeholder="Pasillos" class="ion-margin-horizontal" formControlName="halls" type="number" number></ion-input>
+          </ion-item>
+          <!--Altura-->
+          <ion-item *ngIf="!currentHasRacks">
+              <div slot="start" class="slot-start-icon">
+                  <i class="material-icons">view_stream</i>
+              </div>
+              <!-- Input Label -->
+                  <ion-label position="floating">Alturas</ion-label>
+              <!-- Input Text -->
+              <ion-input placeholder="Alturas" class="ion-margin-horizontal" formControlName="rows" type="number" number></ion-input>
+          </ion-item>
+          <!--Columna-->
+          <ion-item *ngIf="!currentHasRacks">
+              <div slot="start" class="slot-start-icon">
+                  <i class="material-icons">view_column</i>
+              </div>
+              <!-- Input Label -->
+              <ion-label position="floating">Columnas</ion-label>
+              <!-- Input Text -->
+              <ion-input placeholder="Columnas" class="ion-margin-horizontal" formControlName="columns" type="number" number></ion-input>
+          </ion-item>
+      </ion-item-group>
+  </form>
 </ion-content>
 <ion-footer>
-    <ion-toolbar>
-        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-        <ion-button slot="end" color="primary" [disabled]="updateForm.invalid" (click)="submit()">Guardar</ion-button>
-    </ion-toolbar>
+  <ion-toolbar>
+      <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+      <ion-button slot="end" color="primary" [disabled]="updateForm.invalid" (click)="submit()">Guardar</ion-button>
+  </ion-toolbar>
 </ion-footer>
