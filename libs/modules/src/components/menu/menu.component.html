@@ -17,8 +17,7 @@
     </ion-list>
   </ion-menu-toggle>
   <!-- Item with Children -->
-  <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open"
-    detail="false" lines="none" class="parent-subitems">
+  <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none" class="parent-subitems">
     <ion-icon slot="start" [name]="p.icon"></ion-icon>
     <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
     <ion-icon slot="end" name="information-circle" *ngIf="p.notification" class="color-notification"></ion-icon>
@@ -28,8 +27,7 @@
   <!-- Children List for clicked Item -->
   <ion-list *ngIf="p.open" lines="none">
     <ng-container *ngFor="let sub of p.children">
-        <ion-item *ngIf="!sub.header"   class="sub-item" [routerLink]="sub.url" routerDirection="root"
-        routerLinkActive="active" (click)="tapOptionSubitem(sub)">
+      <ion-item *ngIf="!sub.header"   class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)">
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
           {{ sub.title }}
@@ -38,33 +36,14 @@
       </ion-item>
       <!-- item header -->
       <ion-item *ngIf="sub.header" class="sub-item">
-      <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
-      <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
-       <b>
-         {{ sub.title }}
-       </b>
-      </ion-label>
-      <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
-    </ion-item>
-    <ion-list lines="none" *ngIf="sub.children">
-          <ng-container *ngFor="let sub1 of sub.children">
-            <ion-item  *ngIf="sub.id === 'workwaves-scheduled-1'" class="sub-item" routerDirection="root"
-              routerLinkActive="active" (click)="tapOptionSubitem(sub1)">
-              <ion-icon [slot]="iconsDirection" [name]="sub1.icon"></ion-icon>
-              <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
-                {{ sub1.title }}
-              </ion-label>
-            </ion-item>
-            <ion-item  *ngIf="sub.id !== 'workwaves-scheduled-1'" class="sub-item" [routerLink]="sub1.url" routerDirection="root"
-              routerLinkActive="active" (click)="tapOptionSubitem(sub1)">
-              <ion-icon [slot]="iconsDirection" [name]="sub1.icon"></ion-icon>
-              <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
-                {{ sub1.title }}
-              </ion-label>
-            </ion-item>
-
-          </ng-container>
-        </ion-list>
+        <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
+        <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
+         <b>
+           {{ sub.title }}
+         </b>
+        </ion-label>
+        <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
+      </ion-item>
     </ng-container>
   </ion-list>
 </div>
