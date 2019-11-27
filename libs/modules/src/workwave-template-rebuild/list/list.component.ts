@@ -259,31 +259,45 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     this.location.back();
   }
 
-
+  typeChanged(data) {
+    this.listTypesToUpdate = data.fields;
+    if (data.inPageCreation) {
+      this.updateListOfRequestOrders();
+    }
+    // this.pickingParametrizationProvider.loadingListRequestOrders++;
+    // this.loadRequestOrders();
+  }
 
   groupWarehousesChanged(data) {
-    this.events.publish(this.BLOCK_BUTTONS);
-    this.events.publish(this.BLOCK_BUTTONS_TEAM);
-    this.listTypesToUpdate = data.typesShippingOrders;
-    this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.store);
-    this.pickingParametrizationProvider.loadingListRequestOrders++;
+    this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.fields);
+    if (data.inPageCreation) {
+      this.updateListOfRequestOrders();
+    }
+  }
+
+  employeeChanged(data) {
+    this.listEmployeesToUpdate = data.fields;
+    if (data.inPageCreation) {
+      this.updateListOfUserAssignations();
+    }
+  }
+
+  requestOrderChanged(data) {
+    this.listWarehousesThresholdAndSelectedQty = data.fields.listThreshold;
+    this.listRequestOrdersToUpdate = data.fields.listSelected;
+    if (data.inPageCreation) {
+      this.updateListOfUserAssignations();
+    }
+  }
+
+  updateListOfRequestOrders() {
     this.pickingParametrizationProvider.loadingListRequestOrders++;
     this.loadRequestOrders();
   }
 
-  employeeChanged(data) {
-
-    this.listEmployeesToUpdate = data.user;
-
-    this.listWarehousesThresholdAndSelectedQty = data.table.listThreshold;
-    this.listRequestOrdersToUpdate = data.table.listSelected;
-
+  updateListOfUserAssignations() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
-  }
-
-  requestOrderChanged(data) {
-
   }
 
   enlarge() {

@@ -1,18 +1,13 @@
 <div class="main-element">
+  <div class="table-header">
+    <h2 class="title-table">
+      Asignaciones del Equipo
+    </h2>
 
-  <h2 class="title-table">Asignaciones del Equipo</h2>
-
-  <button
-    [disabled]="!buttonAvailability"
-    (click)="userSelected()"
-    [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}"
-    class="config-button"
-    mat-raised-button
-  >Actualizar asignaciones</button>
-
-  <div id="bottom" class="toggle">
-    <span>Expandir</span>
-    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
+    <div class="buttons-action">
+      <ion-icon name="refresh" (click)="userSelected()" [ngClass]="userAssignationsAreLoading() ? 'disabled' : ''"></ion-icon>
+      <ion-icon [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
+    </div>
   </div>
 
   <div class="legend">
@@ -30,18 +25,18 @@
     </div>
   </div>
 
-  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListTeamAssignations && pickingParametrizationProvider.loadingListTeamAssignations > 0">
+  <div class="loader" *ngIf="userAssignationsAreLoading()">
     <div class="spinner">
       <p class="message">Cargando asignaciones del equipo</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListTeamAssignations || pickingParametrizationProvider.loadingListTeamAssignations < 1) && listTeamAssignations.length < 1">
+  <div class="empty-list" *ngIf="!userAssignationsAreLoading() && listTeamAssignations.length < 1">
     <p class="message-empty">No hay asignaciones del equipo cargadas</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListTeamAssignations || pickingParametrizationProvider.loadingListTeamAssignations < 1">
+  <div class="scroll-list" *ngIf="!userAssignationsAreLoading()">
     <mat-grid-list
       *ngFor="let teamAssignation of listTeamAssignations; let i = index"
       class="team-assignations-line"

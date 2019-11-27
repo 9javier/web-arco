@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import { Events } from "@ionic/angular";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
@@ -10,6 +10,8 @@ import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workw
   styleUrls: ['./table-team-assignation.component.scss']
 })
 export class TableTeamAssignationComponent implements OnInit {
+
+  @Output() updateUserAssignations = new EventEmitter();
 
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded";
   private BLOCK_BUTTONS_TEAM = 'block_button_team';
@@ -93,16 +95,7 @@ export class TableTeamAssignationComponent implements OnInit {
   }
 
   userSelected() {
-    let groups = document.getElementsByClassName('store-line');
-    let iGroup = groups[0] as HTMLElement;
-    let iSelected = parseInt(iGroup.children[0].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
-    let iSelectedGroup = groups[iSelected - 1] as HTMLElement;
-    this.serviceG.orderAssignment.value.data.store.thresholdConsolidated = parseInt(iSelectedGroup.children[0].children[2].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
-
-    let aux = this.serviceG.requestUser.value;
-    aux.user = true;
-    aux.table = true;
-    this.serviceG.requestUser.next(aux);
+    this.updateUserAssignations.next();
   }
 
   showConsolidatedBreakdown() {
@@ -150,8 +143,7 @@ export class TableTeamAssignationComponent implements OnInit {
       document.getElementById('top').style.display = 'block';
       top.style.display = 'block';
       middle.style.display = 'block';
-      bottom.style.height = 'calc(45vh - 52px - 56px - 8px);';
-      if (document.getElementsByClassName('empty-list').length > 0) empty.style.height = 'calc(45vh - 52px - 56px - 8px - 72px)';
+      bottom.style.height = 'calc(45vh - 52px - 56px - 18px - 18px - 8px)';
       this.enlarged = !this.enlarged;
     } else {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
@@ -162,9 +154,12 @@ export class TableTeamAssignationComponent implements OnInit {
       top.style.display = 'none';
       middle.style.display = 'none';
       bottom.style.height = 'calc(100vh - 52px - 56px)';
-      if (document.getElementsByClassName('empty-list').length > 0) empty.style.height = 'calc(100vh - 52px - 56px - 72px)';
       this.enlarged = !this.enlarged;
     }
+  }
+
+  userAssignationsAreLoading() : boolean {
+    return this.pickingParametrizationProvider.loadingListTeamAssignations && this.pickingParametrizationProvider.loadingListTeamAssignations > 0;
   }
 
 }

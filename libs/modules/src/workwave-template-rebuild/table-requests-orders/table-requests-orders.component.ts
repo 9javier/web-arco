@@ -25,6 +25,7 @@ export class TableRequestsOrdersComponent implements OnInit {
   private ENABLED_BUTTONS = 'enabled_button';
 
   @Output() changeRequestOrder = new EventEmitter();
+  @Output() updateRequestOrders = new EventEmitter();
 
   listRequestOrders: Array<WorkwaveModel.MatchLineRequest> = new Array<WorkwaveModel.MatchLineRequest>();
   listRequestOrdersFinal: Array<WorkwaveModel.MatchLineRequest> = new Array<WorkwaveModel.MatchLineRequest>();
@@ -215,7 +216,7 @@ export class TableRequestsOrdersComponent implements OnInit {
       } else {
         this.requestOrdersSelection = {};
       }
-      this.selectRequestOrder(false);
+      this.selectRequestOrder(true, false);
 
       this.listRequestsFilters = this.listRequestOrders.map((item) => {
         return {
@@ -358,25 +359,17 @@ export class TableRequestsOrdersComponent implements OnInit {
   }
 
   orderAssignment() {
-    let aux = this.serviceG.orderAssignment.value;
-    aux.store = true;
-    aux.type = true;
-    let groups = document.getElementsByClassName('store-line');
-    let iGroup = groups[0] as HTMLElement;
-    let iSelected = parseInt(iGroup.children[0].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
-    let iSelectedGroup = groups[iSelected - 1] as HTMLElement;
-    aux.data.store.thresholdConsolidated = parseInt(iSelectedGroup.children[0].children[2].children[0].children[0].children[0].getAttribute('ng-reflect-model'));
-    this.serviceG.orderAssignment.next(aux);
+    this.updateRequestOrders.next();
   }
 
   selectAllRequestOrder() {
     for (let iRequest in this.requestOrdersSelection) {
       this.requestOrdersSelection[iRequest] = this.allRequestOrdersSelected;
     }
-    this.selectRequestOrder(true);
+    this.selectRequestOrder(false, true);
   }
 
-  selectRequestOrder(incrementTeamCounter: boolean) {
+  selectRequestOrder(inPageCreation: boolean, incrementTeamCounter: boolean) {
     for (let iObj in this.listWarehousesThresholdAndSelectedQty) {
       this.listWarehousesThresholdAndSelectedQty[iObj].selected = 0;
     }
@@ -393,10 +386,7 @@ export class TableRequestsOrdersComponent implements OnInit {
 
     this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
 
-    let aux = this.serviceG.requestUser.value;
-    aux.data.table = { listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty };
-    aux.table = incrementTeamCounter === false;
-    this.serviceG.requestUser.next(aux);
+    this.changeRequestOrder.next({ fields: {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty}, inPageCreation });
   }
 
   applyFilters(data: any) {
@@ -527,7 +517,7 @@ export class TableRequestsOrdersComponent implements OnInit {
     for (let iRequest in this.requestOrdersSelection) {
       this.requestOrdersSelection[iRequest] = true;
     }
-    this.selectRequestOrder(true);
+    this.selectRequestOrder(false, true);
   }
 
   dateCreatedParsed(requestOrder): string {
@@ -540,4 +530,7 @@ export class TableRequestsOrdersComponent implements OnInit {
     return moment(requestOrder.request.date).format('LT');
   }
 
+  requestsOrdersAreLoading() : boolean {
+    return this.pickingParametrizationProvider.loadingListRequestOrders && this.pickingParametrizationProvider.loadingListRequestOrders > 0
+  }
 }

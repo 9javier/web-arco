@@ -27,7 +27,7 @@
   <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListGroupsWarehouses || pickingParametrizationProvider.loadingListGroupsWarehouses < 1">
     <mat-grid-list *ngFor="let group of listGroupsWarehouses; let i = index" class="store-line" cols="12" rowHeight="48px">
       <mat-grid-tile class="radio" colspan="1" rowspan="1">
-        <mat-radio-group name="stores" [(ngModel)]="groupWarehousesSelected.groupsWarehousePickingId" (ngModelChange)="selectGroupWarehouses(undefined,'change')">
+        <mat-radio-group name="stores" [(ngModel)]="groupWarehousesSelected.groupsWarehousePickingId" (ngModelChange)="selectGroupWarehouses(false)">
           <mat-radio-button [value]="group.id"></mat-radio-button>
         </mat-radio-group>
       </mat-grid-tile>
@@ -38,7 +38,7 @@
 
       <mat-grid-tile class="consolidation" colspan="4">
         <div>
-          <input class="input-quantities" placeholder="-" type="number" [(ngModel)]="groupWarehousesSelected.thresholdConsolidated[group.id]">
+          <input class="input-quantities" placeholder="-" type="number" [(ngModel)]="groupWarehousesSelected.thresholdConsolidated[group.id]" (focusout)="selectGroupWarehouses(false, group.id)">
         </div>
       </mat-grid-tile>
     </mat-grid-list>
