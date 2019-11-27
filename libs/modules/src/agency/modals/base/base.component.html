@@ -1,23 +1,40 @@
-<form [formGroup]="form">
-    <ion-item lines="none" class="item" >
-        <i slot="start" class="icon" color="medium" class="material-icons">N</i>
-        <!-- Input Label -->
-        <ion-label class="label large" position="stacked">Nombre</ion-label>
-        <!-- Input Text -->
-        <ion-input class="input" formControlName="name" type="text" text></ion-input>
-    </ion-item>
-    <ion-item  lines="none" class="item" >
-        <i slot="start" class="icon" color="medium" class="material-icons">D</i>
-        <!-- Input Label -->
-        <ion-label class="label large" position="stacked">Dirección</ion-label>
-        <!-- Input Text -->
-        <ion-input class="input" formControlName="address" type="text" text></ion-input>
-    </ion-item>
-    <ion-item lines="none" class="item" >
-        <ion-icon slot="start" class="icon" name="call"></ion-icon>
-        <!-- Input Label -->
-        <ion-label class="label large" position="stacked">Teléfono</ion-label>
-        <!-- Input Text -->
-        <ion-input class="input" formControlName="phone" type="number" number></ion-input>
-    </ion-item>
+<form *ngIf="form" [formGroup]="form">
+  <ion-grid class="wrapper-form">
+      <ion-row class="input-wrapper">
+          <ion-col>
+              <!--Name-->
+              <ion-item>
+                  <div slot="start" class="slot-start-icon">
+                      <ion-icon color="medium" name=""></ion-icon>
+                  </div>
+                  <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+              </ion-item>
+              <!--Phone-->
+              <ion-item>
+                  <div slot="start" class="slot-start-icon">
+                      <ion-icon color="medium" name="call"></ion-icon>
+                  </div>
+                  <ion-input placeholder="Teléfono" class="ion-margin-horizontal" formControlName="phone" type="number" number></ion-input>
+              </ion-item>
+              <!--Address-->
+              <ion-item>
+                  <div slot="start" class="slot-start-icon">
+                      <ion-icon color="medium" name="pin"></ion-icon>
+                  </div>
+                  <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address" type="text" text></ion-input>
+              </ion-item>
+              <!--Agency-->
+              <ion-item>
+                  <div slot="start" class="slot-start-icon">
+                      <ion-icon color="medium" name=""></ion-icon>
+                  </div>
+                  <ion-select formControlName="manageAgencyId">
+                      <ion-select-option *ngFor="let agency of agencies" [value]="agency.id">
+                          {{ agency.name }}
+                      </ion-select-option>
+                  </ion-select>
+              </ion-item>
+          </ion-col>
+      </ion-row>
+  </ion-grid>
 </form>
