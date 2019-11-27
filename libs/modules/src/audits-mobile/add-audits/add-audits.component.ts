@@ -3,6 +3,7 @@ import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 
 @Component({
   selector: 'suite-add-audits',
@@ -18,7 +19,8 @@ export class AddAuditsComponent implements OnInit {
     private toast : ToastController,
     private router: Router,
     private activeRoute: ActivatedRoute,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private scanditProvider: ScanditProvider
   ) {
     this.focusToInput();
   }
@@ -32,10 +34,17 @@ export class AddAuditsComponent implements OnInit {
     }, 800);
   }
 
-  userTyping(event: any){
+  userTyping(event: any) {
     let codeScanned = this.inputValue;
     this.inputValue = null;
-    this.create(codeScanned);
+    if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
+      || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+      this.create(codeScanned);
+    } else {
+      this.focusToInput();
+      this.audioProvider.playDefaultError();
+      this.presentToast('Escanea un embalaje para comenzar la validación', 'danger');
+    }
   }
 
   create(codeScanned: string){

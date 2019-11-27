@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -23,7 +24,8 @@ export class SccanerProductComponent implements OnInit {
     private toast : ToastController,
     private activeRoute: ActivatedRoute,
     private router : Router,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private scanditProvider: ScanditProvider
   ) {
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
@@ -40,10 +42,17 @@ export class SccanerProductComponent implements OnInit {
     }, 800);
   }
 
-  userTyping(event: any){
+  userTyping(event: any) {
     const codeScanned = this.inputValueScanner;
     this.inputValueScanner = null;
-    this.addProduct(codeScanned);
+    if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
+      this.addProduct(codeScanned);
+    } else {
+      this.buttonStatus = false;
+      this.focusToInput();
+      this.audioProvider.playDefaultError();
+      this.presentToast('Escanea un producto para validar', 'danger');
+    }
   }
 
   backView(){ 
