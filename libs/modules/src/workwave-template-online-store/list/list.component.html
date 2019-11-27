@@ -1,9 +1,9 @@
 <h2 class="workwave-title">
-    <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
-    <div id="top" class="toggle">
-      <span>Expandir</span>
-      <ion-toggle (ionChange)="enlarge()"></ion-toggle>
-    </div>
+  <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
+  <div id="top" class="toggle">
+    <span>Expandir</span>
+    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
+  </div>
 </h2>
 <p *ngIf="disableEdition" class="error-edit-text"><i>Ola de trabajo en ejecución. Imposible editar.</i></p>
 
@@ -27,9 +27,9 @@
 </div>
 
 <ion-footer class="footer-products">
-    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-        <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
-            <i class="material-icons">play_arrow</i>
-        </ion-fab-button>
-    </ion-fab>
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
+      <i class="material-icons">play_arrow</i>
+    </ion-fab-button>
+  </ion-fab>
 </ion-footer>
