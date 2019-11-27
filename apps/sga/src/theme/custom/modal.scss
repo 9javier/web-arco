@@ -35,6 +35,13 @@
       }
     }
   }
+
+  .custom-material-modal {
+    mat-dialog-container.mat-dialog-container {
+      padding: 0;
+    }
+  }
+
   @media only screen and (min-height: 600px) and (min-width: 768px) {
     ion-modal {
       .modal-wrapper {

@@ -1,8 +1,30 @@
 import {HttpRequestModel} from "./HttpRequest";
-import {UserModel} from "@suite/services";
+import {ProductModel, UserModel} from "@suite/services";
 import {CarrierModel} from "./Carrier";
 
 export namespace AuditsModel {
+
+  export interface AuditPacking {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    status: number,
+    type: number,
+    logUser: UserModel.User,
+    sorterAuditPackingProducts: AuditPackingProduct[],
+    packing: CarrierModel.Carrier,
+    has_sorterAuditPackingProducts: boolean
+  }
+
+  export interface AuditPackingProduct {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    hasSorter: boolean,
+    incidence: boolean,
+    rightAudit: boolean,
+    product: ProductModel.Product
+  }
 
   // Create new Audit
   export interface ParamsCreateAudit {

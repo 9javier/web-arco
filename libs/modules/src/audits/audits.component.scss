@@ -1,6 +1,13 @@
 table {
-    width: 100%;
+  width: 100%;
+
+  td.col-see {
+    cursor: pointer;
+    span {
+      color: var(--ion-color-link);
+    }
   }
+}
 
 .content-audits{
     padding: 2%;
