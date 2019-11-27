@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { COLLECTIONS } from 'config/base';
 import { ModalController } from '@ionic/angular';
 import { DataComponent } from '../data/data.component';
 import { CarrierService, IntermediaryService } from '@suite/services';
+import { StateExpeditionAvelonService } from 'libs/services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service';
 
 @Component({
   selector: 'suite-store',
@@ -15,37 +15,52 @@ export class StoreComponent implements OnInit {
   @ViewChild(DataComponent) data:DataComponent;
 
   formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.pattern('^J[0-9]{4}')]]
+    name: ['', [Validators.required]],
+    status: ['', []]
   };
   formBuilderTemplateInputs = [
     {
-      name: 'reference',
+      name: 'name',
       label: 'Ej. J0001',
       type: 'reference'
+    },
+    {
+      name: 'status',
+      label: 'Ej. J0001',
+      type: 'checkbox'
     }
   ];
-  title = 'Crear Jaula';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
-    .name;
-  redirectTo = '/jails';
+  title = 'Crear estado de expedition';
+  redirectTo = '/state-expedition-avelon';
+  public formGroup: FormGroup;
 
   constructor(
     private modalController:ModalController,
-    private carrierService:CarrierService,
-    private intermediaryService:IntermediaryService
+    private stateExpeditionService:StateExpeditionAvelonService,
+    private intermediaryService:IntermediaryService,
+    private formBuilder: FormBuilder 
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.buildForm();
+  }
+  private buildForm(){
+    this.formGroup = this.formBuilder.group({
+      name: ['', Validators.required],
+      status: true
+    });
+  }
 
-  submit(value){
+  submit(){
+    let value = this.formGroup.value;
     this.intermediaryService.presentLoading();
-    this.carrierService.store(value).subscribe(data=>{
+    this.stateExpeditionService.store(value).subscribe(data=>{
       this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentToastSuccess("Jaula guardada con éxito");
+      this.intermediaryService.presentToastSuccess("Estado de expedición guardada con éxito");
       this.close();
     },()=>{
       this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentToastError("Error creando la jaula");
+      this.intermediaryService.presentToastError("Error creando la estado de expedición");
     })
   }
 

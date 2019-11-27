@@ -1,9 +1,10 @@
 import { Component, OnInit ,ViewChild} from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, FormGroup } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
 import { NavParams, ModalController } from '@ionic/angular';
 import { CarrierService, IntermediaryService } from '@suite/services';
 import { DataComponent } from '../data/data.component';
+import { StateExpeditionAvelonService } from 'libs/services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service';
 
 @Component({
   selector: 'suite-update',
@@ -11,36 +12,25 @@ import { DataComponent } from '../data/data.component';
   styleUrls: ['./update.component.scss']
 })
 export class UpdateComponent implements OnInit {
-  formBuilderDataInputs = {
-    reference: ['', [Validators.required, Validators.pattern('^J[0-9]{4}')]]
-  };
-  formBuilderTemplateInputs = [
-    {
-      name: 'reference',
-      label: 'Ej. J0001',
-      type: 'reference',
-      icon: { type: 'ionic', name: 'filing'}
-    }
-  ];
-  title = 'Actualizar Jaula';
-  apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
-    .name;
+  title = 'Actualizar estado de expedicion';
+  public formGroup: FormGroup;
 
-  redirectTo = '/jails/list';
-  jail;
+  redirectTo = '/state-expedition-avelon/list';
+  id;
 
   constructor(
     private navParams:NavParams,
-    private carrierService:CarrierService,
+    private modalController:ModalController,
     private intermediaryService:IntermediaryService,
-    private modalController:ModalController
+    private expedition: StateExpeditionAvelonService
     ) {
-    this.jail = this.navParams.get("jail");
+    this.id = this.navParams.get("id");
   }
 
-  @ViewChild(DataComponent) data:DataComponent;
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
   
   submit(value){
     this.intermediaryService.presentLoading();

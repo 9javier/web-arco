@@ -5,23 +5,26 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>Crear Jaula</ion-title>
+        <ion-title>Crear estado de expedición</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content padding="true">
-    <suite-data></suite-data>
+    <form [formGroup]="formGroup">
+        <ion-item class="item" lines="none">
+            <ion-label class="label large"  position="stacked" slot="start">Nombre</ion-label>
+            <ion-input class="input" formControlName="name" placeholder="Ejem estado" ></ion-input>
+        </ion-item>
+        <br>
+        <ion-item class="item" lines="none">
+            <ion-label class="label large"  position="stacked" slot="start">Estado </ion-label>
+            <ion-checkbox color="dark" checked slot="start" formControlName="status"></ion-checkbox>
+            <span>{{status ? 'Activo' : 'Bloqueado'}}</span>
+        </ion-item>
+    </form>
 </ion-content>
 <ion-footer>
     <ion-toolbar>
         <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-        <ion-button slot="end" color="primary" [disabled]="data.form.invalid" (click)="submit(data.getValue())">Guardar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="formGroup.invalid" (click)="submit()">Guardar</ion-button>
     </ion-toolbar>
 </ion-footer>
-<!--<suite-ui-crud-store
-  [title]="title"
-  [formBuilderDataInputs]="formBuilderDataInputs"
-  [formBuilderTemplateInputs]="formBuilderTemplateInputs"
-  [apiEndpoint]="apiEndpoint"
-  [redirectTo]="redirectTo"
-></suite-ui-crud-store>
--->
