@@ -1,161 +1,161 @@
 <!--View to create a new user-->
 <ion-header>
-  <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-          <ion-button (click)="close()">
-              <ion-icon name="close" class="toogleArrow"></ion-icon>
-          </ion-button>
-      </ion-buttons>
-      <ion-title>Crear Usuario</ion-title>
-  </ion-toolbar>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Crear Usuario</ion-title>
+    </ion-toolbar>
 </ion-header>
 <ion-content>
-  <suite-utils></suite-utils>
-  <!--Form to update the user-->
-  <form *ngIf="createForm" [formGroup]="createForm">
-      <ion-grid class="wrapper-form">
-          <ion-row class="input-wrapper">
-              <!--Name-->
-              <ion-item>
-                  <div slot="start" class="slot-start-icon">
-                      <ion-icon color="medium" name="person"></ion-icon>
-                  </div>
-                  <ion-label position="floating">Nombre</ion-label>
-                  <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
-              </ion-item>
-              <!--Email-->
-              <ion-item>
-                  <div slot="start" class="slot-start-icon">
-                      <ion-icon color="medium" name="finger-print"></ion-icon>
-                  </div>
-                  <ion-label position="floating">Usuario</ion-label>
-                  <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
-              </ion-item>
-              <!--Password-->
-              <ion-item>
-                  <div slot="start" class="slot-start-icon">
-                      <ion-icon color="medium" name="lock"></ion-icon>
-                  </div>
-                  <ion-label position="floating">Nueva contraseña</ion-label>
-                  <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
+    <suite-utils></suite-utils>
+    <!--Form to update the user-->
+    <form *ngIf="createForm" [formGroup]="createForm">
+        <ion-grid class="wrapper-form">
+            <ion-row class="input-wrapper">
+                <!--Name-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="person"></ion-icon>
+                    </div>
+                    <ion-label position="floating">Nombre</ion-label>
+                    <ion-input placeholder="Nombre" class="ion-margin-horizontal" formControlName="name" type="text" text></ion-input>
+                </ion-item>
+                <!--Email-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="finger-print"></ion-icon>
+                    </div>
+                    <ion-label position="floating">Usuario</ion-label>
+                    <ion-input placeholder="Usuario" class="ion-margin-horizontal" formControlName="email" type="text"></ion-input>
+                </ion-item>
+                <!--Password-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-label position="floating">Nueva contraseña</ion-label>
+                    <ion-input placeholder="Nueva contraseña" class="ion-margin-horizontal" formControlName="password" type="password" #passwordInput>
 
-                      <ion-icon class="icon-show-password" color="medium"
-                          [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
-                    passwordInput.type === 'password'
-                      ? (passwordInput.type = 'text')
-                      : (passwordInput.type = 'password')
-                  "></ion-icon>
-                  </ion-input>
+                        <ion-icon class="icon-show-password" color="medium"
+                            [name]="passwordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                      passwordInput.type === 'password'
+                        ? (passwordInput.type = 'text')
+                        : (passwordInput.type = 'password')
+                    "></ion-icon>
+                    </ion-input>
 
-              </ion-item>
-              <!--Repeat password-->
-              <ion-item>
-                  <div slot="start" class="slot-start-icon">
-                      <ion-icon color="medium" name="lock"></ion-icon>
-                  </div>
-                  <ion-label position="floating">Repetir contraseña</ion-label>
-                  <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
-                      <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
-                  repeatPasswordInput.type === 'password'
-                      ? (repeatPasswordInput.type = 'text')
-                      : (repeatPasswordInput.type = 'password')
-                  "></ion-icon>
-                  </ion-input>
-              </ion-item>
-              <!--Direction-->
-              <ion-item>
-                  <div slot="start" class="slot-start-icon">
-                      <ion-icon color="medium" name="home"></ion-icon>
-                  </div>
-                  <ion-label position="floating">Dirección</ion-label>
-                  <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address"
-                      type="text" text></ion-input>
-              </ion-item>
-              <!--Employee Id-->
-              <ion-item>
-                  <div slot="start" class="slot-start-icon">
-                      <ion-icon color="medium" name="lock"></ion-icon>
-                  </div>
-                  <ion-label position="floating">Id empleado Avelon</ion-label>
-                  <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal"
-                      formControlName="employedId" type="number" number></ion-input>
-              </ion-item>
-               <!--Tiene tienda-->
-               <ion-item class="inner-item">
-                  <ion-label>
-                      Empleado de tienda
-                  </ion-label>
-                  <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
-              </ion-item>
-              <!--Tienda-->
+                </ion-item>
+                <!--Repeat password-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-label position="floating">Repetir contraseña</ion-label>
+                    <ion-input placeholder="Repetir contraseña" class="ion-margin-horizontal" formControlName="confirmPassword" type="password" #repeatPasswordInput>
+                        <ion-icon class="icon-show-password" color="medium" [name]="repeatPasswordInput.type === 'password' ? 'eye' : 'eye-off'" (click)="
+                    repeatPasswordInput.type === 'password'
+                        ? (repeatPasswordInput.type = 'text')
+                        : (repeatPasswordInput.type = 'password')
+                    "></ion-icon>
+                    </ion-input>
+                </ion-item>
+                <!--Direction-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="home"></ion-icon>
+                    </div>
+                    <ion-label position="floating">Dirección</ion-label>
+                    <ion-input placeholder="Dirección" class="ion-margin-horizontal" formControlName="address"
+                        type="text" text></ion-input>
+                </ion-item>
+                <!--Employee Id-->
+                <ion-item>
+                    <div slot="start" class="slot-start-icon">
+                        <ion-icon color="medium" name="lock"></ion-icon>
+                    </div>
+                    <ion-label position="floating">Id empleado Avelon</ion-label>
+                    <ion-input placeholder="Id empleado Avelon" class="ion-margin-horizontal"
+                        formControlName="employedId" type="number" number></ion-input>
+                </ion-item>
+                 <!--Tiene tienda-->
+                 <ion-item class="inner-item">
+                    <ion-label>
+                        Empleado de tienda
+                    </ion-label>
+                    <ion-checkbox formControlName="hasWarehouse"></ion-checkbox>
+                </ion-item>
+                <!--Tienda-->
 
-              <ion-item class="inner-item" style="display: none;">
-                  <ion-select placeholder="Tienda" formControlName="warehouseId" [value]="warehouse_id">
-                      <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-                          {{warehouse.name}}</ion-select-option>
-                  </ion-select>
-              </ion-item>
+                <ion-item class="inner-item" style="display: none;">
+                    <ion-select placeholder="Tienda" formControlName="warehouseId" [value]="warehouse_id">
+                        <ion-select-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+                            {{warehouse.name}}</ion-select-option>
+                    </ion-select>
+                </ion-item>
 
-              <!--Warehouses permissions-->
-              <div class="container-permits">
-                  Permisos:
-                  <div [class.error]="createForm['controls'].permits.touched" class="advise"
-                      *ngIf="createForm['controls'].permits.invalid">
-                      Se necesita al menos un almacén, con al menos un rol
-                  </div>
-                  <div [formGroup]="control"
-                      *ngFor="let control of createForm['controls'].permits['controls'];let i = index"
-                      (click)="createForm['controls'].permits.touched = true">
-                      <ion-item
-                          [class.invalid]="!createForm['controls']?.permits?.valid && createForm['controls'].permits.touched">
-                          <mat-accordion multi="false">
-                              <mat-expansion-panel>
-                                  <mat-expansion-panel-header>
-                                      <ion-grid>
-                                          <ion-row>
-                                              <ion-col size="11">
-                                                  <mat-panel-title> {{control.controls.name.value}} </mat-panel-title>
-                                              </ion-col>
-                                              <ion-col size="1">
-                                                  <ion-badge color="danger" *ngIf="!createForm.value.hasWarehouse" (click)="deletePermision($event,i)">-
-                                                  </ion-badge>
-                                              </ion-col>
-                                          </ion-row>
-                                      </ion-grid>
-                                  </mat-expansion-panel-header>
-                                  <div>
-                                      <ion-item
-                                          *ngFor="let control of control['controls'].roles['controls'];let i = index">
-                                          <ion-label>{{roles[i].name}}</ion-label>
-                                          <ion-checkbox value="{{roles[i].id}}" [formControl]="control">
-                                          </ion-checkbox>
-                                      </ion-item>
-                                  </div>
-                                  <mat-list style="display: flex; justify-content:center;"></mat-list>
-                              </mat-expansion-panel>
-                          </mat-accordion>
-                      </ion-item>
-                  </div>
-                  <div>
-                      <ion-button (click)="selectNewWarehouse(addWarehouseToUser)" *ngIf="!createForm.value.hasWarehouse">Agregar permiso +</ion-button>
-                  </div>
-              </div>
-          </ion-row>
-      </ion-grid>
-  </form>
+                <!--Warehouses permissions-->
+                <div class="container-permits">
+                    Permisos:
+                    <div [class.error]="createForm['controls'].permits.touched" class="advise"
+                        *ngIf="createForm['controls'].permits.invalid">
+                        Se necesita al menos un almacén, con al menos un rol
+                    </div>
+                    <div [formGroup]="control"
+                        *ngFor="let control of createForm['controls'].permits['controls'];let i = index"
+                        (click)="createForm['controls'].permits.touched = true">
+                        <ion-item
+                            [class.invalid]="!createForm['controls']?.permits?.valid && createForm['controls'].permits.touched">
+                            <mat-accordion multi="false">
+                                <mat-expansion-panel>
+                                    <mat-expansion-panel-header>
+                                        <ion-grid>
+                                            <ion-row>
+                                                <ion-col size="11">
+                                                    <mat-panel-title> {{control.controls.name.value}} </mat-panel-title>
+                                                </ion-col>
+                                                <ion-col size="1">
+                                                    <ion-badge color="danger" *ngIf="!createForm.value.hasWarehouse" (click)="deletePermision($event,i)">-
+                                                    </ion-badge>
+                                                </ion-col>
+                                            </ion-row>
+                                        </ion-grid>
+                                    </mat-expansion-panel-header>
+                                    <div>
+                                        <ion-item
+                                            *ngFor="let control of control['controls'].roles['controls'];let i = index">
+                                            <ion-label>{{roles[i].name}}</ion-label>
+                                            <ion-checkbox value="{{roles[i].id}}" [formControl]="control">
+                                            </ion-checkbox>
+                                        </ion-item>
+                                    </div>
+                                    <mat-list style="display: flex; justify-content:center;"></mat-list>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </ion-item>
+                    </div>
+                    <div>
+                        <ion-button (click)="selectNewWarehouse(addWarehouseToUser)" *ngIf="!createForm.value.hasWarehouse">Agregar permiso +</ion-button>
+                    </div>
+                </div>
+            </ion-row>
+        </ion-grid>
+    </form>
 </ion-content>
 <ion-footer>
-  <ion-toolbar>
-      <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-      <ion-button slot="end" color="primary" [disabled]="createForm.invalid" (click)="submit()">Guardar</ion-button>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" [disabled]="createForm.invalid" (click)="submit()">Guardar</ion-button>
+    </ion-toolbar>
 </ion-footer>
 <!--<suite-ui-crud-store
-[title]="title"
-[formBuilderDataInputs]="formBuilderDataInputs"
-[formBuilderTemplateInputs]="formBuilderTemplateInputs"
-[apiEndpoint]="apiEndpoint"
-[redirectTo]="redirectTo"
-[customValidators]="customValidators"
+  [title]="title"
+  [formBuilderDataInputs]="formBuilderDataInputs"
+  [formBuilderTemplateInputs]="formBuilderTemplateInputs"
+  [apiEndpoint]="apiEndpoint"
+  [redirectTo]="redirectTo"
+  [customValidators]="customValidators"
 ></suite-ui-crud-store>
 -->
