@@ -1,11 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {AlertController, ToastController} from "@ionic/angular";
-import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {PriceModel, PriceService} from "@suite/services";
-import {PrintModel} from "../../../../services/src/models/endpoints/Print";
-import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
-import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { Component, Input, OnInit } from '@angular/core';
+import { AlertController, ToastController, ModalController } from "@ionic/angular";
+import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
+import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import { PriceModel, PriceService } from "@suite/services";
+import { PrintModel } from "../../../../services/src/models/endpoints/Print";
+import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { range } from 'rxjs';
 
 @Component({
@@ -18,7 +18,7 @@ export class InputCodesComponent implements OnInit {
   dataToWrite: string = 'PRODUCTO';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
-  stampe:number = 1;
+  stampe: number = 1;
 
   @Input() typeTags: number = 1;
   public typeTagsBoolean: boolean = false;
@@ -32,36 +32,94 @@ export class InputCodesComponent implements OnInit {
     private printerService: PrinterService,
     private priceService: PriceService,
     private scanditProvider: ScanditProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    // private modalController: ModalController,
+    // private alerta: AlertController
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
-    },500);
+    }, 500);
   }
 
   async ngOnInit() {
     this.typeTagsBoolean = this.typeTags != 1;
+
   }
 
-  mas(){
+  mas() {
     this.stampe = this.stampe + 1;
   }
 
-  menos(){
-    if(this.stampe === 1){
+  menos() {
+    if (this.stampe === 1) {
       return;
-    }else{
+    } else {
       this.stampe = this.stampe - 1;
     }
   }
-  enviar_Veces(res){
-    range(0,this.stampe).subscribe(data => {
-      console.log('Printed product tag ... ', res);
+  async enviar_Veces(res,prezzo:number |null = null) {
+    let dataImprim;
+    console.log(prezzo);
+    
+    if(prezzo){
+      dataImprim = {res,prezzo}
+    }else{
+      dataImprim = res;
+    }
+    range(0, this.stampe).subscribe(data => {
+      console.log('Printed product tag ... ', dataImprim);
     })
+  }
+  // TODO Alert Prezzo con Codigo
+  async presentModal(codice) {
+    const alert = await this.alertController.create({
+      header: 'Codigo Desconocido',
+      subHeader: 'Nueva Impression',
+      message:"¿Deseas imprimir el nuevo codigo y nuevo precio?",
+      // message: 'Imprimir Codigo y precio ',
+      // animated:true,
+      inputs:[
+        {
+          name:'Codice',
+          placeholder:'Codice',
+          value:codice
+          
+        },
+        {
+          name:'Tickets',
+          value:this.stampe,
+          type:'number'
+        },
+        {
+          name:'prezzo',
+          type:'number',
+          value:0,
+          placeholder:'Prezzo'
+        }
+      ],
+      buttons: [
+        {text:'Impimir', handler: (data) => {
+          console.log('imprimire',data);
+          this.enviar_Veces(codice,data.prezzo)
+        }},{
+          text:'Cancellar',
+          role:'cancel',
+          cssClass:'secondary',
+          handler:()=>{
+            console.log('Cancelliamo procedimento');
+            
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   keyUpInput(event) {
+    // console.log(event);
+
     let dataWrote = (this.inputProduct || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -111,6 +169,8 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             default:
+              console.log(1);
+
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               break;
@@ -119,6 +179,8 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           switch (this.typeTags) {
             case 1:
+              console.log(2);
+
               this.audioProvider.playDefaultError();
               this.presentToast('Escanea un código de caja para reimprimir la etiqueta de caja del producto.', 'danger');
               break;
@@ -146,7 +208,7 @@ export class InputCodesComponent implements OnInit {
                       }
 
                       return {
-                        name: 'radio'+iProductPrice,
+                        name: 'radio' + iProductPrice,
                         type: 'radio',
                         label: label,
                         value: iProductPrice
@@ -154,10 +216,17 @@ export class InputCodesComponent implements OnInit {
                     });
                     this.presentAlertSelect(listItems, responseData);
                   } else {
+                    console.log('Error codiec');
+                    // console.log(dataWrote);
+                    
+                    // TODO CREAMO IL MODAL PER CHIEDERE IL PREZZO
+                    this.presentModal(dataWrote)
+
                     this.lastCodeScanned = 'start';
-                    this.audioProvider.playDefaultError();
+                    // this.audioProvider.playDefaultError();
                     this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
-                  }                }, (error) => {
+                  }
+                }, (error) => {
                   this.lastCodeScanned = 'start';
                   this.audioProvider.playDefaultError();
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
@@ -169,12 +238,16 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             default:
+              console.log(4);
+
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               break;
           }
           break;
         default:
+          console.log(5);
+
           let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
           if (this.typeTags == 1) {
             msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
@@ -201,7 +274,7 @@ export class InputCodesComponent implements OnInit {
       .then(() => {
         setTimeout(() => {
           document.getElementById('input-ta').focus();
-        },500);
+        }, 500);
       });
   }
 
@@ -249,7 +322,7 @@ export class InputCodesComponent implements OnInit {
             this.lastCodeScanned = 'start';
             setTimeout(() => {
               document.getElementById('input-ta').focus();
-            },500);
+            }, 500);
           }
         },
         {
