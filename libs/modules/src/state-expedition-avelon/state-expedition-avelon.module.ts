@@ -7,16 +7,15 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import {CommonUiCrudModule} from '@suite/common/ui/crud';
-import { DataModule } from './data/data.module';
 import { BreadcrumbModule } from '../../../modules/src/components/breadcrumb/breadcrumb.module';
-import { SendComponent } from './send/send.component';
 import { MatFormFieldModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
 import { StateExpeditionAvelonComponent } from './state-expedition-avelon.component';
 import { StateExpeditionAvelonRoutingModule } from './state-expedition-avelon-routing.module';
+import { DeleteComponent } from './delete/delete.component';
 
 @NgModule({
-  declarations: [StateExpeditionAvelonComponent, StoreComponent, UpdateComponent, SendComponent],
+  declarations: [StateExpeditionAvelonComponent, StoreComponent, UpdateComponent, DeleteComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -26,7 +25,6 @@ import { StateExpeditionAvelonRoutingModule } from './state-expedition-avelon-ro
     StateExpeditionAvelonRoutingModule,
     CommonUiCrudModule,
     CdkTableModule,
-    DataModule,
     MatPaginatorModule,
     MatListModule,
     FormsModule,
@@ -35,7 +33,8 @@ import { StateExpeditionAvelonRoutingModule } from './state-expedition-avelon-ro
     MatSelectModule
   ], entryComponents: [
     StoreComponent,
-    SendComponent
+    DeleteComponent,
+    UpdateComponent
   ]
 })
 export class StateExpeditionAvelonModule { }

@@ -12,7 +12,7 @@ import { HttpRequestModel } from 'libs/services/src/models/endpoints/HttpRequest
 })
 export class StateExpeditionAvelonService {
 
-  /**Private urls for Carrier service */
+  /**Private urls for Satete service */
   private stateExpeditionAvelonUrl:string = environment.apiBase+"/state-expedition-avelon";
   private singleCarrierUrl:string = environment.apiBase+"/state-expedition-avelon/{{id}}";
 
@@ -25,18 +25,14 @@ export class StateExpeditionAvelonService {
    */
   getIndex():Observable<Array<StateExpeditionAvelonModel.StateExpeditionAvelon>>{
     return this.http.get<HttpRequestModel.Response>(this.stateExpeditionAvelonUrl).pipe(map(response => response.data));
-
-    /*return this.http.get<StateExpeditionAvelonModel.StateExpeditionAvelon>(this.carrierUrl).pipe(map(response=>{
-      return response.data;
-    }));*/
   }
 
 
 
   /**
-   * Get a carrier by id
-   * @param id - the id of carrier to get
-   * @returns a carrier
+   * Get a State by id
+   * @param id - the id of state to get
+   * @returns a state
    */
   getSingle(id:number):Observable<CarrierModel.Carrier>{
     return this.http.get<CarrierModel.SingleCarrierResponse>(this.singleCarrierUrl.replace("{{id}}",String(id))).pipe(map(response=>{
@@ -45,8 +41,8 @@ export class StateExpeditionAvelonService {
   }
 
   /**
-   * Delete a carrier by id
-   * @param id - the id of the carrier
+   * Delete a state by id
+   * @param id - the id of the state
    */
   delete(id:number):Observable<any>{
     return this.http.delete(this.singleCarrierUrl.replace("{{id}}",String(id)));
