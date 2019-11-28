@@ -50,6 +50,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
   private loading: HTMLIonLoadingElement = null;
   enlarged = false;
+  responseQuantities: WorkwaveModel.AssignationsByRequests[];
 
   constructor(
     private location: Location,
@@ -195,6 +196,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
             this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
             if (resData.quantities) {
               this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, resData.quantities);
+              this.responseQuantities = resData.quantities;
             }
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           } else {

@@ -49,6 +49,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   private ObservablePendings: Array<any> = new Array();
   protected ngUnsubscribe: Subject<void> = new Subject<void>();
   enlarged = false;
+  responseQuantities: WorkwaveModel.AssignationsByRequests[];
 
   constructor(
     private location: Location,
@@ -214,6 +215,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
         if (res.quantities) {
           this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, res.quantities);
+          this.responseQuantities = res.quantities;
         }
         this.pickingParametrizationProvider.loadingListTeamAssignations--;
       }, (error) => {
