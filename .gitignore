@@ -71,3 +71,7 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
+package-lock.json
+libs/services/src/environments
+ionic.config.json
+scandit/src/android/.gradle
