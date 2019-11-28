@@ -36,12 +36,10 @@ export class InputCodesComponent implements OnInit {
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider,
     private audioProvider: AudioProvider,
-    private keyboardService: KeyboardService,
+    private keyboardService: KeyboardService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
-    setTimeout(() => {
-      document.getElementById('input-ta').focus();
-    },800);
+    this.focusToInput();
   }
 
   async ngOnInit() {
@@ -49,6 +47,12 @@ export class InputCodesComponent implements OnInit {
     if (this.isStoreUser) {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
     }
+  }
+
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    },800);
   }
 
   keyUpInput(event) {
@@ -75,6 +79,7 @@ export class InputCodesComponent implements OnInit {
           } else {
             this.audioProvider.playDefaultOk();
             this.printerService.printTagBarcode([dataWrote]);
+            this.focusToInput();
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
@@ -83,6 +88,7 @@ export class InputCodesComponent implements OnInit {
         default:
           this.audioProvider.playDefaultError();
           this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+          this.focusToInput();
           break;
       }
     }
@@ -97,6 +103,7 @@ export class InputCodesComponent implements OnInit {
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
               if (this.isStoreUser) {
+                this.focusToInput();
                 this.postRelabelProduct(this.lastProductReferenceScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               } else {
                 this.audioProvider.playDefaultOk();
@@ -117,19 +124,26 @@ export class InputCodesComponent implements OnInit {
               this.presentAlertSelect(listItems, responseSizeAndModel);
             }
           }
+        } else if (res.code == 0) {
+          this.audioProvider.playDefaultError();
+          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Pruebe de nuevo a realizar la operación.', 'danger');
+          this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
           this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+          this.focusToInput();
         }
       }, (error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
         this.audioProvider.playDefaultError();
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+        this.focusToInput();
       })
       .catch((error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
         this.audioProvider.playDefaultError();
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+        this.focusToInput();
       });
   }
 
@@ -161,14 +175,21 @@ export class InputCodesComponent implements OnInit {
           // Do product print
           this.audioProvider.playDefaultOk();
           this.printerService.printTagBarcodeUsingProduct(res.data);
+          this.focusToInput();
+        } else if (res.code == 0) {
+          this.audioProvider.playDefaultError();
+          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Pruebe de nuevo a realizar la operación.', 'danger');
+          this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
           this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
+          this.focusToInput();
         }
       }, (error) => {
         console.error('Error::Subscribe::Relabel -> ', error);
         this.audioProvider.playDefaultError();
         this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
+        this.focusToInput();
       });
   }
 
@@ -196,7 +217,8 @@ export class InputCodesComponent implements OnInit {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary'
+          cssClass: 'secondary',
+          handler: () => this.focusToInput()
         }, {
           text: 'Seleccionar',
           handler: async (data) => {
@@ -205,6 +227,7 @@ export class InputCodesComponent implements OnInit {
               return false;
             }
 
+            this.focusToInput();
             let modelId = listProductsSizes.model.id;
             let sizeId = listProductsSizes.sizes[data].id;
             if (this.isStoreUser) {
