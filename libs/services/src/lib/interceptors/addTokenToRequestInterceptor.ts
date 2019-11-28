@@ -126,7 +126,7 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
           }),
           catchError(err => {
             this.isRefreshingToken = false;
-            this.intermediaryService.presentConfirm("Su sesión ha expirado", () => { });
+            this.intermediaryService.presentWarning("Su sesión ha expirado", () => { });
             this.authenticationService.logout();
             return new Observable(observer => observer.error(err));
           }),
