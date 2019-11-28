@@ -329,6 +329,13 @@ export class PrintTagsScanditService {
               ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', listItems);
             }
           }
+        } else if (res.code == 0) {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
         } else {
           ScanditMatrixSimple.setText(
             'No se ha podido consultar la información del producto escaneado.',
@@ -384,6 +391,13 @@ export class PrintTagsScanditService {
         if (res.code == 200) {
           // Do product print
           this.printerService.printTagBarcodeUsingProduct(res.data);
+        } else if (res.code == 0) {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
         } else {
           ScanditMatrixSimple.setText(
             'Ha ocurrido un error al intentar consultar la información de la talla.',
