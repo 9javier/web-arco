@@ -28,7 +28,8 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
   private isToastVisible: boolean = false;
 
   private listRoutesWithCustomErrorConnectionManagement: string[] = [
-    '/print/product/relabel'
+    '/print/product/relabel',
+    '/print-tag/manual/price'
   ];
 
   addTokenToRequest(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -75,10 +76,10 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                 // check if the page is assigned to exclude that will manage itself the connection error
                 let customErrorManagement = !!this.listRoutesWithCustomErrorConnectionManagement.find(url => url === this.router.url);
                 /*
-  * NO CONNECTION TO API
-  * status = 0
-  * statusText = 'Unknown Error'
-  * */
+                * NO CONNECTION TO API
+                * status = 0
+                * statusText = 'Unknown Error'
+                * */
                 if (!customErrorManagement && err.statusText == 'Unknown Error' && this.authenticationService.isAuthenticated()) {
                   this.authenticationService.logout();
                   if (!this.isToastVisible) {
