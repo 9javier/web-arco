@@ -127,7 +127,7 @@ export class InputCodesComponent implements OnInit {
           }
         } else if (res.code == 0) {
           this.audioProvider.playDefaultError();
-          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Pruebe de nuevo a realizar la operación.', 'danger');
+          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
           this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
@@ -179,7 +179,7 @@ export class InputCodesComponent implements OnInit {
           this.focusToInput();
         } else if (res.code == 0) {
           this.audioProvider.playDefaultError();
-          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Pruebe de nuevo a realizar la operación.', 'danger');
+          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
           this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
