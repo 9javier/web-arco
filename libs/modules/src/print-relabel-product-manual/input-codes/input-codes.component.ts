@@ -61,6 +61,7 @@ export class InputCodesComponent implements OnInit {
     if (event.keyCode == 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrote;
