@@ -97,7 +97,6 @@ export class TariffService {
 
   getTariffUpdates(data: any[]) {
     let params = {
-      warehouseId: 49,
       data: data
     };
     return this.http.post<TariffModel.ResponseTariffUpdates>(this.getTariffUpdatesUrl, params).pipe(map(response => {

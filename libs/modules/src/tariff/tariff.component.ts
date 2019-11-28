@@ -121,7 +121,13 @@ export class TariffComponent implements OnInit {
     this.tariffService.getIndex(selectPage, limit, sort).subscribe(tariffs=>{
       this.intermediaryService.dismissLoading();
       /** consult updates tariffs */
-      var ids = tariffs.results.map(r => r.tariffId);
+      var temp = tariffs.results.map(r => r.tariffId);
+      var ids: any = [];
+      temp.forEach(item => {
+        ids.push({
+          tariffId: item
+        })
+      });
       this.tariffService.getTariffUpdates(ids).subscribe(updates=>{
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
