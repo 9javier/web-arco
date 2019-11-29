@@ -107,7 +107,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/state-expedition-avelon/state-expedition-avelon.module#StateExpeditionAvelonModule',
     data: {
-      name: 'StateExpeditionAvelon'
+      name: 'Estados'
     }
   },
   {

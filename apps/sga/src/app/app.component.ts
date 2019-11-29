@@ -110,7 +110,7 @@ export class AppComponent implements OnInit {
           icon: 'grid'
         },
         {
-          title: 'StateExpeditionAvelon',
+          title: 'Estados',
           url: '/state-expedition-avelon/menu',
           icon: 'grid'
         },

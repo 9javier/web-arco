@@ -12,10 +12,9 @@ import { MatFormFieldModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
 import { StateExpeditionAvelonComponent } from './state-expedition-avelon.component';
 import { StateExpeditionAvelonRoutingModule } from './state-expedition-avelon-routing.module';
-import { DeleteComponent } from './delete/delete.component';
 
 @NgModule({
-  declarations: [StateExpeditionAvelonComponent, StoreComponent, UpdateComponent, DeleteComponent],
+  declarations: [StateExpeditionAvelonComponent, StoreComponent, UpdateComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -33,7 +32,6 @@ import { DeleteComponent } from './delete/delete.component';
     MatSelectModule
   ], entryComponents: [
     StoreComponent,
-    DeleteComponent,
     UpdateComponent
   ]
 })

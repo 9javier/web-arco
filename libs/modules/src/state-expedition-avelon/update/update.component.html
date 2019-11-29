@@ -10,16 +10,22 @@
 </ion-header>
 <ion-content padding="true">
     <form [formGroup]="formGroup">
-        <ion-item class="item" lines="none">
-            <ion-label class="label large"  position="stacked" slot="start">Nombre</ion-label>
-            <ion-input class="input" formControlName="name" placeholder="Ejem estado" ></ion-input>
-        </ion-item>
-        <br>
-        <ion-item class="item" lines="none">
-            <ion-label class="label large"  position="stacked" slot="start">Estado </ion-label>
-            <ion-checkbox color="dark" checked slot="start" formControlName="status"></ion-checkbox>
-            <span>{{formGroup.value.status ? 'Activo' : 'Bloqueado'}}</span>
-        </ion-item>
+        <div>
+            <ion-item lines="none" class="ion-margin-top">
+                <div slot="start" class="slot-start-icon">
+                    <i _ngcontent-iny-c11="" class="material-icons" color="medium">title</i>           
+                </div>
+                <ion-label class="label large" position="stacked">Nombre</ion-label>
+                <ion-input class="input" type="text" formControlName="name" placeholder="Ejem estado"></ion-input>
+            </ion-item>
+        </div>
+        <div>
+            <ion-item class="ion-margin-top" lines="none">
+                <div slot="start" class="slot-start-icon">
+                </div>
+                <mat-checkbox formControlName="status" >{{formGroup.controls['status'].value ? 'Activo' : 'Bloqueado'}}</mat-checkbox>
+            </ion-item>
+        </div> 
     </form>
 </ion-content>
 <ion-footer>
