@@ -30,6 +30,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   lastCodeScanned = 'start';
   processStarted = false;
   isWaitingSorterFeedback = false;
+  isWaitingWayWillFree: boolean = false;
   productToSetInSorter: string = null;
   idLastWaySet: number = null;
   modalScannRack = false;
@@ -253,35 +254,50 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   private inputProductInSorter(productReference: string) {
     this.sorterInputService
       .postProductScan({ productReference, packingReference: 'P0010' })
-      .subscribe(async (res: InputSorterModel.ProductScan) => {
-        this.productToSetInSorter = productReference;
-        this.messageGuide = 'COLOQUE EL ARTÍCULO EN LA CALLE INDICADA';
+      .then(async (res: InputSorterModel.ResponseProductScan) => {
+        let resCode = res.code;
+        if (resCode == 200) {
+          let resData = res.data;
+          this.productToSetInSorter = productReference;
+          this.messageGuide = 'COLOQUE EL ARTÍCULO EN LA CALLE INDICADA';
 
-        await this.intermediaryService.dismissLoading();
-        this.audioProvider.playDefaultOk();
+          await this.intermediaryService.dismissLoading();
+          this.processStarted = true;
+          this.productScanned = {
+            reference: resData.product.reference,
+            model: {
+              reference: resData.product.model.reference
+            },
+            size: {
+              name: resData.product.size.name
+            },
+            destinyWarehouse: resData.warehouse ? {
+              id: resData.warehouse.id,
+              reference: resData.warehouse.reference,
+              name: resData.warehouse.name
+            } : null
+          };
+          this.idLastWaySet = (<ExecutionSorterModel.ExecutionWay>resData.way).zoneWay.ways.id;
 
-        this.processStarted = true;
-        this.productScanned = {
-          reference: res.product.reference,
-          model: {
-            reference: res.product.model.reference
-          },
-          size: {
-            name: res.product.size.name
-          },
-          destinyWarehouse: res.warehouse ? {
-            id: res.warehouse.id,
-            reference: res.warehouse.reference,
-            name: res.warehouse.name
-          } : null
-        };
-        this.idLastWaySet = (<ExecutionSorterModel.ExecutionWay>res.way).zoneWay.ways.id;
-
-        await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
-
-        this.focusToInput();
-
-        this.checkProductInWay(productReference);
+          if (resData.wayBusyByAnotherUser) {
+            this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
+          } else {
+            this.audioProvider.playDefaultOk();
+            await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+            this.checkProductInWay(productReference);
+          }
+          this.focusToInput();
+        } else {
+          let resError = res.errors;
+          await this.intermediaryService.dismissLoading();
+          this.audioProvider.playDefaultError();
+          let errorMessage = `Ha ocurrido un error al intentar registrar la entrada del producto ${productReference} al sorter.`;
+          if (resError) {
+            errorMessage = resError;
+          }
+          await this.intermediaryService.presentToastError(errorMessage, 1500);
+          this.focusToInput();
+        }
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
@@ -325,6 +341,75 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
+  private checkWayWillFree(wayId: number, referenceProductScanned: string) {
+    let firstCheckOfWayFree = true;
+    if (!this.isWaitingWayWillFree) {
+      this.isWaitingWayWillFree = true;
+
+      const checkWayWillFreeLocal = (wayIdToCheck: number) => {
+        this.sorterInputService
+          .postCheckWayIsFree({
+            wayId: wayIdToCheck,
+            productReference: referenceProductScanned
+          })
+          .then(async (res: InputSorterModel.ResponseCheckWayIsFree) => {
+            if (res.code == 200) {
+              let resData = res.data;
+              if (resData.sorterFull) {
+                await this.intermediaryService.presentToastError(resData.message, 2000);
+                setTimeout(() => {
+                  this.timeoutToQuickUser();
+                  this.sorterNotifyAboutProductScanned();
+                  this.focusToInput();
+                }, 2 * 1000);
+              } else {
+                if (resData.wayFree) {
+                  this.timeoutToQuickUser();
+                  this.audioProvider.playDefaultOk();
+                  if (!firstCheckOfWayFree) {
+                    await this.intermediaryService.presentToastSuccess(resData.message, 2000);
+                  }
+                  this.isWaitingWayWillFree = false;
+
+                  await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+                  this.checkProductInWay(referenceProductScanned);
+                } else if (resData.idNewWay && resData.idNewWay != 0) {
+                  this.timeoutToQuickUser();
+                  this.audioProvider.playDefaultOk();
+                  if (!firstCheckOfWayFree) {
+                    await this.intermediaryService.presentToastSuccess(resData.message, 2000);
+                  }
+                  this.isWaitingWayWillFree = false;
+                  this.idLastWaySet = resData.idNewWay;
+
+                  await this.intermediaryService.presentToastSuccess(`Esperando respuesta del sorter por la entrada del producto.`, 2000);
+                  this.checkProductInWay(referenceProductScanned);
+                } else {
+                  if (firstCheckOfWayFree) {
+                    await this.intermediaryService.presentToastError('La calle que se le asignó está ocupada por otro usuario. Espere a que acabe o se le asigne una nueva para continuar', 2000);
+                    firstCheckOfWayFree = false;
+                  }
+                  if (this.isWaitingWayWillFree) {
+                    setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
+                  }
+                }
+              }
+            } else {
+              if (this.isWaitingWayWillFree) {
+                setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
+              }
+            }
+          }, () => {
+            if (this.isWaitingWayWillFree) {
+              setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
+            }
+          });
+      };
+
+      checkWayWillFreeLocal(wayId);
+    }
+  }
+  
   private async sorterNotifyAboutProductScanned() {
     await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
     this.resetLastScanProcess();
@@ -332,6 +417,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   private resetLastScanProcess() {
     this.isWaitingSorterFeedback = false;
+    this.isWaitingWayWillFree = false;
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
@@ -340,6 +426,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   private stopExecutionInput() {
     this.isWaitingSorterFeedback = false;
+    this.isWaitingWayWillFree = false;
     this.sorterExecutionService
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {

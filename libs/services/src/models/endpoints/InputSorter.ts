@@ -3,6 +3,7 @@ import {ZoneSorterModel} from "./ZoneSorter";
 import {ColorSorterModel} from "./ColorSorter";
 import {ExecutionSorterModel} from "./ExecutionSorter";
 import {WaySorterModel} from "./WaySorter";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace InputSorterModel {
 
@@ -22,7 +23,8 @@ export namespace InputSorterModel {
     sorterExecution: ExecutionSorterModel.Execution,
     color: ColorSorterModel.ColorSorter,
     way: WaySorterModel.WaySorter | ExecutionSorterModel.ExecutionWay,
-    product: ProductModel.Product
+    product: ProductModel.Product,
+    wayBusyByAnotherUser: boolean
   }
 
   export interface RackScan {
@@ -34,7 +36,7 @@ export namespace InputSorterModel {
     id: number
   }
 
-  export interface ResponseProductScan {
+  export interface ResponseProductScan extends HttpRequestModel.Response {
     data: ProductScan
   }
 
@@ -53,5 +55,21 @@ export namespace InputSorterModel {
 
   export interface ResponseCheckProductInWay {
     data: CheckProductInWay
+  }
+
+  // Check if way is already free or get a new way
+  export interface ParamsCheckWayIsFree {
+    wayId: number,
+    productReference: string
+  }
+  export interface CheckWayIsFree {
+    status: number,
+    message: string,
+    wayFree: boolean,
+    sorterFull: boolean,
+    idNewWay: number
+  }
+  export interface ResponseCheckWayIsFree extends HttpRequestModel.Response {
+    data: CheckWayIsFree
   }
 }
