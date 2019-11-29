@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
-import { DataComponent } from '../data/data.component';
-import { CarrierService, IntermediaryService } from '@suite/services';
+import { IntermediaryService } from '@suite/services';
 import { StateExpeditionAvelonService } from 'libs/services/src/lib/endpoint/state-expedition-avelon/state-expedition-avelon.service';
 
 @Component({
@@ -10,26 +9,7 @@ import { StateExpeditionAvelonService } from 'libs/services/src/lib/endpoint/sta
   templateUrl: './store.component.html',
   styleUrls: ['./store.component.scss']
 })
-export class StoreComponent implements OnInit {
-
-  @ViewChild(DataComponent) data:DataComponent;
-
-  formBuilderDataInputs = {
-    name: ['', [Validators.required]],
-    status: ['', []]
-  };
-  formBuilderTemplateInputs = [
-    {
-      name: 'name',
-      label: 'Ej. J0001',
-      type: 'reference'
-    },
-    {
-      name: 'status',
-      label: 'Ej. J0001',
-      type: 'checkbox'
-    }
-  ];
+export class StoreComponent implements OnInit {  
   title = 'Crear estado de expedition';
   redirectTo = '/state-expedition-avelon';
   public formGroup: FormGroup;
