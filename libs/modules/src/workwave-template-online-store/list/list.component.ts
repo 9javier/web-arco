@@ -1,17 +1,21 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import {Location} from "@angular/common";
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Location } from "@angular/common";
 import {
   GroupWarehousePickingModel,
   GroupWarehousePickingService,
   UserTimeModel,
   UserTimeService
 } from "@suite/services";
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {WorkwavesService} from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
-import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
-import {AlertController, Events, LoadingController, ToastController} from "@ionic/angular";
-import {TableTypesOSComponent} from "../table-types/table-types.component";
-import {TableRequestsOrdersOSComponent} from "../table-requests-orders/table-requests-orders.component";
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { WorkwavesService } from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
+import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
+import { AlertController, Events, LoadingController, ToastController } from "@ionic/angular";
+import { TableTypesOSComponent } from "../table-types/table-types.component";
+import { TableRequestsOrdersOSComponent } from "../table-requests-orders/table-requests-orders.component";
+import { TableEmployeesOSComponent } from "../table-employees/table-employees.component";
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwave-template-online-store',
@@ -30,6 +34,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   @Input() typeWorkwave: number;
   @ViewChild(TableTypesOSComponent) tableTypes: TableTypesOSComponent;
   @ViewChild(TableRequestsOrdersOSComponent) tableRequests: TableRequestsOrdersOSComponent;
+  @ViewChild(TableEmployeesOSComponent) tableEmployees: TableEmployeesOSComponent;
 
   template: any;
   disableEdition: boolean = false;
@@ -40,12 +45,17 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
   private listWarehousesThresholdAndSelectedQty: any = {};
   private checkRequestsSelectedIsOverThreshold: boolean = false;
+  private ObservablePendings: Array<any> = new Array();
+
 
   private loading: HTMLIonLoadingElement = null;
+  enlarged = false;
+  responseQuantities: WorkwaveModel.AssignationsByRequests[];
 
   constructor(
     private location: Location,
     private events: Events,
+    private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -53,20 +63,42 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     private userTimeService: UserTimeService,
     private workwavesService: WorkwavesService,
     private pickingParametrizationProvider: PickingParametrizationProvider,
-  ) {}
+  ) {
+    this.workwavesService.requestUser.subscribe(res => {
+      if (res.user === true && res.table == true) {
+        res.data.user = this.tableEmployees.getSelectedEmployees();
+        this.employeeChanged(res.data);
+      }
+    })
+
+    this.workwavesService.orderAssignment.subscribe(res => {
+      if (res.store == true && res.type == true) {
+        this.typeChanged(res.data.typesShippingOrders);
+      }
+    })
+  }
 
   ngOnInit() {
     this.pickingParametrizationProvider.loadingListEmployees = 0;
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore = 0;
     this.tableRequests.loadingListRequestOrdersOnlineStore = 0;
-    console.log('Test::loading 1', this.tableRequests.loadingListRequestOrdersOnlineStore);
     this.pickingParametrizationProvider.loadingListTeamAssignations = 0;
     this.template = {
       name: 'Nueva Ola de trabajo',
       id: null
     };
-    // this.tableTypes.loadListTypes([{name: 'Online', value: 20, selected: true}, {name: 'Peticiones tienda', value: 30, selected: true}], true);
-    this.loadDefaultWorkWaveData()
+    this.loadDefaultWorkWaveData();
+    this.typeChanged([20, 30]);
+  }
+
+  ngOnDestroy() {
+
+    this.ObservablePendings.map(obs => {
+      try {
+        <Observable<any>>obs.unsubscribe();
+      } catch (error) {
+      }
+    })
   }
 
   private loadDefaultWorkWaveData() {
@@ -74,41 +106,36 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.loadEmployees();
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore++;
     this.tableRequests.loadingListRequestOrdersOnlineStore++;
-    console.log('Test::loading 2', this.tableRequests.loadingListRequestOrdersOnlineStore);
     this.loadRequestOrders();
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
 
   private loadEmployees() {
-    this.userTimeService
-      .getListUsersRegister()
-      .subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
-        this.pickingParametrizationProvider.listEmployees = res;
-        this.events.publish(this.EMPLOYEES_LOADED);
-        this.pickingParametrizationProvider.loadingListEmployees--;
-      }, (error) => {
-        console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
-        this.pickingParametrizationProvider.listEmployees = {usersActive: [], usersInactive: []};
-        this.events.publish(this.EMPLOYEES_LOADED);
-        this.pickingParametrizationProvider.loadingListEmployees--;
-      });
+    let obs = this.userTimeService.getListUsersRegister();
+    this.ObservablePendings.push(obs);
+    obs.subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
+      this.pickingParametrizationProvider.listEmployees = res;
+      this.events.publish(this.EMPLOYEES_LOADED);
+      this.pickingParametrizationProvider.loadingListEmployees--;
+    }, (error) => {
+      console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
+      this.pickingParametrizationProvider.listEmployees = { usersActive: [], usersInactive: [] };
+      this.events.publish(this.EMPLOYEES_LOADED);
+      this.pickingParametrizationProvider.loadingListEmployees--;
+    });
   }
 
   private loadRequestOrders() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     if (this.listTypesToUpdate.length > 0) {
-      this.workwavesService
-        .postMatchLineRequestOnlineStore({
-          preparationLinesTypes: this.listTypesToUpdate
-        })
+      this.workwavesService.postMatchLineRequestOnlineStore({ preparationLinesTypes: this.listTypesToUpdate })
         .then((res: WorkwaveModel.ResponseMatchLineRequestOnlineStore) => {
           if (res.code == 201) {
             this.pickingParametrizationProvider.listRequestOrdersOnlineStore = res.data;
             this.events.publish(this.REQUEST_ORDERS_LOADED);
             this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
             this.tableRequests.loadingListRequestOrdersOnlineStore--;
-            console.log('Test::loading 3', this.tableRequests.loadingListRequestOrdersOnlineStore);
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           } else {
             console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', res);
@@ -116,7 +143,6 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
             this.events.publish(this.REQUEST_ORDERS_LOADED);
             this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
             this.tableRequests.loadingListRequestOrdersOnlineStore--;
-            console.log('Test::loading 4', this.tableRequests.loadingListRequestOrdersOnlineStore);
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           }
         }, (error) => {
@@ -125,24 +151,21 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
           this.events.publish(this.REQUEST_ORDERS_LOADED);
           this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
           this.tableRequests.loadingListRequestOrdersOnlineStore--;
-          console.log('Test::loading 5', this.tableRequests.loadingListRequestOrdersOnlineStore);
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        })
-        .catch((error) => {
-          console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
-          this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
-          this.events.publish(this.REQUEST_ORDERS_LOADED);
-          this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
-          this.tableRequests.loadingListRequestOrdersOnlineStore--;
-          console.log('Test::loading 6', this.tableRequests.loadingListRequestOrdersOnlineStore);
-          this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        });
+        }
+      ).catch((error) => {
+        console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
+        this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
+        this.events.publish(this.REQUEST_ORDERS_LOADED);
+        this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
+        this.tableRequests.loadingListRequestOrdersOnlineStore--;
+        this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      });
     } else {
       this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
       this.events.publish(this.REQUEST_ORDERS_LOADED);
       this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
       this.tableRequests.loadingListRequestOrdersOnlineStore--;
-      console.log('Test::loading 7', this.tableRequests.loadingListRequestOrdersOnlineStore);
       this.pickingParametrizationProvider.loadingListTeamAssignations--;
     }
   }
@@ -161,6 +184,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
             this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
             if (resData.quantities) {
               this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, resData.quantities);
+              this.responseQuantities = resData.quantities;
             }
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           } else {
@@ -198,8 +222,8 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     }
   }
 
-  goPreviousPage () {
-    this.location.back();
+  goPreviousPage() {
+    this.router.navigate(['workwaves-scheduled'], { replaceUrl: true });
   }
 
   //region Response from table components
@@ -207,12 +231,12 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.listTypesToUpdate = data;
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore++;
     this.tableRequests.loadingListRequestOrdersOnlineStore++;
-    console.log('Test::loading 8', this.tableRequests.loadingListRequestOrdersOnlineStore);
     this.loadRequestOrders();
   }
 
   employeeChanged(data) {
-    this.listEmployeesToUpdate = data;
+    this.listEmployeesToUpdate = data.user;
+    this.listRequestOrdersToUpdate = data.table.listSelected;
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
@@ -223,6 +247,18 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.loadTeamAssignations();
   }
   //endregion
+
+  enlarge() {
+    if (this.enlarged) {
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = '25vh';
+      this.enlarged = !this.enlarged;
+    } else {
+      let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
+      top.style.height = 'calc(100vh - 52px - 56px - 8px)';
+      this.enlarged = !this.enlarged;
+    }
+  }
 
   private generateWorkWave() {
     this.workwavesService
@@ -274,7 +310,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     const alert = await this.alertController.create({
       header: '¡Umbral máximo superado!',
       message: msg,
-      buttons: [ 'Cerrar' ]
+      buttons: ['Cerrar']
     });
 
     await alert.present();

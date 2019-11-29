@@ -7,6 +7,7 @@ import { AlertController, ToastController } from "@ionic/angular";
 import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-textarea',
@@ -37,7 +38,8 @@ export class TextareaComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private intermediaryService: IntermediaryService,
     private scanditProvider: ScanditProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -272,4 +274,11 @@ export class TextareaComponent implements OnInit {
         }, 500);
       });
   }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
+  }
+
 }

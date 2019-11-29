@@ -1,16 +1,21 @@
 import { Component, OnInit , ViewChild } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-import { AuditsService } from '@suite/services';
+import {AuditsService, ProductModel, UserModel} from '@suite/services';
 import { MatSort, MatDialog } from '@angular/material';
 import { ToastController } from '@ionic/angular';
 import { ProductsByAuditComponent } from './modals/products-by-audit/products-by-audit.component';
+import {CarrierModel} from "../../../services/src/models/endpoints/Carrier";
+import {AuditsModel} from "../../../services/src/models/endpoints/Audits";
+import AuditPacking = AuditsModel.AuditPacking;
 
 
 export interface Audits {
   user: string;
   status: number;
-  packingId: number;
+  packing: {
+    reference: string
+  };
   products: any;
 }
 
@@ -23,7 +28,7 @@ const ELEMENT_DATA: Audits[] = [];
 })
 export class AuditsComponent implements OnInit {
 
-  displayedColumns: string[] = ['user', 'status', 'packingId','products','options'];
+  displayedColumns: string[] = ['user', 'status', 'packing','products','options'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -50,14 +55,13 @@ export class AuditsComponent implements OnInit {
       this.dataSource.sort = this.sort;
     },err =>{
       this.presentToast(err.error.result.reason,'danger');
-      console.log(err);
     })
   }
 
-  openProducts(data): void {
+  openProducts(data: AuditPacking): void {
     const dialogRef = this.dialog.open(ProductsByAuditComponent, {
       width: '600px',
-      panelClass: 'config-modal',
+      panelClass: 'custom-material-modal',
       data: data
     });
 
@@ -66,10 +70,14 @@ export class AuditsComponent implements OnInit {
     });
   }
 
-  showProducts(item){
-    this.audit.getById(item.id).subscribe(res=>{
-      if(res.data.sorterAuditPackingProducts.length === 0) this.presentToast('La auditoria seleccionada, no posee Productos','warning');
-      if(res.data.sorterAuditPackingProducts.length !== 0) this.openProducts(res.data.sorterAuditPackingProducts)
+  showProducts(item) {
+    this.audit.getById(item.id).subscribe(res => {
+      let responseFormatted: AuditPacking = res.data;
+      if (responseFormatted.sorterAuditPackingProducts.length === 0) {
+        this.presentToast(`No hay productos escaneados para la auditoría del embalaje ${responseFormatted.packing.reference}`, 'warning');
+      } else {
+        this.openProducts(responseFormatted);
+      }
     })
   }
 
@@ -82,12 +90,12 @@ export class AuditsComponent implements OnInit {
     toast.present();
   }
 
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(event: any) {
+    const filteredValue = event.target.value;
+    this.dataSource.filter = filteredValue.trim().toLowerCase();
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
-
 }

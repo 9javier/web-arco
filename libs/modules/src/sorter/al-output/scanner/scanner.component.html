@@ -50,7 +50,7 @@
   </div>
   <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted" [ngClass]="wrongCodeScanned ? 'align-bottom' : ''">{{messageGuide}}</p>
 
-  <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
+  <input id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" (focus)="onFocus($event)" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
 
   <div *ngIf="outputWithIncidencesClear" class="wrong-product-found">
     <p>Todos los artículos erróneos localizados. Presione para volver al escaneo sin incidencias.</p>

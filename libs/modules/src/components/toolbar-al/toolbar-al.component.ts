@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Router} from "@angular/router";
-import {ToolbarProvider} from "../../../../services/src/providers/toolbar/toolbar.provider";
-import {ActionToolbarModel} from "../../../../services/src/models/endpoints/ActionToolbar";
-import {PopoverController, Platform} from "@ionic/angular";
-import {PopoverMenuToolbarComponent} from "../popover-menu-toolbar/popover-menu-toolbar.component";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from "@angular/router";
+import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
+import { ActionToolbarModel } from "../../../../services/src/models/endpoints/ActionToolbar";
+import { PopoverController, Platform } from "@ionic/angular";
+import { PopoverMenuToolbarComponent } from "../popover-menu-toolbar/popover-menu-toolbar.component";
 import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.service';
 
 @Component({
@@ -17,11 +17,13 @@ export class ToolbarAlComponent implements OnInit {
   @Output() windowResize = new EventEmitter();
   @Output() toggleSideMenuSga = new EventEmitter();
   @Output() toggleSideMenuAl = new EventEmitter();
-  
+
   public currentPage: string = 'Registro horario';
   public optionsActions: ActionToolbarModel.ActionToolbar[] = [];
   color: string
   isAndroid: boolean;
+  state: boolean;
+  showKeyboard: boolean
   constructor(
     private router: Router,
     private popoverController: PopoverController,
@@ -33,14 +35,26 @@ export class ToolbarAlComponent implements OnInit {
   ngOnInit() {
 
     this.color = 'danger'
-    if(this.plt.is('android')) {
-      this.keyboard.disabled()
+    if (this.plt.is('android')) {
+      //this.keyboard.disabled()
+      this.state = this.state = false
     }
 
     this.isAndroid = this.plt.is('android');
 
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
+      // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
+      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías')) {
+        if(this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')){
+          this.showKeyboard = false;
+        } else {
+          this.showKeyboard = true;
+        }
+      }
+      else {
+        this.showKeyboard = false
+      }
     });
     this.toolbarProvider.showAlMenu.subscribe((show) => {
       this.showAlMenu = show;
@@ -51,7 +65,7 @@ export class ToolbarAlComponent implements OnInit {
     });
   }
 
-  hideByUrl() : boolean {
+  hideByUrl(): boolean {
     return this.router.url == '/login';
   }
 
@@ -83,11 +97,14 @@ export class ToolbarAlComponent implements OnInit {
 
   onActiveKeyboard() {
     const state = this.keyboard.isEneabled();
+    this.state = state
     if (state === true) {
-      this.keyboard.disabled()
-      this.color = 'danger'
+      this.keyboard.disabled();
+      this.state = false;
+      this.color = 'danger';
     } else {
-      this.keyboard.eneabled()
+      this.keyboard.eneabled();
+      this.state = true;
       this.color = 'success'
     }
   }

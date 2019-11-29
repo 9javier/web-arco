@@ -1,10 +1,44 @@
-h2.workwave-title {
-  font-size: 20px;
+div.header-title {
+  position: relative;
+  h2.workwave-title {
+    font-size: 20px;
+    width: 100%;
 
-  span.return-workwaves {
-    padding: 0 0 20px 20px;
-    cursor: pointer;
-    color: var(--ion-color-secondary);
+    span.return-workwaves {
+      padding: 0 0 20px 20px;
+      cursor: pointer;
+      color: var(--ion-color-secondary);
+    }
+
+    div.buttons-action {
+      position: absolute;
+      top: 0;
+      height: 20px;
+      right: 0;
+      width: auto;
+      ion-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 16px;
+        color: var(--ion-color-primary);
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+ion-toggle{
+  vertical-align: top;
+  padding-top: 3px;
+  padding-bottom: 5px;
+}
+
+.toggle{
+  float: right;
+  span{
+    display: inline-block;
+    font-size: 16px;
+    font-weight: normal;
   }
 }
 
@@ -52,13 +86,12 @@ div.stores-employees {
 }
 
 div.requests-orders {
-  height: 25vh;
+  height: 30vh;
   border-bottom: 2px solid var(--ion-color-dark);
 }
 
 div.team-assignation {
-  height: auto;
-  max-height: 35vh;
+  height: calc(45vh - 52px - 56px - 18px - 18px - 8px);
   border-bottom: 2px solid var(--ion-color-dark);
 }
 

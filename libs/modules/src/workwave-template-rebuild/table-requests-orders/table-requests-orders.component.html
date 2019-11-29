@@ -1,17 +1,13 @@
 <div class="main-element">
+  <div class="table-header">
+    <h2 class="title-table">
+      Operaciones de Envío
+    </h2>
 
-  <h2 class="title-table">Operaciones de Envío</h2>
-
-  <button
-    [disabled]="!buttonAvailability"
-    (click)="orderAssignment()"
-    [ngClass]="{'buttons-news-disabled': !buttonAvailability, 'buttons-news': buttonAvailability}"
-    mat-raised-button
-  >Actualizar operaciones</button>
-
-  <div id="middle" class="toggle">
-    <span>Expandir</span>
-    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
+    <div class="buttons-action">
+      <ion-icon name="refresh" (click)="orderAssignment()" [ngClass]="requestsOrdersAreLoading() ? 'disabled' : ''"></ion-icon>
+      <ion-icon [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
+    </div>
   </div>
 
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
@@ -121,22 +117,22 @@
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="loader" *ngIf="pickingParametrizationProvider.loadingListRequestOrders && pickingParametrizationProvider.loadingListRequestOrders > 0">
+  <div class="loader" *ngIf="requestsOrdersAreLoading()">
     <div class="spinner">
       <p class="message">Cargando operaciones de envío</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="(!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1) && listRequestOrders.length < 1">
+  <div class="empty-list" *ngIf="!requestsOrdersAreLoading() && listRequestOrders.length < 1">
     <p class="message-empty">No hay operaciones de envío cargadas</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!pickingParametrizationProvider.loadingListRequestOrders || pickingParametrizationProvider.loadingListRequestOrders < 1">
+  <div class="scroll-list" *ngIf="!requestsOrdersAreLoading()">
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
+          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(false, true)"></ion-checkbox>
         </div>
       </mat-grid-tile>
 

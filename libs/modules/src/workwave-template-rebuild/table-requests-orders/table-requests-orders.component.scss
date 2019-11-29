@@ -1,18 +1,43 @@
 div.main-element {
   height: 100%;
 
-  button{
-    margin-left: 17%;
-    margin-bottom: 11px;
+  div.table-header {
+    line-height: 20px;
+    height: 20px;
+    margin: 18px 0 10px 0;
+    position: relative;
+
+    h2.title-table {
+      margin-top: 0;
+      width: 100%;
+      font-size: 16px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    div.buttons-action {
+      position: absolute;
+      top: 0;
+      height: 20px;
+      right: 0;
+      width: auto;
+      ion-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 16px;
+        color: var(--ion-color-primary);
+        cursor: pointer;
+      }
+      ion-icon.disabled {
+        color: var(--ion-color-secondary);
+        cursor: default;
+      }
+    }
   }
 
-  h2.title-table {
-    text-align: right;
-    font-size: 16px;
-    line-height: 20px;
-    margin-bottom: 10px;
-    display: inline-block;
-    margin-left: 45%;
+  ion-button{
+    margin-left: 17%;
+    margin-bottom: 11px;
   }
 
   .title{
@@ -72,7 +97,7 @@ div.main-element {
   }
 
   .scroll-list {
-    height: calc(100% - 48px - 58px); // 48px from table header - 58px from table title
+    height: calc(100% - 48px - 30px); // 48px from table header - 30px from table title
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;

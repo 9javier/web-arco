@@ -10,6 +10,9 @@ import { PickingParametrizationProvider } from "../../../../services/src/provide
 import { WorkwavesService } from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
 import { AlertController, Events, LoadingController, ToastController } from "@ionic/angular";
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -24,6 +27,10 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded";
   private DRAW_CONSOLIDATED_MATCHES = "draw-consolidated-matches";
   private TYPE_EXECUTION_ID = 1;
+  private BLOCK_BUTTONS = 'block_button';
+  private ENABLED_BUTTONS = 'enabled_button';
+  private BLOCK_BUTTONS_TEAM = 'block_button_team';
+  private ENABLED_BUTTONS_TEAM = 'enabled_button_team';
 
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
@@ -39,12 +46,15 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   private checkRequestsSelectedIsOverThreshold: boolean = false;
 
   private loading: HTMLIonLoadingElement = null;
-
+  private ObservablePendings: Array<any> = new Array();
+  protected ngUnsubscribe: Subject<void> = new Subject<void>();
   enlarged = false;
+  responseQuantities: WorkwaveModel.AssignationsByRequests[];
 
   constructor(
     private location: Location,
     private events: Events,
+    private router: Router,
     private toastController: ToastController,
     private alertController: AlertController,
     private loadingController: LoadingController,
@@ -52,9 +62,14 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     private userTimeService: UserTimeService,
     private workwavesService: WorkwavesService,
     private pickingParametrizationProvider: PickingParametrizationProvider,
+
   ) {
+
     this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table == true) this.employeeChanged(res.data);
+      if (res.user === true && res.table == true) {
+        this.employeeChanged(res.data);
+
+      }
     })
 
     this.workwavesService.orderAssignment.subscribe(res => {
@@ -65,6 +80,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   ngOnInit() {
+
     if (this.templateToEdit) {
       if (this.templateToEdit.type == 1) {
         this.disableEdition = true;
@@ -85,8 +101,19 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
 
   ngOnDestroy() {
-    this.workwavesService.orderAssignment.unsubscribe();
-    this.workwavesService.requestUser.unsubscribe();
+
+
+    //this.workwavesService.orderAssignment.unsubscribe();
+    //this.workwavesService.requestUser.unsubscribe();
+    // this.ngUnsubscribe.next();
+    // this.ngUnsubscribe.complete();
+
+    this.ObservablePendings.map(obs => {
+      try {
+        <Observable<any>>obs.unsubscribe();
+      } catch (error) {
+      }
+    })
   }
 
   private loadDefaultWorkWaveData() {
@@ -101,95 +128,111 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   private loadGroupsWarehouses() {
-    this.groupWarehousePickingService
-      .getIndex()
-      .subscribe((res: Array<GroupWarehousePickingModel.GroupWarehousePicking>) => {
-        this.pickingParametrizationProvider.listGroupsWarehouses = res.filter(groupWarehouse => groupWarehouse.warehouses.length > 0);
-        this.events.publish(this.GROUPS_WAREHOUSES_LOADED);
-        this.pickingParametrizationProvider.loadingListGroupsWarehouses--;
-      }, (error) => {
-        console.error('Error::Subscribe:groupWarehousePickingService::getIndex::', error);
-        this.pickingParametrizationProvider.listGroupsWarehouses = new Array<GroupWarehousePickingModel.GroupWarehousePicking>();
-        this.events.publish(this.GROUPS_WAREHOUSES_LOADED);
-        this.pickingParametrizationProvider.loadingListGroupsWarehouses--;
-      });
+    let obs = this.groupWarehousePickingService.getIndex();
+    this.ObservablePendings.push(obs);
+    obs.subscribe((res: Array<GroupWarehousePickingModel.GroupWarehousePicking>) => {
+      this.pickingParametrizationProvider.listGroupsWarehouses = res.filter(groupWarehouse => groupWarehouse.warehouses.length > 0);
+      this.events.publish(this.GROUPS_WAREHOUSES_LOADED);
+      this.pickingParametrizationProvider.loadingListGroupsWarehouses--;
+    }, (error) => {
+      console.error('Error::Subscribe:groupWarehousePickingService::getIndex::', error);
+      this.pickingParametrizationProvider.listGroupsWarehouses = new Array<GroupWarehousePickingModel.GroupWarehousePicking>();
+      this.events.publish(this.GROUPS_WAREHOUSES_LOADED);
+      this.pickingParametrizationProvider.loadingListGroupsWarehouses--;
+    });
   }
 
   private loadEmployees() {
-    this.userTimeService
-      .getListUsersRegister()
-      .subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
-        this.pickingParametrizationProvider.listEmployees = res;
-        this.events.publish(this.EMPLOYEES_LOADED);
-        this.pickingParametrizationProvider.loadingListEmployees--;
-      }, (error) => {
-        console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
-        this.pickingParametrizationProvider.listEmployees = { usersActive: [], usersInactive: [] };
-        this.events.publish(this.EMPLOYEES_LOADED);
-        this.pickingParametrizationProvider.loadingListEmployees--;
-      });
+    let obs = this.userTimeService.getListUsersRegister();
+    this.ObservablePendings.push(obs);
+    obs.subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
+      this.pickingParametrizationProvider.listEmployees = res;
+      this.events.publish(this.EMPLOYEES_LOADED);
+      this.pickingParametrizationProvider.loadingListEmployees--;
+    }, (error) => {
+      console.error('Error::Subscribe:userTimeService::getListUsersRegister::', error);
+      this.pickingParametrizationProvider.listEmployees = { usersActive: [], usersInactive: [] };
+      this.events.publish(this.EMPLOYEES_LOADED);
+      this.pickingParametrizationProvider.loadingListEmployees--;
+    });
   }
 
   private loadRequestOrders() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     if (this.listTypesToUpdate.length > 0 && this.listGroupsWarehousesToUpdate.length > 0) {
-      this.workwavesService
-        .postMatchLineRequest({
-          groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
-          typesShippingOrders: this.listTypesToUpdate
-        })
-        .subscribe((res: Array<WorkwaveModel.MatchLineRequest>) => {
-          this.pickingParametrizationProvider.listRequestOrders = res;
-          this.events.publish(this.REQUEST_ORDERS_LOADED);
-          this.pickingParametrizationProvider.loadingListRequestOrders--;
-          this.pickingParametrizationProvider.loadingListRequestOrders--;
-          this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        }, (error) => {
-          console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
-          this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
-          this.events.publish(this.REQUEST_ORDERS_LOADED);
-          this.pickingParametrizationProvider.loadingListRequestOrders--;
-          this.pickingParametrizationProvider.loadingListRequestOrders--;
-          this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        });
+      let obs = this.workwavesService.postMatchLineRequest({
+        groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
+        typesShippingOrders: this.listTypesToUpdate
+      });
+      this.ObservablePendings.push(obs);
+      obs.subscribe((res: Array<WorkwaveModel.MatchLineRequest>) => {
+        this.pickingParametrizationProvider.listRequestOrders = res;
+        this.events.publish(this.REQUEST_ORDERS_LOADED);
+        this.pickingParametrizationProvider.loadingListRequestOrders--;
+        this.pickingParametrizationProvider.loadingListRequestOrders--;
+        this.pickingParametrizationProvider.loadingListTeamAssignations--;
+        this.events.publish(this.ENABLED_BUTTONS);
+        this.events.publish(this.ENABLED_BUTTONS_TEAM);
+      }, (error) => {
+        console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
+        this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
+        this.events.publish(this.REQUEST_ORDERS_LOADED);
+        this.pickingParametrizationProvider.loadingListRequestOrders--;
+        this.pickingParametrizationProvider.loadingListRequestOrders--;
+        this.pickingParametrizationProvider.loadingListTeamAssignations--;
+        this.events.publish(this.ENABLED_BUTTONS);
+        this.events.publish(this.ENABLED_BUTTONS_TEAM);
+      });
     } else {
       this.pickingParametrizationProvider.listRequestOrders = new Array<WorkwaveModel.MatchLineRequest>();
       this.events.publish(this.REQUEST_ORDERS_LOADED);
       this.pickingParametrizationProvider.loadingListRequestOrders--;
       this.pickingParametrizationProvider.loadingListRequestOrders--;
       this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      this.events.publish(this.ENABLED_BUTTONS);
+      this.events.publish(this.ENABLED_BUTTONS_TEAM);
     }
   }
 
   private loadTeamAssignations() {
     if (this.listEmployeesToUpdate.length > 0 && this.listRequestOrdersToUpdate.length > 0) {
-
-      this.workwavesService
+      let obs0 = this.workwavesService
+        .postMatchLineRequest({
+          groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
+          typesShippingOrders: this.listTypesToUpdate
+        });
+      this.ObservablePendings.push(obs0);
+      let obs = this.workwavesService
         .postAssignUserToMatchLineRequest({
           requestIds: this.listRequestOrdersToUpdate,
           userIds: this.listEmployeesToUpdate,
           groupsWarehousePicking: this.listGroupsWarehousesToUpdate,
           typesShippingOrders: this.listTypesToUpdate
         })
-        .subscribe((res: WorkwaveModel.UsersAndAssignationsQuantities) => {
-          this.pickingParametrizationProvider.listTeamAssignations = res.assignations;
-          this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
-          if (res.quantities) {
-            this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, res.quantities);
-          }
-          this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        }, (error) => {
-          console.error('Error::Subscribe:workwavesService::postAssignUserToMatchLineRequest::', error);
-          this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
-          this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
-          this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        }, () => {
-           this.loadRequestOrders()
-        });
+      this.ObservablePendings.push(obs);
+      obs.subscribe((res: WorkwaveModel.UsersAndAssignationsQuantities) => {
+        this.pickingParametrizationProvider.listTeamAssignations = res.assignations;
+        this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
+        if (res.quantities) {
+          this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, res.quantities);
+          this.responseQuantities = res.quantities;
+        }
+        this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      }, (error) => {
+        console.error('Error::Subscribe:workwavesService::postAssignUserToMatchLineRequest::', error);
+        this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
+        this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
+        this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      }, () => {
+        this.events.publish(this.ENABLED_BUTTONS);
+        this.events.publish(this.ENABLED_BUTTONS_TEAM);
+      });
     } else {
       this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
       this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
       this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      this.events.publish(this.ENABLED_BUTTONS);
+      this.events.publish(this.ENABLED_BUTTONS_TEAM);
     }
   }
 
@@ -217,44 +260,56 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   goPreviousPage() {
-    this.location.back();
+    this.router.navigate(['workwaves-scheduled'], { replaceUrl: true });
   }
 
-  //region Response from table components
-  // typeChanged(data) {
-  //   this.listTypesToUpdate = data;
-  //   this.pickingParametrizationProvider.loadingListRequestOrders++;
-  //   this.loadRequestOrders();
-  // }
+  typeChanged(data) {
+    this.listTypesToUpdate = data.fields;
+    if (data.inPageCreation) {
+      this.updateListOfRequestOrders();
+    }
+    // this.pickingParametrizationProvider.loadingListRequestOrders++;
+    // this.loadRequestOrders();
+  }
 
   groupWarehousesChanged(data) {
-    this.listTypesToUpdate = data.typesShippingOrders;
-    this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.store);
-    this.pickingParametrizationProvider.loadingListRequestOrders++;
+    this.listGroupsWarehousesToUpdate = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>(data.fields);
+    if (data.inPageCreation) {
+      this.updateListOfRequestOrders();
+    }
+  }
+
+  employeeChanged(data) {
+    this.listEmployeesToUpdate = data.fields;
+    if (data.inPageCreation) {
+      this.updateListOfUserAssignations();
+    }
+  }
+
+  requestOrderChanged(data) {
+    this.listWarehousesThresholdAndSelectedQty = data.fields.listThreshold;
+    this.listRequestOrdersToUpdate = data.fields.listSelected;
+    if (data.inPageCreation) {
+      this.updateListOfUserAssignations();
+    }
+  }
+
+  updateListOfRequestOrders() {
     this.pickingParametrizationProvider.loadingListRequestOrders++;
     this.loadRequestOrders();
   }
 
-  employeeChanged(data) {
-    this.listEmployeesToUpdate = data.user;
-
-    this.listWarehousesThresholdAndSelectedQty = data.table.listThreshold;
-    this.listRequestOrdersToUpdate = data.table.listSelected;
-
+  updateListOfUserAssignations() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
 
-  requestOrderChanged(data) {
-
-  }
-
-  enlarge(){
-    if(this.enlarged){
+  enlarge() {
+    if (this.enlarged) {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
       top.style.height = '25vh';
       this.enlarged = !this.enlarged;
-    }else{
+    } else {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
       top.style.height = 'calc(100vh - 52px - 56px - 8px)';
       this.enlarged = !this.enlarged;
@@ -262,27 +317,28 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   private generateWorkWave() {
-    this.workwavesService
+    let obs = this.workwavesService
       .postConfirmMatchLineRequest({
         type: this.TYPE_EXECUTION_ID,
         requestIds: this.listRequestOrdersToUpdate,
         userIds: this.listEmployeesToUpdate,
         groupsWarehousePicking: this.listGroupsWarehousesToUpdate
-      })
-      .subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
-        if (this.loading) {
-          this.loading.dismiss();
-          this.loading = null;
-        }
-        this.presentToast("Tareas de picking generadas correctamente", "success");
-        this.goPreviousPage();
-      }, (error) => {
-        console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
-        if (this.loading) {
-          this.loading.dismiss();
-          this.loading = null;
-        }
       });
+    this.ObservablePendings.push(obs);
+    obs.subscribe((res: WorkwaveModel.DataConfirmMatchLineRequest) => {
+      if (this.loading) {
+        this.loading.dismiss();
+        this.loading = null;
+      }
+      this.presentToast("Tareas de picking generadas correctamente", "success");
+      this.goPreviousPage();
+    }, (error) => {
+      console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
+      if (this.loading) {
+        this.loading.dismiss();
+        this.loading = null;
+      }
+    });
   }
 
   async presentAlertWarningOverThreshold(listWarehousesOverThreshold: Array<string>) {
