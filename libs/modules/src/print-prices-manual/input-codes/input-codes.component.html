@@ -6,5 +6,6 @@
       <ion-label>Precios</ion-label>
     </ion-item>
   </div>
-  <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)" [(ngModel)]="inputProduct">
+  <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
+    [(ngModel)]="inputProduct" (focus)="onFocus($event)">
 </div>

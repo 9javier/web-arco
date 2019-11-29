@@ -479,9 +479,13 @@ export class PrinterService {
       let price = arrayPricesToProcess[iPrice];
 
       if (price.typeLabel) {
-        if (price.typeLabel == 7 && price.priceDiscount <= price.priceDiscountOutlet) {
-          price.priceDiscount = price.priceDiscountOutlet;
-          price.typeLabel = 5;
+        if (price.typeLabel == 7) {
+          if (price.priceDiscount <= price.priceDiscountOutlet) {
+            price.typeLabel = 5;
+            price.priceDiscount = price.priceDiscountOutlet;
+          } else if (!price.priceDiscountOutlet || (typeof price.priceDiscountOutlet == 'string' && parseFloat(price.priceDiscountOutlet) == 0)) {
+            price.typeLabel = 5;
+          }
         }
 
         let printOptions: PrintModel.Print = {

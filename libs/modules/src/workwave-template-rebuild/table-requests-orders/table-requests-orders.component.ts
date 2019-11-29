@@ -1,7 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {PickingParametrizationProvider} from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
-import {Events} from "@ionic/angular";
-import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves";
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
+import { Events } from "@ionic/angular";
+import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
 import * as moment from 'moment';
 import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
@@ -21,8 +21,11 @@ export class TableRequestsOrdersComponent implements OnInit {
   private FILTER_TYPE: number = 5;
   private FILTER_QUANTITY: number = 6;
   private FILTER_QUANTITY_LAUNCH: number = 7;
+  private BLOCK_BUTTONS = 'block_button';
+  private ENABLED_BUTTONS = 'enabled_button';
 
   @Output() changeRequestOrder = new EventEmitter();
+  @Output() updateRequestOrders = new EventEmitter();
 
   listRequestOrders: Array<WorkwaveModel.MatchLineRequest> = new Array<WorkwaveModel.MatchLineRequest>();
   listRequestOrdersFinal: Array<WorkwaveModel.MatchLineRequest> = new Array<WorkwaveModel.MatchLineRequest>();
@@ -51,126 +54,124 @@ export class TableRequestsOrdersComponent implements OnInit {
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
-  public buttonAvailability : boolean = false;
+  public buttonAvailability: boolean = false;
+  private updating: boolean = false;
 
   constructor(
     public events: Events,
     public pickingParametrizationProvider: PickingParametrizationProvider,
-    private serviceG : WorkwavesService
+    private serviceG: WorkwavesService
   ) {
-    this.serviceG.buttonAvailability.subscribe(res=>{
-      this.buttonAvailability = res.status;
-    })
 
-   }
+  }
 
-  showArrow(colNumber, dirDown){
+  showArrow(colNumber, dirDown) {
     let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
-    if(dirDown) htmlColumn.innerHTML += ' 🡇';
+    if (dirDown) htmlColumn.innerHTML += ' 🡇';
     else htmlColumn.innerHTML += ' 🡅';
   }
 
-  sort(column){
+  sort(column) {
 
-    for(let i = 0; i < document.getElementsByClassName('title').length; i++){
+    for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
       let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
-      if(iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')){
-        iColumn.innerHTML = iColumn.innerHTML.slice(0,-2);
+      if (iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')) {
+        iColumn.innerHTML = iColumn.innerHTML.slice(0, -2);
       }
     }
 
-    switch(column){
-      case 'reference':{
-        if(this.lastOrder[0]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.request.requestId - a.request.requestId});
+    switch (column) {
+      case 'reference': {
+        if (this.lastOrder[0]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return b.request.requestId - a.request.requestId });
           this.showArrow(0, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.request.requestId - b.request.requestId});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return a.request.requestId - b.request.requestId });
           this.showArrow(0, true);
         }
         this.lastOrder[0] = !this.lastOrder[0];
         break;
       }
-      case 'date':{
-        if(this.lastOrder[1]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.request.date).format('X'))});
+      case 'date': {
+        if (this.lastOrder[1]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(moment(b.request.date).format('X')) - parseInt(moment(a.request.date).format('X')) });
           this.showArrow(1, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.request.date).format('X'))});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(moment(a.request.date).format('X')) - parseInt(moment(b.request.date).format('X')) });
           this.showArrow(1, true);
         }
         this.lastOrder[1] = !this.lastOrder[1];
         break;
       }
-      case 'origin':{
-        if(this.lastOrder[2]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.originWarehouse.reference) - parseInt(a.originWarehouse.reference)});
+      case 'origin': {
+        if (this.lastOrder[2]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(b.originWarehouse.reference) - parseInt(a.originWarehouse.reference) });
           this.showArrow(2, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.originWarehouse.reference) - parseInt(b.originWarehouse.reference)});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(a.originWarehouse.reference) - parseInt(b.originWarehouse.reference) });
           this.showArrow(2, true);
         }
         this.lastOrder[2] = !this.lastOrder[2];
         break;
       }
-      case 'destiny':{
-        if(this.lastOrder[3]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.destinyWarehouse.reference) - parseInt(a.destinyWarehouse.reference)});
+      case 'destiny': {
+        if (this.lastOrder[3]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(b.destinyWarehouse.reference) - parseInt(a.destinyWarehouse.reference) });
           this.showArrow(3, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.destinyWarehouse.reference) - parseInt(b.destinyWarehouse.reference)});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(a.destinyWarehouse.reference) - parseInt(b.destinyWarehouse.reference) });
           this.showArrow(3, true);
         }
         this.lastOrder[3] = !this.lastOrder[3];
         break;
       }
-      case 'destiny-max':{
-        if(this.lastOrder[4]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.destinyWarehouse.thresholdShippingStore - a.destinyWarehouse.thresholdShippingStore});
+      case 'destiny-max': {
+        if (this.lastOrder[4]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return b.destinyWarehouse.thresholdShippingStore - a.destinyWarehouse.thresholdShippingStore });
           this.showArrow(4, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.destinyWarehouse.thresholdShippingStore - b.destinyWarehouse.thresholdShippingStore});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return a.destinyWarehouse.thresholdShippingStore - b.destinyWarehouse.thresholdShippingStore });
           this.showArrow(4, true);
         }
         this.lastOrder[4] = !this.lastOrder[4];
         break;
       }
-      case 'type':{
-        if(this.lastOrder[5]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.preparationLinesTypes.name) - parseInt(a.preparationLinesTypes.name)});
+      case 'type': {
+        if (this.lastOrder[5]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(b.preparationLinesTypes.name) - parseInt(a.preparationLinesTypes.name) });
           this.showArrow(5, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.preparationLinesTypes.name) - parseInt(b.preparationLinesTypes.name)});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(a.preparationLinesTypes.name) - parseInt(b.preparationLinesTypes.name) });
           this.showArrow(5, true);
         }
         this.lastOrder[5] = !this.lastOrder[5];
         break;
       }
-      case 'quantity':{
-        if(this.lastOrder[6]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(b.quantityOrder) - parseInt(a.quantityOrder)});
+      case 'quantity': {
+        if (this.lastOrder[6]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(b.quantityOrder) - parseInt(a.quantityOrder) });
           this.showArrow(6, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return parseInt(a.quantityOrder) - parseInt(b.quantityOrder)});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return parseInt(a.quantityOrder) - parseInt(b.quantityOrder) });
           this.showArrow(6, true);
         }
         this.lastOrder[6] = !this.lastOrder[6];
         break;
       }
-      case 'quantity-launch':{
-        if(this.lastOrder[7]){
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return b.quantityMatchWarehouse - a.quantityMatchWarehouse});
+      case 'quantity-launch': {
+        if (this.lastOrder[7]) {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return b.quantityMatchWarehouse - a.quantityMatchWarehouse });
           this.showArrow(7, false);
         }
-        else{
-          this.listRequestOrders = this.listRequestOrders.sort(function(a, b){return a.quantityMatchWarehouse - b.quantityMatchWarehouse});
+        else {
+          this.listRequestOrders = this.listRequestOrders.sort(function (a, b) { return a.quantityMatchWarehouse - b.quantityMatchWarehouse });
           this.showArrow(7, true);
         }
         this.lastOrder[7] = !this.lastOrder[7];
@@ -179,15 +180,15 @@ export class TableRequestsOrdersComponent implements OnInit {
     }
   }
 
-  enlarge(){
-    if(this.enlarged){
+  enlarge() {
+    if (this.enlarged) {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
       let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
       document.getElementById('top').style.display = 'block';
       top.style.display = 'block';
       middle.style.height = '30vh';
       this.enlarged = !this.enlarged;
-    }else{
+    } else {
       let top = document.getElementsByClassName('stores-employees')[0] as HTMLElement;
       let middle = document.getElementsByClassName('requests-orders')[0] as HTMLElement;
       document.getElementById('top').style.display = 'none';
@@ -198,23 +199,29 @@ export class TableRequestsOrdersComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.events.subscribe(this.ENABLED_BUTTONS, () => { this.buttonAvailability = true });
+    this.events.subscribe(this.BLOCK_BUTTONS, () => { this.buttonAvailability = false });
+
     this.events.subscribe(this.REQUEST_ORDERS_LOADED, () => {
       this.listRequestOrders = this.pickingParametrizationProvider.listRequestOrders;
       this.listRequestOrdersFinal = this.pickingParametrizationProvider.listRequestOrders;
-      if (this.listRequestOrders.length > 0) {
-        this.serviceG.buttonAvailability.next({status:true});
-        for (let request of this.listRequestOrders) {
-          this.requestOrdersSelection[request.request.id] = true;
-          if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
-            this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = {max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name};
-          }
-          this.listRequestIdWarehouseId[request.request.id] = {warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse};
-        }
-        this.allRequestOrdersSelected = true;
+      if(this.updating) {
+        this.updating = false;
       } else {
-        this.requestOrdersSelection = {};
+        if (this.listRequestOrders.length > 0) {
+          for (let request of this.listRequestOrders) {
+            this.requestOrdersSelection[request.request.id] = true;
+            if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
+              this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = { max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name };
+            }
+            this.listRequestIdWarehouseId[request.request.id] = { warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse };
+          }
+          this.allRequestOrdersSelected = true;
+        } else {
+          this.requestOrdersSelection = {};
+        }
       }
-      this.selectRequestOrder(false);
+      this.selectRequestOrder(true, false);
 
       this.listRequestsFilters = this.listRequestOrders.map((item) => {
         return {
@@ -352,24 +359,23 @@ export class TableRequestsOrdersComponent implements OnInit {
   ngOnDestroy() {
     this.events.unsubscribe(this.REQUEST_ORDERS_LOADED);
     this.events.unsubscribe(this.DRAW_CONSOLIDATED_MATCHES);
-    this.serviceG.buttonAvailability.unsubscribe();
+    this.events.unsubscribe(this.BLOCK_BUTTONS);
+    this.events.unsubscribe(this.ENABLED_BUTTONS);
   }
 
-  orderAssignment(){
-    let aux = this.serviceG.orderAssignment.value;
-    aux.store = true; 
-    aux.type = true;
-    this.serviceG.orderAssignment.next(aux);
+  orderAssignment() {
+    this.updating = true;
+    this.updateRequestOrders.next();
   }
 
   selectAllRequestOrder() {
     for (let iRequest in this.requestOrdersSelection) {
       this.requestOrdersSelection[iRequest] = this.allRequestOrdersSelected;
     }
-    this.selectRequestOrder(true);
+    this.selectRequestOrder(false, true);
   }
 
-  selectRequestOrder(incrementTeamCounter: boolean) {
+  selectRequestOrder(inPageCreation: boolean, incrementTeamCounter: boolean) {
     for (let iObj in this.listWarehousesThresholdAndSelectedQty) {
       this.listWarehousesThresholdAndSelectedQty[iObj].selected = 0;
     }
@@ -386,10 +392,7 @@ export class TableRequestsOrdersComponent implements OnInit {
 
     this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
 
-    let aux = this.serviceG.requestUser.value;
-    aux.data.table = {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty};
-    aux.table = incrementTeamCounter === false;
-    this.serviceG.requestUser.next(aux);
+    this.changeRequestOrder.next({ fields: {listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty}, inPageCreation });
   }
 
   applyFilters(data: any) {
@@ -410,7 +413,7 @@ export class TableRequestsOrdersComponent implements OnInit {
     }
     else if (data[0].type == this.FILTER_QUANTITY) {
       this.listQuantitiesFilters = data;
-    }else if (data[0].type == this.FILTER_QUANTITY_LAUNCH) {
+    } else if (data[0].type == this.FILTER_QUANTITY_LAUNCH) {
       this.listQuantitiesLaunchFilters = data;
     }
 
@@ -518,19 +521,35 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.listRequestOrders = listRequestOrdersTemp;
 
     for (let iRequest in this.requestOrdersSelection) {
-      this.requestOrdersSelection[iRequest] = true;
+      this.requestOrdersSelection[iRequest] = false;
     }
-    this.selectRequestOrder(true);
+    for (let iRequest of listRequestOrdersTemp) {
+      this.requestOrdersSelection[iRequest.request.id] = true;
+    }
+    this.selectRequestOrder(false, true);
   }
 
-  dateCreatedParsed(requestOrder) : string {
+  getSelectedRequests(){
+    let selectedRequests: Array<number> = [];
+    for(let iRequest in this.requestOrdersSelection){
+      if (this.requestOrdersSelection[iRequest]) {
+        selectedRequests.push(parseInt(iRequest));
+      }
+    }
+    return selectedRequests;
+  }
+
+  dateCreatedParsed(requestOrder): string {
     moment.locale('es');
     return moment(requestOrder.request.date).format('ddd, DD/MM/YYYY');
   }
 
-  timeCreatedParsed(requestOrder) : string {
+  timeCreatedParsed(requestOrder): string {
     moment.locale('es');
     return moment(requestOrder.request.date).format('LT');
   }
 
+  requestsOrdersAreLoading() : boolean {
+    return this.pickingParametrizationProvider.loadingListRequestOrders && this.pickingParametrizationProvider.loadingListRequestOrders > 0
+  }
 }

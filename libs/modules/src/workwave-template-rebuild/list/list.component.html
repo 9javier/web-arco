@@ -1,10 +1,11 @@
-<h2 class="workwave-title">
-  <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
-  <div id="top" class="toggle">
-    <span>Expandir</span>
-    <ion-toggle (ionChange)="enlarge()"></ion-toggle>
-  </div>
-</h2>
+<div class="header-title">
+  <h2 class="workwave-title">
+    <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
+    <div id="top" class="buttons-action">
+      <ion-icon [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
+    </div>
+  </h2>
+</div>
 <p *ngIf="disableEdition" class="error-edit-text"><i>Ola de trabajo en ejecución. Imposible editar.</i></p>
 
 <div [ngClass]="disableEdition ? 'list-workwave-error-edit' : 'list-workwave'">
@@ -12,31 +13,31 @@
   <div class="stores-employees">
     <ion-row>
       <ion-col size="2" class="types">
-        <table-types></table-types>
+        <table-types (changeType)="typeChanged($event)"></table-types>
       </ion-col>
       <ion-col size="5" class="stores">
-        <table-stores></table-stores>
+        <table-stores (changeGroupWarehouses)="groupWarehousesChanged($event)"></table-stores>
       </ion-col>
       <ion-col size="5" class="employees">
-        <table-employees></table-employees>
+        <table-employees (changeEmployee)="employeeChanged($event)"></table-employees>
       </ion-col>
     </ion-row>
   </div>
 
   <div class="requests-orders">
-    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)"></table-requests-orders>
+    <table-requests-orders (changeRequestOrder)="requestOrderChanged($event)" (updateRequestOrders)="updateListOfRequestOrders()"></table-requests-orders>
   </div>
 
   <div class="team-assignation">
-    <table-team-assignation></table-team-assignation>
+    <table-team-assignation [responseQuantities]="responseQuantities" (updateUserAssignations)="updateListOfUserAssignations()"></table-team-assignation>
   </div>
-  
+
 </div>
 
 <ion-footer class="footer-products">
-    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-        <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
-            <i class="material-icons">play_arrow</i>
-        </ion-fab-button>
-    </ion-fab>
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
+      <i class="material-icons">play_arrow</i>
+    </ion-fab-button>
+  </ion-fab>
 </ion-footer>

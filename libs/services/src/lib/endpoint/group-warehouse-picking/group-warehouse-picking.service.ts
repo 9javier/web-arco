@@ -11,19 +11,19 @@ import { Observable } from 'rxjs';
 export class GroupWarehousePickingService {
 
   /**Urls for group warehouse picking service */
-  private groupWarehousePickingUrl:string = environment.apiBase+"/warehouses/groups/picking/";
-  private singleGroupWarehousePickingUrl:string = environment.apiBase+"/warehouses/groups/picking/{{id}}";
+  private groupWarehousePickingUrl: string = environment.apiBase + "/warehouses/groups/picking/";
+  private singleGroupWarehousePickingUrl: string = environment.apiBase + "/warehouses/groups/picking/{{id}}";
 
   displayedColumns: string[] = ['name'];
 
-  constructor(private http:HttpClient) { }
+  constructor(private http: HttpClient) { }
 
   /**
    * Get all group warehouse picking
    * @returns all group warehouses
    */
-  getIndex():Observable<Array<GroupWarehousePickingModel.GroupWarehousePicking>>{
-    return this.http.get<GroupWarehousePickingModel.ResponseGroupWarehousePicking>(this.groupWarehousePickingUrl).pipe(map(response=>{
+  getIndex(): Observable<Array<GroupWarehousePickingModel.GroupWarehousePicking>> {
+    return this.http.get<GroupWarehousePickingModel.ResponseGroupWarehousePicking>(this.groupWarehousePickingUrl).pipe(map(response => {
       return response.data;
     }));
   }
@@ -33,8 +33,8 @@ export class GroupWarehousePickingService {
    * @param id - the id of group warehouse picking
    * @returns the warehose requested
    */
-  getShow(id:number):Observable<GroupWarehousePickingModel.GroupWarehousePicking>{
-    return this.http.get<GroupWarehousePickingModel.ResponseSingleGroupWarehousePicking>(this.singleGroupWarehousePickingUrl.replace("{{id}}",String(id))).pipe(map(response=>{
+  getShow(id: number): Observable<GroupWarehousePickingModel.GroupWarehousePicking> {
+    return this.http.get<GroupWarehousePickingModel.ResponseSingleGroupWarehousePicking>(this.singleGroupWarehousePickingUrl.replace("{{id}}", String(id))).pipe(map(response => {
       return response.data;
     }));
   }
@@ -43,8 +43,8 @@ export class GroupWarehousePickingService {
    * Save a new group into server
    * @param groupWarehousePicking the group to be saved 
    */
-  store(groupWarehousePicking:GroupWarehousePickingModel.RequestGroupWarehousePicking):Observable<GroupWarehousePickingModel.GroupWarehousePicking>{
-    return this.http.post<GroupWarehousePickingModel.ResponseSingleGroupWarehousePicking>(this.groupWarehousePickingUrl,groupWarehousePicking).pipe(map(response=>{
+  store(groupWarehousePicking: GroupWarehousePickingModel.RequestGroupWarehousePicking): Observable<GroupWarehousePickingModel.GroupWarehousePicking> {
+    return this.http.post<GroupWarehousePickingModel.ResponseSingleGroupWarehousePicking>(this.groupWarehousePickingUrl, groupWarehousePicking).pipe(map(response => {
       return response.data;
     }));
   }
@@ -54,19 +54,19 @@ export class GroupWarehousePickingService {
    * @param id - the id of the group to  be updated
    * @param groupWarehousePicking the new group
    */
-  update(id:number,groupWarehousePicking:GroupWarehousePickingModel.RequestGroupWarehousePicking):Observable<GroupWarehousePickingModel.GroupWarehousePicking>{
+  update(id: number, groupWarehousePicking: GroupWarehousePickingModel.RequestGroupWarehousePicking): Observable<GroupWarehousePickingModel.GroupWarehousePicking> {
     return this.http.put<GroupWarehousePickingModel.ResponseSingleGroupWarehousePicking>(this.singleGroupWarehousePickingUrl
-      .replace("{{id}}",String(id)),groupWarehousePicking).pipe(map(response=>{
-      return response.data;
-    }));
+      .replace("{{id}}", String(id)), groupWarehousePicking).pipe(map(response => {
+        return response.data;
+      }));
   }
 
-   /**
-   * Delete a new group in server
-   * @param id - the id of the group to be deleted
-   */
-  delete(id:number){
-    return this.http.delete(this.singleGroupWarehousePickingUrl.replace("{{id}}",String(id)));
+  /**
+  * Delete a new group in server
+  * @param id - the id of the group to be deleted
+  */
+  delete(id: number) {
+    return this.http.delete(this.singleGroupWarehousePickingUrl.replace("{{id}}", String(id)));
   }
 
 }

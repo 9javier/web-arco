@@ -1,5 +1,14 @@
 <div class="main-element">
-  <h2 class="title-table">Operaciones de Envío</h2>
+  <div class="table-header">
+    <h2 class="title-table">
+      Operaciones de Envío
+    </h2>
+
+    <div class="buttons-action">
+      <ion-icon name="refresh" (click)="orderAssignment()" [ngClass]="requestsOrdersAreLoading() ? 'disabled' : ''"></ion-icon>
+      <ion-icon [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
+    </div>
+  </div>
 
   <mat-grid-list class="title-line" cols="24" rowHeight="48px">
     <mat-grid-tile class="checkbox" colspan="1">
@@ -10,7 +19,7 @@
 
     <mat-grid-tile class="reference border-right" colspan="2">
       <div class="tile-value">
-        <span class="title">Referencia</span>
+        <span class="title" (click)="sort('reference')">Ref. 🡇</span>
         <suite-filter-button
           class="filter"
           [title]="'Referencia'"
@@ -23,7 +32,7 @@
 
     <mat-grid-tile class="date border-right" colspan="3">
       <div class="tile-value">
-        <span class="title">Fecha</span>
+        <span class="title" (click)="sort('date')">Fecha</span>
         <suite-filter-button
           class="filter"
           [title]="'Fecha'"
@@ -36,7 +45,7 @@
 
     <mat-grid-tile class="origin border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Origen</span>
+        <span class="title" (click)="sort('origin')">Origen</span>
         <suite-filter-button
           class="filter"
           [title]="'Origen'"
@@ -49,7 +58,7 @@
 
     <mat-grid-tile class="destiny border-right" colspan="6">
       <div class="tile-value">
-        <span class="title">Destino</span>
+        <span class="title" (click)="sort('destiny')">Destino</span>
         <suite-filter-button
           class="filter"
           [title]="'Destino'"
@@ -62,7 +71,7 @@
 
     <mat-grid-tile class="type border-right" colspan="4">
       <div class="tile-value">
-        <span class="title">Tipo</span>
+        <span class="title" (click)="sort('type')">Tipo</span>
         <suite-filter-button
           class="filter"
           [title]="'Tipo'"
@@ -75,29 +84,45 @@
 
     <mat-grid-tile class="quantity border-right" colspan="2">
       <div class="tile-value">
-        Pares
+        <span class="title" (click)="sort('quantity')">Pares</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Pares'"
+          [listItems]="listQuantitiesFilters"
+          [isFiltering]="isFilteringQuantities != this.listQuantitiesFilters.length"
+          (applyFilters)="applyFilters($event)"
+          [filterType]="'slider'">
+        </suite-filter-button>
       </div>
     </mat-grid-tile>
 
     <mat-grid-tile class="quantity-launch" colspan="2">
       <div class="tile-value">
-        Pares Lanzar
+        <span class="title" (click)="sort('quantity-launch')">Pares Lanzar</span>
+        <suite-filter-button
+          class="filter"
+          [title]="'Pares Lanzar'"
+          [listItems]="listQuantitiesLaunchFilters"
+          [isFiltering]="isFilteringQuantitiesLaunch != this.listQuantitiesLaunchFilters.length"
+          (applyFilters)="applyFilters($event)"
+          [filterType]="'slider'">
+        </suite-filter-button>
       </div>
     </mat-grid-tile>
   </mat-grid-list>
 
-  <div class="loader" *ngIf="loadingListRequestOrdersOnlineStore && loadingListRequestOrdersOnlineStore > 0">
+  <div class="loader" *ngIf="requestsOrdersAreLoading()">
     <div class="spinner">
       <p class="message">Cargando operaciones de envío</p>
       <ion-spinner name="dots"></ion-spinner>
     </div>
   </div>
 
-  <div class="empty-list" *ngIf="(!loadingListRequestOrdersOnlineStore || loadingListRequestOrdersOnlineStore < 1) && listRequestOrders.length < 1">
+  <div class="empty-list" *ngIf="!requestsOrdersAreLoading() && listRequestOrders.length < 1">
     <p class="message-empty">No hay operaciones de envío cargadas</p>
   </div>
 
-  <div class="scroll-list" *ngIf="!loadingListRequestOrdersOnlineStore || loadingListRequestOrdersOnlineStore < 1">
+  <div class="scroll-list" *ngIf="!requestsOrdersAreLoading()">
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
