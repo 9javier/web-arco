@@ -523,6 +523,16 @@ export class TableRequestsOrdersComponent implements OnInit {
     this.selectRequestOrder(false, true);
   }
 
+  getSelectedRequests(){
+    let selectedRequests: Array<number> = [];
+    for(let iRequest in this.requestOrdersSelection){
+      if (this.requestOrdersSelection[iRequest]) {
+        selectedRequests.push(parseInt(iRequest));
+      }
+    }
+    return selectedRequests;
+  }
+
   dateCreatedParsed(requestOrder): string {
     moment.locale('es');
     return moment(requestOrder.request.date).format('ddd, DD/MM/YYYY');

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import {
   GroupWarehousePickingModel,
@@ -13,6 +13,8 @@ import { AlertController, Events, LoadingController, ToastController } from "@io
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {Router} from "@angular/router";
+import {TableEmployeesComponent} from "../table-employees/table-employees.component";
+import {TableRequestsOrdersComponent} from "../table-requests-orders/table-requests-orders.component";
 
 @Component({
   selector: 'list-workwave-template-rebuild',
@@ -34,6 +36,9 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   @Input() templateToEdit: any;
   @Input() typeWorkwave: number;
+  @ViewChild(TableEmployeesComponent) tableEmployees: TableEmployeesComponent;
+  @ViewChild(TableRequestsOrdersComponent) tableRequestsOrders: TableRequestsOrdersComponent;
+
   template: any;
   public userReques: any = [];
   disableEdition: boolean = false;
@@ -300,6 +305,8 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   }
 
   updateListOfUserAssignations() {
+    this.listEmployeesToUpdate = this.tableEmployees.getSelectedEmployees();
+    this.listRequestOrdersToUpdate = this.tableRequestsOrders.getSelectedRequests();
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }

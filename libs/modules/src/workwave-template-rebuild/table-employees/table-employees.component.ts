@@ -54,4 +54,14 @@ export class TableEmployeesComponent implements OnInit {
     this.changeEmployee.next({ fields: this.listEmployeesSelected, inPageCreation });
   }
 
+  getSelectedEmployees() {
+    this.listEmployeesSelected = [];
+    for (let iEmployee in this.employeesSelection) {
+      if (this.employeesSelection[iEmployee]) {
+        this.listEmployeesSelected.push(parseInt(iEmployee));
+      }
+    }
+    return this.listEmployeesSelected;
+  }
+
 }
