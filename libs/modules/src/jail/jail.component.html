@@ -28,8 +28,8 @@
                 <th mat-header-cell *matHeaderCellDef>Destino</th>
                 <td mat-cell *matCellDef="let element">
                     <div  *ngIf="element.carrierWarehousesDestiny?.length == 0" class="no-warehouse">Sin destinos</div>
-                    <div  *ngIf="element.carrierWarehousesDestiny?.length == 1">{{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
-                    <div  *ngIf="element.carrierWarehousesDestiny?.length > 1">Varios destinos</div>
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length == 1">{{element.carrierWarehousesDestiny[0].warehouse?.reference }} {{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length > 1"  (click)="showDestinations($event, element)">Varios destinos</div>
                 </td>
             </ng-container>
             <ng-container matColumnDef="isSend">
@@ -56,32 +56,7 @@
 
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
-                    <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                        <ion-grid>
-                            <ion-row>
-                                <ion-col size="12">
-                                    Destinos asociados a esta jaula:
-                                </ion-col>
-                                <ion-col size="12">
-                                    <ion-item *ngFor="let carrier of element.carrierWarehousesDestiny">
-
-                                        <ion-select (ionChange)="updateDestination(carrier.id,$event.detail.value)">
-                                            <ion-select-option *ngFor="let warehouse of warehouses" [selected]="warehouse.id == carrier.warehouse.id" [value]="warehouse.id">
-                                              {{warehouse.reference}} {{warehouse.name}}
-                                            </ion-select-option>
-                                        </ion-select>
-                                    </ion-item>
-                                    <ion-item *ngIf="element.carrierWarehousesDestiny.length == 0">
-                                      <ion-select (ionChange)="setDestination(element.id, $event.detail.value)">
-                                        <ion-select-option *ngFor="let warehouse of warehouses"  [value]="warehouse.id">
-                                          {{warehouse.reference}} {{warehouse.name}}
-                                        </ion-select-option>
-                                      </ion-select>
-                                    </ion-item>
-                                </ion-col>
-                            </ion-row>
-                        </ion-grid>
-                    </div>
+            
                 </td>
             </ng-container>
 

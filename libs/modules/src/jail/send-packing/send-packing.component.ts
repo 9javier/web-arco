@@ -1,9 +1,8 @@
-import { Component, OnInit ,ViewChild} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
 import { NavParams, ModalController } from '@ionic/angular';
 import { CarrierService, IntermediaryService, WarehousesService, WarehouseModel } from '@suite/services';
-import { DataComponent } from '../data/data.component';
 import { MatSelectChange } from '@angular/material';
 
 @Component({
@@ -23,7 +22,7 @@ export class SendPackingComponent implements OnInit {
       icon: { type: 'ionic', name: 'filing'}
     }
   ];
-  title = 'Enviar embalaje';
+  title = 'Enviar';
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
     .name;
 

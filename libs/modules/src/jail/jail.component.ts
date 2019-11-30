@@ -15,6 +15,7 @@ import { StoreComponent } from './store/store.component';
 import { SendComponent } from './send/send.component';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { SendPackingComponent } from './send-packing/send-packing.component';
+import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 
 @Component({
   selector: 'app-jail',
@@ -265,6 +266,22 @@ export class JailComponent implements OnInit {
       this.intermediaryService.presentToastError("Error al actualizar destino");
       this.intermediaryService.dismissLoading();
     });
+  }
+
+  async showDestinations(event, jail){
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component:ShowDestinationsComponent,
+      componentProps:{
+        jail:jail
+      }
+    }))
+    modal.onDidDismiss().then(()=>{
+      
+    })
+    modal.present();
+
   }
 
   getWarehouses(){
