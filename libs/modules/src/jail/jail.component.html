@@ -24,7 +24,20 @@
                     <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
                 </td>
             </ng-container>
-
+            <ng-container matColumnDef="destiny">
+                <th mat-header-cell *matHeaderCellDef>Destino</th>
+                <td mat-cell *matCellDef="let element">
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length == 0" class="no-warehouse">Sin destinos</div>
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length == 1">{{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length > 1">Varios destinos</div>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="isSend">
+                <th mat-header-cell *matHeaderCellDef>Enviar</th>
+                <td mat-cell *matCellDef="let element">
+                    <ion-icon *ngIf="element.isAvailableSend" (click)="toSend($event,element)" name="md-bus" class="action-icon"></ion-icon>
+                </td>
+            </ng-container>
             <ng-container matColumnDef="update">
                 <th mat-header-cell *matHeaderCellDef>Actualizar</th>
                 <td mat-cell *matCellDef="let element">

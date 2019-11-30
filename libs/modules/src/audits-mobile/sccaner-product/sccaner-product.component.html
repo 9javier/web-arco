@@ -1,10 +1,24 @@
-<input id="input" class="input-audit" placeholder="Cod. Referencia" (keyup.enter)="userTyping($event)" [(ngModel)]="inputValueScanner">
+<div class="content">
+  <scanner-manual [placeholder]="'PRODUCTO'" (newValue)="userTyping($event)" [height]="'30vh'"></scanner-manual>
 
-<div class="footer">
-  <div routerLink="/audits" class="button cancel">
-    <button>CERRAR</button>
+  <div class="footer">
+    <div routerDirection="'root'" routerLink="/audits" (click)="backView()" class="button cancel">
+      <button>VOLVER</button>
+    </div>
   </div>
-  <div class="button start">
-    <button >REASIGNAR</button>
+
+  <div class="product-list">
+    <ion-list>
+      <ion-item *ngFor="let packingProduct of packingProducts">
+        <ion-label>
+          {{ packingProduct.product.reference }}
+        </ion-label>
+        <ion-icon
+          slot="end"
+          [name]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'checkmark-circle' : 'close-circle' : 'information-circle'"
+          [ngClass]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'ok' : 'ko' : 'not-audit'">
+        </ion-icon>
+      </ion-item>
+    </ion-list>
   </div>
 </div>

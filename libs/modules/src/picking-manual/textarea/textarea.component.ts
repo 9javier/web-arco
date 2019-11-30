@@ -12,6 +12,7 @@ import {Location} from "@angular/common";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-textarea',
@@ -61,7 +62,8 @@ export class TextareaComponent implements OnInit {
     private pickingProvider: PickingProvider,
     private scanditProvider: ScanditProvider,
     private intermediaryService: IntermediaryService,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
@@ -563,5 +565,11 @@ export class TextareaComponent implements OnInit {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
     },500);
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }

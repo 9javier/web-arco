@@ -52,7 +52,6 @@ export class FilterPopoverComponent implements OnInit {
     if(currentMax == null){
       return this.getMax();
     }else{
-      console.log(currentMax);
       return currentMax;
     }
   }

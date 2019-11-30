@@ -7,6 +7,7 @@ import {PackingInventoryModel} from "../../../../services/src/models/endpoints/P
 import {PackingInventoryService} from "../../../../services/src/lib/endpoint/packing-inventory/packing-inventory.service";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-input-codes',
@@ -30,7 +31,8 @@ export class InputCodesComponent implements OnInit {
     private priceService: PriceService,
     private scanditProvider: ScanditProvider,
     private packingInventorService: PackingInventoryService,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -135,6 +137,12 @@ export class InputCodesComponent implements OnInit {
           document.getElementById('input-ta').focus();
         },500);
       });
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 
 }

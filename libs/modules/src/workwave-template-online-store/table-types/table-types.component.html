@@ -20,7 +20,7 @@
     <mat-grid-list class="content-line" cols="12" rowHeight="48px">
       <mat-grid-tile>
         <ion-item class="tile-value" (click)="selectType()">
-          <ion-checkbox [(ngModel)]="receptionSelected"></ion-checkbox>
+          <ion-checkbox id="onlineCheck" [(ngModel)]="onlineSelected"></ion-checkbox>
           <ion-label>Online</ion-label>
         </ion-item>
       </mat-grid-tile>
@@ -29,7 +29,7 @@
     <mat-grid-list class="content-line" cols="12" rowHeight="48px">
       <mat-grid-tile>
         <ion-item class="tile-value" (click)="selectType()">
-          <ion-checkbox [(ngModel)]="distributionSelected"></ion-checkbox>
+          <ion-checkbox id="shopCheck" [(ngModel)]="shopSelected"></ion-checkbox>
           <ion-label>Peticiones tienda</ion-label>
         </ion-item>
       </mat-grid-tile>

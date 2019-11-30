@@ -6,5 +6,15 @@
       <ion-label>Precios</ion-label>
     </ion-item>
   </div>
-  <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)" [(ngModel)]="inputProduct">
+  <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
+    [(ngModel)]="inputProduct" (focus)="onFocus($event)">
+</div>
+<div class="bottons-mas-menos">
+  <ion-button color="secondary" (click)="menos()">
+    <ion-icon name="remove-circle-outline"></ion-icon>
+  </ion-button>
+  <ion-label color="primary">{{stampe}}</ion-label>
+  <ion-button color="primary" (click)="mas()">
+    <ion-icon name="add-circle-outline"></ion-icon>
+  </ion-button>
 </div>

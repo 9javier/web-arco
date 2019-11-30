@@ -37,6 +37,7 @@ import { MatrixEmptyingSorterComponent } from "./ways-emptying/matrix/matrix.com
 import { SorterInfoWayEmptyingComponent } from "./ways-emptying/info-way/info-way.component";
 import { ScannerRackComponent } from './al-input/scanner-rack/scanner-rack.component';
 import {MatrixOutputSorterComponent} from "./al-output/matrix-output/matrix-output.component";
+import { HideKeyboardModule } from 'hide-keyboard';
 
 const routes: Routes = [
   {
@@ -154,7 +155,8 @@ const routes: Routes = [
     MatSelectModule,
     CommonUiCrudModule,
     RacksModule,
-    MatExpansionModule
+    MatExpansionModule,
+    HideKeyboardModule
   ]
 })
 export class SorterModule { }
