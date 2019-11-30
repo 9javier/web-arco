@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { AlertController, ToastController, ModalController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
@@ -43,8 +43,12 @@ export class InputCodesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.stampe = 1;
     this.typeTagsBoolean = this.typeTags != 1;
+  }
 
+  async ngOnDestroy() {
+    this.stampe = 1;
   }
 
   mas() {
@@ -58,57 +62,75 @@ export class InputCodesComponent implements OnInit {
       this.stampe = this.stampe - 1;
     }
   }
-  async enviar_Veces(res,prezzo:number |null = null) {
-    let dataImprim;
-    console.log(prezzo);
-    
-    if(prezzo){
-      dataImprim = {res,prezzo}
-    }else{
-      dataImprim = res;
-    }
-    range(0, this.stampe).subscribe(data => {
-      console.log('Printed product tag ... ', dataImprim);
-    })
-  }
-  // TODO Alert Prezzo con Codigo
+
+
   async presentModal(codice) {
+
+    let Veces: string = `<b>${this.stampe}</b> ves`;
+    if (this.stampe > 1) {
+      Veces = `<b>${this.stampe}</b> veces`;
+    }
     const alert = await this.alertController.create({
       header: 'Codigo Desconocido',
-      subHeader: 'Nueva Impression',
-      message:"¿Deseas imprimir el nuevo codigo y nuevo precio?",
-      // message: 'Imprimir Codigo y precio ',
-      // animated:true,
-      inputs:[
+      subHeader: 'Nueva Impresion',
+      message: `¿Deseas imprimir la referencia <b>${codice}</b>  ${Veces}`,
+      inputs: [
         {
-          name:'Codice',
-          placeholder:'Codice',
-          value:codice
-          
-        },
-        {
-          name:'Tickets',
-          value:this.stampe,
-          type:'number'
-        },
-        {
-          name:'prezzo',
-          type:'number',
-          value:0,
-          placeholder:'Prezzo'
+          name: 'precio',
+          type: 'number',
+          value: 0,
+          placeholder: 'Precio'
         }
       ],
       buttons: [
-        {text:'Impimir', handler: (data) => {
-          console.log('imprimire',data);
-          this.enviar_Veces(codice,data.prezzo)
-        }},{
-          text:'Cancellar',
-          role:'cancel',
-          cssClass:'secondary',
-          handler:()=>{
-            console.log('Cancelliamo procedimento');
-            
+        {
+          text: 'Imprimir', handler: (data) => {
+
+            let price =
+            {
+              "typeLabel": 2,
+              "outlet": false,
+              "impress": false,
+              "discount": false,
+              "tariffFuture": false,
+              "percent": 0,
+              "percentOutlet": "",
+              "totalPrice": "0",
+              "priceOriginal": "0",
+              "priceDiscount": "",
+              "priceDiscountOutlet": "",
+              "status": 1,
+              "enabled": true,
+              "model": {
+                "reference": "",
+                "name": "",
+                "detailColor": null,
+                "color": {
+                  "name": "",
+                  "colorHex": null,
+                  "description": ""
+                },
+                "brand": {
+                  "name": "",
+                  "supplierName": ""
+                },
+                "lifestyle": null,
+                "category": null
+              }
+            };
+            price.totalPrice = data.precio;
+            price.priceOriginal = data.precio;
+            price.model.reference = codice;
+            price.model.name = codice;
+            let prices: Array<any> = this.convertArrayFromPrint(price);
+            this.audioProvider.playDefaultOk();
+            this.printerService.printTagPriceUsingPrice(prices);
+          }
+        }, {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
           }
         }
       ]
@@ -118,8 +140,6 @@ export class InputCodesComponent implements OnInit {
   }
 
   keyUpInput(event) {
-    // console.log(event);
-
     let dataWrote = (this.inputProduct || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -145,16 +165,16 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT:
           switch (this.typeTags) {
             case 1:
+              console.log("opcion 1 ", this.scanditProvider.codeValue.PRODUCT);
               this.audioProvider.playDefaultOk();
-              this.printerService.printTagBarcode([dataWrote])
+              this.printerService.printTagBarcode([dataWrote], this.stampe)
                 .subscribe((res) => {
-                  // console.log('Printed product tag ... ', res);
-                  this.enviar_Veces(res);
                 }, (error) => {
                   console.warn('Error to print tag ... ', error);
                 });
               break;
             case 2:
+              console.log("opcion 2 ", this.scanditProvider.codeValue.PRODUCT);
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
                 .then((prices) => {
@@ -164,27 +184,23 @@ export class InputCodesComponent implements OnInit {
                     this.presentAlertWarningPriceWithoutTariff(price);
                   } else {
                     this.audioProvider.playDefaultOk();
-                    this.printerService.printTagPriceUsingPrice(price);
+                    this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
                   }
                 });
               break;
             default:
-              console.log(1);
-
-              this.audioProvider.playDefaultError();
-              this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+              this.showToastWrongReference(this.typeTags);
               break;
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           switch (this.typeTags) {
             case 1:
-              console.log(2);
-
-              this.audioProvider.playDefaultError();
-              this.presentToast('Escanea un código de caja para reimprimir la etiqueta de caja del producto.', 'danger');
+              console.log("opcion 1 ", this.scanditProvider.codeValue.PRODUCT_MODEL);
+              this.showToastWrongReference(this.typeTags);
               break;
             case 2:
+              console.log("opcion 2 ", this.scanditProvider.codeValue.PRODUCT_MODEL);
               // Query sizes_range for product model
               this.priceService
                 .postPricesByModel(dataWrote)
@@ -196,7 +212,7 @@ export class InputCodesComponent implements OnInit {
                     if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                       this.presentAlertWarningPriceWithoutTariff(price);
                     } else {
-                      this.printerService.printTagPriceUsingPrice(price);
+                      this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
                     }
                   } else if (responseData && responseData.length > 1) {
                     this.audioProvider.playDefaultOk();
@@ -216,14 +232,8 @@ export class InputCodesComponent implements OnInit {
                     });
                     this.presentAlertSelect(listItems, responseData);
                   } else {
-                    console.log('Error codiec');
-                    // console.log(dataWrote);
-                    
-                    // TODO CREAMO IL MODAL PER CHIEDERE IL PREZZO
-                    this.presentModal(dataWrote)
-
                     this.lastCodeScanned = 'start';
-                    // this.audioProvider.playDefaultError();
+                    this.audioProvider.playDefaultError();
                     this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                   }
                 }, (error) => {
@@ -238,28 +248,66 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             default:
-              console.log(4);
-
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               break;
           }
           break;
-        default:
-          console.log(5);
-
-          let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
-          if (this.typeTags == 1) {
-            msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
-          } else if (this.typeTags == 2) {
-            msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
+        case this.scanditProvider.codeValue.PRODUCT_UNDEFINED:
+          switch (this.typeTags) {
+            case 1:
+              this.showToastWrongReference(this.typeTags);
+              break;
+            case 2:
+              this.lastCodeScanned = 'start';
+              this.presentModal(dataWrote)
+              break;
+            default:
+              this.showToastWrongReference(this.typeTags);
+              break;
           }
-
-          this.audioProvider.playDefaultError();
-          this.presentToast(msg, 'danger');
+          break;
+        default:
+          this.showToastWrongReference(this.typeTags);
           break;
       }
     }
+  }
+
+
+
+  private convertArrayFromPrint(data: any, outputArray?: Boolean): Array<any> {
+    let dataJoin = []
+    let out;
+    if (this.stampe == 1) {
+      if (outputArray) {
+        dataJoin.push(data);
+        out = dataJoin;
+      } else {
+        out = data;
+      }
+
+    } else
+      if (this.stampe > 1) {
+        for (let i = 0; i < this.stampe; i++) {
+          dataJoin.push(data);
+        }
+        out = dataJoin;
+      }
+    return out;
+  }
+
+  private async showToastWrongReference(type: number, lastCodeScanned: Boolean = true) {
+
+    lastCodeScanned ? this.lastCodeScanned = 'start' : null;
+    let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
+    if (type == 1) {
+      msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
+    } else if (type == 2) {
+      msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
+    }
+    this.audioProvider.playDefaultError();
+    this.presentToast(msg, 'danger');
   }
 
   private async presentToast(msg: string, color: string = 'primary') {
@@ -301,7 +349,7 @@ export class InputCodesComponent implements OnInit {
               this.presentAlertWarningPriceWithoutTariff(price);
             } else {
               this.audioProvider.playDefaultOk();
-              this.printerService.printTagPriceUsingPrice(price);
+              this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
             }
           }
         }
@@ -330,7 +378,7 @@ export class InputCodesComponent implements OnInit {
           handler: () => {
             price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
             this.audioProvider.playDefaultOk();
-            this.printerService.printTagPriceUsingPrice(price);
+            this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
           }
         }
       ]

@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {AlertController, ToastController} from "@ionic/angular";
-import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
-import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
-import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { Component, OnInit } from '@angular/core';
+import { AlertController, ToastController } from "@ionic/angular";
+import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
+import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import { AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel } from "@suite/services";
+import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { range, interval } from 'rxjs';
 
 @Component({
@@ -19,7 +19,7 @@ export class InputCodesComponent implements OnInit {
   lastCodeScanned: string = 'start';
   private lastProductReferenceScanned: string = 'start';
 
-  stampe:number=1;
+
 
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
@@ -42,7 +42,7 @@ export class InputCodesComponent implements OnInit {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
-    },800);
+    }, 800);
   }
 
   async ngOnInit() {
@@ -51,29 +51,11 @@ export class InputCodesComponent implements OnInit {
       this.storeUserObj = await this.authService.getStoreCurrentUser();
     }
 
-    console.log('pagina principañe');
-    
-    
+
+
+
   }
 
-  mas(){
-    this.stampe = this.stampe + 1 ;
-  }
-  menos(){
-    if(this.stampe === 1){
-      this.audioProvider.playDefaultError();
-      return;
-    }else{
-      this.stampe = this.stampe -1;
-    }
-  }
-
-  invioStampe(evento){
-    range(0,this.stampe).subscribe(data =>{
-      this.postRelabelProduct(evento);
-      console.log(data)
-    });
-  }
 
   keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
@@ -95,9 +77,7 @@ export class InputCodesComponent implements OnInit {
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
         case this.scanditProvider.codeValue.PRODUCT:
           if (this.isStoreUser) {
-            console.log('enviado datos');
-            this.invioStampe(dataWrote);
-            // this.postRelabelProduct(dataWrote);
+            this.postRelabelProduct(dataWrote);
           } else {
             this.audioProvider.playDefaultOk();
             this.printerService.printTagBarcode([dataWrote]);
@@ -134,7 +114,7 @@ export class InputCodesComponent implements OnInit {
 
               let listItems = responseSizeAndModel.sizes.map((size, iSize) => {
                 return {
-                  name: 'radio'+iSize,
+                  name: 'radio' + iSize,
                   type: 'radio',
                   label: size.name,
                   value: iSize
@@ -160,13 +140,13 @@ export class InputCodesComponent implements OnInit {
   }
 
   private async postRelabelProduct(productReference: string, modelId?: number, sizeId?: number, locationReference?: string) {
-    console.log('invio'+ productReference);
-    
+    console.log('invio' + productReference);
+
     let paramsRelabel: ProductModel.ParamsRelabel = {
       productReference
     };
 
-    if (this.isStoreUser){
+    if (this.isStoreUser) {
       paramsRelabel.warehouseId = this.storeUserObj.id;
     }
 
@@ -212,7 +192,7 @@ export class InputCodesComponent implements OnInit {
       .then(() => {
         setTimeout(() => {
           document.getElementById('input-ta').focus();
-        },500);
+        }, 500);
       });
   }
 
