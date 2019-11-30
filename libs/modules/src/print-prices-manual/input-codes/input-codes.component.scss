@@ -23,3 +23,17 @@ div.content-ta {
     font-weight: bold;
   }
 }
+
+div.bottons-mas-menos{
+  position: fixed;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  ion-button{
+    margin: 5px;
+
+  }
+  ion-label{
+    margin: 10px;
+  }
+}
