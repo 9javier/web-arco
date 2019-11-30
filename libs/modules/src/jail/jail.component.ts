@@ -165,7 +165,7 @@ export class JailComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
       this.carriers = carriers;
-      this.carriers = this.carriers.map(this.isAvailableSend);
+      //this.carriers = this.carriers.map(this.isAvailableSend);
       this.toDelete.removeControl("jails");
       this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
         return this.formBuilder.group({
@@ -179,9 +179,12 @@ export class JailComponent implements OnInit {
     })
   }
   isAvailableSend(carrier) {
-    let res = carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
-    carrier.isAvailableSend = res;
-    return carrier;
+    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[0].isReception == false :  true;
+    if(isAvailable) {
+      let res = carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
+      return res;
+    }
+    return false;
   }
 
   /**
