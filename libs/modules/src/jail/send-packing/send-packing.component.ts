@@ -41,7 +41,6 @@ export class SendPackingComponent implements OnInit {
     private warehousesService:WarehousesService
     ) {
     this.jail = this.navParams.get("jail");
-
     if(this.jail.carrierWarehousesDestiny.length  == 1) {
       this.selectedWarehouse = this.jail.carrierWarehousesDestiny[0].warehouse.id;
       this.warehouse = this.jail.carrierWarehousesDestiny[0].warehouse;
@@ -53,6 +52,9 @@ export class SendPackingComponent implements OnInit {
     this.warehousesService.getIndex().then(observable => {
       observable.subscribe(warehouses => {
         this.warehouses = warehouses.body.data;
+        if(this.jail.warehouse) {
+          this.warehouses = this.warehouses.filter(warehause => warehause.id != this.jail.warehouse.id);
+        }
       });
     })
   }
