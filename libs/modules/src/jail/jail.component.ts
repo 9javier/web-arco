@@ -13,6 +13,8 @@ import { map, switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './update/update.component';
 import { StoreComponent } from './store/store.component';
 import { SendComponent } from './send/send.component';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { SendPackingComponent } from './send-packing/send-packing.component';
 
 @Component({
   selector: 'app-jail',
@@ -35,7 +37,7 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'warehouse',"update",'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing', 'warehouse', 'destiny' ,'isSend',"update",'buttons-print'];
   dataSource:MatTableDataSource<CarrierModel.Carrier>;
   expandedElement:CarrierModel.Carrier;
 
@@ -97,6 +99,26 @@ export class JailComponent implements OnInit {
     })
     modal.present();
   }
+
+  /**
+   * Open modal to edit jail
+   * @param event - to cancel it
+   * @param jail - jail to be updated
+   */
+  async toSend(event,jail){
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component:SendPackingComponent,
+      componentProps:{
+        jail:jail
+      }
+    }))
+    modal.onDidDismiss().then(()=>{
+      this.getCarriers();
+    })
+    modal.present();
+  }
   /**
    * Open modal to store jail
    * @param event - to cancel it
@@ -142,6 +164,7 @@ export class JailComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
       this.carriers = carriers;
+      this.carriers = this.carriers.map(this.isAvailableSend);
       this.toDelete.removeControl("jails");
       this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
         return this.formBuilder.group({
@@ -153,6 +176,11 @@ export class JailComponent implements OnInit {
       this.dataSource = new MatTableDataSource(carriers);
       this.intermediaryService.dismissLoading();
     })
+  }
+  isAvailableSend(carrier) {
+    let res = carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
+    carrier.isAvailableSend = res;
+    return carrier;
   }
 
   /**
