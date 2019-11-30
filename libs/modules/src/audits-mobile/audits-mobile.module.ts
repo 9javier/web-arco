@@ -7,6 +7,10 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { FormsModule } from '@angular/forms';
 import { AddAuditsComponent } from './add-audits/add-audits.component';
 import { SccanerProductComponent } from './sccaner-product/sccaner-product.component';
+import { PendingRevisionsComponent } from './pending-revisions/pending-revisions.component';
+import { ProductListComponent } from './product-list/product-list.component';
+import {ScannerManualModule} from "../components/scanner-manual/scanner-manual.module";
+import { HideKeyboardModule } from 'hide-keyboard';
 
 const routes: Routes = [
   {
@@ -18,7 +22,15 @@ const routes: Routes = [
     component: AddAuditsComponent
   },
   {
-    path: 'scanner-product/:id/:jaula',
+    path: 'pending-revisions',
+    component: PendingRevisionsComponent
+  },
+  {
+    path: 'list-products/:id/:jaula/:add',
+    component: ProductListComponent
+  },
+  {
+    path: 'scanner-product/:id/:jaula/:back',
     component: SccanerProductComponent
   },
   {
@@ -28,13 +40,21 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AuditsMobileComponent,AddAuditsComponent,SccanerProductComponent],
+  declarations: [
+    AuditsMobileComponent,
+    AddAuditsComponent,
+    SccanerProductComponent,
+    PendingRevisionsComponent,
+    ProductListComponent
+  ],
   imports: [
     CommonModule,
     IonicModule,
     FormsModule,
     BreadcrumbModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ScannerManualModule,
+    HideKeyboardModule
   ]
 })
 export class AuditsMobileModule { }

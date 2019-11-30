@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import { Events } from "@ionic/angular";
 import { UserTimeModel } from "@suite/services";
-import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
   selector: 'table-employees',
@@ -13,14 +12,15 @@ export class TableEmployeesComponent implements OnInit {
 
   private EMPLOYEES_LOADED = "employees-loaded";
 
+  @Output() changeEmployee = new EventEmitter();
+
   listEmployees: UserTimeModel.ListUsersRegisterTimeActiveInactive = { usersActive: [], usersInactive: [] };
   employeesSelection: any = {};
   listEmployeesSelected: number[] = [];
 
   constructor(
     public events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider,
-    private serviceG : WorkwavesService
+    public pickingParametrizationProvider: PickingParametrizationProvider
   ) { }
 
   ngOnInit() {
@@ -36,7 +36,7 @@ export class TableEmployeesComponent implements OnInit {
       } else {
         this.employeesSelection = {};
       }
-      this.selectEmployee('init');
+      this.selectEmployee(true);
     });
   }
 
@@ -44,18 +44,24 @@ export class TableEmployeesComponent implements OnInit {
     this.events.unsubscribe(this.EMPLOYEES_LOADED);
   }
 
-  selectEmployee(validation) {
+  selectEmployee(inPageCreation: boolean) {
     this.listEmployeesSelected = [];
     for (let iEmployee in this.employeesSelection) {
       if (this.employeesSelection[iEmployee]) {
         this.listEmployeesSelected.push(parseInt(iEmployee));
       }
     }
+    this.changeEmployee.next({ fields: this.listEmployeesSelected, inPageCreation });
+  }
 
-    let aux = this.serviceG.requestUser.value;
-    aux.data.user = this.listEmployeesSelected;
-    aux.user = validation === 'init' ?  true : false;
-    this.serviceG.requestUser.next(aux);
+  getSelectedEmployees() {
+    this.listEmployeesSelected = [];
+    for (let iEmployee in this.employeesSelection) {
+      if (this.employeesSelection[iEmployee]) {
+        this.listEmployeesSelected.push(parseInt(iEmployee));
+      }
+    }
+    return this.listEmployeesSelected;
   }
 
 }

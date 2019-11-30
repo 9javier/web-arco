@@ -15,6 +15,7 @@ import { SorterOutputModel } from "../../../../../services/src/models/endpoints/
 import { AudioProvider } from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
 import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
+import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -61,7 +62,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     public sorterProvider: SorterProvider,
     private sorterOutputService: SorterOutputService,
     private scanditProvider: ScanditProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -669,5 +671,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         await this.intermediaryService.presentToastError(errorMessage, 2000);
         this.focusToInput();
       });
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }

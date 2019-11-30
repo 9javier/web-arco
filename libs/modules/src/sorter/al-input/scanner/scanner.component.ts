@@ -11,10 +11,10 @@ import {ExecutionSorterModel} from "../../../../../services/src/models/endpoints
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 import {Location} from "@angular/common";
 import {HttpRequestModel} from "../../../../../services/src/models/endpoints/HttpRequest";
-import { Router } from '@angular/router';
-import { ModalController, NavController } from '@ionic/angular';
+import {Events, ModalController} from '@ionic/angular';
 import { ScannerRackComponent } from '../scanner-rack/scanner-rack.component';
 import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -22,6 +22,8 @@ import {AudioProvider} from "../../../../../services/src/providers/audio-provide
   styleUrls: ['./scanner.component.scss']
 })
 export class ScannerInputSorterComponent implements OnInit, OnDestroy {
+
+  private LOAD_DATA_INPUT_SORTER: string = 'load_data_input_sorter';
 
   messageGuide = 'ARTÍCULO';
   inputValue: string = null;
@@ -39,14 +41,10 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   private readonly timeMillisToResetScannedCode: number = 1000;
   private readonly timeMillisToQuickUserFromSorterProcess: number = 10 * 60 * 1000;
 
-  // Footer buttons
-  leftButtonText = 'CARRIL. EQUIV.';
-  rightButtonText = 'NO CABE CAJA';
-  leftButtonDanger = true;
-
   private timeoutToQuickStarted = null;
 
   constructor(
+    private events: Events,
     private modalCtrl: ModalController,
     private location: Location,
     private intermediaryService: IntermediaryService,
@@ -55,14 +53,15 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     public sorterProvider: SorterProvider,
     private scanditProvider: ScanditProvider,
     private toolbarProvider: ToolbarProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
     setTimeout(() => {
       document.getElementById('input').focus();
     },800); }
-  
+
   ngOnInit() {
     this.addScannerRackButton();
     this.timeoutToQuickUser();
@@ -116,13 +115,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   addScannerRackButton() {
     const buttons = [
-      {
-        icon: 'keypad',
-        label: 'Teclado',
-        action: async () => {
-          // TODO: Functions keyboard
-        }
-      },
       {
         icon: 'hand',
         label: 'Finalizar',
@@ -354,6 +346,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
         this.location.back();
+        this.events.publish(this.LOAD_DATA_INPUT_SORTER);
       }, async (error: HttpRequestModel.Error) => {
         await this.intermediaryService.dismissLoading();
         let errorMessage = 'Ha ocurrido un error al intentar finalizar el proceso.';
@@ -375,5 +368,11 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         this.stopExecutionInput();
       }, 3 * 1000);
     }, this.timeMillisToQuickUserFromSorterProcess);
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }

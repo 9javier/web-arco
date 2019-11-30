@@ -6,6 +6,7 @@ import { AuthenticationService, PriceService, ProductModel, ProductsService, War
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { range, interval } from 'rxjs';
+import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-input-codes',
@@ -37,7 +38,8 @@ export class InputCodesComponent implements OnInit {
     private productsService: ProductsService,
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -250,5 +252,11 @@ export class InputCodesComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  public onFocus(event) {
+    if (event && event.target && event.target.id) {
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 }

@@ -5,44 +5,33 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Lista de Productos</ion-title>
+    <ion-title>Productos escaneados de {{ data.packing.reference }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <mat-card class="example-card">
   <mat-card-content>
     <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Búsqueda">
+      <input matInput (keyup)="applyFilter($event)" placeholder="Búsqueda">
     </mat-form-field>
 
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="dataSource">
 
         <ng-container matColumnDef="name">
-          <th class="title-column" mat-header-cell *matHeaderCellDef> Nombre </th>
-          <td mat-cell *matCellDef="let element"> {{element.product.size.name}} </td>
+          <th class="title-column" mat-header-cell *matHeaderCellDef> Referencia </th>
+          <td mat-cell *matCellDef="let element"> {{element.product.model.reference}} </td>
         </ng-container>
 
         <ng-container matColumnDef="reference">
-          <th class="title-column" mat-header-cell *matHeaderCellDef> Referencia </th>
+          <th class="title-column" mat-header-cell *matHeaderCellDef> Código </th>
           <td mat-cell *matCellDef="let element"> {{element.product.reference}} </td>
         </ng-container>
 
-        <ng-container matColumnDef="incidence">
-          <th class="title-column" mat-header-cell *matHeaderCellDef> Incidencia </th>
-          <td mat-cell *matCellDef="let element">
-              <mat-icon class="active-check" *ngIf="element.incidence === false">done_all</mat-icon>
-              <mat-icon class="inactive-check" *ngIf="element.incidence === true">close</mat-icon>
-              
-          </td>
-        </ng-container>
-
         <ng-container matColumnDef="status">
-          <th class="title-column" mat-header-cell *matHeaderCellDef> Estatus </th>
+          <th class="title-column" mat-header-cell *matHeaderCellDef> Estado </th>
           <td mat-cell *matCellDef="let element">
-              <mat-icon class="active-check" *ngIf="element.rightAudit === true">done_all</mat-icon>
-              <mat-icon class="inactive-check" *ngIf="element.rightAudit === false">close</mat-icon>
-              <!-- <mat-checkbox [(ngModel)]="element.rightAudit"></mat-checkbox> -->
+            {{ getProductStatusText(element) }}
           </td>
         </ng-container>
 
@@ -53,9 +42,4 @@
       <mat-paginator [pageSizeOptions]="[30, 40, 50]" showFirstLastButtons></mat-paginator>
     </div>
   </mat-card-content>
-  <mat-card-actions>
-    <div class="clearfix">
-        <button (click)="close()" type="button" mat-stroked-button mat-button>Cerrar</button>
-    </div>
-  </mat-card-actions>
 </mat-card>

@@ -7,7 +7,7 @@
     </ion-item>
   </div>
   <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
-    [(ngModel)]="inputProduct">
+    [(ngModel)]="inputProduct" (focus)="onFocus($event)">
 </div>
 <div class="bottons-mas-menos">
   <ion-button color="secondary" (click)="menos()">

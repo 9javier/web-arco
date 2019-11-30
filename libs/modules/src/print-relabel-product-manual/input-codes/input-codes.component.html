@@ -1,5 +1,4 @@
 <div class="content-ta">
   <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
-    [(ngModel)]="inputProduct">
-
+    (focus)="onFocus($event)" [(ngModel)]="inputProduct">
 </div>

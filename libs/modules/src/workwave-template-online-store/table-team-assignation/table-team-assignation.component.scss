@@ -1,11 +1,64 @@
 div.main-element {
   height: 100%;
 
-  h2.title-table {
-    text-align: center;
-    font-size: 16px;
+  .buttons-news{
+    margin-left: 16%;
+    color: white;
+    background: #222428;
+  }
+
+  .buttons-news-disabled{
+    margin-left: 16%;
+    background:gray;
+    color:white;
+  }
+
+  div.table-header {
     line-height: 20px;
-    margin-bottom: 10px;
+    height: 20px;
+    margin: 18px 0 10px 0;
+    position: relative;
+
+    h2.title-table {
+      margin-top: 0;
+      width: 100%;
+      font-size: 16px;
+      line-height: 20px;
+      text-align: center;
+    }
+
+    div.buttons-action {
+      position: absolute;
+      top: 0;
+      height: 20px;
+      right: 0;
+      width: auto;
+      ion-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 16px;
+        color: var(--ion-color-primary);
+        cursor: pointer;
+      }
+      ion-icon.disabled {
+        color: var(--ion-color-secondary);
+        cursor: default;
+      }
+    }
+  }
+
+  ion-toggle{
+    vertical-align: top;
+    padding-top: 20px;
+    padding-bottom: 10px;
+  }
+
+  .toggle{
+    float: right;
+    span{
+      display: inline-block;
+      margin-top: 18px;
+    }
   }
 
   div.legend {
@@ -41,7 +94,7 @@ div.main-element {
   }
 
   .loader, .empty-list {
-    height: calc(30vh - 30px - 24px); // 30px from table title - 24px from legend
+    height: calc(100% - 30px - 24px); // 30px from table title - 24px from legend
     width: 100%;
     display: table;
     p {
@@ -60,7 +113,7 @@ div.main-element {
   }
 
   .scroll-list {
-    height: calc(30vh - 30px - 24px); // 30px from table title - 24px from legend
+    height: calc(100% - 30px - 24px); // 30px from table title - 24px from legend
     overflow: auto;
     overflow: -moz-scrollbars-none;
     -ms-overflow-style: none;

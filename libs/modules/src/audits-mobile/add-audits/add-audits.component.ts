@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-add-audits',
@@ -15,25 +18,49 @@ export class AddAuditsComponent implements OnInit {
   constructor(
     private audit : AuditsService,
     private toast : ToastController,
-    private router: Router
-  ) { }
+    private router: Router,
+    private activeRoute: ActivatedRoute,
+    private audioProvider: AudioProvider,
+    private scanditProvider: ScanditProvider,
+    private keyboardService: KeyboardService
+  ) {
+    this.focusToInput();
+  }
 
   ngOnInit() {
   }
 
-  userTyping(event: any){
-    console.log(event.target.value);
-    this.create();
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input').focus();
+    }, 800);
   }
 
+  userTyping(event: any) {
+    let codeScanned = this.inputValue;
+    this.inputValue = null;
+    if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
+      || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+      this.create(codeScanned);
+    } else {
+      this.focusToInput();
+      this.audioProvider.playDefaultError();
+      this.presentToast('Escanea un embalaje para comenzar la validación', 'danger');
+    }
+  }
 
-  create(){
-    this.audit.create({packingReference:this.inputValue,status:1}).subscribe(res =>{
-      console.log(res);
-      this.presentToast('Creada con exito!!','success');
-      this.router.navigateByUrl('/audits/scanner-product/'+res.data.id+'/'+this.inputValue);
+  create(codeScanned: string){
+    this.audit.create({packingReference:codeScanned,status:1}).subscribe(res =>{
+      this.audioProvider.playDefaultOk();
+      this.presentToast(`Iniciada validación de ${codeScanned}`,'success');
+      setTimeout(() => {
+        this.presentToast('Escanea los productos del embalaje','success');
+      }, 2 * 1000);
+      this.router.navigateByUrl('/audits/scanner-product/'+res.data.id+'/'+codeScanned+'/'+this.activeRoute.snapshot.routeConfig.path);
     },err=>{
-      this.presentToast(err.error.result.reason,'danger');
+      this.audioProvider.playDefaultError();
+      this.focusToInput();
+      this.presentToast(err.error.errors,'danger');
     })
   }
 
@@ -41,9 +68,15 @@ export class AddAuditsComponent implements OnInit {
     const toast = await this.toast.create({
       message: message,
       color: color,
-      duration: 4000
+      duration: 2000
     });
     toast.present();
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 
 }

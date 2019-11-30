@@ -11,8 +11,8 @@ export class TableTypesOSComponent implements OnInit {
 
   public listTypes: OrderType[] = [];
 
-  receptionSelected: boolean = false;
-  distributionSelected: boolean = false;
+  shopSelected: boolean = false;
+  onlineSelected: boolean = false;
 
   constructor() {}
 
@@ -24,8 +24,8 @@ export class TableTypesOSComponent implements OnInit {
   }*/
 
   ngOnInit() {
-    this.receptionSelected = true;
-    this.distributionSelected = true;
+    this.shopSelected = true;
+    this.onlineSelected = true;
     this.selectType();
   }
 
@@ -36,10 +36,10 @@ export class TableTypesOSComponent implements OnInit {
   }*/
   selectType() {
     let fields: number[] = [];
-    if (this.receptionSelected) {
+    if (this.shopSelected) {
       fields.push(20);
     }
-    if (this.distributionSelected) {
+    if (this.onlineSelected) {
       fields.push(30);
     }
     this.changeType.next(fields);

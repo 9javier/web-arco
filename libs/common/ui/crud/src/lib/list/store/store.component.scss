@@ -18,18 +18,18 @@ ion-grid {
 ion-footer:before {
   height: 0;
 }
-// ion-item {
-//   --border-style: none;
-//   --background: var(--ion-color-light);
-//   padding-bottom: 16px;
-//   ion-input, ion-select {
-//     --background: var(--ion-color-white);
-//     --color: var(--ion-color-dark);
-//     border: 2px solid var(--ion-color-tertiary);
-//     --padding-start: 8px;
+ion-item {
+  --border-style: none;
+  --background: var(--ion-color-light);
+  padding-bottom: 16px;
+  ion-input, ion-select {
+    --background: var(--ion-color-white);
+    --color: var(--ion-color-dark);
+    border: 2px solid var(--ion-color-tertiary);
+    --padding-start: 8px;
 
-//   }
-// }
+  }
+}
 ion-select {
   max-width: 100%;
   width: 100%;
