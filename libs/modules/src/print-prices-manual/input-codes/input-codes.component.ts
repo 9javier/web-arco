@@ -165,7 +165,7 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT:
           switch (this.typeTags) {
             case 1:
-              console.log("opcion 1 ", this.scanditProvider.codeValue.PRODUCT);
+
               this.audioProvider.playDefaultOk();
               this.printerService.printTagBarcode([dataWrote], this.stampe)
                 .subscribe((res) => {
@@ -174,7 +174,7 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             case 2:
-              console.log("opcion 2 ", this.scanditProvider.codeValue.PRODUCT);
+
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
                 .then((prices) => {
@@ -196,12 +196,10 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           switch (this.typeTags) {
             case 1:
-              console.log("opcion 1 ", this.scanditProvider.codeValue.PRODUCT_MODEL);
+
               this.showToastWrongReference(this.typeTags);
               break;
             case 2:
-              console.log("opcion 2 ", this.scanditProvider.codeValue.PRODUCT_MODEL);
-              // Query sizes_range for product model
               this.priceService
                 .postPricesByModel(dataWrote)
                 .then((response) => {

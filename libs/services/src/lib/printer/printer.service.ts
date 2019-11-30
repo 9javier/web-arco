@@ -491,8 +491,7 @@ export class PrinterService {
     let dataToPrint = this.processProductToPrintTagPrice(price);
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
-      console.log("para imprimir", dataToPrint);
-      //this.toPrintFromString(dataToPrint.valuePrint);
+      this.toPrintFromString(dataToPrint.valuePrint);
     }
   }
 
@@ -602,6 +601,7 @@ export class PrinterService {
    * @param failed - the solicitude comes from a failed request
    */
   private async toPrintFromString(textToPrint: string, macAddress?) {
+
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
     /**añadimos esto a la lógica del toPrint */
     if (macAddress) {
