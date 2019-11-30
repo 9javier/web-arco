@@ -221,6 +221,12 @@ export class MenuComponent implements OnInit {
           url: '/jails/menu',
           icon: 'grid'
         },
+        {
+          title: 'Estado de expedición',
+          id: 'state-expedition-avelon',
+          url: '/state-expedition-avelon/menu',
+          icon: 'apps'
+        }
       ]
     },
     {
