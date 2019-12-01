@@ -15,6 +15,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   isProviderAviable: boolean
   expedition: string;
   providerId:  number;
+  interval: any;
 
   result = {
     brandId: undefined,
@@ -61,7 +62,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptions.unsubscribe()
+    this.subscriptions.unsubscribe();
+    clearInterval(this.interval)
   }
 
 
@@ -76,7 +78,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       this.alertMessage('El numero de expedicion no puede estar vacio');
       return
     }
-    console.log(data);
+    // console.log(data);
     
     this.checkProvider(data)
   }
@@ -86,55 +88,58 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.reception.isProviderAviable(data).subscribe(
       (resp: boolean) => {
         this.isProviderAviable = !resp;
-        console.log(resp);
+        // console.log(resp);
         
         if (!this.isProviderAviable) {
           this.alertMessage('Este proveedor no esta habilitado para recepcionar');
         }else {
-          const receptions = this.reception.getReceptions().subscribe((info: ReceptionAvelonModel.Reception)  => {
-            this.response = info;
-            console.log(this.response);
-            let aux
-            this.response.brands.map(elem => {
-              if (elem.selected === true && aux === undefined) {
-                aux = elem.id
-                this.result.brandId = aux;
-              }
-              if (aux !== elem.id) {
-                elem.selected = false
-              }
+          this.interval = setInterval(() => {
+            this.reception.getReceptions().subscribe((info: ReceptionAvelonModel.Reception)  => {
+              this.response = info;
+              // console.log(this.response);
+              let aux
+              this.response.brands.map(elem => {
+                if (elem.selected === true && aux === undefined) {
+                  aux = elem.id
+                  this.result.brandId = aux;
+                }
+                if (aux !== elem.id) {
+                  elem.selected = false
+                }
+              })
+              aux = undefined;
+              this.response.models.map(elem => {
+                if (elem.selected === true && aux === undefined) {
+                  aux = elem.id;
+                  this.result.modelId = aux;
+                }
+                if (aux !== elem.id) {
+                  elem.selected = false
+                }
+              })
+              aux = undefined;
+              this.response.colors.map(elem => {
+                if (elem.selected === true && aux === undefined) {
+                  aux = elem.id;
+                  this.result.colorId = aux;
+                }
+                if (aux !== elem.id) {
+                  elem.selected = false
+                }
+              })
+              aux = undefined;
+              this.response.sizes.map(elem => {
+                if (elem.selected === true && aux === undefined) {
+                  aux = elem.id;
+                  this.result.sizeId = aux;
+                }
+                if (aux !== elem.id) {
+                  elem.selected = false
+                }
+              })
             })
-            aux = undefined;
-            this.response.models.map(elem => {
-              if (elem.selected === true && aux === undefined) {
-                aux = elem.id;
-                this.result.modelId = aux;
-              }
-              if (aux !== elem.id) {
-                elem.selected = false
-              }
-            })
-            aux = undefined;
-            this.response.colors.map(elem => {
-              if (elem.selected === true && aux === undefined) {
-                aux = elem.id;
-                this.result.colorId = aux;
-              }
-              if (aux !== elem.id) {
-                elem.selected = false
-              }
-            })
-            aux = undefined;
-            this.response.sizes.map(elem => {
-              if (elem.selected === true && aux === undefined) {
-                aux = elem.id;
-                this.result.sizeId = aux;
-              }
-              if (aux !== elem.id) {
-                elem.selected = false
-              }
-            })
-          })
+          },1000);
+         
         }
 
       },
@@ -160,7 +165,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   sizeSelected(e) {
-    console.log(e);
+    // console.log(e);
     if(e){
       this.result.sizeId = e.id
     } else {
@@ -170,7 +175,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   listSelected(e: any) {
-    console.log(e);
+    // console.log(e);
     switch (e.type) {
       case 'brands':
           if(e.dato){
@@ -195,7 +200,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         break;
     
     }
-    console.log(e);
+    // console.log(e);
     
   }
 
@@ -220,7 +225,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.result.ean = this.response.ean;
     this.result.expetition = this.expedition;
 
-    console.log(this.result);
+    // console.log(this.result);
     
 
     this.intermediaryService.presentLoading('Enviando');
