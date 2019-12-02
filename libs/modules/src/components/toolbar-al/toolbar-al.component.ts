@@ -45,7 +45,7 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Salida')) {
+      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías')) {
         if(this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')){
           this.showKeyboard = false;
         } else {

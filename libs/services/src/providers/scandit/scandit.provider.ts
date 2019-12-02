@@ -1,27 +1,27 @@
-import {Injectable} from "@angular/core";
+import { Injectable } from "@angular/core";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScanditProvider {
   private _colorsMessage: Colors.Message = {
-    error: {color: '#e8413e', name: 'danger'},
-    info: {color: '#15789e', name: 'info'},
-    success: {color: '#2F9E5A', name: 'success'}
+    error: { color: '#e8413e', name: 'danger' },
+    info: { color: '#15789e', name: 'info' },
+    success: { color: '#2F9E5A', name: 'success' }
   };
   get colorsMessage(): Colors.Message {
     return this._colorsMessage;
   }
 
   private _colorsHeader: Colors.Header = {
-    background: {color: '#222428'},
-    color: {color: '#FFFFFF'}
+    background: { color: '#222428' },
+    color: { color: '#FFFFFF' }
   };
   get colorsHeader(): Colors.Header {
     return this._colorsHeader;
   }
 
-  private _colorText: Colors.Color = {color: '#FFFFFF'};
+  private _colorText: Colors.Color = { color: '#FFFFFF' };
   get colorText(): Colors.Color {
     return this._colorText;
   }
@@ -32,7 +32,8 @@ export class ScanditProvider {
     JAIL: 'jail',
     PALLET: 'pallet',
     PRODUCT: 'product',
-    PRODUCT_MODEL: 'product_model'
+    PRODUCT_MODEL: 'product_model',
+    PRODUCT_UNDEFINED: 'product_undefined'
   };
   get codeValue(): CodeValue {
     return this._codeValue;
@@ -62,6 +63,14 @@ export class ScanditProvider {
     {
       value: this._codeValue.PRODUCT_MODEL,
       regex: /([0-9]){1,6}$/
+    },
+    {
+      value: this._codeValue.PRODUCT_MODEL,
+      regex: /([0-9]){1,6}$/
+    },
+    {
+      value: this._codeValue.PRODUCT_UNDEFINED,
+      regex: /(\w){1,18}$/
     }
   ];
 
@@ -96,7 +105,8 @@ export interface CodeValue {
   JAIL: string,
   PALLET: string,
   PRODUCT: string,
-  PRODUCT_MODEL: string
+  PRODUCT_MODEL: string,
+  PRODUCT_UNDEFINED: string
 }
 
 export interface Regex {

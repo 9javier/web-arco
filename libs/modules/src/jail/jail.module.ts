@@ -14,9 +14,11 @@ import { BreadcrumbModule } from '../../../modules/src/components/breadcrumb/bre
 import { SendComponent } from './send/send.component';
 import { MatFormFieldModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
+import { SendPackingComponent } from './send-packing/send-packing.component';
+import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 
 @NgModule({
-  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent],
+  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -35,7 +37,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule
   ], entryComponents: [
     StoreComponent,
-    SendComponent
+    SendComponent,
+    SendPackingComponent,
+    ShowDestinationsComponent
   ]
 })
 export class JailModule { }

@@ -5,7 +5,7 @@ import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import {Observable, from, of} from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { map, switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
@@ -318,7 +318,29 @@ export class PrinterService {
    * Obtain product by reference and then print each of these products
    * @param listReferences references to print
    */
-  printTagBarcode(listReferences: string[]): Observable<Boolean | Observable<any>> {
+
+  private convertArrayFromPrint(data: any, cntPrint: number = 1, outputArray?: Boolean): Array<any> {
+    let dataJoin = []
+    let out;
+    if (cntPrint == 1) {
+      if (outputArray) {
+        dataJoin.push(data);
+        out = dataJoin;
+      } else {
+        out = data;
+      }
+
+    } else
+      if (cntPrint > 1) {
+        for (let i = 0; i < cntPrint; i++) {
+          dataJoin.push(data);
+        }
+        out = dataJoin;
+      }
+    return out;
+  }
+
+  printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<Boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
     /** declare and obsevable to merge all print results */
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
@@ -331,10 +353,28 @@ export class PrinterService {
       }));
       /**obtain the products */
       console.debug("PRINT::printTagBarcode 2 [" + new Date().toJSON() + "]", listReferences);
+
       return this.getProductsByReference(listReferences).then((response: HttpRequestModel.Response) => {
         console.debug("PRINT::getProductsByReference 2 [" + new Date().toJSON() + "]", response);
         let products = response.data;
-        let dataToPrint = this.processProductToPrintTagBarcode(products);
+
+        let dataToPrint;
+        if (cntPrint == 1) {
+          dataToPrint = this.processProductToPrintTagBarcode(products);
+        } else
+          if (cntPrint > 1) {
+
+            let newData;
+            if (products.length > 1) {
+              //generar codigo cuando son varios
+            } else {
+              newData = products[0];
+            }
+            dataToPrint = this.processProductToPrintTagBarcode(this.convertArrayFromPrint(newData, cntPrint, true));
+          }
+
+
+        console.log("datato prinmt", dataToPrint, "\n");
 
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint));
@@ -361,6 +401,7 @@ export class PrinterService {
     let options: Array<PrintModel.Print> = [];
     let arrayProductsToProcess: Array<ProductModel.Product> = [];
 
+    console.log("cual es el problema", dataToProcess);
     if (!Array.isArray(dataToProcess)) {
       arrayProductsToProcess.push(dataToProcess);
     } else {
@@ -445,6 +486,7 @@ export class PrinterService {
   }
 
   public printTagPriceUsingPrice(price) {
+    console.log("LLgando a esta lugar", price);
     console.debug("PRINT::printTagPriceUsingPrice 1 [" + new Date().toJSON() + "]", price);
     let dataToPrint = this.processProductToPrintTagPrice(price);
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
@@ -473,15 +515,20 @@ export class PrinterService {
     } else {
       arrayPricesToProcess = dataToProcess;
     }
+    console.log("debugeando", arrayPricesToProcess);
     console.debug("PRINT::processProductToPrintTagPrice 2 [" + new Date().toJSON() + "]", arrayPricesToProcess);
     /** Iterate and build object to print */
     for (let iPrice in arrayPricesToProcess) {
       let price = arrayPricesToProcess[iPrice];
 
       if (price.typeLabel) {
-        if (price.typeLabel == 7 && price.priceDiscount <= price.priceDiscountOutlet) {
-          price.priceDiscount = price.priceDiscountOutlet;
-          price.typeLabel = 5;
+        if (price.typeLabel == 7) {
+          if (price.priceDiscount <= price.priceDiscountOutlet) {
+            price.typeLabel = 5;
+            price.priceDiscount = price.priceDiscountOutlet;
+          } else if (!price.priceDiscountOutlet || (typeof price.priceDiscountOutlet == 'string' && parseFloat(price.priceDiscountOutlet) == 0)) {
+            price.typeLabel = 5;
+          }
         }
 
         let printOptions: PrintModel.Print = {
@@ -516,7 +563,6 @@ export class PrinterService {
             valueRange: this.getCorrectValueRange(price)
           }
         };
-
         /** Build the array for obtain the string to send to printer */
         options.push(printOptions);
       }
@@ -559,6 +605,7 @@ export class PrinterService {
    * @param failed - the solicitude comes from a failed request
    */
   private async toPrintFromString(textToPrint: string, macAddress?) {
+
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
     /**añadimos esto a la lógica del toPrint */
     if (macAddress) {

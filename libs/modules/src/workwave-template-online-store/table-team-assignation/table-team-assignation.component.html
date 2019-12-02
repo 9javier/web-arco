@@ -41,7 +41,7 @@
       matTooltipPosition="above"
       [matTooltip]="tooltipValue"
       [matTooltipDisabled]="tooltipValue == null"
-      (mouseover)="showBreakdown()">
+      (mouseover)="showBreakdown(teamAssignation)">
       <mat-grid-tile class="employee" [colspan]="maxSizeForNameCol">
         <div class="tile-value">{{teamAssignation.user.name}}</div>
       </mat-grid-tile>
