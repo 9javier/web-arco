@@ -33,7 +33,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   isWaitingWayWillFree: boolean = false;
   productToSetInSorter: string = null;
   idLastWaySet: number = null;
-  modalScannRack = false;
+  modalScanRack = false;
+  lastProductIsToBusyWay: boolean = false;
 
   productScanned: ProductSorterModel.ProductSorter = null;
 
@@ -84,9 +85,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   }
 
   async presentScannerRackModal() {
-    console.log(this.productScanned);
     this.addScannerRackButton();
-    this.modalScannRack = true;
+    this.modalScanRack = true;
     const scannerModal = await this.modalCtrl.create({
       component: ScannerRackComponent,
       componentProps: {
@@ -97,10 +97,19 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     scannerModal.onDidDismiss().then(async (data) => {
       if (data.data.close) {
         this.isWaitingSorterFeedback = false;
-        this.modalScannRack = false;
+        this.isWaitingWayWillFree = false;
+        this.modalScanRack = false;
         this.addScannerRackButton();
-        this.checkProductInWay(this.productScanned.reference);
+
+        if (this.lastProductIsToBusyWay) {
+          this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
+        } else {
+          this.checkProductInWay(this.productScanned.reference);
+        }
       } else {
+        this.isWaitingSorterFeedback = false;
+        this.isWaitingWayWillFree = false;
+        this.modalScanRack = false;
         this.timeoutToQuickUser();
         if (this.timeoutStarted) {
           clearTimeout(this.timeoutStarted);
@@ -279,6 +288,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           };
           this.idLastWaySet = (<ExecutionSorterModel.ExecutionWay>resData.way).zoneWay.ways.id;
 
+          this.lastProductIsToBusyWay = resData.wayBusyByAnotherUser;
           if (resData.wayBusyByAnotherUser) {
             this.checkWayWillFree(this.idLastWaySet, this.productToSetInSorter);
           } else {
@@ -321,7 +331,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           .subscribe((res: InputSorterModel.CheckProductInWay) => {
             if (!res.is_in_way && this.isWaitingSorterFeedback) {
               setTimeout(() => {
-                if (!this.modalScannRack) {
+                if (!this.modalScanRack) {
                   checkProductInWayLocal(productReference)
                 }
               }, 0.5 * 1000);
@@ -389,18 +399,18 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
                     await this.intermediaryService.presentToastError('La calle que se le asignó está ocupada por otro usuario. Espere a que acabe o se le asigne una nueva para continuar', 2000);
                     firstCheckOfWayFree = false;
                   }
-                  if (this.isWaitingWayWillFree) {
+                  if (this.isWaitingWayWillFree && !this.modalScanRack) {
                     setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
                   }
                 }
               }
             } else {
-              if (this.isWaitingWayWillFree) {
+              if (this.isWaitingWayWillFree && !this.modalScanRack) {
                 setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
               }
             }
           }, () => {
-            if (this.isWaitingWayWillFree) {
+            if (this.isWaitingWayWillFree && !this.modalScanRack) {
               setTimeout(() => checkWayWillFreeLocal(wayIdToCheck), 0.5 * 1000);
             }
           });
@@ -418,6 +428,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
   private resetLastScanProcess() {
     this.isWaitingSorterFeedback = false;
     this.isWaitingWayWillFree = false;
+    this.lastProductIsToBusyWay = false;
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
