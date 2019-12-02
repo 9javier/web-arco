@@ -20,6 +20,7 @@ import { AppVersionService } from '../../../services/src/lib/endpoint/app-versio
 import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
 import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
 import { stringify } from '@angular/core/src/render3/util';
+import {config} from "../../../services/src/config/config";
 
 const interUpdateVersion = interval(300000);
 
@@ -38,7 +39,7 @@ export class LoginComponent implements OnInit {
   };
 
   private loading = null;
-  public versionNumber: string = null;
+  public versionNumber: string = config.version;
   public isMobileApp = false;
   public isNewVersion = false;
 
@@ -69,9 +70,7 @@ export class LoginComponent implements OnInit {
   verifyNewVersion() {
     if (window.cordova) {
       this.isMobileApp = true;
-      (<any>window.cordova).getAppVersion.getVersionNumber((versionNumber) => {
 
-        this.versionNumber = versionNumber;
         this.appVersionService.getVersion().then((response: AppVersionModel.ResponseIndex) => {
           if (response && response.code === 200) {
             if (response.data) {
@@ -92,7 +91,6 @@ export class LoginComponent implements OnInit {
           console.log("Error::getVersion", error)
         });
 
-      });
     } else {
       this.isMobileApp = false;
     }
