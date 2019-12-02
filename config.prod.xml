@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.galvintec.prestaappkrack.tiendas" version="1.7.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.galvintec.prestaappkrack.tiendas" version="1.7.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Krack Logística</name>
     <description>An awesome Ionic/Cordova app.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Ionic Framework Team</author>
@@ -53,5 +53,4 @@
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.1.3" />
     <plugin name="cordova-plugin-zebra-printer" spec="file:plugin-zebra" />
     <plugin name="com.mirasense.scanditsdk.plugin" spec="file:scandit" />
-    <plugin name="cordova-plugin-app-version" spec="^0.1.9" />
 </widget>

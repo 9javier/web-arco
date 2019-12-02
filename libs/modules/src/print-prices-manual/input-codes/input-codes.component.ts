@@ -37,14 +37,18 @@ export class InputCodesComponent implements OnInit {
     private keyboardService: KeyboardService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
-    setTimeout(() => {
-      document.getElementById('input-ta').focus();
-    }, 500);
+    this.focusToInput();
   }
 
   async ngOnInit() {
     this.stampe = 1;
     this.typeTagsBoolean = this.typeTags != 1;
+  }
+
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    }, 500);
   }
 
   async ngOnDestroy() {
@@ -63,9 +67,7 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-
   async presentModal(codice) {
-
     let Veces: string = `${this.stampe} etiqueta`;
     if (this.stampe > 1) {
       Veces = `${this.stampe} etiquetas`;
@@ -144,6 +146,7 @@ export class InputCodesComponent implements OnInit {
     if (event.keyCode == 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrote;
@@ -164,89 +167,120 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT:
           switch (this.typeTags) {
             case 1:
-
               this.audioProvider.playDefaultOk();
               this.printerService.printTagBarcode([dataWrote], this.stampe)
                 .subscribe((res) => {
+                  console.log('Printed product tag ... ', res);
                 }, (error) => {
                   console.warn('Error to print tag ... ', error);
                 });
+              this.focusToInput();
               break;
             case 2:
-
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
                 .then((prices) => {
-                  let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
-                  let price = pricesData[0];
-                  if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
-                    this.presentAlertWarningPriceWithoutTariff(price);
+                  if (prices.code == 200 || prices.code == 201) {
+                    let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
+                    let price = pricesData[0];
+                    if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                      this.presentAlertWarningPriceWithoutTariff(price);
+                    } else {
+                      this.audioProvider.playDefaultOk();
+                      this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+                      this.focusToInput();
+                    }
+                  } else if (prices.code == 0) {
+                    this.audioProvider.playDefaultError();
+                    this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+                    this.focusToInput();
                   } else {
-                    this.audioProvider.playDefaultOk();
-                    this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+                    this.lastCodeScanned = 'start';
+                    this.audioProvider.playDefaultError();
+                    this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                    this.focusToInput();
                   }
                 });
               break;
             default:
               this.showToastWrongReference(this.typeTags);
+              this.focusToInput();
               break;
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           switch (this.typeTags) {
             case 1:
-
               this.showToastWrongReference(this.typeTags);
+              this.focusToInput();
               break;
             case 2:
+              // Query sizes_range for product model
               this.priceService
                 .postPricesByModel(dataWrote)
                 .then((response) => {
-                  let responseData = response.data;
-                  if (responseData && responseData.length == 1) {
-                    this.audioProvider.playDefaultOk();
-                    let price = responseData[0];
-                    if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
-                      this.presentAlertWarningPriceWithoutTariff(price);
-                    } else {
-                      this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
-                    }
-                  } else if (responseData && responseData.length > 1) {
-                    this.audioProvider.playDefaultOk();
-                    // Request user select size to print
-                    let listItems = responseData.map((productPrice, iProductPrice) => {
-                      let label = productPrice.rangesNumbers.sizeRangeNumberMin;
-                      if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
-                        label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
+                  if (response.code == 200 || response.code == 201) {
+                    let responseData = response.data;
+                    if (responseData && responseData.length == 1) {
+                      this.audioProvider.playDefaultOk();
+                      let price = responseData[0];
+                      if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                        this.presentAlertWarningPriceWithoutTariff(price);
+                      } else {
+                        this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+                        this.focusToInput();
                       }
+                    } else if (responseData && responseData.length > 1) {
+                      this.audioProvider.playDefaultOk();
+                      // Request user select size to print
+                      let listItems = responseData.map((productPrice, iProductPrice) => {
+                        let label = productPrice.rangesNumbers.sizeRangeNumberMin;
+                        if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
+                          label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
+                        }
 
-                      return {
-                        name: 'radio' + iProductPrice,
-                        type: 'radio',
-                        label: label,
-                        value: iProductPrice
-                      }
-                    });
-                    this.presentAlertSelect(listItems, responseData);
+                        return {
+                          name: 'radio' + iProductPrice,
+                          type: 'radio',
+                          label: label,
+                          value: iProductPrice
+                        }
+                      });
+                      this.presentAlertSelect(listItems, responseData);
+                    } else {
+                      this.lastCodeScanned = 'start';
+                      this.audioProvider.playDefaultError();
+                      this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                      this.focusToInput();
+                    }
+                  } else if (response.code == 0) {
+                    this.lastCodeScanned = 'start';
+                    this.audioProvider.playDefaultError();
+                    this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+                    this.focusToInput();
                   } else {
                     this.lastCodeScanned = 'start';
                     this.audioProvider.playDefaultError();
                     this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                    this.focusToInput();
                   }
                 }, (error) => {
                   this.lastCodeScanned = 'start';
                   this.audioProvider.playDefaultError();
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                  this.focusToInput();
                 })
                 .catch((error) => {
                   this.lastCodeScanned = 'start';
                   this.audioProvider.playDefaultError();
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                  this.focusToInput();
                 });
               break;
             default:
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+              this.focusToInput();
               break;
           }
           break;
@@ -266,6 +300,7 @@ export class InputCodesComponent implements OnInit {
           break;
         default:
           this.showToastWrongReference(this.typeTags);
+          this.focusToInput();
           break;
       }
     }
@@ -340,7 +375,7 @@ export class InputCodesComponent implements OnInit {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => { }
+          handler: () => this.focusToInput()
         }, {
           text: 'Seleccionar',
           handler: (data) => {
@@ -355,6 +390,7 @@ export class InputCodesComponent implements OnInit {
             } else {
               this.audioProvider.playDefaultOk();
               this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+              this.focusToInput();
             }
           }
         }
@@ -373,9 +409,7 @@ export class InputCodesComponent implements OnInit {
           text: 'No',
           handler: () => {
             this.lastCodeScanned = 'start';
-            setTimeout(() => {
-              document.getElementById('input-ta').focus();
-            }, 500);
+            this.focusToInput();
           }
         },
         {
@@ -384,6 +418,7 @@ export class InputCodesComponent implements OnInit {
             price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
             this.audioProvider.playDefaultOk();
             this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+            this.focusToInput();
           }
         }
       ]
