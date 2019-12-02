@@ -22,7 +22,7 @@ export class InputCodesComponent implements OnInit {
   stampe: number = 1;
 
   @Input() typeTags: number = 1;
-  public typeTagsBoolean: boolean = false;
+  public typeTagsBoolean: boolean = true;
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
@@ -271,7 +271,15 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-
+  toggleChange(){
+    this.typeTagsBoolean = !this.typeTagsBoolean;
+    let buttons = document.getElementsByClassName('bottons-mas-menos')[0] as HTMLElement;
+    if(this.typeTagsBoolean){
+      buttons.style.display = 'block';
+    }else{
+      buttons.style.display = 'none';
+    }
+  }
 
   private convertArrayFromPrint(data: any, outputArray?: Boolean): Array<any> {
     let dataJoin = []
