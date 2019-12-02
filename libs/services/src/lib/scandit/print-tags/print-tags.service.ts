@@ -107,15 +107,35 @@ export class PrintTagsScanditService {
                   this.priceService
                     .postPricesByProductsReferences({ references: [codeScanned] })
                     .then((prices: PriceModel.ResponsePricesByProductsReferences) => {
-                      let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      let price = pricesData[0];
-                      if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
-                        this.scannedPaused = true;
-                        this.productToPrintPvpLabel = price;
-                        ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                      if (prices.code == 200 || prices.code == 201) {
+                        let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
+                        ScanditMatrixSimple.hideLoadingDialog();
+                        let price = pricesData[0];
+                        if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                          this.scannedPaused = true;
+                          this.productToPrintPvpLabel = price;
+                          ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                        } else {
+                          this.printerService.printTagPriceUsingPrice(price);
+                        }
+                      } else if (prices.code == 0) {
+                        ScanditMatrixSimple.hideLoadingDialog();
+                        this.lastCodeScanned = 'start';
+                        ScanditMatrixSimple.setText(
+                          'Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.',
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
                       } else {
-                        this.printerService.printTagPriceUsingPrice(price);
+                        ScanditMatrixSimple.hideLoadingDialog();
+                        this.lastCodeScanned = 'start';
+                        ScanditMatrixSimple.setText(
+                          'Ha ocurrido un error al consultar los precios del artículo escaneado.',
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
                       }
                     }, () => ScanditMatrixSimple.hideLoadingDialog()).catch(() => ScanditMatrixSimple.hideLoadingDialog());
                   break;
@@ -161,21 +181,41 @@ export class PrintTagsScanditService {
                   this.priceService
                     .postPricesByModel(codeScanned)
                     .then((response) => {
-                      let responseData = response.data;
-                      ScanditMatrixSimple.hideLoadingDialog();
-                      if (responseData && responseData.length == 1) {
-                        let price = responseData[0];
-                        if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
-                          this.scannedPaused = true;
-                          this.productToPrintPvpLabel = price;
-                          ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
-                        } else {
-                          this.printerService.printTagPriceUsingPrice(price);
+                      if (response.code == 200 || response.code == 201) {
+                        let responseData = response.data;
+                        ScanditMatrixSimple.hideLoadingDialog();
+                        if (responseData && responseData.length == 1) {
+                          let price = responseData[0];
+                          if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                            this.scannedPaused = true;
+                            this.productToPrintPvpLabel = price;
+                            ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+                          } else {
+                            this.printerService.printTagPriceUsingPrice(price);
+                          }
+                        } else if (responseData && responseData.length > 1) {
+                          this.listProductsPrices = responseData;
+                          // Request user select size to print
+                          ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', responseData);
                         }
-                      } else if (responseData && responseData.length > 1) {
-                        this.listProductsPrices = responseData;
-                        // Request user select size to print
-                        ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', responseData);
+                      } else if (response.code == 0) {
+                        ScanditMatrixSimple.hideLoadingDialog();
+                        this.lastCodeScanned = 'start';
+                        ScanditMatrixSimple.setText(
+                          'Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.',
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
+                      } else {
+                        ScanditMatrixSimple.hideLoadingDialog();
+                        this.lastCodeScanned = 'start';
+                        ScanditMatrixSimple.setText(
+                          'Ha ocurrido un error al consultar los precios del artículo escaneado.',
+                          this.scanditProvider.colorsMessage.error.color,
+                          this.scanditProvider.colorText.color,
+                          16);
+                        this.hideTextMessage(1500);
                       }
                     }, (error) => {
                       ScanditMatrixSimple.hideLoadingDialog();
@@ -289,6 +329,13 @@ export class PrintTagsScanditService {
               ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona talla a usar', listItems);
             }
           }
+        } else if (res.code == 0) {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
         } else {
           ScanditMatrixSimple.setText(
             'No se ha podido consultar la información del producto escaneado.',
@@ -344,6 +391,13 @@ export class PrintTagsScanditService {
         if (res.code == 200) {
           // Do product print
           this.printerService.printTagBarcodeUsingProduct(res.data);
+        } else if (res.code == 0) {
+          ScanditMatrixSimple.setText(
+            'Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.',
+            this.scanditProvider.colorsMessage.error.color,
+            this.scanditProvider.colorText.color,
+            16);
+          this.hideTextMessage(1500);
         } else {
           ScanditMatrixSimple.setText(
             'Ha ocurrido un error al intentar consultar la información de la talla.',

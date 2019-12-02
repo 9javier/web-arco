@@ -4,23 +4,27 @@
       <ion-col size="4">
         <ion-item lines="none">
           <ion-label>Nro Expedicion</ion-label>
-          <ion-input type="text"></ion-input>
+          <ion-input [(ngModel)]="expedition" type="text"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col size="4">
         <ion-item lines="none">
           <ion-label>Proveedor</ion-label>
-          <ion-input type="text"></ion-input>
+          <ion-select (ionChange)="proveedorSelected($event)">
+            <ion-select-option  *ngFor="let item of providers" [value]="item.id">
+               {{item.name}}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-margin-top">
+    <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
       <ion-col size="4">
         <ion-item>
           <ion-title> Marcas </ion-title>
           <i slot="end" class="material-icons">keyboard</i>
         </ion-item>
-        <suite-lists [data]="response.brands"></suite-lists>
+        <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
       </ion-col>
       <ion-col size="4">
         <ion-item>
@@ -28,7 +32,7 @@
           <i slot="end" class="material-icons">keyboard</i>
         </ion-item>
 
-        <suite-lists [data]="response.models"></suite-lists>
+        <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
       </ion-col>
       <ion-col size="4">
         <ion-item>
@@ -36,22 +40,22 @@
           <i slot="end" class="material-icons">keyboard</i>
         </ion-item>
 
-        <suite-lists [data]="response.colors"></suite-lists>
+        <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
       </ion-col>
       <ion-col class="ion-margin-top" size="4">
         <ion-button> buscar </ion-button>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row *ngIf="isProviderAviable">
       <ion-col size="12">
         <ion-title>Talla</ion-title>
-        <suite-sizes [data]="response.sizes"></suite-sizes>
+        <suite-sizes (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
       </ion-col>
       <ion-col size="12">
         <ion-item lines="none">
           <ion-label>EAN:</ion-label>
           <ion-input type="text" [value]="response.ean"></ion-input>
-          <ion-button slot="end"> imprimir </ion-button>
+          <ion-button slot="end" (click)="enviar()" > imprimir </ion-button>
         </ion-item>
       </ion-col>
     </ion-row>
