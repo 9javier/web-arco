@@ -66,19 +66,18 @@ export class InputCodesComponent implements OnInit {
 
   async presentModal(codice) {
 
-    let Veces: string = `<b>${this.stampe}</b> ves`;
+    let Veces: string = `${this.stampe} etiqueta`;
     if (this.stampe > 1) {
-      Veces = `<b>${this.stampe}</b> veces`;
+      Veces = `${this.stampe} etiquetas`;
     }
     const alert = await this.alertController.create({
-      header: 'Codigo Desconocido',
-      subHeader: 'Nueva Impresion',
-      message: `¿Deseas imprimir la referencia <b>${codice}</b>  ${Veces}`,
+      header: 'Etiqueta personalizada',
+      message: `¿Desea imprimir ${Veces} <b>${codice}</b>? Indique el precio y pulse imprimir.`,
       inputs: [
         {
           name: 'precio',
           type: 'number',
-          value: 0,
+          value: '',
           placeholder: 'Precio'
         }
       ],
