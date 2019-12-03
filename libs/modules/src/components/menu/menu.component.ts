@@ -460,12 +460,6 @@ export class MenuComponent implements OnInit {
           icon: 'redo'
         },
         {
-          title: 'Traspaso embalaje',
-          id: 'packing-transfer',
-          url: '/packing/transfer',
-          icon: 'barcode'
-        },
-        {
           title: 'Recepcion de paquete vacio',
           id: 'reception-empty-packing',
           url: '/packing/carrierEmptyPacking',
