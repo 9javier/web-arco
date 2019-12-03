@@ -28,7 +28,6 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
   @ViewChild('input') inputElement: IonInput;
 
   ngOnInit() {
-    console.log(this.navParams.data);
     this.productReference = this.navParams.data.productScanned.reference;
     this.referenceModel = this.navParams.data.productScanned.model.reference;
     this.sizeName = this.navParams.data.productScanned.size.name;
@@ -39,7 +38,7 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     setTimeout(() => {
       this.inputElement.setFocus();
-    }, 2000);
+    }, 800);
   }
 
   async close(isClose = false) {
@@ -59,12 +58,15 @@ export class ScannerRackComponent implements OnInit, AfterViewInit {
       .subscribe(async (res: InputSorterModel.RackScan) => {
         await this.close()
       }, async (error: HttpRequestModel.Error) => {
-        console.log(error);
-        let errorMessage = 'Error desconocido, intente nuevamente';
-        if (error.error.statusCode === 404) {
-          errorMessage = 'Estante Anexo incorrecto';
-        } else if (error.error.statusCode === 405) {
-          errorMessage = 'El Almacen del producto no coincide con la estanteria Anexa';
+        let errorMessage = 'Ha ocurrido un error al procesar la estantería escaneda.';
+        if (error.error) {
+          if (error.error.errors) {
+            errorMessage = error.error.errors;
+          } else if (error.error.statusCode === 404) {
+            errorMessage = 'Estante Anexo incorrecto';
+          } else if (error.error.statusCode === 405) {
+            errorMessage = 'El Almacen del producto no coincide con la estanteria Anexa';
+          }
         }
         await this.intermediaryService.presentToastError(errorMessage, 1500);
       });

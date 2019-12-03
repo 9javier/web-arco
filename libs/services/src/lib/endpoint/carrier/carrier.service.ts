@@ -19,8 +19,7 @@ export class CarrierService {
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
   private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carriesEmptyPacking`
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
-
-
+  private sendPackingUrl = environment.apiBase + "/packing/send"
   constructor(private http:HttpClient) { }
 
   /**
@@ -101,5 +100,11 @@ export class CarrierService {
 
   getReceptions(body) {
     return this.http.post(this.getReceptionsUrl, body).pipe(map((resp:any)=>resp.data));
+  }
+  sendPacking(packingReference:string, warehouseId: number) {
+    let request = {packingReference: packingReference, warehouseId: warehouseId}
+    return this.http.post<CarrierModel.SingleCarrierResponse>(this.sendPackingUrl,request).pipe(map(response=>{
+      return response.data;
+    }));
   }
 }

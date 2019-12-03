@@ -53,6 +53,7 @@ export class TableRequestsOrdersOSComponent implements OnInit {
   private listRequestIdWarehouseId: any = {};
   public buttonAvailability: boolean = true;
   public loadingListRequestOrdersOnlineStore: number = 0;
+  private updating: boolean = false;
 
   constructor(
     public events: Events,
@@ -201,18 +202,22 @@ export class TableRequestsOrdersOSComponent implements OnInit {
       this.listRequestOrders = this.pickingParametrizationProvider.listRequestOrdersOnlineStore;
       this.listRequestOrdersFinal = this.pickingParametrizationProvider.listRequestOrdersOnlineStore;
 
-      if (this.listRequestOrders.length > 0) {
-
-        for (let request of this.listRequestOrders) {
-          this.requestOrdersSelection[request.request.id] = true;
-          if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
-            this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = { max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name };
-          }
-          this.listRequestIdWarehouseId[request.request.id] = { warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse };
-        }
-        this.allRequestOrdersSelected = true;
+      if(this.updating) {
+        this.updating = false;
       } else {
-        this.requestOrdersSelection = {};
+        if (this.listRequestOrders.length > 0) {
+
+          for (let request of this.listRequestOrders) {
+            this.requestOrdersSelection[request.request.id] = true;
+            if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
+              this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = { max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name };
+            }
+            this.listRequestIdWarehouseId[request.request.id] = { warehouse: request.destinyWarehouse.id, qty: request.quantityMatchWarehouse };
+          }
+          this.allRequestOrdersSelected = true;
+        } else {
+          this.requestOrdersSelection = {};
+        }
       }
       this.selectRequestOrder(false);
 
@@ -356,6 +361,7 @@ export class TableRequestsOrdersOSComponent implements OnInit {
   }
 
   orderAssignment() {
+    this.updating = true;
     let aux = this.serviceG.orderAssignment.value;
     aux.store = true;
     aux.type = true;

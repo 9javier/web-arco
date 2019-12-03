@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-add-audits',
@@ -20,7 +21,8 @@ export class AddAuditsComponent implements OnInit {
     private router: Router,
     private activeRoute: ActivatedRoute,
     private audioProvider: AudioProvider,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private keyboardService: KeyboardService
   ) {
     this.focusToInput();
   }
@@ -69,6 +71,12 @@ export class AddAuditsComponent implements OnInit {
       duration: 2000
     });
     toast.present();
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 
 }
