@@ -2,7 +2,8 @@ import { IntermediaryService } from './../../../services/src/lib/endpoint/interm
 import { CarrierService } from '@suite/services';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
+import { ModalComponent } from './modal/modal.component';
 
 @Component({
   selector: 'suite-reception-empty-packing',
@@ -17,7 +18,8 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   constructor(
     private carrierService:CarrierService,
     private intermediaryService: IntermediaryService,
-    public alertController: AlertController
+    public alertController: AlertController,
+    public modalController: ModalController
   ) { }
 
   ngOnInit() {
@@ -67,4 +69,12 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
     )
   }
 
+  async onModal() {
+    const modal = await this.modalController.create({
+    component: ModalComponent,
+    });
+  
+    await modal.present();
+  
+  }
 }

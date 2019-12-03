@@ -1,0 +1,19 @@
+div.content-ta {
+    height: 100%;
+    p.error-positioning {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 15%;
+      color: var(--ion-color-danger);
+      font-size: 22px;
+      padding: 0 24px;
+    }
+    input.ta-positioning {
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      font-size: 23px;
+      font-weight: bold;
+    }
+  }

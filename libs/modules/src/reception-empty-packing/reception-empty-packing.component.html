@@ -6,3 +6,8 @@
     <ion-label slot="start">{{item.reference}}</ion-label>
   </ion-item>
 </ion-list>
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onModal()">
+      <ion-icon name="barcode"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
