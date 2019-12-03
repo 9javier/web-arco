@@ -2,7 +2,7 @@
   <ion-list-header>
     <ion-label>Referencia</ion-label>
   </ion-list-header>
-  <ion-item detail lines="none" *ngFor="let item of items" (click)="onClick(item)">
+  <ion-item detail *ngFor="let item of items" (click)="onClick(item)">
     <ion-label slot="start">{{item.reference}}</ion-label>
   </ion-item>
 </ion-list>

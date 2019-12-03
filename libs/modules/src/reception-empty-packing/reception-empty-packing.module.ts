@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: '',
     component: ReceptionEmptyPackingComponent,
+  },
+  {
+    path: 'manual',
+    component: ModalComponent,
   }
 ];
 

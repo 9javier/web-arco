@@ -1,7 +1,8 @@
+import { Router } from '@angular/router';
 import { IntermediaryService } from './../../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { CarrierService } from '@suite/services';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { KeyboardService } from 'libs/services/src/lib/keyboard/keyboard.service';
 import { Subscription } from 'rxjs';
 
@@ -15,10 +16,11 @@ export class ModalComponent implements OnInit, OnDestroy {
   empty$: Subscription;
   reception$: Subscription;
   constructor(
-    private modal: ModalController,
     private keyboardService: KeyboardService,
     private carrierService: CarrierService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private router: Router,
+    public alertController: AlertController
   ) { 
     
    }
@@ -39,7 +41,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     }, 500);
   }
   close() {
-    this.modal.dismiss()
+    this.router.navigate(['/packing/carrierEmptyPacking']);
   }
 
   keyUpInput(e) {
@@ -59,10 +61,33 @@ export class ModalComponent implements OnInit, OnDestroy {
    this.reception$ = this.carrierService.getReceptions(body).subscribe(
      receptions => {
        this.intermediaryService.presentToastSuccess('Paquqete recepcionado exitosmente')
-       this.modal.dismiss()
+       this.close()
       },
-     e => this.intermediaryService.presentToastError('Paquete enviado no encontrado')
+     e => this.presentAlertConfirm(reference)
    )
+ }
+
+ async presentAlertConfirm(reference) {
+   const alert = await this.alertController.create({
+     header: 'Confirma!',
+     message: `La jaula ${reference} no tiene asignado este destino para ser recibida. Desea continuar escaneado otra jaula o salir     `,
+     buttons: [
+       {
+         text: 'No',
+         role: 'cancel',
+         cssClass: 'secondary',
+         handler: () => {
+           this.close()
+         }
+       }, {
+         text: 'Si',
+         handler: () => {
+         }
+       }
+     ]
+   });
+ 
+   await alert.present();
  }
 
 }

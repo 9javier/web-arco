@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { CarrierService } from '@suite/services';
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -19,7 +20,7 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
     private carrierService:CarrierService,
     private intermediaryService: IntermediaryService,
     public alertController: AlertController,
-    public modalController: ModalController
+    public router: Router
   ) { }
 
   ngOnInit() {
@@ -41,14 +42,14 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   async presentAlertConfirm(item) {
     const alert = await this.alertController.create({
       header: 'Confirm!',
-      message: `Se recibio una jaula vacia con referencia ${item.reference}`,
+      message: `La jaula vacia ${item.reference} sera recibida?`,
       buttons: [
         {
-          text: 'Cancel',
+          text: 'No',
           role: 'cancel',
           cssClass: 'secondary',
         }, {
-          text: 'Okay',
+          text: 'Si',
           handler: () => {
             this.sendReference(item.reference)
           }
@@ -70,11 +71,6 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   }
 
   async onModal() {
-    const modal = await this.modalController.create({
-    component: ModalComponent,
-    });
-  
-    await modal.present();
-  
+    this.router.navigate(['/packing/carrierEmptyPacking/manual'])
   }
 }
