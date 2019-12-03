@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import { Events } from "@ionic/angular";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
@@ -10,6 +10,8 @@ import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workw
   styleUrls: ['./table-team-assignation.component.scss']
 })
 export class TableTeamAssignationOSComponent implements OnInit {
+
+  @Input() responseQuantities: WorkwaveModel.AssignationsByRequests[];
 
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded-os";
 
@@ -95,17 +97,31 @@ export class TableTeamAssignationOSComponent implements OnInit {
     this.serviceG.requestUser.next(aux);
   }
 
-  showBreakdown() {
+  showBreakdown(teamAssignation: WorkwaveModel.TeamAssignations) {
     this.tooltipValue = '';
+
+    let requestReferences = [];
+    let pickingShoes = teamAssignation.pickingShoes;
+    for(let shoesAssignation of pickingShoes){
+      let pickingId = shoesAssignation.pickingId;
+      for(let assignationsByRequests of this.responseQuantities){
+        if(assignationsByRequests.pickingId == pickingId){
+          requestReferences.push(assignationsByRequests.requestReference);
+        }
+      }
+    }
 
     let selectedOperations = document.getElementsByClassName('requests-orders-line');
     let operationsBreakdown = [];
 
     for (let i = 0; i < selectedOperations.length; i++) {
       let iOperation = selectedOperations[i] as HTMLElement;
-      if (this.isChecked(iOperation) && this.getLaunchPairs(iOperation) > 0) {
-        if (typeof operationsBreakdown[this.getDestiny(iOperation)] != "number") operationsBreakdown[this.getDestiny(iOperation)] = this.getLaunchPairs(iOperation);
-        else operationsBreakdown[this.getDestiny(iOperation)] += this.getLaunchPairs(iOperation);
+      if (this.isChecked(iOperation) && this.getLaunchPairs(iOperation) > 0 && this.isAssigned(iOperation, requestReferences)) {
+        if (typeof operationsBreakdown[this.getDestiny(iOperation)] != "number"){
+          operationsBreakdown[this.getDestiny(iOperation)] = this.getLaunchPairs(iOperation);
+        } else {
+          operationsBreakdown[this.getDestiny(iOperation)] += this.getLaunchPairs(iOperation);
+        }
       }
     }
 
@@ -124,6 +140,10 @@ export class TableTeamAssignationOSComponent implements OnInit {
 
   getDestiny(operation: HTMLElement) {
     return operation.children[0].children[4].children[0].children[0].innerHTML;
+  }
+
+  isAssigned(operation: HTMLElement, requestReferences){
+    return requestReferences.includes(parseInt(operation.children[0].children[1].children[0].children[0].innerHTML));
   }
 
   enlarge() {

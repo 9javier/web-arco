@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 
-import com.galvintec.krack.logistica.dev.R;
 import com.mirasense.scanditsdk.plugin.models.FiltersPickingStores;
 import com.mirasense.scanditsdk.plugin.models.PickingStoreRejectionReason;
 import com.mirasense.scanditsdk.plugin.models.ProductModel;
@@ -1688,7 +1687,6 @@ public class ScanditSDK extends CordovaPlugin {
           message = "Ha escaneado un producto que no debería de estar en el embalaje procesado. Revise uno a uno los productos para localizarlo.";
         }
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activityStarted);
-        alertDialogBuilder.setIcon(android.R.drawable.ic_dialog_alert);
         alertDialogBuilder.setMessage(message);
         alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setPositiveButton("Revisar", (dialogInterface, i) -> {
