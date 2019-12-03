@@ -60,7 +60,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     }
    this.reception$ = this.carrierService.getReceptions(body).subscribe(
      receptions => {
-       this.intermediaryService.presentToastSuccess('Paquqete recepcionado exitosmente')
+       this.intermediaryService.presentToastSuccess('Paquete recepcionado exitosmente')
        this.close()
       },
      e => this.presentAlertConfirm(reference)

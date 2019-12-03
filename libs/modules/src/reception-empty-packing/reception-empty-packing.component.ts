@@ -24,7 +24,21 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => this.items = list )
+    // this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => this.items = list )
+  }
+  async ionViewWillEnter(){
+    await this.intermediaryService.presentLoading('Cargando')
+    this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => {
+      this.items = list 
+    },
+    async e => {
+      await this.intermediaryService.dismissLoading()
+      this.intermediaryService.presentToastError('Ocurrio un error al cargar listado')
+    },
+    async () => {
+      await this.intermediaryService.dismissLoading()
+    }
+  )
   }
   ngOnDestroy() {
     if (this.empty$) {
@@ -41,8 +55,8 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
 
   async presentAlertConfirm(item) {
     const alert = await this.alertController.create({
-      header: 'Confirm!',
-      message: `La jaula vacia ${item.reference} sera recibida?`,
+      header: 'Confirmar',
+      message: `Desea recibir la jaula  vacia con la referencia ${item.reference}?`,
       buttons: [
         {
           text: 'No',
