@@ -91,6 +91,8 @@ export class ProductsAlComponent implements OnInit {
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   //@ViewChild(MatSort) sort: MatSort;
 
+  public showFiltersMobileVersion: boolean = false;
+
   constructor(
     private intermediaryService:IntermediaryService,
     private warehouseService:WarehouseService,
@@ -103,6 +105,10 @@ export class ProductsAlComponent implements OnInit {
     private modalController:ModalController,
     private printerService:PrinterService
   ) {}
+
+  openFiltersMobile() {
+    this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
+  }
 
   /**
    * clear empty values of objecto to sanitize it
@@ -249,6 +255,7 @@ export class ProductsAlComponent implements OnInit {
   searchInContainer(parameters):void{
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
+      this.showFiltersMobileVersion = false;
       this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
       this.initSelectForm();
