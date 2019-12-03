@@ -14,7 +14,7 @@ import { ModalComponent } from './modal/modal.component';
 export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   empty$: Subscription;
   reception$: Subscription;
-  items: any;
+  items: Array<any>;
   receptions: any
   constructor(
     private carrierService:CarrierService,
@@ -49,11 +49,11 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   }
   }
 
-  onClick(item) {
-    this.presentAlertConfirm(item)
+  onClick(item , index) {
+    this.presentAlertConfirm(item, index)
   }
 
-  async presentAlertConfirm(item) {
+  async presentAlertConfirm(item, index) {
     const alert = await this.alertController.create({
       header: 'Confirmar',
       message: `Desea recibir la jaula  vacia con la referencia ${item.reference}?`,
@@ -65,7 +65,7 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
         }, {
           text: 'Si',
           handler: () => {
-            this.sendReference(item.reference)
+            this.sendReference(item.reference, index)
           }
         }
       ]
@@ -74,14 +74,16 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  sendReference(reference) {
+  sendReference(reference, index) {
      const body =  {
       packingReference: reference
      }
     this.reception$ = this.carrierService.getReceptions(body).subscribe(
-      receptions => this.intermediaryService.presentToastSuccess('Paquqete recepcionado exitosmente'),
-      e => this.intermediaryService.presentToastError('Paquete enviado no encontrado'),
-      () => this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => this.items = list )
+      receptions => {
+        this.intermediaryService.presentToastSuccess('Paquqete recepcionado exitosmente'),
+        this.items.splice(index,1)
+    },
+      e => this.intermediaryService.presentToastError('Paquete enviado no encontrado')
     )
   }
 
