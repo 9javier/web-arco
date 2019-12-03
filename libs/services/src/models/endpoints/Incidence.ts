@@ -1,4 +1,5 @@
 import {TypeModel, UserModel} from "@suite/services";
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace IncidenceModel {
   export interface Incidence {
@@ -67,7 +68,7 @@ export namespace IncidenceModel {
     code: number;
   }
 
-  export interface ResponseSearch {
+  export interface ResponseSearch extends HttpRequestModel.Response {
     data: {
       count: number,
       count_search: number,
