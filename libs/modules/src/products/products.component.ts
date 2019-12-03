@@ -50,6 +50,7 @@ export class ProductsComponent implements OnInit {
 
   form:FormGroup = this.formBuilder.group({
     containers: [],
+    brands:[],
     models: [],
     colors: [],
     sizes: [],
@@ -73,7 +74,7 @@ export class ProductsComponent implements OnInit {
 
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container','brands'];
   dataSource: any;
 
   /**Filters */
@@ -285,6 +286,7 @@ export class ProductsComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
+        console.log(response);
         this.warehouses = (<any>response.body).data;
         let warehouseMain = (<any>response.body).data.filter(item => item.is_main)
         let warehouse = this.warehouses[0];
@@ -293,6 +295,11 @@ export class ProductsComponent implements OnInit {
         }
 
         this.inventoryServices.searchFilters({}).subscribe(searchsInContainer=>{
+          console.log(searchsInContainer);
+          //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
+          /**
+           * this.updateFiltersourceBrands()
+           */
           this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);

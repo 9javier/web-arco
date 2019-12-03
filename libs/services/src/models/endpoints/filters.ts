@@ -14,6 +14,12 @@ export namespace FiltersModel{
         name:string;
     }
 
+    export interface Brands extends Enum {
+        id:number;
+        name:string;
+        reference:string;
+    }
+
     export interface Group extends Enum {
         id:number;
         reference:string;
