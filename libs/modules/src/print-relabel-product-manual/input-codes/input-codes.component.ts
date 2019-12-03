@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {AlertController, ToastController} from "@ionic/angular";
-import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
-import {AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel} from "@suite/services";
-import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
-import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import { Component, OnInit } from '@angular/core';
+import { AlertController, ToastController } from "@ionic/angular";
+import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
+import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import { AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel } from "@suite/services";
+import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { range, interval } from 'rxjs';
+import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'suite-input-codes',
@@ -36,12 +37,10 @@ export class InputCodesComponent implements OnInit {
     private authService: AuthenticationService,
     private scanditProvider: ScanditProvider,
     private audioProvider: AudioProvider,
-    private keyboardService: KeyboardService,
+    private keyboardService: KeyboardService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
-    setTimeout(() => {
-      document.getElementById('input-ta').focus();
-    },800);
+    this.focusToInput();
   }
 
   async ngOnInit() {
@@ -51,12 +50,19 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    }, 800);
+  }
+
   keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrote;
@@ -75,6 +81,7 @@ export class InputCodesComponent implements OnInit {
           } else {
             this.audioProvider.playDefaultOk();
             this.printerService.printTagBarcode([dataWrote]);
+            this.focusToInput();
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
@@ -83,6 +90,7 @@ export class InputCodesComponent implements OnInit {
         default:
           this.audioProvider.playDefaultError();
           this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+          this.focusToInput();
           break;
       }
     }
@@ -97,6 +105,7 @@ export class InputCodesComponent implements OnInit {
           if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
             if (responseSizeAndModel.sizes.length == 1) {
               if (this.isStoreUser) {
+                this.focusToInput();
                 this.postRelabelProduct(this.lastProductReferenceScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
               } else {
                 this.audioProvider.playDefaultOk();
@@ -108,7 +117,7 @@ export class InputCodesComponent implements OnInit {
 
               let listItems = responseSizeAndModel.sizes.map((size, iSize) => {
                 return {
-                  name: 'radio'+iSize,
+                  name: 'radio' + iSize,
                   type: 'radio',
                   label: size.name,
                   value: iSize
@@ -117,19 +126,26 @@ export class InputCodesComponent implements OnInit {
               this.presentAlertSelect(listItems, responseSizeAndModel);
             }
           }
+        } else if (res.code == 0) {
+          this.audioProvider.playDefaultError();
+          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+          this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
           this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+          this.focusToInput();
         }
       }, (error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
         this.audioProvider.playDefaultError();
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+        this.focusToInput();
       })
       .catch((error) => {
         console.error('Error::Subscribe::GetInfo -> ', error);
         this.audioProvider.playDefaultError();
         this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
+        this.focusToInput();
       });
   }
 
@@ -138,7 +154,7 @@ export class InputCodesComponent implements OnInit {
       productReference
     };
 
-    if (this.isStoreUser){
+    if (this.isStoreUser) {
       paramsRelabel.warehouseId = this.storeUserObj.id;
     }
 
@@ -161,14 +177,21 @@ export class InputCodesComponent implements OnInit {
           // Do product print
           this.audioProvider.playDefaultOk();
           this.printerService.printTagBarcodeUsingProduct(res.data);
+          this.focusToInput();
+        } else if (res.code == 0) {
+          this.audioProvider.playDefaultError();
+          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+          this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
           this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
+          this.focusToInput();
         }
       }, (error) => {
         console.error('Error::Subscribe::Relabel -> ', error);
         this.audioProvider.playDefaultError();
         this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
+        this.focusToInput();
       });
   }
 
@@ -184,7 +207,7 @@ export class InputCodesComponent implements OnInit {
       .then(() => {
         setTimeout(() => {
           document.getElementById('input-ta').focus();
-        },500);
+        }, 500);
       });
   }
 
@@ -196,7 +219,8 @@ export class InputCodesComponent implements OnInit {
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary'
+          cssClass: 'secondary',
+          handler: () => this.focusToInput()
         }, {
           text: 'Seleccionar',
           handler: async (data) => {
@@ -205,6 +229,7 @@ export class InputCodesComponent implements OnInit {
               return false;
             }
 
+            this.focusToInput();
             let modelId = listProductsSizes.model.id;
             let sizeId = listProductsSizes.sizes[data].id;
             if (this.isStoreUser) {
@@ -244,8 +269,8 @@ export class InputCodesComponent implements OnInit {
     await alert.present();
   }
 
-  public onFocus(event){
-    if(event && event.target && event.target.id){
+  public onFocus(event) {
+    if (event && event.target && event.target.id) {
       this.keyboardService.setInputFocused(event.target.id);
     }
   }

@@ -22,6 +22,7 @@
                 Nombre
             </th>
             <td mat-cell *matCellDef="let tariff">
+                <ion-icon slot="end" name="information-circle" *ngIf="tariff?.updated" class="color-notification"></ion-icon>
                 {{ tariff?.tariffName }}
             </td>
         </ng-container>

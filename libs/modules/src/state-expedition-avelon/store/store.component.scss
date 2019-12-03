@@ -1,0 +1,52 @@
+.wrapper-form {
+    display: flex;
+    flex-direction: column;
+  
+    ion-row.input-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 0 1 18rem;
+      ion-col {
+        padding-left: 0px;
+        padding-right: 0px;
+      }
+    }
+  }
+  ion-grid {
+    --ion-grid-column-padding: 32px;
+  }
+  ion-footer:before {
+    height: 0;
+  }
+  ion-select {
+    max-width: 100%;
+    width: 100%;
+  }
+  .slot-start-icon {
+    margin-inline-end: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    .material-icons {
+        font-size:35px ;
+        margin-top:15px;
+    }
+  }
+  .slot-end-icon {
+    margin-inline-start: 0px;
+  }
+  .icon-show-password {
+    position: absolute;
+    z-index: 1200;
+    right: 5px;
+  }
+  ion-icon {
+    font-size: 24px;
+
+  }
+  ion-content{
+     height: calc(100% - 112px);
+   }
+
+
+  
+  

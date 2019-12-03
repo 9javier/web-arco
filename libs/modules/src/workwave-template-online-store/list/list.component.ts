@@ -50,6 +50,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
   private loading: HTMLIonLoadingElement = null;
   enlarged = false;
+  responseQuantities: WorkwaveModel.AssignationsByRequests[];
 
   constructor(
     private location: Location,
@@ -81,13 +82,11 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.pickingParametrizationProvider.loadingListEmployees = 0;
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore = 0;
     this.tableRequests.loadingListRequestOrdersOnlineStore = 0;
-    console.log('Test::loading 1', this.tableRequests.loadingListRequestOrdersOnlineStore);
     this.pickingParametrizationProvider.loadingListTeamAssignations = 0;
     this.template = {
       name: 'Nueva Ola de trabajo',
       id: null
     };
-    // this.tableTypes.loadListTypes([{name: 'Online', value: 20, selected: true}, {name: 'Peticiones tienda', value: 30, selected: true}], true);
     this.loadDefaultWorkWaveData();
     this.typeChanged([20, 30]);
   }
@@ -107,7 +106,6 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.loadEmployees();
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore++;
     this.tableRequests.loadingListRequestOrdersOnlineStore++;
-    console.log('Test::loading 2', this.tableRequests.loadingListRequestOrdersOnlineStore);
     this.loadRequestOrders();
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
@@ -131,18 +129,13 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   private loadRequestOrders() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     if (this.listTypesToUpdate.length > 0) {
-
-      this.workwavesService
-        .postMatchLineRequestOnlineStore({
-          preparationLinesTypes: this.listTypesToUpdate
-        })
+      this.workwavesService.postMatchLineRequestOnlineStore({ preparationLinesTypes: this.listTypesToUpdate })
         .then((res: WorkwaveModel.ResponseMatchLineRequestOnlineStore) => {
           if (res.code == 201) {
             this.pickingParametrizationProvider.listRequestOrdersOnlineStore = res.data;
             this.events.publish(this.REQUEST_ORDERS_LOADED);
             this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
             this.tableRequests.loadingListRequestOrdersOnlineStore--;
-            console.log('Test::loading 3', this.tableRequests.loadingListRequestOrdersOnlineStore);
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           } else {
             console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', res);
@@ -150,7 +143,6 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
             this.events.publish(this.REQUEST_ORDERS_LOADED);
             this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
             this.tableRequests.loadingListRequestOrdersOnlineStore--;
-            console.log('Test::loading 4', this.tableRequests.loadingListRequestOrdersOnlineStore);
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           }
         }, (error) => {
@@ -159,24 +151,21 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
           this.events.publish(this.REQUEST_ORDERS_LOADED);
           this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
           this.tableRequests.loadingListRequestOrdersOnlineStore--;
-          console.log('Test::loading 5', this.tableRequests.loadingListRequestOrdersOnlineStore);
           this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        })
-        .catch((error) => {
-          console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
-          this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
-          this.events.publish(this.REQUEST_ORDERS_LOADED);
-          this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
-          this.tableRequests.loadingListRequestOrdersOnlineStore--;
-          console.log('Test::loading 6', this.tableRequests.loadingListRequestOrdersOnlineStore);
-          this.pickingParametrizationProvider.loadingListTeamAssignations--;
-        });
+        }
+      ).catch((error) => {
+        console.error('Error::Subscribe:workwavesService::postMatchLineRequest::', error);
+        this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
+        this.events.publish(this.REQUEST_ORDERS_LOADED);
+        this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
+        this.tableRequests.loadingListRequestOrdersOnlineStore--;
+        this.pickingParametrizationProvider.loadingListTeamAssignations--;
+      });
     } else {
       this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
       this.events.publish(this.REQUEST_ORDERS_LOADED);
       this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
       this.tableRequests.loadingListRequestOrdersOnlineStore--;
-      console.log('Test::loading 7', this.tableRequests.loadingListRequestOrdersOnlineStore);
       this.pickingParametrizationProvider.loadingListTeamAssignations--;
     }
   }
@@ -195,6 +184,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
             this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
             if (resData.quantities) {
               this.events.publish(this.DRAW_CONSOLIDATED_MATCHES, resData.quantities);
+              this.responseQuantities = resData.quantities;
             }
             this.pickingParametrizationProvider.loadingListTeamAssignations--;
           } else {
@@ -241,7 +231,6 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     this.listTypesToUpdate = data;
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore++;
     this.tableRequests.loadingListRequestOrdersOnlineStore++;
-    console.log('Test::loading 8', this.tableRequests.loadingListRequestOrdersOnlineStore);
     this.loadRequestOrders();
   }
 

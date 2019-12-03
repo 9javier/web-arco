@@ -6,6 +6,7 @@ export namespace TariffModel{
         tariffName:string;
         activeFrom:string;
         activeTill:string;
+        updated:boolean;
     }
     export interface ResponseTariffPaginator{
         results:Array<Tariff>;
@@ -19,5 +20,12 @@ export namespace TariffModel{
     }
     export interface ResponseTariff extends Request.Success{
         data:ResponseTariffPaginator;
+    }
+    export interface TariffUpdates {
+        results:Array<any>
+    }
+
+    export interface ResponseTariffUpdates {
+        data:TariffUpdates;
     }
 }

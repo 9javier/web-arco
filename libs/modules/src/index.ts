@@ -19,6 +19,10 @@ export * from './locations/locations.module';
 export * from './jail/jail.component';
 export * from './jail/jail.module';
 
+export * from './state-expedition-avelon/state-expedition-avelon.component';
+export * from './state-expedition-avelon/state-expedition-avelon.module';
+
+
 export * from './pallets/pallets.component';
 export * from './pallets/pallets.module';
 

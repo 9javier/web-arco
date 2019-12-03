@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild, NgZone } from '@angular/core';
 import { app } from '../../../../services/src/environments/environment';
 import { AuthenticationService, Oauth2Service, TariffService } from '@suite/services';
 import { Router } from '@angular/router';
@@ -221,6 +221,12 @@ export class MenuComponent implements OnInit {
           url: '/jails/menu',
           icon: 'grid'
         },
+        {
+          title: 'Estado de expedición',
+          id: 'state-expedition-avelon',
+          url: '/state-expedition-avelon/menu',
+          icon: 'apps'
+        }
       ]
     },
     {
@@ -549,7 +555,8 @@ export class MenuComponent implements OnInit {
     private auditMultipleScanditService: AuditMultipleScanditService,
     private menuController: MenuController,
     private toolbarProvider: ToolbarProvider,
-    private tariffService: TariffService
+    private tariffService: TariffService,
+    private zona: NgZone
 
   ) {
     this.loginService.availableVersion.subscribe(res => {
@@ -573,7 +580,12 @@ export class MenuComponent implements OnInit {
    */
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
-    this.newTarifff();
+    this.newTariffs();
+    this.zona.run(() => {
+      setInterval(() => {
+        this.newTariffs();
+      }, 300000);
+    });
     let logoutItem = dictionary['user-time'] ? ({
       title: 'Cerrar sesión',
       id: 'logout',
@@ -715,14 +727,10 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
   }
 
-  ngAfterViewInit(): void {
-    //this.listenChanges();
-  }
-
   /**
    * Listen changes in form to resend the request for search
    */
-  newTarifff() {
+  newTariffs() {
     this.tariffService.getNewTariff().subscribe(tariff => {
       /**save the data and format the dates */
       this.alPages.forEach((item, i) => {
