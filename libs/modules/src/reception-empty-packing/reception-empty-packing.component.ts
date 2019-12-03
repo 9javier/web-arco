@@ -80,7 +80,8 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
      }
     this.reception$ = this.carrierService.getReceptions(body).subscribe(
       receptions => this.intermediaryService.presentToastSuccess('Paquqete recepcionado exitosmente'),
-      e => this.intermediaryService.presentToastError('Paquete enviado no encontrado')
+      e => this.intermediaryService.presentToastError('Paquete enviado no encontrado'),
+      () => this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => this.items = list )
     )
   }
 
