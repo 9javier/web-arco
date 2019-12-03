@@ -256,3 +256,7 @@ export  * from './regions/regions.module';
 // // /**Receptions avelon */
 export  * from './receptions-avelon/receptions-avelon.component'
 export  * from './receptions-avelon/receptions-avelon.module';
+
+// // /**Receptions empty packing */
+export  * from './reception-empty-packing/reception-empty-packing.component'
+export  * from './reception-empty-packing/reception-empty-packing.module';
