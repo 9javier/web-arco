@@ -54,7 +54,7 @@ const routes: Routes = [
   {
     path: 'products',
     canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/products/products.module#ProductsModule',
+    loadChildren: '../../../../libs/modules/src/products-al/products-al.module#ProductsAlModule',
     data: {
       name: 'Productos'
     }
