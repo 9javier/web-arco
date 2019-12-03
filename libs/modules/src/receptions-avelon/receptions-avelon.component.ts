@@ -93,7 +93,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         if (!this.isProviderAviable) {
           this.alertMessage('Este proveedor no esta habilitado para recepcionar');
         }else {
-          this.interval = setInterval(() => {
+          // this.interval = setInterval(() => {
             this.reception.getReceptions().subscribe((info: ReceptionAvelonModel.Reception)  => {
               this.response = info;
               // console.log(this.response);
@@ -138,7 +138,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
                 }
               })
             })
-          },1000);
+          // },1000);
          
         }
 
