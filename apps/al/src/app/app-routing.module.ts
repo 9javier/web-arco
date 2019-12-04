@@ -186,6 +186,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'packing/carrierEmptyPacking',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-empty-packing/reception-empty-packing.module#ReceptionEmptyPackingModule',
+    data: {
+      name: 'Packing de Jaulas Vacias'
+    }
+  },
+  {
     path: 'print/product/relabel',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-relabel-product-manual/print-relabel-product-manual.module#PrintRelabelProductManualModule',

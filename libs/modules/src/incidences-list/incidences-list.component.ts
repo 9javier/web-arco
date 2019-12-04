@@ -134,15 +134,19 @@ export class IncidencesListComponent implements OnInit {
   private searchIncidences(parameters: IncidenceModel.SearchParameters) {
     this.incidencesService
       .postSearch(parameters)
-      .subscribe((res: IncidenceModel.ResponseSearch) => {
-        this.incidencesService.incidencesQuantityList = res.data.count_search;
-        this.paginator.length = res.data.count
-        this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.actualPageFilter.page;
-        this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count/this.actualPageFilter.size)
-        this.incidencesService.incidencesUnattendedQuantity = res.data.count;
-        this.incidencesService.incidencesList = res.data.incidences;
-      }, error => {
-        console.warn('Error Subscribe::Search Incidences with Filters');
+      .then((res: IncidenceModel.ResponseSearch) => {
+        if (res.code == 200) {
+          this.incidencesService.incidencesQuantityList = res.data.count_search;
+          this.paginator.length = res.data.count;
+          this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.actualPageFilter.page;
+          this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count/this.actualPageFilter.size);
+          this.incidencesService.incidencesUnattendedQuantity = res.data.count;
+          this.incidencesService.incidencesList = res.data.incidences;
+        } else {
+          console.error('Error to try search Incidences with Filters', res);
+        }
+      }, (error) => {
+        console.error('Error to try search Incidences with Filters', error);
       });
   }
 

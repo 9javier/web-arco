@@ -157,7 +157,8 @@ export namespace WorkwaveModel {
     pickingTypeId: string,
     quantityShoes: string,
     requestId: number,
-    requestReference: number
+    requestReference: number,
+    destinyShopId: number
   }
 
   export interface UsersAndAssignationsQuantities {
