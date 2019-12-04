@@ -458,6 +458,12 @@ export class MenuComponent implements OnInit {
           id: 'packing-transfer',
           url: '/packing/transfer',
           icon: 'redo'
+        },
+        {
+          title: 'Recepcion de paquete vacio',
+          id: 'reception-empty-packing',
+          url: '/packing/carrierEmptyPacking',
+          icon: 'wine'
         }
       ]
     },
@@ -572,7 +578,7 @@ export class MenuComponent implements OnInit {
     this.zona.run(() => {
       setInterval(() => {
         this.newTariffs();
-      }, 300000);
+      }, 5 * 60 * 1000);
     });
     let logoutItem = dictionary['user-time'] ? ({
       title: 'Cerrar sesión',
@@ -719,19 +725,27 @@ export class MenuComponent implements OnInit {
    * Listen changes in form to resend the request for search
    */
   newTariffs() {
-    this.tariffService.getNewTariff().subscribe(tariff => {
-      /**save the data and format the dates */
-      this.alPages.forEach((item, i) => {
-        if ((<any>item).id == "tarifas") {
-          (<any>item).notification = tariff['data'];
-          (<any>item).children.forEach((child, j) => {
-            if ((<any>child).id == "tariff-al") {
-              (<any>child).notification = tariff['data'];
+    this.tariffService
+      .getNewTariff()
+      .then(tariff => {
+        if (tariff.code == 200) {
+          let newTariff = tariff.data;
+          /**save the data and format the dates */
+          this.alPages.forEach((item, i) => {
+            if ((<any>item).id == "tarifas") {
+              (<any>item).notification = newTariff;
+              (<any>item).children.forEach((child, j) => {
+                if ((<any>child).id == "tariff-al") {
+                  (<any>child).notification = newTariff;
+                }
+              });
             }
           });
+        } else {
+          console.error('Error to try check if exists new tariffs', tariff);
         }
-      });
-    }, () => {
+    }, (error) => {
+        console.error('Error to try check if exists new tariffs', error);
     })
   }
 

@@ -1,0 +1,13 @@
+<mat-grid-list *ngFor=" let item of items; let i = index" cols="12" rowHeight="64px" class="separator-list">
+  <mat-grid-tile (click)="onClick(item, i)"  colspan="12" rowspan="1">
+    <div class="tile-value">
+      {{item.reference}}
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button (click)="onModal()">
+    <ion-icon name="barcode"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

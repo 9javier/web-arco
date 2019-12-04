@@ -5,6 +5,8 @@ import { TariffModel } from 'libs/services/src/models/endpoints/Tariff';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { SortModel } from "../../../models/endpoints/Sort";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,11 @@ export class TariffService {
   private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
   private getNewTariffUrl: string = environment.apiBase + "/tariffs/getNewTariff";
   private getTariffUpdatesUrl: string = environment.apiBase + "/tariffs/get-tariff-updates";
-  constructor(private http: HttpClient) { }
+
+  constructor(
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
+  ) { }
 
   /**
    * Get all tariff of the system
@@ -89,10 +95,8 @@ export class TariffService {
     }));
   }
 
-  getNewTariff() {
-    return this.http.get(this.getNewTariffUrl, {}).pipe(map(response => {
-      return response;
-    }));
+  getNewTariff() : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getNewTariffUrl);
   }
 
   getTariffUpdates(data: any[]) {
