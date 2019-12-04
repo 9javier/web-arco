@@ -14,13 +14,26 @@ export class RequestsProvider {
   public getUnauthenticated(url: string) : Promise<HttpRequestModel.Response> {
     return new Promise((resolve, reject) => {
         let req = new XMLHttpRequest();
-        req.open('GET', url, false);
-        req.send(null);
-        let response = { error: 'Error to make GET Request' };
-        if (req.responseText) {
-          response = JSON.parse(req.responseText)
+
+        try {
+          req.open('GET', url, false);
+          req.send(null);
+
+          let response = { error: 'Error to make GET Request' };
+          if (req.responseText) {
+            response = JSON.parse(req.responseText)
+          }
+
+          resolve(response);
+        } catch (e) {
+          let response = {
+            code: req.status,
+            message: 'Unknown Error',
+            errors: 'Unknown Error'
+          };
+
+          resolve(response);
         }
-        resolve(response);
     });
   }
 
@@ -29,17 +42,26 @@ export class RequestsProvider {
       this.auth.getCurrentToken().then((authToken) => {
         let req = new XMLHttpRequest();
 
-        req.open('GET', url, false);
-        req.setRequestHeader('Authorization', authToken);
-        req.send(null);
+        try {
+          req.open('GET', url, false);
+          req.setRequestHeader('Authorization', authToken);
+          req.send(null);
 
-        let response = { error: 'Error to make GET Request' };
+          let response = { error: 'Error to make GET Request' };
+          if (req.responseText) {
+            response = JSON.parse(req.responseText)
+          }
 
-        if (req.responseText) {
-          response = JSON.parse(req.responseText)
+          resolve(response);
+        } catch (e) {
+          let response = {
+            code: req.status,
+            message: 'Unknown Error',
+            errors: 'Unknown Error'
+          };
+
+          resolve(response);
         }
-
-        resolve(response);
       });
     });
   }
@@ -49,18 +71,28 @@ export class RequestsProvider {
       this.auth.getCurrentToken().then((authToken) => {
         let req = new XMLHttpRequest();
 
-        req.open('POST', url, false);
-        req.setRequestHeader('Authorization', authToken);
-        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        req.send(JSON.stringify(body));
+        try {
+          req.open('POST', url, false);
+          req.setRequestHeader('Authorization', authToken);
+          req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          req.send(JSON.stringify(body));
 
-        let response = { error: 'Error to make POST Request' };
+          let response = { error: 'Error to make POST Request' };
 
-        if (req.responseText) {
-          response = JSON.parse(req.responseText)
+          if (req.responseText) {
+            response = JSON.parse(req.responseText)
+          }
+
+          resolve(response);
+        } catch (e) {
+          let response = {
+            code: req.status,
+            message: 'Unknown Error',
+            errors: 'Unknown Error'
+          };
+
+          resolve(response);
         }
-
-        resolve(response);
       });
     });
   }
@@ -70,18 +102,28 @@ export class RequestsProvider {
       this.auth.getCurrentToken().then((authToken) => {
         let req = new XMLHttpRequest();
 
-        req.open('PUT', url, false);
-        req.setRequestHeader('Authorization', authToken);
-        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        req.send(JSON.stringify(body));
+        try {
+          req.open('PUT', url, false);
+          req.setRequestHeader('Authorization', authToken);
+          req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          req.send(JSON.stringify(body));
 
-        let response = { error: 'Error to make PUT Request' };
+          let response = { error: 'Error to make PUT Request' };
 
-        if (req.responseText) {
-          response = JSON.parse(req.responseText)
+          if (req.responseText) {
+            response = JSON.parse(req.responseText)
+          }
+
+          resolve(response);
+        } catch (e) {
+          let response = {
+            code: req.status,
+            message: 'Unknown Error',
+            errors: 'Unknown Error'
+          };
+
+          resolve(response);
         }
-
-        resolve(response);
       });
     });
   }

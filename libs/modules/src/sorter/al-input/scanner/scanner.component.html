@@ -11,7 +11,7 @@
       </ion-row>
     </ion-grid>
   </div>
-  <div class="content-destiny-color" *ngIf="processStarted && productScanned">
+  <div class="content-destiny-color" *ngIf="processStarted && productScanned && !isWaitingWayWillFree">
     <div class="content-color" [ngStyle]="{'background-color': sorterProvider.colorSelected.hex}">
       <div class="content-labels">
         <div id="label-reference" class="label-destiny">{{productScanned.destinyWarehouse.reference}}</div>
@@ -19,6 +19,15 @@
       </div>
     </div>
   </div>
+
+  <div *ngIf="isWaitingWayWillFree" class="waiting-way-free">
+    <div>
+      <p class="wait-msg">¡¡ ESPERE !!</p>
+      <p>COMPROBANDO CALLES LIBRES DONDE TRABAJAR</p>
+      <ion-spinner name="dots"></ion-spinner>
+    </div>
+  </div>
+
   <div class="start-message-guide" (click)="focusToInput()" *ngIf="!inputValue && !processStarted">
     <span>¡Hola </span><div class="color-selected" [ngStyle]="{'background-color': sorterProvider.colorSelected ? sorterProvider.colorSelected.hex : '#000'}"></div><span>!</span>
     <br/>
@@ -32,7 +41,13 @@
 </div>
 
 <ion-footer *ngIf="processStarted && productScanned">
-  <ion-button expand="full" color="danger" (click)="wrongWay()"><span>CARRIL<br>EQUIV.</span></ion-button>
-  <ion-button expand="full" color="dark" (click)="presentScannerRackModal()"><span>SALTAR<br>SORTER</span></ion-button>
-  <ion-button expand="full" color="dark" (click)="fullWay()"><span>NO CABE<br>CAJA</span></ion-button>
+  <ion-button [disabled]="isWaitingWayWillFree" expand="full" color="danger" (click)="wrongWay()">
+    <p>CARRIL EQUIV.</p>
+  </ion-button>
+  <ion-button expand="full" color="dark" (click)="presentScannerRackModal()">
+    <p>SALTAR SORTER</p>
+  </ion-button>
+  <ion-button [disabled]="isWaitingWayWillFree" expand="full" color="dark" (click)="fullWay()">
+    <p>NO CABE CAJA</p>
+  </ion-button>
 </ion-footer>

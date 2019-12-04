@@ -14,4 +14,14 @@ export namespace ReceptionAvelonModel {
     sizes: Array<Data>;
     ean: string
   }
+
+  export interface Providers {
+    id?:string;
+    name:string;
+  }
+
+  export interface CheckProvider {
+    providerId: number;
+    expedition: string;
+  }
 }

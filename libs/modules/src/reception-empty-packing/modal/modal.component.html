@@ -1,0 +1,12 @@
+<ion-content>
+  <ion-toolbar>
+      <ion-buttons slot="end">
+          <ion-button (click)="close()">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+  </ion-toolbar>
+    <div class="content-ta">
+        <input hideKeyboard id="input-ta" [(ngModel)]="reference" class="ta-positioning" placeholder="Ingrese Jaula" (keyup)="keyUpInput($event)" (focus)="onFocus($event)">
+    </div>
+</ion-content>
