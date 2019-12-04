@@ -41,6 +41,10 @@ export namespace FiltersModel{
         name:string;
     }
 
+    export interface ResponseBrand extends Request.Success{
+        data:Array<Brands>
+    }
+
     export interface ResponseColor extends Request.Success{
         data:Array<Color>;
     }

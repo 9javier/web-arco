@@ -50,7 +50,7 @@ export class ProductsComponent implements OnInit {
 
   form:FormGroup = this.formBuilder.group({
     containers: [],
-    brands:[],
+    brand:[],
     models: [],
     colors: [],
     sizes: [],
@@ -78,6 +78,7 @@ export class ProductsComponent implements OnInit {
   dataSource: any;
 
   /**Filters */
+  brands:Array<TagsInputOption> = [];
   colors:Array<TagsInputOption> = [];
   containers:Array<TagsInputOption> = [];
   models:Array<TagsInputOption> = [];
@@ -182,6 +183,8 @@ export class ProductsComponent implements OnInit {
   ngOnInit() {
     this.getFilters();
     this.listenChanges();
+    console.log(this.products);
+    
   }
 
   /**
@@ -248,12 +251,19 @@ export class ProductsComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters):void{
+    console.log(parameters);
+    
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
+      console.log(searchsInContainer);
+      
       this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
+      
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
+      // console.log(this.dataSource);
+      
       let paginator: any = searchsInContainer.data.pagination;
 
       this.paginator.length = paginator.totalResults;
@@ -298,8 +308,8 @@ export class ProductsComponent implements OnInit {
           console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
           /**
-           * this.updateFiltersourceBrands()
            */
+          this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
           this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
@@ -341,6 +351,18 @@ export class ProductsComponent implements OnInit {
     }
 
     return '';
+  }
+
+  private updateFiltersourceBrands(brands: FiltersModel.Brands[]){
+    this.pauseListenFormChange = true;
+    let value = this.form.get("brand").value;
+    console.log(value);
+    
+    this.brands = brands;
+    if (value && value.length) {
+      this.form.get("brand").patchValue(value, {emitEvent: false});
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceColors(colors: FiltersModel.Color[]) {
