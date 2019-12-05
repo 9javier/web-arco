@@ -167,7 +167,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-    /**
+  /**
    * Print the price for selected products
    */
   printPriceProducts():void{
@@ -279,14 +279,28 @@ export class ProductsComponent implements OnInit {
    * go to details modal
    * @param id - the id of the product
    */
-    async goDetails(product:InventoryModel.SearchInContainer){
-      return (await this.modalController.create({
-        component:ProductDetailsComponent,
-        componentProps:{
-          product:product
-        }
-      })).present();
-    }
+  async goDetails(product:InventoryModel.SearchInContainer){
+    return (await this.modalController.create({
+      component:ProductDetailsComponent,
+      componentProps:{
+        product:product
+      }
+    })).present();
+  }
+
+  async deleteProducts(){
+    let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
+    console.log('delete',references);
+    
+    
+    // this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    // this.printerService.printTagBarcode(references).subscribe(result=>{
+    //   this.intermediaryService.dismissLoading();
+    // },error=>{
+    //   this.intermediaryService.dismissLoading();
+    // });
+    
+  }
 
 
   /**

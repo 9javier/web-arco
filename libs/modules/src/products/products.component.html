@@ -145,4 +145,9 @@
         <ion-icon name="print"></ion-icon>
         <ion-icon name="pricetag"></ion-icon>
     </ion-fab-button>
+    <ion-fab-button (click)="deleteProducts()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+        <!-- <ion-icon name = "close"></ion-icon> -->
+        <ion-icon name = "close"></ion-icon>
+    </ion-fab-button>
+
 </ion-fab>
