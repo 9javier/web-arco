@@ -7,6 +7,7 @@ import { ListsComponent } from './components/lists/lists.component';
 import { SizesComponent } from './components/sizes/sizes.component';
 import { FormsModule } from '@angular/forms';
 import { ScreenResultComponent } from './components/screen-result/screen-result.component';
+import { useAnimation, transition, trigger, style, animate } from '@angular/animations';
 
 
 const routes: Routes = [
