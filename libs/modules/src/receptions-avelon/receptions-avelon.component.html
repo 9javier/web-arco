@@ -43,7 +43,7 @@
         <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
       </ion-col>
       <ion-col class="ion-margin-top" size="4">
-        <ion-button> buscar mas </ion-button>
+        <ion-button (click)="buscarMas()" > buscar mas </ion-button>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="isProviderAviable">
@@ -54,8 +54,8 @@
       <ion-col size="12">
         <ion-item lines="none">
           <ion-label>EAN:</ion-label>
-          <ion-input type="text" [value]="response.ean"></ion-input>
-          <ion-button slot="end" (click)="enviar()" > imprimir </ion-button>
+          <ion-input [(ngModel)]="result.ean" type="text" (keyup)="onKey($event)"></ion-input>
+          <ion-button slot="end" (click)="enviar()"> imprimir </ion-button>
         </ion-item>
       </ion-col>
     </ion-row>
