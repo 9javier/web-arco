@@ -29,7 +29,7 @@
           <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
         </ion-col>
         <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.brands, objectType.MODEL)">
+          <ion-item (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
             <ion-title> Modelos </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
@@ -37,7 +37,7 @@
           <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
         </ion-col>
         <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.brands, objectType.COLOR)">
+          <ion-item (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
             <ion-title> Colores </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>

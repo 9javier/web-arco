@@ -4,6 +4,7 @@ import { ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService } fr
 import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
+import { element } from 'protractor';
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -21,7 +22,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   option:any;
   typeScreen: number;
 
-  objectType: typeof Type;
+  objectType = Type;
 
   result: ReceptionAvelonModel.Print = {
     brandId: undefined,
@@ -81,6 +82,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       if (data.selected) {
         console.log('EVENT EMITTER');
         console.log(data);
+        switch (data.selected.type) {
+          case Type.BRAND:
+            this.findAndSelectObject(this.response.brands, data.selected);
+            break;
+          case Type.COLOR:
+            this.findAndSelectObject(this.response.colors, data.selected);
+            break;
+          case Type.MODEL:
+            this.findAndSelectObject(this.response.models, data.selected);
+            break;
+        }
       }
     });
 
@@ -89,6 +101,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         keyboardEventEmitterSubscribe.unsubscribe();
       });
     });
+  }
+
+  findAndSelectObject(array: Array<ReceptionAvelonModel.Data>, selected: any) {
+    let object = array.find(data => data.id === selected.id);
+    console.log(object);
+    if (object) {
+      this.setSelected(array, object, selected.type);
+    }
   }
 
   proveedorSelected(e, item) {
