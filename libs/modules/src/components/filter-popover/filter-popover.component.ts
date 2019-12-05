@@ -125,6 +125,18 @@ export class FilterPopoverComponent implements OnInit {
     this.allSelected = filtersSelected == this.listItems.length;
   }
 
+  checkSelected(event, item) {
+    this.listItems[this.listItems.indexOf(item)].checked = event.detail.checked;
+
+    let filtersSelected: number = 0;
+    for (let iFilter in this.listItems) {
+      if (this.listItems[iFilter].checked) {
+        filtersSelected++;
+      }
+    }
+    this.allSelected = filtersSelected == this.listItems.length;
+  }
+
   selectAll() {
     for (let iFilter in this.listItems) {
       this.listItems[iFilter].checked = this.allSelected;
