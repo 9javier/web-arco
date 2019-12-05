@@ -1,5 +1,7 @@
 import { ReceptionsAvelonService, ReceptionAvelonModel } from '@suite/services';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
+import { VirtualKeyboardComponent } from '../components/virtual-keyboard/virtual-keyboard.component';
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -8,7 +10,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReceptionsAvelonComponent implements OnInit {
   response: ReceptionAvelonModel.Reception;
-  constructor(private reception: ReceptionsAvelonService) { }
+  eventEmitter= new EventEmitter();
+  constructor(private reception: ReceptionsAvelonService, private popoverController: PopoverController) { }
 
   ngOnInit() {
     this.response = {
@@ -22,8 +25,31 @@ export class ReceptionsAvelonComponent implements OnInit {
       console.log(data);
       this.response = data;
     })
+
+    this.eventEmitter.subscribe(res=>{
+      console.log("eventOnKeyPress", res)
+    });
   }
 
+  async openVirtualKeyboard(list: any[]) {
+    const dataList = [];
 
+    list.forEach((item) => {
+      dataList.push({id: item.id, value: item.name})
+    });
 
+    const popover = await this.popoverController.create({
+      component: VirtualKeyboardComponent,
+      translucent: true,
+      componentProps: { data: dataList, eventOnKeyPress: this.eventEmitter },
+      cssClass: 'virtual-keyboard-component'
+    });
+
+    popover.onDidDismiss().then((selected: any) => {
+      console.log('Selected Item');
+      console.log(selected);
+    });
+
+    return await popover.present();
+  }
 }

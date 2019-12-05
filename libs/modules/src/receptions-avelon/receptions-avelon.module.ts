@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { ReceptionsAvelonComponent } from './receptions-avelon.component';
 import { ListsComponent } from './components/lists/lists.component';
 import { SizesComponent } from './components/sizes/sizes.component';
+import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
     RouterModule,
     IonicModule,
     RouterModule.forChild(routes),
+    VirtualKeyboardModule
   ]
 })
 export class ReceptionsAvelonModule { }

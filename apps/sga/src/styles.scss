@@ -42,6 +42,7 @@ $sga-theme: mat-light-theme($sga-primary, $sga-accent, $sga-warn);
 @import './theme/custom/crud-component.scss';
 @import './theme/custom/popover.scss';
 @import './theme/custom/alert-select-user.scss';
+@import '../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.component.scss';
 html,
 body {
     height: 100%;
