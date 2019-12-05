@@ -17,7 +17,7 @@ const routes: Routes = [
 ];
 @NgModule({
   declarations: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent],
-  entryComponents: [ReceptionsAvelonComponent, ListsComponent, SizesComponent],
+  entryComponents: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent],
   imports: [
     CommonModule,
     RouterModule,
