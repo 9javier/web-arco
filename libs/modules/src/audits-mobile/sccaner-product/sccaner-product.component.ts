@@ -1,4 +1,4 @@
-import {Component, OnInit, EventEmitter, Output, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {AuditsService, CarrierService, IntermediaryService} from '@suite/services';
 import { ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,6 +8,7 @@ import {ScanditProvider} from "../../../../services/src/providers/scandit/scandi
 import {ScannerManualComponent} from "../../components/scanner-manual/scanner-manual.component";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {AuditsModel} from "../../../../services/src/models/endpoints/Audits";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -32,7 +33,8 @@ export class SccanerProductComponent implements OnInit {
     private audioProvider: AudioProvider,
     private scanditProvider: ScanditProvider,
     private carrierService: CarrierService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private locattion: Location
   ) {
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
@@ -59,7 +61,7 @@ export class SccanerProductComponent implements OnInit {
 
   backView(){ 
     AuditsMobileComponent.returned.next(false);
-    this.router.navigate(['audits']); 
+    this.locattion.back();
   }
 
   finishAudit(){
