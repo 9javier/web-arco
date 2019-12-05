@@ -17,7 +17,7 @@
     display: flex;
 
     .list-content-keyboard {
-      height: 230px;
+      height: 280px;
       margin-left: 20px;
       background-color: rgba(0, 0, 0, 0.1);
       padding: 5px;
@@ -42,9 +42,6 @@
 
   .content-input {
     text-align: center;
-    input {
-      max-width: 850px;
-    }
 
     ion-searchbar {
       padding: 0 0 20px;
@@ -55,9 +52,9 @@
 .virtual-keyboard-component {
   .popover-content {
     top: 50%;
-    width: 60%;
-    max-width: 900px;
-    left: 25%;
+    width: 70%;
+    left: 15%;
+    max-width: 1000px;
   }
 }
 
@@ -114,7 +111,7 @@
 
 .simple-keyboard.hg-theme-default .hg-button {
   box-shadow: 0 0 3px -1px rgba(0, 0, 0, .3);
-  height: 40px;
+  height: 50px;
   border-radius: 5px;
   box-sizing: border-box;
   padding: 5px;
