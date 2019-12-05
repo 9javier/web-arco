@@ -6,6 +6,8 @@ import { ReceptionsAvelonComponent } from './receptions-avelon.component';
 import { ListsComponent } from './components/lists/lists.component';
 import { SizesComponent } from './components/sizes/sizes.component';
 import { FormsModule } from '@angular/forms';
+import { ScreenResultComponent } from './components/screen-result/screen-result.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const routes: Routes = [
   {
@@ -14,7 +16,7 @@ const routes: Routes = [
   }
 ];
 @NgModule({
-  declarations: [ReceptionsAvelonComponent, ListsComponent, SizesComponent],
+  declarations: [ReceptionsAvelonComponent, ListsComponent, SizesComponent, ScreenResultComponent],
   entryComponents: [ReceptionsAvelonComponent, ListsComponent, SizesComponent],
   imports: [
     CommonModule,
@@ -22,6 +24,7 @@ const routes: Routes = [
     IonicModule,
     FormsModule,
     RouterModule.forChild(routes),
+    BrowserAnimationsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,12 +1,13 @@
 import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService } from '@suite/services';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, } from '@angular/core';
+
 
 @Component({
   selector: 'suite-receptions-avelon',
   templateUrl: './receptions-avelon.component.html',
-  styleUrls: ['./receptions-avelon.component.scss']
+  styleUrls: ['./receptions-avelon.component.scss'] 
 })
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   response: ReceptionAvelonModel.Reception;
@@ -17,6 +18,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   providerId: number;
   interval: any;
   option:any
+  typeScreen: number =2;
 
   result: ReceptionAvelonModel.Print = {
     brandId: undefined,
@@ -272,24 +274,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       data.seleted = true;
       array.push(data);
     }
-    if (type === 1) {
-      console.log('estoy en brand');
-      
+    if (type === 1) { // brand
       this.result.brandId = data.id
     }
-    if (type === 2) {
-      console.log('estoy en color');
-
+    if (type === 2) { // color
       this.result.colorId = data.id
     }
-    if (type === 3) {
-      console.log('estoy en model');
+    if (type === 3) { //model
 
       this.result.modelId = data.id
     }
-    if (type === 4) {
-      console.log('estoy en size');
-
+    if (type === 4) { // size
       this.result.sizeId = data.id
     }
     
@@ -339,6 +334,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       })
     }
     
+  }
+
+  screenExit(e){
+    console.log(e);
+    this.typeScreen = undefined
   }
 
 }
