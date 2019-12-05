@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {TypeUsersProcesses, UserProcessesService} from "@suite/services";
-import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
-import {PickingService} from "../../../../services/src/lib/endpoint/picking/picking.service";
-import {AlertController, LoadingController, ToastController} from "@ionic/angular";
-import {Router} from "@angular/router";
-import {SetWorkwaveAliveService} from "../../../../services/src/lib/endpoint/set-workwave-alive/set-workwave-alive.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { TypeUsersProcesses, UserProcessesService } from "@suite/services";
+import { PickingModel } from "../../../../services/src/models/endpoints/Picking";
+import { PickingService } from "../../../../services/src/lib/endpoint/picking/picking.service";
+import { AlertController, LoadingController, ToastController } from "@ionic/angular";
+import { Router } from "@angular/router";
+import { SetWorkwaveAliveService } from "../../../../services/src/lib/endpoint/set-workwave-alive/set-workwave-alive.service";
 
 @Component({
   selector: 'list-user-assignment-template',
@@ -26,7 +26,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
     private toastController: ToastController,
     private router: Router,
     private setWorkwaveAliveService: SetWorkwaveAliveService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.pickingService
@@ -63,16 +63,16 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
   }
 
   setWorkwaveAlive() {
-    this.setWorkwaveAliveService.intervalExecutedId = setInterval(() => {
-      if (this.router.url.match(/assign\/user\/picking\/([0-9]+)/)) {
-        this.setWorkwaveAliveService.postKeepWorkwaveAlive(this.workwaveId);
-      } else {
-        if (typeof this.setWorkwaveAliveService.intervalExecutedId != 'undefined' && this.setWorkwaveAliveService.intervalExecutedId != null) {
-          clearInterval(this.setWorkwaveAliveService.intervalExecutedId);
-          this.setWorkwaveAliveService.intervalExecutedId = null;
-        }
-      }
-    }, 10 * 1000);
+    // this.setWorkwaveAliveService.intervalExecutedId = setInterval(() => {
+    //   if (this.router.url.match(/assign\/user\/picking\/([0-9]+)/)) {
+    //     this.setWorkwaveAliveService.postKeepWorkwaveAlive(this.workwaveId);
+    //   } else {
+    //     if (typeof this.setWorkwaveAliveService.intervalExecutedId != 'undefined' && this.setWorkwaveAliveService.intervalExecutedId != null) {
+    //       clearInterval(this.setWorkwaveAliveService.intervalExecutedId);
+    //       this.setWorkwaveAliveService.intervalExecutedId = null;
+    //     }
+    //   }
+    // }, 10 * 1000);
   }
 
   async savePicking() {
