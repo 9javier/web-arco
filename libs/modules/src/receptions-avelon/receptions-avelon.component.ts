@@ -80,8 +80,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
     const keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter.subscribe((data) => {
       if (data.selected) {
-        console.log('EVENT EMITTER');
-        console.log(data);
         switch (data.selected.type) {
           case Type.BRAND:
             this.findAndSelectObject(this.response.brands, data.selected);
@@ -105,7 +103,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   findAndSelectObject(array: Array<ReceptionAvelonModel.Data>, selected: any) {
     let object = array.find(data => data.id === selected.id);
-    console.log(object);
     if (object) {
       this.setSelected(array, object, selected.type);
     }
