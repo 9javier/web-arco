@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
-import { Router, NavigationEnd } from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -20,8 +20,9 @@ export class AuditsMobileComponent implements OnInit {
     private audit : AuditsService,
     private toast : ToastController,
     private toolbarProvider: ToolbarProvider,
-    private router : Router
-  ) { 
+    private router : Router,
+    private activeRoute: ActivatedRoute
+  ) {
     AuditsMobileComponent.returned.subscribe(res => {
       this.getAllAudits();
     });
@@ -60,4 +61,15 @@ export class AuditsMobileComponent implements OnInit {
     this.router.navigateByUrl('/audits/list-products/'+data.id+'/'+data.packing.reference+'/false');
   }
 
+  restartAudit(audit) {
+    this.router.navigateByUrl('/audits/scanner-product/'+audit.id+'/'+audit.packing.reference+'/'+this.activeRoute.snapshot.routeConfig.path);
+  }
+
+  getMessageVerifiedProducts(productsQuantity: number) : string {
+    if (productsQuantity == 0 || productsQuantity > 1) {
+      return `${productsQuantity} productos verificados`;
+    } else {
+      return `${productsQuantity} producto verificado`;
+    }
+  }
 }

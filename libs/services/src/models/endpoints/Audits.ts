@@ -1,5 +1,5 @@
 import {HttpRequestModel} from "./HttpRequest";
-import {ProductModel, UserModel} from "@suite/services";
+import {ProductModel, UserModel, WarehouseModel} from "@suite/services";
 import {CarrierModel} from "./Carrier";
 
 export namespace AuditsModel {
@@ -57,5 +57,36 @@ export namespace AuditsModel {
   }
   export interface ResponseCheckProductInPacking extends HttpRequestModel.Response {
     data: CheckProductInPacking
+  }
+
+  // Get products in packing for audit
+  export interface GetAuditProducts {
+    product: ProductModel.Product,
+    audit: {
+      isAudit: true,
+      hasSorter: false,
+      incidence: true,
+      rightAudit: false
+    },
+    destinyProduct: WarehouseModel.Warehouse
+  }
+  export interface ResponseGetAuditProducts {
+    data: GetAuditProducts[],
+    code: number,
+    message: string,
+    error?: HttpRequestModel.ApiError
+  }
+
+  // Check the product in packing for audit
+  export interface AuditProductInPacking {
+    auditCorrect: boolean,
+    product: ProductModel.Product,
+    packing: CarrierModel.Carrier
+  }
+  export interface ResponseAuditProductInPacking {
+    data: AuditProductInPacking,
+    code: number,
+    message: string,
+    error?: HttpRequestModel.ApiError
   }
 }

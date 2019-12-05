@@ -11,6 +11,7 @@ import { PendingRevisionsComponent } from './pending-revisions/pending-revisions
 import { ProductListComponent } from './product-list/product-list.component';
 import {ScannerManualModule} from "../components/scanner-manual/scanner-manual.module";
 import { HideKeyboardModule } from 'hide-keyboard';
+import {MatIconModule, MatListModule} from "@angular/material";
 
 const routes: Routes = [
   {
@@ -54,7 +55,9 @@ const routes: Routes = [
     BreadcrumbModule,
     RouterModule.forChild(routes),
     ScannerManualModule,
-    HideKeyboardModule
+    HideKeyboardModule,
+    MatListModule,
+    MatIconModule
   ]
 })
 export class AuditsMobileModule { }
