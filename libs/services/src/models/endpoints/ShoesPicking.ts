@@ -26,6 +26,10 @@ export namespace ShoesPickingModel {
       on_right_side: boolean;
       items: number;
     }
+    packing?: {
+      id: number,
+      reference: string
+    }
   }
 
   export interface WorkwaveOrder {

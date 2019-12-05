@@ -14,7 +14,13 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
   keyboard: Keyboard;
   searchTerm: string = "";
   items: any;
+  type: number;
   @Output() eventOnKeyPress = new EventEmitter<any>();
+
+  result = {
+    keyPress: '',
+    selected: null
+  };
 
   constructor(
     private keyboardFilteringService: KeyboardFilteringService,
@@ -22,6 +28,7 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
     private popoverController: PopoverController
   ) {
     const items = this.navParams.get('data');
+    this.type = this.navParams.get('type');
     this.keyboardFilteringService.setItems(items);
   }
 
@@ -39,7 +46,8 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
 
   onChange = (input: string) => {
     this.searchTerm = input;
-    this.eventOnKeyPress.emit(input);
+    this.result.keyPress = input;
+    this.eventOnKeyPress.emit(this.result);
   };
 
   onKeyPress = (button: string) => {
@@ -60,6 +68,8 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
   }
 
   async selectItem(id: any) {
-    await this.popoverController.dismiss(id);
+    this.result.selected = {id, type: this.type};
+    this.eventOnKeyPress.emit(this.result);
+    await this.popoverController.dismiss();
   }
 }

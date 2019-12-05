@@ -1,6 +1,6 @@
 <div class="list-wrapper ion-padding">
-    <ion-item lines="none" (click)="selected(dato)" [ngClass]="dato.selected ? 'selected' : 'unselected'"  *ngFor="let dato of datos" >
+    <ion-item lines="none" *ngFor="let dato of datos" (click)="selected(dato)" [ngClass]="{'selected': dato.selected, 'unselected': !dato.selected}">
        <ion-label class="ion-text-capitalize">{{dato.name}}</ion-label>
+       <ion-icon *ngIf="dato.newSelectd"  slot="end" name="add"></ion-icon>
      </ion-item>
 </div>
-

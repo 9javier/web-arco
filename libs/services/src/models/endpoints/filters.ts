@@ -14,6 +14,12 @@ export namespace FiltersModel{
         name:string;
     }
 
+    export interface Brands extends Enum {
+        id:number;
+        name:string;
+        reference:string;
+    }
+
     export interface Group extends Enum {
         id:number;
         reference:string;
@@ -33,6 +39,10 @@ export namespace FiltersModel{
         id:number;
         reference:number;
         name:string;
+    }
+
+    export interface ResponseBrand extends Request.Success{
+        data:Array<Brands>
     }
 
     export interface ResponseColor extends Request.Success{

@@ -39,7 +39,7 @@
         {{product?.product?.size?.name}}
       </ion-label>
       <ion-label>
-        {{product?.inventory?.container?.reference}}
+        {{product?.inventory?.container ? product.inventory.container.reference : product.inventory.packing?.reference}}
       </ion-label>
       <ion-label>
         {{getProductStatusName(product)}}

@@ -5,6 +5,8 @@ import {AuthenticationService, TypeModel} from "@suite/services";
 import {from, Observable} from "rxjs";
 import { environment } from '../../../environments/environment';
 import {switchMap} from "rxjs/operators";
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -64,16 +66,24 @@ export class IncidencesService {
     size: 10
   };
 
-  constructor(private http: HttpClient, private auth: AuthenticationService) {}
+  constructor(
+    private http: HttpClient,
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
+  ) {}
 
   public initPreview() {
     this.postSearch(this._defaultFiltersPreview)
-      .subscribe((res: IncidenceModel.ResponseSearch) => {
-        this._incidencesPreviewList = res.data.incidences;
-        this._incidencesUnattendedQuantity = res.data.count;
-        this._incidencesQuantityPopover = res.data.count_search;
-      }, error => {
-        console.warn('Error Subscribe::Search Incidences with Filters');
+      .then((res: IncidenceModel.ResponseSearch) => {
+        if (res.code == 200) {
+          this._incidencesPreviewList = res.data.incidences;
+          this._incidencesUnattendedQuantity = res.data.count;
+          this._incidencesQuantityPopover = res.data.count_search;
+        } else {
+          console.error('Error to try search Incidences with Filters', res);
+        }
+      }, (error) => {
+        console.error('Error to try search Incidences with Filters', error);
       });
   }
 
@@ -81,12 +91,16 @@ export class IncidencesService {
     let filtersSearch = filters || this._defaultFilters;
 
     this.postSearch(filtersSearch)
-      .subscribe((res: IncidenceModel.ResponseSearch) => {
-        this._incidencesList = res.data.incidences;
-        this._incidencesUnattendedQuantity = res.data.count;
-        this._incidencesQuantityList = res.data.count_search;
-      }, error => {
-        console.warn('Error Subscribe::Search Incidences with Filters');
+      .then((res: IncidenceModel.ResponseSearch) => {
+        if (res.code == 200) {
+          this._incidencesList = res.data.incidences;
+          this._incidencesUnattendedQuantity = res.data.count;
+          this._incidencesQuantityList = res.data.count_search;
+        } else {
+          console.error('Error to try search Incidences with Filters', res);
+        }
+      }, (error) => {
+        console.error('Error to try search Incidences with Filters', error);
       });
   }
 
@@ -168,11 +182,8 @@ export class IncidencesService {
       });
   }
 
-  public postSearch(parameters: IncidenceModel.SearchParameters) : Observable<IncidenceModel.ResponseSearch> {
-    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
-      return this.http.post<IncidenceModel.ResponseSearch>(this.postSearchUrl, parameters, { headers });
-    }));
+  public postSearch(parameters: IncidenceModel.SearchParameters) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postSearchUrl, parameters);
   }
 
 }

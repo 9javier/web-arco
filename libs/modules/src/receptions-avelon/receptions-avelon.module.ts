@@ -1,11 +1,12 @@
 import { IonicModule } from '@ionic/angular';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { ReceptionsAvelonComponent } from './receptions-avelon.component';
 import { ListsComponent } from './components/lists/lists.component';
 import { SizesComponent } from './components/sizes/sizes.component';
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
+import { FormsModule } from '@angular/forms';
 
 const routes: Routes = [
   {
@@ -20,8 +21,10 @@ const routes: Routes = [
     CommonModule,
     RouterModule,
     IonicModule,
+    FormsModule,
     RouterModule.forChild(routes),
     VirtualKeyboardModule
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ReceptionsAvelonModule { }
