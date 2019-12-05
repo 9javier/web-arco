@@ -1,8 +1,8 @@
-import { AlertController, PopoverController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService } from '@suite/services';
-import { Component, OnInit, OnDestroy, EventEmitter } from '@angular/core';
-import { VirtualKeyboardComponent } from '../components/virtual-keyboard/virtual-keyboard.component';
+import { Component, OnInit, OnDestroy, } from '@angular/core';
+import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
 
 @Component({
@@ -19,6 +19,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   providerId: number;
   interval: any;
   option:any;
+  typeScreen: number;
+
+  objectType: typeof Type;
 
   result: ReceptionAvelonModel.Print = {
     brandId: undefined,
@@ -67,7 +70,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     clearInterval(this.interval)
   }
 
-  openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: number) {
+  openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: Type) {
     const dataList = [];
 
     list.forEach((item) => {
@@ -119,8 +122,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.reception.isProviderAviable(data).subscribe(
       (resp: boolean) => {
         this.isProviderAviable = resp;
-        // console.log(resp);
-
         if (!this.isProviderAviable) {
           this.alertMessage('Este proveedor no esta habilitado para recepcionar');
         } else {
@@ -251,23 +252,23 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         if(resp.ean) {
           this.result.ean = resp.ean;
           this.reception.eanProduct(resp.ean).subscribe(resp => {
-            this.setSelected(this.response.brands, resp.brand, 1);
-            this.setSelected(this.response.colors, resp.color, 2);
-            this.setSelected(this.response.models, resp.model, 3);
-            this.setSelected(this.response.sizes, resp.size, 4);
+            this.setSelected(this.response.brands, resp.brand, Type.BRAND);
+            this.setSelected(this.response.colors, resp.color, Type.COLOR);
+            this.setSelected(this.response.models, resp.model, Type.MODEL);
+            this.setSelected(this.response.sizes, resp.size, Type.SIZE);
           })
         }else {
           if(resp.brand) {
-            this.setSelected(this.response.brands, resp.brand, 1);
+            this.setSelected(this.response.brands, resp.brand, Type.BRAND);
           }
           if(resp.color) {
-            this.setSelected(this.response.colors, resp.color, 2);
+            this.setSelected(this.response.colors, resp.color, Type.COLOR);
           }
           if(resp.model) {
-            this.setSelected(this.response.models, resp.model, 3);
+            this.setSelected(this.response.models, resp.model, Type.MODEL);
           }
           if(resp.size) {
-            this.setSelected(this.response.sizes, resp.size, 4);
+            this.setSelected(this.response.sizes, resp.size, Type.SIZE);
           }
         }
 
@@ -295,24 +296,18 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       data.seleted = true;
       array.push(data);
     }
-    if (type === 1) {
-      console.log('estoy en brand');
 
+    if (type === Type.BRAND) { // brand
       this.result.brandId = data.id
     }
-    if (type === 2) {
-      console.log('estoy en color');
-
+    if (type === Type.COLOR) { // color
       this.result.colorId = data.id
     }
-    if (type === 3) {
-      console.log('estoy en model');
+    if (type === Type.MODEL) { //model
 
       this.result.modelId = data.id
     }
-    if (type === 4) {
-      console.log('estoy en size');
-
+    if (type === Type.SIZE) { // size
       this.result.sizeId = data.id
     }
 
@@ -355,12 +350,18 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
 
       this.reception.eanProduct(this.result.ean).subscribe(resp => {
-          this.setSelected(this.response.brands, resp.brand, 1);
-          this.setSelected(this.response.colors, resp.color, 2);
-          this.setSelected(this.response.models, resp.model, 3);
-          this.setSelected(this.response.sizes, resp.size, 4);
+          this.setSelected(this.response.brands, resp.brand, Type.BRAND);
+          this.setSelected(this.response.colors, resp.color, Type.COLOR);
+          this.setSelected(this.response.models, resp.model, Type.MODEL);
+          this.setSelected(this.response.sizes, resp.size, Type.SIZE);
       })
     }
 
+
+  }
+
+  screenExit(e){
+    console.log(e);
+    this.typeScreen = undefined
   }
 }
