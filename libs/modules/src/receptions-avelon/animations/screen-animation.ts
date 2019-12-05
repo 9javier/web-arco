@@ -3,4 +3,4 @@ import {
     transition, animate, style, query
 } from '@angular/animations';
 
-expor const screenAnimation = animation = 
+export const screenAnimation = animation([]) 
