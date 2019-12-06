@@ -1,3 +1,4 @@
+import { Filter } from './enums/filter.enum';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
 
@@ -49,22 +50,25 @@ export class ProductsComponent implements OnInit {
 
 
   form:FormGroup = this.formBuilder.group({
-    containers: [],
-    brand:[],
-    models: [],
-    colors: [],
-    sizes: [],
+    containers: [[]],
+    brand:[[]],
+    models: [[]],
+    colors: [[]],
+    sizes: [[]],
     productReferencePattern:'',
-    warehouses:[],
+    warehouses:[[]],
     pagination: this.formBuilder.group({
         page: 1,
         limit: this.pagerValues[0]
     }),
     orderby:this.formBuilder.group( {
-        type: '',
+        type: '5',
         order: "asc"
     })
   });
+
+  filterPriority: Array<number> = [];
+  oldValue: any
 
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({},{
@@ -88,6 +92,7 @@ export class ProductsComponent implements OnInit {
 
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
+
 
 
   // @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -182,9 +187,54 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit() {
     this.getFilters();
-    this.listenChanges();
-    console.log(this.products);
+    this.observerChanges();
+
+    const reference = document.getElementById('reference').addEventListener('change', this.change)
     
+  }
+  change(e) {
+    console.log(e);
+    
+  }
+  observerChanges(){
+    this.form.valueChanges.subscribe(value => {
+      if (value.brand.length > 0 && this.filterPriority.find(e=>e == Filter.BRANDS) === undefined) {
+        this.filterPriority.push(Filter.BRANDS)
+        console.log('BRANDS');
+        
+      }
+      if (value.colors.length > 0 && this.filterPriority.find(e=>e == Filter.COLORS) === undefined) {
+        this.filterPriority.push(Filter.COLORS)
+        console.log('COLORS');        
+      }
+      if (value.containers.length > 0 && this.filterPriority.find(e=>e == Filter.CONTAINERS) === undefined) {
+        this.filterPriority.push(Filter.CONTAINERS)
+        console.log('CONTAINERS');
+        
+      }
+      if (value.models.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
+        this.filterPriority.push(Filter.MODELS)
+        console.log('MODELS');
+        
+      }
+      if (value.sizes.length > 0 && this.filterPriority.find(e=>e == Filter.SIZES) === undefined) {
+        this.filterPriority.push(Filter.SIZES)
+        console.log('SIZES');
+        
+      }
+      if (value.warehouses.length > 0 && this.filterPriority.find(e=>e == Filter.WAREHOUSES) === undefined) {
+        this.filterPriority.push(Filter.WAREHOUSES)
+        console.log('WAREHOUSES');
+        
+      }      
+
+      const valor = JSON.stringify(value)
+      if(valor !== this.oldValue){
+        this.oldValue = JSON.stringify(value)
+        this.getFilters()
+      }
+
+    })
   }
 
   /**
@@ -205,6 +255,8 @@ export class ProductsComponent implements OnInit {
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
+      console.log(change);
+      
       if (this.pauseListenFormChange) return;
       ///**format the reference */
       /**cant send a request in every keypress of reference, then cancel the previous request */
@@ -226,6 +278,9 @@ export class ProductsComponent implements OnInit {
   }
 
   private getFormValueCopy() {
+    this.form.patchValue({
+      productReferencePattern: `${this.form.value.productReferencePattern}`
+    })
     return JSON.parse(JSON.stringify(this.form.value || {}));
   }
 
@@ -251,11 +306,9 @@ export class ProductsComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters):void{
-    console.log(parameters);
     
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
-      console.log(searchsInContainer);
       
       this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
@@ -303,18 +356,37 @@ export class ProductsComponent implements OnInit {
         if(warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
         }
-
-        this.inventoryServices.searchFilters({}).subscribe(searchsInContainer=>{
+        
+        this.inventoryServices.searchFilters(this.form.value).subscribe(searchsInContainer=>{
           console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
           /**
            */
-          this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
-          this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-          this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-          this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-          this.updateFilterSourceModels(searchsInContainer.data.filters.models);
-          this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+
+          if (this.filterPriority.find(e => e == Filter.BRANDS) == undefined) {
+            this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
+          }
+          if (this.filterPriority.find(e => e == Filter.COLORS) == undefined) {
+            this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+          }
+          if (this.filterPriority.find(e => e == Filter.CONTAINERS) == undefined) {
+            this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+          }
+          if (this.filterPriority.find(e => e == Filter.MODELS) == undefined) {
+            this.updateFilterSourceModels(searchsInContainer.data.filters.models);            
+          }
+          if (this.filterPriority.find(e => e == Filter.REFERENCES) == undefined) {
+            
+          }
+          console.log('updateFilterSourceSizes',this.filterPriority.find(e => e == Filter.SIZES) == undefined);
+          
+          if (this.filterPriority.find(e => e == Filter.SIZES) == undefined) {
+            this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+          }
+          if (this.filterPriority.find(e => e == Filter.WAREHOUSES) == undefined) {
+            this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+          }
+          
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
           setTimeout(() => {
             this.pauseListenFormChange = false;
@@ -373,6 +445,8 @@ export class ProductsComponent implements OnInit {
       this.form.get("colors").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+    console.log(value);
+
   }
 
   private updateFilterSourceContainers(containers: FiltersModel.Container[]) {
