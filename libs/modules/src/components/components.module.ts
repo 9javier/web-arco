@@ -5,6 +5,7 @@ import { DropdownComponent } from './dropdown/dropdown.component';
 import { ResponsiveLayoutModule } from './responsive-layout/responsive-layout.module';
 import { BreadcrumbModule } from './breadcrumb/breadcrumb.module';
 import { MenuModule } from "./menu/menu.module";
+import { VirtualKeyboardModule } from './virtual-keyboard/virtual-keyboard.module';
 
 @NgModule({
   declarations: [UtilsComponent, DropdownComponent],
@@ -12,7 +13,8 @@ import { MenuModule } from "./menu/menu.module";
     CommonModule,
     BreadcrumbModule,
     MenuModule,
-    ResponsiveLayoutModule
+    ResponsiveLayoutModule,
+    VirtualKeyboardModule
   ],
   exports:[UtilsComponent,DropdownComponent]
 })
