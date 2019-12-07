@@ -291,6 +291,12 @@ export class ProductsComponent implements OnInit {
   async deleteProducts(){
     let id = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.id:false).filter(product=>product);
     console.log('delete',id);
+    // TODO LLAMA EL SERVICIO PARA EL PERMISO
+    this.inventoryServices.permisis_user().subscribe(data=>{
+      if(!data){
+        
+      }
+    })
     // TODO CREAMOS EL METODO PARA ELIMINAR
     this.intermediaryService.presentLoading('Borrando productos');
     this.inventoryServices.delete_Products(id).subscribe(result=>{
