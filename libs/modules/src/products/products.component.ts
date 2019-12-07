@@ -1,3 +1,4 @@
+import { BehaviorSubject } from 'rxjs';
 import { Filter } from './enums/filter.enum';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
@@ -68,15 +69,17 @@ export class ProductsComponent implements OnInit {
   });
 
   filterPriority: Array<number> = [];
-  oldValue: any
+  filterPriorityIndex: number;
+  filtersToUpdate: Array<number> =[]
 
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({},{
     validators:validators.haveItems("toSelect")
   });
 
-
-
+  formValueChanges = new BehaviorSubject(this.form.value)
+  formValueChanges$ = this.formValueChanges.asObservable()
+  formCurrentValue = this.form.value;
   products: ProductModel.Product[] = [];
   displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container','brands'];
   dataSource: any;
@@ -93,7 +96,8 @@ export class ProductsComponent implements OnInit {
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
-
+  isFirst: boolean = true;
+  
 
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   //@ViewChild(MatSort) sort: MatSort;
@@ -189,51 +193,72 @@ export class ProductsComponent implements OnInit {
     this.getFilters();
     this.observerChanges();
 
-    const reference = document.getElementById('reference').addEventListener('change', this.change)
+    this.formValueChanges$.subscribe(value => {
+      const currentValue = JSON.stringify(this.formCurrentValue);
+      const newValue = JSON.stringify(value);
+      if(currentValue !== newValue) {
+        if (value.containers.length > this.formCurrentValue.containers.length) {
+          if (value.containers.length > 0 && this.filterPriority.find(e=>e == Filter.CONTAINERS) === undefined) {
+            this.filterPriority.push(Filter.CONTAINERS)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.CONTAINERS)
+        }
+        if (value.brand.length > this.formCurrentValue.brand.length) {
+          if (value.brand.length > 0 && this.filterPriority.find(e=>e == Filter.BRANDS) === undefined) {
+            this.filterPriority.push(Filter.BRANDS)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.BRANDS)
+        }
+        if (value.models.length > this.formCurrentValue.models.length) {
+          if (value.models.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
+            this.filterPriority.push(Filter.MODELS)            
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.MODELS)
+        }
+        if (value.colors.length > this.formCurrentValue.colors.length) {
+          if (value.colors.length > 0 && this.filterPriority.find(e=>e == Filter.COLORS) === undefined) {
+            this.filterPriority.push(Filter.COLORS)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.COLORS)
+          
+        }
+        if (value.sizes.length > this.formCurrentValue.sizes.length) {
+          if (value.sizes.length > 0 && this.filterPriority.find(e=>e == Filter.SIZES) === undefined) {
+            this.filterPriority.push(Filter.SIZES)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.SIZES)
+        }
+        if (value.productReferencePattern !== this.formCurrentValue.productReferencePattern) {
+          if (value.productReferencePatternlength > 0 && this.filterPriority.find(e=>e == Filter.REFERENCES) === undefined) {
+            this.filterPriority.push(Filter.REFERENCES)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.REFERENCES)
+        }
+        if (value.warehouses.length > this.formCurrentValue.warehouses.length) {
+          if (value.warehouses.length > 0 && this.filterPriority.find(e=>e == Filter.WAREHOUSES) === undefined) {
+            this.filterPriority.push(Filter.WAREHOUSES)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.WAREHOUSES)
+        }  
+        this.formCurrentValue = value
+        if(!this.isFirst) {
+          this.getFilters()
+        }
+        if (this.isFirst) {
+          this.isFirst = false;
+        }
+        console.log(this.filterPriorityIndex)
+        console.log(this.filterPriority)
+      }
+    })
     
   }
-  change(e) {
-    console.log(e);
-    
-  }
+
   observerChanges(){
     this.form.valueChanges.subscribe(value => {
-      if (value.brand.length > 0 && this.filterPriority.find(e=>e == Filter.BRANDS) === undefined) {
-        this.filterPriority.push(Filter.BRANDS)
-        console.log('BRANDS');
-        
-      }
-      if (value.colors.length > 0 && this.filterPriority.find(e=>e == Filter.COLORS) === undefined) {
-        this.filterPriority.push(Filter.COLORS)
-        console.log('COLORS');        
-      }
-      if (value.containers.length > 0 && this.filterPriority.find(e=>e == Filter.CONTAINERS) === undefined) {
-        this.filterPriority.push(Filter.CONTAINERS)
-        console.log('CONTAINERS');
-        
-      }
-      if (value.models.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
-        this.filterPriority.push(Filter.MODELS)
-        console.log('MODELS');
-        
-      }
-      if (value.sizes.length > 0 && this.filterPriority.find(e=>e == Filter.SIZES) === undefined) {
-        this.filterPriority.push(Filter.SIZES)
-        console.log('SIZES');
-        
-      }
-      if (value.warehouses.length > 0 && this.filterPriority.find(e=>e == Filter.WAREHOUSES) === undefined) {
-        this.filterPriority.push(Filter.WAREHOUSES)
-        console.log('WAREHOUSES');
-        
-      }      
-
-      const valor = JSON.stringify(value)
-      if(valor !== this.oldValue){
-        this.oldValue = JSON.stringify(value)
-        this.getFilters()
-      }
-
+  
+      this.formValueChanges.next(value)    
+  
     })
   }
 
@@ -356,13 +381,22 @@ export class ProductsComponent implements OnInit {
         if(warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
         }
-        
-        this.inventoryServices.searchFilters(this.form.value).subscribe(searchsInContainer=>{
+        let params;
+        if (this.isFirst) {
+          params = {};
+        } else {
+          params = this.form.value;
+          this
+        }
+        this.inventoryServices.searchFilters(params).subscribe(searchsInContainer=>{
           console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
           /**
            */
 
+          
+          
+          
           if (this.filterPriority.find(e => e == Filter.BRANDS) == undefined) {
             this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
           }
@@ -375,11 +409,6 @@ export class ProductsComponent implements OnInit {
           if (this.filterPriority.find(e => e == Filter.MODELS) == undefined) {
             this.updateFilterSourceModels(searchsInContainer.data.filters.models);            
           }
-          if (this.filterPriority.find(e => e == Filter.REFERENCES) == undefined) {
-            
-          }
-          console.log('updateFilterSourceSizes',this.filterPriority.find(e => e == Filter.SIZES) == undefined);
-          
           if (this.filterPriority.find(e => e == Filter.SIZES) == undefined) {
             this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           }
@@ -387,6 +416,32 @@ export class ProductsComponent implements OnInit {
             this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           }
           
+          let i = this.filterPriorityIndex+1
+          if(i+1 < this.filterPriority.length){
+            while(i < this.filterPriority.length ){
+              if (this.filterPriority[i] == Filter.BRANDS) {
+                this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
+              }
+              if (this.filterPriority[i] == Filter.COLORS) {
+                this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+              }
+              if (this.filterPriority[i] == Filter.CONTAINERS) {
+                this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+              }
+              if (this.filterPriority[i] == Filter.MODELS) {
+                this.updateFilterSourceModels(searchsInContainer.data.filters.models); 
+              }
+              if (this.filterPriority[i] == Filter.SIZES) {
+                this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+              }
+              if (this.filterPriority[i] == Filter.WAREHOUSES) {
+                this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+              }
+              i++;
+            }
+          }
+
+
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
           setTimeout(() => {
             this.pauseListenFormChange = false;
