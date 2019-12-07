@@ -1,9 +1,13 @@
 .selected {
-  color: #fff;
-  background: #249f29;
+  background: #249f29 !important;
+  color: #ffffff;
+}
+.unselected {
+  --background: #00000000;
 }
 
-.size {
-  padding-left: 4.5%;
-  width: 11% !important;
+.newSelected {
+  background: darkblue;
+  color: #ffffff;
 }
+
