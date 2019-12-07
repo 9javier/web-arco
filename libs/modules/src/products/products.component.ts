@@ -289,9 +289,17 @@ export class ProductsComponent implements OnInit {
   }
 
   async deleteProducts(){
-    let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
-    console.log('delete',references);
-    
+    let id = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.id:false).filter(product=>product);
+    console.log('delete',id);
+    // TODO CREAMOS EL METODO PARA ELIMINAR
+    this.intermediaryService.presentLoading('Borrando productos');
+    this.inventoryServices.delete_Products(id).subscribe(result=>{
+      this.intermediaryService.dismissLoading();
+      console.log(result);
+    },error=> {
+      this.intermediaryService.dismissLoading();
+    });
+
     
     // this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     // this.printerService.printTagBarcode(references).subscribe(result=>{
