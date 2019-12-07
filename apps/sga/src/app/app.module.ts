@@ -27,11 +27,13 @@ import localeEs from '@angular/common/locales/es';
 import {registerLocaleData} from "@angular/common";
 import {MondayStartingDateAdapterService} from "../../../../libs/services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
 import { NgxMaskModule } from 'ngx-mask';
+import { VirtualKeyboardComponent } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.component';
+import { VirtualKeyboardModule } from '../../../../libs/modules/src/components/virtual-keyboard/virtual-keyboard.module';
 
 registerLocaleData(localeEs);
 @NgModule({
   declarations: [AppComponent, ErrordialogComponent],
-  entryComponents: [ErrordialogComponent],
+  entryComponents: [ErrordialogComponent, VirtualKeyboardComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -48,7 +50,8 @@ registerLocaleData(localeEs);
     MatNativeDateModule,
     BreadcrumbModule,
     MenuModule,
-    NgxMaskModule.forRoot()
+    NgxMaskModule.forRoot(),
+    VirtualKeyboardModule
   ],
   providers: [
     StatusBar,

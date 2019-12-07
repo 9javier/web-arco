@@ -3,23 +3,26 @@ import { Subscription } from 'rxjs';
 import { ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService } from '@suite/services';
 import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Type } from './enums/type.enum';
-
+import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
+import { element } from 'protractor';
 
 @Component({
   selector: 'suite-receptions-avelon',
   templateUrl: './receptions-avelon.component.html',
-  styleUrls: ['./receptions-avelon.component.scss'] 
+  styleUrls: ['./receptions-avelon.component.scss']
 })
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   response: ReceptionAvelonModel.Reception;
   subscriptions: Subscription;
-  providers: Array<any>
-  isProviderAviable: boolean
+  providers: Array<any>;
+  isProviderAviable: boolean;
   expedition: string;
   providerId: number;
   interval: any;
-  option:any
+  option:any;
   typeScreen: number;
+
+  objectType = Type;
 
   result: ReceptionAvelonModel.Print = {
     brandId: undefined,
@@ -29,25 +32,26 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     providerId: undefined,
     expedition: '',
     ean: ''
-  }
+  };
+
   getReceptionsNotifiedProviders$: Subscription;
 
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
+    private virtualKeyboardService: VirtualKeyboardService,
   ) { }
 
   ngOnInit() {
-    this.intermediaryService.presentLoading('Cargando')
+    this.intermediaryService.presentLoading('Cargando');
     this.response = {
       brands: [],
       models: [],
       sizes: [],
       colors: [],
       ean: ''
-    }
-
+    };
 
     this.isProviderAviable = false;
     this.subscriptions = this.reception.getAllProviders().subscribe((data: Array<ReceptionAvelonModel.Providers>) => {
@@ -59,7 +63,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       () => {
         this.intermediaryService.dismissLoading()
       }
-    )
+    );
   }
 
   ngOnDestroy() {
@@ -67,31 +71,67 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     clearInterval(this.interval)
   }
 
+  openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: Type) {
+    const dataList = [];
+
+    list.forEach((item) => {
+      dataList.push({ id: item.id, value: item.name })
+    });
+
+    const keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter.subscribe((data) => {
+      if (data.selected) {
+        switch (data.selected.type) {
+          case Type.BRAND:
+            this.findAndSelectObject(this.response.brands, data.selected);
+            break;
+          case Type.COLOR:
+            this.findAndSelectObject(this.response.colors, data.selected);
+            break;
+          case Type.MODEL:
+            this.findAndSelectObject(this.response.models, data.selected);
+            break;
+        }
+      }
+    });
+
+    this.virtualKeyboardService.openVirtualKeyboard(dataList, type).then((popover: any) => {
+      popover.onDidDismiss().then(() => {
+        keyboardEventEmitterSubscribe.unsubscribe();
+      });
+    });
+  }
+
+  findAndSelectObject(array: Array<ReceptionAvelonModel.Data>, selected: any) {
+    let object = array.find(data => data.id === selected.id);
+    if (object) {
+      this.setSelected(array, object, selected.type);
+    }
+  }
 
   proveedorSelected(e, item) {
     console.log(e);
     if (e.detail.value) {
       this.providerId = e.detail.value;
       e.target.value = null
-      
+
       const data: ReceptionAvelonModel.CheckProvider = {
         expedition: this.expedition,
         providerId: this.providerId
       }
-  
+
       if (data.expedition === undefined || data.expedition.length === 0) {
         this.alertMessage('El numero de expedicion no puede estar vacio');
         return
       }
       // console.log(data);
-  
+
       this.checkProvider(data)
     }
   }
 
   optionClick(e) {
     console.log(e);
-    
+
   }
 
   checkProvider(data: ReceptionAvelonModel.CheckProvider) {
@@ -124,8 +164,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
 
   async alertMessage(message: string) {
-    // Import the AlertController from ionic package 
-    // Consume it in the constructor as 'alertCtrl' 
+    // Import the AlertController from ionic package
+    // Consume it in the constructor as 'alertCtrl'
     const alert = await this.alertCtrl.create({
       header: 'Alerta',
       message,
@@ -254,7 +294,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
           }
         }
 
-        
+
       });
     }, seg);
   }
@@ -270,7 +310,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   setSelected(array: Array<ReceptionAvelonModel.Data>, data: any, type?: number) {
     console.log(data);
-    
+
     const findIndexResult: number = array.findIndex(element => element.id === data.id);
     if (findIndexResult >= 0) {
       array[findIndexResult].selected = true
@@ -278,6 +318,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       data.seleted = true;
       array.push(data);
     }
+
     if (type === Type.BRAND) { // brand
       this.result.brandId = data.id
     }
@@ -291,7 +332,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     if (type === Type.SIZE) { // size
       this.result.sizeId = data.id
     }
-    
+
     return data;
   }
 
@@ -322,6 +363,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   onKey(e){
     if (e.keyCode == 13) {
+      console.log('enter');
+
       this.response.brands = this.clearSelected(this.response.brands);
       this.response.colors = this.clearSelected(this.response.colors);
       this.response.models = this.clearSelected(this.response.models);
@@ -335,12 +378,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
           this.setSelected(this.response.sizes, resp.size, Type.SIZE);
       })
     }
-    
+
+
   }
 
   screenExit(e){
     console.log(e);
     this.typeScreen = undefined
   }
-
 }

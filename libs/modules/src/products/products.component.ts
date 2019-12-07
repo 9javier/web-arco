@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+import { Filter } from './enums/filter.enum';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
 
@@ -49,30 +51,35 @@ export class ProductsComponent implements OnInit {
 
 
   form:FormGroup = this.formBuilder.group({
-    containers: [],
-    brand:[],
-    models: [],
-    colors: [],
-    sizes: [],
+    containers: [[]],
+    brand:[[]],
+    models: [[]],
+    colors: [[]],
+    sizes: [[]],
     productReferencePattern:'',
-    warehouses:[],
+    warehouses:[[]],
     pagination: this.formBuilder.group({
         page: 1,
         limit: this.pagerValues[0]
     }),
     orderby:this.formBuilder.group( {
-        type: '',
+        type: '5',
         order: "asc"
     })
   });
+
+  filterPriority: Array<number> = [];
+  filterPriorityIndex: number;
+  filtersToUpdate: Array<number> =[]
 
   /**form to select elements to print or for anything */
   selectedForm:FormGroup = this.formBuilder.group({},{
     validators:validators.haveItems("toSelect")
   });
 
-
-
+  formValueChanges = new BehaviorSubject(this.form.value)
+  formValueChanges$ = this.formValueChanges.asObservable()
+  formCurrentValue = this.form.value;
   products: ProductModel.Product[] = [];
   displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container','brands'];
   dataSource: any;
@@ -89,6 +96,8 @@ export class ProductsComponent implements OnInit {
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
+  isFirst: boolean = true;
+  
 
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   //@ViewChild(MatSort) sort: MatSort;
@@ -182,9 +191,75 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit() {
     this.getFilters();
-    this.listenChanges();
-    console.log(this.products);
+    this.observerChanges();
+
+    this.formValueChanges$.subscribe(value => {
+      const currentValue = JSON.stringify(this.formCurrentValue);
+      const newValue = JSON.stringify(value);
+      if(currentValue !== newValue) {
+        if (value.containers.length > this.formCurrentValue.containers.length) {
+          if (value.containers.length > 0 && this.filterPriority.find(e=>e == Filter.CONTAINERS) === undefined) {
+            this.filterPriority.push(Filter.CONTAINERS)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.CONTAINERS)
+        }
+        if (value.brand.length > this.formCurrentValue.brand.length) {
+          if (value.brand.length > 0 && this.filterPriority.find(e=>e == Filter.BRANDS) === undefined) {
+            this.filterPriority.push(Filter.BRANDS)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.BRANDS)
+        }
+        if (value.models.length > this.formCurrentValue.models.length) {
+          if (value.models.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
+            this.filterPriority.push(Filter.MODELS)            
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.MODELS)
+        }
+        if (value.colors.length > this.formCurrentValue.colors.length) {
+          if (value.colors.length > 0 && this.filterPriority.find(e=>e == Filter.COLORS) === undefined) {
+            this.filterPriority.push(Filter.COLORS)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.COLORS)
+          
+        }
+        if (value.sizes.length > this.formCurrentValue.sizes.length) {
+          if (value.sizes.length > 0 && this.filterPriority.find(e=>e == Filter.SIZES) === undefined) {
+            this.filterPriority.push(Filter.SIZES)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.SIZES)
+        }
+        if (value.productReferencePattern !== this.formCurrentValue.productReferencePattern) {
+          if (value.productReferencePatternlength > 0 && this.filterPriority.find(e=>e == Filter.REFERENCES) === undefined) {
+            this.filterPriority.push(Filter.REFERENCES)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.REFERENCES)
+        }
+        if (value.warehouses.length > this.formCurrentValue.warehouses.length) {
+          if (value.warehouses.length > 0 && this.filterPriority.find(e=>e == Filter.WAREHOUSES) === undefined) {
+            this.filterPriority.push(Filter.WAREHOUSES)
+          }
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.WAREHOUSES)
+        }  
+        this.formCurrentValue = value
+        if(!this.isFirst) {
+          this.getFilters()
+        }
+        if (this.isFirst) {
+          this.isFirst = false;
+        }
+        console.log(this.filterPriorityIndex)
+        console.log(this.filterPriority)
+      }
+    })
     
+  }
+
+  observerChanges(){
+    this.form.valueChanges.subscribe(value => {
+  
+      this.formValueChanges.next(value)    
+  
+    })
   }
 
   /**
@@ -205,6 +280,8 @@ export class ProductsComponent implements OnInit {
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
+      console.log(change);
+      
       if (this.pauseListenFormChange) return;
       ///**format the reference */
       /**cant send a request in every keypress of reference, then cancel the previous request */
@@ -226,6 +303,9 @@ export class ProductsComponent implements OnInit {
   }
 
   private getFormValueCopy() {
+    this.form.patchValue({
+      productReferencePattern: `${this.form.value.productReferencePattern}`
+    })
     return JSON.parse(JSON.stringify(this.form.value || {}));
   }
 
@@ -251,11 +331,9 @@ export class ProductsComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters):void{
-    console.log(parameters);
     
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
-      console.log(searchsInContainer);
       
       this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
@@ -303,18 +381,67 @@ export class ProductsComponent implements OnInit {
         if(warehouseMain.length > 0) {
           warehouse = warehouseMain[0];
         }
-
-        this.inventoryServices.searchFilters({}).subscribe(searchsInContainer=>{
+        let params;
+        if (this.isFirst) {
+          params = {};
+        } else {
+          params = this.form.value;
+          this
+        }
+        this.inventoryServices.searchFilters(params).subscribe(searchsInContainer=>{
           console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
           /**
            */
-          this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
-          this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-          this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-          this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-          this.updateFilterSourceModels(searchsInContainer.data.filters.models);
-          this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+
+          
+          
+          
+          if (this.filterPriority.find(e => e == Filter.BRANDS) == undefined) {
+            this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
+          }
+          if (this.filterPriority.find(e => e == Filter.COLORS) == undefined) {
+            this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+          }
+          if (this.filterPriority.find(e => e == Filter.CONTAINERS) == undefined) {
+            this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+          }
+          if (this.filterPriority.find(e => e == Filter.MODELS) == undefined) {
+            this.updateFilterSourceModels(searchsInContainer.data.filters.models);            
+          }
+          if (this.filterPriority.find(e => e == Filter.SIZES) == undefined) {
+            this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+          }
+          if (this.filterPriority.find(e => e == Filter.WAREHOUSES) == undefined) {
+            this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+          }
+          
+          let i = this.filterPriorityIndex+1
+          if(i+1 < this.filterPriority.length){
+            while(i < this.filterPriority.length ){
+              if (this.filterPriority[i] == Filter.BRANDS) {
+                this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
+              }
+              if (this.filterPriority[i] == Filter.COLORS) {
+                this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
+              }
+              if (this.filterPriority[i] == Filter.CONTAINERS) {
+                this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
+              }
+              if (this.filterPriority[i] == Filter.MODELS) {
+                this.updateFilterSourceModels(searchsInContainer.data.filters.models); 
+              }
+              if (this.filterPriority[i] == Filter.SIZES) {
+                this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
+              }
+              if (this.filterPriority[i] == Filter.WAREHOUSES) {
+                this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+              }
+              i++;
+            }
+          }
+
+
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
           setTimeout(() => {
             this.pauseListenFormChange = false;
@@ -373,6 +500,8 @@ export class ProductsComponent implements OnInit {
       this.form.get("colors").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+    console.log(value);
+
   }
 
   private updateFilterSourceContainers(containers: FiltersModel.Container[]) {
