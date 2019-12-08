@@ -247,8 +247,8 @@ export class ProductsComponent implements OnInit {
         if (this.isFirst) {
           this.isFirst = false;
         }
-        console.log(this.filterPriorityIndex)
-        console.log(this.filterPriority)
+        // console.log(this.filterPriorityIndex)
+        // console.log(this.filterPriority)
       }
     })
     
@@ -280,7 +280,7 @@ export class ProductsComponent implements OnInit {
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
-      console.log(change);
+      // console.log(change);
       
       if (this.pauseListenFormChange) return;
       ///**format the reference */
@@ -340,7 +340,7 @@ export class ProductsComponent implements OnInit {
       
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      // console.log(this.dataSource);
+      // // console.log(this.dataSource);
       
       let paginator: any = searchsInContainer.data.pagination;
 
@@ -374,7 +374,7 @@ export class ProductsComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
-        console.log(response);
+        // console.log(response);
         this.warehouses = (<any>response.body).data;
         let warehouseMain = (<any>response.body).data.filter(item => item.is_main)
         let warehouse = this.warehouses[0];
@@ -389,7 +389,7 @@ export class ProductsComponent implements OnInit {
           this
         }
         this.inventoryServices.searchFilters(params).subscribe(searchsInContainer=>{
-          console.log(searchsInContainer);
+          // console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
           /**
            */
@@ -483,7 +483,7 @@ export class ProductsComponent implements OnInit {
   private updateFiltersourceBrands(brands: FiltersModel.Brands[]){
     this.pauseListenFormChange = true;
     let value = this.form.get("brand").value;
-    console.log(value);
+    // console.log(value);
     
     this.brands = brands;
     if (value && value.length) {
@@ -500,7 +500,7 @@ export class ProductsComponent implements OnInit {
       this.form.get("colors").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-    console.log(value);
+    // // console.log(value);
 
   }
 
