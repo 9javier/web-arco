@@ -238,14 +238,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.intermediaryService.presentLoading('Enviando');
 
     this.reception.printReceptionLabel(this.result).subscribe(
-      () => {
+      resp => {
+        
         this.reception.getReceptions(this.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
           this.response = info;
           this.response.brands = this.clearSelected(this.response.brands);
           this.response.models = this.clearSelected(this.response.models);
           this.response.colors = this.clearSelected(this.response.colors);
           this.response.sizes = this.clearSelected(this.response.sizes);
-        })
+
+        },
+        e => console.log(e),
+        () => this.typeScreen = resp.type
+        )
       },
       e => {
         console.log(e);
