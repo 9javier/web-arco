@@ -98,8 +98,7 @@ export class TableTeamAssignationOSComponent implements OnInit {
     this.serviceG.requestUser.next(aux);
   }
 
-  showBreakdown(teamAssignation: WorkwaveModel.TeamAssignations) {
-    let pickingId: number = teamAssignation.pickingShoes[0].pickingId;
+  showConsolidatedBreakdown(pickingId: number) {
     let assignations: AssignationsByRequests[] = [];
     for(let assignationsByRequests of this.responseQuantities){
       if(assignationsByRequests.pickingId == pickingId){
