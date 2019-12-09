@@ -11,6 +11,7 @@ import { ProductDetailsModule } from './modals/product-details/product-details.m
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import { FilterButtonModule } from "../components/filter-button/filter-button.module";
 
 
 const routes: Routes = [
@@ -33,6 +34,7 @@ const routes: Routes = [
     ProductDetailsModule,
     TagsInputModule,
     PaginatorComponentModule,
+    FilterButtonModule
   ],
   declarations: [ProductsComponent]
 })

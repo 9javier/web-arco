@@ -4,4 +4,6 @@ export class TagsInputOption {
     id:number|string;
     name:string;
     type?:string;
+    value?:string;
+    checked?:boolean;
 }

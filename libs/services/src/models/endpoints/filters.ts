@@ -6,33 +6,45 @@ export namespace FiltersModel{
     export interface Color extends Enum {
         id:number;
         name:string;
+        value:string;
+        checked:boolean;
     }
 
     export interface Warehouse extends Enum {
         id:number;
         reference:string;
         name:string;
+        value:string;
+        checked:boolean;
     }
 
     export interface Group extends Enum {
         id:number;
         reference:string;
+        value:string;
+        checked:boolean;
     }
 
     export interface Container extends Enum {
         id:number;
         reference:string;
+        value:string;
+        checked:boolean;
     }
 
     export interface Model extends Enum {
         id:number;
         reference:string;
+        value:string;
+        checked:boolean;
     }
 
     export interface Size extends Enum {
         id:number;
         reference:number;
         name:string;
+        value:string;
+        checked:boolean;
     }
 
     export interface ResponseColor extends Request.Success{

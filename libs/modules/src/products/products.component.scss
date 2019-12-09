@@ -15,3 +15,16 @@ table {
 .mat-cell, .mat-header-cell {
   padding: 10px 10px 10px 0;
 }
+
+span {
+  width: 100%;
+  text-align: left;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+suite-filter-button{
+  text-align: end;
+  padding-right: 8px;
+  display: table-cell;
+}

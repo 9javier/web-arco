@@ -1,6 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
-
 import {
   ProductModel,
   ProductsService,
@@ -13,13 +12,9 @@ import {
   WarehouseService,
   WarehousesService,
   IntermediaryService
-
 } from '@suite/services';
-
 import {HttpResponse} from '@angular/common/http';
-
 import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
-
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
 import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
@@ -27,7 +22,6 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-
 
 @Component({
   selector: 'app-products',
@@ -41,12 +35,12 @@ export class ProductsComponent implements OnInit {
 
   /**timeout for send request */
   requestTimeout;
+
   /**previous reference to detect changes */
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-
 
   form:FormGroup = this.formBuilder.group({
     containers: [],
@@ -70,26 +64,27 @@ export class ProductsComponent implements OnInit {
     validators:validators.haveItems("toSelect")
   });
 
-
-
   products: ProductModel.Product[] = [];
   displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container'];
   dataSource: any;
 
   /**Filters */
-  colors:Array<TagsInputOption> = [];
-  containers:Array<TagsInputOption> = [];
   models:Array<TagsInputOption> = [];
+  colors:Array<TagsInputOption> = [];
   sizes:Array<TagsInputOption> = [];
   warehouses:Array<TagsInputOption> = [];
+  containers:Array<TagsInputOption> = [];
   groups:Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
-
-  // @ViewChild(MatPaginator) paginator: MatPaginator;
-  //@ViewChild(MatSort) sort: MatSort;
+  //NEW FILTERS
+  isFilteringModels: number = 0;
+  isFilteringColors: number = 0;
+  isFilteringSizes: number = 0;
+  isFilteringWarehouses: number = 0;
+  isFilteringContainers: number = 0;
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -103,6 +98,65 @@ export class ProductsComponent implements OnInit {
     private modalController:ModalController,
     private printerService:PrinterService
   ) {}
+
+  //NEW FILTERS
+  applyFilters(filters, filterType) {
+    /*
+    productReferencePattern: number from model.id
+    colors: number array from color.id
+    sizes: string array from size.value
+    warehouses: number array from warehouse.id
+    containers: number array from container.id
+    */
+    switch(filterType){
+      case 'models':
+        let modelFiltered: number = 0;
+        for(let model of filters){
+          if(model.checked) modelFiltered = model.id;
+        }
+        if(modelFiltered != 0) this.form.value.productReferencePattern = modelFiltered;
+        else this.form.value.productReferencePattern = 99999;
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
+      case 'colors':
+        let colorsFiltered: number[] = [];
+        for(let color of filters){
+          if(color.checked) colorsFiltered.push(color.id);
+        }
+        if(colorsFiltered.length > 0) this.form.value.colors = colorsFiltered;
+        else this.form.value.colors = [99999];
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
+      case 'sizes':
+        let sizesFiltered: number[] = [];
+        for(let size of filters){
+          if(size.checked) sizesFiltered.push(size.value);
+        }
+        if(sizesFiltered.length > 0) this.form.value.sizes = sizesFiltered;
+        else this.form.value.sizes = ["99999"];
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
+      case 'warehouses':
+        let warehousesFiltered: number[] = [];
+        for(let warehouse of filters){
+          if(warehouse.checked) warehousesFiltered.push(warehouse.id);
+        }
+        if(warehousesFiltered.length > 0) this.form.value.warehouses = warehousesFiltered;
+        else this.form.value.warehouses = [99999];
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
+      case 'containers':
+        let containersFiltered: number[] = [];
+        for(let container of filters){
+          if(container.checked) containersFiltered.push(container.id);
+        }
+        if(containersFiltered.length > 0) this.form.value.containers = containersFiltered;
+        else this.form.value.containers = [99999];
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
+    }
+
+  }
 
   /**
    * clear empty values of objecto to sanitize it
@@ -165,9 +219,9 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-    /**
-   * Print the price for selected products
-   */
+  /**
+ * Print the price for selected products
+ */
   printPriceProducts():void{
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
@@ -268,15 +322,14 @@ export class ProductsComponent implements OnInit {
    * go to details modal
    * @param id - the id of the product
    */
-    async goDetails(product:InventoryModel.SearchInContainer){
-      return (await this.modalController.create({
-        component:ProductDetailsComponent,
-        componentProps:{
-          product:product
-        }
-      })).present();
-    }
-
+  async goDetails(product:InventoryModel.SearchInContainer){
+    return (await this.modalController.create({
+      component:ProductDetailsComponent,
+      componentProps:{
+        product:product
+      }
+    })).present();
+  }
 
   /**
    * get all filters to fill the selects
@@ -299,6 +352,13 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceModels(searchsInContainer.data.filters.models);
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+
+          this.isFilteringModels = this.models.length;
+          this.isFilteringColors = this.colors.length;
+          this.isFilteringSizes = this.sizes.length;
+          this.isFilteringWarehouses = this.warehouses.length;
+          this.isFilteringContainers = this.containers.length;
+
           setTimeout(() => {
             this.pauseListenFormChange = false;
             this.pauseListenFormChange = true;
@@ -336,39 +396,32 @@ export class ProductsComponent implements OnInit {
     return '';
   }
 
-  private updateFilterSourceColors(colors: FiltersModel.Color[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("colors").value;
-    this.colors = colors;
-    if (value && value.length) {
-      this.form.get("colors").patchValue(value, {emitEvent: false});
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-
-  private updateFilterSourceContainers(containers: FiltersModel.Container[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("containers").value;
-    this.containers = containers.map(container => {
-      container.name = container.reference;
-      return container;
-    });
-    if (value && value.length) {
-      this.form.get("containers").patchValue(value, {emitEvent: false});
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-
   private updateFilterSourceModels(models: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("productReferencePattern").value;
     this.models = models.map(model => {
       model.id = <number>(<unknown>model.reference);
       model.name = model.reference;
+      model.value = model.name;
+      model.checked = true;
       return model;
     });
     if (value && value.length) {
       this.form.get("productReferencePattern").patchValue(value, {emitEvent: false});
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceColors(colors: FiltersModel.Color[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("colors").value;
+    this.colors = colors.map(color => {
+      color.value = color.name;
+      color.checked = true;
+      return color;
+    });
+    if (value && value.length) {
+      this.form.get("colors").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
@@ -380,6 +433,8 @@ export class ProductsComponent implements OnInit {
       .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
       .map(size => {
         size.id = <number>(<unknown>size.id);
+        size.value = size.name;
+        size.checked = true;
         return size;
       })
     ;
@@ -394,10 +449,27 @@ export class ProductsComponent implements OnInit {
     let value = this.form.get("warehouses").value;
     this.warehouses = warehouses.map(warehouse => {
         warehouse.name = warehouse.reference + " - " + warehouse.name;
+        warehouse.value = warehouse.name;
+        warehouse.checked = true;
         return warehouse;
     });
     if (value && value.length) {
       this.form.get("warehouses").patchValue(value, {emitEvent: false});
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceContainers(containers: FiltersModel.Container[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("containers").value;
+    this.containers = containers.map(container => {
+      container.name = container.reference;
+      container.value = container.name;
+      container.checked = true;
+      return container;
+    });
+    if (value && value.length) {
+      this.form.get("containers").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
@@ -409,6 +481,7 @@ export class ProductsComponent implements OnInit {
     this.form.get("orderby").get("type").patchValue(value, {emitEvent: false});
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
+
 }
 
 
