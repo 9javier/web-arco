@@ -15,8 +15,8 @@
     </div>
   </div>
 
-  <div class="product-list" [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
-    <mat-list>
+  <div class="product-list">
+    <mat-list [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
       <mat-list-item *ngFor="let packingProduct of packingProducts">
         <mat-icon matListIcon [ngClass]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'ok' : 'ko' : 'not-audit'">{{ packingProduct.audit.isAudit ? (packingProduct.audit.rightAudit ? 'check_circle' : 'cancel') : 'info'}}</mat-icon>
 
@@ -32,5 +32,9 @@
         </p>
       </mat-list-item>
     </mat-list>
+
+    <button *ngIf="packingProducts && packingProducts.length > 0" mat-mini-fab class="fab-filter" (click)="filterProducts($event)" color="dark">
+      <mat-icon>filter_list</mat-icon>
+    </button>
   </div>
 </div>

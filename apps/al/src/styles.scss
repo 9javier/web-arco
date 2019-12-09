@@ -40,6 +40,8 @@ $sga-theme: mat-light-theme($sga-primary, $sga-accent, $sga-warn);
 @import './theme/variables.scss';
 @import './theme/custom/crud-component.scss';
 @import './theme/custom/custom-mat-paginator.scss';
+@import './theme/custom/popover.scss';
+
 html,
 body {
     height: 100%;

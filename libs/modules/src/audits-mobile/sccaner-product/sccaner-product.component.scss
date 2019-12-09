@@ -64,10 +64,11 @@ div.content {
   }
 
   div.product-list {
-    height: calc(100vh - 56px - 30vh - 54px - 52px); // 56px form toolbar - 30vh from scanner - 54px from button - 52px from audit-info section
-    overflow-y: scroll;
     border-top: 1px solid var(--ion-color-tertiary);
+    position: relative;
     mat-list {
+      height: calc(100vh - 56px - 30vh - 54px - 52px); // 56px form toolbar - 30vh from scanner - 54px from button - 52px from audit-info section
+      overflow-y: scroll;
       padding: 0;
       mat-list-item {
         mat-icon.ok {
@@ -81,8 +82,14 @@ div.content {
         }
       }
     }
-  }
-  div.product-list.product-list-smaller {
-    height: calc(100vh - 56px - 30vh - 54px - 80px); // 56px form toolbar - 30vh from scanner - 54px from button - 80px from audit-info section
+    mat-list.product-list-smaller {
+      height: calc(100vh - 56px - 30vh - 54px - 80px); // 56px form toolbar - 30vh from scanner - 54px from button - 80px from audit-info section
+    }
+
+    button.fab-filter {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
   }
 }

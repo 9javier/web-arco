@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {AuditsService, CarrierService, IntermediaryService} from '@suite/services';
-import { ToastController } from '@ionic/angular';
+import {PopoverController, ToastController} from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
@@ -9,6 +9,8 @@ import {ScannerManualComponent} from "../../components/scanner-manual/scanner-ma
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {AuditsModel} from "../../../../services/src/models/endpoints/Audits";
 import {Location} from "@angular/common";
+import {PopoverFiltersComponent} from "./popover-filters/popover-filters.component";
+import {FiltersAuditProvider} from "../../../../services/src/providers/filters-audit/filters-audit.provider";
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -23,6 +25,7 @@ export class SccanerProductComponent implements OnInit {
   public id : any = '';
   public back : any = '';
   public packingProducts: AuditsModel.GetAuditProducts[] = [];
+  public packingProductsOriginal: AuditsModel.GetAuditProducts[] = [];
   public destinyPacking: string = null;
 
   constructor(
@@ -34,7 +37,9 @@ export class SccanerProductComponent implements OnInit {
     private scanditProvider: ScanditProvider,
     private carrierService: CarrierService,
     private intermediaryService: IntermediaryService,
-    private locattion: Location
+    private locattion: Location,
+    private popoverController: PopoverController,
+    private filtersAuditProvider: FiltersAuditProvider
   ) {
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
@@ -42,6 +47,8 @@ export class SccanerProductComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.filtersAuditProvider.sort = null;
+    this.filtersAuditProvider.filter = 0;
     setTimeout(() => this.scannerManual.focusToInput(), 1000);
     this.getProducts();
     this.getPackingDestiny();
@@ -106,9 +113,79 @@ export class SccanerProductComponent implements OnInit {
     })
   }
 
+  async filterProducts(event) {
+    const popover = await this.popoverController.create({
+      cssClass: 'popover-filter',
+      component: PopoverFiltersComponent,
+      event: event
+    });
+
+    popover.onDidDismiss().then((data) => {
+      if (data.data) {
+        this.filtersAuditProvider.filter = data.data.filter;
+        this.filtersAuditProvider.sort = data.data.sort;
+        this.filterProductsList();
+      }
+    });
+
+    await popover.present();
+  }
+
+  private filterProductsList() {
+    this.packingProducts = JSON.parse(JSON.stringify(this.packingProductsOriginal));
+
+    if (this.filtersAuditProvider.filter) {
+      switch (this.filtersAuditProvider.filter) {
+        case 1:
+          this.packingProducts = this.packingProducts.filter(pp => !pp.audit.isAudit);
+          break;
+        case 2:
+          this.packingProducts = this.packingProducts.filter(pp => pp.audit.isAudit && pp.audit.rightAudit);
+          break;
+        case 3:
+          this.packingProducts = this.packingProducts.filter(pp => pp.audit.isAudit && !pp.audit.rightAudit);
+          break;
+      }
+    }
+
+    if (this.filtersAuditProvider.sort && this.filtersAuditProvider.sort.type && this.filtersAuditProvider.sort.value) {
+      let sortArray = (a, b) => {
+        let aFieldToSort = null;
+        let bFieldToSort = null;
+
+        switch (this.filtersAuditProvider.sort.value) {
+          case 1:
+            aFieldToSort = a.product.size.name;
+            bFieldToSort = b.product.size.name;
+            break;
+          case 2:
+            aFieldToSort = a.product.model.reference;
+            bFieldToSort = b.product.model.reference;
+            break;
+          case 3:
+            aFieldToSort = a.product.model.brand.name;
+            bFieldToSort = b.product.model.brand.name;
+            break;
+        }
+
+        if (aFieldToSort < bFieldToSort) {
+          return this.filtersAuditProvider.sort.type == 'DESC' ? 1 : -1;
+        } else if (aFieldToSort > bFieldToSort) {
+          return this.filtersAuditProvider.sort.type == 'DESC' ? -1 : 1;
+        } else {
+          return 0;
+        }
+      };
+
+      this.packingProducts.sort(sortArray);
+    }
+  }
+
   private getProducts() {
     this.audit.getProducts({ packingReference: this.jaula }).subscribe((res: AuditsModel.ResponseGetAuditProducts) =>{
       this.packingProducts = res.data;
+      this.packingProductsOriginal = res.data;
+      this.filterProductsList();
     },err =>{
       this.presentToast(err.error.errors,'danger');
     })
