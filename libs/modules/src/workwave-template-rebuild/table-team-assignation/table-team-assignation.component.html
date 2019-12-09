@@ -41,15 +41,19 @@
       *ngFor="let teamAssignation of listTeamAssignations; let i = index"
       class="team-assignations-line"
       [cols]="maxSizeForCols"
-      rowHeight="48px"
-      matTooltipPosition="above"
-      [matTooltip]="tooltipValue"
-      [matTooltipDisabled]="tooltipValue == null"
-      (mouseover)="showConsolidatedBreakdown(teamAssignation)">
+      rowHeight="48px">
       <mat-grid-tile class="employee" [colspan]="maxSizeForNameCol">
         <div class="tile-value">{{teamAssignation.user.name}}</div>
       </mat-grid-tile>
-      <mat-grid-tile class="assignation" *ngFor="let assignation of teamAssignation.pickingShoes" [ngClass]="assignation.temporary ? 'temporal' : 'fixed'" [colspan]="stringToInt(assignation.quantityShoes)">
+      <mat-grid-tile
+        class="assignation"
+        *ngFor="let assignation of teamAssignation.pickingShoes"
+        [ngClass]="assignation.temporary ? 'temporal' : 'fixed'"
+        [colspan]="stringToInt(assignation.quantityShoes)"
+        matTooltipPosition="above"
+        [matTooltip]="tooltipValue"
+        [matTooltipDisabled]="tooltipValue == null"
+        (mouseover)="showConsolidatedBreakdown(assignation.pickingId)">
         <div class="tile-value">{{assignation.quantityShoes}}</div>
         <div class="tile-picking-type" [ngClass]="assignation.temporary ? assignation.pickingTypeId.id == 1 ? 'temporal direct' : 'temporal consolidated' : 'fixed'"></div>
       </mat-grid-tile>
