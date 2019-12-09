@@ -506,7 +506,8 @@ export class PrinterService {
       "4": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT,
       "5": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT_OUTLET,
       "6": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT,
-      "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET
+      "7": PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITH_DISCOUNT_OUTLET,
+      "8": PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_MODUL
     };
 
     let options: Array<PrintModel.Print> = [];
@@ -773,6 +774,37 @@ export class PrinterService {
           + "^FS^XZ";
         break;
       case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF: // Tag with product price
+      case PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_MODUL:
+
+        toPrint = "^XA^CI28^LH28,0^AFN^FO0,30^FB320,1,0,R,0^FD"
+          + printOptions.product.productShoeUnit.model.reference
+          + "^FS^ADN^FO10,95^FB320,1,0,R,0^FD";
+        toPrint += "^FS^AVN^FO0,55^FB320,1,0,C,0^FD";
+        if (printOptions.price.priceOriginal) {
+          toPrint += printOptions.price.priceOriginal + ' €';
+        }
+        toPrint += "^FS^AP^FO0,115^GB320,0,3^FS^AQ^FWB^FO5,123^FD";
+        if (printOptions.product.productShoeUnit.model.lifestyle && printOptions.product.productShoeUnit.model.lifestyle.reference && printOptions.product.productShoeUnit.model.category) {
+          toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0, 1) + printOptions.product.productShoeUnit.model.category.reference;
+        }
+        toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
+          + printOptions.product.productShoeUnit.model.reference.slice(0,6)
+          + "^FS^AAN^FO0,145^FB330,1,0,R,0^FD"
+          + printOptions.product.productShoeUnit.manufacturer.name
+          + "^FS^AAN^FO10,190^FB315,1,0,L,0^FD"
+          + printOptions.product.productShoeUnit.model.name
+          + "^FS^AAN^FO0,190^FB315,1,0,R,0^FD";
+        if (printOptions.product.productShoeUnit.model.detailColor) {
+          toPrint += printOptions.product.productShoeUnit.model.detailColor;
+        }
+        toPrint += "^FS^ADN^FO0,125^FB330,1,0,R,0^FD"
+          + "^FS^ADN^FO0,157^FB330,1,0,R,0^FD";
+        if (printOptions.price.valueRange) {
+          toPrint += printOptions.price.valueRange;
+        }
+        toPrint += "^FS^XZ";
+        break;
+
       case PrintModel.LabelTypes.LABEL_PRICE_WITH_TARIF_WITHOUT_DISCOUNT: // Tag with product price
         /*
          * Original Code
@@ -790,7 +822,7 @@ export class PrinterService {
           toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0, 1) + printOptions.product.productShoeUnit.model.category.reference;
         }
         toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
-          + printOptions.product.productShoeUnit.model.reference.substr(0,6)
+          + printOptions.product.productShoeUnit.model.reference
           + "^FS^AAN^FO0,145^FB330,1,0,R,0^FD"
           + printOptions.product.productShoeUnit.manufacturer.name
           + "^FS^AAN^FO10,190^FB315,1,0,L,0^FD"

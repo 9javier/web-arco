@@ -107,7 +107,7 @@ export class InputCodesComponent implements OnInit {
 
             let price =
             {
-              "typeLabel": 2,
+              "typeLabel": 8,
               "outlet": false,
               "impress": false,
               "discount": false,
