@@ -1,24 +1,40 @@
 <div class="content">
+  <div class="audit-info">
+    <p class="packing">{{ jaula }}</p>
+    <p class="destiny" *ngIf="destinyPacking">destino <b>{{ destinyPacking }}</b></p>
+  </div>
+
   <scanner-manual [placeholder]="'PRODUCTO'" (newValue)="userTyping($event)" [height]="'30vh'"></scanner-manual>
 
   <div class="footer">
     <div routerDirection="'root'" routerLink="/audits" (click)="backView()" class="button cancel">
       <button>VOLVER</button>
     </div>
+    <div routerDirection="'root'" routerLink="/audits" (click)="finishAudit()" class="button finish">
+      <button>FINALIZAR</button>
+    </div>
   </div>
 
   <div class="product-list">
-    <ion-list>
-      <ion-item *ngFor="let packingProduct of packingProducts">
-        <ion-label>
-          {{ packingProduct.product.reference }}
-        </ion-label>
-        <ion-icon
-          slot="end"
-          [name]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'checkmark-circle' : 'close-circle' : 'information-circle'"
-          [ngClass]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'ok' : 'ko' : 'not-audit'">
-        </ion-icon>
-      </ion-item>
-    </ion-list>
+    <mat-list [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
+      <mat-list-item *ngFor="let packingProduct of packingProducts">
+        <mat-icon matListIcon [ngClass]="packingProduct.audit.isAudit ? packingProduct.audit.rightAudit ? 'ok' : 'ko' : 'not-audit'">{{ packingProduct.audit.isAudit ? (packingProduct.audit.rightAudit ? 'check_circle' : 'cancel') : 'info'}}</mat-icon>
+
+        <h3 matLine><b>{{packingProduct.product.reference}}</b></h3>
+        <p matLine>
+          <span> {{packingProduct.product.model.reference}} - {{packingProduct.product.model.brand.name}} </span>
+        </p>
+        <p matLine>
+          <span> T - {{packingProduct.product.size.name}} </span>
+        </p>
+        <p matLine *ngIf="packingProduct.audit.isAudit && !packingProduct.audit.rightAudit">
+          <span> destino: <b>{{packingProduct.destinyProduct.reference}} {{packingProduct.destinyProduct.name}}</b> </span>
+        </p>
+      </mat-list-item>
+    </mat-list>
+
+    <button *ngIf="packingProducts && packingProducts.length > 0" mat-mini-fab class="fab-filter" (click)="filterProducts($event)" color="dark">
+      <mat-icon>filter_list</mat-icon>
+    </button>
   </div>
 </div>

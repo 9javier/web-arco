@@ -8,6 +8,7 @@ export namespace CarrierModel{
         createAt:string;
         updateAt:string;
         warehouse:WarehouseModel.Warehouse;
+        carrier: CarrierModel.Carrier
     }
 
     export interface Carrier{
