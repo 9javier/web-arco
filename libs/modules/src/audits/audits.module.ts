@@ -8,6 +8,7 @@ import { MatListModule, MatTableModule, MatPaginatorModule, MatSlideToggleModule
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from '../sorter/modals/modals.module';
 import { ProductsByAuditComponent } from './modals/products-by-audit/products-by-audit.component';
+import {PaginatorComponentModule} from "../components/paginator/paginator.component.module";
 
 const routes: Routes = [
   {
@@ -37,7 +38,8 @@ const routes: Routes = [
     ModalsModule, 
     MatExpansionModule,
     MatSlideToggleModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    PaginatorComponentModule
   ]
 })
 export class AuditsModule { }

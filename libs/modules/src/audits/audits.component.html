@@ -1,34 +1,39 @@
-<ion-content padding="true">
-  <mat-form-field>
+<ion-content>
+  <mat-form-field padding>
     <input matInput (keyup)="applyFilter($event)" placeholder="Búsqueda">
   </mat-form-field>
 
-  <div class="mat-elevation-z8">
+  <div>
     <table mat-table [dataSource]="dataSource">
   
       <ng-container matColumnDef="user">
-        <th class="title-column" mat-header-cell *matHeaderCellDef> Usuario </th>
-        <td mat-cell *matCellDef="let element"> {{element.logUser.email}} </td>
+        <th class="title-column content-left" mat-header-cell *matHeaderCellDef> Usuario </th>
+        <td class="content-left" mat-cell *matCellDef="let element"> {{element.logUser.email}} </td>
       </ng-container>
   
       <ng-container matColumnDef="status">
-        <th class="title-column" mat-header-cell *matHeaderCellDef> Estado </th>
-        <td mat-cell *matCellDef="let element"> {{element.status === 1 ? 'Abierta' : 'Cerrada'}} </td>
+        <th class="title-column content-left" mat-header-cell *matHeaderCellDef> Estado </th>
+        <td class="content-left" mat-cell *matCellDef="let element"> {{element.status === 1 ? 'Abierta' : 'Cerrada'}} </td>
       </ng-container>
 
       <ng-container matColumnDef="packing">
-        <th class="title-column" mat-header-cell *matHeaderCellDef> Embalaje </th>
-        <td mat-cell *matCellDef="let element"> {{element.packing.reference}} </td>
+        <th class="title-column content-left" mat-header-cell *matHeaderCellDef> Embalaje </th>
+        <td class="content-left" mat-cell *matCellDef="let element"> {{element.packing.reference}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date-start">
+        <th class="title-column content-left" mat-header-cell *matHeaderCellDef> Fecha inicio </th>
+        <td class="content-left" mat-cell *matCellDef="let element"> {{ getDateFormatted(element.createdAt) }} </td>
       </ng-container>
 
       <ng-container matColumnDef="products">
-        <th class="title-column" mat-header-cell *matHeaderCellDef> Cantidad de productos </th>
-        <td mat-cell *matCellDef="let element"> {{element.sorterAuditPackingProducts.length}} </td>
+        <th class="title-column content-right" mat-header-cell *matHeaderCellDef> Cantidad de productos </th>
+        <td class="content-right" mat-cell *matCellDef="let element"> {{element.sorterAuditPackingProducts.length}} </td>
       </ng-container>
 
       <ng-container matColumnDef="options">
-        <th class="title-column" mat-header-cell *matHeaderCellDef> Productos </th>
-        <td mat-cell *matCellDef="let element" class="col-see" (click)="showProducts(element)">
+        <th class="title-column content-right" mat-header-cell *matHeaderCellDef> Productos </th>
+        <td mat-cell *matCellDef="let element" class="col-see content-right" (click)="showProducts(element)">
           <span>Ver</span>
         </td>
       </ng-container>
@@ -36,7 +41,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
-  
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+    <suite-paginator [pagerValues]="[5, 10, 20]"></suite-paginator>
   </div>
 </ion-content>

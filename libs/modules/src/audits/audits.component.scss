@@ -1,11 +1,22 @@
 table {
   width: 100%;
 
+  td, th {
+    width: 16%;
+  }
+
   td.col-see {
     cursor: pointer;
     span {
       color: var(--ion-color-link);
     }
+  }
+
+  .content-left {
+    text-align: start;
+  }
+  .content-right {
+    text-align: end;
   }
 }
 
@@ -16,13 +27,4 @@ table {
 .mat-form-field {
     font-size: 14px;
     width: 100%;
-}
-
-td, th {
-    width: 25%;
-    text-align: center;
-}
-
-.title-column{
-    text-align: center;
 }

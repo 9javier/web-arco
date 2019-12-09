@@ -43,7 +43,7 @@ export class DateTimeParserService {
   }
 
   public dateMonthYear(dateToFormat) : string {
-    this.setLocale('en');
+    this.setLocale(null);
     return moment(dateToFormat).format('l');
   }
 
