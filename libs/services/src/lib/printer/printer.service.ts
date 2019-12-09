@@ -489,6 +489,8 @@ export class PrinterService {
     console.log("LLgando a esta lugar", price);
     console.debug("PRINT::printTagPriceUsingPrice 1 [" + new Date().toJSON() + "]", price);
     let dataToPrint = this.processProductToPrintTagPrice(price);
+    console.log({dataToPrint});
+    
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
       this.toPrintFromString(dataToPrint.valuePrint);
@@ -605,6 +607,8 @@ export class PrinterService {
    * @param failed - the solicitude comes from a failed request
    */
   private async toPrintFromString(textToPrint: string, macAddress?) {
+    console.log(textToPrint);
+    
 
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
     /**añadimos esto a la lógica del toPrint */
@@ -786,7 +790,7 @@ export class PrinterService {
           toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0, 1) + printOptions.product.productShoeUnit.model.category.reference;
         }
         toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
-          + printOptions.product.productShoeUnit.model.reference
+          + printOptions.product.productShoeUnit.model.reference.substr(0,6)
           + "^FS^AAN^FO0,145^FB330,1,0,R,0^FD"
           + printOptions.product.productShoeUnit.manufacturer.name
           + "^FS^AAN^FO10,190^FB315,1,0,L,0^FD"

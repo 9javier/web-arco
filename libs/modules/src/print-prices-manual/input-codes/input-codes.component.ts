@@ -1,3 +1,4 @@
+import { Value } from './../../../../../config/postman/sga_localhost_environment';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { AlertController, ToastController, ModalController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
@@ -17,7 +18,9 @@ import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.
 export class InputCodesComponent implements OnInit {
 
   dataToWrite: string = 'PRODUCTO';
+  dataToWriteMotivo : string = 'MOTIVO';
   inputProduct: string = null;
+  inputProductMotivo : string = null;
   lastCodeScanned: string = 'start';
   stampe: number = 1;
 
@@ -43,6 +46,20 @@ export class InputCodesComponent implements OnInit {
   async ngOnInit() {
     this.stampe = 1;
     this.typeTagsBoolean = this.typeTags != 1;
+    // this.max_lenght(this.inputProductMotivo);
+    console.log('pagina due');
+    
+  }
+
+  // TODO CREAR UNA VALIDACION PARA PARA QUE MOTIVO NO SEA MAS DE 1O DIGITOS
+  private max_lenght(value:string):string{
+    if(value !== null  && value.length >= 10){
+      this.audioProvider.playDefaultError();
+      return;
+    }
+    console.log(value);
+    return value;
+    
   }
 
   private focusToInput() {
@@ -67,11 +84,12 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-  async presentModal(codice) {
+  async presentModal(codice,motivo:string) {
     let Veces: string = `${this.stampe} etiqueta`;
     if (this.stampe > 1) {
       Veces = `${this.stampe} etiquetas`;
     }
+    
     const alert = await this.alertController.create({
       header: 'Etiqueta personalizada',
       message: `¿Desea imprimir ${Veces} <b>${codice}</b>? Indique el precio y pulse imprimir.`,
@@ -121,7 +139,8 @@ export class InputCodesComponent implements OnInit {
             };
             price.totalPrice = data.precio;
             price.priceOriginal = data.precio;
-            price.model.reference = codice;
+            price.model.reference = codice +' - '+ motivo;
+            
             price.model.name = codice;
             let prices: Array<any> = this.convertArrayFromPrint(price);
             this.audioProvider.playDefaultOk();
@@ -142,10 +161,16 @@ export class InputCodesComponent implements OnInit {
 
   keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
+    // console.log({dataWrote});
+    
+    let dataMotivo = (this.max_lenght(this.inputProductMotivo) || "").trim();
+    // console.log({dataMotivo});
+    
 
     if (event.keyCode == 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
+        this.inputProductMotivo = null;
         this.focusToInput();
         return;
       }
@@ -163,10 +188,15 @@ export class InputCodesComponent implements OnInit {
       }
 
       this.inputProduct = null;
+      this.inputProductMotivo = null;
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
+        
+        
         case this.scanditProvider.codeValue.PRODUCT:
           switch (this.typeTags) {
             case 1:
+              console.log(dataWrote,'producto');
+              
               this.audioProvider.playDefaultOk();
               this.printerService.printTagBarcode([dataWrote], this.stampe)
                 .subscribe((res) => {
@@ -177,6 +207,8 @@ export class InputCodesComponent implements OnInit {
               this.focusToInput();
               break;
             case 2:
+              console.log(dataWrote,'producto caso 2');
+              
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
                 .then((prices) => {
@@ -203,6 +235,8 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             default:
+              console.log(dataWrote,'default');
+              
               this.showToastWrongReference(this.typeTags);
               this.focusToInput();
               break;
@@ -211,12 +245,20 @@ export class InputCodesComponent implements OnInit {
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
           switch (this.typeTags) {
             case 1:
+              console.log(dataWrote);
+              
               this.showToastWrongReference(this.typeTags);
               this.focusToInput();
               break;
             case 2:
               // Query sizes_range for product model
-              this.priceService
+              console.log(dataWrote);
+              if(dataMotivo && dataWrote.length === 6){
+                console.log('mandiamo log');
+                this.presentModal(dataWrote,dataMotivo);
+                
+              }else{
+                this.priceService
                 .postPricesByModel(dataWrote)
                 .then((response) => {
                   if (response.code == 200 || response.code == 201) {
@@ -238,7 +280,7 @@ export class InputCodesComponent implements OnInit {
                         if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
                           label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
                         }
-
+                        
                         return {
                           name: 'radio' + iProductPrice,
                           type: 'radio',
@@ -276,7 +318,8 @@ export class InputCodesComponent implements OnInit {
                   this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                   this.focusToInput();
                 });
-              break;
+              }
+                break;
             default:
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
@@ -284,21 +327,27 @@ export class InputCodesComponent implements OnInit {
               break;
           }
           break;
-        case this.scanditProvider.codeValue.PRODUCT_UNDEFINED:
-          switch (this.typeTags) {
-            case 1:
-              this.showToastWrongReference(this.typeTags);
-              break;
-            case 2:
-              this.lastCodeScanned = 'start';
-              this.presentModal(dataWrote)
-              break;
-            default:
-              this.showToastWrongReference(this.typeTags);
-              break;
-          }
-          break;
+        // case this.scanditProvider.codeValue.PRODUCT_UNDEFINED:
+        //   switch (this.typeTags) {
+        //     case 1:
+        //       this.showToastWrongReference(this.typeTags);
+        //       break;
+        //     case 2:
+        //       this.lastCodeScanned = 'start';
+        //       console.log(this.inputProductMotivo);
+        //       console.log(this.inputProduct);
+              
+              
+        //       this.presentModal(dataWrote)
+        //       break;
+        //     default:
+        //       this.showToastWrongReference(this.typeTags);
+        //       break;
+        //   }
+        //   break;
         default:
+          console.log('prodotto default');
+          
           this.showToastWrongReference(this.typeTags);
           this.focusToInput();
           break;
