@@ -2,6 +2,7 @@ import { GroupModel } from './Group';
 import {WarehouseModel} from "@suite/services";
 import { Request } from './request';
 import { AgencyModel } from './agency.model';
+import {HttpRequestModel} from "./HttpRequest";
 export namespace WarehouseModel {
   export interface Warehouse {
     id?: number;
@@ -50,5 +51,9 @@ export namespace WarehouseModel {
     code: number;
     message: string;
     name: string;
+  }
+
+  export interface ResponseListAllWarehouses extends HttpRequestModel.Response {
+    data: Warehouse[]
   }
 }
