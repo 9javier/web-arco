@@ -327,9 +327,7 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     // console.log(event);
     
     let node = window.getSelection().anchorNode;
-    this.lastNode = event.target;
-    // console.log(this.lastNode);
-    
+    this.lastNode = node;
     /**y eso es lo que vamos a usar para filtrar */
     this.filteredOptions = this.filterOptions([...this._options], node.textContent.trim());
     if (node.textContent && !this._options.filter(option => option.name.toLowerCase() == (node.textContent.trim()).toLowerCase())[0]) {
@@ -479,24 +477,11 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     tagSpan.innerHTML = option.name;
     tagSpan.dataset.id = <string>option.id;
     tagSpan.dataset.type = option.type;
-    this.currentNode  = node.parentElement
     /**reemplazamos el nodo anterior con el nuevo */
     if (node.parentElement.className == "parent-editable") {
-      // console.log('lalala',node.parentElement);
-      
       node.parentElement.replaceChild(tagSpan, node);
-      
-      // console.log('lololo',node.parentElement);
-
     } else {
-      if (!node.parentElement.parentElement ) {
-        node =this.currentNode
-        // console.log(node);
-        
-        node.parentElement.replaceChild(tagSpan, node)
-      } else {
-        node.parentElement.parentElement.replaceChild(tagSpan, node.parentElement);
-      }
+      node.parentElement.parentElement.replaceChild(tagSpan, node.parentElement);
     }
     /**Inserto un espacio antes a menos que sea el primer elemento */
     if (this.inputElement.nativeElement.childNodes[0] !== tagSpan) {
