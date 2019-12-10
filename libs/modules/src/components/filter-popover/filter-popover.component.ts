@@ -81,35 +81,16 @@ export class FilterPopoverComponent implements OnInit {
   }
 
   searchInFilterList(event: any) {
-    let textSearched = event;
-    if (textSearched && textSearched != '') {
-      let arrayToFilter = this.listItemsFinal;
-      this.listItems = arrayToFilter.filter((item) => {
-        if (typeof item.value == 'string') {
-          if (item.value.toLowerCase().indexOf(textSearched.toLowerCase()) != -1) {
-            item.checked = true;
-            item.hide = false;
-          } else {
-            item.checked = false;
-            item.hide = true;
-          }
-        } else {
-          if (item.value.toString().toLowerCase().indexOf(textSearched.toLowerCase()) != -1) {
-            item.checked = true;
-            item.hide = false;
-          } else {
-            item.checked = false;
-            item.hide = true;
-          }
-        }
-        return true;
-      });
+    if (event && event != '') {
+      for(let index in this.listItems){
+        this.listItems[index].checked = this.listItems[index].value.toString().includes(event);
+        this.listItems[index].hide = !this.listItems[index].checked;
+      }
     } else {
-      this.listItems = this.listItems.filter((item) => {
-        item.checked = true;
-        item.hide = false;
-        return true;
-      });
+      for(let index in this.listItems){
+        this.listItems[index].checked = true;
+        this.listItems[index].hide = false;
+      }
       this.checkAllSelected();
     }
   }
