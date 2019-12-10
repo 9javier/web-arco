@@ -198,6 +198,7 @@ export class PricesComponent implements OnInit {
    */
   selectAll(event): void {
     let value = event.detail.checked;
+
     for (let index = 0; index < this.prices.length; index++) {
       this.itemSelected(this.prices[index].id);
     }
@@ -218,24 +219,24 @@ export class PricesComponent implements OnInit {
 
   // Item seleccionados
   itemSelected(item){
-    let aux =  this.itemIdSelected.findIndex( id => item === id );
-    if(aux === -1) this.itemIdSelected.push(item);
-    if(aux !== -1) this.itemIdSelected.splice(aux,1);
+    const index = this.itemIdSelected.indexOf(item, 0);
+    if (index > -1) {
+      this.itemIdSelected.splice(index, 1);
+    } else {
+      this.itemIdSelected.push(item);
+    }
   }
 
   changeStatusImpress(){
+    this.prices.forEach((price) => {
+      if (this.itemIdSelected.includes(price.id)) {
+        price.status = 4;
+      }
+    });
     this.selectedForm.get('selector').setValue(false);
     this.cd.detectChanges();
-    this.itemIdSelected.map( (itemF,idx) =>{
-      for (let index = 0; index < this.prices.length; index++) {
-       if(itemF == this.prices[index].id) {
-        this.prices[index].status = 4;
-        break;
-       }
-      }
-    })
-
     this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+    this.itemIdSelected = [];
   }
   /**
    * Print the selected labels
@@ -267,10 +268,13 @@ export class PricesComponent implements OnInit {
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
-      this.initSelectForm(this.prices);
+
       if (result) {
         this.changeStatusImpress();
       }
+
+      this.initSelectForm(this.prices);
+
       //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
