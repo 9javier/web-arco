@@ -34,7 +34,7 @@ export class InventoryService {
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
   private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`;
   private deleteProducts = `${environment.apiBase}/inventory/delete-products`;
-  private userPrimsiondeleteProducts = `${environment.apiBase}/gestion-permissions/user/has-delete-product-permission`;
+  private userPrimsiondeleteProducts = `${environment.apiBase}/gestion-permissions/users/has-delete-product-permission`;
 
   constructor(
     private http: HttpClient,
