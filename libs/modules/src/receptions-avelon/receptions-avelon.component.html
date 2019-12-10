@@ -1,63 +1,71 @@
-<ion-content class="ion-padding">
-  <ion-grid fixed>
-    <ion-row>
-      <ion-col size="4">
-        <ion-item lines="none">
-          <ion-label>Nro Expedicion</ion-label>
-          <ion-input [(ngModel)]="expedition" type="text"></ion-input>
-        </ion-item>
-      </ion-col>
-      <ion-col size="4">
-        <ion-item lines="none">
-          <ion-label>Proveedor</ion-label>
-          <ion-select (ionChange)="proveedorSelected($event)">
-            <ion-select-option  *ngFor="let item of providers" [value]="item.id">
-               {{item.name}}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-    <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
-      <ion-col size="4">
-        <ion-item>
-          <ion-title> Marcas </ion-title>
-          <i slot="end" class="material-icons">keyboard</i>
-        </ion-item>
-        <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
-      </ion-col>
-      <ion-col size="4">
-        <ion-item>
-          <ion-title> Modelos </ion-title>
-          <i slot="end" class="material-icons">keyboard</i>
-        </ion-item>
+<ion-content [ngClass]="{'ion-padding': typeScreen == undefined}" >
 
-        <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
-      </ion-col>
-      <ion-col size="4">
-        <ion-item>
-          <ion-title> Colores </ion-title>
-          <i slot="end" class="material-icons">keyboard</i>
-        </ion-item>
+  <ng-container *ngIf="typeScreen == undefined; else screen">
+    <ion-grid fixed>
+      <ion-row>
+        <ion-col size="4">
+          <ion-item lines="none">
+            <ion-label>Nro Expedicion</ion-label>
+            <ion-input [(ngModel)]="expedition" type="text"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="4">
+          <ion-item lines="none">
+            <ion-label>Proveedor</ion-label>
+            <ion-select (ionChange)="proveedorSelected($event)">
+              <ion-select-option  *ngFor="let item of providers" [value]="item.id">
+                 {{item.name}}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
+        <ion-col size="4">
+          <ion-item (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
+            <ion-title> Marcas </ion-title>
+            <i slot="end" class="material-icons">keyboard</i>
+          </ion-item>
+          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
+        </ion-col>
+        <ion-col size="4">
+          <ion-item (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
+            <ion-title> Modelos </ion-title>
+            <i slot="end" class="material-icons">keyboard</i>
+          </ion-item>
 
-        <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
-      </ion-col>
-      <ion-col class="ion-margin-top" size="4">
-        <ion-button (click)="buscarMas()" > buscar mas </ion-button>
-      </ion-col>
-    </ion-row>
-    <ion-row *ngIf="isProviderAviable">
-      <ion-col size="12">
-        <ion-title>Talla</ion-title>
-        <suite-sizes (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
-      </ion-col>
-      <ion-col size="12">
-        <ion-item lines="none">
-          <ion-label>EAN:</ion-label>
-          <ion-input [(ngModel)]="result.ean" type="text" (keyup)="onKey($event)"></ion-input>
-          <ion-button slot="end" (click)="enviar()"> imprimir </ion-button>
-        </ion-item>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+          <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
+        </ion-col>
+        <ion-col size="4">
+          <ion-item (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
+            <ion-title> Colores </ion-title>
+            <i slot="end" class="material-icons">keyboard</i>
+          </ion-item>
+
+          <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
+        </ion-col>
+        <ion-col class="ion-margin-top" size="4">
+          <ion-button (click)="buscarMas()" > buscar mas </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="isProviderAviable">
+        <ion-col size="12">
+          <ion-title>Talla</ion-title>
+          <suite-sizes (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
+        </ion-col>
+        <ion-col size="12">
+          <ion-item lines="none">
+            <ion-label>EAN:</ion-label>
+            <ion-input [(ngModel)]="result.ean" type="text" (keyup)="onKey($event)"></ion-input>
+            <ion-button slot="end" (click)="enviar()"> imprimir </ion-button>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </ng-container>
+  <ng-template #screen>
+    <suite-screen-result [type]="typeScreen" (screenExit)="screenExit($event)"></suite-screen-result>
+  </ng-template>
+
 </ion-content>

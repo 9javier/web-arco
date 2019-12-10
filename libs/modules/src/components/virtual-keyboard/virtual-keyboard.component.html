@@ -1,0 +1,15 @@
+<div class="content-keyboard">
+  <div class="content-input">
+    <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()" clearIcon="false" searchIcon="false" placeholder="Ingrese el texto"></ion-searchbar>
+  </div>
+  <div class="container-key-list">
+    <div class="simple-keyboard"></div>
+    <div class="list-content-keyboard">
+      <ion-list>
+        <ion-item *ngFor="let item of items" (click)="selectItem(item.id)">
+          {{ item.value }}
+        </ion-item>
+      </ion-list>
+    </div>
+  </div>
+</div>

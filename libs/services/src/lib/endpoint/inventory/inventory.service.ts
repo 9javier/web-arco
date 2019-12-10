@@ -61,7 +61,7 @@ export class InventoryService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       // return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
-      return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,{}, {headers});
+      return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
     }));
   }
 
