@@ -22,6 +22,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import * as moment from "../workwave-template-rebuild/table-requests-orders/table-requests-orders.component";
 
 @Component({
   selector: 'app-products',
@@ -86,6 +87,8 @@ export class ProductsComponent implements OnInit {
   isFilteringWarehouses: number = 0;
   isFilteringContainers: number = 0;
 
+  lastOrder = [true, true, true, true, true, true];
+
   constructor(
     private intermediaryService:IntermediaryService,
     private warehouseService:WarehouseService,
@@ -100,6 +103,97 @@ export class ProductsComponent implements OnInit {
   ) {}
 
   //NEW FILTERS
+  sort(column: string){
+    for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
+      let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
+      if (iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')) {
+        iColumn.innerHTML = iColumn.innerHTML.slice(0, -2);
+      }
+    }
+
+    switch (column) {
+      case 'reference': {
+        if (this.lastOrder[0]) {
+          this.form.value.orderby = { order: "desc", type: 6};
+          this.showArrow(0, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 6};
+          this.showArrow(0, true);
+        }
+        this.lastOrder[0] = !this.lastOrder[0];
+        break;
+      }
+      case 'model': {
+        if (this.lastOrder[1]) {
+          this.form.value.orderby = { order: "desc", type: 3};
+          this.showArrow(1, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 3};
+          this.showArrow(1, true);
+        }
+        this.lastOrder[1] = !this.lastOrder[1];
+        break;
+      }
+      case 'color': {
+        if (this.lastOrder[2]) {
+          this.form.value.orderby = { order: "desc", type: 1};
+          this.showArrow(2, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 1};
+          this.showArrow(2, true);
+        }
+        this.lastOrder[2] = !this.lastOrder[2];
+        break;
+      }
+      case 'size': {
+        if (this.lastOrder[3]) {
+          this.form.value.orderby = { order: "desc", type: 2};
+          this.showArrow(3, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 2};
+          this.showArrow(3, true);
+        }
+        this.lastOrder[3] = !this.lastOrder[3];
+        break;
+      }
+      case 'warehouse': {
+        if (this.lastOrder[4]) {
+          this.form.value.orderby = { order: "desc", type: 8};
+          this.showArrow(4, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 8};
+          this.showArrow(4, true);
+        }
+        this.lastOrder[4] = !this.lastOrder[4];
+        break;
+      }
+      case 'container': {
+        if (this.lastOrder[5]) {
+          this.form.value.orderby = { order: "desc", type: 4};
+          this.showArrow(5, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 4};
+          this.showArrow(5, true);
+        }
+        this.lastOrder[5] = !this.lastOrder[5];
+        break;
+      }
+    }
+    this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+  }
+
+  showArrow(colNumber, dirDown) {
+    let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
+    if (dirDown) htmlColumn.innerHTML += ' 🡇';
+    else htmlColumn.innerHTML += ' 🡅';
+  }
+
   applyFilters(filters, filterType) {
     /*
     productReferencePattern: number from model.id
@@ -123,8 +217,14 @@ export class ProductsComponent implements OnInit {
         for(let color of filters){
           if(color.checked) colorsFiltered.push(color.id);
         }
-        if(colorsFiltered.length > 0) this.form.value.colors = colorsFiltered;
-        else this.form.value.colors = [99999];
+        if(colorsFiltered.length > 0){
+          this.form.value.colors = colorsFiltered;
+          this.isFilteringColors = colorsFiltered.length;
+        }
+        else{
+          this.form.value.colors = [99999];
+          this.isFilteringColors = this.colors.length;
+        }
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'sizes':
@@ -132,8 +232,14 @@ export class ProductsComponent implements OnInit {
         for(let size of filters){
           if(size.checked) sizesFiltered.push(size.value);
         }
-        if(sizesFiltered.length > 0) this.form.value.sizes = sizesFiltered;
-        else this.form.value.sizes = ["99999"];
+        if(sizesFiltered.length > 0){
+          this.form.value.sizes = sizesFiltered;
+          this.isFilteringSizes = sizesFiltered.length;
+        }
+        else{
+          this.form.value.sizes = ["99999"];
+          this.isFilteringSizes = this.sizes.length;
+        }
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'warehouses':
@@ -141,8 +247,14 @@ export class ProductsComponent implements OnInit {
         for(let warehouse of filters){
           if(warehouse.checked) warehousesFiltered.push(warehouse.id);
         }
-        if(warehousesFiltered.length > 0) this.form.value.warehouses = warehousesFiltered;
-        else this.form.value.warehouses = [99999];
+        if(warehousesFiltered.length > 0){
+          this.form.value.warehouses = warehousesFiltered;
+          this.isFilteringWarehouses = warehousesFiltered.length;
+        }
+        else{
+          this.form.value.warehouses = [99999];
+          this.isFilteringWarehouses = this.warehouses.length;
+        }
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'containers':
@@ -150,8 +262,14 @@ export class ProductsComponent implements OnInit {
         for(let container of filters){
           if(container.checked) containersFiltered.push(container.id);
         }
-        if(containersFiltered.length > 0) this.form.value.containers = containersFiltered;
-        else this.form.value.containers = [99999];
+        if(containersFiltered.length > 0){
+          this.form.value.containers = containersFiltered;
+          this.isFilteringContainers = containersFiltered.length;
+        }
+        else{
+          this.form.value.containers = [99999];
+          this.isFilteringContainers = this.containers.length;
+        }
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
     }
@@ -353,10 +471,12 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
 
+          this.warehouses[0].checked = false;
+
           this.isFilteringModels = this.models.length;
           this.isFilteringColors = this.colors.length;
           this.isFilteringSizes = this.sizes.length;
-          this.isFilteringWarehouses = this.warehouses.length;
+          this.isFilteringWarehouses = this.warehouses.length - 1;
           this.isFilteringContainers = this.containers.length;
 
           setTimeout(() => {
