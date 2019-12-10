@@ -471,12 +471,15 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
 
-          this.warehouses[0].checked = false;
+          for(let index in this.warehouses){
+            this.warehouses[index].checked = false;
+          }
+          this.warehouses[0].checked = true;
 
           this.isFilteringModels = this.models.length;
           this.isFilteringColors = this.colors.length;
           this.isFilteringSizes = this.sizes.length;
-          this.isFilteringWarehouses = this.warehouses.length - 1;
+          this.isFilteringWarehouses = 1;
           this.isFilteringContainers = this.containers.length;
 
           setTimeout(() => {
