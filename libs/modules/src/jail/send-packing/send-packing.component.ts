@@ -48,13 +48,11 @@ export class SendPackingComponent implements OnInit {
 
 
   ngOnInit() {
-    this.warehousesService.getIndex().then(observable => {
-      observable.subscribe(warehouses => {
-        this.warehouses = warehouses.body.data;
-        if(this.jail.warehouse) {
-          this.warehouses = this.warehouses.filter(warehause => warehause.id != this.jail.warehouse.id);
-        }
-      });
+    this.warehousesService.getListAllWarehouses().then((warehouses: WarehouseModel.ResponseListAllWarehouses) => {
+      this.warehouses = warehouses.data;
+      if(this.jail.warehouse) {
+        this.warehouses = this.warehouses.filter(warehause => warehause.id != this.jail.warehouse.id);
+      }
     })
   }
   

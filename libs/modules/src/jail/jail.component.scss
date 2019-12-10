@@ -46,6 +46,21 @@ div.table-container {
                 color: var(--ion-color-secondary-shade);
             }
         }
+
+      th {
+        i.settings-header {
+          font-size: 20px;
+        }
+      }
+      .left-border {
+        border-left: 1px solid var(--ion-color-primary);
+      }
+      .center-content {
+        text-align: center;
+      }
+      .right-content {
+        text-align: right;
+      }
     }
 }
 
