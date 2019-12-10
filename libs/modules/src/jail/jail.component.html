@@ -32,23 +32,31 @@
                     <div  *ngIf="element.carrierWarehousesDestiny?.length > 1"  (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios destinos</span></div>
                 </td>
             </ng-container>
+
+          <ng-container matColumnDef="products-status">
+            <th mat-header-cell *matHeaderCellDef>Productos</th>
+            <td mat-cell *matCellDef="let element"> {{ element.packingInventorys && element.packingInventorys.length > 0 ? element.packingInventorys.length : 'vacía' }} </td>
+          </ng-container>
             <ng-container matColumnDef="isSend">
-                <th mat-header-cell *matHeaderCellDef>Enviar</th>
-                <td mat-cell *matCellDef="let element">
-                    <ion-icon *ngIf="isAvailableSend(element)" (click)="toSend($event,element)" name="md-bus" class="action-icon"></ion-icon>
+                <th mat-header-cell *matHeaderCellDef class="right-content left-border"></th>
+                <td mat-cell *matCellDef="let element" class="right-content left-border">
+                    <i *ngIf="isAvailableSend(element)" (click)="toSend($event,element)" class="material-icons action-icon">send</i>
                 </td>
             </ng-container>
             <ng-container matColumnDef="update">
-                <th mat-header-cell *matHeaderCellDef>Actualizar</th>
-                <td mat-cell *matCellDef="let element">
-                    <ion-icon (click)="toUpdate($event,element)" name="create" class="action-icon"></ion-icon>
+                <th mat-header-cell *matHeaderCellDef class="center-content">
+                  <i class="material-icons settings-header">settings</i>
+                </th>
+                <td mat-cell *matCellDef="let element" class="center-content">
+                    <i (click)="toUpdate($event,element)" class="material-icons action-icon">edit</i>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="buttons-print">
-                <th mat-header-cell *matHeaderCellDef>Imprimir</th>
+                <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons action-icon">print</i> </td>
             </ng-container>
+
             <ng-container matColumnDef="sendPacking">
                     <th mat-header-cell *matHeaderCellDef> Enviar</th>
                     <td mat-cell *matCellDef="let element"><i  (click)="send($event,element)" class="material-icons">send</i> </td>

@@ -20,6 +20,7 @@ export namespace CarrierModel{
         packingType: number;
         warehouse: WarehouseModel.Warehouse;
         carrierWarehousesDestiny:CarrierWarehouseDestiny;
+      packingInventorys: any[]
     }
 
     export interface CarrierResponse extends Request.Success{
