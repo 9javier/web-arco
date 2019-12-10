@@ -200,7 +200,9 @@ export class PricesComponent implements OnInit {
     let value = event.detail.checked;
 
     for (let index = 0; index < this.prices.length; index++) {
-      this.itemSelected(this.prices[index].id);
+      if (this.prices[index].status !== 3) {
+        this.itemSelected(this.prices[index].id);
+      }
     }
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
@@ -225,6 +227,7 @@ export class PricesComponent implements OnInit {
     } else {
       this.itemIdSelected.push(item);
     }
+    console.log(this.itemIdSelected);
   }
 
   changeStatusImpress(){
