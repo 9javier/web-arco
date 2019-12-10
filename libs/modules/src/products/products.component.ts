@@ -48,7 +48,7 @@ export class ProductsComponent implements OnInit {
     models: [],
     colors: [],
     sizes: [],
-    productReferencePattern:'',
+    productReferencePattern: [],
     warehouses:[],
     pagination: this.formBuilder.group({
         page: 1,
@@ -196,7 +196,7 @@ export class ProductsComponent implements OnInit {
 
   applyFilters(filters, filterType) {
     /*
-    productReferencePattern: number from model.id
+    productReferencePattern: string array from model.reference
     colors: number array from color.id
     sizes: string array from size.value
     warehouses: number array from warehouse.id
@@ -204,12 +204,18 @@ export class ProductsComponent implements OnInit {
     */
     switch(filterType){
       case 'models':
-        let modelFiltered: number = 0;
+        let modelsFiltered: string[] = [];
         for(let model of filters){
-          if(model.checked) modelFiltered = model.id;
+          if(model.checked) modelsFiltered.push(model.reference);
         }
-        if(modelFiltered != 0) this.form.value.productReferencePattern = modelFiltered;
-        else this.form.value.productReferencePattern = 99999;
+        if(modelsFiltered.length > 0){
+          this.form.value.productReferencePattern = modelsFiltered;
+          this.isFilteringModels = modelsFiltered.length;
+        }
+        else{
+          this.form.value.productReferencePattern = [99999];
+          this.isFilteringModels = this.models.length;
+        }
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'colors':
@@ -289,11 +295,7 @@ export class ProductsComponent implements OnInit {
     }else{
       object.orderby.type = parseInt(object.orderby.type);
     }
-    if(!object.orderby.order)
-      delete object.orderby.order;
-    if(object.productReferencePattern) {
-      object.productReferencePattern = "%" + object.productReferencePattern + "%";
-    }
+    if(!object.orderby.order) delete object.orderby.order;
     Object.keys(object).forEach(key=>{
       if(object[key] instanceof Array){
         if(object[key][0] instanceof Array){
