@@ -46,20 +46,6 @@ export class InputCodesComponent implements OnInit {
   async ngOnInit() {
     this.stampe = 1;
     this.typeTagsBoolean = this.typeTags != 1;
-    // this.max_lenght(this.inputProductMotivo);
-    console.log('pagina due');
-
-  }
-
-  // TODO CREAR UNA VALIDACION PARA PARA QUE MOTIVO NO SEA MAS DE 1O DIGITOS
-  private max_lenght(value: string): string {
-    if (value !== null && value.length >= 10) {
-      this.audioProvider.playDefaultError();
-      return;
-    }
-    console.log(value);
-    return value;
-
   }
 
   private focusToInput() {
@@ -92,7 +78,7 @@ export class InputCodesComponent implements OnInit {
 
     const alert = await this.alertController.create({
       header: 'Etiqueta personalizada',
-      message: `¿Desea imprimir ${Veces} <b>${codice}</b>? Indique el precio y pulse imprimir.`,
+      message: `¿Desea imprimir ${Veces} <b>${codice}-${motivo}</b>? Indique el precio y pulse imprimir.`,
       inputs: [
         {
           name: 'precio',
@@ -139,7 +125,7 @@ export class InputCodesComponent implements OnInit {
             };
             price.totalPrice = data.precio;
             price.priceOriginal = data.precio;
-            price.model.reference = codice + ' - ' + motivo;
+            price.model.reference = codice + '-' + motivo;
 
             price.model.name = codice;
             let prices: Array<any> = this.convertArrayFromPrint(price);
@@ -163,7 +149,7 @@ export class InputCodesComponent implements OnInit {
     let dataWrote = (this.inputProduct || "").trim();
     // console.log({dataWrote});
 
-    let dataMotivo = (this.max_lenght(this.inputProductMotivo) || "").trim();
+    let dataMotivo = (this.inputProductMotivo || "").trim();
     // console.log({dataMotivo});
 
 
@@ -251,9 +237,8 @@ export class InputCodesComponent implements OnInit {
               this.focusToInput();
               break;
             case 2:
-              if (dataMotivo.length > 0 && dataWrote.length === 6) {
+              if (dataMotivo && dataMotivo.length > 0) {
                 this.presentModal(dataWrote, dataMotivo);
-
               } else {
                 this.priceService
                   .postPricesByModel(dataWrote)
