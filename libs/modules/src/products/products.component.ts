@@ -229,10 +229,10 @@ export class ProductsComponent implements OnInit {
           this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.SIZES)
         }
         if (value.productReferencePattern !== this.formCurrentValue.productReferencePattern) {
-          if (value.productReferencePatternlength > 0 && this.filterPriority.find(e=>e == Filter.REFERENCES) === undefined) {
-            this.filterPriority.push(Filter.REFERENCES)
+          if (value.productReferencePattern && value.productReferencePattern.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
+            this.filterPriority.push(Filter.MODELS)
           }
-          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.REFERENCES)
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.MODELS)
         }
         if (value.warehouses.length > this.formCurrentValue.warehouses.length) {
           if (value.warehouses.length > 0 && this.filterPriority.find(e=>e == Filter.WAREHOUSES) === undefined) {
@@ -249,6 +249,8 @@ export class ProductsComponent implements OnInit {
         }
         // console.log(this.filterPriorityIndex)
         // console.log(this.filterPriority)
+
+        console.log(this.filterPriority)
       }
     })
     
@@ -385,9 +387,20 @@ export class ProductsComponent implements OnInit {
         if (this.isFirst) {
           params = {};
         } else {
+          if (this.form.value.productReferencePattern) {
+            this.form.patchValue({
+              productReferencePattern: this.form.value.productReferencePattern.toString()
+            })
+          } else {
+            this.form.patchValue({
+              productReferencePattern: ""
+            })
+          }
           params = this.form.value;
-          this
         }
+
+
+
         this.inventoryServices.searchFilters(params).subscribe(searchsInContainer=>{
           // console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
