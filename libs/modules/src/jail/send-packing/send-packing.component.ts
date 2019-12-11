@@ -4,6 +4,7 @@ import { COLLECTIONS } from 'config/base';
 import { NavParams, ModalController } from '@ionic/angular';
 import { CarrierService, IntermediaryService, WarehousesService, WarehouseModel } from '@suite/services';
 import { MatSelectChange } from '@angular/material';
+import {CarrierModel} from "../../../../services/src/models/endpoints/carrier.model";
 
 @Component({
   selector: 'suite-send-packing',
@@ -62,16 +63,39 @@ export class SendPackingComponent implements OnInit {
   }
 
   submit(){
-    let value = this.warehouse.id;
     this.intermediaryService.presentLoading();
-    this.carrierService.sendPacking(this.jail.reference, value).subscribe(()=>{
-      this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
-      this.close();
-    },()=>{
-      this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentToastError("Error de envío de embalaje");
-    })
+    this.carrierService
+      .postCheckProductsDestiny({
+        packingId: this.jail.id,
+        warehouseDestinyId: this.warehouse.id
+      })
+      .then((res: CarrierModel.ResponseCheckProductsDestiny) => {
+        if (res.code == 200) {
+          if (res.data.someProductWithDifferentDestiny) {
+            this.intermediaryService.dismissLoading();
+            this.intermediaryService.presentConfirm('Alguno de los productos incluidos en la jaula tiene un destino diferente al indicado.', () => {
+              // TODO
+            });
+          } else {
+            let value = this.warehouse.id;
+            this.carrierService.sendPacking(this.jail.reference, value).subscribe(()=>{
+              this.intermediaryService.dismissLoading();
+              this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
+              this.close();
+            },()=>{
+              this.intermediaryService.dismissLoading();
+              this.intermediaryService.presentToastError("Error de envío de embalaje");
+            })
+          }
+        } else {
+          this.intermediaryService.dismissLoading();
+          let errorMessage = "Ha ocurrido un error al intentar enviar el embalaje.";
+          if (res.errors) {
+            errorMessage = res.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      });
   }
 
   close(){
