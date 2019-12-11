@@ -29,7 +29,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);
@@ -57,7 +57,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);
@@ -88,7 +88,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);
@@ -119,7 +119,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);

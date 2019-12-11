@@ -23,6 +23,7 @@ export class CarrierService {
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
   private sendPackingUrl = environment.apiBase + "/packing/send";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
+  private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
 
   constructor(
     private http:HttpClient,
@@ -117,5 +118,9 @@ export class CarrierService {
 
   getGetPackingDestiny(packingReference: string) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getGetPackingDestinyUrl + packingReference);
+  }
+
+  postCheckProductsDestiny(params: CarrierModel.ParamsCheckProductsDestiny) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCheckProductsDestinyUrl, params);
   }
 }
