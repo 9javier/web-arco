@@ -543,7 +543,6 @@ export class ProductsComponent implements OnInit {
   }
 
   private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
-    console.log('references: ',references);
     this.pauseListenFormChange = true;
     let value = this.form.get("references").value;
     this.references = references.map(reference => {

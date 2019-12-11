@@ -18,8 +18,8 @@
   </div>
 
   <div class="scroll-list">
-    <div *ngFor="let item of getOrderedList()">
-      <ion-item lines="none" *ngIf="!item.hide">
+    <div *ngFor="let item of itemsToRender">
+      <ion-item lines="none">
         <ion-checkbox [checked]="item.checked" (ionChange)="checkSelected($event, item)"></ion-checkbox>
         <ion-label>{{item.value}}</ion-label>
       </ion-item>

@@ -16,6 +16,7 @@ export class FilterPopoverComponent implements OnInit {
   private listItemsFinal: Array<any> = new Array<any>();
   public typedFilter: string = "";
   public allSelected: boolean = true;
+  public itemsToRender: Array<any> = new Array<any>();
 
   constructor(
     private popoverCtrl: PopoverController,
@@ -59,17 +60,17 @@ export class FilterPopoverComponent implements OnInit {
   updateSelection(event){
     let currentMinValue = event.target.value['lower'];
     let currentMaxValue = event.target.value['upper'];
+    this.itemsToRender = [];
     for (let item in this.listItems) {
-      if (this.listItems[item].value >= currentMinValue && this.listItems[item].value <= currentMaxValue) {
+      if (this.listItems[item].value >= currentMinValue && this.listItems[item].value <= currentMaxValue){
+        this.itemsToRender.push(this.listItems[item]);
         this.listItems[item].checked = true;
       }else{
         this.listItems[item].checked = false;
       }
     }
-  }
-
-  getOrderedList(){
-    return this.listItems.sort(function(a, b){return a.value - b.value});
+    this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).slice(0,50);
+    this.checkAllSelected();
   }
 
   ngOnInit() {
@@ -78,21 +79,28 @@ export class FilterPopoverComponent implements OnInit {
     this.listItems = this.filterPopoverProvider.listItems;
     this.checkAllSelected();
     this.listItemsFinal = this.filterPopoverProvider.listItems;
+    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).slice(0,50);
   }
 
-  searchInFilterList(event: any) {
-    if (event && event != '') {
-      for(let index in this.listItems){
-        this.listItems[index].checked = this.listItems[index].value.toString().includes(event);
-        this.listItems[index].hide = !this.listItems[index].checked;
+  searchInFilterList(textSearched: string) {
+    this.itemsToRender = [];
+    if (textSearched && textSearched != '') {
+      for(let i = 0; i < this.listItems.length; i++){
+        if(this.listItems[i].value.toString().includes(textSearched)){
+          this.itemsToRender.push(this.listItems[i]);
+          this.listItems[i].checked = true;
+        }else{
+          this.listItems[i].checked = false;
+        }
       }
+      this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).slice(0,50);
     } else {
       for(let index in this.listItems){
         this.listItems[index].checked = true;
-        this.listItems[index].hide = false;
       }
-      this.checkAllSelected();
+      this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).slice(0,50);
     }
+    this.checkAllSelected();
   }
 
   checkAllSelected() {
