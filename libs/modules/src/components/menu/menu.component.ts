@@ -293,6 +293,12 @@ export class MenuComponent implements OnInit {
       url: '/receptions-avelon',
       icon: 'archive'
     },
+    {
+      title: 'Predistribuciones',
+      id: 'predistributions',
+      url: '/predistributions',
+      icon: 'archive'
+    },
   ];
 
   alPages: MenuItemList = [
