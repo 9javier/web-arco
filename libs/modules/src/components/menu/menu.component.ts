@@ -460,10 +460,10 @@ export class MenuComponent implements OnInit {
           icon: 'redo'
         },
         {
-          title: 'Recepcion de paquete vacio',
+          title: 'Recepción de embalaje vacío',
           id: 'reception-empty-packing',
           url: '/packing/carrierEmptyPacking',
-          icon: 'wine'
+          icon: 'exit'
         }
       ]
     },

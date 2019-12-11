@@ -14,7 +14,7 @@ import { ModalComponent } from './modal/modal.component';
 export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   empty$: Subscription;
   reception$: Subscription;
-  items: Array<any>;
+  items: Array<any> = [];
   receptions: any
   constructor(
     private carrierService:CarrierService,
