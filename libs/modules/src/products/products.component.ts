@@ -1,4 +1,3 @@
-import { PermisionComponent } from './modals/permision/permision.component';
 import { BehaviorSubject } from 'rxjs';
 import { Filter } from './enums/filter.enum';
 import {Component, OnInit, ViewChild} from '@angular/core';
@@ -401,7 +400,7 @@ export class ProductsComponent implements OnInit {
     // TODO LLAMA EL SERVICIO PARA EL PERMISO
     this.inventoryServices.permisis_user().pipe(map(data => data['data'])).subscribe(data=>{
       console.log(data)
-      if(data === false){
+      if(data === true){
         // this.presentModal()
         this.presentAlert();
         
