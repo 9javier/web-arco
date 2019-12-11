@@ -51,9 +51,6 @@ export class SendPackingComponent implements OnInit {
   ngOnInit() {
     this.warehousesService.getListAllWarehouses().then((warehouses: WarehouseModel.ResponseListAllWarehouses) => {
       this.warehouses = warehouses.data;
-      if(this.jail.warehouse) {
-        this.warehouses = this.warehouses.filter(warehause => warehause.id != this.jail.warehouse.id);
-      }
     })
   }
   
@@ -73,19 +70,12 @@ export class SendPackingComponent implements OnInit {
         if (res.code == 200) {
           if (res.data.someProductWithDifferentDestiny) {
             this.intermediaryService.dismissLoading();
-            this.intermediaryService.presentConfirm('Alguno de los productos incluidos en la jaula tiene un destino diferente al indicado.', () => {
-              // TODO
+            this.intermediaryService.presentConfirm('Alguno de los productos incluidos en el embalaje tiene un destino diferente al indicado. ¿Asignar el destino indicado al embalaje igualmente?', () => {
+              this.intermediaryService.presentLoading();
+              this.changePackingDestiny();
             });
           } else {
-            let value = this.warehouse.id;
-            this.carrierService.sendPacking(this.jail.reference, value).subscribe(()=>{
-              this.intermediaryService.dismissLoading();
-              this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
-              this.close();
-            },()=>{
-              this.intermediaryService.dismissLoading();
-              this.intermediaryService.presentToastError("Error de envío de embalaje");
-            })
+            this.changePackingDestiny();
           }
         } else {
           this.intermediaryService.dismissLoading();
@@ -96,6 +86,18 @@ export class SendPackingComponent implements OnInit {
           this.intermediaryService.presentToastError(errorMessage);
         }
       });
+  }
+
+  private changePackingDestiny() {
+    let value = this.warehouse.id;
+    this.carrierService.sendPacking(this.jail.reference, value).subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
+      this.close();
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError("Error de envío de embalaje");
+    });
   }
 
   close(){
