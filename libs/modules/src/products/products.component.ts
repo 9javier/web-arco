@@ -44,6 +44,7 @@ export class ProductsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
   form:FormGroup = this.formBuilder.group({
+    references: [],
     containers: [],
     models: [],
     colors: [],
@@ -81,6 +82,9 @@ export class ProductsComponent implements OnInit {
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
   //NEW FILTERS
+  references:Array<TagsInputOption> = [];
+
+  isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
   isFilteringColors: number = 0;
   isFilteringSizes: number = 0;
@@ -203,6 +207,21 @@ export class ProductsComponent implements OnInit {
     containers: number array from container.id
     */
     switch(filterType){
+      case 'references':
+        let referencesFiltered: string[] = [];
+        for(let reference of filters){
+          if(reference.checked) referencesFiltered.push(reference.reference);
+        }
+        if(referencesFiltered.length > 0){
+          this.form.value.references = referencesFiltered;
+          this.isFilteringReferences = referencesFiltered.length;
+        }
+        else{
+          this.form.value.references = [99999];
+          this.isFilteringReferences = this.references.length;
+        }
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
       case 'models':
         let modelsFiltered: string[] = [];
         for(let model of filters){
@@ -470,6 +489,7 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
           this.updateFilterSourceModels(searchsInContainer.data.filters.models);
+          this.updateFilterSourceReferences(searchsInContainer.data.filters.references);
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
 
@@ -478,6 +498,7 @@ export class ProductsComponent implements OnInit {
           }
           this.warehouses[0].checked = true;
 
+          this.isFilteringReferences = this.references.length;
           this.isFilteringModels = this.models.length;
           this.isFilteringColors = this.colors.length;
           this.isFilteringSizes = this.sizes.length;
@@ -519,6 +540,23 @@ export class ProductsComponent implements OnInit {
     }
 
     return '';
+  }
+
+  private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
+    console.log('references: ',references);
+    this.pauseListenFormChange = true;
+    let value = this.form.get("references").value;
+    this.references = references.map(reference => {
+      reference.id = <number>(<unknown>reference.reference);
+      reference.name = reference.reference;
+      reference.value = reference.name;
+      reference.checked = true;
+      return reference;
+    });
+    if (value && value.length) {
+      this.form.get("references").patchValue(value, {emitEvent: false});
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
   private updateFilterSourceModels(models: FiltersModel.Model[]) {

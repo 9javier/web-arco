@@ -77,6 +77,7 @@ export namespace InventoryModel {
   export interface ResponseFilters extends Request.Success{
     data:{
       filters: {
+        references: FiltersModel.Reference[],
         colors: FiltersModel.Color[],
         containers: FiltersModel.Container[],
         models: FiltersModel.Model[],

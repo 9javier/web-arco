@@ -14,6 +14,13 @@
       <ng-container matColumnDef="reference">
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('reference')">Código</span>
+          <suite-filter-button
+            class="filter"
+            [title]="'Código'"
+            [listItems]="references"
+            [isFiltering]="isFilteringReferences != references.length"
+            (applyFilters)="applyFilters($event, 'references')">
+          </suite-filter-button>
         </th>
         <td mat-cell *matCellDef="let product">
           {{ product?.productShoeUnit?.reference }}

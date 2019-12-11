@@ -39,6 +39,13 @@ export namespace FiltersModel{
         checked:boolean;
     }
 
+    export interface Reference extends Enum {
+        id:number;
+        reference:string;
+        value:string;
+        checked:boolean;
+    }
+
     export interface Size extends Enum {
         id:number;
         reference:number;
