@@ -1,0 +1,32 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Almacenes</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <p><strong>tarifa:</strong> {{tariff.name}}</p> 
+    <ion-list>
+        <ion-item *ngFor="let res of warehousesResult">
+            <div slot="start" class="slot-start-icon">
+                    <ion-icon name="grid"></ion-icon>
+            </div>
+            <ion-label class="label large">{{res.warehouse.reference}} {{res.warehouse.name}}</ion-label>
+            <ion-select placeholder="Seleccionar estado"  [(ngModel)]="res.optionSelected" 
+            cancelText="Cancelar" okText="Aceptar">
+                <ion-select-option  value="0">Ninguno</ion-select-option>
+                <ion-select-option  *ngFor="let option of res.optionsStatus"  [value]="option.id">{{option.name}}</ion-select-option>
+            </ion-select>
+        </ion-item>
+      </ion-list>
+</ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary" (click)="submit()">Impress</ion-button>
+    </ion-toolbar>
+</ion-footer>

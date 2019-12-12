@@ -8,6 +8,7 @@ import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/mate
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import { TariffUpdateFilterPriceComponent } from './tariff-update-filter-price/tariff-update-filter-price.component';
 
 const routes:Routes = [
   {
@@ -17,7 +18,7 @@ const routes:Routes = [
 ]; 
 
 @NgModule({
-  declarations: [TariffSGAComponent],
+  declarations: [TariffSGAComponent, TariffUpdateFilterPriceComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -30,6 +31,9 @@ const routes:Routes = [
     RouterModule.forChild(routes),
     TagsInputModule,
     PaginatorComponentModule
+  ],
+  entryComponents: [
+    TariffUpdateFilterPriceComponent
   ]
 })
 export class TariffSGAModule { }

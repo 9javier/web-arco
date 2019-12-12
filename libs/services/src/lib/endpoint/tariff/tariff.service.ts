@@ -21,6 +21,8 @@ export class TariffService {
   private syncTariffUrl: string = environment.apiBase + "/tariffs/sync";
   private getNewTariffUrl: string = environment.apiBase + "/tariffs/getNewTariff";
   private getTariffUpdatesUrl: string = environment.apiBase + "/tariffs/get-tariff-updates";
+  private updateFilterPriceUrl = environment.apiBase + "/filter/prices/update-filter-price";
+  private filterPriceTypesUrl = environment.apiBase + "/tariffs/filter-price-types";
 
   constructor(
     private http: HttpClient,
@@ -106,6 +108,18 @@ export class TariffService {
     return this.http.post<TariffModel.ResponseTariffUpdates>(this.getTariffUpdatesUrl, params).pipe(map(response => {
       return response.data;
     }));
+  }
+  updateFilterPrice(data: any[]) {
+    let params = {
+      data: data
+    };
+    return this.http.post<TariffModel.ResponseTariffUpdates>(this.updateFilterPriceUrl, params).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  getFilterPriceTypes() {
+    return this.http.get(this.filterPriceTypesUrl);
   }
 
 }

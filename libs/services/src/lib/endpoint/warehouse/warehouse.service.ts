@@ -20,7 +20,7 @@ export class WarehouseService {
   private getIndexUrl:string = environment.apiBase+"/warehouses";
   private getFullIndexUrl:string = environment.apiBase+"/warehouses/full";
   private warehouseMainUrl:string = environment.apiBase+"/warehouses/main";
-
+  private warehouseForTariffUrl:string = environment.apiBase + "/tariffs/warehouse/{{id}}";
 
 
   private _idWarehouseMain: number;
@@ -72,6 +72,11 @@ export class WarehouseService {
     });
   }
 
+  getAllByTariff(tariffId:number) {
+    return this.http.get(
+      this.warehouseForTariffUrl.replace("{{id}}", tariffId.toString())
+    );
+  }
   async getFullIndex() {
 
     const currentToken = await this.auth.getCurrentToken();
