@@ -32,7 +32,9 @@ export class InventoryService {
 
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
-  private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`
+  private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`;
+  private deleteProducts = `${environment.apiBase}/inventory/delete-products`;
+  private userPrimsiondeleteProducts = `${environment.apiBase}/gestion-permissions/users/has-delete-product-permission`;
 
   constructor(
     private http: HttpClient,
@@ -61,6 +63,27 @@ export class InventoryService {
       // return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
       return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
     }));
+  }
+
+  /**
+   * @author Gaetano Sabino
+   * @param ids 
+   */
+  delete_Products(ids:number[]){
+    let body = {
+      ids
+    }
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post(this.deleteProducts,body,{headers})
+    }))
+  }
+
+  permisis_user(){
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get(this.userPrimsiondeleteProducts);
+    }))
   }
 
   postStore(params: InventoryModel.Inventory) : Promise<HttpRequestModel.Response> {

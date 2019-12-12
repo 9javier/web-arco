@@ -23,12 +23,13 @@ import {HttpResponse} from '@angular/common/http';
 import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import { map } from 'rxjs/operators';
 
 
 @Component({
@@ -112,7 +113,8 @@ export class ProductsComponent implements OnInit {
     private filterServices:FiltersService,
     private productsService: ProductsService,
     private modalController:ModalController,
-    private printerService:PrinterService
+    private printerService:PrinterService,
+    private alertController: AlertController
   ) {}
 
   /**
@@ -176,7 +178,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-    /**
+  /**
    * Print the price for selected products
    */
   printPriceProducts():void{
@@ -359,14 +361,73 @@ export class ProductsComponent implements OnInit {
    * go to details modal
    * @param id - the id of the product
    */
-    async goDetails(product:InventoryModel.SearchInContainer){
-      return (await this.modalController.create({
-        component:ProductDetailsComponent,
-        componentProps:{
-          product:product
+  async goDetails(product:InventoryModel.SearchInContainer){
+    return (await this.modalController.create({
+      component:ProductDetailsComponent,
+      componentProps:{
+        product:product
+      }
+    })).present();
+  }
+
+  
+  async presentAlert() {
+    const alert = await this.alertController.create({
+      header: '¡User sin Permisos!',
+      subHeader: '¡Usted no tiene permisos para eliminar los productos!',
+      message: 'Necesita cambiar sus permisos',
+      buttons: [
+        {
+          cssClass:'primary',
+          text:'OK',
+          handler: () => {
+            console.log('Confirm Ok');
+            this.selectedForm.reset();
+          }
         }
-      })).present();
-    }
+        
+      ]
+    });
+
+    await alert.present();
+  }
+
+  
+
+  
+
+  async deleteProducts(){
+    let id = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.id:false).filter(product=>product);
+    console.log('delete',id);
+    // TODO LLAMA EL SERVICIO PARA EL PERMISO
+    this.inventoryServices.permisis_user().pipe(map(data => data['data'])).subscribe(data=>{
+      console.log(data)
+      if(data === true){
+        // this.presentModal()
+        this.presentAlert();
+        
+      }else{
+        this.intermediaryService.presentLoading('Borrando productos');
+        this.inventoryServices.delete_Products(id).subscribe(result=>{
+          this.intermediaryService.dismissLoading();
+          console.log(result);
+        },error=> {
+          this.intermediaryService.dismissLoading();
+        });
+
+      }
+    })
+    // TODO CREAMOS EL METODO PARA ELIMINAR
+
+    
+    // this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    // this.printerService.printTagBarcode(references).subscribe(result=>{
+    //   this.intermediaryService.dismissLoading();
+    // },error=>{
+    //   this.intermediaryService.dismissLoading();
+    // });
+    
+  }
 
 
   /**
