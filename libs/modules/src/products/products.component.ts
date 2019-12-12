@@ -44,6 +44,7 @@ export class ProductsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
   form:FormGroup = this.formBuilder.group({
+    brands: [],
     references: [],
     containers: [],
     models: [],
@@ -67,7 +68,7 @@ export class ProductsComponent implements OnInit {
   });
 
   products: ProductModel.Product[] = [];
-  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container'];
+  displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container', 'brand'];
   dataSource: any;
 
   /**Filters */
@@ -83,6 +84,7 @@ export class ProductsComponent implements OnInit {
 
   //NEW FILTERS
   references:Array<TagsInputOption> = [];
+  brands:Array<TagsInputOption> = [];
 
   isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
@@ -90,8 +92,9 @@ export class ProductsComponent implements OnInit {
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
   isFilteringContainers: number = 0;
+  isFilteringBrands: number = 0;
 
-  lastOrder = [true, true, true, true, true, true];
+  lastOrder = [true, true, true, true, true, true, true];
 
   constructor(
     private intermediaryService:IntermediaryService,
@@ -186,6 +189,18 @@ export class ProductsComponent implements OnInit {
           this.showArrow(5, true);
         }
         this.lastOrder[5] = !this.lastOrder[5];
+        break;
+      }
+      case 'brand': {
+        if (this.lastOrder[6]) {
+          this.form.value.orderby = { order: "desc", type: 9};
+          this.showArrow(6, false);
+        }
+        else {
+          this.form.value.orderby = { order: "asc", type: 9};
+          this.showArrow(6, true);
+        }
+        this.lastOrder[6] = !this.lastOrder[6];
         break;
       }
     }
@@ -294,6 +309,21 @@ export class ProductsComponent implements OnInit {
         else{
           this.form.value.containers = [99999];
           this.isFilteringContainers = this.containers.length;
+        }
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        break;
+      case 'brands':
+        let brandsFiltered: number[] = [];
+        for(let brand of filters){
+          if(brand.checked) brandsFiltered.push(brand.id);
+        }
+        if(brandsFiltered.length > 0){
+          this.form.value.brands = brandsFiltered;
+          this.isFilteringBrands = brandsFiltered.length;
+        }
+        else{
+          this.form.value.brands = [99999];
+          this.isFilteringBrands = this.brands.length;
         }
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
@@ -492,6 +522,7 @@ export class ProductsComponent implements OnInit {
           this.updateFilterSourceReferences(searchsInContainer.data.filters.references);
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
           this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+          this.updateFilterSourceBrands(searchsInContainer.data.filters.brands);
 
           for(let index in this.warehouses){
             this.warehouses[index].checked = false;
@@ -504,6 +535,7 @@ export class ProductsComponent implements OnInit {
           this.isFilteringSizes = this.sizes.length;
           this.isFilteringWarehouses = 1;
           this.isFilteringContainers = this.containers.length;
+          this.isFilteringBrands = this.brands.length;
 
           setTimeout(() => {
             this.pauseListenFormChange = false;
@@ -632,6 +664,20 @@ export class ProductsComponent implements OnInit {
     });
     if (value && value.length) {
       this.form.get("containers").patchValue(value, {emitEvent: false});
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("brands").value;
+    this.brands = brands.map(brand => {
+      brand.value = brand.name;
+      brand.checked = true;
+      return brand;
+    });
+    if (value && value.length) {
+      this.form.get("brands").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }

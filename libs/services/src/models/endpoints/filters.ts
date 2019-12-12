@@ -46,6 +46,14 @@ export namespace FiltersModel{
         checked:boolean;
     }
 
+    export interface Brand extends Enum {
+        id:number;
+        name:string;
+        reference:string;
+        value:string;
+        checked:boolean;
+    }
+
     export interface Size extends Enum {
         id:number;
         reference:number;
