@@ -41,11 +41,10 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
           that.warehousesResult = that.warehousesResult.map(elem => {
             elem['optionSelected'] = null;
             elem['optionsStatus'] = that.optionsStatus;
+            elem['isAvailableFilterPrice'] = false;
             return elem;
           });
-
         } 
-        console.log('>>>' ,that.warehousesResult);
       });
     });
   }
@@ -74,5 +73,10 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
 
   close():void{
     this.modalController.dismiss();
+  }
+  changeTexbox(event, res){
+    event.stopPropagation();
+    event.preventDefault();
+    res.isAvailableFilterPrice = event.target.value > 0; 
   }
 }
