@@ -8,6 +8,7 @@ import { ProductsByAuditComponent } from './modals/products-by-audit/products-by
 import {CarrierModel} from "../../../services/src/models/endpoints/Carrier";
 import {AuditsModel} from "../../../services/src/models/endpoints/Audits";
 import AuditPacking = AuditsModel.AuditPacking;
+import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 
 export interface Audits {
@@ -28,7 +29,7 @@ const ELEMENT_DATA: Audits[] = [];
 })
 export class AuditsComponent implements OnInit {
 
-  displayedColumns: string[] = ['user', 'status', 'packing','products','options'];
+  displayedColumns: string[] = ['user', 'status', 'packing', 'date-start', 'products','options'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -41,7 +42,8 @@ export class AuditsComponent implements OnInit {
   constructor(
     private audit : AuditsService,
     private toast : ToastController,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private dateTimeParserService: DateTimeParserService
   ) { }
 
   ngOnInit() {
@@ -97,5 +99,9 @@ export class AuditsComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  getDateFormatted(originalDate) : string {
+    return this.dateTimeParserService.dateMonthYear(originalDate);
   }
 }

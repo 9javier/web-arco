@@ -100,8 +100,7 @@ export class TableTeamAssignationComponent implements OnInit {
     this.updateUserAssignations.next();
   }
 
-  showConsolidatedBreakdown(teamAssignation: WorkwaveModel.TeamAssignations) {
-    let pickingId: number = teamAssignation.pickingShoes[0].pickingId;
+  showConsolidatedBreakdown(pickingId: number)  {
     let assignations: AssignationsByRequests[] = [];
     for(let assignationsByRequests of this.responseQuantities){
       if(assignationsByRequests.pickingId == pickingId){

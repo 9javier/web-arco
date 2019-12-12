@@ -15,14 +15,14 @@
                     <suite-tags-input placeholder="Brands" [options]="brands"  formControlName="brand" multiple="true">
                     </suite-tags-input>
                 </ion-col>
-                <ion-col size="2" size-xs="12" size-md="4">
+                <ion-col size="2" size-xs="12" size-md="2">
                     <ion-label>
                         Colores:
                     </ion-label>
                     <suite-tags-input placeholder="Colores" [options]="colors" formControlName="colors" multiple="true">
                     </suite-tags-input>
                 </ion-col>
-                <ion-col size="2" size-xs="12" size-md="4">
+                <ion-col size="2" size-xs="12" size-md="2">
                     <ion-label>
                         Tallas
                     </ion-label>
@@ -77,7 +77,7 @@
             </ng-container>
 
             <ng-container matColumnDef="brands">
-                <th mat-header-cell *matHeaderCellDef>Brands</th>
+                <th mat-header-cell *matHeaderCellDef>Marca</th>
                 <td mat-cell *matCellDef="let product">
                     {{ product?.productShoeUnit?.model?.brand?.name }}
                 </td>

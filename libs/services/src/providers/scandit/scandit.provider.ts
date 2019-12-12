@@ -64,10 +64,7 @@ export class ScanditProvider {
       value: this._codeValue.PRODUCT_MODEL,
       regex: /([0-9]){1,6}$/
     },
-    {
-      value: this._codeValue.PRODUCT_MODEL,
-      regex: /([0-9]){1,6}$/
-    },
+    
     {
       value: this._codeValue.PRODUCT_UNDEFINED,
       regex: /(\w){1,18}$/

@@ -231,10 +231,10 @@ export class ProductsComponent implements OnInit {
           this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.SIZES)
         }
         if (value.productReferencePattern !== this.formCurrentValue.productReferencePattern) {
-          if (value.productReferencePatternlength > 0 && this.filterPriority.find(e=>e == Filter.REFERENCES) === undefined) {
-            this.filterPriority.push(Filter.REFERENCES)
+          if (value.productReferencePattern && value.productReferencePattern.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
+            this.filterPriority.push(Filter.MODELS)
           }
-          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.REFERENCES)
+          this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.MODELS)
         }
         if (value.warehouses.length > this.formCurrentValue.warehouses.length) {
           if (value.warehouses.length > 0 && this.filterPriority.find(e=>e == Filter.WAREHOUSES) === undefined) {
@@ -249,7 +249,9 @@ export class ProductsComponent implements OnInit {
         if (this.isFirst) {
           this.isFirst = false;
         }
-        console.log(this.filterPriorityIndex)
+        // console.log(this.filterPriorityIndex)
+        // console.log(this.filterPriority)
+
         console.log(this.filterPriority)
       }
     })
@@ -282,7 +284,7 @@ export class ProductsComponent implements OnInit {
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
-      console.log(change);
+      // console.log(change);
       
       if (this.pauseListenFormChange) return;
       ///**format the reference */
@@ -342,7 +344,7 @@ export class ProductsComponent implements OnInit {
       
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
-      // console.log(this.dataSource);
+      // // console.log(this.dataSource);
       
       let paginator: any = searchsInContainer.data.pagination;
 
@@ -435,7 +437,7 @@ export class ProductsComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.warehouseService.getIndex().then(observable=>{
       observable.subscribe(response=>{
-        console.log(response);
+        // console.log(response);
         this.warehouses = (<any>response.body).data;
         let warehouseMain = (<any>response.body).data.filter(item => item.is_main)
         let warehouse = this.warehouses[0];
@@ -446,11 +448,22 @@ export class ProductsComponent implements OnInit {
         if (this.isFirst) {
           params = {};
         } else {
+          if (this.form.value.productReferencePattern) {
+            this.form.patchValue({
+              productReferencePattern: this.form.value.productReferencePattern.toString()
+            })
+          } else {
+            this.form.patchValue({
+              productReferencePattern: ""
+            })
+          }
           params = this.form.value;
-          this
         }
+
+
+
         this.inventoryServices.searchFilters(params).subscribe(searchsInContainer=>{
-          console.log(searchsInContainer);
+          // console.log(searchsInContainer);
           //TODO QUI DOBBIAMO CREARE IL METODO PER RESTITUIRE IL BRANDS
           /**
            */
@@ -544,7 +557,7 @@ export class ProductsComponent implements OnInit {
   private updateFiltersourceBrands(brands: FiltersModel.Brands[]){
     this.pauseListenFormChange = true;
     let value = this.form.get("brand").value;
-    console.log(value);
+    // console.log(value);
     
     this.brands = brands;
     if (value && value.length) {
@@ -561,7 +574,7 @@ export class ProductsComponent implements OnInit {
       this.form.get("colors").patchValue(value, {emitEvent: false});
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-    console.log(value);
+    // // console.log(value);
 
   }
 

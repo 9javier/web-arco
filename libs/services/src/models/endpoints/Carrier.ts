@@ -1,4 +1,5 @@
 import {HttpRequestModel} from "./HttpRequest";
+import { CarrierModel as carrierModel } from './carrier.model';
 
 export namespace CarrierModel {
 
@@ -60,4 +61,7 @@ export namespace CarrierModel {
     data: any
   }
 
+  export interface ResponseGetPackingDestiny extends HttpRequestModel.Response {
+    data: carrierModel.CarrierWarehouseDestiny
+  }
 }
