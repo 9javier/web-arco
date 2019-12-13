@@ -57,6 +57,10 @@ export class FilterPopoverComponent implements OnInit {
     }
   }
 
+  private notHidden(item){
+    return !item.hide;
+  }
+
   updateSelection(event){
     let currentMinValue = event.target.value['lower'];
     let currentMaxValue = event.target.value['upper'];
@@ -69,7 +73,7 @@ export class FilterPopoverComponent implements OnInit {
         this.listItems[item].checked = false;
       }
     }
-    this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).slice(0,50);
+    this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     this.checkAllSelected();
   }
 
@@ -79,7 +83,7 @@ export class FilterPopoverComponent implements OnInit {
     this.listItems = this.filterPopoverProvider.listItems;
     this.checkAllSelected();
     this.listItemsFinal = this.filterPopoverProvider.listItems;
-    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).slice(0,50);
+    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
   }
 
   searchInFilterList(textSearched: string) {
@@ -93,12 +97,12 @@ export class FilterPopoverComponent implements OnInit {
           this.listItems[i].checked = false;
         }
       }
-      this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).slice(0,50);
+      this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     } else {
       for(let index in this.listItems){
         this.listItems[index].checked = true;
       }
-      this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).slice(0,50);
+      this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     }
     this.checkAllSelected();
   }

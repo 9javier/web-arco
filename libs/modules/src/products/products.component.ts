@@ -72,20 +72,19 @@ export class ProductsComponent implements OnInit {
   dataSource: any;
 
   /**Filters */
+  references:Array<TagsInputOption> = [];
   models:Array<TagsInputOption> = [];
   colors:Array<TagsInputOption> = [];
   sizes:Array<TagsInputOption> = [];
   warehouses:Array<TagsInputOption> = [];
   containers:Array<TagsInputOption> = [];
+  brands:Array<TagsInputOption> = [];
   groups:Array<TagsInputOption> = [];
 
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
-  //NEW FILTERS
-  references:Array<TagsInputOption> = [];
-  brands:Array<TagsInputOption> = [];
-
+  //For filter popovers
   isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
   isFilteringColors: number = 0;
@@ -94,6 +93,9 @@ export class ProductsComponent implements OnInit {
   isFilteringContainers: number = 0;
   isFilteringBrands: number = 0;
 
+  lastUsedFilter: string = 'warehouses';
+
+  //For sorting
   lastOrder = [true, true, true, true, true, true, true];
 
   constructor(
@@ -109,7 +111,6 @@ export class ProductsComponent implements OnInit {
     private printerService:PrinterService
   ) {}
 
-  //NEW FILTERS
   sort(column: string){
     for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
       let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
@@ -214,13 +215,6 @@ export class ProductsComponent implements OnInit {
   }
 
   applyFilters(filters, filterType) {
-    /*
-    productReferencePattern: string array from model.reference
-    colors: number array from color.id
-    sizes: string array from size.value
-    warehouses: number array from warehouse.id
-    containers: number array from container.id
-    */
     switch(filterType){
       case 'references':
         let referencesFiltered: string[] = [];
@@ -235,7 +229,6 @@ export class ProductsComponent implements OnInit {
           this.form.value.references = [99999];
           this.isFilteringReferences = this.references.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'models':
         let modelsFiltered: string[] = [];
@@ -250,7 +243,6 @@ export class ProductsComponent implements OnInit {
           this.form.value.productReferencePattern = [99999];
           this.isFilteringModels = this.models.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'colors':
         let colorsFiltered: number[] = [];
@@ -265,7 +257,6 @@ export class ProductsComponent implements OnInit {
           this.form.value.colors = [99999];
           this.isFilteringColors = this.colors.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'sizes':
         let sizesFiltered: number[] = [];
@@ -280,7 +271,6 @@ export class ProductsComponent implements OnInit {
           this.form.value.sizes = ["99999"];
           this.isFilteringSizes = this.sizes.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'warehouses':
         let warehousesFiltered: number[] = [];
@@ -295,7 +285,6 @@ export class ProductsComponent implements OnInit {
           this.form.value.warehouses = [99999];
           this.isFilteringWarehouses = this.warehouses.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'containers':
         let containersFiltered: number[] = [];
@@ -310,7 +299,6 @@ export class ProductsComponent implements OnInit {
           this.form.value.containers = [99999];
           this.isFilteringContainers = this.containers.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
       case 'brands':
         let brandsFiltered: number[] = [];
@@ -325,10 +313,10 @@ export class ProductsComponent implements OnInit {
           this.form.value.brands = [99999];
           this.isFilteringBrands = this.brands.length;
         }
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         break;
     }
-
+    this.lastUsedFilter = filterType;
+    this.searchInContainer(this.sanitize(this.getFormValueCopy()));
   }
 
   /**
@@ -482,6 +470,49 @@ export class ProductsComponent implements OnInit {
       this.paginator.pageIndex = paginator.selectPage;
       this.paginator.lastPage = paginator.lastPage;
 
+      //Reduce all filters
+      if(this.lastUsedFilter != 'references') {
+        let filteredReferences = searchsInContainer.data.filters['references'] as unknown as string[];
+        for (let index in this.references) {
+          this.references[index].hide = !filteredReferences.includes(this.references[index].value);
+        }
+      }
+      if(this.lastUsedFilter != 'models') {
+        let filteredModels = searchsInContainer.data.filters['models'] as unknown as string[];
+        for (let index in this.models) {
+          this.models[index].hide = !filteredModels.includes(this.models[index].value);
+        }
+      }
+      if(this.lastUsedFilter != 'colors') {
+        let filteredColors = searchsInContainer.data.filters['colors'] as unknown as string[];
+        for (let index in this.colors) {
+          this.colors[index].hide = !filteredColors.includes(this.colors[index].value);
+        }
+      }
+      if(this.lastUsedFilter != 'sizes') {
+        let filteredSizes = searchsInContainer.data.filters['sizes'] as unknown as string[];
+        for (let index in this.sizes) {
+          this.sizes[index].hide = !filteredSizes.includes(this.sizes[index].value);
+        }
+      }
+      if(this.lastUsedFilter != 'warehouses') {
+        let filteredWarehouses = searchsInContainer.data.filters['warehouses'] as unknown as (string | number)[];
+        for (let index in this.warehouses) {
+          this.warehouses[index].hide = !filteredWarehouses.includes(this.warehouses[index].value);
+        }
+      }
+      if(this.lastUsedFilter != 'containers') {
+        let filteredContainers = searchsInContainer.data.filters['containers'] as unknown as string[];
+        for (let index in this.containers) {
+          this.containers[index].hide = !filteredContainers.includes(this.containers[index].value);
+        }
+      }
+      if(this.lastUsedFilter != 'brands') {
+        let filteredBrands = searchsInContainer.data.filters['brands'] as unknown as string[];
+        for (let index in this.brands) {
+          this.brands[index].hide = !filteredBrands.includes(this.brands[index].value);
+        }
+      }
     },()=>{
       this.intermediaryService.dismissLoading();
     });
@@ -515,14 +546,14 @@ export class ProductsComponent implements OnInit {
         }
 
         this.inventoryServices.searchFilters({}).subscribe(searchsInContainer=>{
-          this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
-          this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
-          this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
-          this.updateFilterSourceModels(searchsInContainer.data.filters.models);
           this.updateFilterSourceReferences(searchsInContainer.data.filters.references);
+          this.updateFilterSourceModels(searchsInContainer.data.filters.models);
+          this.updateFilterSourceColors(searchsInContainer.data.filters.colors);
           this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
-          this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
+          this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
+          this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
           this.updateFilterSourceBrands(searchsInContainer.data.filters.brands);
+          this.updateFilterSourceOrdertypes(searchsInContainer.data.filters.ordertypes);
 
           for(let index in this.warehouses){
             this.warehouses[index].checked = false;
@@ -582,6 +613,7 @@ export class ProductsComponent implements OnInit {
       reference.name = reference.reference;
       reference.value = reference.name;
       reference.checked = true;
+      reference.hide = false;
       return reference;
     });
     if (value && value.length) {
@@ -598,6 +630,7 @@ export class ProductsComponent implements OnInit {
       model.name = model.reference;
       model.value = model.name;
       model.checked = true;
+      model.hide = false;
       return model;
     });
     if (value && value.length) {
@@ -612,6 +645,7 @@ export class ProductsComponent implements OnInit {
     this.colors = colors.map(color => {
       color.value = color.name;
       color.checked = true;
+      color.hide = false;
       return color;
     });
     if (value && value.length) {
@@ -629,6 +663,7 @@ export class ProductsComponent implements OnInit {
         size.id = <number>(<unknown>size.id);
         size.value = size.name;
         size.checked = true;
+        size.hide = false;
         return size;
       })
     ;
@@ -645,6 +680,7 @@ export class ProductsComponent implements OnInit {
         warehouse.name = warehouse.reference + " - " + warehouse.name;
         warehouse.value = warehouse.name;
         warehouse.checked = true;
+        warehouse.hide = false;
         return warehouse;
     });
     if (value && value.length) {
@@ -660,6 +696,7 @@ export class ProductsComponent implements OnInit {
       container.name = container.reference;
       container.value = container.name;
       container.checked = true;
+      container.hide = false;
       return container;
     });
     if (value && value.length) {
@@ -674,6 +711,7 @@ export class ProductsComponent implements OnInit {
     this.brands = brands.map(brand => {
       brand.value = brand.name;
       brand.checked = true;
+      brand.hide = false;
       return brand;
     });
     if (value && value.length) {
