@@ -13,11 +13,11 @@
     <ion-list>
         <ion-item *ngFor="let res of warehousesResult">
             <div slot="start" class="slot-start-icon">
-                    <ion-icon name="grid"></ion-icon>
+                <ion-checkbox color="dark" [(ngModel)]="res.isAvailableFilterPrice"></ion-checkbox>
             </div>
             <ion-label class="label large">{{res.warehouse.reference}} {{res.warehouse.name}}</ion-label>
             <ion-select placeholder="Seleccionar estado"  [(ngModel)]="res.optionSelected" 
-            cancelText="Cancelar" okText="Aceptar">
+            cancelText="Cancelar" okText="Aceptar" (ionChange)="changeTexbox($event, res)">
                 <ion-select-option  value="0">Ninguno</ion-select-option>
                 <ion-select-option  *ngFor="let option of res.optionsStatus"  [value]="option.id">{{option.name}}</ion-select-option>
             </ion-select>

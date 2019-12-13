@@ -14,7 +14,7 @@ import {
   TypesService,
   WarehouseService,
   WarehousesService,
-  IntermediaryService
+  IntermediaryService, UsersService
 
 } from '@suite/services';
 
@@ -98,23 +98,23 @@ export class ProductsComponent implements OnInit {
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
   isFirst: boolean = true;
-  
+  hasDeleteProduct = false;
 
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   //@ViewChild(MatSort) sort: MatSort;
 
   constructor(
-    private intermediaryService:IntermediaryService,
-    private warehouseService:WarehouseService,
-    private warehousesService:WarehousesService,
-    private typeService:TypesService,
-    private formBuilder:FormBuilder,
-    private inventoryServices:InventoryService,
-    private filterServices:FiltersService,
+    private intermediaryService: IntermediaryService,
+    private warehouseService: WarehouseService,
+    private warehousesService: WarehousesService,
+    private typeService: TypesService,
+    private formBuilder: FormBuilder,
+    private inventoryServices: InventoryService,
+    private filterServices: FiltersService,
     private productsService: ProductsService,
-    private modalController:ModalController,
-    private printerService:PrinterService,
-    private alertController: AlertController
+    private modalController: ModalController,
+    private printerService: PrinterService,
+    private usersService: UsersService,
   ) {}
 
   /**
@@ -192,6 +192,12 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.usersService.hasDeleteProductPermission().then((observable) => {
+      observable.subscribe((response) => {
+        this.hasDeleteProduct = response.body.data;
+      })
+    });
+
     this.getFilters();
     this.observerChanges();
 
@@ -213,7 +219,7 @@ export class ProductsComponent implements OnInit {
         }
         if (value.models.length > this.formCurrentValue.models.length) {
           if (value.models.length > 0 && this.filterPriority.find(e=>e == Filter.MODELS) === undefined) {
-            this.filterPriority.push(Filter.MODELS)            
+            this.filterPriority.push(Filter.MODELS)
           }
           this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.MODELS)
         }
@@ -222,7 +228,7 @@ export class ProductsComponent implements OnInit {
             this.filterPriority.push(Filter.COLORS)
           }
           this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.COLORS)
-          
+
         }
         if (value.sizes.length > this.formCurrentValue.sizes.length) {
           if (value.sizes.length > 0 && this.filterPriority.find(e=>e == Filter.SIZES) === undefined) {
@@ -241,7 +247,7 @@ export class ProductsComponent implements OnInit {
             this.filterPriority.push(Filter.WAREHOUSES)
           }
           this.filterPriorityIndex = this.filterPriority.findIndex(e => e == Filter.WAREHOUSES)
-        }  
+        }
         this.formCurrentValue = value
         if(!this.isFirst) {
           this.getFilters()
@@ -255,14 +261,14 @@ export class ProductsComponent implements OnInit {
         console.log(this.filterPriority)
       }
     })
-    
+
   }
 
   observerChanges(){
     this.form.valueChanges.subscribe(value => {
-  
-      this.formValueChanges.next(value)    
-  
+
+      this.formValueChanges.next(value)
+
     })
   }
 
@@ -285,7 +291,7 @@ export class ProductsComponent implements OnInit {
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
       // console.log(change);
-      
+
       if (this.pauseListenFormChange) return;
       ///**format the reference */
       /**cant send a request in every keypress of reference, then cancel the previous request */
@@ -335,17 +341,17 @@ export class ProductsComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters):void{
-    
+
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
-      
+
       this.intermediaryService.dismissLoading();
       this.searchsInContainer = searchsInContainer.data.results;
-      
+
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
       // // console.log(this.dataSource);
-      
+
       let paginator: any = searchsInContainer.data.pagination;
 
       this.paginator.length = paginator.totalResults;
@@ -468,9 +474,9 @@ export class ProductsComponent implements OnInit {
           /**
            */
 
-          
-          
-          
+
+
+
           if (this.filterPriority.find(e => e == Filter.BRANDS) == undefined) {
             this.updateFiltersourceBrands(searchsInContainer.data.filters.brands);
           }
@@ -481,7 +487,7 @@ export class ProductsComponent implements OnInit {
             this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
           }
           if (this.filterPriority.find(e => e == Filter.MODELS) == undefined) {
-            this.updateFilterSourceModels(searchsInContainer.data.filters.models);            
+            this.updateFilterSourceModels(searchsInContainer.data.filters.models);
           }
           if (this.filterPriority.find(e => e == Filter.SIZES) == undefined) {
             this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
@@ -489,7 +495,7 @@ export class ProductsComponent implements OnInit {
           if (this.filterPriority.find(e => e == Filter.WAREHOUSES) == undefined) {
             this.updateFilterSourceWarehouses(searchsInContainer.data.filters.warehouses);
           }
-          
+
           let i = this.filterPriorityIndex+1
           if(i+1 < this.filterPriority.length){
             while(i < this.filterPriority.length ){
@@ -503,7 +509,7 @@ export class ProductsComponent implements OnInit {
                 this.updateFilterSourceContainers(searchsInContainer.data.filters.containers);
               }
               if (this.filterPriority[i] == Filter.MODELS) {
-                this.updateFilterSourceModels(searchsInContainer.data.filters.models); 
+                this.updateFilterSourceModels(searchsInContainer.data.filters.models);
               }
               if (this.filterPriority[i] == Filter.SIZES) {
                 this.updateFilterSourceSizes(searchsInContainer.data.filters.sizes);
@@ -558,7 +564,7 @@ export class ProductsComponent implements OnInit {
     this.pauseListenFormChange = true;
     let value = this.form.get("brand").value;
     // console.log(value);
-    
+
     this.brands = brands;
     if (value && value.length) {
       this.form.get("brand").patchValue(value, {emitEvent: false});
@@ -640,6 +646,10 @@ export class ProductsComponent implements OnInit {
     this.groups = ordertypes;
     this.form.get("orderby").get("type").patchValue(value, {emitEvent: false});
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  deleteProducts() {
+
   }
 }
 

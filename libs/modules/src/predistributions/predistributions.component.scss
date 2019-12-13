@@ -5,9 +5,7 @@
 
     tr {
       th {
-        background: #000000;
         padding-top: 20px;
-        color: #ffffff;
         padding-right: 0;
 
         ::ng-deep .mat-sort-header-button {
@@ -22,25 +20,14 @@
         .content-checkbox {
           padding-top: 10px;
           padding-bottom: 10px;
-
-          .custom-checkbox {
-            .mat-ripple-element {
-              background-color: rgba(100, 200, 50, 0.5) !important;
-            }
-          }
         }
 
         ::ng-deep .mat-checkbox .mat-checkbox-frame {
-          border-color: #ffffff;
-          background-color: #ffffff !important;
+          border-color: #757575;
         }
 
         ::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background, ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-          background-color: #ffffff !important;
-        }
-
-        ::ng-deep .mat-checkbox-checkmark-path {
-          stroke: #000 !important;
+          background-color: #000000 !important;
         }
       }
 
