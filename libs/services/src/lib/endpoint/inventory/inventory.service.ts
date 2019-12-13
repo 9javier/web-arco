@@ -9,6 +9,8 @@ import {environment} from '../../../environments/environment';
 import {map, switchMap} from 'rxjs/operators';
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import { ExcellModell } from 'libs/services/src/models/endpoints/Excell';
+import { response } from 'express';
 
 const PATH_POST_STORE: string = PATH('Inventory Process', 'Store');
 const PATH_GET_PRODUCTS_CONTAINER: string = PATH('Inventory', 'List by Container').slice(0, -1);
@@ -30,6 +32,7 @@ export class InventoryService {
   private postPickingConsolidatedUrl: string = environment.apiBase + '/processes/picking-main/consolidated';
   private postPickingOnlineStoreUrl: string = environment.apiBase + '/processes/picking-main/ot';
 
+  private sendexcell = "http://localhost:8081/api/inventory/export-to-excel";
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
   private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`;
@@ -60,8 +63,26 @@ export class InventoryService {
   searchFilters(parameters):Observable<InventoryModel.ResponseFilters>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      // let headers = new HttpHeaders().set('Accept', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet').set('Authorization', token);
       // return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
       return this.http.post<InventoryModel.ResponseFilters>(this.searchFiltersUrl,parameters, {headers});
+    }));
+  }
+
+
+  /**
+   * @author Gaetano Sabino
+   * @param parameters 
+   */
+  getFileExcell(parameters:ExcellModell.fileExcell){
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      
+      let headers = new HttpHeaders()
+        .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        .set('Content-Disposition', "attachment; filename='export.xlsx")
+        .set('Authorization', token);
+      return this.http.post(this.sendexcell, parameters, {headers,responseType:'blob'});
     }));
   }
 

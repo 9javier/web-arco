@@ -1,7 +1,9 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { Filter } from './enums/filter.enum';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
+import * as Filesave from 'file-saver';
+
 
 import {
   ProductModel,
@@ -29,7 +31,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 
 
 @Component({
@@ -47,6 +49,7 @@ export class ProductsComponent implements OnInit {
   /**previous reference to detect changes */
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
+  
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
@@ -249,20 +252,16 @@ export class ProductsComponent implements OnInit {
         if (this.isFirst) {
           this.isFirst = false;
         }
-        // console.log(this.filterPriorityIndex)
-        // console.log(this.filterPriority)
-
-        console.log(this.filterPriority)
       }
     })
     
   }
 
+  // TODO PORQUE?
   observerChanges(){
     this.form.valueChanges.subscribe(value => {
-  
+     
       this.formValueChanges.next(value)    
-  
     })
   }
 
@@ -391,11 +390,27 @@ export class ProductsComponent implements OnInit {
 
     await alert.present();
   }
-
   
-
+  // TODO METODO LLAMAR ARCHIVO EXCELL
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell(){
+    this.intermediaryService.presentLoading('Descargando Archivo Excell');
+    this.inventoryServices.getFileExcell(this.formCurrentValue).pipe(
+      catchError(error => of(error)),
+      // map(file => file.error.text)
+    ).subscribe((data)=>{
+      console.log(data);
+      
+      const blob = new Blob([data], { type: 'application/octet-stream' });
+      Filesave.saveAs(blob,`${Date.now()}.xlsx`)
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess('Archivo descargado')
+    },error => console.log(error));
+  }
   
-
+  // FIXES pro
   async deleteProducts(){
     let id = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.id:false).filter(product=>product);
     console.log('delete',id);
@@ -411,7 +426,7 @@ export class ProductsComponent implements OnInit {
         this.inventoryServices.delete_Products(id).subscribe(result=>{
           this.intermediaryService.dismissLoading();
           console.log(result);
-        },error=> {
+        },error => {
           this.intermediaryService.dismissLoading();
         });
 
