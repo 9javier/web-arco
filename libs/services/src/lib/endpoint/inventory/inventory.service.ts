@@ -77,11 +77,10 @@ export class InventoryService {
   getFileExcell(parameters:ExcellModell.fileExcell){
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      console.log(parameters);
       
-      let headers = new HttpHeaders()
-        .set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        .set('Content-Disposition', "attachment; filename='export.xlsx")
-        .set('Authorization', token);
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
       return this.http.post(this.sendexcell, parameters, {headers,responseType:'blob'});
     }));
   }

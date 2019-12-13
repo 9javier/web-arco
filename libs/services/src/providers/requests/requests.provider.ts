@@ -75,7 +75,7 @@ export class RequestsProvider {
           req.open('POST', url, false);
           req.setRequestHeader('Authorization', authToken);
           req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-          req.setRequestHeader("Content-Type","blob")
+         
           req.send(JSON.stringify(body));
 
           let response = { error: 'Error to make POST Request' };
@@ -97,6 +97,9 @@ export class RequestsProvider {
       });
     });
   }
+
+
+
 
   public put(url: string, body: any) : Promise<HttpRequestModel.Response> {
     return new Promise((resolve, reject) => {
