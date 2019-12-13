@@ -348,7 +348,7 @@
           </th>
           <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-              <ion-checkbox (click)="itemSelected(label.id)" *ngIf="label.status != 3"
+              <ion-checkbox (click)="itemSelected(label.id)"
                 [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
             </ng-template>
           </td>

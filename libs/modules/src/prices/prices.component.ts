@@ -18,7 +18,7 @@ import {
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { validators } from '../utils/validators';
-import { NavParams } from '@ionic/angular';
+import { AlertController, NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -127,7 +127,8 @@ export class PricesComponent implements OnInit {
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
-    private cd : ChangeDetectorRef
+    private cd : ChangeDetectorRef,
+    private alertController: AlertController
   ) {
 
   }
@@ -247,42 +248,46 @@ export class PricesComponent implements OnInit {
    */
   async printPrices(items, warehouseId: number) {
     //this.initSelectForm(this.prices);
-    if (!warehouseId) {
-      if (this.isStoreUser) {
-        warehouseId = this.storeUserObj.id;
-      } else {
-        warehouseId = this.warehouseService.idWarehouseMain;
-      }
-    }
 
-    let prices = this.selectedForm.value.toSelect.map((price, i) => {
-      if (items[i].status != 3) {
-        let object = {
-          warehouseId: warehouseId,
-          tariffId: items[i].tariff.id,
-          modelId: items[i].model.id,
-          numRange: items[i].numRange
+    if (this.verifyPricesDeleted()) {
+      await this.presentAlertConfirm();
+    } else {
+      if (!warehouseId) {
+        if (this.isStoreUser) {
+          warehouseId = this.storeUserObj.id;
+        } else {
+          warehouseId = this.warehouseService.idWarehouseMain;
         }
-        return price ? object : false
-      }
-    })
-      .filter(price => price);
-
-    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
-    this.printerService.printPrices({ references: prices }).subscribe(result => {
-      this.intermediaryService.dismissLoading();
-
-      if (result) {
-        this.changeStatusImpress();
       }
 
-      this.initSelectForm(this.prices);
+      let prices = this.selectedForm.value.toSelect.map((price, i) => {
+        if (items[i].status != 3) {
+          let object = {
+            warehouseId: warehouseId,
+            tariffId: items[i].tariff.id,
+            modelId: items[i].model.id,
+            numRange: items[i].numRange
+          }
+          return price ? object : false
+        }
+      })
+        .filter(price => price);
 
-      //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-    }, error => {
-      this.intermediaryService.dismissLoading();
-    });
+      this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+      this.printerService.printPrices({ references: prices }).subscribe(result => {
+        this.intermediaryService.dismissLoading();
 
+        if (result) {
+          this.changeStatusImpress();
+        }
+
+        this.initSelectForm(this.prices);
+
+        //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+      }, error => {
+        this.intermediaryService.dismissLoading();
+      });
+    }
   }
 
   async ngOnInit() {
@@ -505,6 +510,41 @@ export class PricesComponent implements OnInit {
         this.getFilters();
       });
     });
+  }
+
+  verifyPricesDeleted() {
+    return true;
+  }
+
+  async presentAlertConfirm(num: number) {
+    const messageSingular =  `Existe ${num} precio eliminado. ¿Desea imprimir la tarifa eliminada con el precio actual?`;
+    const messagePlural =  `Existen ${num} precios eliminados. ¿Desea imprimir las tarifas eliminadas con el precio actual?`;
+    const alert = await this.alertController.create({
+      header: '¡Confirmar!',
+      message: num > 1 ? messagePlural : messageSingular,
+      buttons: [
+        {
+          text: 'Si',
+          handler: () => {
+            console.log('Si');
+          }
+        }, {
+          text: 'No',
+          handler: (blah) => {
+            console.log('No');
+          }
+        },{
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   // GET & SET SECTION
