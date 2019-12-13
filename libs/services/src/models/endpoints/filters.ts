@@ -62,6 +62,15 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+    export interface Supplier extends Enum {
+      id:number;
+      name:string;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
     export interface Group extends Enum {
       id:number;
       reference:string;
