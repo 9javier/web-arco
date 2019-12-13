@@ -219,7 +219,7 @@
                 <ion-grid>
                   <ion-row class="custom-panel-header">
                     <ion-col size="1" class="check-print">
-                      <ion-checkbox *ngIf="price.status != 3"
+                      <ion-checkbox
                         [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
                         (click)="$event.stopPropagation();itemSelected(price.id);">
                       </ion-checkbox>
