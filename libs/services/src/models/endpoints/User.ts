@@ -64,6 +64,12 @@ export namespace UserModel {
     code: number;
   }
 
+  export interface ResponseHasDeleteProductPermission {
+    data: boolean;
+    message: string;
+    code: number;
+  }
+
   export interface ErrorResponseIndex {
     statusCode: number;
     status: number;
