@@ -23,6 +23,7 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import * as moment from "../workwave-template-rebuild/table-requests-orders/table-requests-orders.component";
+import {FilterButtonComponent} from "../components/filter-button/filter-button.component";
 
 @Component({
   selector: 'app-products',
@@ -42,6 +43,13 @@ export class ProductsComponent implements OnInit {
   pauseListenFormChange = false;
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
+  @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
+  @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
+  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
+  @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
+  @ViewChild('filterButtonContainers') filterButtonContainers: FilterButtonComponent;
+  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
 
   form:FormGroup = this.formBuilder.group({
     brands: [],
@@ -476,42 +484,49 @@ export class ProductsComponent implements OnInit {
         for (let index in this.references) {
           this.references[index].hide = !filteredReferences.includes(this.references[index].value);
         }
+        this.filterButtonReferences.listItems = this.references;
       }
       if(this.lastUsedFilter != 'models') {
         let filteredModels = searchsInContainer.data.filters['models'] as unknown as string[];
         for (let index in this.models) {
           this.models[index].hide = !filteredModels.includes(this.models[index].value);
         }
+        this.filterButtonModels.listItems = this.models;
       }
       if(this.lastUsedFilter != 'colors') {
         let filteredColors = searchsInContainer.data.filters['colors'] as unknown as string[];
         for (let index in this.colors) {
           this.colors[index].hide = !filteredColors.includes(this.colors[index].value);
         }
+        this.filterButtonColors.listItems = this.colors;
       }
       if(this.lastUsedFilter != 'sizes') {
         let filteredSizes = searchsInContainer.data.filters['sizes'] as unknown as string[];
         for (let index in this.sizes) {
           this.sizes[index].hide = !filteredSizes.includes(this.sizes[index].value);
         }
+        this.filterButtonSizes.listItems = this.sizes;
       }
       if(this.lastUsedFilter != 'warehouses') {
-        let filteredWarehouses = searchsInContainer.data.filters['warehouses'] as unknown as (string | number)[];
+        let filteredWarehouses = searchsInContainer.data.filters['warehouses'] as unknown as (string|number)[];
         for (let index in this.warehouses) {
-          this.warehouses[index].hide = !filteredWarehouses.includes(this.warehouses[index].value);
+          this.warehouses[index].hide = !filteredWarehouses.includes(this.warehouses[index].reference);
         }
+        this.filterButtonWarehouses.listItems = this.warehouses;
       }
       if(this.lastUsedFilter != 'containers') {
         let filteredContainers = searchsInContainer.data.filters['containers'] as unknown as string[];
         for (let index in this.containers) {
           this.containers[index].hide = !filteredContainers.includes(this.containers[index].value);
         }
+        this.filterButtonContainers.listItems = this.containers;
       }
       if(this.lastUsedFilter != 'brands') {
         let filteredBrands = searchsInContainer.data.filters['brands'] as unknown as string[];
         for (let index in this.brands) {
           this.brands[index].hide = !filteredBrands.includes(this.brands[index].value);
         }
+        this.filterButtonBrands.listItems = this.brands;
       }
     },()=>{
       this.intermediaryService.dismissLoading();

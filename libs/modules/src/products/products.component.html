@@ -15,6 +15,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('reference')">Código</span>
           <suite-filter-button
+            #filterButtonReferences
             class="filter"
             [title]="'Código'"
             [listItems]="references"
@@ -31,6 +32,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('model')">Referencia</span>
           <suite-filter-button
+            #filterButtonModels
             class="filter"
             [title]="'Referencia'"
             [listItems]="models"
@@ -47,6 +49,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('color')">Color</span>
           <suite-filter-button
+            #filterButtonColors
             class="filter"
             [title]="'Color'"
             [listItems]="colors"
@@ -63,6 +66,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('size')">Talla</span>
           <suite-filter-button
+            #filterButtonSizes
             class="filter"
             [title]="'Talla'"
             [listItems]="sizes"
@@ -79,6 +83,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('warehouse')">Almacén</span>
           <suite-filter-button
+            #filterButtonWarehouses
             class="filter"
             [title]="'Almacén'"
             [listItems]="warehouses"
@@ -95,6 +100,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('container')">Ubicación</span>
           <suite-filter-button
+            #filterButtonContainers
             class="filter"
             [title]="'Ubicación'"
             [listItems]="containers"
@@ -111,6 +117,7 @@
         <th mat-header-cell *matHeaderCellDef>
           <span class="title" (click)="sort('brand')">Marca</span>
           <suite-filter-button
+            #filterButtonBrands
             class="filter"
             [title]="'Marca'"
             [listItems]="brands"
