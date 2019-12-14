@@ -42,14 +42,14 @@ import { map, catchError } from 'rxjs/operators';
 
 export class ProductsComponent implements OnInit {
 
-  pagerValues = [50, 100, 1000];
+  pagerValues = [500, 100, 1000];
 
   /**timeout for send request */
   requestTimeout;
   /**previous reference to detect changes */
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
-  
+
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
@@ -267,8 +267,8 @@ export class ProductsComponent implements OnInit {
   // TODO PORQUE?
   observerChanges(){
     this.form.valueChanges.subscribe(value => {
-     
-      this.formValueChanges.next(value)    
+
+      this.formValueChanges.next(value)
     })
   }
 
@@ -376,28 +376,6 @@ export class ProductsComponent implements OnInit {
     })).present();
   }
 
-
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: '¡User sin Permisos!',
-      subHeader: '¡Usted no tiene permisos para eliminar los productos!',
-      message: 'Necesita cambiar sus permisos',
-      buttons: [
-        {
-          cssClass: 'primary',
-          text: 'OK',
-          handler: () => {
-            console.log('Confirm Ok');
-            this.selectedForm.reset();
-          }
-        }
-
-      ]
-    });
-
-    await alert.present();
-  }
-  
   // TODO METODO LLAMAR ARCHIVO EXCELL
   /**
    * @description Eviar parametros y recibe un archivo excell
@@ -409,46 +387,28 @@ export class ProductsComponent implements OnInit {
       // map(file => file.error.text)
     ).subscribe((data)=>{
       console.log(data);
-      
+
       const blob = new Blob([data], { type: 'application/octet-stream' });
       Filesave.saveAs(blob,`${Date.now()}.xlsx`)
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess('Archivo descargado')
     },error => console.log(error));
   }
-  
+
   // FIXES pro
   async deleteProducts(){
-    let id = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.id:false).filter(product=>product);
+    let id = this.selectedForm.value.toSelect.map((product, i) =>
+      product ? this.searchsInContainer[i].productShoeUnit.id : false)
+      .filter(product => product);
+
     console.log('delete',id);
-    // TODO LLAMA EL SERVICIO PARA EL PERMISO
-    this.inventoryServices.permisis_user().pipe(map(data => data['data'])).subscribe(data => {
-      console.log(data)
-      if (data === true) {
-        // this.presentModal()
-        this.presentAlert();
-
-      } else {
-        this.intermediaryService.presentLoading('Borrando productos');
-        this.inventoryServices.delete_Products(id).subscribe(result => {
-          this.intermediaryService.dismissLoading();
-          console.log(result);
-        },error => {
-          this.intermediaryService.dismissLoading();
-        });
-
-      }
-    })
-    // TODO CREAMOS EL METODO PARA ELIMINAR
-
-
-    // this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
-    // this.printerService.printTagBarcode(references).subscribe(result=>{
-    //   this.intermediaryService.dismissLoading();
-    // },error=>{
-    //   this.intermediaryService.dismissLoading();
-    // });
-
+    await this.intermediaryService.presentLoading('Borrando productos');
+    this.inventoryServices.delete_Products(id).subscribe(async result => {
+      await this.intermediaryService.dismissLoading();
+      console.log(result);
+    }, async error => {
+      await this.intermediaryService.dismissLoading();
+    });
   }
 
 
