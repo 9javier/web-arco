@@ -1,5 +1,5 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatTableDataSource} from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatTableDataSource } from '@angular/material';
 import {
   ProductModel,
   ProductsService,
@@ -7,23 +7,19 @@ import {
   FiltersModel,
   InventoryService,
   InventoryModel,
-  TypeModel,
   TypesService,
   WarehouseService,
   WarehousesService,
   IntermediaryService
 } from '@suite/services';
-import {HttpResponse} from '@angular/common/http';
 import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
 import { ModalController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import * as moment from "../workwave-template-rebuild/table-requests-orders/table-requests-orders.component";
-import {FilterButtonComponent} from "../components/filter-button/filter-button.component";
+import { FilterButtonComponent } from "../components/filter-button/filter-button.component";
 
 @Component({
   selector: 'app-products',
@@ -118,6 +114,29 @@ export class ProductsComponent implements OnInit {
     private modalController:ModalController,
     private printerService:PrinterService
   ) {}
+
+  eraseFilters(){
+    this.form = this.formBuilder.group({
+      brands: [],
+      references: [],
+      containers: [],
+      models: [],
+      colors: [],
+      sizes: [],
+      productReferencePattern: [],
+      warehouses:[],
+      pagination: this.formBuilder.group({
+        page: 1,
+        limit: this.pagerValues[0]
+      }),
+      orderby:this.formBuilder.group( {
+        type: '',
+        order: "asc"
+      })
+    });
+    this.lastUsedFilter = 'warehouses';
+    this.getFilters();
+  }
 
   sort(column: string){
     for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
