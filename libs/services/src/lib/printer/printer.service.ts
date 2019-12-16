@@ -5,7 +5,7 @@ import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable, from, of } from 'rxjs';
+import { Observable, from, of, Subject } from 'rxjs';
 import { map, switchMap, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
@@ -27,6 +27,8 @@ export class PrinterService {
   private getProductsByReferenceUrl: string = environment.apiBase + "/products/references";
   private printNotifyUrl: string = environment.apiBase + "/tariffs/printReferences";
 
+  public stampe$:Subject<boolean> = new Subject();
+
   private address: string;
 
   constructor(
@@ -40,6 +42,7 @@ export class PrinterService {
     this.address = await this.getConfiguredAddress();
     console.debug("PRINT::openConnection 1 [" + new Date().toJSON() + "]", this.address);
     return new Promise((resolve, reject) => {
+      
       if (this.address) {
         if (cordova.plugins.zbtprinter) {
           cordova.plugins.zbtprinter.openConnection(this.address,
@@ -642,6 +645,8 @@ export class PrinterService {
                 console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                 resolve(true);
+                this.stampe$.next(true);
+                
               }, (fail) => {
                 console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
@@ -669,20 +674,26 @@ export class PrinterService {
 
 
   private async toPrint(printOptions: PrintModel.Print) {
+    console.log('imprint');
+    
     console.debug("PRINT::toPrint 1 [" + new Date().toJSON() + "]", printOptions);
+    // this.stampe$.next(true);
     if (this.address) {
       if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
         let textToPrint = this.getTextToPrinter(printOptions);
         return new Promise((resolve, reject) => {
           let printAttempts = 0;
           console.debug("PRINT::toPrint 2 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
+          // this.stampe$.next(true);
           let tryToPrintFn = () => {
             printAttempts++;
             console.debug("PRINT::toPrint 3 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
+            // this.stampe$.next(true);
             cordova.plugins.zbtprinter.printWithConnection(this.address, textToPrint,
               (success) => {
                 console.debug("PRINT::toPrint 4 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts, success });
                 resolve();
+                this.stampe$.next(true);
               }, (fail) => {
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
                   console.debug("PRINT::toPrint 5 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
@@ -699,9 +710,11 @@ export class PrinterService {
         });
       } else {
         console.debug("PRINT::toPrint 7 [" + new Date().toJSON() + "]", { printOptions, address: this.address });
+        // this.stampe$.next(true);
       }
     } else {
       console.debug("PRINT::toPrint 8 [" + new Date().toJSON() + "]", { printOptions, address: this.address });
+      // this.stampe$.next(true);
     }
   }
 

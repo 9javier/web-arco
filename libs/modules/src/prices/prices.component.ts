@@ -18,7 +18,7 @@ import {
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { validators } from '../utils/validators';
-import { NavParams } from '@ionic/angular';
+import { AlertController, NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -36,6 +36,7 @@ export class PricesComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
   filterTypes: Array<PriceModel.StatusType> = [];
+  pricesDeleted: Array<PriceModel.Price> = [];
 
   warehouses: Array<any> = [];
   pagerValues: Array<number> = [50, 100, 500];
@@ -127,7 +128,8 @@ export class PricesComponent implements OnInit {
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
-    private cd : ChangeDetectorRef
+    private cd : ChangeDetectorRef,
+    private alertController: AlertController
   ) {
 
   }
@@ -247,6 +249,20 @@ export class PricesComponent implements OnInit {
    */
   async printPrices(items, warehouseId: number) {
     //this.initSelectForm(this.prices);
+
+    if (this.verifyPricesDeleted()) {
+      await this.presentAlertConfirm(warehouseId, items);
+    } else {
+      this.printPricesWithoutDeleted(warehouseId, items);
+    }
+  }
+
+  private printPricesDeleted() {
+    //TODO: PROCESS DELETED PRICES
+    //TODO: USE this.pricesDeleted
+  }
+
+  private printPricesWithoutDeleted(warehouseId: number, items) {
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -262,13 +278,13 @@ export class PricesComponent implements OnInit {
           tariffId: items[i].tariff.id,
           modelId: items[i].model.id,
           numRange: items[i].numRange
-        }
-        return price ? object : false
+        };
+        return price ? object : false;
       }
     })
       .filter(price => price);
 
-    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
 
@@ -282,7 +298,6 @@ export class PricesComponent implements OnInit {
     }, error => {
       this.intermediaryService.dismissLoading();
     });
-
   }
 
   async ngOnInit() {
@@ -505,6 +520,48 @@ export class PricesComponent implements OnInit {
         this.getFilters();
       });
     });
+  }
+
+  verifyPricesDeleted() {
+    this.pricesDeleted = [];
+    this.selectedForm.value.toSelect.map((selected, i) => {
+      if (selected && this.prices[i].status === 3) {
+        this.pricesDeleted.push(this.prices[i]);
+      }
+    }).filter(price => price);
+
+    return !!this.pricesDeleted.length;
+  }
+
+  async presentAlertConfirm(warehouseId: number, items) {
+    const num = this.pricesDeleted.length;
+    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir la tarifa eliminada con el precio actual?`;
+    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir las tarifas eliminadas con el precio actual?`;
+    const alert = await this.alertController.create({
+      header: '¡Confirmar!',
+      message: num > 1 ? messagePlural : messageSingular,
+      buttons: [
+        {
+          text: 'Si',
+          handler: () => {
+            this.printPricesDeleted();
+            this.printPricesWithoutDeleted(warehouseId, items);
+          }
+        }, {
+          text: 'No',
+          handler: () => {
+            this.printPricesWithoutDeleted(warehouseId, items);
+          }
+        },{
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {}
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   // GET & SET SECTION

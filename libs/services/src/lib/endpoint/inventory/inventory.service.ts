@@ -36,7 +36,7 @@ export class InventoryService {
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
   private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`;
-  private deleteProducts = `${environment.apiBase}/inventory/delete-products`;
+  private deleteProductsUrl = `${environment.apiBase}/inventory/delete-products`;
   private userPrimsiondeleteProducts = `${environment.apiBase}/gestion-permissions/users/has-delete-product-permission`;
 
   constructor(
@@ -72,13 +72,13 @@ export class InventoryService {
 
   /**
    * @author Gaetano Sabino
-   * @param parameters 
+   * @param parameters
    */
   getFileExcell(parameters:ExcellModell.fileExcell){
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       console.log(parameters);
-      
+
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
 
       return this.http.post(this.sendexcell, parameters, {headers,responseType:'blob'});
@@ -87,15 +87,14 @@ export class InventoryService {
 
   /**
    * @author Gaetano Sabino
-   * @param ids 
+   * @param ids
    */
-  delete_Products(ids:number[]){
-    let body = {
-      ids
-    }
+  delete_Products(ids: number[]){
+    let body = { ids };
+
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
-      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      return this.http.post(this.deleteProducts,body,{headers})
+      let headers:HttpHeaders = new HttpHeaders({ Authorization:token });
+      return this.http.post(this.deleteProductsUrl, body,{ headers })
     }))
   }
 
