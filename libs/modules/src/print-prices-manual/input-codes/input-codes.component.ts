@@ -30,6 +30,8 @@ export class InputCodesComponent implements OnInit {
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
+  finestampa$: boolean ;
+
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
@@ -46,6 +48,9 @@ export class InputCodesComponent implements OnInit {
   async ngOnInit() {
     this.stampe = 1;
     this.typeTagsBoolean = this.typeTags != 1;
+    this.printerService.stampe$.subscribe(()=>{
+      this.stampe = 1;
+    })
   }
 
   private focusToInput() {
@@ -176,9 +181,9 @@ export class InputCodesComponent implements OnInit {
       this.inputProduct = null;
       this.inputProductMotivo = null;
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
-
-
         case this.scanditProvider.codeValue.PRODUCT:
+          console.log('prodotti');
+          
           switch (this.typeTags) {
             case 1:
               console.log(dataWrote, 'producto');
@@ -229,6 +234,8 @@ export class InputCodesComponent implements OnInit {
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
+          console.log('prodotti_modelli');
+          
           switch (this.typeTags) {
             case 1:
               console.log(dataWrote);
@@ -237,20 +244,34 @@ export class InputCodesComponent implements OnInit {
               this.focusToInput();
               break;
             case 2:
+              console.log('siamo qui');
+              
               if (dataMotivo && dataMotivo.length > 0) {
+                console.log('passa da qui');
+                
                 this.presentModal(dataWrote, dataMotivo);
               } else {
+                console.log('passa da qui 2');
+                
                 this.priceService
                   .postPricesByModel(dataWrote)
                   .then((response) => {
+                    console.log(response);
+                    
                     if (response.code == 200 || response.code == 201) {
+                      console.log('passimo di qui');
+                      
                       let responseData = response.data;
                       if (responseData && responseData.length == 1) {
                         this.audioProvider.playDefaultOk();
                         let price = responseData[0];
                         if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                          console.log('passiamo di qui');
+                          
                           this.presentAlertWarningPriceWithoutTariff(price);
                         } else {
+                          console.log('passiamo di qui');
+                          
                           this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
                           this.focusToInput();
                         }
@@ -303,6 +324,8 @@ export class InputCodesComponent implements OnInit {
               }
               break;
             default:
+              console.log('default');
+              
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               this.focusToInput();
