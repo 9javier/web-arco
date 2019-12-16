@@ -412,6 +412,30 @@ export class ProductsComponent implements OnInit {
   }
 
 
+  async presentAlertDeleteConfirm() {
+    const alert = await this.alertController.create({
+      header: '¡Confirmar eliminación!',
+      message: '¿Deseas eliminar los productos seleccionados?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.initSelectForm();
+          }
+        }, {
+          text: 'Si',
+          handler: async () => {
+            await this.deleteProducts();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   /**
    * get all filters to fill the selects
    */

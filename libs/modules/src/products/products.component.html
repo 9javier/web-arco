@@ -189,7 +189,7 @@
     <ion-icon name="pricetag"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
-  <ion-fab-button (click)="deleteProducts()" *ngIf="selectedForm['controls']?.toSelect
+  <ion-fab-button (click)="presentAlertDeleteConfirm()" *ngIf="selectedForm['controls']?.toSelect
    && selectedForm.valid && hasDeleteProduct" color="danger">
     <i class="material-icons">delete</i>
   </ion-fab-button>
