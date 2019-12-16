@@ -32,7 +32,7 @@ export class InventoryService {
   private postPickingConsolidatedUrl: string = environment.apiBase + '/processes/picking-main/consolidated';
   private postPickingOnlineStoreUrl: string = environment.apiBase + '/processes/picking-main/ot';
 
-  private sendexcell = "http://localhost:8081/api/inventory/export-to-excel";
+  private sendexcell = environment.apiBase+"/api/inventory/export-to-excel";
   private searchInContainerUrl = environment.apiBase+"/inventory/search";
   private searchFiltersUrl = environment.apiBase+"/inventory/searchFilters";
   private userPermissionUrl = `${environment.apiBase}/gestion-permissions/users/has-force-permission`;
