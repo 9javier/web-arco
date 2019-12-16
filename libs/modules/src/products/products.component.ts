@@ -404,7 +404,7 @@ export class ProductsComponent implements OnInit {
     console.log('delete',id);
     await this.intermediaryService.presentLoading('Borrando productos');
     this.inventoryServices.delete_Products(id).subscribe(async result => {
-      await this.intermediaryService.dismissLoading();
+      this.getFilters();
       console.log(result);
     }, async error => {
       await this.intermediaryService.dismissLoading();
