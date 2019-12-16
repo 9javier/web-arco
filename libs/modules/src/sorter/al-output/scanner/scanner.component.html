@@ -35,7 +35,7 @@
   </div>
 
   <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
-    Escanea el último artículo del sorter para acabar.
+    Si quedan artículos en la calle, por favor, escanee el último artículo.
   </p>
   <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted" class="message-guide-wrong-code">
     ¡Escanea cada artículo y revisa destino!
