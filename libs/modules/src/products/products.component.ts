@@ -42,7 +42,7 @@ import { map, catchError } from 'rxjs/operators';
 
 export class ProductsComponent implements OnInit {
 
-  pagerValues = [500, 100, 1000];
+  pagerValues = [50, 100, 1000];
 
   /**timeout for send request */
   requestTimeout;
