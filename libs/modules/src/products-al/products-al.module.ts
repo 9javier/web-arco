@@ -4,21 +4,19 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MatTableModule } from '@angular/material';
 import { MatListModule } from '@angular/material';
-import { ProductsComponent } from './products.component';
+import { ProductsAlComponent } from './products-al.component';
 import { RouterModule, Routes } from "@angular/router";
 import { MatPaginatorModule } from '@angular/material';
-import { ProductDetailsModule } from './modals/product-details/product-details.module';
+import { ProductDetailsAlModule } from './modals-al/product-details-al/product-details-al.module';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
-import { FilterButtonModule } from "../components/filter-button/filter-button.module";
-import { MatTooltipModule } from "@angular/material";
 
 
 const routes: Routes = [
   {
     path: '',
-    component: ProductsComponent
+    component: ProductsAlComponent
   }
 ];
 
@@ -32,12 +30,10 @@ const routes: Routes = [
     MatPaginatorModule,
     BreadcrumbModule,
     RouterModule.forChild(routes),
-    ProductDetailsModule,
+    ProductDetailsAlModule,
     TagsInputModule,
     PaginatorComponentModule,
-    FilterButtonModule,
-    MatTooltipModule
   ],
-  declarations: [ProductsComponent]
+  declarations: [ProductsAlComponent]
 })
-export class ProductsModule {}
+export class ProductsAlModule {}

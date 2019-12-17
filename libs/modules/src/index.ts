@@ -35,6 +35,9 @@ export * from './groups/groups.module';
 export * from './products/products.component';
 export * from './products/products.module';
 
+export * from './products-al/products-al.component';
+export * from './products-al/products-al.module';
+
 export * from './audits/audits.component';
 export * from './audits/audits.module';
 
