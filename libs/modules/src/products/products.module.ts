@@ -11,6 +11,7 @@ import { ProductDetailsModule } from './modals/product-details/product-details.m
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import { ProductRelocationModule } from './modals/product-relocation/product-relocation.module';
 
 
 const routes: Routes = [
@@ -31,6 +32,7 @@ const routes: Routes = [
     BreadcrumbModule,
     RouterModule.forChild(routes),
     ProductDetailsModule,
+    ProductRelocationModule,
     TagsInputModule,
     PaginatorComponentModule,
   ],

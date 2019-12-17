@@ -160,9 +160,8 @@
         >
           <ng-template [ngIf]="selectedForm['controls']?.toSelect">
             <ion-checkbox
-              [formControl]="
-                (selectedForm['controls']?.toSelect)['controls'][i]
-              "
+              [formControl]="(selectedForm['controls']?.toSelect)['controls'][i]"
+              (click)="itemSelected(product)"
             ></ion-checkbox>
           </ng-template>
         </td>
@@ -187,6 +186,10 @@
   >
     <ion-icon name="print"></ion-icon>
     <ion-icon name="pricetag"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button (click)="presentAlertRelocation()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+    <ion-icon name="swap"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
   <ion-fab-button (click)="presentAlertDeleteConfirm()" *ngIf="selectedForm['controls']?.toSelect

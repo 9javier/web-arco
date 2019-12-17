@@ -1,7 +1,7 @@
 import { BehaviorSubject, of } from 'rxjs';
 import { Filter } from './enums/filter.enum';
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatTableDataSource} from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatTableDataSource } from '@angular/material';
 import * as Filesave from 'file-saver';
 
 
@@ -32,6 +32,7 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { map, catchError } from 'rxjs/operators';
+import { ProductRelocationComponent } from './modals/product-relocation/product-relocation.component';
 
 
 @Component({
@@ -100,6 +101,8 @@ export class ProductsComponent implements OnInit {
   /**List of SearchInContainer */
   searchsInContainer: Array<InventoryModel.SearchInContainer> = [];
 
+  itemsIdSelected: Array<any> = [];
+
   isFirst: boolean = true;
   hasDeleteProduct = false;
 
@@ -167,6 +170,12 @@ export class ProductsComponent implements OnInit {
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
     });
+
+    if (value) {
+      this.itemsIdSelected = this.searchsInContainer;
+    } else {
+      this.itemsIdSelected = [];
+    }
   }
 
   /**
@@ -401,7 +410,6 @@ export class ProductsComponent implements OnInit {
       product ? this.searchsInContainer[i].productShoeUnit.id : false)
       .filter(product => product);
 
-    console.log('delete',id);
     await this.intermediaryService.presentLoading('Borrando productos');
     this.inventoryServices.delete_Products(id).subscribe(async result => {
       this.getFilters();
@@ -648,6 +656,33 @@ export class ProductsComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
+  async presentAlertRelocation() {
+    let modal = await this.modalController.create({
+      component: ProductRelocationComponent,
+      componentProps: {
+        products: this.itemsIdSelected
+      },
+      cssClass: 'modal-relocation'
+    });
+
+    modal.onDidDismiss().then((data: any) => {
+      if (data.data.dismissed){
+        this.getFilters();
+        this.itemsIdSelected = [];
+      }
+    });
+
+    modal.present();
+  }
+
+  itemSelected(product) {
+    const index = this.itemsIdSelected.indexOf(product, 0);
+    if (index > -1) {
+      this.itemsIdSelected.splice(index, 1);
+    } else {
+      this.itemsIdSelected.push(product);
+    }
+  }
 }
 
 
