@@ -1,8 +1,21 @@
 <ion-content padding="true">
 
   <ion-text color="primary">
-    <suite-breadcrumb></suite-breadcrumb>
-    <ion-icon name="refresh" (click)="eraseFilters()" [matTooltip]="'Reiniciar filtros'"></ion-icon>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <suite-breadcrumb></suite-breadcrumb>
+        </ion-col>
+        <ion-col class="ion-align-self-center bt-right">
+          <ion-button color="primary" (click)="fileExcell()">
+            <ion-icon name="document"></ion-icon>
+          </ion-button>
+          <ion-button color="primary" (click)="eraseFilters()">
+            <ion-icon name="refresh" [matTooltip]="'Reiniciar filtros'"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-text>
 
   <div class="mat-table-wrapper-overflow-x">
