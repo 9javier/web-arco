@@ -121,6 +121,7 @@ export class ProductsComponent implements OnInit {
 
   eraseFilters(){
     this.form = this.formBuilder.group({
+      suppliers: [],
       brands: [],
       references: [],
       containers: [],
