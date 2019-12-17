@@ -4,7 +4,7 @@ import { FilterPopoverComponent } from './filter-popover.component';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import {FormsModule} from "@angular/forms";
-import {MatFormFieldModule, MatInputModule} from "@angular/material";
+import {MatFormFieldModule, MatInputModule, MatTooltipModule} from "@angular/material";
 @NgModule({
   entryComponents:[ FilterPopoverComponent ],
   declarations: [ FilterPopoverComponent ],
@@ -14,7 +14,8 @@ import {MatFormFieldModule, MatInputModule} from "@angular/material";
     RouterModule,
     FormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatTooltipModule
   ],
   exports:[ FilterPopoverComponent ]
 })

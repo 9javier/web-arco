@@ -2,70 +2,107 @@ import { Request } from './request';
 import { Mode } from '@ionic/core';
 import { Enum } from "@suite/services";
 export namespace FiltersModel{
-    
-    export interface Color extends Enum {
-        id:number;
-        name:string;
-    }
 
-    export interface Warehouse extends Enum {
-        id:number;
-        reference:string;
-        name:string;
-    }
-
-    export interface Brands extends Enum {
-        id:number;
-        name:string;
-        reference:string;
-    }
-
-    export interface Group extends Enum {
-        id:number;
-        reference:string;
-    }
-
-    export interface Container extends Enum {
-        id:number;
-        reference:string;
+    export interface Reference extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
     export interface Model extends Enum {
-        id:number;
-        reference:string;
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface Color extends Enum {
+      id:number;
+      name:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
     export interface Size extends Enum {
-        id:number;
-        reference:number;
-        name:string;
+      id:number;
+      reference:number;
+      name:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
-    export interface ResponseBrand extends Request.Success{
-        data:Array<Brands>
+    export interface Warehouse extends Enum {
+      id:number;
+      reference:string;
+      name:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
-    export interface ResponseColor extends Request.Success{
-        data:Array<Color>;
+    export interface Container extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
-    export interface ResponseWarehouse extends Request.Success{
-        data:Array<Warehouse>
+    export interface Brand extends Enum {
+      id:number;
+      name:string;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
-    export interface ResponseGroup extends Request.Success{
-        data:Array<Group>
+    export interface Supplier extends Enum {
+      id:number;
+      name:string;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
     }
 
-    export interface ResponseContainer extends Request.Success{
-        data:Array<Container>;
+    export interface Group extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
     }
 
     export interface ResponseModel extends Request.Success{
-        data:Array<Model>;
+      data:Array<Model>;
+    }
+
+    export interface ResponseBrand extends Request.Success{
+        data:Array<Brand>
+    }
+
+    export interface ResponseColor extends Request.Success{
+      data:Array<Color>;
     }
 
     export interface ResponseSize extends Request.Success{
-        data:Array<Size>;
+      data:Array<Size>;
+    }
+
+    export interface ResponseWarehouse extends Request.Success{
+      data:Array<Warehouse>
+    }
+
+    export interface ResponseContainer extends Request.Success{
+      data:Array<Container>;
+    }
+
+    export interface ResponseGroup extends Request.Success{
+      data:Array<Group>
     }
 }
