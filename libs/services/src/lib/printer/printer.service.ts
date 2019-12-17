@@ -27,7 +27,7 @@ export class PrinterService {
   private getProductsByReferenceUrl: string = environment.apiBase + "/products/references";
   private printNotifyUrl: string = environment.apiBase + "/tariffs/printReferences";
 
-  public stampe$:Subject<boolean> = new Subject();
+  public stampe$: Subject<boolean> = new Subject();
 
   private address: string;
 
@@ -42,7 +42,7 @@ export class PrinterService {
     this.address = await this.getConfiguredAddress();
     console.debug("PRINT::openConnection 1 [" + new Date().toJSON() + "]", this.address);
     return new Promise((resolve, reject) => {
-      
+
       if (this.address) {
         if (cordova.plugins.zbtprinter) {
           cordova.plugins.zbtprinter.openConnection(this.address,
@@ -51,6 +51,7 @@ export class PrinterService {
                 this.presentToast('Conectado a la impresora', 'success');
               }
               console.debug("PRINT::openConnection 2 [" + new Date().toJSON() + "]", result);
+
               resolve();
             }, (error) => {
               if (showAlert) {
@@ -489,13 +490,14 @@ export class PrinterService {
   }
 
   public printTagPriceUsingPrice(price) {
-    console.log("LLgando a esta lugar", price);
+
     console.debug("PRINT::printTagPriceUsingPrice 1 [" + new Date().toJSON() + "]", price);
     let dataToPrint = this.processProductToPrintTagPrice(price);
-    console.log({dataToPrint});
-    
+
+
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
+      console.log(dataToPrint);
       this.toPrintFromString(dataToPrint.valuePrint);
     }
   }
@@ -612,7 +614,7 @@ export class PrinterService {
    */
   private async toPrintFromString(textToPrint: string, macAddress?) {
     console.log(textToPrint);
-    
+
 
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
     /**añadimos esto a la lógica del toPrint */
@@ -644,9 +646,8 @@ export class PrinterService {
               (success) => {
                 console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-                resolve(true);
                 this.stampe$.next(true);
-                
+                resolve(true);
               }, (fail) => {
                 console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
@@ -675,7 +676,7 @@ export class PrinterService {
 
   private async toPrint(printOptions: PrintModel.Print) {
     console.log('imprint');
-    
+
     console.debug("PRINT::toPrint 1 [" + new Date().toJSON() + "]", printOptions);
     // this.stampe$.next(true);
     if (this.address) {
@@ -692,8 +693,9 @@ export class PrinterService {
             cordova.plugins.zbtprinter.printWithConnection(this.address, textToPrint,
               (success) => {
                 console.debug("PRINT::toPrint 4 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts, success });
-                resolve();
                 this.stampe$.next(true);
+                resolve();
+
               }, (fail) => {
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
                   console.debug("PRINT::toPrint 5 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
@@ -801,7 +803,7 @@ export class PrinterService {
           toPrint += printOptions.product.productShoeUnit.model.lifestyle.reference.substring(0, 1) + printOptions.product.productShoeUnit.model.category.reference;
         }
         toPrint += "^FS^LH28,0^FWN^FO40,125^BY2,3.0^BCN,50,N,N,N^FD"
-          + printOptions.product.productShoeUnit.model.reference.slice(0,6)
+          + printOptions.product.productShoeUnit.model.reference.slice(0, 6)
           + "^FS^AAN^FO0,145^FB330,1,0,R,0^FD"
           + printOptions.product.productShoeUnit.manufacturer.name
           + "^FS^AAN^FO10,190^FB315,1,0,L,0^FD"
