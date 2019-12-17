@@ -370,7 +370,7 @@ export class ProductsComponent implements OnInit {
       case 'brands':
         let brandsFiltered: number[] = [];
         for(let brand of filters){
-          if(brand.checked) brandsFiltered.push(brand.id);
+          if(brand.checked) brandsFiltered.push(brand.value);
         }
         if (brandsFiltered.length >= this.brands.length) {
           this.form.value.brands = [];
