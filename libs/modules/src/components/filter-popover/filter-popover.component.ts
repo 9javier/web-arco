@@ -23,6 +23,14 @@ export class FilterPopoverComponent implements OnInit {
     private filterPopoverProvider: FilterPopoverProvider
   ) { }
 
+  underTheLimit(): boolean{
+    let checkedItems: number = 0;
+    for(let item of this.listItems){
+      if(item.checked) checkedItems++;
+    }
+    return checkedItems < 100 || checkedItems == this.listItems.length;
+  }
+
   getMax(){
     let values: Array<number> = new Array<number>();
     for (let item of this.listItems){
