@@ -26,11 +26,10 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
 
   ngOnInit() {
     this.tariff = this.navParams.get("tariff");
-    console.log(this.tariff);
     this.optionsStatus = [1,2,3,4,5,6,7];
     this.loadWarehouse();
   }
-  
+
   loadWarehouse() {
     let that = this;
      this.tariffService.getFilterPriceTypes().subscribe(result => {
@@ -39,16 +38,16 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
         if(result['code'] == 200) { // success
           that.warehousesResult = result['data'];
           that.warehousesResult = that.warehousesResult.map(elem => {
-            elem['optionSelected'] = null;
+            elem['optionSelected'] = 0;
             elem['optionsStatus'] = that.optionsStatus;
             elem['isAvailableFilterPrice'] = false;
             return elem;
           });
-        } 
+        }
       });
     });
   }
-  
+
   submit(){
     this.intermediaryService.presentLoading();
     let data = this.warehousesResult.filter(res => {
@@ -77,6 +76,6 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
   changeTexbox(event, res){
     event.stopPropagation();
     event.preventDefault();
-    res.isAvailableFilterPrice = event.target.value > 0; 
+    res.isAvailableFilterPrice = event.target.value > 0;
   }
 }
