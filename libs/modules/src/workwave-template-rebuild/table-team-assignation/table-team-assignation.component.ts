@@ -3,6 +3,7 @@ import { PickingParametrizationProvider } from "../../../../services/src/provide
 import { Events } from "@ionic/angular";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
 import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
+import AssignationsByRequests = WorkwaveModel.AssignationsByRequests;
 
 @Component({
   selector: 'table-team-assignation',
@@ -99,36 +100,34 @@ export class TableTeamAssignationComponent implements OnInit {
     this.updateUserAssignations.next();
   }
 
-  showConsolidatedBreakdown(teamAssignation: WorkwaveModel.TeamAssignations) {
+  showConsolidatedBreakdown(pickingId: number)  {
+    let assignations: AssignationsByRequests[] = [];
+    for(let assignationsByRequests of this.responseQuantities){
+      if(assignationsByRequests.pickingId == pickingId){
+        assignations.push(assignationsByRequests);
+      }
+    }
+    let destinyIdQuantities: number[] = [];
+    for(let assignation of assignations){
+      if(typeof destinyIdQuantities[assignation.destinyShopId] == 'number') {
+        destinyIdQuantities[assignation.destinyShopId] += parseInt(assignation.quantityShoes);
+      }else{
+        destinyIdQuantities[assignation.destinyShopId] = parseInt(assignation.quantityShoes);
+      }
+    }
+    let destinyNameQuantities: number[] = [];
+    for(let group of this.pickingParametrizationProvider.listGroupsWarehouses){
+      for(let warehouse of group.warehouses){
+        for(let destinyId in destinyIdQuantities){
+          if(parseInt(destinyId) == warehouse.id){
+            destinyNameQuantities[warehouse.name] = destinyIdQuantities[destinyId];
+          }
+        }
+      }
+    }
     this.tooltipValue = '';
-
-    let requestReferences = [];
-    let pickingShoes = teamAssignation.pickingShoes;
-    for(let shoesAssignation of pickingShoes){
-      let pickingId = shoesAssignation.pickingId;
-      for(let assignationsByRequests of this.responseQuantities){
-        if(assignationsByRequests.pickingId == pickingId){
-          requestReferences.push(assignationsByRequests.requestReference);
-        }
-      }
-    }
-
-    let selectedOperations = document.getElementsByClassName('requests-orders-line');
-    let operationsBreakdown = [];
-
-    for (let i = 0; i < selectedOperations.length; i++) {
-      let iOperation = selectedOperations[i] as HTMLElement;
-      if (this.isChecked(iOperation) && this.getLaunchPairs(iOperation) > 0 && this.isAssigned(iOperation, requestReferences)) {
-        if (typeof operationsBreakdown[this.getDestiny(iOperation)] != "number"){
-          operationsBreakdown[this.getDestiny(iOperation)] = this.getLaunchPairs(iOperation);
-        } else {
-          operationsBreakdown[this.getDestiny(iOperation)] += this.getLaunchPairs(iOperation);
-        }
-      }
-    }
-
-    for (let destiny in operationsBreakdown) {
-      this.tooltipValue += destiny + ' -> ' + operationsBreakdown[destiny] + '\n';
+    for(let destinyName in destinyNameQuantities){
+      this.tooltipValue += destinyName + ' -> ' + destinyNameQuantities[destinyName] + '\n';
     }
   }
 

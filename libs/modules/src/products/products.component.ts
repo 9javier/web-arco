@@ -1,5 +1,8 @@
+import { BehaviorSubject, of } from 'rxjs';
+import { Filter } from './enums/filter.enum';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatTableDataSource } from '@angular/material';
+import * as Filesave from 'file-saver';
 import {
   ProductModel,
   ProductsService,
@@ -10,16 +13,19 @@ import {
   TypesService,
   WarehouseService,
   WarehousesService,
-  IntermediaryService
+  IntermediaryService,
+  UsersService
 } from '@suite/services';
+import { HttpResponse } from '@angular/common/http';
 import { FormBuilder,FormGroup, FormControl, FormArray } from '@angular/forms';
 import { ProductDetailsComponent } from './modals/product-details/product-details.component';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { validators } from '../utils/validators';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { FilterButtonComponent } from "../components/filter-button/filter-button.component";
+import { map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-products',
@@ -91,6 +97,8 @@ export class ProductsComponent implements OnInit {
   /**List of SearchInContainer */
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
+  hasDeleteProduct = false;
+
   //For filter popovers
   isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
@@ -111,12 +119,14 @@ export class ProductsComponent implements OnInit {
     private warehouseService:WarehouseService,
     private warehousesService:WarehousesService,
     private typeService:TypesService,
+    private alertController: AlertController,
     private formBuilder:FormBuilder,
     private inventoryServices:InventoryService,
     private filterServices:FiltersService,
     private productsService: ProductsService,
     private modalController:ModalController,
-    private printerService:PrinterService
+    private printerService:PrinterService,
+    private usersService: UsersService
   ) {}
 
   eraseFilters(){
@@ -480,6 +490,12 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.usersService.hasDeleteProductPermission().then((observable) => {
+      observable.subscribe((response) => {
+        this.hasDeleteProduct = response.body.data;
+      })
+    });
+
     this.getFilters();
     this.listenChanges();
   }
@@ -626,13 +642,78 @@ export class ProductsComponent implements OnInit {
    * go to details modal
    * @param id - the id of the product
    */
-  async goDetails(product:InventoryModel.SearchInContainer){
-    return (await this.modalController.create({
-      component:ProductDetailsComponent,
-      componentProps:{
-        product:product
-      }
-    })).present();
+    async goDetails(product:InventoryModel.SearchInContainer){
+      return (await this.modalController.create({
+        component:ProductDetailsComponent,
+        componentProps:{
+          product:product
+        }
+      })).present();
+    }
+
+  // TODO METODO LLAMAR ARCHIVO EXCELL
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell(){
+    this.intermediaryService.presentLoading('Descargando Archivo Excel');
+    const formToExcel = this.getFormValueCopy();
+    if(formToExcel.pagination){
+      formToExcel.pagination.page = 1;
+      formToExcel.pagination.limit = 0;
+    }
+    this.inventoryServices.getFileExcell(this.sanitize(formToExcel)).pipe(
+      catchError(error => of(error)),
+      // map(file => file.error.text)
+    ).subscribe((data)=>{
+      console.log(data);
+
+      const blob = new Blob([data], { type: 'application/octet-stream' });
+      Filesave.saveAs(blob,`${Date.now()}.xlsx`)
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess('Archivo descargado')
+    },error => console.log(error));
+  }
+
+  // FIXES pro
+  async deleteProducts(){
+    let id = this.selectedForm.value.toSelect.map((product, i) =>
+      product ? this.searchsInContainer[i].productShoeUnit.id : false)
+      .filter(product => product);
+
+    console.log('delete',id);
+    await this.intermediaryService.presentLoading('Borrando productos');
+    this.inventoryServices.delete_Products(id).subscribe(async result => {
+      this.getFilters();
+      console.log(result);
+    }, async error => {
+      await this.intermediaryService.dismissLoading();
+    });
+  }
+
+
+  async presentAlertDeleteConfirm() {
+    const alert = await this.alertController.create({
+      header: '¡Confirmar eliminación!',
+      message: '¿Deseas eliminar los productos seleccionados?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            this.initSelectForm();
+          }
+        }, {
+          text: 'Si',
+          handler: async () => {
+            await this.deleteProducts();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   /**
@@ -848,7 +929,6 @@ export class ProductsComponent implements OnInit {
     this.form.get("orderby").get("type").patchValue(value, {emitEvent: false});
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
-
 }
 
 

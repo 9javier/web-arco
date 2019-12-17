@@ -1,3 +1,4 @@
+import { Value } from './../../../../../config/postman/sga_localhost_environment';
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { AlertController, ToastController, ModalController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
@@ -17,7 +18,9 @@ import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.
 export class InputCodesComponent implements OnInit {
 
   dataToWrite: string = 'PRODUCTO';
+  dataToWriteMotivo: string = 'MOTIVO';
   inputProduct: string = null;
+  inputProductMotivo: string = null;
   lastCodeScanned: string = 'start';
   stampe: number = 1;
 
@@ -26,6 +29,8 @@ export class InputCodesComponent implements OnInit {
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
+
+  finestampa$: boolean;
 
   constructor(
     private toastController: ToastController,
@@ -43,6 +48,9 @@ export class InputCodesComponent implements OnInit {
   async ngOnInit() {
     this.stampe = 1;
     this.typeTagsBoolean = this.typeTags != 1;
+    this.printerService.stampe$.subscribe(() => {
+      this.stampe = 1;
+    })
   }
 
   private focusToInput() {
@@ -67,14 +75,15 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-  async presentModal(codice) {
+  async presentModal(codice, motivo: string) {
     let Veces: string = `${this.stampe} etiqueta`;
     if (this.stampe > 1) {
       Veces = `${this.stampe} etiquetas`;
     }
+
     const alert = await this.alertController.create({
       header: 'Etiqueta personalizada',
-      message: `¿Desea imprimir ${Veces} <b>${codice}</b>? Indique el precio y pulse imprimir.`,
+      message: `¿Desea imprimir ${Veces} <b>${codice}-${motivo}</b>? Indique el precio y pulse imprimir.`,
       inputs: [
         {
           name: 'precio',
@@ -89,7 +98,7 @@ export class InputCodesComponent implements OnInit {
 
             let price =
             {
-              "typeLabel": 2,
+              "typeLabel": 8,
               "outlet": false,
               "impress": false,
               "discount": false,
@@ -121,7 +130,8 @@ export class InputCodesComponent implements OnInit {
             };
             price.totalPrice = data.precio;
             price.priceOriginal = data.precio;
-            price.model.reference = codice;
+            price.model.reference = codice + '-' + motivo;
+
             price.model.name = codice;
             let prices: Array<any> = this.convertArrayFromPrint(price);
             this.audioProvider.playDefaultOk();
@@ -142,10 +152,16 @@ export class InputCodesComponent implements OnInit {
 
   keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
+    // console.log({dataWrote});
+
+    let dataMotivo = (this.inputProductMotivo || "").trim();
+    // console.log({dataMotivo});
+
 
     if (event.keyCode == 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
+        this.inputProductMotivo = null;
         this.focusToInput();
         return;
       }
@@ -163,10 +179,15 @@ export class InputCodesComponent implements OnInit {
       }
 
       this.inputProduct = null;
+      this.inputProductMotivo = null;
       switch (this.scanditProvider.checkCodeValue(dataWrote)) {
         case this.scanditProvider.codeValue.PRODUCT:
+
+
           switch (this.typeTags) {
             case 1:
+
+
               this.audioProvider.playDefaultOk();
               this.printerService.printTagBarcode([dataWrote], this.stampe)
                 .subscribe((res) => {
@@ -177,6 +198,8 @@ export class InputCodesComponent implements OnInit {
               this.focusToInput();
               break;
             case 2:
+
+
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
                 .then((prices) => {
@@ -203,101 +226,110 @@ export class InputCodesComponent implements OnInit {
                 });
               break;
             default:
+              console.log(dataWrote, 'default');
+
               this.showToastWrongReference(this.typeTags);
               this.focusToInput();
               break;
           }
           break;
         case this.scanditProvider.codeValue.PRODUCT_MODEL:
+
+
+          console.log('prodotti_modelli');
+
           switch (this.typeTags) {
             case 1:
+              console.log(dataWrote);
+
               this.showToastWrongReference(this.typeTags);
               this.focusToInput();
               break;
             case 2:
-              // Query sizes_range for product model
-              this.priceService
-                .postPricesByModel(dataWrote)
-                .then((response) => {
-                  if (response.code == 200 || response.code == 201) {
-                    let responseData = response.data;
-                    if (responseData && responseData.length == 1) {
-                      this.audioProvider.playDefaultOk();
-                      let price = responseData[0];
-                      if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
-                        this.presentAlertWarningPriceWithoutTariff(price);
+
+
+              if (dataMotivo && dataMotivo.length > 0) {
+                this.presentModal(dataWrote, dataMotivo);
+              } else {
+
+
+                this.priceService
+                  .postPricesByModel(dataWrote)
+                  .then((response) => {
+                    console.log(response);
+
+                    if (response.code == 200 || response.code == 201) {
+                      let responseData = response.data;
+                      if (responseData && responseData.length == 1) {
+                        this.audioProvider.playDefaultOk();
+                        let price = responseData[0];
+                        if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+
+                          this.presentAlertWarningPriceWithoutTariff(price);
+                        } else {
+
+
+                          this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+                          this.focusToInput();
+                        }
+                      } else if (responseData && responseData.length > 1) {
+                        this.audioProvider.playDefaultOk();
+                        // Request user select size to print
+                        let listItems = responseData.map((productPrice, iProductPrice) => {
+                          let label = productPrice.rangesNumbers.sizeRangeNumberMin;
+                          if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
+                            label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
+                          }
+
+                          return {
+                            name: 'radio' + iProductPrice,
+                            type: 'radio',
+                            label: label,
+                            value: iProductPrice
+                          }
+                        });
+                        this.presentAlertSelect(listItems, responseData);
                       } else {
-                        this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+                        this.lastCodeScanned = 'start';
+                        this.audioProvider.playDefaultError();
+                        this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                         this.focusToInput();
                       }
-                    } else if (responseData && responseData.length > 1) {
-                      this.audioProvider.playDefaultOk();
-                      // Request user select size to print
-                      let listItems = responseData.map((productPrice, iProductPrice) => {
-                        let label = productPrice.rangesNumbers.sizeRangeNumberMin;
-                        if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
-                          label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
-                        }
-
-                        return {
-                          name: 'radio' + iProductPrice,
-                          type: 'radio',
-                          label: label,
-                          value: iProductPrice
-                        }
-                      });
-                      this.presentAlertSelect(listItems, responseData);
+                    } else if (response.code == 0) {
+                      this.lastCodeScanned = 'start';
+                      this.audioProvider.playDefaultError();
+                      this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+                      this.focusToInput();
                     } else {
                       this.lastCodeScanned = 'start';
                       this.audioProvider.playDefaultError();
                       this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                       this.focusToInput();
                     }
-                  } else if (response.code == 0) {
-                    this.lastCodeScanned = 'start';
-                    this.audioProvider.playDefaultError();
-                    this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
-                    this.focusToInput();
-                  } else {
+                  }, (error) => {
                     this.lastCodeScanned = 'start';
                     this.audioProvider.playDefaultError();
                     this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
                     this.focusToInput();
-                  }
-                }, (error) => {
-                  this.lastCodeScanned = 'start';
-                  this.audioProvider.playDefaultError();
-                  this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
-                  this.focusToInput();
-                })
-                .catch((error) => {
-                  this.lastCodeScanned = 'start';
-                  this.audioProvider.playDefaultError();
-                  this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
-                  this.focusToInput();
-                });
+                  })
+                  .catch((error) => {
+                    this.lastCodeScanned = 'start';
+                    this.audioProvider.playDefaultError();
+                    this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                    this.focusToInput();
+                  });
+              }
               break;
             default:
+              console.log('default');
+
               this.audioProvider.playDefaultError();
               this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
               this.focusToInput();
               break;
           }
           break;
-        case this.scanditProvider.codeValue.PRODUCT_UNDEFINED:
-          switch (this.typeTags) {
-            case 1:
-              this.showToastWrongReference(this.typeTags);
-              break;
-            case 2:
-              this.lastCodeScanned = 'start';
-              this.presentModal(dataWrote)
-              break;
-            default:
-              this.showToastWrongReference(this.typeTags);
-              break;
-          }
-          break;
+
         default:
           this.showToastWrongReference(this.typeTags);
           this.focusToInput();
@@ -306,12 +338,12 @@ export class InputCodesComponent implements OnInit {
     }
   }
 
-  toggleChange(){
+  toggleChange() {
     this.typeTagsBoolean = !this.typeTagsBoolean;
     let buttons = document.getElementsByClassName('bottons-mas-menos')[0] as HTMLElement;
-    if(this.typeTagsBoolean){
+    if (this.typeTagsBoolean) {
       buttons.style.display = 'block';
-    }else{
+    } else {
       buttons.style.display = 'none';
     }
   }

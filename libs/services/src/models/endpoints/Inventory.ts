@@ -86,6 +86,7 @@ export namespace InventoryModel {
         sizes: FiltersModel.Size[],
         warehouses: FiltersModel.Warehouse[],
         ordertypes: FiltersModel.Group[],
+        brands: FiltersModel.Brands[]
       }
     }
   }

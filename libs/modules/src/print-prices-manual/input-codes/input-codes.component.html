@@ -12,5 +12,7 @@
     </ion-item>
     <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
            [(ngModel)]="inputProduct" (focus)="onFocus($event)">
+    <input *ngIf="typeTagsBoolean" id="input-ta2" class="motivo" [placeholder]="dataToWriteMotivo" maxlength="12" (keyup)="keyUpInput($event)"
+           [(ngModel)]="inputProductMotivo" (focus)="onFocus($event)">
   </div>
 </div>

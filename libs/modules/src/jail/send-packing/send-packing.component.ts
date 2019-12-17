@@ -4,6 +4,7 @@ import { COLLECTIONS } from 'config/base';
 import { NavParams, ModalController } from '@ionic/angular';
 import { CarrierService, IntermediaryService, WarehousesService, WarehouseModel } from '@suite/services';
 import { MatSelectChange } from '@angular/material';
+import {CarrierModel} from "../../../../services/src/models/endpoints/carrier.model";
 
 @Component({
   selector: 'suite-send-packing',
@@ -48,13 +49,8 @@ export class SendPackingComponent implements OnInit {
 
 
   ngOnInit() {
-    this.warehousesService.getIndex().then(observable => {
-      observable.subscribe(warehouses => {
-        this.warehouses = warehouses.body.data;
-        if(this.jail.warehouse) {
-          this.warehouses = this.warehouses.filter(warehause => warehause.id != this.jail.warehouse.id);
-        }
-      });
+    this.warehousesService.getListAllWarehouses().then((warehouses: WarehouseModel.ResponseListAllWarehouses) => {
+      this.warehouses = warehouses.data;
     })
   }
   
@@ -64,8 +60,36 @@ export class SendPackingComponent implements OnInit {
   }
 
   submit(){
-    let value = this.warehouse.id;
     this.intermediaryService.presentLoading();
+    this.carrierService
+      .postCheckProductsDestiny({
+        packingId: this.jail.id,
+        warehouseDestinyId: this.warehouse.id
+      })
+      .then((res: CarrierModel.ResponseCheckProductsDestiny) => {
+        if (res.code == 200) {
+          if (res.data.someProductWithDifferentDestiny) {
+            this.intermediaryService.dismissLoading();
+            this.intermediaryService.presentConfirm('Alguno de los productos incluidos en el embalaje tiene un destino diferente al indicado. ¿Asignar el destino indicado al embalaje igualmente?', () => {
+              this.intermediaryService.presentLoading();
+              this.changePackingDestiny();
+            });
+          } else {
+            this.changePackingDestiny();
+          }
+        } else {
+          this.intermediaryService.dismissLoading();
+          let errorMessage = "Ha ocurrido un error al intentar enviar el embalaje.";
+          if (res.errors) {
+            errorMessage = res.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      });
+  }
+
+  private changePackingDestiny() {
+    let value = this.warehouse.id;
     this.carrierService.sendPacking(this.jail.reference, value).subscribe(()=>{
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
@@ -73,7 +97,7 @@ export class SendPackingComponent implements OnInit {
     },()=>{
       this.intermediaryService.dismissLoading();
       this.intermediaryService.presentToastError("Error de envío de embalaje");
-    })
+    });
   }
 
   close(){

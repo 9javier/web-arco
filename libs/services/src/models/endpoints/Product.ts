@@ -46,7 +46,7 @@ export namespace ProductModel {
         description: string;
       },
       brand: {
-        name
+        name:string;
       }
     };
     size: {

@@ -18,7 +18,7 @@ import {
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { validators } from '../utils/validators';
-import { NavParams } from '@ionic/angular';
+import { AlertController, NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -36,6 +36,7 @@ export class PricesComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
   filterTypes: Array<PriceModel.StatusType> = [];
+  pricesDeleted: Array<PriceModel.Price> = [];
 
   warehouses: Array<any> = [];
   pagerValues: Array<number> = [50, 100, 500];
@@ -127,7 +128,8 @@ export class PricesComponent implements OnInit {
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
-    private cd : ChangeDetectorRef
+    private cd : ChangeDetectorRef,
+    private alertController: AlertController
   ) {
 
   }
@@ -198,8 +200,11 @@ export class PricesComponent implements OnInit {
    */
   selectAll(event): void {
     let value = event.detail.checked;
+
     for (let index = 0; index < this.prices.length; index++) {
-      this.itemSelected(this.prices[index].id);
+      if (this.prices[index].status !== 3) {
+        this.itemSelected(this.prices[index].id);
+      }
     }
     (<FormArray>this.selectedForm.controls.toSelect).controls.forEach(control => {
       control.setValue(value);
@@ -218,24 +223,25 @@ export class PricesComponent implements OnInit {
 
   // Item seleccionados
   itemSelected(item){
-    let aux =  this.itemIdSelected.findIndex( id => item === id );
-    if(aux === -1) this.itemIdSelected.push(item);
-    if(aux !== -1) this.itemIdSelected.splice(aux,1);
+    const index = this.itemIdSelected.indexOf(item, 0);
+    if (index > -1) {
+      this.itemIdSelected.splice(index, 1);
+    } else {
+      this.itemIdSelected.push(item);
+    }
+    console.log(this.itemIdSelected);
   }
 
   changeStatusImpress(){
+    this.prices.forEach((price) => {
+      if (this.itemIdSelected.includes(price.id)) {
+        price.status = 4;
+      }
+    });
     this.selectedForm.get('selector').setValue(false);
     this.cd.detectChanges();
-    this.itemIdSelected.map( (itemF,idx) =>{
-      for (let index = 0; index < this.prices.length; index++) {
-       if(itemF == this.prices[index].id) {
-        this.prices[index].status = 4;
-        break;
-       }
-      }
-    })
-
     this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+    this.itemIdSelected = [];
   }
   /**
    * Print the selected labels
@@ -243,6 +249,20 @@ export class PricesComponent implements OnInit {
    */
   async printPrices(items, warehouseId: number) {
     //this.initSelectForm(this.prices);
+
+    if (this.verifyPricesDeleted()) {
+      await this.presentAlertConfirm(warehouseId, items);
+    } else {
+      this.printPricesWithoutDeleted(warehouseId, items);
+    }
+  }
+
+  private printPricesDeleted() {
+    //TODO: PROCESS DELETED PRICES
+    //TODO: USE this.pricesDeleted
+  }
+
+  private printPricesWithoutDeleted(warehouseId: number, items) {
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -258,24 +278,26 @@ export class PricesComponent implements OnInit {
           tariffId: items[i].tariff.id,
           modelId: items[i].model.id,
           numRange: items[i].numRange
-        }
-        return price ? object : false
+        };
+        return price ? object : false;
       }
     })
       .filter(price => price);
 
-    this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
+    this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
     this.printerService.printPrices({ references: prices }).subscribe(result => {
       this.intermediaryService.dismissLoading();
-      this.initSelectForm(this.prices);
+
       if (result) {
         this.changeStatusImpress();
       }
+
+      this.initSelectForm(this.prices);
+
       //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
     });
-
   }
 
   async ngOnInit() {
@@ -498,6 +520,48 @@ export class PricesComponent implements OnInit {
         this.getFilters();
       });
     });
+  }
+
+  verifyPricesDeleted() {
+    this.pricesDeleted = [];
+    this.selectedForm.value.toSelect.map((selected, i) => {
+      if (selected && this.prices[i].status === 3) {
+        this.pricesDeleted.push(this.prices[i]);
+      }
+    }).filter(price => price);
+
+    return !!this.pricesDeleted.length;
+  }
+
+  async presentAlertConfirm(warehouseId: number, items) {
+    const num = this.pricesDeleted.length;
+    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir la tarifa eliminada con el precio actual?`;
+    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir las tarifas eliminadas con el precio actual?`;
+    const alert = await this.alertController.create({
+      header: '¡Confirmar!',
+      message: num > 1 ? messagePlural : messageSingular,
+      buttons: [
+        {
+          text: 'Si',
+          handler: () => {
+            this.printPricesDeleted();
+            this.printPricesWithoutDeleted(warehouseId, items);
+          }
+        }, {
+          text: 'No',
+          handler: () => {
+            this.printPricesWithoutDeleted(warehouseId, items);
+          }
+        },{
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {}
+        }
+      ]
+    });
+
+    await alert.present();
   }
 
   // GET & SET SECTION

@@ -82,6 +82,10 @@ export namespace FiltersModel{
       data:Array<Model>;
     }
 
+    export interface ResponseBrand extends Request.Success{
+        data:Array<Brands>
+    }
+
     export interface ResponseColor extends Request.Success{
       data:Array<Color>;
     }

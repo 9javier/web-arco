@@ -333,6 +333,14 @@ const routes: Routes = [
     data: {
       name: 'Recepciones'
     }
+  },
+  {
+    path:'predistributions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/predistributions/predistributions.module#PredistributionsModule',
+    data: {
+      name: 'Predistribuciones'
+    }
   }
 ];
 

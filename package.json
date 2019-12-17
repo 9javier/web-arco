@@ -60,6 +60,7 @@
     "cordova-plugin-whitelist": "^1.3.3",
     "cordova-plugin-zebra-printer": "file:plugin-zebra",
     "core-js": "^2.5.4",
+    "file-saver": "^2.0.2",
     "hammerjs": "^2.0.8",
     "hide-keyboard": "^0.2.1",
     "ionic": "^4.12.0",
@@ -71,6 +72,9 @@
     "ngx-mask": "^8.1.3",
     "ngx-material-timepicker": "^3.1.0",
     "rxjs": "6.3.3",
+    "simple-keyboard": "^2.27.27",
+    "simple-keyboard-layouts": "^1.10.12",
+    "xlsx": "^0.15.3",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

@@ -1,0 +1,18 @@
+<div class="container ion-text-center" [ngClass]="{'greenScreen': type == 1, 'redScreen': type == 2}">
+
+  <ng-container *ngIf="type == 1;else red">
+    <p class="ion-text-uppercase">
+        almacén
+    </p>
+  </ng-container>
+  <ng-template #red>
+    <p class="ion-text-uppercase">
+        ventilación
+    </p>
+  </ng-template>
+    <ion-button (click)="screenExit()">
+      salir
+      <ion-icon slot="end" name="exit"></ion-icon>
+    </ion-button>
+
+</div>

@@ -15,7 +15,7 @@
       <input matInput (keyup)="applyFilter($event)" placeholder="Búsqueda">
     </mat-form-field>
 
-    <div class="mat-elevation-z8">
+    <div>
       <table mat-table [dataSource]="dataSource">
 
         <ng-container matColumnDef="name">
@@ -39,7 +39,7 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <mat-paginator [pageSizeOptions]="[30, 40, 50]" showFirstLastButtons></mat-paginator>
+      <suite-paginator [pagerValues]="[30, 40, 50]"></suite-paginator>
     </div>
   </mat-card-content>
 </mat-card>

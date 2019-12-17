@@ -31,6 +31,7 @@ export class UsersService {
   private getShowUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private putUpdateUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private delDestroyUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
+  private hasDeleteProductPermissionUrl:string = environment.apiBase+"/gestion-permissions/users/has-delete-product-permission";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
@@ -97,5 +98,15 @@ export class UsersService {
         )
       );
     });
+  }
+
+  async hasDeleteProductPermission(): Promise<Observable<HttpResponse<UserModel.ResponseHasDeleteProductPermission>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.get<UserModel.ResponseHasDeleteProductPermission>(
+      this.hasDeleteProductPermissionUrl, {
+        headers: headers,
+        observe: 'response'
+      });
   }
 }

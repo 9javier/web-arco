@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
-import { AlertController } from "@ionic/angular";
+import { AlertController, ModalController } from "@ionic/angular";
 import * as _ from 'lodash';
 
 import {
@@ -16,6 +16,7 @@ import { validators } from '../utils/validators';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import { TariffUpdateFilterPriceComponent } from './tariff-update-filter-price/tariff-update-filter-price.component';
 
 @Component({
   selector: 'suite-tariff',
@@ -67,6 +68,7 @@ export class TariffSGAComponent implements OnInit {
     private router: Router,
     private warehousesService: WarehousesService,
     private alertController: AlertController,
+    private modalCtrl:ModalController,
   ) {
     this.processing = false;
   }
@@ -313,5 +315,20 @@ export class TariffSGAComponent implements OnInit {
 
   get existTariffsToUpdate() {
     return this.tariffsUpdate.length > 0;
+  }
+
+  async selectWarehouse(event, tariff) {
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component:TariffUpdateFilterPriceComponent,
+      componentProps:{
+        tariff:tariff
+      }
+    }))
+    modal.onDidDismiss().then(()=>{
+      // reload table.
+    })
+    modal.present();
   }
 }

@@ -1,5 +1,6 @@
 import { Request } from './request';
 import { WarehouseModel } from './Warehouse';
+import {HttpRequestModel} from "./HttpRequest";
 
 export namespace CarrierModel{
 
@@ -8,6 +9,7 @@ export namespace CarrierModel{
         createAt:string;
         updateAt:string;
         warehouse:WarehouseModel.Warehouse;
+        carrier: CarrierModel.Carrier
     }
 
     export interface Carrier{
@@ -19,6 +21,7 @@ export namespace CarrierModel{
         packingType: number;
         warehouse: WarehouseModel.Warehouse;
         carrierWarehousesDestiny:CarrierWarehouseDestiny;
+      packingInventorys: any[]
     }
 
     export interface CarrierResponse extends Request.Success{
@@ -31,5 +34,17 @@ export namespace CarrierModel{
 
     export interface CarrierWarehouseDestinyResponse extends Request.Success{
         data:CarrierWarehouseDestiny
+    }
+
+    // Check packing-products destiny
+    export interface ParamsCheckProductsDestiny {
+      packingId: number,
+      warehouseDestinyId: number
+    }
+    export interface CheckProductsDestiny {
+      someProductWithDifferentDestiny: boolean
+    }
+    export interface ResponseCheckProductsDestiny extends HttpRequestModel.Response {
+      data: CheckProductsDestiny
     }
 }

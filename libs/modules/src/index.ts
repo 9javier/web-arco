@@ -263,3 +263,11 @@ export  * from './regions/regions.module';
 // // /**Receptions avelon */
 export  * from './receptions-avelon/receptions-avelon.component'
 export  * from './receptions-avelon/receptions-avelon.module';
+
+// // /**Predistributions */
+export  * from './predistributions/predistributions.component'
+export  * from './predistributions/predistributions.module';
+
+// // /**Receptions empty packing */
+export  * from './reception-empty-packing/reception-empty-packing.component'
+export  * from './reception-empty-packing/reception-empty-packing.module';

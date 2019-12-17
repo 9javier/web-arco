@@ -1,0 +1,24 @@
+ion-item {
+  --border-style: none;
+  --border-width: none;
+  width: 100%;
+  ion-button {
+    height: 30px;
+  }
+}
+
+div.no-packing {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-content: center;
+  padding: 36px;
+  text-align: center;
+  p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    place-content: center;
+  }
+}

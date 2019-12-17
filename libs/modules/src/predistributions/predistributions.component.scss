@@ -1,0 +1,66 @@
+.content-table-distributions {
+  table {
+    text-align: center !important;
+    width: 100%;
+
+    tr {
+      th {
+        padding-top: 20px;
+        padding-right: 0;
+
+        ::ng-deep .mat-sort-header-button {
+          display: block !important;
+        }
+
+        ::ng-deep .mat-sort-header-container {
+          align-items: center;
+          justify-content: center;
+        }
+
+        .content-checkbox {
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
+
+        ::ng-deep .mat-checkbox .mat-checkbox-frame {
+          border-color: #757575;
+        }
+
+        ::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background, ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+          background-color: #000000 !important;
+        }
+      }
+
+      .header-checkbox {
+        padding-right: 20px;
+      }
+
+      td {
+        padding-right: 18px;
+
+        ::ng-deep .mat-checkbox-checked .mat-checkbox-background {
+          background-color: #000000 !important;
+        }
+
+        ::ng-deep .mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {
+          background-color: #000000 !important;
+        }
+      }
+    }
+  }
+
+  .mat-header-cell {
+    text-align: center;
+  }
+
+  mat-paginator {
+    ::ng-deep .mat-paginator-page-size {
+      left: 20px;
+      position: absolute;
+    }
+
+    ::ng-deep .mat-paginator-range-actions {
+      margin-right: 80px;
+    }
+  }
+}

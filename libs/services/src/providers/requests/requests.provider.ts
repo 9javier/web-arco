@@ -29,7 +29,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);
@@ -57,7 +57,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);
@@ -75,6 +75,7 @@ export class RequestsProvider {
           req.open('POST', url, false);
           req.setRequestHeader('Authorization', authToken);
           req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+         
           req.send(JSON.stringify(body));
 
           let response = { error: 'Error to make POST Request' };
@@ -88,7 +89,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);
@@ -96,6 +97,9 @@ export class RequestsProvider {
       });
     });
   }
+
+
+
 
   public put(url: string, body: any) : Promise<HttpRequestModel.Response> {
     return new Promise((resolve, reject) => {
@@ -119,7 +123,7 @@ export class RequestsProvider {
           let response = {
             code: req.status,
             message: 'Unknown Error',
-            errors: 'Unknown Error'
+            errors: 'Error de conexión a internet'
           };
 
           resolve(response);

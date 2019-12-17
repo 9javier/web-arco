@@ -39,18 +39,18 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
       });
       if (this.multiple) {
         this.writeValue(this.values);
-      } else{
+      } else {
         this.writeValue(this.value);
       }
       this.filteredOptions = this.filterOptions(options, "");
     }
   }
-
+  
   flagEmmit = false;
   values: Array<any> = [];
   prevLength;
-
   lastNode;
+  currentNode: HTMLElement
 
   /**The placeholder to be showed */
   @Input() placeholder = "";
@@ -125,7 +125,10 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    * Select option via input options
    * @param option - the selected option
    */
-  selectOption(option:TagsInputOption,click?):void{
+  selectOption(option: TagsInputOption, click?): void {
+    // console.log(click);
+    // console.log(option);
+    
     this.filteredOptions = [];
     //this.selectedOption = option;
     this.optionPointerIndex = 0;
@@ -133,8 +136,10 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     let node;
     if (!click) {
       node = window.getSelection().anchorNode;
+      // console.log(node);
     } else {
       node = this.lastNode;
+      // console.log(node);
     }
     this.flagEmmit = true;
     this.insertTag(option.id, (node != this.inputElement.nativeElement) ? node : null);
@@ -147,14 +152,14 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
   clickEditable(event): void {
     let target = event.target;
     let node = window.getSelection().anchorNode;
-    this.filteredOptions = this.filterOptions(this._options,node.textContent);
+    this.filteredOptions = this.filterOptions(this._options, node.textContent);
   }
 
   /**
    * test purpouses
    * @param event
    */
-  eventClick(event){
+  eventClick(event) {
   }
 
   /**
@@ -319,6 +324,8 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    */
   onInput(event): void {
     /**nodo sobre el cual se está escribiendo*/
+    // console.log(event);
+    
     let node = window.getSelection().anchorNode;
     this.lastNode = node;
     /**y eso es lo que vamos a usar para filtrar */
@@ -357,8 +364,8 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    * @param currentNode - for stop the loop
    * @returns the offset
    */
- getIndexOfNode(parentElement:ElementRef,currentNode):number{
-    for(let i = 0; i < parentElement.nativeElement.childNodes.length || 0; i++){
+  getIndexOfNode(parentElement: ElementRef, currentNode): number {
+    for (let i = 0; i < parentElement.nativeElement.childNodes.length || 0; i++) {
       let _node = parentElement.nativeElement.childNodes[i];
       if (_node === currentNode)
         return i;
@@ -516,7 +523,7 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    *
    * @param value - the value to acting
    */
-  writeValue(value: any): void{
+  writeValue(value: any): void {
     /**need to know is value is an array or a single value */
     if (!this.flagEmmit) {
       this.clearInput(this.inputElement.nativeElement);

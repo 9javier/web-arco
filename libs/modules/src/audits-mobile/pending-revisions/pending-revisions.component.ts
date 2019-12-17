@@ -17,9 +17,7 @@ export class PendingRevisionsComponent implements OnInit {
     private toast : ToastController,
     private router : Router,
     private activeRoute: ActivatedRoute
-  ) { 
-    console.log(this.activeRoute.snapshot.routeConfig.path);
-  }
+  ) { }
 
   ngOnInit() {
     this.getAllAudits();
@@ -50,4 +48,7 @@ export class PendingRevisionsComponent implements OnInit {
     toast.present();
   }
 
+  restartAudit(audit) {
+    this.router.navigateByUrl('/audits/scanner-product/'+audit.id+'/'+audit.packing.reference+'/'+this.activeRoute.snapshot.routeConfig.path);
+  }
 }

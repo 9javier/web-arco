@@ -12,6 +12,8 @@ import { switchMap,map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { GroupWarehousePickingModel } from '../../../models/endpoints/group-warehouse-model';
 import { AgencyModel } from '../../../models/endpoints/agency.model';
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 const PATH_BASE: string = URL + '/api/';
 @Injectable({
@@ -21,6 +23,7 @@ export class WarehousesService {
 
   private apiBase = environment.apiBase;
   private postStoreUrl = this.apiBase+"/warehouses";
+  private getListAllWarehousesUrl = this.apiBase + "/warehouses/list";
   private getShowUrl = this.apiBase+"/warehouses/{id}";
   private getMainUrl = this.apiBase+"/warehouses/main";
   private updateUrl = this.getShowUrl;
@@ -31,7 +34,11 @@ export class WarehousesService {
   private postAssignGroupToCategoryUrl:string = this.apiBase+"/warehouses/{{warehouseId}}/groups/{{groupId}}";
   private deleteGroupToWarehouseUrl:string = this.postAssignGroupToCategoryUrl;
   private enumPackingUrl:string = environment.apiBase+"/types/packing";
-  constructor(private http: HttpClient, private auth: AuthenticationService) {}
+  constructor(
+    private http: HttpClient,
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider
+  ) {}
 
   async getIndex(): Promise<Observable<HttpResponse<WarehouseModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
@@ -207,6 +214,11 @@ export class WarehousesService {
         observe: 'response'
       }
     )
+   }
+
+   getListAllWarehouses() : Promise<HttpRequestModel.Response> {
+     console.log('Test::inside getListAllWarehouses()');
+     return this.requestsProvider.get(this.getListAllWarehousesUrl);
    }
 
 }

@@ -4,6 +4,8 @@ import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import { Observable } from 'rxjs';
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +19,16 @@ export class CarrierService {
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
   private packingUrl:string = environment.apiBase+"/types/packing";
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
-  private sendPackingUrl = environment.apiBase + "/packing/send"
-  constructor(private http:HttpClient) { }
+  private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carriesEmptyPacking`
+  private getReceptionsUrl = `${environment.apiBase}/packing/reception`
+  private sendPackingUrl = environment.apiBase + "/packing/send";
+  private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
+  private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
+
+  constructor(
+    private http:HttpClient,
+    private requestsProvider: RequestsProvider
+  ) { }
 
   /**
    * Get all carriers in server
@@ -92,10 +102,25 @@ export class CarrierService {
     }));
   }
 
+  getCarriesEmptyPacking() {
+    return this.http.get(this.getCarriesEmptyPackingUrl).pipe(map((resp:any)=>resp.data));
+  }
+
+  getReceptions(body) {
+    return this.http.post(this.getReceptionsUrl, body).pipe(map((resp:any)=>resp.data));
+  }
   sendPacking(packingReference:string, warehouseId: number) {
     let request = {packingReference: packingReference, warehouseId: warehouseId}
     return this.http.post<CarrierModel.SingleCarrierResponse>(this.sendPackingUrl,request).pipe(map(response=>{
       return response.data;
     }));
+  }
+
+  getGetPackingDestiny(packingReference: string) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.getGetPackingDestinyUrl + packingReference);
+  }
+
+  postCheckProductsDestiny(params: CarrierModel.ParamsCheckProductsDestiny) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCheckProductsDestinyUrl, params);
   }
 }
