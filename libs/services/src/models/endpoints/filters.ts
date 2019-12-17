@@ -83,7 +83,7 @@ export namespace FiltersModel{
     }
 
     export interface ResponseBrand extends Request.Success{
-        data:Array<Brands>
+        data:Array<Brand>
     }
 
     export interface ResponseColor extends Request.Success{
