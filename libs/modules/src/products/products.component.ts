@@ -386,17 +386,21 @@ export class ProductsComponent implements OnInit {
         }
         break;
       case 'suppliers':
-        let suppliersFiltered: number[] = [];
+        let suppliersFiltered: string[] = [];
         for(let supplier of filters){
-          if(supplier.checked) suppliersFiltered.push(supplier.id);
+          if(supplier.checked) suppliersFiltered.push(supplier.value);
         }
-        if(suppliersFiltered.length > 0){
-          this.form.value.suppliers = suppliersFiltered;
-          this.isFilteringSuppliers = suppliersFiltered.length;
-        }
-        else{
-          this.form.value.suppliers = [99999];
+        if (suppliersFiltered.length >= this.suppliers.length) {
+          this.form.value.suppliers = [];
           this.isFilteringSuppliers = this.suppliers.length;
+        } else {
+          if (suppliersFiltered.length > 0) {
+            this.form.value.suppliers = suppliersFiltered;
+            this.isFilteringSuppliers = suppliersFiltered.length;
+          } else {
+            this.form.value.suppliers = ['99999'];
+            this.isFilteringSuppliers = this.suppliers.length;
+          }
         }
         break;
     }
