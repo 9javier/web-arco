@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { COLLECTIONS } from 'config/base';
-import {ModalController} from "@ionic/angular";
+import { ModalController, AlertController } from '@ionic/angular';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import { CarrierService, WarehouseModel, IntermediaryService } from '@suite/services';
 import { MatTableDataSource } from '@angular/material';
@@ -16,6 +16,8 @@ import { SendComponent } from './send/send.component';
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
+import asyncForEach from '../../../../../mga-krack/mga-api/lib/src/API/Common/AsyncForeach';
+import { SendJailComponent } from './send-jail/send-jail.component';
 
 @Component({
   selector: 'app-jail',
@@ -55,6 +57,7 @@ export class JailComponent implements OnInit {
     private carrierService:CarrierService,
     private warehouseService:WarehouseService,
     private intermediaryService:IntermediaryService,
+    private alertControler: AlertController,
     private printerService:PrinterService
     ) {
   }
@@ -77,6 +80,8 @@ export class JailComponent implements OnInit {
   }
 
   prevent(event){
+    // console.log(event);
+    
     event.preventDefault();
     event.stopPropagation();
   }
@@ -164,6 +169,8 @@ export class JailComponent implements OnInit {
   getCarriers():void{
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
+      console.log(carriers);
+      
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
       this.toDelete.removeControl("jails");
@@ -178,6 +185,7 @@ export class JailComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     })
   }
+
   isAvailableSend(carrier) {
     let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[0].isReception == false :  true;
     if(isAvailable) {
@@ -191,6 +199,8 @@ export class JailComponent implements OnInit {
    * check if have items to delete
    */
   hasToDelete():boolean{
+    
+    
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
@@ -209,8 +219,89 @@ export class JailComponent implements OnInit {
     }
 
     if (listReferences && listReferences.length > 0) {
+      console.log(listReferences);
+      
       this.printReferencesList(listReferences);
     }
+  }
+
+  async newJail(){
+    let lista:number[]  = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
+    let newLista = this.toDelete.value.jails.filter(jail => jail.selected);
+    let newId:CarrierModel.Carrier = null;
+    let listaCarrier:CarrierModel.Carrier[]=[];
+    let listaSend:CarrierModel.Carrier[]=[];
+    if(this.carriers.length > 1){
+      console.log('gia abbiamo la lista');
+      
+    }else{
+      console.log('chiamiamo la lista');
+      
+      this.carrierService.getIndex().subscribe(carriers => {
+        this.carriers = carriers;
+      })
+    }
+
+    lista.forEach(async (id,i,li)=>{
+      newId = this.carriers.find(x => x.id === id )
+      if(newId){
+        listaCarrier.push(newId)
+      }
+    });
+    if(listaCarrier.length > 0){
+      console.log(listaCarrier);
+      
+      listaSend = listaCarrier.filter(x => {
+        if(x.packingInventorys.length > 0 && x.status === 2 || x.status === 3 && x.carrierWarehousesDestiny.length === 0){
+          return x;
+        }
+      })
+      if(listaSend.length > 0){
+        listaSend.forEach(y => {
+          listaCarrier = listaCarrier.filter(x => x.id !== y.id)
+        })
+      }
+      // this.presentAlert(listaCarrier)
+      this.sendJaula(listaCarrier)
+      console.log(listaCarrier);
+      console.log(listaSend);
+    }
+    
+    
+    
+    
+    
+  }
+
+  async presentAlert(lista:CarrierModel.Carrier[]) {
+    let nomi:any[] = lista.map(x => ({...x,name:x.reference,type:'text',value:x.reference,disable:true}));
+    let mes = ''
+    let mesStatus = '';
+    let mesW = '';
+    let mesP = '';
+    lista.forEach((item,i)=>{
+      if(item.packingInventorys.length === 0){
+        mesP = ' No tiene productos,'
+      }else if(item.packingInventorys.length > 0){
+        mesP = '';
+      }
+      
+      if(item.carrierWarehousesDestiny.length === 0){
+        mesW = ' No ha destino,';
+      }else if(item.carrierWarehousesDestiny.length > 1) {
+        mesW = ' Tiene mas de un destino,';
+      }
+      mes += `${item.reference} no puede ser enviado porque ${mesP} ${mesStatus} ${mesW} \n`
+    })
+    const alert = await this.alertControler.create({
+      header: 'Estos item de la lista no se pueden enviar',
+      // subHeader: 'Subtitle',
+      message: mes,
+      // inputs:nomi,
+      buttons: ['OK']
+    });
+
+    await alert.present();
   }
 
   private async printReferencesList(listReferences: Array<string>) {
@@ -240,6 +331,17 @@ export class JailComponent implements OnInit {
       this.getCarriers();
     })
     modal.present();
+  }
+
+  async sendJaula(jails){
+    let modal = (await this.modalCtrl.create({
+      component:SendJailComponent,
+      componentProps:{
+        jails
+      },
+      cssClass: 'modalStyles',
+    }))
+    modal.present()
   }
 
   /**
