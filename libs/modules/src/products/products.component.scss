@@ -1,12 +1,15 @@
-suite-breadcrumb{
-  display: inline-block;
-}
+ion-text {
 
-ion-icon{
-  float: right;
-  font-size: xx-large;
-  margin-top: 25px;
-  cursor: pointer;
+  suite-breadcrumb {
+    display: inline-block;
+  }
+
+  ion-icon {
+    float: right;
+    font-size: xx-large;
+    margin-top: 25px;
+    cursor: pointer;
+  }
 }
 
 ion-item {

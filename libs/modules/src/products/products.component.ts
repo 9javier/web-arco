@@ -242,19 +242,23 @@ export class ProductsComponent implements OnInit {
   }
 
   applyFilters(filters, filterType) {
-    switch(filterType){
+    switch(filterType) {
       case 'references':
         let referencesFiltered: string[] = [];
-        for(let reference of filters){
-          if(reference.checked) referencesFiltered.push(reference.reference);
+        for (let reference of filters) {
+          if (reference.checked) referencesFiltered.push(reference.reference);
         }
-        if(referencesFiltered.length > 0){
-          this.form.value.references = referencesFiltered;
-          this.isFilteringReferences = referencesFiltered.length;
-        }
-        else{
-          this.form.value.references = [99999];
+        if (referencesFiltered.length >= this.references.length) {
+          this.form.value.productReferencePattern = [];
           this.isFilteringReferences = this.references.length;
+        } else {
+          if (referencesFiltered.length > 0) {
+            this.form.value.productReferencePattern = referencesFiltered;
+            this.isFilteringReferences = referencesFiltered.length;
+          } else {
+            this.form.value.productReferencePattern = ['99999'];
+            this.isFilteringReferences = this.references.length;
+          }
         }
         break;
       case 'models':
@@ -262,13 +266,17 @@ export class ProductsComponent implements OnInit {
         for(let model of filters){
           if(model.checked) modelsFiltered.push(model.reference);
         }
-        if(modelsFiltered.length > 0){
-          this.form.value.productReferencePattern = modelsFiltered;
-          this.isFilteringModels = modelsFiltered.length;
-        }
-        else{
-          this.form.value.productReferencePattern = [99999];
+        if (modelsFiltered.length >= this.models.length) {
+          this.form.value.models = [];
           this.isFilteringModels = this.models.length;
+        } else {
+          if (modelsFiltered.length > 0) {
+            this.form.value.models = modelsFiltered;
+            this.isFilteringModels = modelsFiltered.length;
+          } else {
+            this.form.value.models = [99999];
+            this.isFilteringModels = this.models.length;
+          }
         }
         break;
       case 'colors':
@@ -276,13 +284,17 @@ export class ProductsComponent implements OnInit {
         for(let color of filters){
           if(color.checked) colorsFiltered.push(color.id);
         }
-        if(colorsFiltered.length > 0){
-          this.form.value.colors = colorsFiltered;
-          this.isFilteringColors = colorsFiltered.length;
-        }
-        else{
-          this.form.value.colors = [99999];
+        if (colorsFiltered.length >= this.colors.length) {
+          this.form.value.colors = [];
           this.isFilteringColors = this.colors.length;
+        } else {
+          if (colorsFiltered.length > 0) {
+            this.form.value.colors = colorsFiltered;
+            this.isFilteringColors = colorsFiltered.length;
+          } else {
+            this.form.value.colors = [99999];
+            this.isFilteringColors = this.colors.length;
+          }
         }
         break;
       case 'sizes':
@@ -290,13 +302,17 @@ export class ProductsComponent implements OnInit {
         for(let size of filters){
           if(size.checked) sizesFiltered.push(size.value);
         }
-        if(sizesFiltered.length > 0){
-          this.form.value.sizes = sizesFiltered;
-          this.isFilteringSizes = sizesFiltered.length;
-        }
-        else{
-          this.form.value.sizes = ["99999"];
+        if (sizesFiltered.length >= this.sizes.length) {
+          this.form.value.sizes = [];
           this.isFilteringSizes = this.sizes.length;
+        } else {
+          if (sizesFiltered.length > 0) {
+            this.form.value.sizes = sizesFiltered;
+            this.isFilteringSizes = sizesFiltered.length;
+          } else {
+            this.form.value.sizes = ["99999"];
+            this.isFilteringSizes = this.sizes.length;
+          }
         }
         break;
       case 'warehouses':
@@ -304,13 +320,17 @@ export class ProductsComponent implements OnInit {
         for(let warehouse of filters){
           if(warehouse.checked) warehousesFiltered.push(warehouse.id);
         }
-        if(warehousesFiltered.length > 0){
-          this.form.value.warehouses = warehousesFiltered;
-          this.isFilteringWarehouses = warehousesFiltered.length;
-        }
-        else{
-          this.form.value.warehouses = [99999];
+        if (warehousesFiltered.length >= this.warehouses.length) {
+          this.form.value.warehouses = [];
           this.isFilteringWarehouses = this.warehouses.length;
+        } else {
+          if (warehousesFiltered.length > 0) {
+            this.form.value.warehouses = warehousesFiltered;
+            this.isFilteringWarehouses = warehousesFiltered.length;
+          } else {
+            this.form.value.warehouses = [99999];
+            this.isFilteringWarehouses = this.warehouses.length;
+          }
         }
         break;
       case 'containers':
@@ -318,13 +338,17 @@ export class ProductsComponent implements OnInit {
         for(let container of filters){
           if(container.checked) containersFiltered.push(container.id);
         }
-        if(containersFiltered.length > 0){
-          this.form.value.containers = containersFiltered;
-          this.isFilteringContainers = containersFiltered.length;
-        }
-        else{
-          this.form.value.containers = [99999];
+        if (containersFiltered.length >= this.containers.length) {
+          this.form.value.containers = [];
           this.isFilteringContainers = this.containers.length;
+        } else {
+          if (containersFiltered.length > 0) {
+            this.form.value.containers = containersFiltered;
+            this.isFilteringContainers = containersFiltered.length;
+          } else {
+            this.form.value.containers = [99999];
+            this.isFilteringContainers = this.containers.length;
+          }
         }
         break;
       case 'brands':
@@ -332,13 +356,17 @@ export class ProductsComponent implements OnInit {
         for(let brand of filters){
           if(brand.checked) brandsFiltered.push(brand.id);
         }
-        if(brandsFiltered.length > 0){
-          this.form.value.brands = brandsFiltered;
-          this.isFilteringBrands = brandsFiltered.length;
-        }
-        else{
-          this.form.value.brands = [99999];
+        if (brandsFiltered.length >= this.brands.length) {
+          this.form.value.brands = [];
           this.isFilteringBrands = this.brands.length;
+        } else {
+          if (brandsFiltered.length > 0) {
+            this.form.value.brands = brandsFiltered;
+            this.isFilteringBrands = brandsFiltered.length;
+          } else {
+            this.form.value.brands = [99999];
+            this.isFilteringBrands = this.brands.length;
+          }
         }
         break;
     }
