@@ -15,7 +15,6 @@
             <ion-label class="label large">{{res.warehouse.reference}} {{res.warehouse.name}}</ion-label>
             <ion-select [(ngModel)]="res.optionSelected" cancelText="Cancelar" okText="Aceptar" interface="popover" (ionChange)="changeTexbox($event, res)">
                 <ion-select-option [value]="0">Seleccionar estado</ion-select-option>
-                <ion-select-option [value]="6">Todos</ion-select-option>
                 <ion-select-option  *ngFor="let option of res.optionsStatus" role="option" [value]="option.id">{{option.name}}</ion-select-option>
             </ion-select>
         </ion-item>
@@ -24,6 +23,6 @@
 <ion-footer>
     <ion-toolbar>
         <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-        <ion-button slot="end" color="primary" (click)="submit()">Indicar como impresos</ion-button>
+        <ion-button slot="end" color="primary" (click)="submit()" [disabled]="!haveSomePriceToUpdate()">Indicar como impresos</ion-button>
     </ion-toolbar>
 </ion-footer>

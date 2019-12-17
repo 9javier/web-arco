@@ -14,7 +14,7 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
   destinations;
   tariff;
   datas;
-  warehousesResult;
+  warehousesResult: any[];
   optionsStatus = [];
   constructor(
     private modalController:ModalController,
@@ -77,5 +77,11 @@ export class TariffUpdateFilterPriceComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
     res.isAvailableFilterPrice = event.target.value > 0;
+  }
+
+  haveSomePriceToUpdate(): boolean {
+    return this.warehousesResult.filter(res => {
+      return res.optionSelected > 0 ;
+    }).length > 0;
   }
 }
