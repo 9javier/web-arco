@@ -1,3 +1,17 @@
+ion-text {
+
+  suite-breadcrumb {
+    display: inline-block;
+  }
+
+  ion-icon {
+    float: right;
+    font-size: xx-large;
+    margin-top: 25px;
+    cursor: pointer;
+  }
+}
+
 ion-item {
   ion-label+ion-input {
     text-align: right;

@@ -12,6 +12,7 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import { FilterButtonModule } from "../components/filter-button/filter-button.module";
+import { MatTooltipModule } from "@angular/material";
 
 
 const routes: Routes = [
@@ -34,7 +35,8 @@ const routes: Routes = [
     ProductDetailsModule,
     TagsInputModule,
     PaginatorComponentModule,
-    FilterButtonModule
+    FilterButtonModule,
+    MatTooltipModule
   ],
   declarations: [ProductsComponent]
 })

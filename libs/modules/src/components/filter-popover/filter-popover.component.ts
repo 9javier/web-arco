@@ -23,6 +23,28 @@ export class FilterPopoverComponent implements OnInit {
     private filterPopoverProvider: FilterPopoverProvider
   ) { }
 
+  showAllItems(){
+    for(let index in this.listItems){
+      this.listItems[index].hide = false;
+    }
+    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);;
+  }
+
+  hiddenItems(): boolean{
+    for(let item of this.listItems) {
+      if (item.hide) return true;
+    }
+    return false;
+  }
+
+  underTheLimit(): boolean{
+    let checkedItems: number = 0;
+    for(let item of this.listItems){
+      if(item.checked) checkedItems++;
+    }
+    return checkedItems < 100 || checkedItems == this.listItems.length;
+  }
+
   getMax(){
     let values: Array<number> = new Array<number>();
     for (let item of this.listItems){
@@ -69,8 +91,10 @@ export class FilterPopoverComponent implements OnInit {
       if (this.listItems[item].value >= currentMinValue && this.listItems[item].value <= currentMaxValue){
         this.itemsToRender.push(this.listItems[item]);
         this.listItems[item].checked = true;
+        this.listItems[item].hide = false;
       }else{
         this.listItems[item].checked = false;
+        this.listItems[item].hide = true;
       }
     }
     this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
@@ -93,14 +117,17 @@ export class FilterPopoverComponent implements OnInit {
         if(this.listItems[i].value.toString().includes(textSearched)){
           this.itemsToRender.push(this.listItems[i]);
           this.listItems[i].checked = true;
+          this.listItems[i].hide = false;
         }else{
           this.listItems[i].checked = false;
+          this.listItems[i].hide = true;
         }
       }
       this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     } else {
       for(let index in this.listItems){
         this.listItems[index].checked = true;
+        this.listItems[index].hide = false;
       }
       this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     }
