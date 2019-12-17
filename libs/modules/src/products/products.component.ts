@@ -381,8 +381,13 @@ export class ProductsComponent implements OnInit {
    * @description Eviar parametros y recibe un archivo excell
    */
   async fileExcell(){
-    this.intermediaryService.presentLoading('Descargando Archivo Excell');
-    this.inventoryServices.getFileExcell(this.formCurrentValue).pipe(
+    this.intermediaryService.presentLoading('Descargando Archivo Excel');
+    const formToExcel = this.getFormValueCopy();
+    if(formToExcel.pagination){
+      formToExcel.pagination.page = 1;
+      formToExcel.pagination.limit = 0;
+    }
+    this.inventoryServices.getFileExcell(this.sanitize(formToExcel)).pipe(
       catchError(error => of(error)),
       // map(file => file.error.text)
     ).subscribe((data)=>{
