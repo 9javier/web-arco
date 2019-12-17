@@ -23,6 +23,20 @@ export class FilterPopoverComponent implements OnInit {
     private filterPopoverProvider: FilterPopoverProvider
   ) { }
 
+  showAllItems(){
+    for(let index in this.listItems){
+      this.listItems[index].hide = false;
+    }
+    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);;
+  }
+
+  hiddenItems(): boolean{
+    for(let item of this.listItems) {
+      if (item.hide) return true;
+    }
+    return false;
+  }
+
   underTheLimit(): boolean{
     let checkedItems: number = 0;
     for(let item of this.listItems){

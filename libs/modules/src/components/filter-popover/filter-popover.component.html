@@ -24,6 +24,11 @@
         <ion-label>{{item.value}}</ion-label>
       </ion-item>
     </div>
+    <div *ngIf="hiddenItems()">
+      <ion-item>
+        <ion-button (click)="showAllItems()">Mostrar más opciones</ion-button>
+      </ion-item>
+    </div>
   </div>
 
   <div class="apply">
