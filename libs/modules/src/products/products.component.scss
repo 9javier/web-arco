@@ -1,3 +1,14 @@
+ion-text {
+
+  suite-breadcrumb {
+    display: inline-block;
+  }
+
+  ion-icon {
+    cursor: pointer;
+  }
+}
+
 ion-item {
   ion-label+ion-input {
     text-align: right;
@@ -18,4 +29,21 @@ table {
 
 .bt-right{
   text-align: end;
+}
+
+span {
+  width: 100%;
+  text-align: left;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+suite-filter-button{
+  text-align: end;
+  padding-right: 8px;
+  display: table-cell;
+}
+
+.title{
+  cursor: pointer;
 }

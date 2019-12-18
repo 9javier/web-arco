@@ -138,7 +138,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   async emptyWay() {
     let showModalWithCount = async () => {
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
-      let countdown = 10;
+      let countdown = 5;
       let enableSetWayAsEmpty = false;
 
       let buttonCancel = {
@@ -596,12 +596,15 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   private launchIncidenceSound() {
-    this.intervalIncidenceBeep = setInterval(() => {
-      if (!this.launchIncidenceBeep) {
-        clearInterval(this.intervalIncidenceBeep);
-      }
-      this.audioProvider.play('incidenceBeep');
-    }, 3 * 1000);
+    if (!this.intervalIncidenceBeep) {
+      this.intervalIncidenceBeep = setInterval(() => {
+        if (!this.launchIncidenceBeep) {
+          clearInterval(this.intervalIncidenceBeep);
+          this.intervalIncidenceBeep = null;
+        }
+        this.audioProvider.play('incidenceBeep');
+      }, 3 * 1000);
+    }
   }
 
   private stopExecutionOutput() {

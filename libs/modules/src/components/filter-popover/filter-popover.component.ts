@@ -16,11 +16,34 @@ export class FilterPopoverComponent implements OnInit {
   private listItemsFinal: Array<any> = new Array<any>();
   public typedFilter: string = "";
   public allSelected: boolean = true;
+  public itemsToRender: Array<any> = new Array<any>();
 
   constructor(
     private popoverCtrl: PopoverController,
     private filterPopoverProvider: FilterPopoverProvider
   ) { }
+
+  showAllItems(){
+    for(let index in this.listItems){
+      this.listItems[index].hide = false;
+    }
+    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);;
+  }
+
+  hiddenItems(): boolean{
+    for(let item of this.listItems) {
+      if (item.hide) return true;
+    }
+    return false;
+  }
+
+  underTheLimit(): boolean{
+    let checkedItems: number = 0;
+    for(let item of this.listItems){
+      if(item.checked) checkedItems++;
+    }
+    return checkedItems < 100 || checkedItems == this.listItems.length;
+  }
 
   getMax(){
     let values: Array<number> = new Array<number>();
@@ -56,20 +79,26 @@ export class FilterPopoverComponent implements OnInit {
     }
   }
 
+  private notHidden(item){
+    return !item.hide;
+  }
+
   updateSelection(event){
     let currentMinValue = event.target.value['lower'];
     let currentMaxValue = event.target.value['upper'];
+    this.itemsToRender = [];
     for (let item in this.listItems) {
-      if (this.listItems[item].value >= currentMinValue && this.listItems[item].value <= currentMaxValue) {
+      if (this.listItems[item].value >= currentMinValue && this.listItems[item].value <= currentMaxValue){
+        this.itemsToRender.push(this.listItems[item]);
         this.listItems[item].checked = true;
+        this.listItems[item].hide = false;
       }else{
         this.listItems[item].checked = false;
+        this.listItems[item].hide = true;
       }
     }
-  }
-
-  getOrderedList(){
-    return this.listItems.sort(function(a, b){return a.value - b.value});
+    this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
+    this.checkAllSelected();
   }
 
   ngOnInit() {
@@ -78,40 +107,31 @@ export class FilterPopoverComponent implements OnInit {
     this.listItems = this.filterPopoverProvider.listItems;
     this.checkAllSelected();
     this.listItemsFinal = this.filterPopoverProvider.listItems;
+    this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
   }
 
-  searchInFilterList(event: any) {
-    let textSearched = event;
+  searchInFilterList(textSearched: string) {
+    this.itemsToRender = [];
     if (textSearched && textSearched != '') {
-      let arrayToFilter = this.listItemsFinal;
-      this.listItems = arrayToFilter.filter((item) => {
-        if (typeof item.value == 'string') {
-          if (item.value.toLowerCase().indexOf(textSearched.toLowerCase()) != -1) {
-            item.checked = true;
-            item.hide = false;
-          } else {
-            item.checked = false;
-            item.hide = true;
-          }
-        } else {
-          if (item.value.toString().toLowerCase().indexOf(textSearched.toLowerCase()) != -1) {
-            item.checked = true;
-            item.hide = false;
-          } else {
-            item.checked = false;
-            item.hide = true;
-          }
+      for(let i = 0; i < this.listItems.length; i++){
+        if(this.listItems[i].value.toString().includes(textSearched)){
+          this.itemsToRender.push(this.listItems[i]);
+          this.listItems[i].checked = true;
+          this.listItems[i].hide = false;
+        }else{
+          this.listItems[i].checked = false;
+          this.listItems[i].hide = true;
         }
-        return true;
-      });
+      }
+      this.itemsToRender = this.itemsToRender.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     } else {
-      this.listItems = this.listItems.filter((item) => {
-        item.checked = true;
-        item.hide = false;
-        return true;
-      });
-      this.checkAllSelected();
+      for(let index in this.listItems){
+        this.listItems[index].checked = true;
+        this.listItems[index].hide = false;
+      }
+      this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
     }
+    this.checkAllSelected();
   }
 
   checkAllSelected() {
@@ -122,6 +142,18 @@ export class FilterPopoverComponent implements OnInit {
       }
     }
 
+    this.allSelected = filtersSelected == this.listItems.length;
+  }
+
+  checkSelected(event, item) {
+    this.listItems[this.listItems.indexOf(item)].checked = event.detail.checked;
+
+    let filtersSelected: number = 0;
+    for (let iFilter in this.listItems) {
+      if (this.listItems[iFilter].checked) {
+        filtersSelected++;
+      }
+    }
     this.allSelected = filtersSelected == this.listItems.length;
   }
 

@@ -63,6 +63,12 @@
         }
       }
     }
+
+    ion-modal.modal-relocation {
+      .modal-wrapper {
+        height: 560px;
+      }
+    }
   }
   .modalStyles{
     .modal-wrapper{

@@ -257,9 +257,57 @@ export class PricesComponent implements OnInit {
     }
   }
 
-  private printPricesDeleted() {
-    //TODO: PROCESS DELETED PRICES
-    //TODO: USE this.pricesDeleted
+  private printPricesWithDeleted(warehouseId: number, items) {
+
+    if (!warehouseId) {
+      if (this.isStoreUser) {
+        warehouseId = this.storeUserObj.id;
+      } else {
+        warehouseId = this.warehouseService.idWarehouseMain;
+      }
+    }
+
+    let prices = this.selectedForm.value.toSelect.map((price, i) => {
+      if (items[i].status != 3 && items[i].status != 7) {
+        let object = {
+          warehouseId: warehouseId,
+          tariffId: items[i].tariff.id,
+          modelId: items[i].model.id,
+          numRange: items[i].numRange
+        };
+        return price ? object : false;
+      }
+    })
+      .filter(price => price);
+
+    let pricesDeleted = this.selectedForm.value.toSelect.map((priceD, i) => {
+      if (items[i].status == 3 || items[i].status == 7) {
+        let priceDeleted: any = items[i];
+        let object = {
+          warehouseId: this.isStoreUser ? this.storeUserObj.id: null,
+          modelId: priceDeleted.model.id,
+          numRange: priceDeleted.numRange
+        };
+        return priceD ? object : false;
+      }
+    })
+      .filter(priceD => priceD);
+
+    prices = prices.concat(pricesDeleted);
+
+    this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
+    this.printerService.printPrices({ references: prices }).subscribe(result => {
+      this.intermediaryService.dismissLoading();
+
+      if (result) {
+        this.changeStatusImpress();
+      }
+      this.initSelectForm(this.prices);
+
+      //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+    }, error => {
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   private printPricesWithoutDeleted(warehouseId: number, items) {
@@ -535,8 +583,8 @@ export class PricesComponent implements OnInit {
 
   async presentAlertConfirm(warehouseId: number, items) {
     const num = this.pricesDeleted.length;
-    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir la tarifa eliminada con el precio actual?`;
-    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir las tarifas eliminadas con el precio actual?`;
+    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
+    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
     const alert = await this.alertController.create({
       header: '¡Confirmar!',
       message: num > 1 ? messagePlural : messageSingular,
@@ -544,13 +592,7 @@ export class PricesComponent implements OnInit {
         {
           text: 'Si',
           handler: () => {
-            this.printPricesDeleted();
-            this.printPricesWithoutDeleted(warehouseId, items);
-          }
-        }, {
-          text: 'No',
-          handler: () => {
-            this.printPricesWithoutDeleted(warehouseId, items);
+            this.printPricesWithDeleted(warehouseId, items);
           }
         },{
           text: 'Cancelar',

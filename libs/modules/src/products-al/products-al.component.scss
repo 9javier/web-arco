@@ -1,0 +1,17 @@
+ion-item {
+  ion-label+ion-input {
+    text-align: right;
+  }
+}
+
+.mat-table-wrapper-overflow-x {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-cell, .mat-header-cell {
+  padding: 10px 10px 10px 0;
+}
