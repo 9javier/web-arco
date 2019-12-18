@@ -17,6 +17,7 @@ import { SorterTemplateService } from "../../../../services/src/lib/endpoint/sor
 import { TemplateZonesService } from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
 import { MatrixOutputSorterComponent } from "./matrix-output/matrix-output.component";
 import { WaySorterModel } from "../../../../services/src/models/endpoints/WaySorter";
+import {Events} from "@ionic/angular";
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -47,8 +48,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     private sorterOutputService: SorterOutputService,
     private sorterTemplateService: SorterTemplateService,
     private templateZonesService: TemplateZonesService,
-    public sorterProvider: SorterProvider
-  ) { }
+    public sorterProvider: SorterProvider,
+    public events: Events,
+  ) {}
 
   ngOnInit() {
     if (this.sorterProvider.colorSelected) {
@@ -66,12 +68,17 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
       }
     }
+    this.events.subscribe('sorter:refresh', (wayIsEmpty) => {
+      this.loadActiveSorter();
+      this.stopExecutionColor(true);
+    });
   }
 
   ngOnDestroy() {
     if (this.sorterProvider.processActiveForUser === 2) {
       this.stopExecutionColor(false);
     }
+    this.events.unsubscribe('sorter:refresh');
   }
 
   private loadDefaultData() {
