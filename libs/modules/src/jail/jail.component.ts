@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { COLLECTIONS } from 'config/base';
-import { ModalController, AlertController } from '@ionic/angular';
+import { ModalController, AlertController, LoadingController } from '@ionic/angular';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import { CarrierService, WarehouseModel, IntermediaryService } from '@suite/services';
 import { MatTableDataSource } from '@angular/material';
@@ -58,7 +58,8 @@ export class JailComponent implements OnInit {
     private warehouseService:WarehouseService,
     private intermediaryService:IntermediaryService,
     private alertControler: AlertController,
-    private printerService:PrinterService
+    private printerService:PrinterService,
+    private loadController: LoadingController
     ) {
   }
 
@@ -166,6 +167,25 @@ export class JailComponent implements OnInit {
     })
   }
 
+  ricarica(){
+    this.carrierService.getIndex().subscribe(carriers => {
+      console.log(carriers);
+      
+      this.carriers = carriers;
+      //this.carriers = this.carriers.map(this.isAvailableSend);
+      this.toDelete.removeControl("jails");
+      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
+        return this.formBuilder.group({
+          id: carrier.id,
+          reference: carrier.reference,
+          selected: false
+        });
+      })));
+      this.dataSource = new MatTableDataSource(carriers);
+      // this.intermediaryService.dismissLoading();
+    })
+  }
+
   getCarriers():void{
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
@@ -194,6 +214,8 @@ export class JailComponent implements OnInit {
     }
     return false;
   }
+
+
 
   /**
    * check if have items to delete
@@ -224,6 +246,8 @@ export class JailComponent implements OnInit {
       this.printReferencesList(listReferences);
     }
   }
+
+  
 
   async newJail(){
     let lista:number[]  = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
@@ -261,8 +285,8 @@ export class JailComponent implements OnInit {
           listaCarrier = listaCarrier.filter(x => x.id !== y.id)
         })
       }
-      // this.presentAlert(listaCarrier)
-      this.sendJaula(listaCarrier)
+      this.presentAlert(listaCarrier,listaSend)
+      // this.sendJaula(listaCarrier);
       console.log(listaCarrier);
       console.log(listaSend);
     }
@@ -273,32 +297,49 @@ export class JailComponent implements OnInit {
     
   }
 
-  async presentAlert(lista:CarrierModel.Carrier[]) {
-    let nomi:any[] = lista.map(x => ({...x,name:x.reference,type:'text',value:x.reference,disable:true}));
-    let mes = ''
-    let mesStatus = '';
-    let mesW = '';
-    let mesP = '';
-    lista.forEach((item,i)=>{
-      if(item.packingInventorys.length === 0){
-        mesP = ' No tiene productos,'
-      }else if(item.packingInventorys.length > 0){
-        mesP = '';
-      }
-      
+  async presentAlert(lista:CarrierModel.Carrier[],listaPresentada:CarrierModel.Carrier[]) {
+    let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
+    let newlista = [];
+    lista.forEach(item=>{
+      let er = '';
       if(item.carrierWarehousesDestiny.length === 0){
-        mesW = ' No ha destino,';
-      }else if(item.carrierWarehousesDestiny.length > 1) {
-        mesW = ' Tiene mas de un destino,';
+        er = ' no tiene destino'
       }
-      mes += `${item.reference} no puede ser enviado porque ${mesP} ${mesStatus} ${mesW} \n`
+      if(item.packingInventorys.length === 0){
+        er= ' no tiene productos'
+      }
+      newlista.push({value:item.reference+er,disabled:true,type:'text',})
+      
     })
     const alert = await this.alertControler.create({
-      header: 'Estos item de la lista no se pueden enviar',
-      // subHeader: 'Subtitle',
-      message: mes,
-      // inputs:nomi,
-      buttons: ['OK']
+      header: '¿Estos items no se presentarán, desea seguir?',
+      subHeader: '¡Presentaras esta/s jaula/s '+listaRefereceJaulainviata+'!',
+      // message: mes,
+      inputs:newlista,
+      buttons: [
+        {
+          text:'CANCELAR',
+          role:'cancel',
+          cssClass:'danger',
+          handler:()=>{
+
+          }
+        },
+        {
+          text:'SI',
+          role:'send',
+          cssClass:'primary',
+          handler:()=>{
+            this.intermediaryService.presentLoading('..Presentando Jaulas')
+            this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data=>{
+              console.log(data);
+              this.intermediaryService.dismissLoading();
+              this.ricarica();
+            });
+
+          }
+        }
+      ]
     });
 
     await alert.present();
