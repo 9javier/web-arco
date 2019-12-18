@@ -1,189 +1,155 @@
 <ion-content padding="true">
-  <ion-text color="primary">
-      <ion-grid>
 
-          <ion-row>
-              <ion-col> <suite-breadcrumb></suite-breadcrumb> </ion-col>
-              <ion-col class="ion-align-self-center bt-right">
-                  <ion-button size="small" color="primary" (click)="fileExcell()">
-                      <ion-icon slot="start" name="cloud-download"></ion-icon>
-                      Excell File
-                    </ion-button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-  </ion-text>
-  <form [formGroup]="form">
+  <ion-text color="primary">
     <ion-grid>
       <ion-row>
-        <ion-col size="2" size-xs="12" size-md="4">
-          <ion-label>Referencias:</ion-label>
-          <suite-tags-input
-            id="reference"
-            placeholder="Referencia"
-            [options]="models"
-            formControlName="productReferencePattern"
-          ></suite-tags-input>
+        <ion-col>
+          <suite-breadcrumb></suite-breadcrumb>
         </ion-col>
-        <ion-col size="2" size-xs="12" size-md="4">
-          <ion-label>Marcas:</ion-label>
-          <suite-tags-input
-            placeholder="Brands"
-            [options]="brands"
-            formControlName="brand"
-            multiple="true"
-          >
-          </suite-tags-input>
-        </ion-col>
-        <ion-col size="2" size-xs="12" size-md="2">
-          <ion-label> Colores: </ion-label>
-          <suite-tags-input
-            placeholder="Colores"
-            [options]="colors"
-            formControlName="colors"
-            multiple="true"
-          >
-          </suite-tags-input>
-        </ion-col>
-        <ion-col size="2" size-xs="12" size-md="2">
-          <ion-label> Tallas </ion-label>
-          <suite-tags-input
-            [literal]="true"
-            placeholder="Tallas"
-            [options]="sizes"
-            formControlName="sizes"
-            multiple="true"
-          ></suite-tags-input>
-        </ion-col>
-        <ion-col size="2" size-xs="12" size-md="4">
-          <ion-label> Almacenes </ion-label>
-          <suite-tags-input
-            placeholder="Almacenes"
-            [options]="warehouses"
-            formControlName="warehouses"
-            multiple="true"
-          ></suite-tags-input>
-        </ion-col>
-        <ion-col size="2" size-xs="12" size-md="4">
-          <ion-label> Ubicaciones </ion-label>
-          <suite-tags-input
-            placeholder="Ubicaciones"
-            [options]="containers"
-            [literalmixed]="true"
-            formControlName="containers"
-            multiple="true"
-          ></suite-tags-input>
-        </ion-col>
-        <ion-col size="2" size-xs="12" size-md="4">
-          <ion-label> Ordenar </ion-label>
-          <ion-item formGroupName="orderby">
-            <ion-label> Ordenar </ion-label>
-            <ion-select formControlName="type" interface="popover">
-              <ion-select-option
-                value="{{group.id}}"
-                *ngFor="let group of groups"
-                >{{ group.name }}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
+        <ion-col class="ion-align-self-center bt-right">
+          <ion-button color="primary" (click)="fileExcell()">
+            <ion-icon name="document"></ion-icon>
+          </ion-button>
+          <ion-button color="primary" (click)="eraseFilters()">
+            <ion-icon name="refresh" [matTooltip]="'Reiniciar filtros'"></ion-icon>
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
-  </form>
+  </ion-text>
 
   <div class="mat-table-wrapper-overflow-x">
     <table mat-table [dataSource]="dataSource">
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
-      <tr
-        mat-row
-        (click)="goDetails(row)"
-        *matRowDef="let row; columns: displayedColumns"
-      ></tr>
+      <tr mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns"></tr>
 
       <ng-container matColumnDef="reference">
-        <th mat-header-cell *matHeaderCellDef>Código</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('reference')">Código</span>
+          <suite-filter-button #filterButtonReferences class="filter" [title]="'Código'" [listItems]="references"
+            [isFiltering]="isFilteringReferences != references.length"
+            (applyFilters)="applyFilters($event, 'references')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let product">
           {{ product?.productShoeUnit?.reference }}
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="brands">
-        <th mat-header-cell *matHeaderCellDef>Marca</th>
-        <td mat-cell *matCellDef="let product">
-          {{ product?.productShoeUnit?.model?.brand?.name }}
-        </td>
-      </ng-container>
-
       <ng-container matColumnDef="model">
-        <th mat-header-cell *matHeaderCellDef>Referencia</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('model')">Referencia</span>
+          <suite-filter-button #filterButtonModels class="filter" [title]="'Referencia'" [listItems]="models"
+            [isFiltering]="isFilteringModels != models.length" (applyFilters)="applyFilters($event, 'models')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let product">
           {{ product?.productShoeUnit?.model?.reference }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="color">
-        <th mat-header-cell *matHeaderCellDef>Color</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('color')">Color</span>
+          <suite-filter-button #filterButtonColors class="filter" [title]="'Color'" [listItems]="colors"
+            [isFiltering]="isFilteringColors != colors.length" (applyFilters)="applyFilters($event, 'colors')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let product">
           {{ product?.productShoeUnit?.model?.color?.name }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="size">
-        <th mat-header-cell *matHeaderCellDef>Talla</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('size')">Talla</span>
+          <suite-filter-button #filterButtonSizes class="filter" [title]="'Talla'" [listItems]="sizes"
+            [isFiltering]="isFilteringSizes != sizes.length" (applyFilters)="applyFilters($event, 'sizes')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let product">
           {{ product?.productShoeUnit?.size?.name }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="warehouse">
-        <th mat-header-cell *matHeaderCellDef>Almacén</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('warehouse')">Almacén</span>
+          <suite-filter-button #filterButtonWarehouses class="filter" [title]="'Almacén'" [listItems]="warehouses"
+            [isFiltering]="isFilteringWarehouses != warehouses.length"
+            (applyFilters)="applyFilters($event, 'warehouses')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let product">
           {{ product?.warehouse?.reference }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="container">
-        <th mat-header-cell *matHeaderCellDef>Ubicación</th>
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('container')">Ubicación</span>
+          <suite-filter-button #filterButtonContainers class="filter" [title]="'Ubicación'" [listItems]="containers"
+            [isFiltering]="isFilteringContainers != containers.length"
+            (applyFilters)="applyFilters($event, 'containers')">
+          </suite-filter-button>
+        </th>
         <td mat-cell *matCellDef="let product">
           {{ getProductLocation(product) }}
         </td>
       </ng-container>
+
+      <ng-container matColumnDef="brand">
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('brand')">Marca</span>
+          <suite-filter-button #filterButtonBrands class="filter" [title]="'Marca'" [listItems]="brands"
+            [isFiltering]="isFilteringBrands != brands.length" (applyFilters)="applyFilters($event, 'brands')">
+          </suite-filter-button>
+        </th>
+        <td mat-cell *matCellDef="let product">
+          {{ product?.productShoeUnit?.model?.brand?.name }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="supplier">
+        <th mat-header-cell *matHeaderCellDef>
+          <span class="title" (click)="sort('supplier')">Proveedor</span>
+          <suite-filter-button #filterButtonSuppliers class="filter" [title]="'Proveedor'" [listItems]="suppliers"
+            [isFiltering]="isFilteringSuppliers != suppliers.length" (applyFilters)="applyFilters($event, 'suppliers')">
+          </suite-filter-button>
+        </th>
+        <td mat-cell *matCellDef="let product">
+          {{ product?.productShoeUnit?.model?.brand?.supplierName }}
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="select" [formGroup]="selectedForm">
         <th mat-header-cell *matHeaderCellDef>
           <ion-checkbox (ionChange)="selectAll($event)"></ion-checkbox>
         </th>
-        <td
-          mat-cell
-          *matCellDef="let product; let i = index"
-          (click)="prevent($event)"
-        >
+        <td mat-cell *matCellDef="let product;let i = index" (click)="prevent($event)">
           <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-            <ion-checkbox
-              [formControl]="(selectedForm['controls']?.toSelect)['controls'][i]"
-              (click)="itemSelected(product)"
-            ></ion-checkbox>
+            <ion-checkbox [formControl]="(selectedForm['controls']?.toSelect)['controls'][i]"
+              (click)="itemSelected(product)"></ion-checkbox>
           </ng-template>
         </td>
       </ng-container>
+
     </table>
   </div>
+
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-  <!-- <mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator> -->
+
 </ion-content>
+
 <ion-fab vertical="bottom" horizontal="end">
-  <ion-fab-button
-    (click)="printPriceProducts()"
-    *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid"
-  >
+  <ion-fab-button (click)="printPriceProducts()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
     <ion-icon name="logo-usd"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
-  <ion-fab-button
-    (click)="printLabelProducts()"
-    *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid"
-  >
+  <ion-fab-button (click)="printLabelProducts()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
     <ion-icon name="pricetag"></ion-icon>
   </ion-fab-button>
