@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
 import { SorterProvider } from "../../../../../services/src/providers/sorter/sorter.provider";
 import { ScanditProvider } from "../../../../../services/src/providers/scandit/scandit.provider";
-import { IntermediaryService } from "@suite/services";
+import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from "@suite/services";
 import { OutputSorterModel } from "../../../../../services/src/models/endpoints/OutputSorter";
 import { ProductSorterModel } from "../../../../../services/src/models/endpoints/ProductSorter";
 import { AlertController } from "@ionic/angular";
@@ -39,6 +39,12 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   lastProductScanned: boolean = false;
   outputWithIncidencesClear: boolean = false;
 
+  listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
+  private listTypesFromDb: Array<{ id: number, name: string }> = [];
+  private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
+  private countLoadOfVariables: number = 0;
+  private readonly SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY: number = 3;
+
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
@@ -69,15 +75,25 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
     public events: Events,
+    private globalVariableService: GlobalVariableService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input').focus();
     }, 800);
+    this.events.subscribe('load_of_variables', () => {
+      this.countLoadOfVariables++;
+      if (this.countLoadOfVariables == 2) {
+        this.generateVariablesList();
+        this.countLoadOfVariables = 0;
+      }
+    });
   }
 
   ngOnInit() {
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
+    this.getTypes();
+    this.getGlobalVariables();
   }
 
   ngOnDestroy() {
@@ -140,10 +156,61 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
+  generateVariablesList() {
+    this.intermediaryService.dismissLoading();
+    if (this.listVariablesFromDb.length != this.listTypesFromDb.length) {
+      this.listVariables = this.listVariablesFromDb;
+      for (let iType in this.listTypesFromDb) {
+        let type = this.listTypesFromDb[iType];
+        let isTypeCreated: boolean = false;
+        for (let iVariable in this.listVariablesFromDb) {
+          let variable = this.listVariablesFromDb[iVariable];
+          if (variable.type == type.id) {
+            isTypeCreated = true;
+            break;
+          }
+        }
+        if (!isTypeCreated) {
+          this.listVariables.push({ type: type.id, value: null });
+        }
+      }
+    } else {
+      this.listVariables = this.listVariablesFromDb;
+    }
+    this.listVariables.sort((a, b) => {
+      return a.type < b.type ? -1 : 1;
+    })
+  }
+
+  getGlobalVariables() {
+    this.globalVariableService
+      .getAll()
+      .subscribe((globalVariables) => {
+        this.listVariablesFromDb = globalVariables;
+        this.events.publish('load_of_variables');
+      });
+  }
+
+  getTypes() {
+    this.globalVariableService
+      .getTypes()
+      .subscribe((types) => {
+        this.listTypesFromDb = types;
+        this.events.publish('load_of_variables');
+      });
+  }
+
   async emptyWay() {
     let showModalWithCount = async () => {
+      let globalVar = null;
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
-      let countdown = 5;
+      for(let global of this.listVariables){
+        if(global.type == this.SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY){
+          globalVar = global.value;
+        }
+      }
+      let varGlobalNum = parseInt(globalVar);
+      let countdown = varGlobalNum;
       let enableSetWayAsEmpty = false;
 
       let buttonCancel = {
