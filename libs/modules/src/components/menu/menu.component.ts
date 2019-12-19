@@ -321,6 +321,12 @@ export class MenuComponent implements OnInit {
           icon: 'basket'
         },
         {
+          title: 'Nuevos Productos',
+          id: 'new-products',
+          url: '/new-products',
+          icon: 'basket'
+        },
+        {
           title: 'Consulta',
           id: 'products-info',
           url: 'products/info',
