@@ -303,10 +303,13 @@ export class JailComponent implements OnInit {
     lista.forEach(item=>{
       let er = '';
       if(item.carrierWarehousesDestiny.length === 0){
-        er = ' no tiene destino'
+        er = ' no tiene destino';
       }
       if(item.packingInventorys.length === 0){
-        er= ' no tiene productos'
+        er= ' no tiene productos';
+      }
+      if(item.status === 4 || item.status === 1 || item.status === 5){
+        er = `estado "${item.status}" no permite precintar`;
       }
       newlista.push({value:item.reference+er,disabled:true,type:'text',})
       
@@ -330,7 +333,7 @@ export class JailComponent implements OnInit {
           role:'send',
           cssClass:'primary',
           handler:()=>{
-            this.intermediaryService.presentLoading('..Presentando Jaulas')
+            this.intermediaryService.presentLoading('..Precintando Jaula/s')
             this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data=>{
               console.log(data);
               this.intermediaryService.dismissLoading();

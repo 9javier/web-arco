@@ -41,8 +41,8 @@ export class CarrierService {
     }));
   }
 
-  postSealList(jauls:string[]){
-    let body={jauls};
+  postSealList(reference:string[]){
+    let body={reference};
     return this.http.post(this.postSealsList,body)
   }
 
