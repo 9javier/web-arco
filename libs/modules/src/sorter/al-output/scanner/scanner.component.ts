@@ -202,15 +202,16 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   async emptyWay() {
     let showModalWithCount = async () => {
-      let globalVar = null;
+      let globalVar = 5;
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
-      for(let global of this.listVariables){
-        if(global.type == this.SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY){
-          globalVar = global.value;
-        }
+      let globalFound = this.listVariables.find( global => {
+        return global.type == this.SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY;
+
+      });
+      if(globalFound && globalFound.value){
+        globalVar = parseInt(globalFound.value);
       }
-      let varGlobalNum = parseInt(globalVar);
-      let countdown = varGlobalNum;
+      let countdown = globalVar;
       let enableSetWayAsEmpty = false;
 
       let buttonCancel = {
