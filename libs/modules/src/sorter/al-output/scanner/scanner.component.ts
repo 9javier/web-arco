@@ -16,6 +16,8 @@ import { AudioProvider } from "../../../../../services/src/providers/audio-provi
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
 import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
+import {MatrixSorterModel} from "../../../../../services/src/models/endpoints/MatrixSorter";
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -52,6 +54,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   private launchIncidenceBeep: boolean = false;
   private intervalIncidenceBeep = null;
 
+  private wayIsEmpty: boolean = false;
+
   constructor(
     private location: Location,
     private router: Router,
@@ -64,6 +68,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private scanditProvider: ScanditProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
+    public events: Events,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -73,13 +78,13 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
-
-
   }
 
   ngOnDestroy() {
     this.checkByWrongCode = false;
     this.launchIncidenceBeep = false;
+    this.wayIsEmpty = true;
+    this.events.publish('sorter:refresh', this.wayIsEmpty);
   }
 
   focusToInput() {
