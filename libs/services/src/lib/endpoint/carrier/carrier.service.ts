@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import { Observable } from 'rxjs';
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,7 @@ export class CarrierService {
   private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carriesEmptyPacking`
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
   private sendPackingUrl = environment.apiBase + "/packing/send";
+  private postSealsList = environment.apiBase+"/packing/seal-lista";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
 
@@ -38,6 +39,11 @@ export class CarrierService {
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierUrl).pipe(map(response=>{
       return response.data;
     }));
+  }
+
+  postSealList(reference:string[]){
+    let body={reference};
+    return this.http.post(this.postSealsList,body)
   }
 
   getPackingTypes(){

@@ -1,6 +1,7 @@
 import { Request } from './request';
 import { WarehouseModel } from './Warehouse';
 import {HttpRequestModel} from "./HttpRequest";
+import Inventory from '../../../../../../mga-krack/mga-api/lib/src/API/Application/Domain/Entities/Inventory';
 
 export namespace CarrierModel{
 
@@ -11,17 +12,16 @@ export namespace CarrierModel{
         warehouse:WarehouseModel.Warehouse;
         carrier: CarrierModel.Carrier
     }
-
     export interface Carrier{
         createdAt: string;
         updatedAt: string;
         id: number;
         reference: string;
         status: number;
-        packingType: number;
+        packingType: number[];
         warehouse: WarehouseModel.Warehouse;
-        carrierWarehousesDestiny:CarrierWarehouseDestiny;
-      packingInventorys: any[]
+        carrierWarehousesDestiny:CarrierWarehouseDestiny[];
+        packingInventorys: any[]
     }
 
     export interface CarrierResponse extends Request.Success{
