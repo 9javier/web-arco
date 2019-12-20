@@ -950,7 +950,7 @@ export class ProductsComponent implements OnInit {
 
     modal.onDidDismiss().then((data: any) => {
       if (data.data.dismissed) {
-        this.getFilters();
+        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         this.itemsIdSelected = [];
       }
     });
