@@ -21,7 +21,7 @@
             <th mat-header-cell *matHeaderCellDef>
                 nombre
             </th>
-            <td mat-cell *matCellDef="let tariff" (click)="selectWarehouse($event, tariff)">
+            <td class="nameColumn" mat-cell *matCellDef="let tariff" (click)="selectWarehouse($event, tariff)">
                 {{ tariff?.name }}
             </td>
         </ng-container>
