@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
 import { SorterProvider } from "../../../../../services/src/providers/sorter/sorter.provider";
 import { ScanditProvider } from "../../../../../services/src/providers/scandit/scandit.provider";
-import { IntermediaryService } from "@suite/services";
+import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from "@suite/services";
 import { OutputSorterModel } from "../../../../../services/src/models/endpoints/OutputSorter";
 import { ProductSorterModel } from "../../../../../services/src/models/endpoints/ProductSorter";
 import { AlertController } from "@ionic/angular";
@@ -16,6 +16,8 @@ import { AudioProvider } from "../../../../../services/src/providers/audio-provi
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
 import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
+import {MatrixSorterModel} from "../../../../../services/src/models/endpoints/MatrixSorter";
+import {Events} from "@ionic/angular";
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -37,6 +39,12 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   lastProductScanned: boolean = false;
   outputWithIncidencesClear: boolean = false;
 
+  listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
+  private listTypesFromDb: Array<{ id: number, name: string }> = [];
+  private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
+  private countLoadOfVariables: number = 0;
+  private readonly SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY: number = 3;
+
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
 
@@ -52,6 +60,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   private launchIncidenceBeep: boolean = false;
   private intervalIncidenceBeep = null;
 
+  private wayIsEmpty: boolean = false;
+
   constructor(
     private location: Location,
     private router: Router,
@@ -64,22 +74,33 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private scanditProvider: ScanditProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
+    public events: Events,
+    private globalVariableService: GlobalVariableService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input').focus();
     }, 800);
+    this.events.subscribe('load_of_variables', () => {
+      this.countLoadOfVariables++;
+      if (this.countLoadOfVariables == 2) {
+        this.generateVariablesList();
+        this.countLoadOfVariables = 0;
+      }
+    });
   }
 
   ngOnInit() {
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
-
-
+    this.getTypes();
+    this.getGlobalVariables();
   }
 
   ngOnDestroy() {
     this.checkByWrongCode = false;
     this.launchIncidenceBeep = false;
+    this.wayIsEmpty = true;
+    this.events.publish('sorter:refresh', this.wayIsEmpty);
   }
 
   focusToInput() {
@@ -135,10 +156,62 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }
   }
 
+  generateVariablesList() {
+    this.intermediaryService.dismissLoading();
+    if (this.listVariablesFromDb.length != this.listTypesFromDb.length) {
+      this.listVariables = this.listVariablesFromDb;
+      for (let iType in this.listTypesFromDb) {
+        let type = this.listTypesFromDb[iType];
+        let isTypeCreated: boolean = false;
+        for (let iVariable in this.listVariablesFromDb) {
+          let variable = this.listVariablesFromDb[iVariable];
+          if (variable.type == type.id) {
+            isTypeCreated = true;
+            break;
+          }
+        }
+        if (!isTypeCreated) {
+          this.listVariables.push({ type: type.id, value: null });
+        }
+      }
+    } else {
+      this.listVariables = this.listVariablesFromDb;
+    }
+    this.listVariables.sort((a, b) => {
+      return a.type < b.type ? -1 : 1;
+    })
+  }
+
+  getGlobalVariables() {
+    this.globalVariableService
+      .getAll()
+      .subscribe((globalVariables) => {
+        this.listVariablesFromDb = globalVariables;
+        this.events.publish('load_of_variables');
+      });
+  }
+
+  getTypes() {
+    this.globalVariableService
+      .getTypes()
+      .subscribe((types) => {
+        this.listTypesFromDb = types;
+        this.events.publish('load_of_variables');
+      });
+  }
+
   async emptyWay() {
     let showModalWithCount = async () => {
+      let globalVar = 5;
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
-      let countdown = 5;
+      let globalFound = this.listVariables.find( global => {
+        return global.type == this.SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY;
+
+      });
+      if(globalFound && globalFound.value){
+        globalVar = parseInt(globalFound.value);
+      }
+      let countdown = globalVar;
       let enableSetWayAsEmpty = false;
 
       let buttonCancel = {
