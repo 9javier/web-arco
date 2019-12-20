@@ -72,9 +72,15 @@ export class InputCodesComponent implements OnInit {
               this.audioProvider.playDefaultOk();
               this.presentToast('El embalaje se ha precintado correctamente.', 'primary');
             } else {
-              this.audioProvider.playDefaultError();
-              let errorMsg = res && res.error && res.error.errors ? res.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
-              this.presentToast(errorMsg, 'danger');
+              if(res.code == 404){
+                this.audioProvider.playDefaultError();
+                let errorMsg = res && res.error && res.error.errors ? res.error.errors : res.errors;
+                this.presentToast(errorMsg, 'danger');
+              }else {
+                this.audioProvider.playDefaultError();
+                let errorMsg = res && res.error && res.error.errors ? res.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+                this.presentToast(errorMsg, 'danger');
+              }
             }
           }, (error) => {
             this.intermediaryService.dismissLoading();
