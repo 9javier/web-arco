@@ -27,20 +27,36 @@ import { SendJailComponent } from './send-jail/send-jail.component';
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),
       state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
+      transition(
+        'expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')
+      )
+    ])
   ]
 })
-
 export class JailComponent implements OnInit {
   public title = 'Jaulas';
   // public displayedColumns: string[] = ['select', 'reference', 'buttons-print' ];
-  public columns: any[] = [{ name: 'ID', value: 'id' }, { name: 'Referencia', value: 'reference' }];
-  public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
+  public columns: any[] = [
+    { name: 'ID', value: 'id' },
+    { name: 'Referencia', value: 'reference' }
+  ];
+  public apiEndpoint = COLLECTIONS.find(
+    collection => collection.name === 'Carriers'
+  ).name;
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'isSend', "update", 'buttons-print'];
+  displayedColumns = [
+    'select',
+    'reference',
+    'packing',
+    'destiny',
+    'products-status',
+    'isSend',
+    'update',
+    'buttons-print'
+  ];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
@@ -60,8 +76,7 @@ export class JailComponent implements OnInit {
     private alertControler: AlertController,
     private printerService: PrinterService,
     private loadController: LoadingController
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.getTypePacking();
@@ -95,15 +110,15 @@ export class JailComponent implements OnInit {
   async toUpdate(event, jail) {
     event.stopPropagation();
     event.preventDefault();
-    let modal = (await this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: UpdateComponent,
       componentProps: {
         jail: jail
       }
-    }))
+    });
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
     modal.present();
   }
 
@@ -115,15 +130,15 @@ export class JailComponent implements OnInit {
   async toSend(event, jail) {
     event.stopPropagation();
     event.preventDefault();
-    let modal = (await this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: SendPackingComponent,
       componentProps: {
         jail: jail
       }
-    }))
+    });
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
     modal.present();
   }
   /**
@@ -132,12 +147,12 @@ export class JailComponent implements OnInit {
    * @param jail - jail to be updated
    */
   async toStore() {
-    let modal = (await this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: StoreComponent
-    }));
+    });
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
     modal.present();
   }
 
@@ -146,25 +161,32 @@ export class JailComponent implements OnInit {
     this.carrierService.getPackingTypes().subscribe(types => {
       this.types = types;
       this.intermediaryService.dismissLoading();
-    })
+    });
   }
   delete() {
     let observable = new Observable(observer => observer.next());
     this.toDelete.value.jails.forEach(jail => {
       if (jail.selected)
-        observable = observable.pipe(switchMap(resonse => {
-          return this.carrierService.delete(jail.id)
-        }))
+        observable = observable.pipe(
+          switchMap(resonse => {
+            return this.carrierService.delete(jail.id);
+          })
+        );
     });
     this.intermediaryService.presentLoading();
-    observable.subscribe(() => {
-      this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentToastSuccess("Jaula eliminada con exito");
-      this.getCarriers();
-    }, () => {
-      this.intermediaryService.dismissLoading();
-      this.intermediaryService.presentToastSuccess("Error eliminando jaula");
-    })
+    observable.subscribe(
+      () => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess(
+          'Jaula eliminada con exito'
+        );
+        this.getCarriers();
+      },
+      () => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess('Error eliminando jaula');
+      }
+    );
   }
 
   cleanSelect(closeAlert?: boolean) {
@@ -173,20 +195,24 @@ export class JailComponent implements OnInit {
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
-      this.toDelete.removeControl("jails");
-      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
-        return this.formBuilder.group({
-          id: carrier.id,
-          reference: carrier.reference,
-          selected: false
-        });
-      })));
+      this.toDelete.removeControl('jails');
+      this.toDelete.addControl(
+        'jails',
+        this.formBuilder.array(
+          carriers.map(carrier => {
+            return this.formBuilder.group({
+              id: carrier.id,
+              reference: carrier.reference,
+              selected: false
+            });
+          })
+        )
+      );
       this.dataSource = new MatTableDataSource(carriers);
       if (closeAlert) {
         this.intermediaryService.dismissLoading();
       }
-
-    })
+    });
   }
 
   getCarriers(): void {
@@ -196,36 +222,62 @@ export class JailComponent implements OnInit {
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
-      this.toDelete.removeControl("jails");
-      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
-        return this.formBuilder.group({
-          id: carrier.id,
-          reference: carrier.reference,
-          selected: false
-        });
-      })));
+      this.toDelete.removeControl('jails');
+      this.toDelete.addControl(
+        'jails',
+        this.formBuilder.array(
+          carriers.map(carrier => {
+            return this.formBuilder.group({
+              id: carrier.id,
+              reference: carrier.reference,
+              selected: false
+            });
+          })
+        )
+      );
       this.dataSource = new MatTableDataSource(carriers);
       this.intermediaryService.dismissLoading();
-    })
+    });
   }
 
   isAvailableSend(carrier) {
-    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[0].isReception == false : true;
+    let isAvailable =
+      carrier.packingSends.length > 0
+        ? carrier.packingSends[carrier.packingSends.length -1].isReception == false
+        : true;
     if (isAvailable) {
-      let res = carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
-      return res;
+      // console.log('passa di qui');
+      
+      if (isAvailable) {
+        let res =
+          carrier.carrierWarehousesDestiny.length == 0 ||
+          carrier.carrierWarehousesDestiny.length == 1;
+        return res;
+      }
+    }else{
+      // console.log(`${carrier.reference} passa da qui`);
+      
+      let isAvailable2 =
+      carrier.packingSends.length > 0
+        ? carrier.packingSends[carrier.packingSends.length -1].isSend == true
+        : true;
+    if (isAvailable2) {
+      if (!isAvailable) {
+        let res =
+          carrier.carrierWarehousesDestiny.length == 0 ||
+          carrier.carrierWarehousesDestiny.length == 1;
+        return res;
+      }
     }
+    }
+
     return false;
   }
-
-
 
   /**
    * check if have items to delete
    */
   hasToDelete(): boolean {
-
-
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
@@ -240,7 +292,9 @@ export class JailComponent implements OnInit {
     if (row && row.reference) {
       listReferences = [row.reference];
     } else if (!row) {
-      listReferences = this.toDelete.value.jails.filter(jail => jail.selected).map(jail => jail.reference);
+      listReferences = this.toDelete.value.jails
+        .filter(jail => jail.selected)
+        .map(jail => jail.reference);
     }
 
     if (listReferences && listReferences.length > 0) {
@@ -248,10 +302,10 @@ export class JailComponent implements OnInit {
     }
   }
 
-
-
   async newJail() {
-    let lista: number[] = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
+    let lista: number[] = this.toDelete.value.jails
+      .filter(jail => jail.selected)
+      .map(x => x.id);
     let newLista = this.toDelete.value.jails.filter(jail => jail.selected);
     let newId: CarrierModel.Carrier = null;
     let listaCarrier: CarrierModel.Carrier[] = [];
@@ -260,41 +314,38 @@ export class JailComponent implements OnInit {
     } else {
       this.carrierService.getIndex().subscribe(carriers => {
         this.carriers = carriers;
-      })
+      });
     }
 
-
-    lista.forEach(async (id) => {
-
-      newId = this.carriers.find(x => x.id === id)
+    lista.forEach(async id => {
+      newId = this.carriers.find(x => x.id === id);
 
       if (newId) {
-        listaCarrier.push(newId)
+        listaCarrier.push(newId);
       }
     });
     if (listaCarrier.length > 0) {
-
       listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status === 2 || x.status === 3 && x.carrierWarehousesDestiny.length === 1) {
+        if (
+          (x.packingInventorys.length > 0 && x.status === 2) ||
+          (x.status === 3 && x.carrierWarehousesDestiny.length === 1)
+        ) {
           return x;
         }
-      })
+      });
       if (listaSend.length > 0) {
         listaSend.forEach(y => {
-          listaCarrier = listaCarrier.filter(x => x.id !== y.id)
-        })
+          listaCarrier = listaCarrier.filter(x => x.id !== y.id);
+        });
       }
-      this.presentAlert(listaCarrier, listaSend)
-
+      this.presentAlert(listaCarrier, listaSend);
     }
-
-
-
-
-
   }
 
-  async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
+  async presentAlert(
+    lista: CarrierModel.Carrier[],
+    listaPresentada: CarrierModel.Carrier[]
+  ) {
     let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
     let newlista = [];
     let newlistaPrint = [];
@@ -302,41 +353,34 @@ export class JailComponent implements OnInit {
       let er = '';
       if (item.carrierWarehousesDestiny.length === 0) {
         er = '     SIN DESTINO';
-      } else
-        if (item.carrierWarehousesDestiny.length > 1) {
-          er = '     VARIOS DESTINOS';
-        } else
-          if (item.packingInventorys.length === 0) {
-            er = '     SIN PRODUCTOS';
-          } else
-            if (item.status === 4 || item.status === 1 || item.status === 5) {
-              if (item.status === 1 || item.status === 5) {
-                er = '     SIN PRODUCTOS';
-              }
-              else
-                if (item.status === 4) {
-                  er = '     ACTUALMENTE PRECINTADA';
-                }
-            }
+      } else if (item.carrierWarehousesDestiny.length > 1) {
+        er = '     VARIOS DESTINOS';
+      } else if (item.packingInventorys.length === 0) {
+        er = '     SIN PRODUCTOS';
+      } else if (item.status === 4 || item.status === 1 || item.status === 5) {
+        if (item.status === 1 || item.status === 5) {
+          er = '     SIN PRODUCTOS';
+        } else if (item.status === 4) {
+          er = '     ACTUALMENTE PRECINTADA';
+        }
+      }
       newlistaPrint.push(item.reference + er);
-    })
-    let lstShow = "";
+    });
+    let lstShow = '';
     newlistaPrint.map(x => {
       lstShow += `${x}</br>`;
-      return `${x}</br>`
+      return `${x}</br>`;
     });
 
-    let lst = "";
+    let lst = '';
 
     listaRefereceJaulainviata.map(x => {
       lst += `${x}</br>`;
-      return `${x}</br>`
+      return `${x}</br>`;
     });
-
 
     let alert;
     if (listaRefereceJaulainviata.length === 0) {
-
       alert = await this.alertControler.create({
         header: 'NO HAS SELECCIONADO NINGUNA JAULA QUE SE PUEDEN PRECINTAR!',
         message: `<b>JAULAS QUE NO SE PRECINTARAN</b></br>${lstShow}`,
@@ -351,16 +395,15 @@ export class JailComponent implements OnInit {
           }
         ]
       });
-
     } else {
-
       if (listaRefereceJaulainviata.length > 0 && lista.length === 0) {
-        this.intermediaryService.presentLoading('Precintando Jaula/s')
-        this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-          this.cleanSelect(true);
-        });
+        this.intermediaryService.presentLoading('Precintando Jaula/s');
+        this.carrierService
+          .postSealList(listaRefereceJaulainviata)
+          .subscribe(data => {
+            this.cleanSelect(true);
+          });
       } else {
-
         alert = await this.alertControler.create({
           header: '¿ALGUNAS JAULAS NO SE PRECINTARAN, DESEAS CONTINUAR?',
           message: `<b>¡SOLO ESTAS JAULAS SE PRECINTARAN!</b></br></br>${lst}</br><b>JAULAS QUE NO SE PRECINTARAN</b></br>${lstShow}`,
@@ -369,8 +412,7 @@ export class JailComponent implements OnInit {
               text: 'CANCELAR',
               role: 'cancel',
               cssClass: 'danger',
-              handler: () => {
-              }
+              handler: () => {}
             },
             {
               text: 'SI',
@@ -378,10 +420,14 @@ export class JailComponent implements OnInit {
               cssClass: 'primary',
               handler: () => {
                 if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Jaula/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
+                  this.intermediaryService.presentLoading(
+                    'Precintando Jaula/s'
+                  );
+                  this.carrierService
+                    .postSealList(listaRefereceJaulainviata)
+                    .subscribe(data => {
+                      this.cleanSelect(true);
+                    });
                 }
               }
             }
@@ -389,9 +435,6 @@ export class JailComponent implements OnInit {
         });
       }
     }
-
-
-
 
     await alert.present();
   }
@@ -412,28 +455,28 @@ export class JailComponent implements OnInit {
   async send(event, jail) {
     event.stopPropagation();
     event.preventDefault();
-    let modal = (await this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: SendComponent,
       componentProps: {
         jail: jail
       },
       cssClass: 'modalStyles'
-    }))
+    });
     modal.onDidDismiss().then(() => {
       this.getCarriers();
-    })
+    });
     modal.present();
   }
 
   async sendJaula(jails) {
-    let modal = (await this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: SendJailComponent,
       componentProps: {
         jails
       },
-      cssClass: 'modalStyles',
-    }))
-    modal.present()
+      cssClass: 'modalStyles'
+    });
+    modal.present();
   }
 
   /**
@@ -443,42 +486,55 @@ export class JailComponent implements OnInit {
    */
   updateDestination(prev: number, current: number): void {
     this.intermediaryService.presentLoading();
-    this.carrierService.updateDestination(prev, { destinationWarehouseId: current }).subscribe(() => {
-      this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
-      this.intermediaryService.dismissLoading();
-      this.getCarriers();
-    }, () => {
-      this.intermediaryService.presentToastError("Error al actualizar destino");
-      this.intermediaryService.dismissLoading();
-    });
+    this.carrierService
+      .updateDestination(prev, { destinationWarehouseId: current })
+      .subscribe(
+        () => {
+          this.intermediaryService.presentToastSuccess(
+            'Destino actualizado con éxito'
+          );
+          this.intermediaryService.dismissLoading();
+          this.getCarriers();
+        },
+        () => {
+          this.intermediaryService.presentToastError(
+            'Error al actualizar destino'
+          );
+          this.intermediaryService.dismissLoading();
+        }
+      );
   }
 
   setDestination(carrierId: number, current: number): void {
     this.intermediaryService.presentLoading();
-    this.carrierService.setDestination(carrierId, current).subscribe(() => {
-      this.intermediaryService.presentToastSuccess("Destino actualizado con éxito");
-      this.intermediaryService.dismissLoading();
-      this.getCarriers();
-    }, () => {
-      this.intermediaryService.presentToastError("Error al actualizar destino");
-      this.intermediaryService.dismissLoading();
-    });
+    this.carrierService.setDestination(carrierId, current).subscribe(
+      () => {
+        this.intermediaryService.presentToastSuccess(
+          'Destino actualizado con éxito'
+        );
+        this.intermediaryService.dismissLoading();
+        this.getCarriers();
+      },
+      () => {
+        this.intermediaryService.presentToastError(
+          'Error al actualizar destino'
+        );
+        this.intermediaryService.dismissLoading();
+      }
+    );
   }
 
   async showDestinations(event, jail) {
     event.stopPropagation();
     event.preventDefault();
-    let modal = (await this.modalCtrl.create({
+    let modal = await this.modalCtrl.create({
       component: ShowDestinationsComponent,
       componentProps: {
         jail: jail
       }
-    }))
-    modal.onDidDismiss().then(() => {
-
-    })
+    });
+    modal.onDidDismiss().then(() => {});
     modal.present();
-
   }
 
   getWarehouses() {
@@ -488,7 +544,7 @@ export class JailComponent implements OnInit {
         this.warehouses = (<any>response.body).data;
         this.intermediaryService.dismissLoading();
       });
-    })
+    });
   }
 
   closeModal() {
