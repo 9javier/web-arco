@@ -348,9 +348,12 @@ export class TableRequestsOrdersComponent implements OnInit {
 
     this.events.subscribe(this.DRAW_CONSOLIDATED_MATCHES, (data: Array<WorkwaveModel.AssignationsByRequests>) => {
       for (let requestOrder of this.listRequestOrders) {
-        let matchedForRequest = data.find(match => match.requestId == requestOrder.request.id);
+        let matchedForRequest = data.filter(match => match.requestId == requestOrder.request.id);
         if (matchedForRequest) {
-          requestOrder.quantityMatchWarehouse = parseInt(matchedForRequest.quantityShoes);
+          requestOrder.quantityMatchWarehouse = 0;
+          for(let item of matchedForRequest) {
+            requestOrder.quantityMatchWarehouse += parseInt(item.quantityShoes);
+          }
         }
       }
     })
