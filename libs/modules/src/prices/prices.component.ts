@@ -24,6 +24,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { isNgTemplate } from '@angular/compiler';
+import {StockModel} from "../../../services/src/models/endpoints/Stock";
 
 @Component({
   selector: 'suite-prices',
@@ -134,7 +135,13 @@ export class PricesComponent implements OnInit {
 
   }
 
-
+  getTotalStock(price : PriceModel.Price) : number{
+    let stock : number = 0;
+    for(let stockStore of price.stockStore){
+      stock += stockStore.cantidad;
+    }
+    return stock;
+  }
 
   /**
    * clear empty values of objecto to sanitize it
