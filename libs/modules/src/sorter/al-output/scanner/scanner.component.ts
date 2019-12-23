@@ -38,6 +38,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   hideRightButtonFooter: boolean = true;
   lastProductScanned: boolean = false;
   outputWithIncidencesClear: boolean = false;
+  isWaitingSorterFeedback = false;
 
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private listTypesFromDb: Array<{ id: number, name: string }> = [];
@@ -104,7 +105,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   focusToInput() {
-    document.getElementById('input').focus();
+    setTimeout(() => {
+      if (!this.isWaitingSorterFeedback && document.getElementById('input')) {
+        document.getElementById('input').focus()
+      }
+    }, 500);
   }
 
   async keyUpInput(event) {
