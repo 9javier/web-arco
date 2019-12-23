@@ -786,22 +786,20 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  public getProductLocation(product): string {
-    if (product) {
-      if (product.locationType == 3) {
-        return 'SORTER';
-      } else {
-        if (product.carrier && product.carrier.reference) {
-          return product.carrier.reference;
-        } else {
-          if (product.container && product.container.reference) {
-            return product.container.reference;
-          }
-        }
-      }
+  public getProductLocation(product) : string {
+    let location: string = '';
+    switch(product.locationType){
+      case 1:
+        if(product.container != null) location = product.container.reference;
+        break;
+      case 2:
+        if(product.carrier != null) location = product.carrier.reference;
+        break;
+      case 3:
+        location = 'SORTER';
+        break;
     }
-
-    return '';
+    return location;
   }
 
   private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
