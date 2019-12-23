@@ -275,7 +275,7 @@ export class JailComponent implements OnInit {
     if (listaCarrier.length > 0) {
 
       listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status === 2 || x.status === 3 && x.carrierWarehousesDestiny.length === 1) {
+        if (x.packingInventorys.length > 0 && x.status != 4 && x.carrierWarehousesDestiny.length === 1) {
           return x;
         }
       })
@@ -301,21 +301,21 @@ export class JailComponent implements OnInit {
     lista.forEach(item => {
       let er = '';
       if (item.carrierWarehousesDestiny.length === 0) {
-        er = '     SIN DESTINO';
+        er = '- Sin destino';
       } else
         if (item.carrierWarehousesDestiny.length > 1) {
-          er = '     VARIOS DESTINOS';
+          er = '- Varios destinos';
         } else
           if (item.packingInventorys.length === 0) {
-            er = '     SIN PRODUCTOS';
+            er = '- Sin productos';
           } else
-            if (item.status === 4 || item.status === 1 || item.status === 5) {
-              if (item.status === 1 || item.status === 5) {
-                er = '     SIN PRODUCTOS';
+            if (item.status === 4 || item.status === 5) {
+              if (item.status === 5) {
+                er = '- Sin productos';
               }
               else
                 if (item.status === 4) {
-                  er = '     ACTUALMENTE PRECINTADA';
+                  er = '- Precintada';
                 }
             }
       newlistaPrint.push(item.reference + er);
@@ -338,11 +338,11 @@ export class JailComponent implements OnInit {
     if (listaRefereceJaulainviata.length === 0) {
 
       alert = await this.alertControler.create({
-        header: 'NO HAS SELECCIONADO NINGUNA JAULA QUE SE PUEDEN PRECINTAR!',
-        message: `<b>JAULAS QUE NO SE PRECINTARAN</b></br>${lstShow}`,
+        header: 'Aviso',
+        message: `<b>Los siguientes embalajes no se pueden precintar</b></br></br>${lstShow}`,
         buttons: [
           {
-            text: 'CANCELAR',
+            text: 'Cancelar',
             role: 'cancel',
             cssClass: 'danger',
             handler: () => {
@@ -355,30 +355,52 @@ export class JailComponent implements OnInit {
     } else {
 
       if (listaRefereceJaulainviata.length > 0 && lista.length === 0) {
-        this.intermediaryService.presentLoading('Precintando Jaula/s')
-        this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-          this.cleanSelect(true);
-        });
-      } else {
-
         alert = await this.alertControler.create({
-          header: '¿ALGUNAS JAULAS NO SE PRECINTARAN, DESEAS CONTINUAR?',
-          message: `<b>¡SOLO ESTAS JAULAS SE PRECINTARAN!</b></br></br>${lst}</br><b>JAULAS QUE NO SE PRECINTARAN</b></br>${lstShow}`,
+          header: 'Confirmación',
+          message: `<b>Embalajes que se van a precintar. ¿Está seguro?</b></br></br>${lst}</br>`,
           buttons: [
             {
-              text: 'CANCELAR',
+              text: 'Cancelar',
               role: 'cancel',
               cssClass: 'danger',
               handler: () => {
               }
             },
             {
-              text: 'SI',
+              text: 'Aceptar',
               role: 'send',
               cssClass: 'primary',
               handler: () => {
                 if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Jaula/s')
+                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
+                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
+                    this.cleanSelect(true);
+                  });
+                }
+              }
+            }
+          ]
+        });
+      } else {
+
+        alert = await this.alertControler.create({
+          header: 'Aviso',
+          message: `<b>Embalajes que se van a precintar</b></br></br>${lst}</br></br><b>Embalajes que NO se van a precintar</b></br></br>${lstShow}`,
+          buttons: [
+            {
+              text: 'Cancelar',
+              role: 'cancel',
+              cssClass: 'danger',
+              handler: () => {
+              }
+            },
+            {
+              text: 'Aceptar',
+              role: 'send',
+              cssClass: 'primary',
+              handler: () => {
+                if (listaRefereceJaulainviata.length > 0) {
+                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
                   this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
                     this.cleanSelect(true);
                   });
