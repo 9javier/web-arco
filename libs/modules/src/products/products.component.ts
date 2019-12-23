@@ -114,6 +114,7 @@ export class ProductsComponent implements OnInit {
   isFilteringSuppliers: number = 0;
 
   lastUsedFilter: string = 'warehouses';
+  isMobileApp: boolean = false;
 
   //For sorting
   lastOrder = [true, true, true, true, true, true, true, true];
@@ -131,7 +132,9 @@ export class ProductsComponent implements OnInit {
     private modalController: ModalController,
     private printerService: PrinterService,
     private usersService: UsersService
-  ) { }
+  ) {
+    this.isMobileApp = typeof window.cordova !== "undefined";
+  }
 
   eraseFilters() {
     this.form = this.formBuilder.group({
