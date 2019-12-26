@@ -29,7 +29,7 @@ export namespace PriceModel{
         tariffId: number,
         model: ModelModel.Model,
         status?: number,
-        stockStore?: Array<StockModel.Stock>
+        stockStore?: StockModel.Stock
     }
 
     export interface StatusType{
