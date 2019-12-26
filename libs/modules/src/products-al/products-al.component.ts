@@ -53,7 +53,7 @@ export class ProductsAlComponent implements OnInit {
     models: [],
     colors: [],
     sizes: [],
-    productReferencePattern:'',
+    productReferencePattern: [],
     warehouses:[],
     pagination: this.formBuilder.group({
         page: 1,
@@ -125,9 +125,6 @@ export class ProductsAlComponent implements OnInit {
     }
     if(!object.orderby.order)
       delete object.orderby.order;
-    if(object.productReferencePattern) {
-      object.productReferencePattern = "%" + object.productReferencePattern + "%";
-    }
     Object.keys(object).forEach(key=>{
       if(object[key] instanceof Array){
         if(object[key][0] instanceof Array){

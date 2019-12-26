@@ -47,3 +47,12 @@ suite-filter-button{
 .title{
   cursor: pointer;
 }
+
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}

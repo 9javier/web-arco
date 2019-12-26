@@ -143,13 +143,13 @@
 
 </ion-content>
 
-<ion-fab vertical="bottom" horizontal="end">
-  <ion-fab-button (click)="printPriceProducts()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+<ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+  <ion-fab-button (click)="printPriceProducts()" *ngIf="isMobileApp && selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
     <ion-icon name="logo-usd"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
-  <ion-fab-button (click)="printLabelProducts()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+  <ion-fab-button (click)="printLabelProducts()" *ngIf="isMobileApp && selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
     <ion-icon name="pricetag"></ion-icon>
   </ion-fab-button>

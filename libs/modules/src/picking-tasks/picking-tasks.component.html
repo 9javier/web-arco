@@ -1,3 +1,4 @@
-<list-picking-tasks-template *ngIf="isStoreChecked && !isStore"></list-picking-tasks-template>
-
-<list-stores-picking-tasks-template *ngIf="isStoreChecked && isStore"></list-stores-picking-tasks-template>
+<ion-content>
+  <list-picking-tasks-template *ngIf="isStoreChecked && !isStore"></list-picking-tasks-template>
+  <list-stores-picking-tasks-template *ngIf="isStoreChecked && isStore"></list-stores-picking-tasks-template>
+</ion-content>

@@ -666,10 +666,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
             // tslint:disable-next-line:no-shadowed-variable
             .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
               console.log(res);
-              // TODO tenemos el primer id warehouse
-              this.sorterProvider.id_wareHouse = res.data.warehouse.id;
 
               if (res.code === 201) {
+                this.sorterProvider.id_wareHouse = res.data.warehouse.id;
                 await this.intermediaryService.dismissLoading();
                 let newProcessWay = res.data;
                 this.sorterProvider.infoSorterOutputOperation = {
