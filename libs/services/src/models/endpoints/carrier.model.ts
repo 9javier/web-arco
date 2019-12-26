@@ -1,7 +1,6 @@
 import { Request } from './request';
 import { WarehouseModel } from './Warehouse';
 import {HttpRequestModel} from "./HttpRequest";
-import Inventory from '../../../../../../mga-krack/mga-api/lib/src/API/Application/Domain/Entities/Inventory';
 
 export namespace CarrierModel{
 

@@ -13,10 +13,8 @@ import { map, switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './update/update.component';
 import { StoreComponent } from './store/store.component';
 import { SendComponent } from './send/send.component';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
-import asyncForEach from '../../../../../mga-krack/mga-api/lib/src/API/Common/AsyncForeach';
 import { SendJailComponent } from './send-jail/send-jail.component';
 
 @Component({
