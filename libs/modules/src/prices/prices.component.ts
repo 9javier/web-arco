@@ -137,8 +137,10 @@ export class PricesComponent implements OnInit {
 
   getTotalStock(price : PriceModel.Price) : number{
     let stock : number = 0;
-    for(let stockStore of price.stockStore){
-      stock += stockStore.cantidad;
+    if(price.stockStore) {
+      for (let stockStore of price.stockStore) {
+        stock += stockStore.cantidad;
+      }
     }
     return stock;
   }
