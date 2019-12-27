@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonInput, ModalController, NavParams } from '@ionic/angular';
 import { SorterInputService } from '../../../../../services/src/lib/endpoint/sorter-input/sorter-input.service';
 import { InputSorterModel } from '../../../../../services/src/models/endpoints/InputSorter';
@@ -6,7 +6,6 @@ import { HttpRequestModel } from '../../../../../services/src/models/endpoints/H
 import { IntermediaryService } from '@suite/services';
 import { KeyboardService } from "../../../../../services/src/lib/keyboard/keyboard.service";
 import { ToolbarProvider } from "../../../../../services/src/providers/toolbar/toolbar.provider";
-import { EventEmitter, Output } from '@angular/core';
 import { Router } from "@angular/router";
 import { ActionToolbarModel } from "../../../../../services/src/models/endpoints/ActionToolbar";
 import { PopoverController, Platform } from "@ionic/angular";
@@ -26,9 +25,9 @@ export class ScannerRackComponent implements OnInit{
   destinyWarehouse: any;
   inputValue: '';
 
-  public currentPage: string = 'Registro horario';
+  public currentPage: string = 'Entrada';
   public optionsActions: ActionToolbarModel.ActionToolbar[] = [];
-  color: string
+  color: string;
   isAndroid: boolean;
   state: boolean;
   showKeyboard: boolean;
