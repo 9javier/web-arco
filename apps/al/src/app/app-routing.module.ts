@@ -194,6 +194,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'sendEmptyPacking',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/send-empty-packing/send-empty-packing.module#SendEmptyPackingModule',
+    data: {
+      name: 'Send de Jaulas Vacias'
+    }
+  },
+  {
     path: 'print/product/relabel',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/print-relabel-product-manual/print-relabel-product-manual.module#PrintRelabelProductManualModule',

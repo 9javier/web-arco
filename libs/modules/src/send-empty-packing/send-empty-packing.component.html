@@ -1,0 +1,58 @@
+<ion-content>
+    <div class="table-container">
+        <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element;let i = dataIndex" [formGroup]="toDelete" (click)="prevent($event)">
+                    <ion-checkbox [formControl]="toDelete['controls']?.jails['controls'][i]['controls']?.selected"></ion-checkbox>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="reference">
+                <th mat-header-cell *matHeaderCellDef>Referencia</th>
+                <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="packing">
+                <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="warehouse">
+                <th mat-header-cell *matHeaderCellDef>Origen</th>
+                <td mat-cell *matCellDef="let element"> {{element?.warehouse ? (element.warehouse.reference + ' ' + element.warehouse.name) : '' }}
+                    <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="destiny">
+                <th mat-header-cell *matHeaderCellDef>Destino</th>
+                <td mat-cell *matCellDef="let element">
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length == 0" class="no-warehouse">Sin destinos</div>
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length == 1">{{element.carrierWarehousesDestiny[0].warehouse?.reference }} {{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
+                    <div  *ngIf="element.carrierWarehousesDestiny?.length > 1"  (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios destinos</span></div>
+                </td>
+            </ng-container>
+
+          <ng-container matColumnDef="products-status">
+            <th mat-header-cell *matHeaderCellDef>Productos</th>
+            <td mat-cell *matCellDef="let element"> {{ element.packingInventorys && element.packingInventorys.length > 0 ? element.packingInventorys.length : 'vacía' }} </td>
+          </ng-container>
+            <ng-container matColumnDef="isSend">
+                <th mat-header-cell *matHeaderCellDef class="right-content left-border"></th>
+                <td mat-cell *matCellDef="let element" class="right-content left-border">
+                    <i *ngIf="isAvailableSend(element)" (click)="toSend($event,element)" class="material-icons action-icon">send</i>
+                </td>
+            </ng-container>            
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
+            </tr>
+        </table>
+    </div>
+</ion-content>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button (click)="toStore()"><i class="material-icons">send</i></ion-fab-button>
+  </ion-fab>
+</ion-footer>
