@@ -61,32 +61,35 @@ export class TextareaComponent implements OnInit {
   }
 
   keyUpInput(event) {
+    console.log("Uno");
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
-
+    console.log("Uno2");
     if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
-
+      console.log("Uno3");
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
         return;
       }
       this.lastCodeScanned = dataWrited;
+      console.log("Dos");
 
       if (this.timeoutStarted) {
         clearTimeout(this.timeoutStarted);
       }
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
-
+      console.log("Tres");
       this.processInitiated = true;
       if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
-        this.audioProvider.playDefaultOk();
+        this.processInitiated = false;
         this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
+        this.audioProvider.playDefaultOk();
         this.containerReference = dataWrited;
         this.packingReference = null;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-        this.processInitiated = false;
+        console.log("4");
       } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
         let params: any = {
           productReference: dataWrited,
@@ -99,25 +102,28 @@ export class TextareaComponent implements OnInit {
         } else if (!this.isStoreUser && this.packingReference) {
           params.packingReference = this.packingReference;
         }
+        this.inputPositioning = null;
 
         this.storeProductInContainer(params);
 
-        this.inputPositioning = null;
         this.errorMessage = null;
+        console.log("5");
       } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.JAIL)) {
-        this.audioProvider.playDefaultOk();
+        this.processInitiated = false;
         this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
+        this.audioProvider.playDefaultOk();
         this.containerReference = null;
         this.packingReference = dataWrited;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-        this.processInitiated = false;
+        console.log("6");
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;
         this.errorMessage = '¡Referencia del contenedor/embalaje errónea!';
         this.processInitiated = false;
+        console.log("7");
       } else {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;
@@ -127,6 +133,7 @@ export class TextareaComponent implements OnInit {
           this.errorMessage = '¡Referencia del producto/contenedor/embalaje errónea!';
         }
         this.processInitiated = false;
+        console.log("8");
       }
     }
   }
@@ -138,7 +145,6 @@ export class TextareaComponent implements OnInit {
       .then(async (res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
-          this.audioProvider.playDefaultOk();
           let msgSetText = '';
           if (this.isStoreUser) {
             msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
@@ -149,8 +155,9 @@ export class TextareaComponent implements OnInit {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
           }
-          this.presentToast(msgSetText, 2000, 'success');
           this.processInitiated = false;
+          this.presentToast(msgSetText, 2000, 'success');
+          this.audioProvider.playDefaultOk();
         } else if (res.code == 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
