@@ -470,6 +470,12 @@ export class MenuComponent implements OnInit {
           id: 'reception-empty-packing',
           url: '/packing/carrierEmptyPacking',
           icon: 'exit'
+        },
+        {
+          title: 'Envío de embalaje vacío',
+          id: 'send-empty-packing',
+          url: '/sendEmptyPacking',
+          icon: 'send'
         }
       ]
     },
