@@ -30,7 +30,7 @@ export class TariffSGAComponent implements OnInit {
   filters: FormGroup = this.formBuilder.group({
     warehouseId: 51
   });
-
+  newTariff: number;
   warehouses: Array<any> = [];
   /**Quantity of items for show in any page */
   pagerValues = [50, 100, 500];
@@ -160,13 +160,22 @@ export class TariffSGAComponent implements OnInit {
 
 
   isCalculating(): void {
+    
     this.tariffService.getIsCalculating().subscribe(
       data => {
+      
         this.processing = data.isCalculating;
         this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
-          this.listenChanges()
+          this.newTariff = 0;
+          this.listenChanges();
+        }else{
+          this.newTariff ++;
+          if(this.newTariff === 1){
+            this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+          }
         }
+        
       },
       () => {
         this.processing = true;
