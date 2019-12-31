@@ -6,6 +6,8 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {PickingService} from "../../../services/src/lib/endpoint/picking/picking.service";
 import {AlertController, LoadingController, ToastController} from "@ionic/angular";
 import {UserTimeModel, UserTimeService} from "@suite/services";
+import { filter, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'list-picking-rebuild',
@@ -64,9 +66,15 @@ export class ListPickingRebuildComponent implements OnInit {
       this.isLoadingPickings = false;
     };
     let subscribeErrorListPickings = (error) => {
-      console.error('Error::Subscribe:pickingService::getListAllPendingPicking::', error);
-      this.listPickings = new Array<PickingModel.PendingPickingsSelected>();
-      this.isLoadingPickings = false;
+      if(error.status === 404){
+        this.router.navigateByUrl('workwaves-scheduled');
+        this.isLoadingPickings = false;
+        return;
+      }else{
+        console.error('Error::Subscribe:pickingService::getListAllPendingPicking::', error);
+        this.listPickings = new Array<PickingModel.PendingPickingsSelected>();
+        this.isLoadingPickings = false;
+      }
     };
 
     if (this.idWorkwave) {
@@ -230,12 +238,13 @@ export class ListPickingRebuildComponent implements OnInit {
     this.workwavesService
       .postDeletePickings({ pickingsIds: this.listIdsPickingsSelected })
       .subscribe((res: any) => {
+        
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
         }
         this.presentToast('Tareas de picking eliminadas correctamente.', 'success');
-
+        this.usersNoSelectedToDelete = true;
         this.loadPickingsList();
         this.loadEmployees();
       }, (error) => {
