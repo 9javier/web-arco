@@ -10,17 +10,12 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { UpdateComponent } from './update/update.component';
-import { StoreComponent } from './store/store.component';
-import { SendComponent } from './send/send.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
-import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
-import { SendJailComponent } from './send-jail/send-jail.component';
 
 @Component({
-  selector: 'app-jail',
-  templateUrl: './jail.component.html',
-  styleUrls: ['./jail.component.scss'],
+  selector: 'app-send-empty-packing',
+  templateUrl: './send-empty-packing.component.html',
+  styleUrls: ['./send-empty-packing.component.scss'],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0px', minHeight: '0' })),
@@ -30,15 +25,15 @@ import { SendJailComponent } from './send-jail/send-jail.component';
   ]
 })
 
-export class JailComponent implements OnInit {
-  public title = 'Jaulas';
+export class SendEmptyPackingComponent implements OnInit {
+  public title = 'Envio de Jaulas vacias';
   // public displayedColumns: string[] = ['select', 'reference', 'buttons-print' ];
   public columns: any[] = [{ name: 'ID', value: 'id' }, { name: 'Referencia', value: 'reference' }];
   public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
-  public routePath = '/jails';
+  public routePath = '/send-empty-packing';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'isSend', "update", 'buttons-print'];
+  displayedColumns = ['select', 'reference', 'destiny', 'products-status', 'isSend'];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
@@ -90,26 +85,6 @@ export class JailComponent implements OnInit {
    * @param event - to cancel it
    * @param jail - jail to be updated
    */
-  async toUpdate(event, jail) {
-    event.stopPropagation();
-    event.preventDefault();
-    let modal = (await this.modalCtrl.create({
-      component: UpdateComponent,
-      componentProps: {
-        jail: jail
-      }
-    }))
-    modal.onDidDismiss().then(() => {
-      this.getCarriers();
-    })
-    modal.present();
-  }
-
-  /**
-   * Open modal to edit jail
-   * @param event - to cancel it
-   * @param jail - jail to be updated
-   */
   async toSend(event, jail) {
     event.stopPropagation();
     event.preventDefault();
@@ -124,20 +99,7 @@ export class JailComponent implements OnInit {
     })
     modal.present();
   }
-  /**
-   * Open modal to store jail
-   * @param event - to cancel it
-   * @param jail - jail to be updated
-   */
-  async toStore() {
-    let modal = (await this.modalCtrl.create({
-      component: StoreComponent
-    }));
-    modal.onDidDismiss().then(() => {
-      this.getCarriers();
-    })
-    modal.present();
-  }
+  
 
   getTypePacking() {
     this.intermediaryService.presentLoading();
@@ -194,7 +156,7 @@ export class JailComponent implements OnInit {
 
   getCarriers(): void {
     this.intermediaryService.presentLoading();
-    this.carrierService.getIndex().subscribe(carriers => {
+    this.carrierService.getCarrierMeWarehouse().subscribe(carriers => {
       console.log(carriers);
 
       this.carriers = carriers;
@@ -213,40 +175,8 @@ export class JailComponent implements OnInit {
   }
 
   isAvailableSend(carrier) {
-    let isAvailable =
-      carrier.packingSends.length > 0
-        ? carrier.packingSends[carrier.packingSends.length -1].isReception == false
-        : true;
-    if (isAvailable) {
-      // console.log('passa di qui');
-
-      if (isAvailable) {
-        let res =
-          carrier.carrierWarehousesDestiny.length == 0 ||
-          carrier.carrierWarehousesDestiny.length == 1;
-        return res;
-      }
-    }else{
-      // console.log(`${carrier.reference} passa da qui`);
-
-      let isAvailable2 =
-      carrier.packingSends.length > 0
-        ? carrier.packingSends[carrier.packingSends.length -1].isSend == true
-        : true;
-    if (isAvailable2) {
-      if (!isAvailable) {
-        let res =
-          carrier.carrierWarehousesDestiny.length == 0 ||
-          carrier.carrierWarehousesDestiny.length == 1;
-        return res;
-      }
-    }
-    }
-
-    return false;
+    return true;
   }
-
-
 
   /**
    * check if have items to delete
@@ -257,70 +187,7 @@ export class JailComponent implements OnInit {
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
-  /**
-   * copied function to show modal when user tap on print button
-   * @param event
-   * @param row
-   */
-  async print(event, row?: CarrierModel.Carrier) {
-    event.stopPropagation();
-    let listReferences: Array<string> = null;
-    if (row && row.reference) {
-      listReferences = [row.reference];
-    } else if (!row) {
-      listReferences = this.toDelete.value.jails.filter(jail => jail.selected).map(jail => jail.reference);
-    }
 
-    if (listReferences && listReferences.length > 0) {
-      this.printReferencesList(listReferences);
-    }
-  }
-
-
-
-  async newJail() {
-    let lista: number[] = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
-    let newLista = this.toDelete.value.jails.filter(jail => jail.selected);
-    let newId: CarrierModel.Carrier = null;
-    let listaCarrier: CarrierModel.Carrier[] = [];
-    let listaSend: CarrierModel.Carrier[] = [];
-    if (this.carriers.length > 1) {
-    } else {
-      this.carrierService.getIndex().subscribe(carriers => {
-        this.carriers = carriers;
-      })
-    }
-
-
-    lista.forEach(async (id) => {
-
-      newId = this.carriers.find(x => x.id === id)
-
-      if (newId) {
-        listaCarrier.push(newId)
-      }
-    });
-    if (listaCarrier.length > 0) {
-
-      listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status != 4 && x.carrierWarehousesDestiny.length === 1) {
-          return x;
-        }
-      })
-      if (listaSend.length > 0) {
-        listaSend.forEach(y => {
-          listaCarrier = listaCarrier.filter(x => x.id !== y.id)
-        })
-      }
-      this.presentAlert(listaCarrier, listaSend)
-
-    }
-
-
-
-
-
-  }
 
   async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
     let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
@@ -455,38 +322,6 @@ export class JailComponent implements OnInit {
   }
 
   /**
-   * Open modal to edit jail
-   * @param event - to cancel it
-   * @param jail - jail to be updated
-   */
-  async send(event, jail) {
-    event.stopPropagation();
-    event.preventDefault();
-    let modal = (await this.modalCtrl.create({
-      component: SendComponent,
-      componentProps: {
-        jail: jail
-      },
-      cssClass: 'modalStyles'
-    }))
-    modal.onDidDismiss().then(() => {
-      this.getCarriers();
-    })
-    modal.present();
-  }
-
-  async sendJaula(jails) {
-    let modal = (await this.modalCtrl.create({
-      component: SendJailComponent,
-      componentProps: {
-        jails
-      },
-      cssClass: 'modalStyles',
-    }))
-    modal.present()
-  }
-
-  /**
    * Change one destination
    * @param prev the previous warehouse
    * @param current the current value of this destination
@@ -513,22 +348,6 @@ export class JailComponent implements OnInit {
       this.intermediaryService.presentToastError("Error al actualizar destino");
       this.intermediaryService.dismissLoading();
     });
-  }
-
-  async showDestinations(event, jail) {
-    event.stopPropagation();
-    event.preventDefault();
-    let modal = (await this.modalCtrl.create({
-      component: ShowDestinationsComponent,
-      componentProps: {
-        jail: jail
-      }
-    }))
-    modal.onDidDismiss().then(() => {
-
-    })
-    modal.present();
-
   }
 
   getWarehouses() {

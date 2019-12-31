@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import { Observable } from 'rxjs';
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,7 @@ export class CarrierService {
 
   /**Private urls for Carrier service */
   private carrierUrl:string = environment.apiBase+"/packing";
+  private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/meWarehouses';
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
@@ -22,6 +23,7 @@ export class CarrierService {
   private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carriesEmptyPacking`
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
   private sendPackingUrl = environment.apiBase + "/packing/send";
+  private postSealsList = environment.apiBase+"/packing/seal-lista";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
 
@@ -38,6 +40,18 @@ export class CarrierService {
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierUrl).pipe(map(response=>{
       return response.data;
     }));
+  }
+  
+  getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
+    return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+
+  postSealList(reference:string[]){
+    let body={reference};
+    return this.http.post(this.postSealsList,body)
   }
 
   getPackingTypes(){

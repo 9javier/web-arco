@@ -275,3 +275,6 @@ export  * from './predistributions/predistributions.module';
 // // /**Receptions empty packing */
 export  * from './reception-empty-packing/reception-empty-packing.component'
 export  * from './reception-empty-packing/reception-empty-packing.module';
+
+export  * from './send-empty-packing/send-empty-packing.component'
+export  * from './send-empty-packing/send-empty-packing.module';

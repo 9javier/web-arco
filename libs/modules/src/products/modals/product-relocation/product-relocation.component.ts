@@ -221,7 +221,7 @@ export class ProductRelocationComponent implements OnInit {
     await alert.present();
   }
 
-  private checkFieldIsEnabled(source) {
+  checkFieldIsEnabled(source) {
     switch (source) {
       case 2:
         return this.listHallsOriginal[this.warehouseSelected];

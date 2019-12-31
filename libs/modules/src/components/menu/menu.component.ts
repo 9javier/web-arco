@@ -476,6 +476,12 @@ export class MenuComponent implements OnInit {
           id: 'reception-empty-packing',
           url: '/packing/carrierEmptyPacking',
           icon: 'exit'
+        },
+        {
+          title: 'Envío de embalaje vacío',
+          id: 'send-empty-packing',
+          url: '/sendEmptyPacking',
+          icon: 'send'
         }
       ]
     },
@@ -587,11 +593,13 @@ export class MenuComponent implements OnInit {
   filterPages(dictionary) {
     dictionary = JSON.parse(JSON.stringify(dictionary));
     this.newTariffs();
-    this.zona.run(() => {
-      setInterval(() => {
-        this.newTariffs();
-      }, 5 * 60 * 1000);
-    });
+    if(app.name == 'al') {
+      this.zona.run(() => {
+        setInterval(() => {
+          this.newTariffs();
+        }, 5 * 60 * 1000);
+      });
+    }
     let logoutItem = dictionary['user-time'] ? ({
       title: 'Cerrar sesión',
       id: 'logout',
