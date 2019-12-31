@@ -62,8 +62,11 @@ export class ListPickingRebuildComponent implements OnInit {
     this.isLoadingPickings = true;
 
     let subscribeResponseListPickings = (res: Array<PickingModel.PendingPickings>) => {
+      console.log('siamo qui',res.map(x => x.id));
+      
       this.listPickings = res;
       this.isLoadingPickings = false;
+      this.listIdsPickingsSelected = [];
     };
     let subscribeErrorListPickings = (error) => {
       if(error.status === 404){
@@ -182,6 +185,8 @@ export class ListPickingRebuildComponent implements OnInit {
   pickingSelected(data) {
     if (data.value) {
       this.listIdsPickingsSelected.push(data.id);
+      console.log(this.listIdsPickingsSelected);
+      
       this.usersNoSelectedToChangeUser = false;
       this.usersNoSelectedToDelete = this.listIdsPickingsSelected.length == 1 && !data.delete;
       if (!data.delete) {
@@ -219,6 +224,8 @@ export class ListPickingRebuildComponent implements OnInit {
       for (let picking of this.listPickings) {
         picking.selected = true;
         this.listIdsPickingsSelected.push(picking.id);
+        console.log(this.listIdsPickingsSelected);
+        
         if (picking.status == this.STATUS_PICKING_INITIATED) {
           this.quantityPickingsSelectedAndInitiated++;
         }
@@ -237,16 +244,41 @@ export class ListPickingRebuildComponent implements OnInit {
   private deletePickings() {
     this.workwavesService
       .postDeletePickings({ pickingsIds: this.listIdsPickingsSelected })
-      .subscribe((res: any) => {
+      .subscribe((res: {type:number,ids:number[]}) => {
+        // console.log(res.ids);
+        if(this.listIdsPickingsSelected.length === res.ids.length){
+          let prova = 0;
+          this.listIdsPickingsSelected.forEach(x =>{
+            let p = res.ids.find(es => es === x);
+            // console.log(p);
+            if(p){
+              prova ++;
+            }
+          })
+          if(prova === this.listPickings.length){
+            this.router.navigateByUrl('workwaves-scheduled');
+            if (this.loading) {
+              this.loading.dismiss();
+              this.loading = null;
+            }
+            return;
+          }
+          console.log(prova);
+        }
         
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
         }
+
         this.presentToast('Tareas de picking eliminadas correctamente.', 'success');
         this.usersNoSelectedToDelete = true;
+        
+        
+        
         this.loadPickingsList();
         this.loadEmployees();
+
       }, (error) => {
         console.error('Error::Subscribe:workwavesService::deleteDeletePickings::', error);
         if (this.loading) {
