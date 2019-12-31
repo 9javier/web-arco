@@ -33,7 +33,7 @@ export class SendEmptyPackingComponent implements OnInit {
   public routePath = '/send-empty-packing';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'isSend'];
+  displayedColumns = ['select', 'reference', 'destiny', 'products-status', 'isSend'];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
@@ -156,7 +156,7 @@ export class SendEmptyPackingComponent implements OnInit {
 
   getCarriers(): void {
     this.intermediaryService.presentLoading();
-    this.carrierService.getIndex().subscribe(carriers => {
+    this.carrierService.getCarrierMeWarehouse().subscribe(carriers => {
       console.log(carriers);
 
       this.carriers = carriers;
@@ -175,40 +175,8 @@ export class SendEmptyPackingComponent implements OnInit {
   }
 
   isAvailableSend(carrier) {
-    let isAvailable =
-      carrier.packingSends.length > 0
-        ? carrier.packingSends[carrier.packingSends.length -1].isReception == false
-        : true;
-    if (isAvailable) {
-      // console.log('passa di qui');
-
-      if (isAvailable) {
-        let res =
-          carrier.carrierWarehousesDestiny.length == 0 ||
-          carrier.carrierWarehousesDestiny.length == 1;
-        return res;
-      }
-    }else{
-      // console.log(`${carrier.reference} passa da qui`);
-
-      let isAvailable2 =
-      carrier.packingSends.length > 0
-        ? carrier.packingSends[carrier.packingSends.length -1].isSend == true
-        : true;
-    if (isAvailable2) {
-      if (!isAvailable) {
-        let res =
-          carrier.carrierWarehousesDestiny.length == 0 ||
-          carrier.carrierWarehousesDestiny.length == 1;
-        return res;
-      }
-    }
-    }
-
-    return false;
+    return true;
   }
-
-
 
   /**
    * check if have items to delete
@@ -219,70 +187,7 @@ export class SendEmptyPackingComponent implements OnInit {
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
-  /**
-   * copied function to show modal when user tap on print button
-   * @param event
-   * @param row
-   */
-  async print(event, row?: CarrierModel.Carrier) {
-    event.stopPropagation();
-    let listReferences: Array<string> = null;
-    if (row && row.reference) {
-      listReferences = [row.reference];
-    } else if (!row) {
-      listReferences = this.toDelete.value.jails.filter(jail => jail.selected).map(jail => jail.reference);
-    }
 
-    if (listReferences && listReferences.length > 0) {
-      this.printReferencesList(listReferences);
-    }
-  }
-
-
-
-  async newJail() {
-    let lista: number[] = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
-    let newLista = this.toDelete.value.jails.filter(jail => jail.selected);
-    let newId: CarrierModel.Carrier = null;
-    let listaCarrier: CarrierModel.Carrier[] = [];
-    let listaSend: CarrierModel.Carrier[] = [];
-    if (this.carriers.length > 1) {
-    } else {
-      this.carrierService.getIndex().subscribe(carriers => {
-        this.carriers = carriers;
-      })
-    }
-
-
-    lista.forEach(async (id) => {
-
-      newId = this.carriers.find(x => x.id === id)
-
-      if (newId) {
-        listaCarrier.push(newId)
-      }
-    });
-    if (listaCarrier.length > 0) {
-
-      listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status != 4 && x.carrierWarehousesDestiny.length === 1) {
-          return x;
-        }
-      })
-      if (listaSend.length > 0) {
-        listaSend.forEach(y => {
-          listaCarrier = listaCarrier.filter(x => x.id !== y.id)
-        })
-      }
-      this.presentAlert(listaCarrier, listaSend)
-
-    }
-
-
-
-
-
-  }
 
   async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
     let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);

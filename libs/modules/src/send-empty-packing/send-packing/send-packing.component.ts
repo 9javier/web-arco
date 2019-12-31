@@ -41,10 +41,11 @@ export class SendPackingComponent implements OnInit {
     private warehousesService:WarehousesService
     ) {
     this.jail = this.navParams.get("jail");
-    if(this.jail.carrierWarehousesDestiny.length  == 1) {
+    console.log('jail >>> ', this.jail);
+    /*if(this.jail.carrierWarehousesDestiny.length  == 1) {
       this.selectedWarehouse = this.jail.carrierWarehousesDestiny[0].warehouse.id;
       this.warehouse = this.jail.carrierWarehousesDestiny[0].warehouse;
-    }
+    }*/
   }
 
 

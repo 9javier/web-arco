@@ -14,6 +14,7 @@ export class CarrierService {
 
   /**Private urls for Carrier service */
   private carrierUrl:string = environment.apiBase+"/packing";
+  private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/meWarehouses';
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
@@ -40,6 +41,13 @@ export class CarrierService {
       return response.data;
     }));
   }
+  
+  getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
+    return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
 
   postSealList(reference:string[]){
     let body={reference};
