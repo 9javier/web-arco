@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SendPackingComponent } from './send-packing/send-packing.component';
+import { SendPackingManualComponent } from './send-packing-manual/send-packing-manual.component';
 
 @Component({
   selector: 'app-send-empty-packing',
@@ -370,6 +371,21 @@ export class SendEmptyPackingComponent implements OnInit {
     });
 
     return await modal.present();
+  }
+
+  async toScanner(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component: SendPackingManualComponent,
+      componentProps: {
+        //jail: jail
+      }
+    }))
+    modal.onDidDismiss().then(() => {
+      this.getCarriers();
+    })
+    modal.present();   
   }
 }
 

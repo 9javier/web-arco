@@ -1,0 +1,46 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Enviar</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+    <div>
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <i class="material-icons" color="medium">title</i>   
+            </div>
+            <ion-label class="label large" position="stacked">Referencia:</ion-label>
+
+        </ion-item>
+    </div>
+    <div>
+        <suite-input-codes></suite-input-codes>
+    </div>
+    <br>
+    <div>
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <ion-icon name="albums"></ion-icon>
+            </div>
+            <ion-label class="label large" position="stacked">Almacén:</ion-label>
+            <mat-form-field style="width: 100%">
+                <mat-select (selectionChange)="selectWarehouse($event)" [(ngModel)]="selectedWarehouse">
+                    <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+                            {{warehouse.reference}} {{warehouse.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </ion-item>
+    </div>
+    </ion-content>
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+        <ion-button slot="end" color="primary"  (click)="submit()">Enviar</ion-button>
+    </ion-toolbar>
+</ion-footer>
