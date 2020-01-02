@@ -208,10 +208,9 @@ export class JailComponent implements OnInit {
   }
 
   isAvailableSend(carrier) {
-    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[0].isReception == false : true;
+    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[carrier.packingSends.length - 1].isReception : true;
     if (isAvailable) {
-      let res = carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
-      return res;
+      return carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
     }
     return false;
   }
