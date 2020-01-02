@@ -10,6 +10,16 @@ export namespace PermissionsModel {
     code: number;
   }
 
+  export interface ResponseGestionPermision {
+    statusCode: number,
+    statusMessage: string,
+    statusDescription: string,
+    result: any,
+    data: boolean,
+    message: string,
+    code: number
+  }
+
   export interface ResponseShow {
     data: Permission;
   }

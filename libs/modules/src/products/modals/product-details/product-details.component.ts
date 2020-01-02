@@ -10,7 +10,8 @@ import { Observable } from "rxjs";
 import * as moment from 'moment';
 import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { DateTimeParserService } from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
-
+import { PermissionsService } from '../../../../../services/src/lib/endpoint/permissions/permissions.service';
+import { async } from '@angular/core/testing';
 @Component({
   selector: 'suite-product-details',
   templateUrl: './product-details.component.html',
@@ -21,6 +22,9 @@ export class ProductDetailsComponent implements OnInit {
   /**The section that by showed in the modal */
   section = 'information';
   title = 'Ubicación ';
+
+  permision: boolean;
+
 
   product: InventoryModel.SearchInContainer;
   productHistorical;
@@ -64,6 +68,7 @@ export class ProductDetailsComponent implements OnInit {
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
     private toastController: ToastController,
+    private servicePermision: PermissionsService,
     private dateTimeParserService: DateTimeParserService,
   ) {
     this.product = this.navParams.get("product");
@@ -170,16 +175,34 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   private processMovementMessageAndLocate(product, generateAvelonMovement: boolean) {
-    let referenceProduct = product.productShoeUnit.reference;
-    let textLoading = 'Reubicando producto...';
-    let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
-    if (this.referenceContainer) {
-      let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
-      textToastOk += ' en Ubicación ' + location;
-    } else {
-      textToastOk += ' de tienda.';
-    }
-    this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk, generateAvelonMovement);
+        if(this.permision){ 
+          let referenceProduct = product.productShoeUnit.reference;
+          let textLoading = 'Reubicando producto...';
+          let textToastOk = 'Producto ' + referenceProduct + ' reubicado';
+          if (this.referenceContainer) {
+            let location = parseInt(this.referenceContainer.substring(1, 4)) + ' . ' + parseInt(this.referenceContainer.substring(8, 11)) + ' . ' + parseInt(this.referenceContainer.substring(5, 7));
+            textToastOk += ' en Ubicación ' + location;
+          } else {
+            textToastOk += ' de tienda.';
+          }
+          this.locateProductFunction(this.referenceContainer, referenceProduct, this.warehouseSelected, textLoading, textToastOk, generateAvelonMovement);
+        }else{
+          this.AlertPermision()
+        }
+  }
+
+  async AlertPermision(){
+    let alert = await this.alertController.create({
+        header:'¡Usted no tiene los Permisos para gererar esta operacion!',
+        message:'Pedir permissos',
+        buttons:[{
+          text:'OK',
+          handler:()=>{
+            this.close();
+          }
+        }]
+    });
+    await alert.present();
   }
 
   private locateProductFunction(referenceContainer: string, referenceProduct: string, idWarehouse: number, textLoading: string, textToastOk: string, generateAvelonMovement: boolean) {

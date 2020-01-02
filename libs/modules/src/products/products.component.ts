@@ -1,4 +1,4 @@
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, of, Observable } from 'rxjs';
 import { Filter } from './enums/filter.enum';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource } from '@angular/material';
@@ -14,7 +14,8 @@ import {
   WarehouseService,
   WarehousesService,
   IntermediaryService,
-  UsersService
+  UsersService,
+  PermissionsModel
 } from '@suite/services';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
@@ -27,6 +28,7 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 import { FilterButtonComponent } from "../components/filter-button/filter-button.component";
 import { map, catchError } from 'rxjs/operators';
 import { ProductRelocationComponent } from './modals/product-relocation/product-relocation.component';
+import { PermissionsService } from '../../../services/src/lib/endpoint/permissions/permissions.service';
 
 @Component({
   selector: 'app-products',
@@ -44,6 +46,7 @@ export class ProductsComponent implements OnInit {
   /**previous reference to detect changes */
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
+  permision:boolean;
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -131,7 +134,8 @@ export class ProductsComponent implements OnInit {
     private productsService: ProductsService,
     private modalController: ModalController,
     private printerService: PrinterService,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private permisionService: PermissionsService
   ) {
     this.isMobileApp = typeof window.cordova !== "undefined";
   }
@@ -508,6 +512,7 @@ export class ProductsComponent implements OnInit {
         this.hasDeleteProduct = response.body.data;
       })
     });
+    this.getPermisionUser()
 
     this.getFilters();
     this.listenChanges();
@@ -659,7 +664,8 @@ export class ProductsComponent implements OnInit {
     return (await this.modalController.create({
       component: ProductDetailsComponent,
       componentProps: {
-        product: product
+        product: product,
+        permision: this.permision
       }
     })).present();
   }
@@ -800,6 +806,19 @@ export class ProductsComponent implements OnInit {
         break;
     }
     return location;
+  }
+
+  /**
+   * @description regresa Permisos de User
+   * @author Gaetano Sabino
+   */
+  private getPermisionUser(){
+    this.permisionService.getGestionPermision().then(obs =>{
+      obs.subscribe(permision =>{
+        this.permision = permision.body.data;
+      })
+    });
+    
   }
 
   private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
@@ -944,7 +963,8 @@ export class ProductsComponent implements OnInit {
     let modal = await this.modalController.create({
       component: ProductRelocationComponent,
       componentProps: {
-        products: this.itemsIdSelected
+        products: this.itemsIdSelected,
+        permision:this.permision
       },
       cssClass: 'modal-relocation'
     });
@@ -953,19 +973,23 @@ export class ProductsComponent implements OnInit {
       if (data.data.dismissed) {
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         this.itemsIdSelected = [];
+      }else if(!data.data.dismissed){
+        this.selectedForm.controls.toSelect.reset()
+        this.itemsIdSelected = [];
       }
     });
-
     modal.present();
   }
 
   itemSelected(product) {
+
     const index = this.itemsIdSelected.indexOf(product, 0);
     if (index > -1) {
       this.itemsIdSelected.splice(index, 1);
     } else {
       this.itemsIdSelected.push(product);
     }
+    
   }
 }
 
