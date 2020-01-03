@@ -137,8 +137,6 @@ export class TariffSGAComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.tariffService.getTariffIfSoftdelete().subscribe(
       data => {
-        console.log(data);
-
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
         this.tariffs = data.results.map(result => {
@@ -163,7 +161,6 @@ export class TariffSGAComponent implements OnInit {
     
     this.tariffService.getIsCalculating().subscribe(
       data => {
-      
         this.processing = data.isCalculating;
         this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
@@ -278,6 +275,7 @@ export class TariffSGAComponent implements OnInit {
           text: 'Confirmar',
           handler: () => {
             this.intermediaryService.presentLoading("Modificando los seleccionados");
+            this.dataSource = [];
             this.tariffService.syncTariff().subscribe(result => {
               this.intermediaryService.dismissLoading();
               this.listenChanges();
