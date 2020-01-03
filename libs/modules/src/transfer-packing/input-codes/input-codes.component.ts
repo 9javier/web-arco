@@ -64,7 +64,8 @@ export class InputCodesComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
-        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {
+        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET
+        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.BAG) {
         if (this.isProcessStarted) {
           this.transferAmongPackings(dataWrote);
         } else {

@@ -31,6 +31,7 @@ export class ScanditProvider {
     CONTAINER_OLD: 'container_old',
     JAIL: 'jail',
     PALLET: 'pallet',
+    BAG: 'bag',
     PRODUCT: 'product',
     PRODUCT_MODEL: 'product_model',
     PRODUCT_UNDEFINED: 'product_undefined'
@@ -57,6 +58,10 @@ export class ScanditProvider {
       regex: /P([0-9]){4}/
     },
     {
+      value: this._codeValue.BAG,
+      regex: /B([0-9]){4}/
+    },
+    {
       value: this._codeValue.PRODUCT,
       regex: /([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/
     },
@@ -64,7 +69,7 @@ export class ScanditProvider {
       value: this._codeValue.PRODUCT_MODEL,
       regex: /([0-9]){1,6}$/
     },
-    
+
     {
       value: this._codeValue.PRODUCT_UNDEFINED,
       regex: /(\w){1,18}$/
@@ -101,6 +106,7 @@ export interface CodeValue {
   CONTAINER_OLD: string,
   JAIL: string,
   PALLET: string,
+  BAG: string,
   PRODUCT: string,
   PRODUCT_MODEL: string,
   PRODUCT_UNDEFINED: string
