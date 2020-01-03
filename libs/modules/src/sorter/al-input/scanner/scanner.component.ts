@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
-import {ScanditProvider} from "../../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../../services/src/providers/item-references/item-references.provider";
 import {IntermediaryService} from "@suite/services";
 import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
 import {SorterInputService} from "../../../../../services/src/lib/endpoint/sorter-input/sorter-input.service";
@@ -53,7 +53,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     private sorterInputService: SorterInputService,
     private sorterExecutionService: SorterExecutionService,
     public sorterProvider: SorterProvider,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private toolbarProvider: ToolbarProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService
@@ -175,7 +175,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       }
       this.focusToInput();
     } else {
-      if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
         this.addScannerRackButton();
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);

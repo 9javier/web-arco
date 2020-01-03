@@ -4,6 +4,7 @@ import {ScanditModel} from "../../../models/scandit/Scandit";
 import {CarriersService} from "../../endpoint/carriers/carriers.service";
 import {CarrierModel} from "../../../models/endpoints/Carrier";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -20,8 +21,9 @@ export class SealScanditService {
 
   constructor(
     private carriersService: CarriersService,
-    private scanditProvider: ScanditProvider
-  ) {
+    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider
+) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
 
@@ -41,8 +43,7 @@ export class SealScanditService {
           }
           timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
-          if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
-            || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+          if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
             // Seal the packing
             ScanditMatrixSimple.showLoadingDialog('Precintando embalaje...');
             this.carriersService

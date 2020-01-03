@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import { Observable } from "rxjs";
-import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
 import { AlertController, ToastController } from "@ionic/angular";
-import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
@@ -37,7 +35,7 @@ export class TextareaComponent implements OnInit {
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
     private intermediaryService: IntermediaryService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
   ) {
@@ -78,7 +76,7 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.processInitiated = true;
-      if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+      if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
         this.audioProvider.playDefaultOk();
         this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
         this.containerReference = dataWrited;
@@ -87,7 +85,7 @@ export class TextareaComponent implements OnInit {
         this.inputPositioning = null;
         this.errorMessage = null;
         this.processInitiated = false;
-      } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let params: any = {
           productReference: dataWrited,
           warehouseId: warehouseId,
@@ -104,7 +102,7 @@ export class TextareaComponent implements OnInit {
 
         this.inputPositioning = null;
         this.errorMessage = null;
-      } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.JAIL)) {
+      } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PACKING) {
         this.audioProvider.playDefaultOk();
         this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
         this.containerReference = null;

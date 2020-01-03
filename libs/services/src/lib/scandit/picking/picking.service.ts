@@ -8,6 +8,7 @@ import {ScanditModel} from "../../../models/scandit/Scandit";
 import {Events} from "@ionic/angular";
 import {environment} from "../../../environments/environment";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -28,7 +29,8 @@ export class PickingScanditService {
     private events: Events,
     private pickingStoreService: PickingStoreService,
     private scanditProvider: ScanditProvider,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+    private itemReferencesProvider: ItemReferencesProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -60,7 +62,7 @@ export class PickingScanditService {
         if (response.barcode && response.barcode.data && this.lastCodeScanned != response.barcode.data) {
           let codeScanned = response.barcode.data;
           if(scanMode == 'products'){
-            if(this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT){
+            if(this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT){
               this.lastCodeScanned = codeScanned;
               ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
 
@@ -134,8 +136,7 @@ export class PickingScanditService {
               this.hideTextMessage(2000);
             }
           } else if (scanMode == 'carriers') {
-            if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
-              || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+            if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
               ScanditMatrixSimple.showLoadingDialog('Cargando embalaje...');
               ScanditMatrixSimple.setTimeout("scannedPacking",  0.5 * 1000, JSON.stringify([codeScanned]));
             } else {
@@ -147,7 +148,7 @@ export class PickingScanditService {
               this.hideTextMessage(2000);
             }
           } else if (scanMode == 'products_disassociate') {
-            if(this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
+            if(this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT) {
               ScanditMatrixSimple.showLoadingDialog('Desasociando artículo del traspaso actual...');
               this.pickingStoreService
                 .postLineRequestDisassociate({

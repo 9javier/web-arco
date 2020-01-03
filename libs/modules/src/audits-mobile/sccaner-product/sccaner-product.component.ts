@@ -4,7 +4,7 @@ import {PopoverController, ToastController} from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {ScannerManualComponent} from "../../components/scanner-manual/scanner-manual.component";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {AuditsModel} from "../../../../services/src/models/endpoints/Audits";
@@ -34,7 +34,7 @@ export class SccanerProductComponent implements OnInit {
     private activeRoute: ActivatedRoute,
     private router : Router,
     private audioProvider: AudioProvider,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private carrierService: CarrierService,
     private intermediaryService: IntermediaryService,
     private locattion: Location,
@@ -55,7 +55,7 @@ export class SccanerProductComponent implements OnInit {
   }
 
   userTyping(codeScanned: string) {
-    if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
+    if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT) {
       this.scannerManual.setValue(null);
       this.addProduct(codeScanned, false);
     } else {

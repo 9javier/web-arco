@@ -1,13 +1,11 @@
-import { Value } from './../../../../../config/postman/sga_localhost_environment';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { AlertController, ToastController, ModalController } from "@ionic/angular";
+import { Component, Input, OnInit } from '@angular/core';
+import { AlertController, ToastController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
-import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import { PriceModel, PriceService } from "@suite/services";
 import { PrintModel } from "../../../../services/src/models/endpoints/Print";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import { range } from 'rxjs';
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
@@ -37,7 +35,7 @@ export class InputCodesComponent implements OnInit {
     private alertController: AlertController,
     private printerService: PrinterService,
     private priceService: PriceService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
   ) {
@@ -180,8 +178,8 @@ export class InputCodesComponent implements OnInit {
 
       this.inputProduct = null;
       this.inputProductMotivo = null;
-      switch (this.scanditProvider.checkCodeValue(dataWrote)) {
-        case this.scanditProvider.codeValue.PRODUCT:
+      switch (this.itemReferencesProvider.checkCodeValue(dataWrote)) {
+        case this.itemReferencesProvider.codeValue.PRODUCT:
 
 
           switch (this.typeTags) {
@@ -233,7 +231,7 @@ export class InputCodesComponent implements OnInit {
               break;
           }
           break;
-        case this.scanditProvider.codeValue.PRODUCT_MODEL:
+        case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
 
 
           console.log('prodotti_modelli');
