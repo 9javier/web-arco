@@ -33,7 +33,7 @@ export class SendPackingManualComponent implements OnInit {
   warehouse: WarehouseModel.Warehouse;
   selectedWarehouse;
 
-  public typeTags: number = 2;
+  public typeTags: number = 1;
 
 
   constructor(

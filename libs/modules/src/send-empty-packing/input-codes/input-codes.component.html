@@ -1,4 +1,24 @@
 <div class="content-ta">
+  <div class="error-positioning">
+    <ion-item>
+      <div slot="start" class="slot-start-icon">
+          <ion-icon name="albums"></ion-icon>
+      </div>
+      <ion-label class="label large" position="stacked">Almacén:</ion-label>
+      <mat-form-field style="width: 100%">
+          <mat-select (selectionChange)="selectWarehouse($event)" [(ngModel)]="selectedWarehouse">
+              <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+                      {{warehouse.reference}} {{warehouse.name}}
+              </mat-option>
+          </mat-select>
+      </mat-form-field>
+  </ion-item>
   <input id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)"
-    (focus)="onFocus($event)" [(ngModel)]="inputProduct">
+           [(ngModel)]="inputProduct" (focus)="onFocus($event)">
+      
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="primary"  (click)="submit()">Enviar</ion-button>
+  </ion-toolbar>
+  </div>
 </div>

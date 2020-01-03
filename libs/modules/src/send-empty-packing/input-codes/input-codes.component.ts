@@ -1,12 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { AlertController, ToastController } from "@ionic/angular";
+import { Value } from './../../../../../config/postman/sga_localhost_environment';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { AlertController, ToastController, ModalController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
-import { AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel } from "@suite/services";
+import { PriceModel, PriceService } from "@suite/services";
+import { PrintModel } from "../../../../services/src/models/endpoints/Print";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import { range, interval } from 'rxjs';
+import { range } from 'rxjs';
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
+import { CarrierService, IntermediaryService, WarehousesService, WarehouseModel } from '@suite/services';
+import { MatSelectChange } from '@angular/material';
+import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 
 @Component({
   selector: 'suite-input-codes',
@@ -15,184 +20,183 @@ import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.
 })
 export class InputCodesComponent implements OnInit {
 
-  dataToWrite: string = 'PRODUCTO';
+  dataToWrite: string = 'JAULA';
   inputProduct: string = null;
   lastCodeScanned: string = 'start';
-  private lastProductReferenceScanned: string = 'start';
+  stampe: number = 1;
 
-  private isStoreUser: boolean = false;
-  private storeUserObj: WarehouseModel.Warehouse = null;
-
-  public typeTagsBoolean: boolean = false;
+  @Input() typeTags: number = 1;
+  public typeTagsBoolean: boolean = true;
 
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
+
+  finestampa$: boolean;
+
+  warehouses:Array<WarehouseModel.Warehouse> = [];
 
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
     private printerService: PrinterService,
     private priceService: PriceService,
-    private productsService: ProductsService,
-    private authService: AuthenticationService,
     private scanditProvider: ScanditProvider,
     private audioProvider: AudioProvider,
-    private keyboardService: KeyboardService
+    private keyboardService: KeyboardService,
+    private warehousesService:WarehousesService,
+    private modalController:ModalController,
+    private carrierService:CarrierService,
+    private intermediaryService:IntermediaryService,
+
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
+    this.warehousesService.getListAllWarehouses().then((warehouses: WarehouseModel.ResponseListAllWarehouses) => {
+      this.warehouses = warehouses.data;
+    })
   }
 
   async ngOnInit() {
-    this.isStoreUser = await this.authService.isStoreUser();
-    if (this.isStoreUser) {
-      this.storeUserObj = await this.authService.getStoreCurrentUser();
-    }
+    this.stampe = 1;
+    this.typeTagsBoolean = this.typeTags != 1;
+    this.printerService.stampe$.subscribe(() => {
+      this.stampe = 1;
+    })
   }
 
   private focusToInput() {
     setTimeout(() => {
       document.getElementById('input-ta').focus();
-    }, 800);
+    }, 500);
+  }
+
+  async ngOnDestroy() {
+    this.stampe = 1;
+  }
+  submit() {
+    let dataWrote = (this.inputProduct || "").trim();
+    if (dataWrote === this.lastCodeScanned) {
+      this.inputProduct = null;
+      this.focusToInput();
+      return;
+    }
+    this.lastCodeScanned = dataWrote;
+    if (this.timeoutStarted) {
+      clearTimeout(this.timeoutStarted);
+    }
+    this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
+    // validate if existe joule o packing ref
+    if(this.warehouse == undefined) {
+      this.audioProvider.playDefaultError();
+      this.presentToast('Debe seleccionar el almacen de destino.', 'danger');
+      this.focusToInput();
+      return;
+    }
+      //send Empty jaule
+    this.intermediaryService.presentLoading();
+    // let value = this.warehouse.id;
+    this.carrierService.sendPacking(dataWrote, this.warehouse.id).subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
+      this.close();
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError("Error de envío de embalaje");
+    });
+    return;
   }
 
   keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
+    // console.log({dataWrote});
 
     if (event.keyCode == 13 && dataWrote) {
+
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
         this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrote;
-      this.lastProductReferenceScanned = dataWrote;
-
       if (this.timeoutStarted) {
         clearTimeout(this.timeoutStarted);
       }
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
-
-      this.inputProduct = null;
-      switch (this.scanditProvider.checkCodeValue(dataWrote)) {
-        case this.scanditProvider.codeValue.PRODUCT:
-          if (this.isStoreUser) {
-            this.postRelabelProduct(dataWrote);
-          } else {
-            this.audioProvider.playDefaultOk();
-            this.printerService.printTagBarcode([dataWrote]);
-            this.focusToInput();
-          }
-          break;
-        case this.scanditProvider.codeValue.PRODUCT_MODEL:
-          this.getSizeListByReference(dataWrote);
-          break;
-        default:
-          this.audioProvider.playDefaultError();
-          this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
-          this.focusToInput();
-          break;
+      // validate if existe joule o packing ref
+      if(this.warehouse == undefined) {
+        this.audioProvider.playDefaultError();
+        this.presentToast('Debe seleccionar el almacen de destino.', 'danger');
+        this.focusToInput();
+        return;
       }
+      //send Empty jaule
+      this.intermediaryService.presentLoading();
+     // let value = this.warehouse.id;
+      this.carrierService.sendPacking(dataWrote, this.warehouse.id).subscribe(()=>{
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
+        this.close();
+      },()=>{
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError("Error de envío de embalaje");
+      });
+      return;
+    }
+  }
+  private changePackingDestiny() {
+    let value = this.warehouse.id;
+    this.carrierService.sendPacking(this.warehouse.id, value).subscribe(()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
+      this.close();
+    },()=>{
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError("Error de envío de embalaje");
+    });
+  }
+
+  toggleChange() {
+    this.typeTagsBoolean = !this.typeTagsBoolean;
+    let buttons = document.getElementsByClassName('bottons-mas-menos')[0] as HTMLElement;
+    if (this.typeTagsBoolean) {
+      buttons.style.display = 'block';
+    } else {
+      buttons.style.display = 'none';
     }
   }
 
-  private getSizeListByReference(dataWrote: string) {
-    this.productsService
-      .getInfo(dataWrote)
-      .then(async (res: ProductModel.ResponseInfo) => {
-        if (res.code == 200) {
-          let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
-          if (responseSizeAndModel.model && responseSizeAndModel.sizes) {
-            if (responseSizeAndModel.sizes.length == 1) {
-              if (this.isStoreUser) {
-                this.focusToInput();
-                this.postRelabelProduct(this.lastProductReferenceScanned, responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
-              } else {
-                this.audioProvider.playDefaultOk();
-                this.presentAlertInput(responseSizeAndModel.model.id, responseSizeAndModel.sizes[0].id);
-              }
-            } else {
-              this.audioProvider.playDefaultOk();
-              let responseSizeAndModel: ProductModel.SizesAndModel = <ProductModel.SizesAndModel>res.data;
+  private convertArrayFromPrint(data: any, outputArray?: Boolean): Array<any> {
+    let dataJoin = []
+    let out;
+    if (this.stampe == 1) {
+      if (outputArray) {
+        dataJoin.push(data);
+        out = dataJoin;
+      } else {
+        out = data;
+      }
 
-              let listItems = responseSizeAndModel.sizes.map((size, iSize) => {
-                return {
-                  name: 'radio' + iSize,
-                  type: 'radio',
-                  label: size.name,
-                  value: iSize
-                }
-              });
-              this.presentAlertSelect(listItems, responseSizeAndModel);
-            }
-          }
-        } else if (res.code == 0) {
-          this.audioProvider.playDefaultError();
-          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
-          this.focusToInput();
-        } else {
-          this.audioProvider.playDefaultError();
-          this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
-          this.focusToInput();
+    } else
+      if (this.stampe > 1) {
+        for (let i = 0; i < this.stampe; i++) {
+          dataJoin.push(data);
         }
-      }, (error) => {
-        console.error('Error::Subscribe::GetInfo -> ', error);
-        this.audioProvider.playDefaultError();
-        this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
-        this.focusToInput();
-      })
-      .catch((error) => {
-        console.error('Error::Subscribe::GetInfo -> ', error);
-        this.audioProvider.playDefaultError();
-        this.presentToast('No se ha podido consultar la información del producto escaneado.', 'danger');
-        this.focusToInput();
-      });
+        out = dataJoin;
+      }
+    return out;
   }
 
-  private async postRelabelProduct(productReference: string, modelId?: number, sizeId?: number, locationReference?: string) {
-    let paramsRelabel: ProductModel.ParamsRelabel = {
-      productReference
-    };
+  private async showToastWrongReference(type: number, lastCodeScanned: Boolean = true) {
 
-    if (this.isStoreUser) {
-      paramsRelabel.warehouseId = this.storeUserObj.id;
+    lastCodeScanned ? this.lastCodeScanned = 'start' : null;
+    let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
+    if (type == 1) {
+      msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
+    } else if (type == 2) {
+      msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
     }
-
-    if (modelId) {
-      paramsRelabel.modelId = modelId;
-    }
-
-    if (sizeId) {
-      paramsRelabel.sizeId = sizeId;
-    }
-
-    if (locationReference) {
-      paramsRelabel.locationReference = locationReference;
-    }
-
-    this.productsService
-      .postRelabel(paramsRelabel)
-      .then((res: ProductModel.ResponseRelabel) => {
-        if (res.code == 200) {
-          // Do product print
-          this.audioProvider.playDefaultOk();
-          this.printerService.printTagBarcodeUsingProduct(res.data);
-          this.focusToInput();
-        } else if (res.code == 0) {
-          this.audioProvider.playDefaultError();
-          this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
-          this.focusToInput();
-        } else {
-          this.audioProvider.playDefaultError();
-          this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
-          this.focusToInput();
-        }
-      }, (error) => {
-        console.error('Error::Subscribe::Relabel -> ', error);
-        this.audioProvider.playDefaultError();
-        this.presentToast('Ha ocurrido un error al intentar consultar la información de la talla.', 'danger');
-        this.focusToInput();
-      });
+    this.audioProvider.playDefaultError();
+    this.presentToast(msg, 'danger');
   }
 
   private async presentToast(msg: string, color: string = 'primary') {
@@ -211,7 +215,7 @@ export class InputCodesComponent implements OnInit {
       });
   }
 
-  private async presentAlertSelect(listItems: any[], listProductsSizes: ProductModel.SizesAndModel) {
+  private async presentAlertSelect(listItems: any[], listProductPrices: any[]) {
     const alert = await this.alertController.create({
       header: 'Selecciona talla a usar',
       inputs: listItems,
@@ -223,19 +227,19 @@ export class InputCodesComponent implements OnInit {
           handler: () => this.focusToInput()
         }, {
           text: 'Seleccionar',
-          handler: async (data) => {
+          handler: (data) => {
             // Avoid close alert without selection
             if (typeof data == 'undefined') {
               return false;
             }
 
-            this.focusToInput();
-            let modelId = listProductsSizes.model.id;
-            let sizeId = listProductsSizes.sizes[data].id;
-            if (this.isStoreUser) {
-              this.postRelabelProduct(this.lastProductReferenceScanned, modelId, sizeId);
+            let price = listProductPrices[data];
+            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+              this.presentAlertWarningPriceWithoutTariff(price);
             } else {
-              this.presentAlertInput(modelId, sizeId);
+              this.audioProvider.playDefaultOk();
+              this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+              this.focusToInput();
             }
           }
         }
@@ -245,22 +249,25 @@ export class InputCodesComponent implements OnInit {
     await alert.present();
   }
 
-  private async presentAlertInput(modelId: number, sizeId: number) {
+  private async presentAlertWarningPriceWithoutTariff(price: PriceModel.PriceByModelTariff) {
     const alert = await this.alertController.create({
-      header: 'Ubicación del producto',
-      message: 'Introduce la referencia de la ubicación o el embalaje en que está el producto. Si no está en ninguno de estos sitios continúa sin rellenar este campo.',
-      inputs: [{
-        name: 'reference',
-        type: 'text',
-        placeholder: 'Referencia '
-      }],
-      backdropDismiss: false,
+      header: '¡Precio sin tarifa!',
+      message: 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?',
       buttons: [
         {
-          text: 'Continuar',
-          handler: (data) => {
-            let reference = data.reference.trim();
-            this.postRelabelProduct(this.lastProductReferenceScanned, modelId, sizeId, reference);
+          text: 'No',
+          handler: () => {
+            this.lastCodeScanned = 'start';
+            this.focusToInput();
+          }
+        },
+        {
+          text: 'Sí',
+          handler: () => {
+            price.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+            this.audioProvider.playDefaultOk();
+            this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
+            this.focusToInput();
           }
         }
       ]
@@ -273,5 +280,15 @@ export class InputCodesComponent implements OnInit {
     if (event && event.target && event.target.id) {
       this.keyboardService.setInputFocused(event.target.id);
     }
+  }
+
+  selectedWarehouse;
+  warehouse;
+  selectWarehouse(event: MatSelectChange) {
+    this.selectedWarehouse = event.value;
+    this.warehouses.forEach(warehouse => {if(warehouse.id == this.selectedWarehouse) this.warehouse = warehouse});
+  }
+  close(){
+    this.modalController.dismiss();
   }
 }
