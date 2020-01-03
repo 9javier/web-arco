@@ -510,12 +510,6 @@ export class MenuComponent implements OnInit {
           id: 'audit-rv',
           url: '/audits/pending-revisions',
           icon: 'list-box'
-        },
-        {
-          title: 'Escaneo múltiple',
-          id: 'audit-al-multiple',
-          url: 'audits/multiple',
-          icon: 'list'
         }
       ]
     },
@@ -695,8 +689,6 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
-    } else if (p.url === 'audits/multiple') {
-      this.auditMultipleScanditService.init();
     } else {
       this.returnTitle(p);
     }
