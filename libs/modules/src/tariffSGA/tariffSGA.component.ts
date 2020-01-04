@@ -48,6 +48,7 @@ export class TariffSGAComponent implements OnInit {
 
   processing: boolean;
   tarifProcessing: any;
+  isRefreshCalc: any;
 
   /**form to select elements to print or for anything */
   selectedForm: FormGroup = this.formBuilder.group(
@@ -68,20 +69,29 @@ export class TariffSGAComponent implements OnInit {
     private router: Router,
     private warehousesService: WarehousesService,
     private alertController: AlertController,
-    private modalCtrl:ModalController,
+    private modalCtrl: ModalController,
   ) {
     this.processing = false;
+    this.isRefreshCalc = false;
   }
 
   ngOnInit() {
     this.filters.patchValue({ warehouseId: 1 });
     this.getWarehouses();
-    this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
-    this.listenChanges();
-    this.isCalculating();
-    if (!this.intervalIsCalculation) {
-      this.intervalIsCalculation = setInterval(() => { this.isCalculating() }, 10000);
-    }
+    this.tariffService.getIsCalculating().subscribe(
+      data => {
+        this.processing = data.isCalculating;
+        this.tarifProcessing = (data.tariff) ? data.tariff : null;
+        if (this.processing) {
+          this.isRefreshCalc = true;
+        }
+        this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+        this.listenChanges();
+        if (!this.intervalIsCalculation) {
+          this.intervalIsCalculation = setInterval(() => { this.isCalculating() }, 10000);
+        }
+      }
+    );
   }
 
   ngOnDestroy() {
@@ -108,7 +118,7 @@ export class TariffSGAComponent implements OnInit {
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
-      this.page = flag ? page.pageIndex: 1;
+      this.page = flag ? page.pageIndex : 1;
       this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
     });
   }
@@ -137,8 +147,6 @@ export class TariffSGAComponent implements OnInit {
     this.intermediaryService.presentLoading();
     this.tariffService.getTariffIfSoftdelete().subscribe(
       data => {
-        console.log(data);
-
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
         this.tariffs = data.results.map(result => {
@@ -149,7 +157,7 @@ export class TariffSGAComponent implements OnInit {
         this.initSelectForm(this.tariffs);
         this.dataSource = new MatTableDataSource<any>(this.tariffs);
         this.paginator.length = data && data.pagination ? data.pagination.totalResults : 0;
-        this.paginator.pageIndex = data && data.pagination ? data.pagination.selectPage: 1;
+        this.paginator.pageIndex = data && data.pagination ? data.pagination.selectPage : 1;
         this.paginator.lastPage = data && data.pagination ? data.pagination.lastPage : 1;
       },
       () => {
@@ -160,28 +168,32 @@ export class TariffSGAComponent implements OnInit {
 
 
   isCalculating(): void {
-    
+
     this.tariffService.getIsCalculating().subscribe(
       data => {
-      
         this.processing = data.isCalculating;
         this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
           this.newTariff = 0;
-          this.listenChanges();
-        }else{
-          this.newTariff ++;
-          if(this.newTariff === 1){
+          if (this.isRefreshCalc) {
             this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
+            this.isRefreshCalc = false;
           }
+          this.listenChanges();
+
+        } else {
         }
-        
+
       },
       () => {
         this.processing = true;
       }
     );
   }
+
+
+
+
 
   /**
  * Cancel event and stop it propagation
@@ -278,13 +290,17 @@ export class TariffSGAComponent implements OnInit {
           text: 'Confirmar',
           handler: () => {
             this.intermediaryService.presentLoading("Modificando los seleccionados");
+            this.dataSource = [];
             this.tariffService.syncTariff().subscribe(result => {
               this.intermediaryService.dismissLoading();
+              this.isRefreshCalc = true;
               this.listenChanges();
               this.isCalculating();
             }, error => {
+              //this.isRefreshCalc = false;
               this.intermediaryService.dismissLoading();
             }, () => {
+              //this.isRefreshCalc = false;
               this.tariffsUpdate = [];
               //this.getTariffs(this.page, this.limit, this.filters.value.warehouseId);
               this.isCalculating();
@@ -330,12 +346,12 @@ export class TariffSGAComponent implements OnInit {
     event.stopPropagation();
     event.preventDefault();
     let modal = (await this.modalCtrl.create({
-      component:TariffUpdateFilterPriceComponent,
-      componentProps:{
-        tariff:tariff
+      component: TariffUpdateFilterPriceComponent,
+      componentProps: {
+        tariff: tariff
       }
     }))
-    modal.onDidDismiss().then(()=>{
+    modal.onDidDismiss().then(() => {
       // reload table.
     })
     modal.present();
