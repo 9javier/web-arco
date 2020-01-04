@@ -41,18 +41,19 @@ export class SendPackingComponent implements OnInit {
     private warehousesService:WarehousesService
     ) {
     this.jail = this.navParams.get("jail");
-    console.log('jail >>> ', this.jail);
-    /*if(this.jail.carrierWarehousesDestiny.length  == 1) {
+    if(this.jail.carrierWarehousesDestiny.length  == 1) {
       this.selectedWarehouse = this.jail.carrierWarehousesDestiny[0].warehouse.id;
       this.warehouse = this.jail.carrierWarehousesDestiny[0].warehouse;
-    }*/
+    }
   }
 
 
   ngOnInit() {
+    let This = this;
     this.warehousesService.getListAllWarehouses().then((warehouses: WarehouseModel.ResponseListAllWarehouses) => {
       this.warehouses = warehouses.data;
-    })
+      this.warehouses = this.warehouses.filter(w => w.id != This.jail.warehouse.id);
+    });
   }
   
   selectWarehouse(event: MatSelectChange) {
