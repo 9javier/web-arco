@@ -145,10 +145,6 @@ export * from './picking-manual/picking-manual.module';
 export * from './list-picking/list-picking.component';
 export * from './list-picking/list-picking.module';
 
-/**List Pickings with New Products */
-export * from './new-products/new-products.component';
-export * from './new-products/new-products.module';
-
 /**Tariff */
 export * from './tariff/tariff.component';
 export * from './tariff/tariff.module';
@@ -159,6 +155,10 @@ export * from './tariffSGA/tariffSGA.module';
 /**Prices */
 export * from './prices/prices.component';
 export * from './prices/prices.module';
+
+/**New Products */
+export * from './new-products/new-products.component';
+export * from './new-products/new-products.module';
 
 /**Tags-input */
 export * from './components/tags-input/tags-input.component';

@@ -1,19 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Routes } from '@angular/router';
+import { NewProductsComponent } from './new-products.component';
+import { ReactiveFormsModule,FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { BreadcrumbModule, NewProductsComponent } from '@suite/common-modules';
-import { ReactiveFormsModule } from '@angular/forms';
-import { TagsInputModule } from '../components/tags-inputag/tags-input.module';
-import {
-  MatButtonModule,
-  MatCheckboxModule,
-  MatExpansionModule,
-  MatPaginatorModule,
-  MatRippleModule,
-  MatTableModule
-} from '@angular/material';
+import { MatListModule, MatTableModule, MatPaginatorModule, MatExpansionModule, MatSlideToggleModule } from '@angular/material';
+import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
+import { RouterModule,Routes } from '@angular/router';
 import { ResponsiveLayoutModule } from '../components/responsive-layout/responsive-layout.module';
+import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 
 const routes: Routes = [
@@ -25,22 +19,21 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [NewProductsComponent],
-  entryComponents: [NewProductsComponent],
   imports: [
+    FormsModule,
     CommonModule,
-    RouterModule.forChild(routes),
-    IonicModule,
-    BreadcrumbModule,
     ReactiveFormsModule,
-    TagsInputModule,
+    IonicModule,
+    MatListModule,
     MatTableModule,
-    MatCheckboxModule,
-    MatRippleModule,
     MatPaginatorModule,
+    BreadcrumbModule,
+    RouterModule.forChild(routes),
     ResponsiveLayoutModule,
-    PaginatorComponentModule,
     MatExpansionModule,
-    MatButtonModule
+    MatSlideToggleModule,
+    TagsInputModule,
+    PaginatorComponentModule
   ]
 })
 export class NewProductsModule { }

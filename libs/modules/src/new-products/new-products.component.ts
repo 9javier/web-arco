@@ -1,21 +1,28 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { validators } from '@suite/common-modules';
-import {
-  AuthenticationService,
-  environment,
-  IntermediaryService, InventoryService,
-  PriceModel,
-  PriceService,
-  ProductsService,
-  WarehouseModel, WarehouseService, WarehousesService
-} from '@suite/services';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
+
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
+
+import {
+  IntermediaryService,
+  LabelsService,
+  NewProductModel,
+  NewProductsService,
+  WarehousesService,
+  WarehouseService,
+  ProductsService, AuthenticationService, WarehouseModel
+
+} from '@suite/services';
+
+import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
+
+import { validators } from '../utils/validators';
+import { AlertController, NavParams } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-import { MatPaginator, MatTableDataSource } from '@angular/material';
+import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
+import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { AlertController } from '@ionic/angular';
-import { PrinterService } from '../../../services/src/lib/printer/printer.service';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
   selector: 'suite-new-products',
@@ -34,8 +41,8 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   dataSource: any;
   displayedColumns: string[] = ['select', 'model', 'range', 'family', 'lifestyle', 'brand', 'price', 'action'];
   warehouses: Array<any> = [];
-  filterTypes: Array<PriceModel.StatusType> = [];
-  pricesDeleted: Array<PriceModel.Price> = [];
+  filterTypes: Array<NewProductModel.StatusType> = [];
+  pricesDeleted: Array<NewProductModel.NewProduct> = [];
 
   selectedForm: FormGroup = this.formBuilder.group({
     selector: false
@@ -71,7 +78,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   stampe: number = 1;
 
   /**List of prices */
-  prices: Array<PriceModel.Price> = [];
+  prices: Array<NewProductModel.NewProduct> = [];
 
   /**Filters */
   models: Array<TagsInputOption> = [];
@@ -86,14 +93,12 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   constructor(
     private printerService: PrinterService,
     private formBuilder: FormBuilder,
-    private priceService: PriceService,
+    private newProductsService: NewProductsService,
     private route: ActivatedRoute,
-    private productsService: ProductsService,
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
     private cd : ChangeDetectorRef,
     private warehouseService: WarehouseService,
-    private inventoryServices: InventoryService,
     private warehousesService: WarehousesService,
     private authenticationService: AuthenticationService,
   ) {}
@@ -125,7 +130,6 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     let previousPageSize = this.limit;
 
     this.paginatorComponent.page.subscribe(page => {
-      console.log('AQUIIII');
       let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
       this.limit = page.pageSize;
@@ -168,7 +172,6 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     } else {
       this.itemIdSelected.push(item);
     }
-    console.log(this.itemIdSelected);
   }
 
   processProductSizesRange(price): string {
@@ -201,7 +204,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     return '';
   }
 
-  getPhotoUrl(priceObj: PriceModel.Price): string | boolean {
+  getPhotoUrl(priceObj: NewProductModel.NewProduct): string | boolean {
     let isPhotoTestUrl = false;
 
     if (priceObj.model && priceObj.model.has_photos && priceObj.model.photos.length > 0) {
@@ -215,7 +218,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  getPhotoUrlDesktop(price: PriceModel.Price): string {
+  getPhotoUrlDesktop(price: NewProductModel.NewProduct): string {
     let photoUrl = this.getPhotoUrl(price);
 
     if (!photoUrl) {
@@ -273,28 +276,12 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
     parameters.tariffId = 121;
-    // ToDo: Cambiar a nuevo EndPoint
-    this.priceService.getIndex(parameters).subscribe(prices => {
-      prices.results.forEach(price => {
-        price.sizes = [
-            {
-              id: 1,
-              name: '6½',
-              reference: '07'
-            },
-            {
-              id: 2,
-              name: '7½',
-              reference: '08'
-            }
-          ]
-      });
-
+    this.newProductsService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
       this.prices = prices.results;
-      console.log(this.prices);
+
       this.initSelectForm(this.prices);
-      this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+      this.dataSource = new MatTableDataSource<NewProductModel.NewProduct>(this.prices);
       let paginator = prices.pagination;
       this.paginatorComponent.length = paginator.totalResults;
       this.paginatorComponent.pageIndex = paginator.selectPage;
@@ -316,10 +303,9 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   }
 
   getFilters(): void {
-    // ToDo: Llamar EndPoint de Filtros
     const parameters = this.sanitize(this.getFormValueCopy());
-    parameters.tariffId = 121; // ToDo: Borrar
-    this.productsService.getAllFilters(parameters).subscribe(filters => {
+
+    this.newProductsService.getAllFilters(parameters).subscribe(filters => {
       this.colors = filters.colors;
       this.brands = filters.brands;
       this.sizes = filters.sizes;
@@ -354,7 +340,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       })
     });
 
-    this.priceService.getStatusEnum().subscribe(status1 => {
+    this.newProductsService.getStatusEnum().subscribe(status1 => {
       this.filterTypes = status1;
       this.status = this.filterTypes.find((status2) => {
         return status2.name.toLowerCase() === "todos";
@@ -366,7 +352,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getFamilyAndLifestyle(priceObj: PriceModel.Price): string {
+  getFamilyAndLifestyle(priceObj: NewProductModel.NewProduct): string {
     let familyLifestyle: string[] = [];
     if (priceObj.model.family) {
       familyLifestyle.push(priceObj.model.family.name);
@@ -421,7 +407,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     });
     this.selectedForm.get('selector').setValue(false);
     this.cd.detectChanges();
-    this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+    this.dataSource = new MatTableDataSource<NewProductModel.NewProduct>(this.prices);
     this.itemIdSelected = [];
   }
 
@@ -523,9 +509,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   }
 
   async printPrice(price: any) {
-    console.log(price);
-
-    let listItems = price.sizes.map((size, iSize) => {
+    let listItems = price.size.map((size, iSize) => {
       return {
         name: 'radio' + iSize,
         type: 'radio',
@@ -534,10 +518,10 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       }
     });
 
-    if (price.sizes && price.sizes.length > 1) {
+    if (price.size && price.size.length > 1) {
       await this.presentAlertSelect(listItems, price);
-    } else if (price.sizes && price.sizes.length === 1) {
-      price.size = price.sizes[0];
+    } else if (price.size && price.size.length === 1) {
+      price.size = price.size[0];
       this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
     }
   }
@@ -558,7 +542,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
               return false;
             }
 
-            price.size = price.sizes[data];
+            price.size = price.size[data];
             this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
           }
         }
