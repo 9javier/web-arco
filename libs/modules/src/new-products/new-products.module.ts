@@ -6,6 +6,7 @@ import { BreadcrumbModule, NewProductsComponent } from '@suite/common-modules';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TagsInputModule } from '../components/tags-inputag/tags-input.module';
 import {
+  MatButtonModule,
   MatCheckboxModule,
   MatExpansionModule,
   MatPaginatorModule,
@@ -38,7 +39,8 @@ const routes: Routes = [
     MatPaginatorModule,
     ResponsiveLayoutModule,
     PaginatorComponentModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatButtonModule
   ]
 })
 export class NewProductsModule { }
