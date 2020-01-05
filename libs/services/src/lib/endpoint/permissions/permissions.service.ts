@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-
 import { Observable } from 'rxjs/internal/Observable';
 import { AuthenticationService } from '../authentication/authentication.service';
-
 import { PermissionsModel } from '../../../models/endpoints/Permissions';
 import { ACLModel } from '../../../models/endpoints/ACL';
-
-
 import { environment } from '../../../environments/environment';
+import { map, mapTo } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +18,7 @@ export class PermissionsService {
   private getShowUrl:string = environment.apiBase+"/permissions/{{id}}";
   private postAssignPermissionToRolUrl:string = environment.apiBase+"/gestion-permissions/roles/{{rolId}}/permissions/{{permissionId}}";
   private deletePermissionToRolUrl:string = environment.apiBase+"/gestion-permissions/roles/{{rolId}}/permissions/{{permissionId}}"
-
+  private getPermision:string = environment.apiBase+"/gestion-permissions/users/has-force-permission";
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
 
   async getIndex(): Promise<
@@ -49,6 +46,17 @@ export class PermissionsService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  /**@description response promise permision of user */
+  async getGestionPermision():Promise<Observable<HttpResponse<PermissionsModel.ResponseGestionPermision>>>{
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.get<PermissionsModel.ResponseGestionPermision>(
+      this.getPermision,{
+        headers,
+        observe:'response'}
+    )
   }
 
   async postAssignPermissionToRol(
