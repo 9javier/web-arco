@@ -275,7 +275,6 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
 
   searchInContainer(parameters): void {
     this.intermediaryService.presentLoading();
-    parameters.tariffId = 121;
     this.newProductsService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
       this.prices = prices.results;
