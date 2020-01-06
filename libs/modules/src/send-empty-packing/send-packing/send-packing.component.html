@@ -9,13 +9,22 @@
     </ion-toolbar>
 </ion-header>
 <ion-content padding="true">
-    <div>
+    <div *ngIf="jail">
         <ion-item>
             <div slot="start" class="slot-start-icon">
                 <i class="material-icons" color="medium">title</i>   
             </div>
             <ion-label class="label large" position="stacked">Referencia:</ion-label>
             <ion-input  placeholder="" value="{{jail.reference}}" disabled></ion-input>
+        </ion-item>
+    </div>
+    <div *ngIf="jails">
+        <ion-item>
+            <div slot="start" class="slot-start-icon">
+                <i class="material-icons" color="medium">title</i>   
+            </div>
+            <ion-label class="label large" position="stacked">Referencia:</ion-label>
+            <ion-input  *ngFor="let jail of jails" placeholder="" value="{{jail.reference}}" disabled></ion-input>
         </ion-item>
     </div>
     <br>
