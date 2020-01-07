@@ -110,6 +110,8 @@ export class PricesComponent implements OnInit {
   displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
+  printAllStock: boolean = false;
+
   public disableExpansionPanel: boolean = true;
 
   public mobileVersionTypeList: 'list' | 'table' = 'list';
@@ -134,7 +136,9 @@ export class PricesComponent implements OnInit {
 
   }
 
-
+  switchPrintAllStock(){
+   this.printAllStock = !this.printAllStock;
+  }
 
   /**
    * clear empty values of objecto to sanitize it
@@ -319,18 +323,29 @@ export class PricesComponent implements OnInit {
       }
     }
 
-    let prices = this.selectedForm.value.toSelect.map((price, i) => {
-      if (items[i].status != 3) {
-        let object = {
-          warehouseId: warehouseId,
-          tariffId: items[i].tariff.id,
-          modelId: items[i].model.id,
-          numRange: items[i].numRange
-        };
-        return price ? object : false;
+    let prices = [];
+
+    for(let i = 0; i < this.selectedForm.value.toSelect.length; i++){
+      if(this.selectedForm.value.toSelect[i] && items[i].status != 3){
+        if(this.printAllStock) {
+          for (let j = 0; j < items[i].stockStore.length; j++) {
+            prices.push({
+              warehouseId: warehouseId,
+              tariffId: items[i].tariff.id,
+              modelId: items[i].model.id,
+              numRange: items[i].numRange
+            });
+          }
+        }else{
+          prices.push({
+            warehouseId: warehouseId,
+            tariffId: items[i].tariff.id,
+            modelId: items[i].model.id,
+            numRange: items[i].numRange
+          });
+        }
       }
-    })
-      .filter(price => price);
+    }
 
     this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
     this.printerService.printPrices({ references: prices }).subscribe(result => {
