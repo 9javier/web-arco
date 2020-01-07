@@ -321,12 +321,6 @@ export class MenuComponent implements OnInit {
           icon: 'basket'
         },
         {
-          title: 'Nuevos Productos',
-          id: 'new-products',
-          url: '/new-products',
-          icon: 'basket'
-        },
-        {
           title: 'Consulta',
           id: 'products-info',
           url: 'products/info',
@@ -378,6 +372,12 @@ export class MenuComponent implements OnInit {
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
           icon: 'pricetags'
+        },
+        {
+          title: 'Nuevos Productos',
+          id: 'new-products',
+          url: '/new-products',
+          icon: 'basket'
         }
       ]
     },

@@ -500,8 +500,8 @@ export class PrinterService {
       }));
       console.debug("PRINT::printTagPrices 2 [" + new Date().toJSON() + "]", listReferences);
       return this.priceService.postPricesByProductsReferences({ references: listReferences }).then((prices) => {
-        let dataToPrint = this.processProductToPrintTagPrice(prices);
-        console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices);
+        let dataToPrint = this.processProductToPrintTagPrice(prices.data);
+        console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices.data);
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
         })).pipe(flatMap(response => {

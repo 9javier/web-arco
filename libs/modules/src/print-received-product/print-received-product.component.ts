@@ -3,6 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {Platform} from "@ionic/angular";
 import {ReceptionScanditService} from "../../../services/src/lib/scandit/reception/reception.service";
 import {Location} from "@angular/common";
+import {IntermediaryService} from "@suite/services";
 
 @Component({
   selector: 'app-print-received-product',
@@ -19,12 +20,17 @@ export class PrintReceivedProductComponent implements OnInit {
     private route: ActivatedRoute,
     private platform: Platform,
     private location: Location,
-    private receptionScanditService: ReceptionScanditService
+    private receptionScanditService: ReceptionScanditService,
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
     this.route.url.subscribe((url: any )=> {
       if (url && url.length > 0 && url[0].path == 'scandit') {
+        if (url[1].path) {
+          this.intermediaryService.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER');
+        }
+
         this.returnToScandit = true;
       } else{
         this.returnToScandit = false;
