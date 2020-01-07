@@ -42,7 +42,7 @@ export class InputCodesComponent implements OnInit {
 
   }
 
-  keyUpInput(event) {
+  async keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -60,7 +60,7 @@ export class InputCodesComponent implements OnInit {
       this.inputProduct = null;
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PACKING) {
-        this.intermediaryService.presentLoading();
+        await this.intermediaryService.presentLoading();
         this.carriersService
           .postSeal({
             reference: dataWrote
@@ -71,11 +71,11 @@ export class InputCodesComponent implements OnInit {
               this.audioProvider.playDefaultOk();
               this.presentToast('El embalaje se ha precintado correctamente.', 'primary');
             } else {
-              if(res.code == 404){
+              if (res.code == 404) {
                 this.audioProvider.playDefaultError();
                 let errorMsg = res && res.error && res.error.errors ? res.error.errors : res.errors;
                 this.presentToast(errorMsg, 'danger');
-              }else {
+              } else {
                 this.audioProvider.playDefaultError();
                 let errorMsg = res && res.error && res.error.errors ? res.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
                 this.presentToast(errorMsg, 'danger');
