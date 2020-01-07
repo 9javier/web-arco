@@ -77,14 +77,14 @@ export class TextareaComponent implements OnInit {
 
       this.processInitiated = true;
       if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
-        this.audioProvider.playDefaultOk();
+        this.processInitiated = false;
         this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
+        this.audioProvider.playDefaultOk();
         this.containerReference = dataWrited;
         this.packingReference = null;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-        this.processInitiated = false;
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let params: any = {
           productReference: dataWrited,
@@ -97,20 +97,20 @@ export class TextareaComponent implements OnInit {
         } else if (!this.isStoreUser && this.packingReference) {
           params.packingReference = this.packingReference;
         }
+        this.inputPositioning = null;
 
         this.storeProductInContainer(params);
 
-        this.inputPositioning = null;
         this.errorMessage = null;
       } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PACKING) {
-        this.audioProvider.playDefaultOk();
+        this.processInitiated = false;
         this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
+        this.audioProvider.playDefaultOk();
         this.containerReference = null;
         this.packingReference = dataWrited;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-        this.processInitiated = false;
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;
@@ -136,7 +136,6 @@ export class TextareaComponent implements OnInit {
       .then(async (res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
         if (res.code == 200 || res.code == 201) {
-          this.audioProvider.playDefaultOk();
           let msgSetText = '';
           if (this.isStoreUser) {
             msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
@@ -147,8 +146,9 @@ export class TextareaComponent implements OnInit {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
           }
-          this.presentToast(msgSetText, 2000, 'success');
           this.processInitiated = false;
+          this.presentToast(msgSetText, 2000, 'success');
+          this.audioProvider.playDefaultOk();
         } else if (res.code == 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
