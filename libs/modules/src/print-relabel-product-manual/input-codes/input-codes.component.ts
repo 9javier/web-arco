@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
-import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import { AuthenticationService, PriceService, ProductModel, ProductsService, WarehouseModel } from "@suite/services";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import { range, interval } from 'rxjs';
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
@@ -35,7 +34,7 @@ export class InputCodesComponent implements OnInit {
     private priceService: PriceService,
     private productsService: ProductsService,
     private authService: AuthenticationService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService
   ) {
@@ -74,8 +73,8 @@ export class InputCodesComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
-      switch (this.scanditProvider.checkCodeValue(dataWrote)) {
-        case this.scanditProvider.codeValue.PRODUCT:
+      switch (this.itemReferencesProvider.checkCodeValue(dataWrote)) {
+        case this.itemReferencesProvider.codeValue.PRODUCT:
           if (this.isStoreUser) {
             this.postRelabelProduct(dataWrote);
           } else {
@@ -84,7 +83,7 @@ export class InputCodesComponent implements OnInit {
             this.focusToInput();
           }
           break;
-        case this.scanditProvider.codeValue.PRODUCT_MODEL:
+        case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
           this.getSizeListByReference(dataWrote);
           break;
         default:

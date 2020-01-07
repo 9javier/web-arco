@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ToastController} from "@ionic/angular";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
@@ -27,7 +27,7 @@ export class InputCodesComponent implements OnInit {
   constructor(
     private toastController: ToastController,
     private carriersService: CarriersService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private intermediaryService: IntermediaryService,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService
@@ -59,8 +59,7 @@ export class InputCodesComponent implements OnInit {
 
       this.inputProduct = null;
 
-      if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
-        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PACKING) {
         this.intermediaryService.presentLoading();
         this.carriersService
           .postSeal({

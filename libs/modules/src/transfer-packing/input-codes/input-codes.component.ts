@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {LoadingController, ToastController} from "@ionic/angular";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {SettingsService} from "../../../../services/src/lib/storage/settings/settings.service";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
@@ -33,7 +33,7 @@ export class InputCodesComponent implements OnInit {
     private toastController: ToastController,
     private settingsService: SettingsService,
     private carriersService: CarriersService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -63,8 +63,7 @@ export class InputCodesComponent implements OnInit {
       }
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
-      if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
-        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PACKING) {
         if (this.isProcessStarted) {
           this.transferAmongPackings(dataWrote);
         } else {
@@ -74,8 +73,8 @@ export class InputCodesComponent implements OnInit {
           this.msgTop = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
           this.placeholderDataToWrite = this.disableTransferProductByProduct ? 'EMBALAJE' : 'PRODUCTO';
         }
-      } else if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT
-        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PRODUCT
+        || this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL) {
         if (this.isProcessStarted) {
           if (this.disableTransferProductByProduct) {
             this.audioProvider.playDefaultError();

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
 import { SorterProvider } from "../../../../../services/src/providers/sorter/sorter.provider";
-import { ScanditProvider } from "../../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../../services/src/providers/item-references/item-references.provider";
 import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from "@suite/services";
 import { OutputSorterModel } from "../../../../../services/src/models/endpoints/OutputSorter";
 import { ProductSorterModel } from "../../../../../services/src/models/endpoints/ProductSorter";
@@ -13,10 +13,9 @@ import { Location } from "@angular/common";
 import { SorterOutputService } from "../../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
 import { SorterOutputModel } from "../../../../../services/src/models/endpoints/SorterOutput";
 import { AudioProvider } from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
-import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
-import {MatrixSorterModel} from "../../../../../services/src/models/endpoints/MatrixSorter";
 import {Events} from "@ionic/angular";
 
 @Component({
@@ -72,7 +71,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private sorterExecutionService: SorterExecutionService,
     public sorterProvider: SorterProvider,
     private sorterOutputService: SorterOutputService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
     public events: Events,
@@ -130,8 +129,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       this.inputValue = null;
 
-      if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.JAIL
-        || this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PALLET) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
           this.audioProvider.playDefaultError();
           await this.intermediaryService.presentToastError('Código de producto erróneo.', 2000);
@@ -139,7 +137,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         } else {
           this.assignPackingToProcess(dataWrote);
         }
-      } else if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
           this.outputProductFromSorter(dataWrote);
         } else if (this.packingIsFull) {
