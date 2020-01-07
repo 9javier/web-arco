@@ -518,7 +518,6 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     this.intermediaryService.presentLoading('Imprimiendo');
     this.printerService.printPrices({ references: pricesReference }, true).subscribe(result => {
       this.intermediaryService.dismissLoading();
-      this.listenChanges();
     }, error => {
       this.intermediaryService.dismissLoading();
     });
