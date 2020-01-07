@@ -507,13 +507,13 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private sendPrint(price: any) {
+  private sendPrint(price: any, sizeSelect: any) {
     let pricesReference = [{
       warehouseId: price.warehouse.id,
       tariffId: price.tariff.id,
       modelId: price.model.id,
       numRange: price.numRange,
-      sizeId: price.size.id
+      sizeId: sizeSelect.id
     }];
     this.intermediaryService.presentLoading('Imprimiendo');
     this.printerService.printPrices({ references: pricesReference }, true).subscribe(result => {
@@ -524,8 +524,6 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   }
 
   async printPrice(price: any) {
-
-
     let listItems = price.size.map((size, iSize) => {
       return {
         name: 'radio' + iSize,
@@ -539,8 +537,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     if (price.size && price.size.length > 1) {
       await this.presentAlertSelect(listItems, price);
     } else if (price.size && price.size.length === 1) {
-      price.size = price.size[0];
-      this.sendPrint(price);
+      this.sendPrint(price, price.size[0]);
     }
 
   }
@@ -560,9 +557,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
             if (typeof data === 'undefined') {
               return false;
             }
-
-            price.size = price.size[data];
-            this.sendPrint(price);
+            this.sendPrint(price, price.size[data]);
           }
         }
       ]
