@@ -35,7 +35,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
 
   public mobileVersionTypeList: 'list' | 'table' = 'list';
   public showFiltersMobileVersion = false;
-  public itemIdSelected : any = [];
+  public itemIdSelected: any = [];
   private isStoreUser = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
   dataSource: any;
@@ -97,11 +97,11 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private intermediaryService: IntermediaryService,
     private alertController: AlertController,
-    private cd : ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
     private warehouseService: WarehouseService,
     private warehousesService: WarehousesService,
     private authenticationService: AuthenticationService,
-  ) {}
+  ) { }
 
   async ngOnInit() {
     this.isStoreUser = await this.authenticationService.isStoreUser();
@@ -165,7 +165,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     e.stopPropagation();
   }
 
-  itemSelected(item){
+  itemSelected(item) {
     const index = this.itemIdSelected.indexOf(item, 0);
     if (index > -1) {
       this.itemIdSelected.splice(index, 1);
@@ -375,8 +375,8 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
 
   async presentAlertConfirm(warehouseId: number, items) {
     const num = this.pricesDeleted.length;
-    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
-    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
+    const messageSingular = `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
+    const messagePlural = `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
     const alert = await this.alertController.create({
       header: '¡Confirmar!',
       message: num > 1 ? messagePlural : messageSingular,
@@ -386,11 +386,11 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
           handler: () => {
             this.printPricesWithDeleted(warehouseId, items);
           }
-        },{
+        }, {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {}
+          handler: () => { }
         }
       ]
     });
@@ -398,7 +398,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     await alert.present();
   }
 
-  changeStatusImpress(){
+  changeStatusImpress() {
     this.prices.forEach((price) => {
       if (this.itemIdSelected.includes(price.id)) {
         price.status = 4;
@@ -437,7 +437,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       if (items[i].status === 3 || items[i].status === 7) {
         let priceDeleted: any = items[i];
         let object = {
-          warehouseId: this.isStoreUser ? this.storeUserObj.id: null,
+          warehouseId: this.isStoreUser ? this.storeUserObj.id : null,
           modelId: priceDeleted.model.id,
           numRange: priceDeleted.numRange
         };
@@ -508,7 +508,6 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   }
 
   private sendPrint(price: any) {
-    console.log(price);
     let pricesReference = [{
       warehouseId: price.warehouse.id,
       tariffId: price.tariff.id,
@@ -516,15 +515,18 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       numRange: price.numRange,
       sizeId: price.size.id
     }];
-
+    this.intermediaryService.presentLoading('Imprimiendo');
     this.printerService.printPrices({ references: pricesReference }, true).subscribe(result => {
       this.intermediaryService.dismissLoading();
+      this.listenChanges();
     }, error => {
       this.intermediaryService.dismissLoading();
     });
   }
 
   async printPrice(price: any) {
+
+
     let listItems = price.size.map((size, iSize) => {
       return {
         name: 'radio' + iSize,
@@ -534,12 +536,14 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       }
     });
 
+
     if (price.size && price.size.length > 1) {
       await this.presentAlertSelect(listItems, price);
     } else if (price.size && price.size.length === 1) {
       price.size = price.size[0];
       this.sendPrint(price);
     }
+
   }
 
   private async presentAlertSelect(listItems: any[], price: any) {
@@ -580,12 +584,12 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       }
 
     } else
-    if (this.stampe > 1) {
-      for (let i = 0; i < this.stampe; i++) {
-        dataJoin.push(data);
+      if (this.stampe > 1) {
+        for (let i = 0; i < this.stampe; i++) {
+          dataJoin.push(data);
+        }
+        out = dataJoin;
       }
-      out = dataJoin;
-    }
     return out;
   }
 
