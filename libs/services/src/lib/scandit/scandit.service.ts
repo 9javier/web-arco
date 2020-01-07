@@ -2,15 +2,14 @@ import {Injectable} from '@angular/core';
 import {InventoryService} from "../endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../models/endpoints/Inventory";
 import {WarehouseService} from "../endpoint/warehouse/warehouse.service";
-import {from, Observable} from "rxjs/index";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient} from "@angular/common/http";
 import {ShoesPickingModel} from "../../models/endpoints/ShoesPicking";
-import {switchMap} from "rxjs/operators";
 import {environment} from "../../environments/environment";
 import {AuthenticationService} from "../endpoint/authentication/authentication.service";
 import {Events} from "@ionic/angular";
 import {WarehouseModel} from "@suite/services";
 import {ScanditProvider} from "../../providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../providers/item-references/item-references.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {RequestsProvider} from "../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../models/endpoints/HttpRequest";
@@ -55,6 +54,7 @@ export class ScanditService {
     private warehouseService: WarehouseService,
     private authenticationService: AuthenticationService,
     private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private requestsProvider: RequestsProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -115,7 +115,7 @@ export class ScanditService {
         }
         timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
-        if (!this.isStoreUser && (code.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || code.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+        if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
           this.positioningLog(2, "1.3", "container matched!", [code, containerReference]);
           //Container
           positionsScanning = [];
@@ -124,7 +124,7 @@ export class ScanditService {
           this.hideTextMessage(2000);
           containerReference = code;
           packingReference = null;
-        } else if (code.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
+        } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT) {
           this.positioningLog(2, "1.4", "product matched!");
           //Product
           let productReference = code;
@@ -202,8 +202,7 @@ export class ScanditService {
               }
             }
           }
-        } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.PALLET
-          || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.JAIL)) {
+        } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {
           positionsScanning = [];
           ScanditMatrixSimple.setText(`Inicio de ubicación en el embalaje ${code}`, BACKGROUND_COLOR_INFO, TEXT_COLOR, 18);
           this.hideTextMessage(2000);
@@ -305,7 +304,7 @@ export class ScanditService {
 
     this.clearTimeoutCleanLastCodeScanned();
     this.intervalCleanLastCodeScanned = setInterval(() => {
-      if (this.scanditProvider.checkCodeValue(lastCodeScanned) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(lastCodeScanned) == this.scanditProvider.codeValue.JAIL) {
+      if (this.itemReferencesProvider.checkCodeValue(lastCodeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
         if(Math.abs((new Date().getTime() - timeLastCodeScanned) / 1000) > 4){
           lastCodeScanned = 'start';
         }
@@ -344,17 +343,17 @@ export class ScanditService {
       timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       //Check Jail/Pallet or product
-      if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {
-        this.pickingLog(2, "3", "if (!this.scannerPaused && (code.match(/J([0-9]){4}/) || code.match(/P([0-9]){4}/))) {");
+      if (!this.scannerPaused && this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {
+        this.pickingLog(2, "3", "if (!this.scannerPaused && this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PACKING) {");
         if (productsToScan.length != 0) {
           this.pickingLog(2, "4", "if (productsToScan.length != 0) {");
           let typePackingScanned = 0;
-          if (code.match(/J([0-9]){4}/)) {
-            this.pickingLog(2, "5", "if (code.match(/J([0-9]){4}/)) {");
+          if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
             typePackingScanned = 1;
-          } else {
-            this.pickingLog(2, "6", "} else {");
+          } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
             typePackingScanned = 2;
+          } else {
+            typePackingScanned = 3;
           }
 
           if ((packingReference && packingReference == code) || !packingReference) {
@@ -372,12 +371,12 @@ export class ScanditService {
                 .then((res) => {
                   ScanditMatrixSimple.hideLoadingDialog();
                   this.pickingLog(2, "9", ".subscribe((res) => {");
-                  if (code.match(/J([0-9]){4}/)) {
-                    this.pickingLog(2, "10", "if (code.match(/J([0-9]){4}/)) {");
+                  if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
                     typePacking = 1;
-                  } else {
-                    this.pickingLog(2, "11", "} else {");
+                  } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
                     typePacking = 2;
+                  } else {
+                    typePacking = 3;
                   }
                   if(res){
                     if (res.code == 200 || res.code == 201) {
@@ -529,7 +528,7 @@ export class ScanditService {
             throw e;
           }
         }
-      } else if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.PRODUCT && !this.scannerPaused && code) {
+      } else if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.PRODUCT && !this.scannerPaused && code) {
         this.pickingLog(2, "26", "} else if (!this.scannerPaused && code && code != '' && code != lastCodeScanned) {");
         if (!processInitiated) {
           this.pickingLog(2, "27", "if (!processInitiated) {");
@@ -645,7 +644,8 @@ export class ScanditService {
           }
         }
       } else if (this.scanContainerToNotFound && !response.action) {
-        if ((this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
+        if (this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.CONTAINER
+          || this.itemReferencesProvider.checkCodeValue(code) == this.itemReferencesProvider.codeValue.CONTAINER_OLD) {
           ScanditMatrixSimple.showLoadingDialog('Comprobando ubicación...');
           this.postCheckContainerProduct(code, productsToScan[0].inventory.id)
             .then((res: InventoryModel.ResponseCheckContainer) => {

@@ -10,6 +10,7 @@ import {ReceptionModel} from "../../../models/endpoints/Reception";
 import {ReceptionProvider} from "../../../providers/reception/reception.provider";
 import {Router} from "@angular/router";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let ScanditMatrixSimple;
 
@@ -38,7 +39,8 @@ export class ReceptionScanditService {
     private authenticationService: AuthenticationService,
     private receptionService: ReceptionService,
     private scanditProvider: ScanditProvider,
-    private receptionProvider: ReceptionProvider
+    private receptionProvider: ReceptionProvider,
+    private itemReferencesProvider: ItemReferencesProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -70,12 +72,11 @@ export class ReceptionScanditService {
             timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
             this.scannerPaused = true;
-            switch (this.scanditProvider.checkCodeValue(code)) {
-              case this.scanditProvider.codeValue.JAIL:
-              case this.scanditProvider.codeValue.PALLET:
+            switch (this.itemReferencesProvider.checkCodeValue(code)) {
+              case this.itemReferencesProvider.codeValue.PACKING:
                 this.processPackingScanned(code);
                 break;
-              case this.scanditProvider.codeValue.PRODUCT:
+              case this.itemReferencesProvider.codeValue.PRODUCT:
                 ScanditMatrixSimple.showFixedTextBottom(false, '');
                 this.processProductScanned(code);
                 break;
@@ -132,10 +133,12 @@ export class ReceptionScanditService {
   }
 
   private processPackingScanned(code: string) {
-    if (this.scanditProvider.checkCodeValue(code) == this.scanditProvider.codeValue.JAIL) {
+    if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.JAIL)) {
       this.receptionProvider.typePacking = 1;
-    } else {
+    } else if (this.itemReferencesProvider.checkSpecificCodeValue(code, this.itemReferencesProvider.codeValue.PALLET)) {
       this.receptionProvider.typePacking = 2;
+    } else {
+      this.receptionProvider.typePacking = 3;
     }
 
     if (this.typeReception == 1) {

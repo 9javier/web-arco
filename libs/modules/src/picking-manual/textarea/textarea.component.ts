@@ -5,11 +5,10 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {AuthenticationService, environment, InventoryModel, InventoryService, IntermediaryService} from "@suite/services";
 import {AlertController, Events, ToastController} from "@ionic/angular";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
-import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {switchMap} from "rxjs/operators";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {Location} from "@angular/common";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
@@ -60,7 +59,7 @@ export class TextareaComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private pickingProvider: PickingProvider,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private intermediaryService: IntermediaryService,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
@@ -79,7 +78,7 @@ export class TextareaComponent implements OnInit {
 
     this.clearTimeoutCleanLastCodeScanned();
     this.intervalCleanLastCodeScanned = setInterval(() => {
-      if (this.scanditProvider.checkCodeValue(this.lastCodeScanned) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(this.lastCodeScanned) == this.scanditProvider.codeValue.JAIL) {
+      if (this.itemReferencesProvider.checkCodeValue(this.lastCodeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
         if(Math.abs((new Date().getTime() - this.timeLastCodeScanned) / 1000) > 4){
           this.lastCodeScanned = 'start';
         }
@@ -113,13 +112,15 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputPicking = null;
-      if (dataWrited.match(/J([0-9]){4}/) || dataWrited.match(/P([0-9]){4}/)) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PACKING) {
         if (this.listProducts.length != 0) {
           let typePackingScanned = 0;
-          if (dataWrited.match(/J([0-9]){4}/)) {
+          if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
             typePackingScanned = 1;
-          } else {
+          } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
             typePackingScanned = 2;
+          } else {
+            typePackingScanned = 3;
           }
 
           if ((this.packingReference && this.packingReference == dataWrited) || !this.packingReference) {
@@ -134,14 +135,16 @@ export class TextareaComponent implements OnInit {
               })
                 .subscribe((res) => {
                   this.intermediaryService.dismissLoading();
-                  if (dataWrited.match(/J([0-9]){4}/)) {
+                  if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
                     this.typePacking = 1;
-                  } else {
+                  } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
                     this.typePacking = 2;
+                  } else {
+                    this.typePacking = 3;
                   }
-                  if(res){
+                  if (res) {
                     if (res.code == 200 || res.code == 201) {
-                      if(res.data.packingStatus == 2){
+                      if (res.data.packingStatus == 2) {
                         this.processInitiated = true;
                         this.audioProvider.playDefaultOk();
                         this.inputPicking = null;
@@ -154,7 +157,7 @@ export class TextareaComponent implements OnInit {
                         this.setNexProductToScan(this.listProducts[0]);
                         this.presentToast(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`, 2000, this.pickingProvider.colorsMessage.info.name);
                         this.showTextStartScanPacking(false, this.typePacking, '');
-                      } else if(res.data.packingStatus == 3){
+                      } else if (res.data.packingStatus == 3) {
                         this.processInitiated = false;
                         this.audioProvider.playDefaultOk();
                         this.inputPicking = null;
@@ -254,7 +257,7 @@ export class TextareaComponent implements OnInit {
               this.intermediaryService.dismissLoading();
             });
         }
-      } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PRODUCT) {
         if (!this.processInitiated) {
           this.audioProvider.playDefaultError();
           this.inputPicking = null;
@@ -353,7 +356,8 @@ export class TextareaComponent implements OnInit {
           }
         }
       } else if (this.scanContainerToNotFound) {
-        if ((this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.CONTAINER_OLD)) {
+        if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER
+          || this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER_OLD) {
           this.intermediaryService.presentLoading();
           this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id)
             .subscribe((res: InventoryModel.ResponseCheckContainer) => {

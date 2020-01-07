@@ -24,6 +24,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { isNgTemplate } from '@angular/compiler';
+import {StockModel} from "../../../services/src/models/endpoints/Stock";
 
 @Component({
   selector: 'suite-prices',

@@ -11,8 +11,10 @@ export class SorterActionsEmptyingComponent implements OnInit, OnDestroy {
   @Input() width: string = null;
   @Input() disableAuto: boolean = false;
   @Input() disableManual: boolean = false;
+  @Input() disableMixed: boolean = false;
   @Output() autoEmptying = new EventEmitter();
   @Output() manualEmptying = new EventEmitter();
+  @Output() mixedEmptying = new EventEmitter();
 
   constructor() { }
 
@@ -30,5 +32,9 @@ export class SorterActionsEmptyingComponent implements OnInit, OnDestroy {
 
   public emptyManual() {
     this.manualEmptying.next();
+  }
+
+  public emptyMixed() {
+    this.mixedEmptying.next();
   }
 }

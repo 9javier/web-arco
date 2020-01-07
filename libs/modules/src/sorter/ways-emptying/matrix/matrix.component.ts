@@ -21,6 +21,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   private isTemplateWithEqualZones: boolean = false;
 
   public waySelected: number = null;
+  public waysSelected: any[] = [];
 
   constructor(
     private events: Events,
@@ -28,13 +29,32 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
-  
-  ngOnInit() {
 
+  ngOnInit() {
+    this.waysSelected = [];
   }
 
   ngOnDestroy() {
 
+  }
+
+  getBackground(column: MatrixSorterModel.Column) : string {
+    if (column && column.way) {
+      let way = null;
+      let blueWay = false;
+      for(way of this.waysSelected){
+        if (column.way.id == way.id) {
+          blueWay = true;
+        }
+      }
+      if (blueWay == true) {
+        return 'lightskyblue';
+      } else if (column.way.templateZone && column.way.templateZone.zones && column.way.templateZone.zones.color) {
+        return column.way.templateZone.zones.color.hex;
+      }
+    } else {
+      return '#ffffff';
+    }
   }
 
   getBackgroundForSelected(column: MatrixSorterModel.Column) : string {
@@ -84,7 +104,12 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number) {
     this.waySelected = column.way.id;
+    this.waysSelected.push(column.way);
     this.columnSelected.next({column, iHeight, iCol});
+  }
+
+  refresh(){
+    this.waysSelected = [];
   }
 
   public loadNewMatrix(newMatrix: MatrixSorterModel.MatrixTemplateSorter[]) {

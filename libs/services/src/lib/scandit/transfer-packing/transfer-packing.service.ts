@@ -5,6 +5,7 @@ import {ScanditModel} from "../../../models/scandit/Scandit";
 import {Events} from "@ionic/angular";
 import {CarriersService} from "../../endpoint/carriers/carriers.service";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let ScanditMatrixSimple;
 
@@ -28,7 +29,8 @@ export class TransferPackingScanditService {
     private events: Events,
     private settingsService: SettingsService,
     private carriersService: CarriersService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -51,8 +53,7 @@ export class TransferPackingScanditService {
             }
             timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
-            if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
-              || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+            if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
               if (this.isProcessStarted) {
                 this.transferAmongPackings(codeScanned);
               } else {
@@ -66,8 +67,8 @@ export class TransferPackingScanditService {
                   ScanditMatrixSimple.setOriginTextSwitchToIonic(true, codeScanned);
                 }, 0.5 * 1000);
               }
-            } else if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT
-              || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
+            } else if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT
+              || this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL) {
               if (this.isProcessStarted) {
                 if (this.disableTransferProductByProduct) {
                   ScanditMatrixSimple.setText(
