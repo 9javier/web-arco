@@ -278,3 +278,8 @@ export  * from './reception-empty-packing/reception-empty-packing.module';
 
 export  * from './send-empty-packing/send-empty-packing.component'
 export  * from './send-empty-packing/send-empty-packing.module';
+
+//// *marketplaces
+
+export  * from './marketplaces/marketplaces.component'
+export  * from './marketplaces/marketplaces.module';

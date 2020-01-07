@@ -341,6 +341,14 @@ const routes: Routes = [
     data: {
       name: 'Predistribuciones'
     }
+  },
+  {
+    path:'marketplaces',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/marketplaces/marketplaces.module#MarketplacesModule',
+    data: {
+      name: 'Marketplaces'
+    }
   }
 ];
 

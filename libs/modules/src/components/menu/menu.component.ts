@@ -24,7 +24,7 @@ interface MenuSectionGroupItem {
 interface MenuSectionItem {
   title: string,
   id?: string,
-  url: string,
+  url?: string,
   icon: string,
   notification?: boolean
   children?: MenuSectionItem[];
@@ -299,6 +299,32 @@ export class MenuComponent implements OnInit {
       url: '/predistributions',
       icon: 'archive'
     },
+    {
+      title: 'Catálogos Marketplaces',
+      id: 'catalogs-marketplaces',
+      url: '/marketplaces/catalogs-marketplaces',
+      icon: 'document'
+    },
+    {
+      title: 'KrackOnline',
+      open: true,
+      type: 'wrapper',
+      icon: 'apps',
+      children: [ 
+        {
+          title: 'Catálogos',
+          id: 'ko-catalog',
+          url: '/marketplaces/krackonline/catalog',
+          icon: 'document'
+        }
+      ]
+    },
+    {
+      title: 'Prioridad de Tienda',
+      id: 'store-priority',
+      url: '/marketplaces/store-priority',
+      icon: 'document'
+    }
   ];
 
   alPages: MenuItemList = [
