@@ -1,27 +1,34 @@
 <ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Entrada</ion-title>
+  <ion-toolbar color="primary" [class.display-none]="hideByUrl()">
+    <ion-buttons slot="end">
+      <ion-button (click)="onActiveKeyboard()">
+        <i [ngStyle]="{'color': state ? 'green': 'grey'}" class="material-icons">keyboard</i>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>
+      {{currentPage}}
+    </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <div class="product-scanned">
-    <div class="model-data">
-      <span class="col-text">
-        {{ productReference }}
-      </span>
-      <span class="model">
-        {{ referenceModel }}
-      </span>
-      <span>
-        {{ sizeName ? 'T: ' + sizeName : '' }}
-      </span>
-    </div>
-    <div *ngIf="destinyWarehouse">
-      <span class="col-store">
-        {{ destinyWarehouse.reference + ' ' + destinyWarehouse.name }}
-      </span>
-    </div>
+
+  <div class="product-scanned" *ngIf="productScanned" style="margin-top: 10%">
+    <ion-grid>
+      <ion-row>
+        <ion-col>{{ productReference }}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>{{ referenceModel }}</ion-col>
+        <ion-col></ion-col>
+        <ion-col>{{ sizeName ? 'T: ' + sizeName : '' }}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>{{ destinyWarehouse.reference + ' ' + destinyWarehouse.name }}</ion-col>
+      </ion-row>
+    </ion-grid>
   </div>
-  <ion-input hideKeyboard #input placeholder="Ingrese Referencia de estanteria" class="input-sorter" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue"></ion-input>
+  <input hideKeyboard id="input" placeholder="Ingrese Referencia de estanteria" class="input-sorter" style="margin: auto;width: 65%;border: 0;background: none;border-radius: 0" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue" >
+
+<ion-footer *ngIf="productScanned">
   <ion-button class="round" padding color="primary" expand="block" (click)="close(true)">Cerrar</ion-button>
-</ion-content>
+</ion-footer>
