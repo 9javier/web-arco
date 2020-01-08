@@ -24,6 +24,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { isNgTemplate } from '@angular/compiler';
+import { Range } from './interfaces/range.interface';
 
 @Component({
   selector: 'suite-prices',
@@ -63,6 +64,10 @@ export class PricesComponent implements OnInit {
     lifestyles: [],
     status: 0,
     tariffId: 0,
+    prices: this.formBuilder.group({
+      min: 0,
+      max: 100
+    }),
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -82,6 +87,7 @@ export class PricesComponent implements OnInit {
   families: Array<TagsInputOption> = [];
   lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
+  priceses: Range;
 
   /**List of SearchInContainer */
   searchsInContainer: Array<PriceModel.Price> = [];
@@ -189,7 +195,6 @@ export class PricesComponent implements OnInit {
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
-
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
@@ -410,15 +415,25 @@ export class PricesComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters(): void {
+    console.log(this.getFormValueCopy());
+    this.priceses = {
+      min: 0,
+      max: 1000
+    }
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
+      console.log(filters);
+      
       this.colors = filters.colors;
-      this.brands = filters.brands;
+      this.brands = filters.brands; 
       this.sizes = filters.sizes;
       this.seasons = filters.seasons;
       this.models = filters.models;
       this.families = filters.families;
       this.lifestyles = filters.lifestyles;
-
+      this.priceses = filters.prices
+      this.form.patchValue({
+        prices: filters.prices
+      })
       this.applyFilters();
     });
   }
@@ -428,6 +443,8 @@ export class PricesComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters): void {
+    console.log(parameters);
+    
     this.intermediaryService.presentLoading();
     this.priceService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
@@ -532,6 +549,8 @@ export class PricesComponent implements OnInit {
     clearTimeout(this.requestTimeout);
     this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
+      console.log(this.form.value);
+      
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, 100);
   }
@@ -548,6 +567,10 @@ export class PricesComponent implements OnInit {
       status: 0,
       size: 0,
       tariffId: 0,
+      prices: {
+        min:0,
+        max:1000
+      },
       pagination: this.formBuilder.group({
         page: this.page || 1,
         limit: this.limit || this.pagerValues[0]
@@ -629,5 +652,16 @@ export class PricesComponent implements OnInit {
 
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
+  }
+  rangeChange(event){
+    this.form.patchValue({
+      prices:{
+        min: event.detail.value.lower,
+        max: event.detail.value.upper
+      }
+    })
+    console.log(event.detail.value)
+    console.log(this.form.value.prices);
+    
   }
 }
