@@ -53,7 +53,7 @@ export class WarehousesModalComponent implements OnInit {
         validators: validators.haveItems('toSelect')
       }
     );
-    console.log(this.selectedForm)
+
   }
 
   ngOnInit() {
@@ -72,7 +72,7 @@ export class WarehousesModalComponent implements OnInit {
               >
             ) => {
               this.warehouses = res.body.data;
-              console.log(this.warehouses);
+
               this.initSelect(this.warehouses);
             },
             (err) => {
@@ -136,8 +136,7 @@ export class WarehousesModalComponent implements OnInit {
   initSelect(items) {
     this.selectedForm.removeControl('toSelect');
     this.selectedForm.addControl('toSelect', this.formBuilder.array(items.map(item => new FormControl(Boolean(false)))));
-    
-    console.log(this.warehousesFromZone)
+
 
     for(let i = 0; i < this.warehouses.length; i++) {
       this.warehousesFromZone.forEach(warehouse => {

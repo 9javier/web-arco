@@ -21,3 +21,39 @@ div.no-audits {
     place-content: center;
   }
 }
+
+ion-fab[vertical="center"][horizontal="start"] ion-fab-list {
+  left: 0;
+  align-items: flex-start;
+}
+
+ion-fab[vertical="center"][horizontal="end"] ion-fab-list {
+  right: 0;
+  align-items: flex-end;
+}
+
+ion-fab[vertical="bottom"][horizontal="start"] ion-fab-list {
+  left: 0;
+  align-items: flex-start;
+}
+
+ion-fab[vertical="bottom"][horizontal="end"] ion-fab-list {
+  right: 0;
+  align-items: flex-end;
+}
+
+ion-fab-button[size="small"] {
+  --size: 32px;
+}
+
+.custom-fab {
+  display: flex;
+  align-items: center;
+}
+ion-fab[horizontal="start"] .custom-fab {
+  flex-direction: row-reverse;
+}
+.custom-fab ion-button {
+  --height: 25px;
+  text-transform: none;
+}

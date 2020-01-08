@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {AlertController, ToastController} from "@ionic/angular";
+import {ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {PriceService} from "@suite/services";
 import {PackingInventoryModel} from "../../../../services/src/models/endpoints/PackingInventory";
 import {PackingInventoryService} from "../../../../services/src/lib/endpoint/packing-inventory/packing-inventory.service";
@@ -29,7 +29,7 @@ export class InputCodesComponent implements OnInit {
     private toastController: ToastController,
     private printerService: PrinterService,
     private priceService: PriceService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private packingInventorService: PackingInventoryService,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
@@ -60,8 +60,8 @@ export class InputCodesComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputProduct = null;
-      switch (this.scanditProvider.checkCodeValue(dataWrote)) {
-        case this.scanditProvider.codeValue.PRODUCT:
+      switch (this.itemReferencesProvider.checkCodeValue(dataWrote)) {
+        case this.itemReferencesProvider.codeValue.PRODUCT:
           this.getCarrierOfProductAndPrint(dataWrote);
           break;
         default:

@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ScannerManualComponent} from "../components/scanner-manual/scanner-manual.component";
-import {ScanditProvider} from "../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import {environment as al_environment} from "../../../../apps/al/src/environments/environment";
 import {IntermediaryService, ProductModel, ProductsService} from "@suite/services";
 import {WorkwaveModel} from "../../../services/src/models/endpoints/Workwaves";
@@ -31,7 +31,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private productsService: ProductsService,
     private workwavesService: WorkwavesService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -42,7 +42,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
   }
 
   public async newValueScanner(data) {
-    if (this.scanditProvider.checkCodeValue(data) != this.scanditProvider.codeValue.PRODUCT) {
+    if (this.itemReferencesProvider.checkCodeValue(data) != this.itemReferencesProvider.codeValue.PRODUCT) {
       // if code scanned not correspond to product reference, throw error
       this.scannerManual.setValue(null);
       this.audioProvider.playDefaultError();

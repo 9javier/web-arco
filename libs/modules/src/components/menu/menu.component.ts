@@ -321,12 +321,6 @@ export class MenuComponent implements OnInit {
           icon: 'basket'
         },
         {
-          title: 'Nuevos Productos',
-          id: 'new-products',
-          url: '/new-products',
-          icon: 'basket'
-        },
-        {
           title: 'Consulta',
           id: 'products-info',
           url: 'products/info',
@@ -378,6 +372,12 @@ export class MenuComponent implements OnInit {
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
           icon: 'pricetags'
+        },
+        {
+          title: 'Nuevos Productos',
+          id: 'new-products',
+          url: '/new-products',
+          icon: 'basket'
         }
       ]
     },
@@ -522,12 +522,6 @@ export class MenuComponent implements OnInit {
           id: 'audit-rv',
           url: '/audits/pending-revisions',
           icon: 'list-box'
-        },
-        {
-          title: 'Escaneo múltiple',
-          id: 'audit-al-multiple',
-          url: 'audits/multiple',
-          icon: 'list'
         }
       ]
     },
@@ -707,8 +701,6 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
-    } else if (p.url === 'audits/multiple') {
-      this.auditMultipleScanditService.init();
     } else {
       this.returnTitle(p);
     }

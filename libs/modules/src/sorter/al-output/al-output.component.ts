@@ -54,9 +54,9 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.sorterProvider.colorSelected) {
-      console.log(this.sorterProvider.colorSelected);
+
     }
-    console.log(this.sorterProvider.colorSelected);
+
 
     if (this.activeDefaultData) {
       this.loadDefaultData();
@@ -64,7 +64,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       this.loadingSorterTemplateMatrix = true;
       this.loadData();
       if (this.sorterProvider.colorSelected) {
-        console.log(this.sorterProvider.colorSelected);
+
 
       }
     }
@@ -568,7 +568,7 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   colorSelected(data) {
-    console.log('color' + data.colorSelected);
+
 
     this.sorterProvider.colorSelected = data.color;
     this.resumeProcessForUser = !!data.userId;
@@ -581,7 +581,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   async sorterOperationStarted() {
-    console.log('Tasto Start');
 
     if (!this.sorterProvider.colorSelected) {
       await this.intermediaryService.presentToastError('Selecciona un color para comenzar.');
@@ -595,12 +594,11 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
 
     if (this.resumeProcessForUser) {
       await this.intermediaryService.presentLoading('Reanudando proceso...');
-      // TODO questo el get del color
-      console.log("se muestra el color", this.sorterProvider.infoSorterOutputOperation);
+
       this.sorterOutputService
         .getGetCurrentProcessWay()
         .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
-          console.log(res);
+
 
           if (res.code === 201) {
             await this.intermediaryService.dismissLoading();
@@ -653,19 +651,17 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
       this.sorterExecutionService
         .postExecuteColor(paramsRequest)
         .subscribe((res: ExecutionSorterModel.ExecuteColor) => {
-          console.log(res);
 
           let lastWarehouse: number;
-          console.log("here22222", this.sorterProvider.infoSorterOutputOperation);
+
           if (this.sorterProvider.infoSorterOutputOperation) {
-            console.log("llegue aqui", this.sorterProvider.infoSorterOutputOperation.destinyWarehouse.id);
+
           }
 
           this.sorterOutputService
             .getNewProcessWay(idWayToWork, lastWarehouse)
             // tslint:disable-next-line:no-shadowed-variable
             .then(async (res: SorterOutputModel.ResponseNewProcessWay) => {
-              console.log(res);
 
               if (res.code === 201) {
                 this.sorterProvider.id_wareHouse = res.data.warehouse.id;
@@ -744,7 +740,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   waySelected(data: WaySorterModel.WaySorter) {
-    console.log(data);
 
     this.waySelectedToEmptying = data;
   }
@@ -754,7 +749,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterService
       .getFirstSorter()
       .subscribe((res: SorterModel.FirstSorter) => {
-        console.log(res);
 
         this.loadAvailableColors(res.id);
       }, async (error: HttpRequestModel.Error) => {
@@ -771,7 +765,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterExecutionService
       .getColorActive()
       .then((res: ExecutionSorterModel.ResponseColorActive) => {
-        console.log(res);
 
         if (res.code === 201) {
           this.sorterProvider.colorActiveForUser = res.data.color.hex;
@@ -796,7 +789,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.templateColorsService
       .postAvailableColorsByProcess({ processType: 2 })
       .subscribe((res: TemplateColorsModel.AvailableColorsByProcess[]) => {
-        console.log(res);
 
         this.colorsSelectors = res;
         this.loadActiveTemplate(idSorter);
@@ -814,7 +806,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterTemplateService
       .getActiveTemplate()
       .subscribe((res: TemplateSorterModel.Template) => {
-        console.log(res);
 
         this.loadMatrixTemplateSorter(idSorter, res.id);
       }, async (error: HttpRequestModel.Error) => {
@@ -832,7 +823,6 @@ export class AlOutputSorterComponent implements OnInit, OnDestroy {
     this.templateZonesService
       .getMatrixTemplateSorter(idSorter, idTemplate)
       .subscribe((res: MatrixSorterModel.MatrixTemplateSorter[]) => {
-        console.log(res);
 
         this.haveManualEmptying = !!res.find(height => !!height.columns.find(columnWay => !!columnWay.way.manual));
         if (this.haveManualEmptying) {

@@ -11,7 +11,6 @@ export class BaseComponent implements OnInit {
   @Input() set sorter(sorter){
     if(sorter) {
       this.form.patchValue(sorter);
-      console.log(this.form.value);
     }
   }
 

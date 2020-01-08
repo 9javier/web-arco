@@ -62,8 +62,6 @@ export class RackService {
   }
 
   update(id: number, rack: RackModel.Rack) {
-    console.log(id);
-    console.log(rack);
     return this.http.put<RackModel.SingleRackResponse>(`${this.rackUrl}/${id}`, rack).pipe(map((response) =>{
       return response.data;
     }));
