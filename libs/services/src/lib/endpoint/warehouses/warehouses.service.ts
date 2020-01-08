@@ -217,7 +217,7 @@ export class WarehousesService {
    }
 
    getListAllWarehouses() : Promise<HttpRequestModel.Response> {
-     console.log('Test::inside getListAllWarehouses()');
+
      return this.requestsProvider.get(this.getListAllWarehousesUrl);
    }
 

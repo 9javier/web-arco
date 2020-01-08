@@ -31,8 +31,6 @@ export class UpdateComponent implements OnInit {
   ngOnInit() {
     this.templateZonesService.getShowTemplateZone(this.zonaId, this.id).subscribe(data => {
       this.zone = data.data;
-      console.log(this.zone)
-      console.log(data.data)
     }, err => {
       console.log(err)
     })
@@ -50,9 +48,7 @@ export class UpdateComponent implements OnInit {
       zoneWarehouses: [],
       ...payload
     }
-    console.log(payload);
     this.templateZonesService.updateTemplateZone(payload, payload.id, this.id).subscribe((data) => {
-      console.log(data.data);
       this.close();
     }, (err) => {
       console.log(err);

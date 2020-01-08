@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {Platform} from "@ionic/angular";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Platform, ToastController} from "@ionic/angular";
 import {ReceptionScanditService} from "../../../services/src/lib/scandit/reception/reception.service";
 import {Location} from "@angular/common";
 
@@ -19,12 +19,18 @@ export class PrintReceivedProductComponent implements OnInit {
     private route: ActivatedRoute,
     private platform: Platform,
     private location: Location,
-    private receptionScanditService: ReceptionScanditService
+    private router: Router,
+    private toastCtrl: ToastController,
+    private receptionScanditService: ReceptionScanditService,
   ) {}
 
   ngOnInit() {
     this.route.url.subscribe((url: any )=> {
       if (url && url.length > 0 && url[0].path == 'scandit') {
+        if (url[1].path) {
+          this.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER');
+        }
+
         this.returnToScandit = true;
       } else{
         this.returnToScandit = false;
@@ -42,6 +48,21 @@ export class PrintReceivedProductComponent implements OnInit {
 
   ngOnDestroy() {
     this.backButtonOverride.unsubscribe();
+  }
+
+  async presentSnackbar(message: string, closeBtn: string = 'CERRAR') {
+    let toast = await this.toastCtrl.create({
+      message: message,
+      closeButtonText: closeBtn,
+      color: 'dark',
+      showCloseButton: true
+    });
+
+    toast.onDidDismiss().then(() => {
+      this.router.navigate(['new-products']);
+    });
+
+    return toast.present();
   }
 
 }

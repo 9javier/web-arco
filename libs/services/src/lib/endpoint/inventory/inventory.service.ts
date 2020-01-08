@@ -77,7 +77,7 @@ export class InventoryService {
   getFileExcell(parameters: ExcellModell.fileExcell) {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      console.log(parameters);
+
 
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
 

@@ -175,6 +175,9 @@ export class ProductsAlComponent implements OnInit {
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagPrices(references).subscribe(result=>{
+      if(result && typeof result !== "boolean"){
+        result.subscribe(r=>{});
+      }
       this.intermediaryService.dismissLoading();
     },error=>{
       this.intermediaryService.dismissLoading();

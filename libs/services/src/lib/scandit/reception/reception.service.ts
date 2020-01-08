@@ -11,6 +11,7 @@ import {ReceptionProvider} from "../../../providers/reception/reception.provider
 import {Router} from "@angular/router";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
+import {PrinterService} from "../../printer/printer.service";
 
 declare let ScanditMatrixSimple;
 
@@ -29,6 +30,8 @@ export class ReceptionScanditService {
 
   private readonly timeMillisToResetScannedCode: number = 1000;
 
+  private refenceProductToPrint: string = null;
+
   constructor(
     private router: Router,
     private alertController: AlertController,
@@ -38,6 +41,7 @@ export class ReceptionScanditService {
     private warehouseService: WarehouseService,
     private authenticationService: AuthenticationService,
     private receptionService: ReceptionService,
+    private printerService: PrinterService,
     private scanditProvider: ScanditProvider,
     private receptionProvider: ReceptionProvider,
     private itemReferencesProvider: ItemReferencesProvider
@@ -123,6 +127,14 @@ export class ReceptionScanditService {
               break;
             case 'wrong_code_msg':
               this.scannerPaused = false;
+              break;
+            case 'new_product_expo':
+              this.scannerPaused = false;
+              if (response.response) {
+                this.printNewProductPriceTag();
+              } else {
+                this.refenceProductToPrint = null;
+              }
               break;
             default:
               break;
@@ -241,17 +253,18 @@ export class ReceptionScanditService {
               this.scanditProvider.colorText.color,
               16);
             this.hideTextMessage(1500);
-            setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+            setTimeout(() => {
+              this.scannerPaused = false;
+              this.receptionProvider.referencePacking = null;
+              this.receptionProvider.typePacking = 0;
+              this.receptionProvider.processStarted = false;
 
-            this.receptionProvider.referencePacking = null;
-            this.receptionProvider.typePacking = 0;
-            this.receptionProvider.processStarted = false;
-
-            if (res.data.quantity > 0) {
-              // Close Scandit and navigate to list of products received
-              ScanditMatrixSimple.finish();
-              this.router.navigate(['print', 'product', 'received', 'scandit']);
-            }
+              if (res.data.quantity > 0) {
+                // Close Scandit and navigate to list of products received
+                ScanditMatrixSimple.finish();
+                this.router.navigate(['print', 'product', 'received', 'scandit', res.data.hasNewProducts]);
+              }
+            }, 1.5 * 1000);
           } else if (this.typeReception == 2) {
 
           }
@@ -296,6 +309,8 @@ export class ReceptionScanditService {
       params.force = force;
     }
 
+    this.refenceProductToPrint = referenceProduct;
+
     ScanditMatrixSimple.showLoadingDialog('Recepcionando producto...');
     this.receptionService
       .postReceiveProduct(params)
@@ -308,11 +323,19 @@ export class ReceptionScanditService {
             this.scanditProvider.colorText.color,
             18);
           this.hideTextMessage(1500);
-          this.scannerPaused = false;
+
+          if (response.data.hasNewProducts) {
+            ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');
+          } else {
+            this.refenceProductToPrint = null;
+            this.scannerPaused = false;
+          }
         } else if (response.code == 428) {
+          this.refenceProductToPrint = null;
           this.scannerPaused = true;
           ScanditMatrixSimple.showWarningToForce(true, referenceProduct);
         } else {
+          this.refenceProductToPrint = null;
           ScanditMatrixSimple.setText(
             response.errors,
             this.scanditProvider.colorsMessage.error.color,
@@ -322,6 +345,7 @@ export class ReceptionScanditService {
           this.scannerPaused = false;
         }
       }, (error) => {
+        this.refenceProductToPrint = null;
         ScanditMatrixSimple.hideLoadingDialog();
         if (error.error.code == 428) {
           this.scannerPaused = true;
@@ -337,6 +361,7 @@ export class ReceptionScanditService {
         }
       })
       .catch((error) => {
+        this.refenceProductToPrint = null;
         ScanditMatrixSimple.hideLoadingDialog();
         if (error.error.code == 428) {
           this.scannerPaused = true;
@@ -381,6 +406,16 @@ export class ReceptionScanditService {
         this.scannerPaused = false;
         console.error('Error::Subscribe::Set products as not received after empty packing::', error);
       });
+  }
+
+  private printNewProductPriceTag() {
+    this.printerService.printTagPrices([this.refenceProductToPrint]).subscribe(result => {
+      if(result && typeof result !== "boolean"){
+        result.subscribe(r=>{});
+      }
+    }, error => {
+      console.log('error', error);
+    });
   }
 
   private hideTextMessage(delay: number) {

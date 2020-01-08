@@ -45,7 +45,7 @@ export class TemplateZonesService {
        return response;
       },
       catchError((err) => {
-        console.log('caught rethrown error, providing fallback value');
+
         return of([]);
       })
     ));
@@ -89,7 +89,6 @@ export class TemplateZonesService {
        return response;
       },
       catchError((err) => {
-        console.log('caught rethrown error, providing fallback value');
         return of([]);
       })
     ));

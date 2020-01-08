@@ -153,7 +153,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         this.selectWay.forEach(way => {
           way.columns.forEach(column => {
             if(column.waysId === waySelect.waysId){
-              console.log(column);
+
               if(column.zone === '' && column.color === ''){
                 column.zone = this.zoneSelect.id;
                 column.color = this.zoneSelect.color.hex;
@@ -287,7 +287,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
           });
         });
 
-        console.log(this.dataPriorities);
+
         this.data = [];
         this.dataPriorities.forEach(priority => {
           if(priority.zone === this.zoneSelect.id){

@@ -172,7 +172,6 @@ export class JailComponent implements OnInit {
 
   cleanSelect(closeAlert?: boolean) {
     this.carrierService.getIndex().subscribe(carriers => {
-      console.log(carriers);
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
@@ -195,7 +194,6 @@ export class JailComponent implements OnInit {
   getCarriers(): void {
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
-      console.log(carriers);
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);

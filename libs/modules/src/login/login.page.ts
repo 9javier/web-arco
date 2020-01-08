@@ -77,7 +77,6 @@ export class LoginComponent implements OnInit {
 
               const resultCompare = this.compareVersions(`${response.data['majorRelease']}.${response.data['minorRelease']}.${response.data['patchRelease']}`, this.versionNumber);
               if (resultCompare === 1) {
-                console.log('VERSION MAYOR');
                 this.isNewVersion = true;
                 this.loginService.availableVersion.next({ status: true, version: response.data['majorRelease'] });
               } else {
