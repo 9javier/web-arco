@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'suite-security-stocks',
@@ -7,7 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SecurityStocksComponent implements OnInit {
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { 
+    console.log(this.route.snapshot.data['name'])
+  }
 
   ngOnInit() {
   }

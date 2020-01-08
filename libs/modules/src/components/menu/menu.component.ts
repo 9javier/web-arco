@@ -316,7 +316,53 @@ export class MenuComponent implements OnInit {
           id: 'ko-catalog',
           url: '/marketplaces/krackonline/catalog',
           icon: 'document'
-        }
+        },
+        {
+          title: 'Mapeos',
+          id: 'ko-mapping',
+          url: '/marketplaces/krackonline/mapping',
+          icon: 'document'
+        },{
+          title: 'Reglas',
+          id: 'ko-rules',
+          url: '/marketplaces/krackonline/rules',
+          icon: 'document'
+        },{
+          title: 'Stocks seguridad',
+          id: 'ko-security-stocks',
+          url: '/marketplaces/krackonline/security-stocks',
+          icon: 'document'
+        },
+      ]
+    },
+    {
+      title: 'Miniprecios',
+      open: true,
+      type: 'wrapper',
+      icon: 'apps',
+      children: [ 
+        {
+          title: 'Catálogos',
+          id: 'mp-catalog',
+          url: '/marketplaces/miniprecios/catalog',
+          icon: 'document'
+        },
+        {
+          title: 'Mapeos',
+          id: 'mp-mapping',
+          url: '/marketplaces/miniprecios/mapping',
+          icon: 'document'
+        },{
+          title: 'Reglas',
+          id: 'mp-rules',
+          url: '/marketplaces/miniprecios/rules',
+          icon: 'document'
+        },{
+          title: 'Stocks seguridad',
+          id: 'mp-security-stocks',
+          url: '/marketplaces/miniprecios/security-stocks',
+          icon: 'document'
+        },
       ]
     },
     {
