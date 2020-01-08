@@ -24,7 +24,7 @@ interface MenuSectionGroupItem {
 interface MenuSectionItem {
   title: string,
   id?: string,
-  url?: string,
+  url: string,
   icon: string,
   notification?: boolean
   children?: MenuSectionItem[];

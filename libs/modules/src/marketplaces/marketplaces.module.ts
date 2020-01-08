@@ -9,7 +9,8 @@ import { StorePriorityComponent } from './store-priority/store-priority.componen
 import { MappingsComponent } from './mappings/mappings.component';
 import { RulesComponent } from './rules/rules.component';
 import { SecurityStocksComponent } from './security-stocks/security-stocks.component';
-
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatTableModule} from '@angular/material/table';
 
 const routes: Routes = [
   {
@@ -107,7 +108,9 @@ const routes: Routes = [
     CommonModule,
     RouterModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MatExpansionModule,
+    MatTableModule
   ]
 })
 export class MarketplacesModule { }
