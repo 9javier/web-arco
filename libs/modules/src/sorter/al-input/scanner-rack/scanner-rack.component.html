@@ -12,7 +12,7 @@
   </ion-toolbar>
 </ion-header>
 
-  <div class="product-scanned" *ngIf="productScanned" style="margin-top: 10%">
+  <div class="product-scanned" style="margin-top: 10%">
     <ion-grid>
       <ion-row>
         <ion-col>{{ productReference }}</ion-col>
@@ -29,6 +29,6 @@
   </div>
   <input hideKeyboard id="input" placeholder="Ingrese Referencia de estanteria" class="input-sorter" style="margin: auto;width: 65%;border: 0;background: none;border-radius: 0" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="inputValue" >
 
-<ion-footer *ngIf="productScanned">
+<ion-footer>
   <ion-button class="round" padding color="primary" expand="block" (click)="close(true)">Cerrar</ion-button>
 </ion-footer>
