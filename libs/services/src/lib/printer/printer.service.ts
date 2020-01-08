@@ -341,7 +341,7 @@ export class PrinterService {
     };
 
     console.debug("PRINT::printNotifyNewProduct 1 [" + new Date().toJSON() + "]", references);
-    return this.http.post(this.printNotifyNewProductUrl, { references: references }).pipe(map(response => {
+    return this.http.post(this.printNotifyNewProductUrl, { references: [references] }).pipe(map(response => {
       console.debug("PRINT::printNotifyNewProduct 2 [" + new Date().toJSON() + "]", references);
       return true;
     }));
