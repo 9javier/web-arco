@@ -6,7 +6,9 @@
         Marcas
       </mat-panel-title>
     </mat-expansion-panel-header>
-
+    <mat-form-field>
+      <input matInput (keyup)="brandsFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
     <table class="brands-table" mat-table [dataSource]="dataSourceBrands" class="mat-elevation-z8">
 
       <ng-container matColumnDef="id">
@@ -37,6 +39,9 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
+    <mat-form-field>
+      <input matInput (keyup)="colorsFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
     <table class="brands-table" mat-table [dataSource]="dataSourceColors" class="mat-elevation-z8">
 
       <ng-container matColumnDef="id">
@@ -67,6 +72,9 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
+    <mat-form-field>
+      <input matInput (keyup)="sizesFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
     <table class="brands-table" mat-table [dataSource]="dataSourceSizes" class="mat-elevation-z8">
 
       <ng-container matColumnDef="id">

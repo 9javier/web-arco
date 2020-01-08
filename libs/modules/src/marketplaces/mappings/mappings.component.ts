@@ -48,4 +48,16 @@ export class MappingsComponent implements OnInit {
   ngOnInit() {
   }
 
+  brandsFilter(e) {
+    console.log(e)
+  }
+
+  colorsFilter(e) {
+    console.log(e)
+  }
+
+  sizesFilter(e) {
+    console.log(e)
+  }
+
 }

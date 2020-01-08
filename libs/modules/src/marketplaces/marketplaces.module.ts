@@ -11,6 +11,8 @@ import { RulesComponent } from './rules/rules.component';
 import { SecurityStocksComponent } from './security-stocks/security-stocks.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material';
 
 const routes: Routes = [
   {
@@ -110,7 +112,9 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes),
     MatExpansionModule,
-    MatTableModule
+    MatTableModule,
+    MatFormFieldModule,
+    MatInputModule
   ]
 })
 export class MarketplacesModule { }
