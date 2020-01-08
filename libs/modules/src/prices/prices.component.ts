@@ -421,7 +421,6 @@ export class PricesComponent implements OnInit {
       max: 1000
     }
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
-      console.log(filters);
       
       this.colors = filters.colors;
       this.brands = filters.brands; 
@@ -660,7 +659,6 @@ export class PricesComponent implements OnInit {
         max: event.detail.value.upper
       }
     })
-    console.log(event.detail.value)
     console.log(this.form.value.prices);
     
   }
