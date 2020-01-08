@@ -1,3 +1,50 @@
-<p>
-  rules works!
-</p>
+
+<mat-accordion class="container-rules">
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Categorias
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <table mat-table [dataSource]="dataSourceCategories" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="name">
+        <th class="table-th" mat-header-cell *matHeaderCellDef> Nombre </th>
+        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="categories">
+        <th class="table-th-categories" mat-header-cell *matHeaderCellDef> Categorias </th>
+        <td mat-cell *matCellDef="let element"> {{element.categories}} </td>
+      </ng-container>
+    
+      <ng-container matColumnDef="product_quantity">
+        <th class="table-th" mat-header-cell *matHeaderCellDef>  </th>
+        <td mat-cell *matCellDef="let element"> {{element.product_quantity}} </td>
+      </ng-container>
+    
+      <tr mat-header-row *matHeaderRowDef="displayedCategoriesColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedCategoriesColumns;"></tr>
+    </table>
+
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Precio minimo
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Stocks de seguridad
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+  </mat-expansion-panel>
+
+</mat-accordion>
