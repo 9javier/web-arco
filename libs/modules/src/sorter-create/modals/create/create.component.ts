@@ -37,10 +37,8 @@ export class CreateComponent implements OnInit {
     const payload = {
       active: true, ...data
     }
-    console.log(payload)
     this.sorteService
       .postCreate(payload).subscribe((data) => {
-        console.log(data.data);
         this.close();
       });
   }

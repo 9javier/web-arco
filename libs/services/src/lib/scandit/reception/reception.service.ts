@@ -409,7 +409,7 @@ export class ReceptionScanditService {
 
   private printNewProductPriceTag() {
     this.printerService.printTagPrices([this.refenceProductToPrint]).subscribe(result => {
-      console.log('test', result);
+
     }, error => {
       console.log('error', error);
     });

@@ -41,9 +41,8 @@ export class StoreComponent implements OnInit {
       zoneWarehouses: [],
       ...payload
     }
-    console.log(payload);
+
     this.templateZonesService.postCreate(payload, this.id).subscribe((data) => {
-      console.log(data.data);
       this.close();
     }, (err) => {
       console.log(err);

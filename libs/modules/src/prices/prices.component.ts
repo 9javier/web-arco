@@ -244,7 +244,6 @@ export class PricesComponent implements OnInit {
     } else {
       this.itemIdSelected.push(item);
     }
-    console.log(this.itemIdSelected);
   }
 
   changeStatusImpress(){

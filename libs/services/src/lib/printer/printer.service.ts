@@ -407,7 +407,6 @@ export class PrinterService {
           }
 
 
-        console.log("datato prinmt", dataToPrint, "\n");
 
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint));
@@ -434,7 +433,7 @@ export class PrinterService {
     let options: Array<PrintModel.Print> = [];
     let arrayProductsToProcess: Array<ProductModel.Product> = [];
 
-    console.log("cual es el problema", dataToProcess);
+
     if (!Array.isArray(dataToProcess)) {
       arrayProductsToProcess.push(dataToProcess);
     } else {
@@ -526,7 +525,7 @@ export class PrinterService {
 
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
-      console.log(dataToPrint);
+
       this.toPrintFromString(dataToPrint.valuePrint);
     }
   }
@@ -552,7 +551,7 @@ export class PrinterService {
     } else {
       arrayPricesToProcess = dataToProcess;
     }
-    console.log("debugeando", arrayPricesToProcess);
+
     console.debug("PRINT::processProductToPrintTagPrice 2 [" + new Date().toJSON() + "]", arrayPricesToProcess);
     /** Iterate and build object to print */
     for (let iPrice in arrayPricesToProcess) {
@@ -647,7 +646,7 @@ export class PrinterService {
    * @param failed - the solicitude comes from a failed request
    */
   private async toPrintFromString(textToPrint: string, macAddress?) {
-    console.log(textToPrint);
+
 
 
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
@@ -709,7 +708,7 @@ export class PrinterService {
 
 
   private async toPrint(printOptions: PrintModel.Print) {
-    console.log('imprint');
+
 
     console.debug("PRINT::toPrint 1 [" + new Date().toJSON() + "]", printOptions);
     // this.stampe$.next(true);
