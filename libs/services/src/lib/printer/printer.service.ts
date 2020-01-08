@@ -487,7 +487,7 @@ export class PrinterService {
    * Print the prices of products
    * @param listReferences references of products
    */
-  printTagPrices(listReferences: string[]): Observable<Boolean | Observable<any>> {
+  printTagPrices(listReferences: string[]): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagPrices 1 [" + new Date().toJSON() + "]", listReferences);
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
