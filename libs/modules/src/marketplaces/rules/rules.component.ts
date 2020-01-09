@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ModalController } from '@ionic/angular';
+import { NewRuleComponent } from './new-rule/new-rule.component';
 
 @Component({
   selector: 'suite-rules',
@@ -15,14 +17,27 @@ export class RulesComponent implements OnInit {
       product_quantity: '3655 productos'}
   ];
 
-  displayedCategoriesColumns: string[] = ['name', 'categories', 'product_quantity'];
+  displayedCategoriesColumns: string[] = ['name', 'categories', 'product_quantity', 'edit'];
   dataSourceCategories = this.categories_data;
 
-  constructor(private route: ActivatedRoute) { 
+  constructor(
+    private route: ActivatedRoute,
+    private modalController: ModalController
+  ) { 
     console.log(this.route.snapshot.data['name'])
   }
 
   ngOnInit() {
+  }
+
+  async openModalNewRule(): Promise<void> {
+    let modal = (await this.modalController.create({
+      component: NewRuleComponent
+    }));
+    modal.onDidDismiss().then((response) => {
+     console.log(response)
+    });
+    modal.present();
   }
 
 }
