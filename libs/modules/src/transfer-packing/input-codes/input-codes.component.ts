@@ -108,19 +108,29 @@ export class InputCodesComponent implements OnInit {
           } else {
             this.hideLoading();
             this.audioProvider.playDefaultError();
-            this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+            let errorMsg = 'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.';
+            if (res.errors) {
+              errorMsg = res.errors;
+            }
+            this.presentToast(errorMsg, 'danger');
           }
         }, (error) => {
           this.hideLoading();
           this.audioProvider.playDefaultError();
-          console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
-          this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+          let errorMsg = 'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.';
+          if (error.error && error.error.errors) {
+            errorMsg = error.error.errors;
+          }
+          this.presentToast(errorMsg, 'danger');
         })
         .catch((error) => {
           this.hideLoading();
           this.audioProvider.playDefaultError();
-          console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
-          this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+          let errorMsg = 'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.';
+          if (error.error && error.error.errors) {
+            errorMsg = error.error.errors;
+          }
+          this.presentToast(errorMsg, 'danger');
         });
     });
   }
@@ -144,7 +154,7 @@ export class InputCodesComponent implements OnInit {
     const toast = await this.toastController.create({
       message: msg,
       position: 'bottom',
-      duration: 1500,
+      duration: 4 * 1000,
       color: color
     });
 
