@@ -166,8 +166,7 @@ export class TextareaComponent implements OnInit {
                         this.setNexProductToScan(this.listProducts[0]);
                         this.presentToast(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`, 2000, this.pickingProvider.colorsMessage.info.name);
                         this.showTextStartScanPacking(false, this.typePacking, '');
-                      } else if (res.data.packingStatus == 3) {
-                        console.log('AQUIIII');
+                      } else if (res.data.packingStatus === 3) {
                         this.alertSealPacking(this.jailReference, false);
                       } else {
                         this.processInitiated = false;
@@ -537,9 +536,7 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Si',
           handler: () => {
-            if (finalProcess) {
-              this.sealPacking(packingReference, finalProcess);
-            }
+            this.sealPacking(packingReference, finalProcess);
           }
         }]
     });
@@ -558,11 +555,12 @@ export class TextareaComponent implements OnInit {
     this.presentToast(`${this.literalsJailPallet[this.typePacking].process_end_packing}${dataWrite}.`, 2000, this.pickingProvider.colorsMessage.info.name);
     this.showNexProductToScan(false);
     this.showTextStartScanPacking(true, this.typePacking, '');
+    this.intermediaryService.dismissLoading();
   }
 
   private sealPacking(packingReference: any, finalProcess = true) {
     if (packingReference && packingReference.length > 0) {
-      this.intermediaryService.presentLoading('Precintando Embalaje/s');
+      this.intermediaryService.presentLoading('Precintando Jaula');
       this.carrierService.postSealList(packingReference).subscribe(async () => {
         if (finalProcess) {
           this.endProcessPacking(packingReference);
