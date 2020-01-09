@@ -196,6 +196,20 @@
                     <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes" multiple="true">
                     </suite-tags-input>
                   </ion-col>
+                  <ion-col size="6">
+                    <ion-label>Rango de precios:</ion-label>
+                    <ion-range
+                      [min]="priceses.min" [max]="priceses.max"
+                      dualKnobs="true" pin="true"
+                      snaps="true" step="1"
+                      ticks="true" [value]="{lower: priceses.min, upper: priceses.max }"
+                      color="primary"
+                      (ionChange)="rangeChange($event)"
+                      >
+                        <ion-label slot="start">{{priceses.min}}</ion-label>
+                        <ion-label slot="end">{{priceses.max}}</ion-label>
+                    </ion-range>
+                  </ion-col>
                 </ion-row>
                 <ion-row>
                   <ion-col class="btn-remove" size="6">
