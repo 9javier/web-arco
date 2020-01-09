@@ -167,16 +167,8 @@ export class TextareaComponent implements OnInit {
                         this.presentToast(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`, 2000, this.pickingProvider.colorsMessage.info.name);
                         this.showTextStartScanPacking(false, this.typePacking, '');
                       } else if (res.data.packingStatus == 3) {
-                        this.processInitiated = false;
-                        this.audioProvider.playDefaultOk();
-                        this.inputPicking = null;
-                        this.focusToInput();
-                        this.jailReference = null;
-                        this.dataToWrite = 'CONTENEDOR';
-                        this.packingReference = this.jailReference;
-                        this.presentToast(`${this.literalsJailPallet[this.typePacking].process_end_packing}${dataWrited}.`, 2000, this.pickingProvider.colorsMessage.info.name);
-                        this.showNexProductToScan(false);
-                        this.showTextStartScanPacking(true, this.typePacking, '');
+                        console.log('AQUIIII');
+                        this.alertSealPacking(this.jailReference, false);
                       } else {
                         this.processInitiated = false;
                         this.audioProvider.playDefaultError();
@@ -526,7 +518,7 @@ export class TextareaComponent implements OnInit {
     return await alertWarning.present();
   }
 
-  async alertSealPacking(packingReference: string) {
+  async alertSealPacking(packingReference: string, finalProcess = true) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
       message: packingReference ? `¿Desea precintar la Jaula ${packingReference}?` : '¿Desea precintar la Jaula?',
@@ -535,13 +527,19 @@ export class TextareaComponent implements OnInit {
         {
           text: 'No',
           handler: () => {
-            this.endProcessPacking(packingReference);
+            if (finalProcess) {
+              this.endProcessPacking(packingReference);
+            } else {
+              this.endProcessIntermediate(this.jailReference);
+            }
           }
         },
         {
           text: 'Si',
           handler: () => {
-            this.sealPacking(packingReference);
+            if (finalProcess) {
+              this.sealPacking(packingReference, finalProcess);
+            }
           }
         }]
     });
@@ -549,11 +547,28 @@ export class TextareaComponent implements OnInit {
     return await alertWarning.present();
   }
 
-  private sealPacking(packingReference: any) {
+  private endProcessIntermediate(dataWrite: any) {
+    this.processInitiated = false;
+    this.audioProvider.playDefaultOk();
+    this.inputPicking = null;
+    this.focusToInput();
+    this.jailReference = null;
+    this.dataToWrite = 'CONTENEDOR';
+    this.packingReference = this.jailReference;
+    this.presentToast(`${this.literalsJailPallet[this.typePacking].process_end_packing}${dataWrite}.`, 2000, this.pickingProvider.colorsMessage.info.name);
+    this.showNexProductToScan(false);
+    this.showTextStartScanPacking(true, this.typePacking, '');
+  }
+
+  private sealPacking(packingReference: any, finalProcess = true) {
     if (packingReference && packingReference.length > 0) {
       this.intermediaryService.presentLoading('Precintando Embalaje/s');
       this.carrierService.postSealList(packingReference).subscribe(async () => {
-        this.endProcessPacking(packingReference);
+        if (finalProcess) {
+          this.endProcessPacking(packingReference);
+        } else {
+          this.endProcessIntermediate(this.jailReference);
+        }
       });
     }
   }
