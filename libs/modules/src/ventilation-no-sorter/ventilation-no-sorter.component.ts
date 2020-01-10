@@ -37,11 +37,15 @@ export class VentilationNoSorterComponent implements OnInit {
       await this.intermediaryService.presentLoading('Procesando...');
       let originScan;
       await this.pickingStoreService.getByProductReference({reference: this.inputValue})
-        .then(response => { originScan = response.data.length > 0 });
-      if(originScan){
-        // do something
+        .then(response => { originScan = response.data});
+      if(originScan && originScan.length != 0){
+        if(originScan.picking_store_products_destinyWarehouseId == 3){
+          console.log('Tengo destino 0.')
+        }else{
+          console.log('Tengo destino diferente de 0.')
+        }
       }else{
-        // do something
+        console.log('No tengo escaneo de origen.')
       }
       await this.intermediaryService.dismissLoading();
     } else {
