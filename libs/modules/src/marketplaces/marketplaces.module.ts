@@ -8,11 +8,14 @@ import { CatalogMarketplacesComponent } from './catalog-marketplaces/catalog-mar
 import { StorePriorityComponent } from './store-priority/store-priority.component';
 import { MappingsComponent } from './mappings/mappings.component';
 import { RulesComponent } from './rules/rules.component';
+import { RulesModule } from './rules/rules.module';
 import { SecurityStocksComponent } from './security-stocks/security-stocks.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonModule} from '@angular/material/button';
 
 const routes: Routes = [
   {
@@ -114,7 +117,10 @@ const routes: Routes = [
     MatExpansionModule,
     MatTableModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    RulesModule
   ]
 })
 export class MarketplacesModule { }
