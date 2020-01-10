@@ -16,7 +16,6 @@ import { AudioProvider } from "../../../../../services/src/providers/audio-provi
 import { Router, ActivatedRoute, RouterOutlet } from '@angular/router';
 import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
-import {MatrixSorterModel} from "../../../../../services/src/models/endpoints/MatrixSorter";
 import {Events} from "@ionic/angular";
 
 @Component({
@@ -40,6 +39,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   outputWithIncidencesClear: boolean = false;
   isWaitingSorterFeedback = false;
 
+  ULTIMA_JAULA:string;
+  ultimaReferenza:string;
+  alerta:boolean;
+  
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private listTypesFromDb: Array<{ id: number, name: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
@@ -84,7 +87,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }, 800);
     this.events.subscribe('load_of_variables', () => {
       this.countLoadOfVariables++;
-      if (this.countLoadOfVariables == 2) {
+      if (this.countLoadOfVariables === 2) {
         this.generateVariablesList();
         this.countLoadOfVariables = 0;
       }
@@ -92,7 +95,21 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if(this.sorterProvider.infoSorterOutputOperation){
+      // console.log(this.sorterProvider);
+    }
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
+    // if(this.infoSorterOperation.packingReference){
+    //   if(this.infoSorterOperation.packingReference !== null){
+    //     this.assignPackingToProcess(this.infoSorterOperation.packingReference.toString())
+    //     console.log(this.infoSorterOperation.packingReference.toString());
+    //   }
+    //   if(this.infoSorterOperation.packingReference === null || this.infoSorterOperation.packingReference === undefined){
+    //     console.log('nullo');
+        
+    //   }
+    //   console.log(this.infoSorterOperation);
+    // }
     this.getTypes();
     this.getGlobalVariables();
   }
@@ -114,7 +131,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   async keyUpInput(event) {
     let dataWrote = (this.inputValue || "").trim();
-
+    
+    // TODO Utima referenza 
+    this.ultimaReferenza = dataWrote;
+    // console.log(this.ultimaReferenza);
+    
     if (event.keyCode === 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputValue = null;
@@ -137,6 +158,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           await this.intermediaryService.presentToastError('Código de producto erróneo.', 2000);
           this.focusToInput();
         } else {
+          console.log('passa di qui');
+          
           this.assignPackingToProcess(dataWrote);
         }
       } else if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
@@ -163,14 +186,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   generateVariablesList() {
     this.intermediaryService.dismissLoading();
-    if (this.listVariablesFromDb.length != this.listTypesFromDb.length) {
+    if (this.listVariablesFromDb.length !== this.listTypesFromDb.length) {
       this.listVariables = this.listVariablesFromDb;
       for (let iType in this.listTypesFromDb) {
         let type = this.listTypesFromDb[iType];
         let isTypeCreated: boolean = false;
         for (let iVariable in this.listVariablesFromDb) {
           let variable = this.listVariablesFromDb[iVariable];
-          if (variable.type == type.id) {
+          if (variable.type === type.id) {
             isTypeCreated = true;
             break;
           }
@@ -191,6 +214,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.globalVariableService
       .getAll()
       .subscribe((globalVariables) => {
+        console.log(globalVariables);
         this.listVariablesFromDb = globalVariables;
         this.events.publish('load_of_variables');
       });
@@ -207,13 +231,17 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   async emptyWay() {
     let showModalWithCount = async () => {
+      console.log('passa di qui');
+      
       let globalVar = 5;
       let textCountdown = 'Revisa para confirmar que la calle está completamente vacía.<br/>';
       let globalFound = this.listVariables.find( global => {
-        return global.type == this.SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY;
+        return global.type === this.SECONDS_COUNTDOWN_TO_CONFIRM_EMPTY_WAY;
 
       });
       if(globalFound && globalFound.value){
+        console.log('passa di qui ', {valor:globalFound.value});
+        
         globalVar = parseInt(globalFound.value);
       }
       let countdown = globalVar;
@@ -226,7 +254,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       let buttonOk = {
         text: 'Confirmar',
-        handler: () => this.setWayAsEmpty()
+        handler: () => this.jaulaLlena()
+        // handler: () => this.setWayAsEmpty()
+        
       };
 
       let alertEmptyPacking = await this.alertController.create({
@@ -296,8 +326,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   async packingFull() {
     let callback = () => {
       if (this.wrongCodeScanned) {
+        console.log('passa di qui',this.wrongCodeScanned);
         this.setPackingAsFull();
       } else {
+        console.log('passa di qui');
         this.packingIsFull = true;
         this.hideLeftButtonFooter = true;
         this.hideRightButtonFooter = false;
@@ -324,7 +356,27 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.launchIncidenceBeep = false;
   }
 
+  /**
+   * @description Alert cuando terminan las calles por warehoise
+   */
+  private async nuevaAlert(almacen:string | null = null ){
+    this.alerta = false;
+    let message = `No hay calles para vaciar por Almacen ${almacen} <br>,
+                   escanear nueva Jaula, 
+                   la ${this.sorterProvider.infoSorterOutputOperation.packingReference} 
+                   tiene destino diferente`;
+    let alert = await this.alertController.create({
+      header: '¡Calles terminadas!',
+      message,
+      buttons:['OK']
+    });
+
+    await alert.present();
+  }
+
   private async assignPackingToProcess(packingReference: string) {
+    this.ULTIMA_JAULA = packingReference;
+
     await this.intermediaryService.presentLoading('Asignando embalaje al proceso...');
 
     this.sorterOutputService
@@ -333,12 +385,30 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseAssignPackingToWay) => {
+        console.log('passa por a qui');
+        console.log(res);
+
+        let warehouse = res.data.way['warehouse'];
+        let nome = warehouse['name'];
+        console.log(nome);
+        
+        if(res.code === 405 && res.errors === "El destino del carril no coincide con el de la jaula" && this.alerta){
+          this.ULTIMA_JAULA = null;
+          this.nuevaAlert(nome)
+        }else{
+          this.ULTIMA_JAULA = res.data.packing.reference
+        }
+
+        // if(this.ULTIMA_JAULA === res.data.packing.reference){
+        //   console.log('la ultima jaula coincide');
+        //   this.ULTIMA_JAULA = res.data.packing.reference;
+        // }
+
         if (res.code === 200) {
           // If output process is not started yet (first packing scanned) start here to check if current way have incidences
           if (!this.processStarted) {
             this.checkWayWithIncidence();
           }
-
           this.messageGuide = 'ESCANEAR 1º ARTÍCULO';
           this.processStarted = true;
           this.packingIsFull = false;
@@ -393,6 +463,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         incidenceProcess: this.wrongCodeScanned
       })
       .then(async (res: SorterOutputModel.ResponseScanProductPutInPacking) => {
+        console.log('passa por aqui',{res});
         if (res.code === 201) {
           await this.intermediaryService.dismissLoading();
 
@@ -450,9 +521,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
               this.audioProvider.playDefaultOk();
               await this.intermediaryService.presentToastSuccess(`Producto ${productReference} comprobado y válido.`, 2000);
               if (this.packingIsFull) {
+                console.log('passa por este');
+                console.log(productReference);
+                
                 this.lastProductScanned = true;
                 this.setPackingAsFull();
               } else {
+                console.log('pasa por este');
+                
                 this.hideLeftButtonFooter = false;
                 this.hideRightButtonFooter = false;
 
@@ -494,7 +570,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
+  // TODO registra el paking come lleno
   private async setPackingAsFull() {
+    console.log('passa di qui');
+    
     await this.intermediaryService.presentLoading('Registrado embalaje como lleno...');
 
     this.sorterOutputService
@@ -503,6 +582,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponsePackingFull) => {
+        console.log(res,'passa di qui');
+        
         if (res.code === 200) {
           this.audioProvider.playDefaultOk();
           if (this.wrongCodeScanned) {
@@ -547,15 +628,56 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
+  private async jaulaLlena(){
+    this.alerta = false;
+    let alert = await this.alertController.create({
+      header:`¿La Jaula ${this.infoSorterOperation.packingReference} esta llena? `,
+      // message:'¿La Calle esta vacia desea cambiar la Jaula?',
+      buttons:[
+        {
+          text:'SI',
+          handler:()=>{
+            console.log('pasa por si new calle');
+            console.log(this.ultimaReferenza);
+            let productReference = this.ultimaReferenza;
+            this.sorterOutputService
+            .postPackingFull({
+              packingReference: this.infoSorterOperation.packingReference,
+              wayId: this.infoSorterOperation.wayId.toString()
+            }).then(res=>{
+              console.log(res);
+              if(res.code === 200){
+                this.audioProvider.playDefaultOk();
+                this.ULTIMA_JAULA = null;
+                this.setWayAsEmpty().then(()=>{
+                  this.packingIsFull = false;
+                })
+              }              
+            });
+        }},
+        {
+          text:`No`,
+          handler:()=>{
+            console.log('passa di qui');
+            this.alerta = true;
+            this.setWayAsEmpty();
+          }
+        }
+      ]
+    })
+    await alert.present();
+  }
+
   private async setWayAsEmpty() {
     await this.intermediaryService.presentLoading('Comprobando que la calle esté vacía...');
-
     setTimeout(() => {
       this.sorterOutputService
         .postEmptyWay({
           wayId: this.infoSorterOperation.wayId.toString()
         })
         .then(async (res: SorterOutputModel.ResponseEmptyWay) => {
+          console.log(res);
+          
           if (res.code === 200) {
             this.audioProvider.playDefaultOk();
             this.sorterProvider.colorActiveForUser = null;
@@ -689,12 +811,16 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     this.sorterExecutionService
       .postStopExecuteColor()
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
+        console.log('passa por stop');
+        
         let paramsRequest: ExecutionSorterModel.ParamsExecuteColor = {
           color: this.sorterProvider.colorSelected.id,
           type: 2
         };
         if (paramsRequest) {
           this.sorterExecutionService.postExecuteColor(paramsRequest).subscribe(data => {
+            console.log('paasa stop2');
+            
             let idWayToWork = null;
             if (this.waySelectedToEmptying) {
               idWayToWork = this.waySelectedToEmptying.id;
@@ -707,6 +833,9 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
             this.sorterOutputService.getNewProcessWay(idWayToWork, lastWarehouse)
               .then(async (res2: SorterOutputModel.ResponseNewProcessWay) => {
+                console.log({res2,idWayToWork,lastWarehouse});
+                console.log('passa stop3');
+                
                 if (res2.code === 201) {
                   this.inputValue = null;
                   this.processStarted = null;
@@ -725,7 +854,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                     },
                     wayId: newProcessWay.way.zoneWay.ways.id
                   };
-
+                  console.log({ifo:this.infoSorterOperation});
+                  
+                  if(this.ULTIMA_JAULA || this.ULTIMA_JAULA !== null){
+                    this.assignPackingToProcess(this.ULTIMA_JAULA);
+                  }
                   this.focusToInput();
                 } else {
                   let errorMessage = 'Ha ocurrido un error al intentar obtener la nueva calle donde trabajar.';
