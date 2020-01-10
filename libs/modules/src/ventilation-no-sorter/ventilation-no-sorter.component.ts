@@ -1,9 +1,10 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import {AudioProvider} from "../../../services/src/providers/audio-provider/audio-provider.provider";
-import {IntermediaryService} from "@suite/services";
+import {IntermediaryService, WarehouseModel, WarehousesService} from "@suite/services";
 import {ScannerManualComponent} from "../components/scanner-manual/scanner-manual.component";
 import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
+import Warehouse = WarehouseModel.Warehouse;
 
 @Component({
   selector: 'app-ventilation-no-sorter',
@@ -17,11 +18,14 @@ export class VentilationNoSorterComponent implements OnInit {
 
   inputValue: string = null;
 
+  message: string = '¡Hola! Escanea un artículo para comenzar';
+
   constructor(
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private intermediaryService: IntermediaryService,
-    private pickingStoreService: PickingStoreService
+    private pickingStoreService: PickingStoreService,
+    private warehousesService: WarehousesService
   ) {}
 
   ngOnInit() {
@@ -40,14 +44,20 @@ export class VentilationNoSorterComponent implements OnInit {
         .then(response => { originScan = response.data});
       if(originScan && originScan.length != 0){
         if(originScan.picking_store_products_destinyWarehouseId == 3){
-          console.log('Tengo destino 0.')
+          console.log('Tengo destino 0.');
+          // A implementar.
         }else{
-          console.log('Tengo destino diferente de 0.')
+          let warehouse: Warehouse = this.warehousesService.getById(originScan.picking_store_products_destinyWarehouseId);
+          this.scannerManual.value = '';
+          this.inputValue = null;
+          this.message = 'El destino de este artículo es '+warehouse.reference+' '+warehouse.name;
+          await this.intermediaryService.dismissLoading();
+          this.scannerManual.focusToInput();
         }
       }else{
-        console.log('No tengo escaneo de origen.')
+        console.log('No tengo escaneo de origen.');
+        // A implementar.
       }
-      await this.intermediaryService.dismissLoading();
     } else {
       this.audioProvider.playDefaultError();
       await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);

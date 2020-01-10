@@ -1,11 +1,7 @@
 <ion-content (click)="scannerManual.focusToInput()">
 
   <div class="start-message" *ngIf="!inputValue">
-    <span>¡Hola!</span>
-    <br/>
-    <span>Escanea un artículo</span>
-    <br/>
-    <span>para comenzar</span>
+    <span>{{message}}</span>
   </div>
 
   <scanner-manual
