@@ -312,7 +312,7 @@ export class MenuComponent implements OnInit {
       icon: 'apps',
       children: [ 
         {
-          title: 'Catálogos',
+          title: 'Catálogo',
           id: 'ko-catalog',
           url: '/marketplaces/krackonline/catalog',
           icon: 'document'
@@ -342,7 +342,7 @@ export class MenuComponent implements OnInit {
       icon: 'apps',
       children: [ 
         {
-          title: 'Catálogos',
+          title: 'Catálogo',
           id: 'mp-catalog',
           url: '/marketplaces/miniprecios/catalog',
           icon: 'document'
