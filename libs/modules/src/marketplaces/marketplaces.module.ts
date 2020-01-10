@@ -3,6 +3,17 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { MarketplacesComponent } from './marketplaces.component';
 import { IonicModule } from '@ionic/angular';
+
+//style libraries
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatTableModule} from '@angular/material/table';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonModule} from '@angular/material/button';
+import {MatListModule} from '@angular/material/list';
+
+//Components
 import { CatalogComponent } from './catalog/catalog.component';
 import { CatalogMarketplacesComponent } from './catalog-marketplaces/catalog-marketplaces.component';
 import { StorePriorityComponent } from './store-priority/store-priority.component';
@@ -10,12 +21,6 @@ import { MappingsComponent } from './mappings/mappings.component';
 import { RulesComponent } from './rules/rules.component';
 import { RulesModule } from './rules/rules.module';
 import { SecurityStocksComponent } from './security-stocks/security-stocks.component';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatTableModule} from '@angular/material/table';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material';
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatButtonModule} from '@angular/material/button';
 
 const routes: Routes = [
   {
@@ -120,7 +125,8 @@ const routes: Routes = [
     MatInputModule,
     MatCheckboxModule,
     MatButtonModule,
-    RulesModule
+    RulesModule,
+    MatListModule
   ]
 })
 export class MarketplacesModule { }

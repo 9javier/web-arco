@@ -1,5 +1,74 @@
 .select {
-  width: 70%;
   margin-top: 20px;
+  margin-left: 5%;
+  width: 85%;
+  background: #f1f1f1;
+  padding: 10px;
+}
+
+.categories-list {
+  background: #f1f1f1;
+  color: black;
+  width: 85%;
+  margin-left: 5%;
+  margin-top: 5%;;
+}
+
+.filter-area {
+  margin-top: 20px;
+  margin-left: 5%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tag-area {
+  background: #f1f1f1;
+  padding: 10px;
+  width: 90%;
+}
+
+.product-quantity-tag {
+  font-size: 12px;
+  align-self: flex-end;
+  margin-right: 10%;
+}
+
+.categories {
+  margin-top: 20px;
+  margin-left: 5%;
+  display: flex;
+  flex-direction: column;
+}
+
+table {
+  width: 90%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+
+  th {
+    background: #f1f1f1;
+    color: black;
+    font-weight: bold;
+    font-size: 15px;
+  }
+}
+
+.create-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 10%;
+  margin-bottom: 20px;
+
+  span {
+    font-size: 12px;
+  }
+}
+
+.buttonCreate {
+  background: black;
+  color: white;
+  padding: 10px;
   margin-left: 20px;
 }
