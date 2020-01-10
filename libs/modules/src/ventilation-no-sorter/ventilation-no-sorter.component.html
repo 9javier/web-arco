@@ -1,3 +1,18 @@
 <ion-content>
-  <span>VENTILATION</span>
+
+  <div class="start-message" *ngIf="!inputValue">
+    <span>¡Hola!</span>
+    <br/>
+    <span>Escanea un artículo</span>
+    <br/>
+    <span>para comenzar</span>
+  </div>
+
+  <scanner-manual
+    #scannerManual
+    [placeholder]="''"
+    (currentValue)="updateValue($event)"
+    (newValue)="scan()"
+  ></scanner-manual>
+
 </ion-content>
