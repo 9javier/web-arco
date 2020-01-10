@@ -167,7 +167,11 @@ export class TextareaComponent implements OnInit {
                         this.presentToast(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`, 2000, this.pickingProvider.colorsMessage.info.name);
                         this.showTextStartScanPacking(false, this.typePacking, '');
                       } else if (res.data.packingStatus === 3) {
-                        this.alertSealPacking(this.jailReference, false);
+                        if (this.typePicking === 1) {
+                          this.alertSealPackingIntermediate(this.jailReference);
+                        } else {
+                          this.endProcessIntermediate(this.jailReference);
+                        }
                       } else {
                         this.processInitiated = false;
                         this.audioProvider.playDefaultError();
@@ -225,7 +229,11 @@ export class TextareaComponent implements OnInit {
           this.focusToInput();
           this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, 2000, this.pickingProvider.colorsMessage.error.name);
         } else {
-          this.alertSealPacking(this.jailReference);
+          if (this.typePicking === 1) {
+            this.alertSealPackingFinal(this.jailReference);
+          } else {
+            this.endProcessPacking(this.jailReference);
+          }
         }
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PRODUCT) {
         if (!this.processInitiated) {
@@ -446,16 +454,16 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  private showTextStartScanPacking(show: boolean, typePacking: number, packingReference?: string) {
+  private showTextStartScanPacking(show: boolean, typePacking: number, packingReference?: string, continueProcess = false) {
     if (show) {
       if (packingReference) {
-        if (typePacking == 1) {
+        if (typePacking === 1) {
           this.scanJail = "Escanea la Jaula " + packingReference + " para continuar con el proceso de picking ya iniciado.";
         } else {
           this.scanJail = "Escanea el Pallet " + packingReference + " para continuar con el proceso de picking ya iniciado.";
         }
       } else {
-        this.scanJail = "Escanea un embalaje para dar comienzo al proceso de picking.";
+        this.scanJail = continueProcess ? "Escanea un embalaje para continuar con el proceso de picking." : "Escanea un embalaje para dar comienzo al proceso de picking.";
       }
     } else {
       this.scanJail = null;
@@ -517,7 +525,51 @@ export class TextareaComponent implements OnInit {
     return await alertWarning.present();
   }
 
-  async alertSealPacking(packingReference: string, finalProcess = true) {
+  async alertSealPackingFinal(packingReference: string) {
+    const listCarriers = [];
+
+    this.inventoryService.getPendingSeal(this.pickingId).then(async (res: InventoryModel.ResponseGlobal) => {
+      const pendingSealCarrier = Array(res.data)[0];
+
+      pendingSealCarrier.forEach((item) => {
+        listCarriers.push(item.packing[0].reference);
+      });
+
+      let listShow = "";
+
+      listCarriers.map(x => {
+        listShow += `${x}</br>`;
+        return `${x}</br>`
+      });
+
+      if (listCarriers && listCarriers.length > 0) {
+        const alertWarning = await this.alertController.create({
+          header: 'Atención',
+          message: `<b>Jaulas que se van a precintar. ¿Está seguro?</b></br></br>${listShow}</br>`,
+          backdropDismiss: false,
+          buttons: [
+            {
+              text: 'No',
+              handler: () => {
+                this.endProcessPacking(packingReference);
+              }
+            },
+            {
+              text: 'Si',
+              handler: () => {
+                this.sealPackingFinal(listCarriers);
+              }
+            }]
+        });
+
+        return await alertWarning.present();
+      } else {
+        this.endProcessPacking(packingReference);
+      }
+    });
+  }
+
+  async alertSealPackingIntermediate(packingReference: string) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
       message: packingReference ? `¿Desea precintar la Jaula ${packingReference}?` : '¿Desea precintar la Jaula?',
@@ -526,17 +578,13 @@ export class TextareaComponent implements OnInit {
         {
           text: 'No',
           handler: () => {
-            if (finalProcess) {
-              this.endProcessPacking(packingReference);
-            } else {
-              this.endProcessIntermediate(this.jailReference);
-            }
+            this.endProcessIntermediate(this.jailReference);
           }
         },
         {
           text: 'Si',
           handler: () => {
-            this.sealPacking(packingReference, finalProcess);
+            this.sealPackingIntermediate(packingReference);
           }
         }]
     });
@@ -554,24 +602,40 @@ export class TextareaComponent implements OnInit {
     this.packingReference = this.jailReference;
     this.presentToast(`${this.literalsJailPallet[this.typePacking].process_end_packing}${dataWrite}.`, 2000, this.pickingProvider.colorsMessage.info.name);
     this.showNexProductToScan(false);
-    this.showTextStartScanPacking(true, this.typePacking, '');
+    this.showTextStartScanPacking(true, this.typePacking, '', true);
     this.intermediaryService.dismissLoading();
   }
 
-  private sealPacking(packingReference: any, finalProcess = true) {
+  private sealPackingFinal(listCarriers: string[]) {
+    if (listCarriers && listCarriers.length > 0) {
+      this.intermediaryService.presentLoading('Precintando Jaulas');
+      this.carrierService.postSealList(listCarriers).subscribe(async () => {
+        this.audioProvider.playDefaultOk();
+        this.intermediaryService.dismissLoading();
+        this.inputPicking = null;
+        this.presentToast('Proceso finalizado correctamente.', 1500, this.pickingProvider.colorsMessage.success.name);
+        this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
+        this.clearTimeoutCleanLastCodeScanned();
+        setTimeout(() => {
+          this.location.back();
+          this.events.publish('picking:remove');
+        }, 1.5 * 1000);
+      });
+    }
+  }
+
+  private sealPackingIntermediate(packingReference: any) {
     if (packingReference && packingReference.length > 0) {
       this.intermediaryService.presentLoading('Precintando Jaula');
-      this.carrierService.postSealList(packingReference).subscribe(async () => {
-        if (finalProcess) {
-          this.endProcessPacking(packingReference);
-        } else {
-          this.endProcessIntermediate(this.jailReference);
-        }
+      this.carrierService.postSealList(Array(packingReference)).subscribe(async () => {
+        this.endProcessIntermediate(this.jailReference);
       });
     }
   }
 
   private endProcessPacking(packingReference: any) {
+    console.log('END PROCESS PACKING');
+    console.log(packingReference);
     this.postVerifyPacking({
       status: 3,
       pickingId: this.pickingId,
