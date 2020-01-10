@@ -20,29 +20,33 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   selectionReserved = new SelectionModel<Predistribution>(true, []);
 
   constructor(private predistributionsService: PredistributionsService) {
-    this.predistributionsService.getIndex().then((ELEMENT_DATA) => {
-      console.log(ELEMENT_DATA);
-      this.dataSource = new MatTableDataSource<Predistribution>(ELEMENT_DATA);
-    });
+    // this.predistributionsService.getIndex().then((ELEMENT_DATA) => {
+    //   console.log(ELEMENT_DATA);
+    //   this.dataSource = new MatTableDataSource<Predistribution>(ELEMENT_DATA);
+    // });
   }
 
   ngOnInit(): void {
-    this.paginator._intl.itemsPerPageLabel = 'Ver';
-    this.paginator._intl.getRangeLabel = this.getRangeLabel;
-    this.dataSource.data.forEach(row => {
-      if (row.distribution) {
-        this.selectionPredistribution.select(row);
-      }
+    this.predistributionsService.entities().subscribe(entities => {
+      console.log(entities);
+      
+    })
+    // this.paginator._intl.itemsPerPageLabel = 'Ver';
+    // this.paginator._intl.getRangeLabel = this.getRangeLabel;
+    // this.dataSource.data.forEach(row => {
+    //   if (row.distribution) {
+    //     this.selectionPredistribution.select(row);
+    //   }
 
-      if (row.reserved) {
-        this.selectionReserved.select(row);
-      }
-    });
+    //   if (row.reserved) {
+    //     this.selectionReserved.select(row);
+    //   }
+    // });
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
+    // this.dataSource.paginator = this.paginator;
   }
 
   getRangeLabel = (page: number, pageSize: number, length: number) =>  {

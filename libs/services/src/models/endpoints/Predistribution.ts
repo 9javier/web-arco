@@ -38,4 +38,23 @@ export namespace PredistributionModel {
     message: string;
     code: number;
   }
+   export interface IndexRequest {
+    references: Array<number | string>,
+    wharehouses: Array<number | string>,
+    providers: Array<number | string>,
+    brands: Array<number | string>,
+    colors: Array<number | string>,
+    sizes: Array<number | string>,
+    orderBy: OrderBy
+    pagination: Pagination
+   }
+   interface Pagination {
+    page:number;
+    limit:number;
+   }
+
+   interface OrderBy {
+    type:number,
+    order:string
+   }
 }
