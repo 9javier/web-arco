@@ -35,9 +35,14 @@ export class VentilationNoSorterComponent implements OnInit {
   async scan(){
     if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PRODUCT) {
       await this.intermediaryService.presentLoading('Procesando...');
-      await this.pickingStoreService.getByProductReference(this.inputValue).then(response => {
-        console.log('originScan:', response);
-      });
+      let originScan;
+      await this.pickingStoreService.getByProductReference({reference: this.inputValue})
+        .then(response => { originScan = response.data.length > 0 });
+      if(originScan){
+        // do something
+      }else{
+        // do something
+      }
       await this.intermediaryService.dismissLoading();
     } else {
       this.audioProvider.playDefaultError();

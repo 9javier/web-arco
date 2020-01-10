@@ -29,8 +29,8 @@ export class PickingStoreService {
     private requestsProvider: RequestsProvider
   ) {}
 
-  getByProductReference(reference: string) : Promise<HttpRequestModel.Response>{
-    return this.requestsProvider.post(this.getByProductReferenceUrl, reference);
+  getByProductReference(parameters: PickingStoreModel.ProductReference) : Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.post(this.getByProductReferenceUrl, parameters);
   }
 
   getInitiated() : Promise<HttpRequestModel.Response> {
