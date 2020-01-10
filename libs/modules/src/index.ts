@@ -240,6 +240,10 @@ export * from './components/filter-popover/filter-popover.module';
 export * from './transfer-packing/transfer-packing.component';
 export * from './transfer-packing/transfer-packing.module';
 
+/** Transfer Ventilation */
+export * from './transfer-ventilation/transfer-ventilation.component';
+export * from './transfer-ventilation/transfer-ventilation.module';
+
 /** Toolbar AL */
 export * from './components/toolbar-al/toolbar-al.component';
 export * from './components/toolbar-al/toolbar-al.module';

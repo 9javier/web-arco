@@ -492,8 +492,8 @@ export class MenuComponent implements OnInit {
       icon: 'grid',
       children: [
         {
-          title: 'Ventilación de Traspasos',
-          id: 'transfer-ventilation',
+          title: 'Ventilación de traspasos',
+          id: 'ventilation-transfer',
           url: '/ventilation/transfer',
           icon: 'swap'
         },
