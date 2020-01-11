@@ -3,8 +3,8 @@ import { AuditsService } from '@suite/services';
 import { ToastController } from '@ionic/angular';
 import { Router, ActivatedRoute } from '@angular/router';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 
 @Component({
   selector: 'suite-add-audits',
@@ -21,7 +21,7 @@ export class AddAuditsComponent implements OnInit {
     private router: Router,
     private activeRoute: ActivatedRoute,
     private audioProvider: AudioProvider,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private keyboardService: KeyboardService
   ) {
     this.focusToInput();
@@ -39,8 +39,7 @@ export class AddAuditsComponent implements OnInit {
   userTyping(event: any) {
     let codeScanned = this.inputValue;
     this.inputValue = null;
-    if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL
-      || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET) {
+    if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
       this.create(codeScanned);
     } else {
       this.focusToInput();

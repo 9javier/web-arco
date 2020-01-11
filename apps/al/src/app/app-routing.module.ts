@@ -58,7 +58,16 @@ const routes: Routes = [
     data: {
       name: 'Productos'
     }
-  }, {
+  },
+  {
+    path: 'new-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/new-products/new-products.module#NewProductsModule',
+    data: {
+      name: 'Nuevos Productos'
+    }
+  },
+  {
     path: 'building',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/building/building.module#BuildingModule',

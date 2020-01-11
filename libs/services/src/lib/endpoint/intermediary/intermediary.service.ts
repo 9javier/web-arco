@@ -103,5 +103,24 @@ export class IntermediaryService {
 
     return await alert.present();
   }
-  
+
+  /**
+   * Show snackbar
+   * @param message - message to be presented
+   * @param closeBtn
+   */
+  async presentSnackbar(message: string, closeBtn: string = 'CERRAR') {
+    let toast = await this.toastCtrl.create({
+      message: message,
+      closeButtonText: closeBtn,
+      color: 'dark',
+      showCloseButton: true
+    });
+
+    toast.onDidDismiss().then((data) => {
+      console.debug('Test::Data', data);
+    });
+
+    toast.present();
+  }
 }

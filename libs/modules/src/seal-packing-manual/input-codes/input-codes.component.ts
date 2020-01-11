@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ToastController} from "@ionic/angular";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
@@ -27,7 +27,7 @@ export class InputCodesComponent implements OnInit {
   constructor(
     private toastController: ToastController,
     private carriersService: CarriersService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private intermediaryService: IntermediaryService,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService
@@ -42,7 +42,7 @@ export class InputCodesComponent implements OnInit {
 
   }
 
-  keyUpInput(event) {
+  async keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -59,9 +59,8 @@ export class InputCodesComponent implements OnInit {
 
       this.inputProduct = null;
 
-      if (this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.JAIL
-        || this.scanditProvider.checkCodeValue(dataWrote) == this.scanditProvider.codeValue.PALLET) {
-        this.intermediaryService.presentLoading();
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PACKING) {
+        await this.intermediaryService.presentLoading();
         this.carriersService
           .postSeal({
             reference: dataWrote
@@ -72,11 +71,11 @@ export class InputCodesComponent implements OnInit {
               this.audioProvider.playDefaultOk();
               this.presentToast('El embalaje se ha precintado correctamente.', 'primary');
             } else {
-              if(res.code == 404){
+              if (res.code == 404) {
                 this.audioProvider.playDefaultError();
                 let errorMsg = res && res.error && res.error.errors ? res.error.errors : res.errors;
                 this.presentToast(errorMsg, 'danger');
-              }else {
+              } else {
                 this.audioProvider.playDefaultError();
                 let errorMsg = res && res.error && res.error.errors ? res.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
                 this.presentToast(errorMsg, 'danger');

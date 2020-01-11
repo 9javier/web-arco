@@ -135,7 +135,6 @@ export class SendEmptyPackingComponent implements OnInit {
 
   cleanSelect(closeAlert?: boolean) {
     this.carrierService.getIndex().subscribe(carriers => {
-      console.log(carriers);
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
@@ -158,7 +157,6 @@ export class SendEmptyPackingComponent implements OnInit {
   getCarriers(): void {
     this.intermediaryService.presentLoading();
     this.carrierService.getCarrierMeWarehouse().subscribe(carriers => {
-      console.log(carriers);
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
@@ -184,143 +182,11 @@ export class SendEmptyPackingComponent implements OnInit {
    */
   hasToDelete(): boolean {
 
-
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
 
 
 
-  async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
-    let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
-    let newlista = [];
-    let newlistaPrint = [];
-    lista.forEach(item => {
-      let er = '';
-      if (item.carrierWarehousesDestiny.length === 0) {
-        er = '- Sin destino';
-      } else
-        if (item.carrierWarehousesDestiny.length > 1) {
-          er = '- Varios destinos';
-        } else
-          if (item.packingInventorys.length === 0) {
-            er = '- Sin productos';
-          } else
-            if (item.status === 4 || item.status === 5) {
-              if (item.status === 5) {
-                er = '- Sin productos';
-              }
-              else
-                if (item.status === 4) {
-                  er = '- Precintada';
-                }
-            }
-      newlistaPrint.push(item.reference + er);
-    })
-    let lstShow = "";
-    newlistaPrint.map(x => {
-      lstShow += `${x}</br>`;
-      return `${x}</br>`
-    });
-
-    let lst = "";
-
-    listaRefereceJaulainviata.map(x => {
-      lst += `${x}</br>`;
-      return `${x}</br>`
-    });
-
-
-    let alert;
-    if (listaRefereceJaulainviata.length === 0) {
-
-      alert = await this.alertControler.create({
-        header: 'Aviso',
-        message: `<b>Los siguientes embalajes no se pueden precintar</b></br></br>${lstShow}`,
-        buttons: [
-          {
-            text: 'Cancelar',
-            role: 'cancel',
-            cssClass: 'danger',
-            handler: () => {
-              this.cleanSelect(false);
-            }
-          }
-        ]
-      });
-
-    } else {
-
-      if (listaRefereceJaulainviata.length > 0 && lista.length === 0) {
-        alert = await this.alertControler.create({
-          header: 'Confirmación',
-          message: `<b>Embalajes que se van a precintar. ¿Está seguro?</b></br></br>${lst}</br>`,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'danger',
-              handler: () => {
-              }
-            },
-            {
-              text: 'Aceptar',
-              role: 'send',
-              cssClass: 'primary',
-              handler: () => {
-                if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
-                }
-              }
-            }
-          ]
-        });
-      } else {
-
-        alert = await this.alertControler.create({
-          header: 'Aviso',
-          message: `<b>Embalajes que se van a precintar</b></br></br>${lst}</br></br><b>Embalajes que NO se van a precintar</b></br></br>${lstShow}`,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'danger',
-              handler: () => {
-              }
-            },
-            {
-              text: 'Aceptar',
-              role: 'send',
-              cssClass: 'primary',
-              handler: () => {
-                if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
-                }
-              }
-            }
-          ]
-        });
-      }
-    }
-
-
-
-
-    await alert.present();
-  }
-
-  private async printReferencesList(listReferences: Array<string>) {
-    if ((<any>window).cordova) {
-      this.printerService.print({ text: listReferences, type: 0 });
-    } else {
-      return await this.printerService.printBarcodesOnBrowser(listReferences);
-    }
-  }
 
   /**
    * Change one destination
@@ -386,6 +252,25 @@ export class SendEmptyPackingComponent implements OnInit {
       this.getCarriers();
     })
     modal.present();   
+  }
+  
+  async sendAll(event){
+    event.stopPropagation();
+    event.preventDefault();
+    let jails = this.toDelete.value.jails.filter(jail => jail.selected);
+    console.log('debug >>>', jails);
+    let modal = (await this.modalCtrl.create({
+      component: SendPackingComponent,
+      componentProps: {
+        jail: null,
+        jails: jails
+      }
+    }))
+    modal.onDidDismiss().then(() => {
+      this.getCarriers();
+    })
+    modal.present();
+    return false;
   }
 }
 

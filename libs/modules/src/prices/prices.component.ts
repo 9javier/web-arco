@@ -24,6 +24,8 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { isNgTemplate } from '@angular/compiler';
+import { Range } from './interfaces/range.interface';
+import {StockModel} from "../../../services/src/models/endpoints/Stock";
 
 @Component({
   selector: 'suite-prices',
@@ -63,6 +65,10 @@ export class PricesComponent implements OnInit {
     lifestyles: [],
     status: 0,
     tariffId: 0,
+    prices: this.formBuilder.group({
+      min: 0,
+      max: 100
+    }),
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -82,6 +88,7 @@ export class PricesComponent implements OnInit {
   families: Array<TagsInputOption> = [];
   lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
+  priceses: Range;
 
   /**List of SearchInContainer */
   searchsInContainer: Array<PriceModel.Price> = [];
@@ -110,6 +117,8 @@ export class PricesComponent implements OnInit {
   displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
+  printAllStock: boolean = false;
+
   public disableExpansionPanel: boolean = true;
 
   public mobileVersionTypeList: 'list' | 'table' = 'list';
@@ -134,7 +143,19 @@ export class PricesComponent implements OnInit {
 
   }
 
+  getTotalStock(price : PriceModel.Price) : number{
+    let stock : number = 0;
+    if(price.stockStore) {
+      for (let stockStore of price.stockStore) {
+        stock += stockStore.cantidad;
+      }
+    }
+    return stock;
+  }
 
+  switchPrintAllStock(){
+   this.printAllStock = !this.printAllStock;
+  }
 
   /**
    * clear empty values of objecto to sanitize it
@@ -189,7 +210,6 @@ export class PricesComponent implements OnInit {
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
-
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
@@ -229,7 +249,6 @@ export class PricesComponent implements OnInit {
     } else {
       this.itemIdSelected.push(item);
     }
-    console.log(this.itemIdSelected);
   }
 
   changeStatusImpress(){
@@ -319,18 +338,29 @@ export class PricesComponent implements OnInit {
       }
     }
 
-    let prices = this.selectedForm.value.toSelect.map((price, i) => {
-      if (items[i].status != 3) {
-        let object = {
-          warehouseId: warehouseId,
-          tariffId: items[i].tariff.id,
-          modelId: items[i].model.id,
-          numRange: items[i].numRange
-        };
-        return price ? object : false;
+    let prices = [];
+
+    for(let i = 0; i < this.selectedForm.value.toSelect.length; i++){
+      if(this.selectedForm.value.toSelect[i] && items[i].status != 3){
+        if(this.printAllStock) {
+          for (let j = 0; j < items[i].stockStore.length; j++) {
+            prices.push({
+              warehouseId: warehouseId,
+              tariffId: items[i].tariff.id,
+              modelId: items[i].model.id,
+              numRange: items[i].numRange
+            });
+          }
+        }else{
+          prices.push({
+            warehouseId: warehouseId,
+            tariffId: items[i].tariff.id,
+            modelId: items[i].model.id,
+            numRange: items[i].numRange
+          });
+        }
       }
-    })
-      .filter(price => price);
+    }
 
     this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
     this.printerService.printPrices({ references: prices }).subscribe(result => {
@@ -410,7 +440,13 @@ export class PricesComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters(): void {
+    console.log(this.getFormValueCopy());
+    this.priceses = {
+      min: 0,
+      max: 1000
+    }
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
+
       this.colors = filters.colors;
       this.brands = filters.brands;
       this.sizes = filters.sizes;
@@ -418,7 +454,10 @@ export class PricesComponent implements OnInit {
       this.models = filters.models;
       this.families = filters.families;
       this.lifestyles = filters.lifestyles;
-
+      this.priceses = filters.prices
+      this.form.patchValue({
+        prices: filters.prices
+      })
       this.applyFilters();
     });
   }
@@ -428,6 +467,8 @@ export class PricesComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters): void {
+    console.log(parameters);
+
     this.intermediaryService.presentLoading();
     this.priceService.getIndex(parameters).subscribe(prices => {
       this.showFiltersMobileVersion = false;
@@ -532,6 +573,8 @@ export class PricesComponent implements OnInit {
     clearTimeout(this.requestTimeout);
     this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
+      console.log(this.form.value);
+
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, 100);
   }
@@ -548,6 +591,10 @@ export class PricesComponent implements OnInit {
       status: 0,
       size: 0,
       tariffId: 0,
+      prices: {
+        min:0,
+        max:1000
+      },
       pagination: this.formBuilder.group({
         page: this.page || 1,
         limit: this.limit || this.pagerValues[0]
@@ -629,5 +676,15 @@ export class PricesComponent implements OnInit {
 
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
+  }
+  rangeChange(event){
+    this.form.patchValue({
+      prices:{
+        min: event.detail.value.lower,
+        max: event.detail.value.upper
+      }
+    })
+    console.log(this.form.value.prices);
+
   }
 }

@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {Router, ActivatedRoute} from '@angular/router';
 import { Subject } from 'rxjs';
+import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
 
 @Component({
   selector: 'suite-audits-mobile',
@@ -21,7 +22,8 @@ export class AuditsMobileComponent implements OnInit {
     private toast : ToastController,
     private toolbarProvider: ToolbarProvider,
     private router : Router,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private auditMultipleScanditService: AuditMultipleScanditService
   ) {
     AuditsMobileComponent.returned.subscribe(res => {
       this.getAllAudits();
@@ -63,6 +65,10 @@ export class AuditsMobileComponent implements OnInit {
 
   restartAudit(audit) {
     this.router.navigateByUrl('/audits/scanner-product/'+audit.id+'/'+audit.packing.reference+'/'+this.activeRoute.snapshot.routeConfig.path);
+  }
+
+  initAuditMultipleScandit(){
+    this.auditMultipleScanditService.init();
   }
 
   getMessageVerifiedProducts(productsQuantity: number) : string {

@@ -26,6 +26,7 @@ export class PrinterService {
   /**urls for printer service */
   private getProductsByReferenceUrl: string = environment.apiBase + "/products/references";
   private printNotifyUrl: string = environment.apiBase + "/tariffs/printReferences";
+  private printNotifyNewProductUrl: string = environment.apiBase + "/processes/receive-store/printReferences";
 
   public stampe$: Subject<boolean> = new Subject();
 
@@ -272,7 +273,7 @@ export class PrinterService {
    * Obtain the prices by reference and then print each of these prices
    * @param referencesObject - object with the array of references to be sended
    */
-  printPrices(referencesObject) {
+  printPrices(referencesObject, isNewProduct = false) {
     console.debug("PRINT::printPrices 1 [" + new Date().toJSON() + "]", referencesObject);
     let observable: Observable<boolean> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
@@ -286,14 +287,25 @@ export class PrinterService {
       /**obtain the products */
       console.debug("PRINT::printPrices 3 [" + new Date().toJSON() + "]", referencesObject);
       return this.priceService.getIndexByModelTariff(referencesObject).pipe(flatMap((prices) => {
-        let dataToPrint = this.processProductToPrintTagPrice(prices);
+        let dataToPrint;
+
+        if (isNewProduct) {
+          dataToPrint = this.processProductToPrintTagPrice(prices, isNewProduct, referencesObject.references[0].sizeId);
+        } else {
+          dataToPrint = this.processProductToPrintTagPrice(prices);
+        }
+
         console.debug("PRINT::printPrices 4 [" + new Date().toJSON() + "]", prices);
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
         })).pipe(flatMap(response => {
           console.debug("PRINT::printPrices 5 [" + new Date().toJSON() + "]", response);
           if (response) {
-            return this.printNotify(dataToPrint.options.map(option => option.price.id));
+            if (isNewProduct) {
+              return this.printNotifyNewProduct(dataToPrint.options[0]);
+            } else {
+              return this.printNotify(dataToPrint.options.map(option => option.price.id));
+            }
           } else {
             return of(false);
           }
@@ -314,6 +326,23 @@ export class PrinterService {
     console.debug("PRINT::printNotify 1 [" + new Date().toJSON() + "]", ids);
     return this.http.post(this.printNotifyUrl, { references: ids }).pipe(map(response => {
       console.debug("PRINT::printNotify 2 [" + new Date().toJSON() + "]", ids);
+      return true;
+    }));
+  }
+
+  printNotifyNewProduct(optionPrice: any): Observable<boolean> {
+    const filterPriceId = optionPrice.price.id;
+    const modelId = Number(optionPrice.product.productShoeUnit.model.id);
+    const sizeId = optionPrice.sizeId;
+    const references = {
+      filterPriceId,
+      modelId,
+      sizeId
+    };
+
+    console.debug("PRINT::printNotifyNewProduct 1 [" + new Date().toJSON() + "]", references);
+    return this.http.post(this.printNotifyNewProductUrl, { references: [references] }).pipe(map(response => {
+      console.debug("PRINT::printNotifyNewProduct 2 [" + new Date().toJSON() + "]", references);
       return true;
     }));
   }
@@ -378,7 +407,6 @@ export class PrinterService {
           }
 
 
-        console.log("datato prinmt", dataToPrint, "\n");
 
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint));
@@ -405,7 +433,7 @@ export class PrinterService {
     let options: Array<PrintModel.Print> = [];
     let arrayProductsToProcess: Array<ProductModel.Product> = [];
 
-    console.log("cual es el problema", dataToProcess);
+
     if (!Array.isArray(dataToProcess)) {
       arrayProductsToProcess.push(dataToProcess);
     } else {
@@ -459,7 +487,7 @@ export class PrinterService {
    * Print the prices of products
    * @param listReferences references of products
    */
-  printTagPrices(listReferences: string[]): Observable<Boolean | Observable<any>> {
+  printTagPrices(listReferences: string[]): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagPrices 1 [" + new Date().toJSON() + "]", listReferences);
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
       let innerObservable: Observable<any> = new Observable(observer => {
@@ -471,8 +499,8 @@ export class PrinterService {
       }));
       console.debug("PRINT::printTagPrices 2 [" + new Date().toJSON() + "]", listReferences);
       return this.priceService.postPricesByProductsReferences({ references: listReferences }).then((prices) => {
-        let dataToPrint = this.processProductToPrintTagPrice(prices);
-        console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices);
+        let dataToPrint = this.processProductToPrintTagPrice(prices.data);
+        console.debug("PRINT::printTagPrices 3 [" + new Date().toJSON() + "]", prices.data);
         innerObservable = innerObservable.pipe(flatMap(product => {
           return from(this.toPrintFromString(dataToPrint.valuePrint).catch((_ => { })));
         })).pipe(flatMap(response => {
@@ -497,12 +525,12 @@ export class PrinterService {
 
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
-      console.log(dataToPrint);
+
       this.toPrintFromString(dataToPrint.valuePrint);
     }
   }
 
-  private processProductToPrintTagPrice(dataToProcess: (any | Array<any>)): { valuePrint, options } {
+  private processProductToPrintTagPrice(dataToProcess: (any | Array<any>), isNewProduct = false, sizeId = 0): { valuePrint, options } {
     console.debug("PRINT::processProductToPrintTagPrice 1 [" + new Date().toJSON() + "]", dataToProcess);
     const dictionaryOfCaseTypes = {
       "1": PrintModel.LabelTypes.LABEL_INFO_PRODUCT,
@@ -523,7 +551,7 @@ export class PrinterService {
     } else {
       arrayPricesToProcess = dataToProcess;
     }
-    console.log("debugeando", arrayPricesToProcess);
+
     console.debug("PRINT::processProductToPrintTagPrice 2 [" + new Date().toJSON() + "]", arrayPricesToProcess);
     /** Iterate and build object to print */
     for (let iPrice in arrayPricesToProcess) {
@@ -571,6 +599,11 @@ export class PrinterService {
             valueRange: this.getCorrectValueRange(price)
           }
         };
+
+        if (isNewProduct) {
+          printOptions.product.productShoeUnit.model.id = price.model.id;
+          printOptions.sizeId = sizeId;
+        }
         /** Build the array for obtain the string to send to printer */
         options.push(printOptions);
       }
@@ -613,7 +646,7 @@ export class PrinterService {
    * @param failed - the solicitude comes from a failed request
    */
   private async toPrintFromString(textToPrint: string, macAddress?) {
-    console.log(textToPrint);
+
 
 
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
@@ -675,7 +708,7 @@ export class PrinterService {
 
 
   private async toPrint(printOptions: PrintModel.Print) {
-    console.log('imprint');
+
 
     console.debug("PRINT::toPrint 1 [" + new Date().toJSON() + "]", printOptions);
     // this.stampe$.next(true);

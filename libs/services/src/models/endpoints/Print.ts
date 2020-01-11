@@ -1,4 +1,8 @@
+import { SizeModel } from '@suite/services';
+
 export namespace PrintModel {
+  import Size = SizeModel.Size;
+
   export interface Product {
     container?: {
       column?: number,
@@ -113,6 +117,7 @@ export namespace PrintModel {
       typeLabel?:number;
     };
     type?: number;
+    sizeId?: number;
   }
 
   export interface ProductSizeRange {

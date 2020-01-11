@@ -14,9 +14,19 @@
     <p>No hay auditorías iniciadas</p>
   </div>
 
-  <ion-fab routerLink="/audits/add" vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    <ion-fab-list side="top" class="list-fabs">
+      <div class="custom-fab">
+        <ion-button>Escaneo aleatorio (cámara)</ion-button>
+        <ion-fab-button size="small" (click)="initAuditMultipleScandit()"><i class="material-icons">camera</i></ion-fab-button>
+      </div>
+      <div class="custom-fab">
+        <ion-button>Escaneo total (láser)</ion-button>
+        <ion-fab-button size="small" color="primary" routerLink="/audits/add"><i class="material-icons">all_out</i></ion-fab-button>
+      </div>
+    </ion-fab-list>
   </ion-fab>
 </ion-content>

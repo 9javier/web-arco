@@ -79,7 +79,6 @@ export class SorterComponent implements OnInit {
         validators: validators.haveItems('toSelect')
       }
     );
-    console.log(this.selectedForm);
 
     this.selectedFormActive = this.formBuilder.group(
       {
@@ -128,7 +127,6 @@ export class SorterComponent implements OnInit {
       );
     this.sorterTemplateService.getIndex().subscribe((data) => {
       this.templates = data.data;
-      console.log(this.templates)
       this.initSelectActive(this.templates);
     })
   }
@@ -213,8 +211,6 @@ export class SorterComponent implements OnInit {
 
   active(element, check) {
     event.stopPropagation();
-    console.log('active')
-    console.log(check.value)
     let payload = element;
     payload = {
       active: check.value,
@@ -222,12 +218,10 @@ export class SorterComponent implements OnInit {
     }
     this.intermediaryService.presentLoading();
     this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe((data) => {
-      console.log(data);
     }, (err) => {
       console.log(err)
     }, () => {
       this.getTemplates();
-      console.log(this.templates)
       this.intermediaryService.dismissLoading();
     });
   }

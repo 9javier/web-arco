@@ -6,7 +6,7 @@ div.container {
   div.emptying-types {
     display: flex;
     flex-direction: row;
-    div.automatic, div.manual {
+    div.automatic, div.manual, div.mixed {
       display: flex;
       flex-direction: column;
       flex: 1;

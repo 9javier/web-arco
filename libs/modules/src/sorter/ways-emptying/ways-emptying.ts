@@ -27,9 +27,11 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   public loadingSorterTemplateMatrix: boolean = true;
   public disableAuto: boolean = true;
   public disableManual: boolean = true;
+  public disableMixed: boolean = true;
 
   private firstSorter: SorterModel.FirstSorter;
   private lastWaySelected = null;
+  private lastWaysSelected: any[] = [];
   private waysToUpdate: any[] = [];
 
   constructor(
@@ -51,57 +53,127 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   public columnSelected(data: {column: MatrixSorterModel.Column, iHeight: number, iCol: number}) {
     this.disableAuto = true;
     this.disableManual = true;
-    if (data.column.way.new_emptying == null) {
-      if (data.column.way.manual == 1) {
-        this.disableAuto = false;
+    this.disableMixed = true;
+
+    this.lastWaySelected = data;
+    this.lastWaysSelected.push(this.lastWaySelected);
+    this.emptyingVerification();
+    this.infoWayEmptying.newWaySelected(data.column.way);
+    if(this.disableMixed == true) {
+      if (data.column.way.new_emptying == null) {
+        if (data.column.way.manual == 1) {
+          this.disableAuto = false;
+        } else {
+          this.disableManual = false;
+        }
       } else {
-        this.disableManual = false;
-      }
-    } else {
-      if (data.column.way.new_emptying == 1) {
-        this.disableAuto = false;
-      } else {
-        this.disableManual = false;
+        if (data.column.way.new_emptying == 1) {
+          this.disableAuto = false;
+        } else {
+          this.disableManual = false;
+        }
       }
     }
-    this.lastWaySelected = data;
-    this.infoWayEmptying.newWaySelected(data.column.way);
+  }
+
+  emptyingVerification(){
+    let way = null;
+    let haveManual = false;
+    let haveAuto = false;
+    for(way of this.lastWaysSelected){
+      if( way.column.way.manual == 1){
+        haveManual = true;
+      }else{
+        if(way.column.way.manual == 0){
+          haveAuto = true;
+        }
+      }
+    }
+    if(haveManual == true && haveAuto == true){
+      this.disableAuto = true;
+      this.disableManual = true;
+      this.disableMixed = false;
+    }
   }
 
   public async autoEmptying() {
     await this.intermediaryService.presentLoading('Cambiando a vaciado automático...');
-    this.matrix.changeEmptyingForWay(0, this.lastWaySelected.iHeight, this.lastWaySelected.iCol);
-    this.disableAuto = true;
-    this.disableManual = false;
-    let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == this.lastWaySelected.column.way.id);
-    if (someWay >= 0) {
-      this.waysToUpdate[someWay] = this.lastWaySelected.column.way;
-      this.waysToUpdate[someWay].new_emptying = 0;
-    } else {
-      let wayToUpdate = this.lastWaySelected.column.way;
-      wayToUpdate.new_emptying = 0;
-      this.waysToUpdate.push(wayToUpdate);
+    let selectedWay = null;
+    for(selectedWay of this.lastWaysSelected) {
+      this.matrix.changeEmptyingForWay(0, selectedWay.iHeight, selectedWay.iCol);
+      this.disableAuto = true;
+      this.disableManual = true;
+      let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+      if (someWay >= 0) {
+        this.waysToUpdate[someWay] = selectedWay.column.way;
+        this.waysToUpdate[someWay].new_emptying = 0;
+      } else {
+        let wayToUpdate = selectedWay.column.way;
+        wayToUpdate.new_emptying = 0;
+        this.waysToUpdate.push(wayToUpdate);
+      }
     }
-
     await this.changeWayManual();
+
   }
 
   public async manualEmptying() {
     await this.intermediaryService.presentLoading('Cambiando a vaciado manual...');
-    this.matrix.changeEmptyingForWay(1, this.lastWaySelected.iHeight, this.lastWaySelected.iCol);
-    this.disableAuto = false;
-    this.disableManual = true;
-    let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == this.lastWaySelected.column.way.id);
-    if (someWay >= 0) {
-      this.waysToUpdate[someWay] = this.lastWaySelected.column.way;
-      this.waysToUpdate[someWay].new_emptying = 1;
-    } else {
-      let wayToUpdate = this.lastWaySelected.column.way;
-      wayToUpdate.new_emptying = 1;
-      this.waysToUpdate.push(wayToUpdate);
+    let selectedWay = null;
+    for(selectedWay of this.lastWaysSelected) {
+      this.matrix.changeEmptyingForWay(1, selectedWay.iHeight, selectedWay.iCol);
+      this.disableAuto = true;
+      this.disableManual = true;
+      let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+      if (someWay >= 0) {
+        this.waysToUpdate[someWay] = selectedWay.column.way;
+        this.waysToUpdate[someWay].new_emptying = 1;
+      } else {
+        let wayToUpdate = selectedWay.column.way;
+        wayToUpdate.new_emptying = 1;
+        this.waysToUpdate.push(wayToUpdate);
+      }
     }
-
     await this.changeWayManual();
+
+  }
+
+  public async mixedEmptying() {
+    await this.intermediaryService.presentLoading('Invirtiendo tipo de vaciado...');
+    let selectedWay = null;
+    for(selectedWay of this.lastWaysSelected) {
+      if(selectedWay.column.way.manual == 1){
+        this.matrix.changeEmptyingForWay(0, selectedWay.iHeight, selectedWay.iCol);
+        this.disableAuto = true;
+        this.disableManual = true;
+        this.disableMixed = true;
+        let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+        if (someWay >= 0) {
+          this.waysToUpdate[someWay] = selectedWay.column.way;
+          this.waysToUpdate[someWay].new_emptying = 0;
+        } else {
+          let wayToUpdate = selectedWay.column.way;
+          wayToUpdate.new_emptying = 0;
+          this.waysToUpdate.push(wayToUpdate);
+        }
+      }else{
+        this.matrix.changeEmptyingForWay(1, selectedWay.iHeight, selectedWay.iCol);
+        this.disableAuto = true;
+        this.disableManual = true;
+        this.disableMixed = true;
+        let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+        if (someWay >= 0) {
+          this.waysToUpdate[someWay] = selectedWay.column.way;
+          this.waysToUpdate[someWay].new_emptying = 1;
+        } else {
+          let wayToUpdate = selectedWay.column.way;
+          wayToUpdate.new_emptying = 1;
+          this.waysToUpdate.push(wayToUpdate);
+        }
+      }
+    }
+    await this.changeWayManual();
+
   }
 
   private async changeWayManual() {
@@ -123,7 +195,9 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
               wayToUpdateFound.manual = (way.manual ? 1 : 0);
             }
           }
-
+          this.lastWaysSelected = [];
+          this.waysToUpdate = [];
+          this.matrix.refresh();
           await this.intermediaryService.presentToastSuccess('¡Cambios guardados!');
           await this.intermediaryService.dismissLoading();
         } else {

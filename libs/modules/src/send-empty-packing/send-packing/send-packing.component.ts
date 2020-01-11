@@ -32,6 +32,7 @@ export class SendPackingComponent implements OnInit {
   warehouses:Array<WarehouseModel.Warehouse> = [];
   warehouse: WarehouseModel.Warehouse;
   selectedWarehouse;
+  jails;
 
   constructor(
     private navParams:NavParams,
@@ -41,18 +42,24 @@ export class SendPackingComponent implements OnInit {
     private warehousesService:WarehousesService
     ) {
     this.jail = this.navParams.get("jail");
-    console.log('jail >>> ', this.jail);
-    /*if(this.jail.carrierWarehousesDestiny.length  == 1) {
+    if(this.jail && this.jail.carrierWarehousesDestiny.length  == 1) {
       this.selectedWarehouse = this.jail.carrierWarehousesDestiny[0].warehouse.id;
       this.warehouse = this.jail.carrierWarehousesDestiny[0].warehouse;
-    }*/
+    }
+    // case 2
+    this.jails = this.navParams.get("jails");
+
   }
 
 
   ngOnInit() {
+    let This = this;
     this.warehousesService.getListAllWarehouses().then((warehouses: WarehouseModel.ResponseListAllWarehouses) => {
       this.warehouses = warehouses.data;
-    })
+      if(This.jail != null) {
+        this.warehouses = this.warehouses.filter(w => w.id != This.jail.warehouse.id);
+      }
+    });
   }
   
   selectWarehouse(event: MatSelectChange) {
@@ -60,7 +67,27 @@ export class SendPackingComponent implements OnInit {
     this.warehouses.forEach(warehouse => {if(warehouse.id == this.selectedWarehouse) this.warehouse = warehouse});
   }
 
+  submitall(){
+    let This = this;
+    this.intermediaryService.presentLoading();
+    this.jails.forEach(jail => {
+      let value = This.warehouse.id;
+      this.carrierService.sendPacking(jail.reference, value).subscribe(()=>{
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess("Envío de embalaje con éxito");
+        this.close();
+      },()=>{
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError("Error de envío de embalaje");
+      });
+    });
+  }
+
   submit(){
+    if(this.jails != null) {
+      this.submitall();  
+      return;
+    }
     this.intermediaryService.presentLoading();
     this.carrierService
       .postCheckProductsDestiny({

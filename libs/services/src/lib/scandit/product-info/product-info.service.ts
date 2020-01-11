@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ScanditProvider } from "../../../providers/scandit/scandit.provider";
 import { ScanditModel } from "../../../models/scandit/Scandit";
-import { ProductModel, ProductsService } from "@suite/services";
+import {PriceService, ProductModel, ProductsService} from "@suite/services";
 
 
 
 import { environment as al_environment } from "../../../../../../apps/al/src/environments/environment";
 import { environment } from "../../../environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -23,7 +24,8 @@ export class ProductInfoScanditService {
 
   constructor(
     private productService: ProductsService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -46,8 +48,8 @@ export class ProductInfoScanditService {
           }
           timeoutStarted = setTimeout(() => lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
-          if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT
-            || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT_MODEL) {
+          if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT
+            || this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL) {
 
             this.productService.getExtendedInfo(codeScanned).then((res) => {
               if (res.code == 200) {

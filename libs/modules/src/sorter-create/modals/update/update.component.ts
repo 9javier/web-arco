@@ -48,7 +48,6 @@ export class UpdateComponent implements OnInit {
     }
     this.sorteService
       .updateSorter(payload, payload.id).subscribe((data) => {
-        console.log(data);
         this.close();
       });
   }

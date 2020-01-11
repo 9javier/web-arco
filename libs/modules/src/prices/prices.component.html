@@ -120,10 +120,11 @@
               </ion-col>
               <ion-col size="9" class="information">
                 <div class="information">
-                  <h5>Información</h5>
+                  <ion-toggle (ionChange)="switchPrintAllStock()"></ion-toggle>
+                  <span>Imp. nº stock</span>
                 </div>
               </ion-col>
-              <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
+              <ion-col size="1" class="filters-mobile" (click)="openFiltersMobile()">
                 <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
                   <i class="material-icons">filter_list</i>
                 </div>
@@ -197,6 +198,24 @@
                   </ion-col>
                 </ion-row>
                 <ion-row>
+                  <ion-col size="12">
+                    <div class="ion-text-center">
+                      <ion-label>Precios</ion-label>
+                    </div>
+                    <ion-range
+                      [min]="priceses.min" [max]="priceses.max"
+                      dualKnobs="true" pin="true"
+                      snaps="true" step="1"
+                      ticks="true" [value]="{lower: priceses.min, upper: priceses.max }"
+                      color="primary"
+                      (ionChange)="rangeChange($event)"
+                      >
+                        <ion-label slot="start">{{priceses.min}}</ion-label>
+                        <ion-label slot="end">{{priceses.max}}</ion-label>
+                    </ion-range>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
                   <ion-col class="btn-remove" size="6">
                     <ion-button (click)="clearFilters()">
                       Borra Filtros
@@ -254,7 +273,7 @@
                           </ion-col>
                           <ion-col class="stock" size="6">
                             <p>
-                              {{ price.stockStore ? price.stockStore.cantidad : 0 }} Uds.
+                              {{getTotalStock(price)}} Uds.
                             </p>
                           </ion-col>
                         </ion-row>

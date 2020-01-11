@@ -41,7 +41,7 @@ export class CarrierService {
       return response.data;
     }));
   }
-  
+
   getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{
       return response.data;
@@ -73,7 +73,7 @@ export class CarrierService {
    * @param id - the id of carrier to get
    * @returns a carrier
    */
-  getSingle(id:number):Observable<CarrierModel.Carrier>{
+  getSingle(id:any):Observable<CarrierModel.Carrier>{
     return this.http.get<CarrierModel.SingleCarrierResponse>(this.singleCarrierUrl.replace("{{id}}",String(id))).pipe(map(response=>{
       return response.data;
     }));
