@@ -153,14 +153,18 @@ export class TextareaComponent implements OnInit {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
         } else if (res.code == 401) {
-          /** Comprobando si tienes permisos para el forzado */
-          const permission = await this.inventoryService.checkUserPermissions();
-          /** Forzado de empaquetado */
-          if (permission.data) {
-            this.warningToForce(params, res.errors);
+          if (res.message == 'UserConfirmationRequiredException') {
+            this.warningToForce(params, res.errors, false, 'Continuar');
           } else {
-            this.presentAlert(res.errors);
-            this.processInitiated = false;
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions();
+            /** Forzado de empaquetado */
+            if (permission.data) {
+              this.warningToForce(params, res.errors);
+            } else {
+              this.presentAlert(res.errors);
+              this.processInitiated = false;
+            }
           }
         } else {
           let errorMessage = res.message;
@@ -188,7 +192,7 @@ export class TextareaComponent implements OnInit {
       });
   }
 
-  private async warningToForce(params, subHeader) {
+  private async warningToForce(params, subHeader, checkPermissionToForce: boolean = true, btnOkMessage: string = 'Forzar') {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
       subHeader,
@@ -202,17 +206,23 @@ export class TextareaComponent implements OnInit {
           }
         },
         {
-          text: 'Forzar',
+          text: btnOkMessage,
           handler: async () => {
-            // Consultando si el usuario tiene permisos para forzar
-            const permissions = await this.inventoryService.checkUserPermissions();
-            if (permissions.data) {
+            if (checkPermissionToForce) {
+              // Consultando si el usuario tiene permisos para forzar
+              const permissions = await this.inventoryService.checkUserPermissions();
+              if (permissions.data) {
+                params.force = true;
+                this.storeProductInContainer(params);
+                this.processInitiated = false;
+              } else {
+                this.alertController.dismiss();
+                this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
+                this.processInitiated = false;
+              }
+            } else {
               params.force = true;
               this.storeProductInContainer(params);
-              this.processInitiated = false;
-            } else {
-              this.alertController.dismiss();
-              this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
               this.processInitiated = false;
             }
           }
