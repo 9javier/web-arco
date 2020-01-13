@@ -19,24 +19,24 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class PredistributionsService {
-  baseUrl: string;
-  indexUrl: string;
-  entitiesUrl: string;
+  private baseUrl: string;
+  private indexUrl: string;
+  private entitiesUrl: string;
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter
     this.indexUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress`
     this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`
   }
 
-  index(body: PredistributionModel.IndexRequest):Observable<Array<PredistributionModel.Predistribution>> {
+  index(body: PredistributionModel.IndexRequest): Observable<PredistributionModel.DataSource> {
     return this.http.post<HttpRequestModel.Response>(this.indexUrl,body).pipe(
       map(resp => resp.data)
     )
   }
-  entities():Observable<Array<PredistributionModel.Predistribution>> {
+  entities() {
     const body = {
       references: [],
-      wharehouses: [],
+      warehouses: [],
       providers: [],
       brands: [],
       colors: [],

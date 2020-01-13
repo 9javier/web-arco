@@ -12,6 +12,27 @@ export namespace PredistributionModel {
     distribution?: boolean;
     reserved?: boolean;
   }
+  export interface DataSource {
+    filters: Array<Filters>
+    pagination: Pagination,
+    results: Array<any>
+  }
+  interface Filters { 
+    id: number, 
+    name: string 
+  }
+
+
+  interface Pagination {
+    firstPage: number,
+    lastPage: number,
+    limit: number,
+    selectPage: number,
+    totalResults: number
+  }
+
+  
+
   export interface ResponseIndex {
     data: Predistribution[];
   }

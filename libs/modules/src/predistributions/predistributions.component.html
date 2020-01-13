@@ -1,57 +1,91 @@
 <ion-content>
-  <table mat-table [dataSource]="entities">
-    <th mat-header-cell *matHeaderCellDef>
-      Modelo
-    </th>
-    <th mat-header-cell *matHeaderCellDef>
-      Colores
-    </th>
-    <th mat-header-cell *matHeaderCellDef>
-      Marcas
-    </th>
-    <th mat-header-cell *matHeaderCellDef>
-      Talles
-    </th>
-    <th mat-header-cell *matHeaderCellDef>
-      Tiendas
-    </th>
-    <th mat-header-cell *matHeaderCellDef>
-      Proveedores
-    </th>
-  </table>
+  <ion-grid>
+    <ion-row class="ion-padding">
+      <ion-col size="12">
+        <ion-title>Filtros</ion-title>
+      </ion-col>
+      <ion-col size="4"  >
+        <ion-label>Modelos</ion-label>
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonModels [title]="'Modelos'" [listItems]="entities.models"
+            [isFiltering]="isFilteringModels != entities.models.length"
+            (applyFilters)="applyFilters($event, 'models')">
+          </suite-filter-button>
+      </ion-col>
+      <ion-col size="4"  >
+        <ion-label>Marcas</ion-label>
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonBrands [title]="'Marcas'" [listItems]="entities.brands"
+            [isFiltering]="isFilteringBrands != entities.brands.length"
+            (applyFilters)="applyFilters($event, 'brands')">
+          </suite-filter-button>
+      </ion-col>
+      <ion-col size="4"  >
+        <ion-label>Tallas</ion-label>
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonSizes [title]="'Tallas'" [listItems]="entities.sizes"
+            [isFiltering]="isFilteringSizes != entities.sizes.length"
+            (applyFilters)="applyFilters($event, 'sizes')">
+          </suite-filter-button>
+      </ion-col>
+      <ion-col size="4"  >
+        <ion-label>Colores</ion-label>
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonColors [title]="'Colores'" [listItems]="entities.colors"
+            [isFiltering]="isFilteringColors != entities.colors.length"
+            (applyFilters)="applyFilters($event, 'colors')">
+          </suite-filter-button>
+      </ion-col>
+      <ion-col size="4"  >
+        <ion-label>Tiendas</ion-label>
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouses [title]="'Tiendas'" [listItems]="entities.destinyShop"
+            [isFiltering]="isFilteringWarehouses != entities.destinyShop.length"
+            (applyFilters)="applyFilters($event, 'warehouses')">
+          </suite-filter-button>
+      </ion-col>
+      <ion-col size="4"  >
+        <ion-label>Proveedores</ion-label>
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Prveedores'" [listItems]="entities.provider"
+            [isFiltering]="isFilteringProviders != entities.colors.length"
+            (applyFilters)="applyFilters($event, 'providers')">
+          </suite-filter-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid >
+  
   <div class="content-table-distributions">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
-      <ng-container matColumnDef="select">
+    <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef class="header-checkbox">
           <div>Todas</div>
           <div></div>
           <div class="content-checkbox">
-            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                          [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
-                          [checked]="selection.hasValue() && isAllSelected()"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()"
-                          [aria-label]="checkboxLabel()">
-            </mat-checkbox>
+            <ng-container *ngIf="dataSource" >
+              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </ng-container>
           </div>
         </th>
         <td mat-cell *matCellDef="let row">
-          <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                        [matRippleColor]="'black'" (click)="$event.stopPropagation()"
-                        (change)="$event ? selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)"
-                        [aria-label]="checkboxLabel(row)">
-          </mat-checkbox>
+          <ng-container *ngIf="dataSource" >
+            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </ng-container>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="article">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Artículo </th>
-        <td mat-cell *matCellDef="let element"> {{element.article.reference}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.product.reference}} </td>
       </ng-container>
 
       <ng-container matColumnDef="store">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Tienda </th>
-        <td mat-cell *matCellDef="let element"> {{element.warehouse.name}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.destinyShop.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="date_service">
@@ -59,7 +93,7 @@
         <td mat-cell *matCellDef="let element"> {{element.date_service}} </td>
       </ng-container>
 
-      <ng-container matColumnDef="distribution">
+      <!-- <ng-container matColumnDef="distribution">
         <th mat-header-cell *matHeaderCellDef class="header-checkbox">
           <div>Predistribución</div>
           <div>bloqueada</div>
@@ -80,9 +114,9 @@
                         [aria-label]="checkboxLabel(row)">
           </mat-checkbox>
         </td>
-      </ng-container>
+      </ng-container>  -->
 
-      <ng-container matColumnDef="reserved">
+<!-- <ng-container matColumnDef="reserved">
         <th mat-header-cell *matHeaderCellDef class="header-checkbox">
           <div>Stock</div>
           <div>Reservado</div>
@@ -103,12 +137,12 @@
                         [aria-label]="checkboxLabel(row)">
           </mat-checkbox>
         </td>
-      </ng-container>
+      </ng-container> -->
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
           (click)="selection.toggle(row)">
-      </tr>
+      </tr> 
     </table>
     <mat-paginator [pageSize]="50" [pageSizeOptions]="[50, 100, 1000]" showFirstLastButtons></mat-paginator>
   </div>

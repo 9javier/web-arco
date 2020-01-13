@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { PredistributionsComponent } from './predistributions.component';
@@ -10,6 +10,7 @@ import {
   MatSortModule,
   MatTableModule
 } from '@angular/material';
+import { FilterButtonModule } from '../components/filter-button/filter-button.module';
 
 const routes: Routes = [
   {
@@ -30,7 +31,9 @@ const routes: Routes = [
     MatCheckboxModule,
     MatRippleModule,
     MatPaginatorModule,
-    MatSortModule
-  ]
+    MatSortModule,
+    FilterButtonModule
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class PredistributionsModule { }
