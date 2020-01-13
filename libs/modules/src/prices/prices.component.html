@@ -196,8 +196,12 @@
                     <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes" multiple="true">
                     </suite-tags-input>
                   </ion-col>
-                  <ion-col size="6">
-                    <ion-label>Rango de precios:</ion-label>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">
+                    <div class="ion-text-center">
+                      <ion-label>Precios</ion-label>
+                    </div>
                     <ion-range
                       [min]="priceses.min" [max]="priceses.max"
                       dualKnobs="true" pin="true"
