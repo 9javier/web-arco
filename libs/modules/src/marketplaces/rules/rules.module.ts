@@ -1,14 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RulesComponent } from './rules.component';
-import { NewRuleComponent } from './new-rule/new-rule.component';
 import { IonicModule } from '@ionic/angular';
+
+import { MatListModule } from '@angular/material/list';
+import { MatTableModule } from '@angular/material'  
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
+import { NewRuleComponent } from './new-rule/new-rule.component';
+
 
 @NgModule({
   declarations: [NewRuleComponent],
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    MatListModule,
+    MatTableModule,
+    MatCheckboxModule
   ], 
   entryComponents: [NewRuleComponent]
 })
