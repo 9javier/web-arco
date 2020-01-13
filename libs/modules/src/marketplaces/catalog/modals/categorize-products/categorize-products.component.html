@@ -1,0 +1,56 @@
+<ion-header>
+    <div class="cp-modal-header-wrapper">
+      <div>
+        {{selectedProducts.length}}&nbsp;
+        <span *ngIf="selectedProducts.length == 1"> producto seleccionado</span>
+        <span *ngIf="selectedProducts.length != 1"> productos seleccionados</span>
+      </div>
+      <div (click)="close();">
+        X
+      </div>
+    </div>
+</ion-header>
+<ion-content>
+  <div class="cp-modal-body-wrapper">
+    <div class="cp-modal-table-wrapper">
+      <table mat-table [dataSource]="productCategoriesTableData">
+
+        <tr mat-header-row *matHeaderRowDef="productCategoriesTableHeader; sticky: true;"></tr>
+        <tr mat-row *matRowDef="let row; columns: productCategoriesTableHeader;" class="cp-modal-table-content"></tr>
+
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <i class="material-icons">search</i>
+          </th>
+          <td mat-cell *matCellDef="let category">
+            <ion-checkbox (ionChange)="selectCategoryRow(category)"></ion-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef><span>ID</span></th>
+          <td mat-cell *matCellDef="let category"> {{category.id}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef class="cp-modal-large-column"><span>Nombre de la categoría</span></th>
+          <td mat-cell *matCellDef="let category" class="cp-modal-large-column"> {{category.name}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="products">
+          <th mat-header-cell *matHeaderCellDef class="cp-modal-large-column"><span>&nbsp;</span></th>
+          <td mat-cell *matCellDef="let category" class="cp-modal-large-column">
+            <span *ngIf="category.products == 1">{{category.products}} producto</span>
+            <span *ngIf="category.products > 1">{{category.products}} productos</span>
+            <span *ngIf="category.products <= 0">&nbsp;</span>
+          </td>
+        </ng-container>
+
+      </table>
+    </div>
+    <div class="cp-modal-buttons-wrapper">
+      <div (click)="associateCategories()">ASOCIAR CATEGORÍAS</div>
+      <div (click)="unlink()">DESVINCULAR</div>
+    </div>
+  </div>
+</ion-content>

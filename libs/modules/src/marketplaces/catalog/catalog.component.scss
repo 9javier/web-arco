@@ -121,8 +121,9 @@
 
     .mp-catalog-first-footer-section {
       display: flex;
-      margin-left: 25px;
+      margin-left: 34px;
       align-items: center;
+      height: 66px;
 
       .mp-catalog-massive-actions-button {
         font-size: 11px;
@@ -146,6 +147,7 @@
     .mp-catalog-second-footer-section {
       display: flex;
       align-items: center;
+      height: 66px;
 
       .mp-catalog-category-selector {
         margin-right: 20px;
@@ -159,6 +161,16 @@
         padding: 12px;
         text-align: center;
         cursor: pointer;
+      }
+
+      .mp-catalog-category-disabled-button {
+        font-size: 11px;
+        background-color: #000;
+        color: #fff;
+        width: 202px;
+        padding: 12px;
+        text-align: center;
+        opacity: .4;
       }
 
       .mp-catalog-enable-button {

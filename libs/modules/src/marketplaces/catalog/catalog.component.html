@@ -80,12 +80,22 @@
     </div>
     <div class="mp-catalog-second-footer-section">
       <div class="mp-catalog-category-selector">
-        <ion-select placeholder="Seleccionar categoría">
-          <ion-select-option>Categoría 1</ion-select-option>
-          <ion-select-option>Categoría 2</ion-select-option>
-        </ion-select>
+        <mat-form-field>
+          <mat-label style="color: #000; font-size: 13px;">Seleccionar catergoría</mat-label>
+          <mat-select style="color: #000; font-size: 13px;">
+            <mat-option style="color: #000; font-size: 13px;" [value]="'Categoría 1'">
+              Categoría 1
+            </mat-option>
+            <mat-option style="color: #000; font-size: 13px;" [value]="'Categoría 2'">
+              Categoría 2
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-      <div class="mp-catalog-category-button">
+      <div class="mp-catalog-category-button" (click)="openCategoryModal();" *ngIf="selectedProducts.length;">
+        CATEGORIZAR
+      </div>
+      <div class="mp-catalog-category-disabled-button" *ngIf="!selectedProducts.length;">
         CATEGORIZAR
       </div>
       <div class="mp-catalog-enable-button">
