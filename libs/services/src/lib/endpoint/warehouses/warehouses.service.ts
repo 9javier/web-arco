@@ -123,7 +123,7 @@ export class WarehousesService {
     }));
   }
 
-  getWarehouse(parameters: WarehouseModel.Id): Promise<HttpRequestModel.Response>{
+  getWarehouseAndSize(parameters: WarehouseModel.WarehouseAndSizeId): Promise<HttpRequestModel.Response>{
     return this.requestsProvider.post(this.getWarehouseUrl, parameters);
   }
 

@@ -1,10 +1,11 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import {AudioProvider} from "../../../services/src/providers/audio-provider/audio-provider.provider";
-import {IntermediaryService, WarehouseModel, WarehousesService} from "@suite/services";
+import {IntermediaryService, SizeModel, WarehouseModel, WarehousesService} from "@suite/services";
 import {ScannerManualComponent} from "../components/scanner-manual/scanner-manual.component";
 import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
 import Warehouse = WarehouseModel.Warehouse;
+import Size = SizeModel.Size;
 
 @Component({
   selector: 'app-ventilation-no-sorter',
@@ -17,8 +18,11 @@ export class VentilationNoSorterComponent implements OnInit {
   @ViewChild('scannerManual') scannerManual: ScannerManualComponent;
 
   inputValue: string = null;
-
-  message: string = '¡Hola! Escanea un artículo para comenzar';
+  showScanner: boolean = true;
+  warehouse: Warehouse;
+  waitingForCage: boolean = false;
+  scannedCode: string;
+  size: Size;
 
   constructor(
     private itemReferencesProvider: ItemReferencesProvider,
@@ -47,16 +51,21 @@ export class VentilationNoSorterComponent implements OnInit {
           console.log('Tengo destino 0.');
           // A implementar.
         }else{
-          let warehouse = null;
-          await this.warehousesService.getWarehouse({id: originScan.picking_store_products_destinyWarehouseId})
+          await this.warehousesService.getWarehouseAndSize({
+            warehouse: originScan.picking_store_products_destinyWarehouseId,
+            size: originScan.product_shoes_unit_sizeId
+          })
             .then(response => {
-              warehouse = response.data;
+              this.warehouse = response.data.warehouse;
+              this.size = response.data.size;
             });
           this.scannerManual.value = '';
+          this.scannedCode = this.inputValue;
           this.inputValue = null;
-          this.message = 'El destino de este artículo es '+warehouse.reference+' '+warehouse.name;
+          this.showScanner = false;
+          this.waitingForCage = true;
+
           await this.intermediaryService.dismissLoading();
-          this.scannerManual.focusToInput();
         }
       }else{
         console.log('No tengo escaneo de origen.');
