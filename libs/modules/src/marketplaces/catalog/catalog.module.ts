@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CatalogComponent } from './catalog.component';
 
 @NgModule({
-  declarations: [CatalogComponent],
+  declarations: [ CatalogComponent],
   imports: [
     CommonModule
   ]

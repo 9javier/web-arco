@@ -1,0 +1,186 @@
+ion-header {
+  &::after {
+    display: none;
+  }
+
+  .cp-modal-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    padding: 20px;
+
+    div:first-of-type {
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+
+    div:last-of-type {
+      font-size: 30px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+  }
+}
+
+ion-content {
+
+  .cp-modal-body-wrapper {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .cp-modal-table-wrapper {
+      width: calc(100% - 90px);
+      max-height: calc(100% - 120px);
+      overflow-x: auto;
+      margin-left: 13px;
+      & > table {
+        width: 100%;
+
+        tr {
+          height: 30px;
+
+          &.cp-modal-table-content {
+            &:first-of-type {
+              height: 40px;
+              td {
+                padding-top: 10px!important;
+              }
+            }
+          }
+
+          td {
+            padding: 0 9px!important;
+            width: 10%;
+            font-size: 11px;
+            font-weight: 500;
+            border-top: none;
+            border-bottom: none;
+            border-right: 1px solid #c7c8ce;
+            background-color: #f5f4f6;
+            color: #000;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow-x: hidden;
+            text-align: left;
+            vertical-align: middle;
+
+            &.cp-modal-large-column {
+              width: 45%;
+              padding: 0 20px!important;
+            }
+
+            &:first-of-type {
+              padding: 0 5px!important;
+              width: fit-content;
+              border-right: none;
+              margin-bottom: 0;
+              background-color: #fff;
+
+              ion-checkbox {
+                --size: 20px;
+                --border-width: 1px;
+                --border-color: #c7c8ce;
+                --border-radius: 1px;
+                margin-top: 3px;
+              }
+
+            }
+
+            &:last-of-type {
+              border-right: none;
+            }
+
+          }
+
+          &:first-of-type {
+            th {
+              padding: 0!important;
+              width: 10%;
+              font-size: 11px;
+              font-weight: 500;
+              border-bottom: none;
+              vertical-align: top;
+
+              &.cp-modal-large-column {
+                width: 45%;
+
+                span {
+                  padding: 9px 20px;
+                }
+              }
+
+              span {
+                background-color: #f5f4f6;
+                margin-bottom: 24px;
+                display: block;
+                padding: 9px;
+                text-align: left;
+                font-weight: 500;
+                color: #000;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+              }
+
+              &:first-of-type {
+                padding: 2px 5px!important;
+                width: fit-content;
+                border-right: none;
+                margin-bottom: 0;
+
+                i {
+                  margin-top: 31px;
+                  opacity: .5;
+                }
+              }
+
+              &:last-of-type {
+                border-right: none;
+              }
+
+            }
+          }
+        }
+
+      }
+    }
+
+    .cp-modal-buttons-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 90px;
+      margin-top: 30px;
+
+      div:first-of-type {
+        font-size: 11px;
+        background-color: #000;
+        color: #fff;
+        width: 202px;
+        padding: 12px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      div:last-of-type {
+        font-size: 11px;
+        font-weight: 500;
+        background-color: #f5f4f6;
+        color: #000;
+        width: 202px;
+        padding: 12px;
+        text-align: center;
+        cursor: pointer;
+      }
+    }
+  }
+
+}

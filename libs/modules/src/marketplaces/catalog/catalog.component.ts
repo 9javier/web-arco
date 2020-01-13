@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Route, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import {ModalController} from "@ionic/angular";
+import {CategorizeProductsComponent} from "./modals/categorize-products/categorize-products.component";
 
 @Component({
   selector: 'suite-catalog',
@@ -59,22 +61,40 @@ export class CatalogComponent implements OnInit {
     }
   ];
   private catalogTableHeader: string[] = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
-  //dataSourceCatalogData = this.catalogTableData;
+  private selectedProducts;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+    private route: ActivatedRoute,
+    private modalController: ModalController
+  ) {
     console.log(this.route.snapshot.data['name'])
   }
 
   ngOnInit() {
+    this.selectedProducts = [];
   }
 
   selectProductRow(product) {
-    console.log(product);
+    if (this.selectedProducts.includes(product)) {
+      this.selectedProducts.splice(this.selectedProducts.indexOf(product), 1);
+    } else {
+      this.selectedProducts.push(product);
+      this.selectedProducts.sort((a,b) => (a.ref > b.ref) ? 1 : ((b.ref > a.ref) ? -1 : 0));
+    }
+    console.log(this.selectedProducts);
   }
 
   changeProductActive(product) {
     product.active = !product.active;
     console.log(product);
+  }
+
+  async openCategoryModal() {
+    let modal = await this.modalController.create({
+      component: CategorizeProductsComponent,
+      componentProps: { selectedProducts: this.selectedProducts }
+    });
+    return modal.present();
   }
 
 }

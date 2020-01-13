@@ -13,9 +13,10 @@ import { SecurityStocksComponent } from './security-stocks/security-stocks.compo
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material';
+import {MatInputModule, MatSelectModule} from '@angular/material';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
+import {CategorizeProductsModule} from "./catalog/modals/categorize-products/categorize-products.module";
 
 const routes: Routes = [
   {
@@ -120,7 +121,9 @@ const routes: Routes = [
     MatInputModule,
     MatCheckboxModule,
     MatButtonModule,
-    RulesModule
+    MatSelectModule,
+    RulesModule,
+    CategorizeProductsModule
   ]
 })
 export class MarketplacesModule { }
