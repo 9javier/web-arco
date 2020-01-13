@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'suite-mappings',
@@ -41,7 +41,10 @@ export class MappingsComponent implements OnInit {
   displayedSizesColumns: string[] = ['id', 'origin', 'destination'];
   dataSourceSizes = this.sizes_data;
 
-  constructor(private route: ActivatedRoute) {
+  constructor(
+      private route: ActivatedRoute,
+      private router : Router
+    ) {
     console.log(this.route.snapshot.data['name']) 
   }
 
@@ -58,6 +61,11 @@ export class MappingsComponent implements OnInit {
 
   sizesFilter(e) {
     console.log(e)
+  }
+
+  createMapping() {
+    console.log('create')
+    this.router.navigate(['create-mapping']);
   }
 
 }
