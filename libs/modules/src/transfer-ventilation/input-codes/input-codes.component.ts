@@ -7,6 +7,8 @@ import {CarrierModel} from 'libs/services/src/models/endpoints/carrier.model';
 import {MatTableDataSource} from '@angular/material';
 import {CarrierService, IntermediaryService} from '@suite/services';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import {ShopsTransfersService} from "../../../../services/src/lib/endpoint/shops-transfers/shops-transfers.service";
+import {ShopsTransfersModel} from "../../../../services/src/models/endpoints/ShopsTransfers";
 
 @Component({
   selector: 'suite-input-codes',
@@ -22,12 +24,14 @@ export class InputCodesComponent implements OnInit {
 
   private isProcessStarted: boolean = false;
   public packingReferenceOrigin: string = null;
-  public jails: string[] = ["J0008","J0010","J0016","J0009","J0006","J0013"];
   displayedColumns = ['destiny', 'articles'];
-  dataSource: MatTableDataSource<{destiny: string, articles: number}>;
+  dataSourceDestinies: MatTableDataSource<{reference: string, name: string, numProducts: number}>;
+  dataSourcePacking: MatTableDataSource<{reference: string}>;
+  totalProducts: number = null;
+  totalDestinies: number = null;
+  totalPacking: number = null;
+  references: string[] = [];
   private loading: HTMLIonLoadingElement = null;
-
-  carriers: Array<CarrierModel.Carrier> = [];
 
   toDelete: FormGroup = this.formBuilder.group({
     jails: this.formBuilder.array([])
@@ -43,41 +47,59 @@ export class InputCodesComponent implements OnInit {
     private carrierService: CarrierService,
     private intermediaryService: IntermediaryService,
     private itemReferencesProvider: ItemReferencesProvider,
-    private audioProvider: AudioProvider
+    private audioProvider: AudioProvider,
+    private shopTransfersService: ShopsTransfersService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
       document.getElementById('input-ta').focus();
-    },800);
+    },500);
   }
 
   ngOnInit() {
 
   }
 
-  getCarriers(): void {
-    this.intermediaryService.presentLoading();
-      setTimeout(() => {
-        let carriers = [
-          {
-            destiny: "005 : MINIPRECIOS",
-            articles: 20
-          },
-          {
-            destiny: "000 : Almacén CLOUD",
-            articles: 30
-          },
-          {
-            destiny: "miniprecios",
-            articles: 20
-          },{
-            destiny: "miniprecios",
-            articles: 20
+  async getCarriers(jailReference) {
+    let flag = false;
+    await this.intermediaryService.presentLoading();
+    this.shopTransfersService.getInfoByPacking(jailReference).then((data: ShopsTransfersModel.ResponseInfoByPacking) => {
+      if(data.code == 200){
+        let destinies = data.data.list_destinies.map(destiny => {
+          return {
+            reference: destiny.reference,
+            name: destiny.name,
+            numProducts: destiny.total_products
           }
-        ];
-        this.dataSource = new MatTableDataSource(carriers);
-        this.intermediaryService.dismissLoading();
-      }, 1000);
+        });
+        let jails = data.data.list_packing.map(packing => {
+          return {
+            reference: packing.reference,
+          }
+        });
+        this.totalPacking = data.data.total_packing;
+        this.totalDestinies = data.data.total_destinies;
+        this.totalProducts = data.data.total_products;
+        this.dataSourceDestinies = new MatTableDataSource(destinies);
+        this.dataSourcePacking = new MatTableDataSource(jails);
+        let packings = this.dataSourcePacking.filteredData;
+        let packing = null;
+        for(packing of packings){
+          this.references.push(packing.reference);
+        }
+        this.audioProvider.playDefaultOk();
+        this.isProcessStarted = true;
+        this.packingReferenceOrigin = jailReference;
+      }else{
+          this.packingReferenceOrigin = null;
+          this.audioProvider.playDefaultError();
+          this.presentToast(data.errors, 'danger');
+      }
+
+    });
+    setTimeout(() => {
+      this.intermediaryService.dismissLoading();
+    }, 500);
   }
 
   reload() {
@@ -87,7 +109,7 @@ export class InputCodesComponent implements OnInit {
     },500);
   }
 
-  keyUpInput(event) {
+  async keyUpInput(event) {
     let dataWrote = (this.codeWrote || "").trim();
 
     if (event.keyCode == 13 && dataWrote) {
@@ -102,12 +124,8 @@ export class InputCodesComponent implements OnInit {
         clearTimeout(this.timeoutStarted);
       }
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
-
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PACKING) {
-          this.audioProvider.playDefaultOk();
-          this.isProcessStarted = true;
-          this.packingReferenceOrigin = dataWrote;
-          this.getCarriers();
+          this.getCarriers(dataWrote);
       } else {
         this.audioProvider.playDefaultError();
         this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');

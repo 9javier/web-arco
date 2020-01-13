@@ -87,12 +87,17 @@ div.table-container {
 }
 
 div.table-jails {
+  margin-left: 1%;
   table.table-incidences {
     width: 100%;
     margin-top: 5%;
   }
   ion-fab.new-jail{
-    margin-top: 7%;
+    margin-top: 8%;
+  }
+  ion-button{
+    font-size: 12px;
+    height: 30px;
   }
 }
 
