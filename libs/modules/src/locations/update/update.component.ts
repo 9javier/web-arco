@@ -7,6 +7,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-update',
@@ -194,11 +195,11 @@ export class UpdateComponent implements OnInit {
     return await this.loading.present();
   }
 
-  async presentToast(msg, color) {
+  async presentToast(msg, color, durationToast = 3740) {
     const toast = await this.toastController.create({
       message: msg,
       position: 'top',
-      duration: 3750,
+      duration: durationToast,
       color: color || "primary"
     });
     toast.present();
@@ -334,7 +335,7 @@ export class UpdateComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            this.presentToast(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`, 'danger');
+            this.presentToast(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
           }
         }, {
           text: 'Forzar',
@@ -378,7 +379,7 @@ export class UpdateComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 'danger');
+          this.presentToast(errorMessage, 'danger', TimesToastType.DURATION_ERROR_TOAST);
         }
       }, (error: HttpErrorResponse) => {
         if (this.loading) {
@@ -388,7 +389,7 @@ export class UpdateComponent implements OnInit {
         if (error.error.code == 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
-          this.presentToast(error.message, 'danger');
+          this.presentToast(error.message, 'danger', TimesToastType.DURATION_ERROR_TOAST);
         }
       });
   }

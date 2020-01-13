@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {LoadingController, ModalController, ToastController} from "@ionic/angular";
+import {LoadingController, ModalController} from "@ionic/angular";
 import {WarehouseService} from "../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import {WarehouseMapsModel, WarehouseMapsService} from "@suite/services";
-import {interval} from "rxjs";
+import { IntermediaryService, WarehouseMapsModel, WarehouseMapsService } from '@suite/services';
 import {InventoryService} from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../../../../services/src/models/endpoints/Inventory";
+import { TimesToastType } from '../../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-move-products',
@@ -49,7 +49,7 @@ export class MoveProductsComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private warehouseService: WarehouseService,
     private warehouseMapsService: WarehouseMapsService,
     private inventoryService: InventoryService
@@ -136,7 +136,7 @@ export class MoveProductsComponent implements OnInit {
         this.columnSelectedOrigin = this.listColumns[0].column;
         referenceContainer = this.listReferences[this.warehouseSelectedOrigin][this.hallSelectedOrigin][this.rowSelectedOrigin][this.columnSelectedOrigin];
         for (let container of this.listLocationsWarehouseOrigin) {
-          if (container.reference == referenceContainer) this.positionSelectedOrigin = container;
+          if (container.reference === referenceContainer) this.positionSelectedOrigin = container;
         }
         break;
       case 3:
@@ -144,13 +144,13 @@ export class MoveProductsComponent implements OnInit {
         this.rowSelectedOrigin = this.listRows[0].row;
         referenceContainer = this.listReferences[this.warehouseSelectedOrigin][this.hallSelectedOrigin][this.rowSelectedOrigin][this.columnSelectedOrigin];
         for (let container of this.listLocationsWarehouseOrigin) {
-          if (container.reference == referenceContainer) this.positionSelectedOrigin = container;
+          if (container.reference === referenceContainer) this.positionSelectedOrigin = container;
         }
         break;
       case 4:
         referenceContainer = this.listReferences[this.warehouseSelectedOrigin][this.hallSelectedOrigin][this.rowSelectedOrigin][this.columnSelectedOrigin || 1];
         for (let container of this.listLocationsWarehouseOrigin) {
-          if (container.reference == referenceContainer) this.positionSelectedOrigin = container;
+          if (container.reference === referenceContainer) this.positionSelectedOrigin = container;
         }
         break;
     }
@@ -177,7 +177,7 @@ export class MoveProductsComponent implements OnInit {
         this.listHallsDestiny = this.listHallsOriginal[this.warehouseSelectedDestiny.id];
         let indexHall = 0;
         for (let iRack in this.listHallsDestiny) {
-          if (this.listHallsDestiny[iRack].id == this.positionSelectedDestiny.rack.id) indexHall = parseInt(iRack);
+          if (this.listHallsDestiny[iRack].id === this.positionSelectedDestiny.rack.id) indexHall = parseInt(iRack);
         }
         this.hallSelectedDestiny = this.listHallsDestiny[indexHall].id;
         this.listRowsDestiny = this.listRowsOriginal[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny];
@@ -192,7 +192,7 @@ export class MoveProductsComponent implements OnInit {
         this.columnSelectedDestiny = this.listColumnsDestiny[0].column;
         referenceContainer = this.listReferences[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny][this.columnSelectedDestiny];
         for (let container of this.listLocationsWarehouseDestiny) {
-          if (container.reference == referenceContainer) this.positionSelectedDestiny = container;
+          if (container.reference === referenceContainer) this.positionSelectedDestiny = container;
         }
         break;
       case 4:
@@ -200,7 +200,7 @@ export class MoveProductsComponent implements OnInit {
         this.rowSelectedDestiny = this.listRowsDestiny[0].row;
         referenceContainer = this.listReferences[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny][this.columnSelectedDestiny];
         for (let container of this.listLocationsWarehouseDestiny) {
-          if (container.reference == referenceContainer) {
+          if (container.reference === referenceContainer) {
             this.positionSelectedDestiny = container;
           }
         }
@@ -208,7 +208,7 @@ export class MoveProductsComponent implements OnInit {
       case 5:
         referenceContainer = this.listReferences[this.warehouseSelectedDestiny.id][this.hallSelectedDestiny][this.rowSelectedDestiny][this.columnSelectedDestiny || 1];
         for (let container of this.listLocationsWarehouseDestiny) {
-          if (container.reference == referenceContainer) {
+          if (container.reference === referenceContainer) {
             this.positionSelectedDestiny = container;
           }
         }
@@ -256,10 +256,10 @@ export class MoveProductsComponent implements OnInit {
             this.loading = null;
             this.goToList();
           }
-          if (res.code == 200 || res.code == 201) {
-            this.presentToast('Productos reubicados', 'success');
+          if (res.code === 200 || res.code === 201) {
+            this.intermediaryService.presentToastSuccess('Productos reubicados', TimesToastType.DURATION_SUCCESS_TOAST_3750);
           } else {
-            this.presentToast(res.message, 'danger');
+            this.intermediaryService.presentToastError(res.message);
           }
         }, (error: InventoryModel.ErrorResponse) => {
           if (this.loading) {
@@ -267,7 +267,7 @@ export class MoveProductsComponent implements OnInit {
             this.loading = null;
             this.goToList();
           }
-          this.presentToast(error.message, 'danger');
+          this.intermediaryService.presentToastError(error.message);
         });
     });
   }
@@ -275,11 +275,11 @@ export class MoveProductsComponent implements OnInit {
   workwaveOk() {
     if (
       (
-        (this.possibleMovementSelectedOrigin == 1 && this.warehouseSelectedOrigin)
-        || (this.possibleMovementSelectedOrigin == 2 && this.positionSelectedOrigin)
-        || (this.possibleMovementSelectedOrigin == 3 && this.hallSelectedOrigin)
-        || (this.possibleMovementSelectedOrigin == 4 && this.hallSelectedOrigin && this.columnSelectedOrigin)
-        || (this.possibleMovementSelectedOrigin == 5 && this.hallSelectedOrigin && this.rowSelectedOrigin)
+        (this.possibleMovementSelectedOrigin === 1 && this.warehouseSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin === 2 && this.positionSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin === 3 && this.hallSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin === 4 && this.hallSelectedOrigin && this.columnSelectedOrigin)
+        || (this.possibleMovementSelectedOrigin === 5 && this.hallSelectedOrigin && this.rowSelectedOrigin)
       )
       && (
         (this.warehouseSelectedDestiny && this.warehouseSelectedDestiny.has_racks && this.positionSelectedDestiny)
@@ -298,15 +298,4 @@ export class MoveProductsComponent implements OnInit {
     });
     return await this.loading.present();
   }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
-  }
-
 }

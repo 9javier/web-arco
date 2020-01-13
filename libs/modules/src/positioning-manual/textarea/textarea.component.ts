@@ -6,6 +6,7 @@ import {ItemReferencesProvider} from "../../../../services/src/providers/item-re
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-textarea',
@@ -173,7 +174,7 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 2000, 'danger');
+          this.presentToast(errorMessage, TimesToastType.DURATION_ERROR_TOAST, 'danger');
           this.processInitiated = false;
         }
       }, (error) => {
@@ -182,7 +183,7 @@ export class TextareaComponent implements OnInit {
         if (error.error.code == 428) {
           this.showWarningToForce(params);
         } else {
-          this.presentToast(error.message, 1500, 'danger');
+          this.presentToast(error.message, TimesToastType.DURATION_ERROR_TOAST, 'danger');
           this.processInitiated = false;
         }
       });
@@ -197,7 +198,7 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Cancelar',
           handler: () => {
-            this.presentToast('El producto no se ha ubicado.', 2000, 'danger');
+            this.presentToast('El producto no se ha ubicado.', TimesToastType.DURATION_ERROR_TOAST, 'danger');
             this.processInitiated = false;
           }
         },

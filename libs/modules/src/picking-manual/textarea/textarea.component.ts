@@ -20,6 +20,7 @@ import {environment as al_environment} from "../../../../../apps/al/src/environm
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 import { CarrierModel } from '../../../../services/src/models/endpoints/carrier.model';
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-textarea',
@@ -177,14 +178,14 @@ export class TextareaComponent implements OnInit {
                         this.audioProvider.playDefaultError();
                         this.inputPicking = null;
                         this.focusToInput();
-                        this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
+                        this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
                       }
                     } else {
                       this.processInitiated = false;
                       this.audioProvider.playDefaultError();
                       this.inputPicking = null;
                       this.focusToInput();
-                      this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
+                      this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
                     }
                   } else {
                     this.audioProvider.playDefaultOk();
@@ -203,7 +204,7 @@ export class TextareaComponent implements OnInit {
                   this.intermediaryService.dismissLoading();
                   this.audioProvider.playDefaultError();
                   if (error.error.code == 404) {
-                    this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
+                    this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
                   } else {
                     this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
                   }
@@ -215,19 +216,19 @@ export class TextareaComponent implements OnInit {
               this.inputPicking = null;
               this.audioProvider.playDefaultError();
               this.focusToInput();
-              this.presentToast(this.literalsJailPallet[this.typePacking].wrong_packing, 2000, this.pickingProvider.colorsMessage.error.name);
+              this.presentToast(this.literalsJailPallet[this.typePacking].wrong_packing, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
             }
           } else {
             this.inputPicking = null;
             this.audioProvider.playDefaultError();
             this.focusToInput();
-            this.presentToast(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, 2000, this.pickingProvider.colorsMessage.error.name);
+            this.presentToast(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
           }
         } else if (this.jailReference && this.jailReference != dataWrited) {
           this.inputPicking = null;
           this.audioProvider.playDefaultError();
           this.focusToInput();
-          this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, 2000, this.pickingProvider.colorsMessage.error.name);
+          this.presentToast(this.literalsJailPallet[this.typePacking].wrong_process_finished, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
         } else {
           if (this.typePicking === 1) {
             this.alertSealPackingFinal(this.jailReference);
@@ -240,7 +241,7 @@ export class TextareaComponent implements OnInit {
           this.audioProvider.playDefaultError();
           this.inputPicking = null;
           this.focusToInput();
-          this.presentToast(this.literalsJailPallet[this.typePacking].scan_before_products, 2000, this.pickingProvider.colorsMessage.error.name);
+          this.presentToast(this.literalsJailPallet[this.typePacking].scan_before_products, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
         } else {
           if (this.listProducts.length > 0) {
             let picking: InventoryModel.Picking = {
@@ -273,7 +274,7 @@ export class TextareaComponent implements OnInit {
                 this.audioProvider.playDefaultError();
                 this.inputPicking = null;
                 this.focusToInput();
-                this.presentToast(res.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+                this.presentToast(res.errors, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
                 this.getPendingListByPicking(this.pickingId)
                   .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
                     if (res.code == 200 || res.code == 201) {
@@ -297,7 +298,7 @@ export class TextareaComponent implements OnInit {
               this.intermediaryService.dismissLoading();
               this.inputPicking = null;
               this.focusToInput();
-              this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+              this.presentToast(error.error.errors, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
               this.getPendingListByPicking(this.pickingId)
                 .subscribe((res: ShoesPickingModel.ResponseListByPicking) => {
                   if (res.code == 200 || res.code == 201) {
@@ -370,31 +371,31 @@ export class TextareaComponent implements OnInit {
                     } else {
                       this.audioProvider.playDefaultError();
                       this.focusToInput();
-                      this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
+                      this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
                     }
                   }, error => {
                     this.audioProvider.playDefaultError();
                     this.focusToInput();
-                    this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', 2000, this.pickingProvider.colorsMessage.error.name);
+                    this.presentToast('Ha ocurrido un error al intentar reportar el producto como no encontrado.', TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
                   });
               } else {
                 this.audioProvider.playDefaultError();
                 this.focusToInput();
-                this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
+                this.presentToast('El código escaneado no corresponde a la ubicación del producto.', TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
               }
             }, (error) => {
               this.intermediaryService.dismissLoading();
               console.error('Error::Subscribe::CheckContainerProduct -> ', error);
               this.audioProvider.playDefaultError();
               this.focusToInput();
-              this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
+              this.presentToast('El código escaneado no corresponde a la ubicación del producto.', TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
             }, () => {
               this.intermediaryService.dismissLoading();
             });
         } else {
           this.focusToInput();
           this.audioProvider.playDefaultError();
-          this.presentToast('El código escaneado no corresponde a la ubicación del producto.', 2000, this.pickingProvider.colorsMessage.error.name);
+          this.presentToast('El código escaneado no corresponde a la ubicación del producto.', TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
         }
       } else {
         if (this.processInitiated) {
@@ -404,7 +405,7 @@ export class TextareaComponent implements OnInit {
           this.inputPicking = null;
           this.audioProvider.playDefaultError();
           this.focusToInput();
-          this.presentToast('Referencia errónea', 1500, this.pickingProvider.colorsMessage.error.name);
+          this.presentToast('Referencia errónea', TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
         }
       }
     }
@@ -659,9 +660,9 @@ export class TextareaComponent implements OnInit {
         this.focusToInput();
         this.clearTimeoutCleanLastCodeScanned();
         if (error.error.code == 404) {
-          this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, 2000, this.pickingProvider.colorsMessage.error.name);
+          this.presentToast(this.literalsJailPallet[this.typePacking].not_registered, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
         } else {
-          this.presentToast(error.error.errors, 2000, this.pickingProvider.colorsMessage.error.name);
+          this.presentToast(error.error.errors, TimesToastType.DURATION_ERROR_TOAST, this.pickingProvider.colorsMessage.error.name);
         }
       }, () => {
         this.intermediaryService.dismissLoading();

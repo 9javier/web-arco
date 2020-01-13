@@ -9,6 +9,7 @@ import {
 import { Observable } from 'rxjs';
 import {HttpResponse, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import { ToastController } from '@ionic/angular';
+import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 
 
@@ -78,9 +79,7 @@ export class GroupToWarehouseComponent implements OnInit {
             this.initGroups();
           },
           (errorResponse: HttpErrorResponse) => {
-            this.presentToast(
-              `${errorResponse.status} - ${errorResponse.message}`
-            );
+            this.presentToast( `${errorResponse.status} - ${errorResponse.message}`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
             this.initGroups();
           }
         );
@@ -102,20 +101,19 @@ export class GroupToWarehouseComponent implements OnInit {
             this.initGroups();
           },
           (errorResponse: HttpErrorResponse) => {
-            this.presentToast(
-              `${errorResponse.status} - ${errorResponse.message}`
-            );
+            this.presentToast( `${errorResponse.status} - ${errorResponse.message}`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
             this.initGroups();
           }
         );
       });
     }
 
-  async presentToast(msg) {
+  async presentToast(msg, color = "primary", durationToast  = 4550) {
     const toast = await this.toastController.create({
       message: msg,
       position: 'top',
-      duration: 4550
+      color: color,
+      duration: durationToast
     });
     toast.present();
   }

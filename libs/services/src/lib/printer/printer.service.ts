@@ -1,18 +1,17 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from "@ionic/angular";
 import { PrintModel } from "../../models/endpoints/Print";
 import { SettingsService } from "../storage/settings/settings.service";
 import { AppSettingsModel } from "../../models/storage/AppSettings";
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from, of, Subject } from 'rxjs';
-import { map, switchMap, flatMap } from 'rxjs/operators';
+import { map, flatMap } from 'rxjs/operators';
 import { PriceService } from '../endpoint/price/price.service';
 import * as JsBarcode from 'jsbarcode';
-import { forEach } from '@angular/router/src/utils/collection';
-import { ProductModel } from "@suite/services";
+import { IntermediaryService, ProductModel } from '@suite/services';
 import { RequestsProvider } from "../../providers/requests/requests.provider";
 import { HttpRequestModel } from "../../models/endpoints/HttpRequest";
+import { TimesToastType } from '../../models/timesToastType';
 
 declare let cordova: any;
 
@@ -34,7 +33,7 @@ export class PrinterService {
 
   constructor(
     private http: HttpClient,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private settingsService: SettingsService,
     private priceService: PriceService,
     private requestsProvider: RequestsProvider) { }
@@ -49,28 +48,28 @@ export class PrinterService {
           cordova.plugins.zbtprinter.openConnection(this.address,
             (result) => {
               if (showAlert) {
-                this.presentToast('Conectado a la impresora', 'success');
+                this.intermediaryService.presentToastSuccess('Conectado a la impresora', TimesToastType.DURATION_SUCCESS_TOAST_3750);
               }
               console.debug("PRINT::openConnection 2 [" + new Date().toJSON() + "]", result);
 
               resolve();
             }, (error) => {
               if (showAlert) {
-                this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+                this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
               }
               console.debug("PRINT::openConnection 3 [" + new Date().toJSON() + "]", error);
               reject();
             });
         } else {
           if (showAlert) {
-            this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+            this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
           }
           console.debug("PRINT::openConnection 4 [" + new Date().toJSON() + "]");
           reject();
         }
       } else {
         if (showAlert) {
-          this.presentToast('No está configurada la impresora', 'danger');
+          this.intermediaryService.presentToastError('No está configurada la impresora', TimesToastType.DURATION_ERROR_TOAST);
         }
         console.debug("PRINT::openConnection 5 [" + new Date().toJSON() + "]");
         reject();
@@ -121,7 +120,7 @@ export class PrinterService {
         cordova.plugins.zbtprinter.checkConnection(
           (result) => {
             console.debug("PRINT::reConnect 2 [" + new Date().toJSON() + "]", result);
-            if (result == "connect") {
+            if (result === "connect") {
               resolve(result);
             } else {
               resolve(this.openConnection());
@@ -355,7 +354,7 @@ export class PrinterService {
   private convertArrayFromPrint(data: any, cntPrint: number = 1, outputArray?: Boolean): Array<any> {
     let dataJoin = []
     let out;
-    if (cntPrint == 1) {
+    if (cntPrint === 1) {
       if (outputArray) {
         dataJoin.push(data);
         out = dataJoin;
@@ -686,7 +685,7 @@ export class PrinterService {
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
                   console.debug("PRINT::toPrintFromString 12 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                   //console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
-                  this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+                  this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
                   reject(false);
                 } else {
                   console.debug("PRINT::toPrintFromString 13 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
@@ -713,7 +712,7 @@ export class PrinterService {
     console.debug("PRINT::toPrint 1 [" + new Date().toJSON() + "]", printOptions);
     // this.stampe$.next(true);
     if (this.address) {
-      if (typeof cordova != "undefined" && cordova.plugins.zbtprinter) {
+      if (typeof cordova !== "undefined" && cordova.plugins.zbtprinter) {
         let textToPrint = this.getTextToPrinter(printOptions);
         return new Promise((resolve, reject) => {
           let printAttempts = 0;
@@ -732,7 +731,7 @@ export class PrinterService {
               }, (fail) => {
                 if (printAttempts >= PrinterService.MAX_PRINT_ATTEMPTS) {
                   console.debug("PRINT::toPrint 5 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
-                  this.presentToast('No ha sido posible conectarse con la impresora', 'danger');
+                  this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
                   reject();
                 } else {
                   console.debug("PRINT::toPrint 6 [" + new Date().toJSON() + "]", { printOptions, address: this.address, printAttempts });
@@ -987,16 +986,6 @@ export class PrinterService {
     }
     console.debug("PRINT::addTextToPrint 2 [" + new Date().toJSON() + "]", { toPrint, stringToBarcode, printOptions });
     return toPrint;
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 
   async printBarcodesOnBrowser(codes: string[]) {

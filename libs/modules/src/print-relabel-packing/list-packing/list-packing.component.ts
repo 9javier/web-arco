@@ -6,6 +6,7 @@ import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/prin
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {AuthenticationService, TypeModel, TypesService, WarehouseModel} from "@suite/services";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'list-packing-relabel',
@@ -68,7 +69,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           if (!this.isStoreUser) {
             warehouseTypeName = 'del almacén';
           }
-          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
+          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
         }
       }, (error) => {
         this.isLoadingData = false;
@@ -80,7 +81,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           if (!this.isStoreUser) {
             warehouseTypeName = 'del almacén';
           }
-          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
+          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
         }
       });
   }
@@ -176,7 +177,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
           } else if (carrierType.id == 2) {
             msgErrorByCarrierType = 'un nuevo pallet';
           }
-          this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger');
+          this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
         }
       }, (error) => {
         this.loading.dismiss();
@@ -188,15 +189,15 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
         } else if (carrierType.id == 2) {
           msgErrorByCarrierType = 'un nuevo pallet';
         }
-        this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger');
+        this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
       });
   }
 
-  private async presentToast(msg: string, color: string = 'primary') {
+  private async presentToast(msg: string, color: string = 'primary', durationToast = 1500) {
     const toast = await this.toastController.create({
       message: msg,
       position: 'bottom',
-      duration: 1500,
+      duration: durationToast,
       color: color
     });
 
