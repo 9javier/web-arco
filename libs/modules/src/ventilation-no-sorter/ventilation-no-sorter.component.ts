@@ -47,7 +47,11 @@ export class VentilationNoSorterComponent implements OnInit {
           console.log('Tengo destino 0.');
           // A implementar.
         }else{
-          let warehouse: Warehouse = this.warehousesService.getById(originScan.picking_store_products_destinyWarehouseId);
+          let warehouse = null;
+          await this.warehousesService.getWarehouse({id: originScan.picking_store_products_destinyWarehouseId})
+            .then(response => {
+              warehouse = response.data;
+            });
           this.scannerManual.value = '';
           this.inputValue = null;
           this.message = 'El destino de este artículo es '+warehouse.reference+' '+warehouse.name;

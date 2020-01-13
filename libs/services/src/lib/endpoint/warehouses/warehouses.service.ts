@@ -25,6 +25,7 @@ export class WarehousesService {
   private postStoreUrl = this.apiBase+"/warehouses";
   private getListAllWarehousesUrl = this.apiBase + "/warehouses/list";
   private getShowUrl = this.apiBase+"/warehouses/{id}";
+  private getWarehouseUrl = this.apiBase+"/warehouses/warehouse";
   private getMainUrl = this.apiBase+"/warehouses/main";
   private updateUrl = this.getShowUrl;
   private toGroupWarehousePickingUrl = this.apiBase+"/warehouses/groups/picking/{{id}}/group/{{groupId}}";
@@ -49,7 +50,7 @@ export class WarehousesService {
     });
   }
 
-    /**
+  /**
    * Get enum of packing
    */
   getTypePacking(){
@@ -99,7 +100,6 @@ export class WarehousesService {
     }));
   }
 
-
   put(warehouse:WarehouseModel.Warehouse):Observable<WarehouseModel.Warehouse>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers = new HttpHeaders({Authorization:token});
@@ -123,6 +123,10 @@ export class WarehousesService {
     }));
   }
 
+  getWarehouse(parameters: WarehouseModel.Id): Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.post(this.getWarehouseUrl, parameters);
+  }
+
   async deleteGroupToWarehouse(
     warehousesId: number,
     groupId: number
@@ -138,14 +142,13 @@ export class WarehousesService {
     );
   }
 
-    /**
+  /**
    * Add Warehouse to GroupWarehousePicking
    */
-
   async toGroupWarehousePicking(
     warehousesId: number,
     groupId: number
-   ): Promise<Observable<HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>>>  {
+  ): Promise<Observable<HttpResponse<GroupWarehousePickingModel.GroupWarehousePicking>>>  {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<GroupWarehousePickingModel.GroupWarehousePicking>(
@@ -156,16 +159,15 @@ export class WarehousesService {
         observe: 'response'
       }
     )
-   }
+  }
 
-   /**
+  /**
    * Remove Warehouse from GroupWarehousePicking
    */
-
   async removeOfGroupWarehousePicking(
     warehousesId: number,
     groupId: number
-   ): Promise<Observable<HttpResponse<WarehouseModel.ResponseDelete>>>  {
+  ): Promise<Observable<HttpResponse<WarehouseModel.ResponseDelete>>>  {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<WarehouseModel.ResponseDelete>(
@@ -175,16 +177,15 @@ export class WarehousesService {
         observe: 'response'
       }
     )
-   }
+  }
 
-   /**
+  /**
    * Add Warehouse to Agency
    */
-
   async toAgency(
     warehouseId: number,
     agencyId: number
-   ): Promise<Observable<HttpResponse<AgencyModel.Agency>>>  {
+  ): Promise<Observable<HttpResponse<AgencyModel.Agency>>>  {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.post<AgencyModel.Agency>(
@@ -195,16 +196,15 @@ export class WarehousesService {
         observe: 'response'
       }
     )
-   }
+  }
 
-   /**
+  /**
    * Remove Warehouse to Agency
    */
-
   async removeOfAgency(
     warehousesId: number,
     agencyId: number
-   ): Promise<Observable<HttpResponse<WarehouseModel.ResponseDelete>>>  {
+  ): Promise<Observable<HttpResponse<WarehouseModel.ResponseDelete>>>  {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });
     return this.http.delete<WarehouseModel.ResponseDelete>(
@@ -214,7 +214,7 @@ export class WarehousesService {
         observe: 'response'
       }
     )
-   }
+  }
 
    getListAllWarehouses() : Promise<HttpRequestModel.Response> {
 
