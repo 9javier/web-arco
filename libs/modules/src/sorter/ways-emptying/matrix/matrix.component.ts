@@ -57,15 +57,9 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     }
   }
 
-  getBackgroundForSelected(column: MatrixSorterModel.Column) : string {
+  deselectWay(column: MatrixSorterModel.Column) : string {
     if (column && column.way) {
-      if (column.way.id == this.waySelected) {
-        return 'lightskyblue';
-      } else if (column.way.templateZone && column.way.templateZone.zones && column.way.templateZone.zones.color) {
         return column.way.templateZone.zones.color.hex;
-      }
-    } else {
-      return '#ffffff';
     }
   }
 
@@ -103,9 +97,26 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number) {
-    this.waySelected = column.way.id;
-    this.waysSelected.push(column.way);
+    let wayS = null;
+    let flag = false;
+    for(wayS of this.waysSelected){
+      if(wayS == column.way){
+        flag = true;
+        this.removeItemFromArr( this.waysSelected, wayS );
+      }
+    }
+    if(flag == false){
+      this.waysSelected.push(column.way);
+    }
     this.columnSelected.next({column, iHeight, iCol});
+  }
+
+  removeItemFromArr( arr, item ) {
+    let i = arr.indexOf( item );
+
+    if ( i !== -1 ) {
+      arr.splice( i, 1 );
+    }
   }
 
   refresh(){

@@ -117,10 +117,6 @@ export class IntermediaryService {
       showCloseButton: true
     });
 
-    toast.onDidDismiss().then((data) => {
-      console.debug('Test::Data', data);
-    });
-
-    toast.present();
+    return toast.present();
   }
 }
