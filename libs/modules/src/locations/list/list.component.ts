@@ -2,13 +2,13 @@ import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { animate, state, style, transition, trigger } from "@angular/animations";
 import { Location } from "@angular/common";
 import { SelectionModel } from "@angular/cdk/collections";
-import { RolModel, UserModel, WarehouseModel } from "@suite/services";
+import { IntermediaryService, RolModel, UserModel, WarehouseModel } from '@suite/services';
 import { Observable, of } from "rxjs";
 import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { HallModel } from "../../../../services/src/models/endpoints/Hall";
 import { HallsService } from "../../../../services/src/lib/endpoint/halls/halls.service";
 import { ActivatedRoute } from "@angular/router";
-import { ModalController, ToastController, NavParams } from "@ionic/angular";
+import { ModalController } from "@ionic/angular";
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { UpdateComponent } from "../update/update.component";
 import { UpdateComponent as updateHall } from '../../halls/update/update.component';
@@ -47,7 +47,7 @@ export class ListComponent implements OnInit {
     private location: Location,
     private hallsService: HallsService,
     private route: ActivatedRoute,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private warehouseService: WarehouseService,
     private modalController: ModalController,
     private changeDetector: ChangeDetectorRef,
@@ -95,7 +95,7 @@ export class ListComponent implements OnInit {
       modal.onDidDismiss()
         .then(() => {
           this.initHalls();
-          if (this.routePath == '/warehouses') {
+          if (this.routePath === '/warehouses') {
             this.warehouseService
               .init()
               .then((data: Observable<HttpResponse<any>>) => {
@@ -111,9 +111,9 @@ export class ListComponent implements OnInit {
     }
   }
   isMainWarehouseManagementSection = (): boolean =>
-    this.origin == LocationsComponent.MAIN_WAREHOUSE_MANAGEMENT_SECTION_PATH;
+    this.origin === LocationsComponent.MAIN_WAREHOUSE_MANAGEMENT_SECTION_PATH;
   isWarehouseListSection = (): boolean =>
-    this.origin == LocationsComponent.WAREHOUSE_LIST_SECTION_PATH;
+    this.origin === LocationsComponent.WAREHOUSE_LIST_SECTION_PATH;
   isExpansionDetailRow = (i: number, row: Object) => row.hasOwnProperty('detailRow');
   expandedElement: any = null;
 
@@ -187,7 +187,7 @@ export class ListComponent implements OnInit {
                 .map(hall => {
                   let expanded = false;
                   let dropdown_icon = 'ios-arrow-down';
-                  if (this.expandedElement && this.expandedElement.id == hall.id) {
+                  if (this.expandedElement && this.expandedElement.id === hall.id) {
                     expanded = true;
                     dropdown_icon = 'ios-arrow-up';
                   }
@@ -215,7 +215,7 @@ export class ListComponent implements OnInit {
                 element.containers.forEach(containers => {
                   let rowIndex = containers.row - 1;
                   containers.selected = false;
-                  if (typeof element.container[rowIndex] == 'undefined') {
+                  if (typeof element.container[rowIndex] === 'undefined') {
                     element.container[rowIndex] = [];
                   }
                   element.container[rowIndex].push(containers);
@@ -226,7 +226,7 @@ export class ListComponent implements OnInit {
                     }
                   }
                   if (containers.incidence) {
-                    if (!element.incidence || (element.incidence && element.incidence != 'serious')) {
+                    if (!element.incidence || (element.incidence && element.incidence !== 'serious')) {
                       element.incidence = containers.incidence;
                     }
                   }
@@ -272,7 +272,7 @@ export class ListComponent implements OnInit {
     this.locationsSelected = {};
     this.countLocationsSelected = 0;
     for (let rowData of this.dataSource) {
-      if (rowData.id != row.id) {
+      if (rowData.id !== row.id) {
         rowData.expanded = false;
         rowData.dropdown_icon = 'ios-arrow-down';
       }
@@ -321,7 +321,7 @@ export class ListComponent implements OnInit {
 
   selectAllLocations() {
     if (this.isWarehouseListSection()) {
-      if (this.expandedElement.totalContainers != this.countLocationsSelected) {
+      if (this.expandedElement.totalContainers !== this.countLocationsSelected) {
         for (let row of this.expandedElement.container) {
           for (let container of row) {
             if (!container.selected) {
@@ -371,24 +371,24 @@ export class ListComponent implements OnInit {
           .updateDisable(container.id)
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
-              this.presentToast('Posición desactivada', null);
+              this.intermediaryService.presentToastPrimary('Posición desactivada');
             }), (errorResponse: HttpErrorResponse) => {
-              this.presentToast(errorResponse.error.errors, 'danger');
+              this.intermediaryService.presentToastError(errorResponse.error.errors);
             });
           }, (errorResponse: HttpErrorResponse) => {
-            this.presentToast('Error - Errores no estandarizados', 'danger');
+            this.intermediaryService.presentToastError('Error - Errores no estandarizados');
           });
       } else {
         this.hallsService
           .updateEnable(container.id)
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
-              this.presentToast('Posición activada', null);
+              this.intermediaryService.presentToastPrimary('Posición activada');
             }), (errorResponse: HttpErrorResponse) => {
-              this.presentToast(errorResponse.error.errors, 'danger');
+              this.intermediaryService.presentToastError(errorResponse.error.errors);
             });
           }, (errorResponse: HttpErrorResponse) => {
-            this.presentToast('Error - Errores no estandarizados', 'danger');
+            this.intermediaryService.presentToastError('Error - Errores no estandarizados');
           });
       }
     }
@@ -403,24 +403,24 @@ export class ListComponent implements OnInit {
           .updateUnlock(container.id)
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateEnable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateEnable>) => {
-              this.presentToast('Posición desbloqueada', null);
+              this.intermediaryService.presentToastPrimary('Posición desbloqueada');
             }), (errorResponse: HttpErrorResponse) => {
-              this.presentToast(errorResponse.error.errors, 'danger');
+              this.intermediaryService.presentToastError(errorResponse.error.errors);
             });
           }, (errorResponse: HttpErrorResponse) => {
-            this.presentToast('Error - Errores no estandarizados', 'danger');
+            this.intermediaryService.presentToastError('Error - Errores no estandarizados');
           });
       } else {
         this.hallsService
           .updateLock(container.id)
           .then((data: Observable<HttpResponse<HallModel.ResponseUpdateDisable>>) => {
             data.subscribe(((res: HttpResponse<HallModel.ResponseUpdateDisable>) => {
-              this.presentToast('Posición bloqueada', null);
+              this.intermediaryService.presentToastPrimary('Posición bloqueada');
             }), (errorResponse: HttpErrorResponse) => {
-              this.presentToast(errorResponse.error.errors, 'danger');
+              this.intermediaryService.presentToastError(errorResponse.error.errors);
             });
           }, (errorResponse: HttpErrorResponse) => {
-            this.presentToast('Error - Errores no estandarizados', 'danger');
+            this.intermediaryService.presentToastError('Error - Errores no estandarizados');
           });
       }
     }
@@ -452,16 +452,6 @@ export class ListComponent implements OnInit {
     this.locationsSelected = {};
     this.countLocationsSelected = 0;
     this.initHalls();
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 
   setIntervalForReload(source) {

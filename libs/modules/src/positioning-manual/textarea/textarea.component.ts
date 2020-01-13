@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
-import { AlertController, ToastController } from "@ionic/angular";
+import { AlertController } from "@ionic/angular";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'suite-textarea',
@@ -30,7 +32,6 @@ export class TextareaComponent implements OnInit {
 
   constructor(
     private alertController: AlertController,
-    private toastController: ToastController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
@@ -62,7 +63,7 @@ export class TextareaComponent implements OnInit {
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
 
-    if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
+    if (event.keyCode === 13 && dataWrited && !this.processInitiated) {
 
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
@@ -76,16 +77,20 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.processInitiated = true;
-      if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
+      if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
         this.processInitiated = false;
-        this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
+        this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          }, 500);
+        });
         this.audioProvider.playDefaultOk();
         this.containerReference = dataWrited;
         this.packingReference = null;
         this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-      } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PRODUCT) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
         let params: any = {
           productReference: dataWrited,
           warehouseId: warehouseId,
@@ -102,9 +107,13 @@ export class TextareaComponent implements OnInit {
         this.storeProductInContainer(params);
 
         this.errorMessage = null;
-      } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) == this.itemReferencesProvider.codeValue.PACKING) {
+      } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         this.processInitiated = false;
-        this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
+        this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          }, 500);
+        });
         this.audioProvider.playDefaultOk();
         this.containerReference = null;
         this.packingReference = dataWrited;
@@ -135,7 +144,7 @@ export class TextareaComponent implements OnInit {
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
-        if (res.code == 200 || res.code == 201) {
+        if (res.code === 200 || res.code === 201) {
           let msgSetText = '';
           if (this.isStoreUser) {
             msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
@@ -147,12 +156,16 @@ export class TextareaComponent implements OnInit {
             }
           }
           this.processInitiated = false;
-          this.presentToast(msgSetText, 2000, 'success');
+          this.intermediaryService.presentToastSuccess(msgSetText, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            }, 500);
+          });
           this.audioProvider.playDefaultOk();
-        } else if (res.code == 428) {
+        } else if (res.code === 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
-        } else if (res.code == 401) {
+        } else if (res.code === 401) {
           /** Comprobando si tienes permisos para el forzado */
           const permission = await this.inventoryService.checkUserPermissions();
           /** Forzado de empaquetado */
@@ -173,16 +186,24 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 2000, 'danger');
+          this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            }, 500);
+          });
           this.processInitiated = false;
         }
       }, (error) => {
         this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
-        if (error.error.code == 428) {
+        if (error.error.code === 428) {
           this.showWarningToForce(params);
         } else {
-          this.presentToast(error.message, 1500, 'danger');
+          this.intermediaryService.presentToastError(error.message, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            }, 500);
+          });
           this.processInitiated = false;
         }
       });
@@ -197,7 +218,12 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Cancelar',
           handler: () => {
-            this.presentToast('El producto no se ha ubicado.', 2000, 'danger');
+            this.intermediaryService.presentToastError('El producto no se ha ubicado.', PositionsToast.BOTTOM).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              }, 500);
+            });
+
             this.processInitiated = false;
           }
         },
@@ -255,22 +281,6 @@ export class TextareaComponent implements OnInit {
     });
 
     return await alertWarning.present();
-  }
-
-  private async presentToast(msg: string, duration: number = 2000, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: duration,
-      color: color
-    });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        }, 500);
-      });
   }
 
   public onFocus(event){

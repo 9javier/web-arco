@@ -1,22 +1,19 @@
 import { Component, OnInit, Input, NgZone } from '@angular/core';
-import { UserModel, RolModel } from '@suite/services';
+import { UserModel, RolModel, IntermediaryService } from '@suite/services';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, from } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { ToastController, LoadingController, NavParams, ModalController } from '@ionic/angular';
+import { LoadingController, NavParams, ModalController } from '@ionic/angular';
 import {
   Router,
-  ActivatedRoute,
-  ParamMap,
-  NavigationStart,
-  NavigationEnd
+  ActivatedRoute
 } from '@angular/router';
 
 import { CrudService } from '../../service/crud.service';
-import { switchMap, filter } from 'rxjs/operators';
 import { HallsService } from "../../../../../../../services/src/lib/endpoint/halls/halls.service";
 import { HallModel } from "../../../../../../../services/src/models/endpoints/Hall";
+import { TimesToastType } from '../../../../../../../services/src/models/timesToastType';
 
 interface FormBuilderInputs {
   string: [string, Validators[]];
@@ -64,7 +61,7 @@ export class UpdateComponent implements OnInit {
   constructor(
     private crudService: CrudService,
     private formBuilder: FormBuilder,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private route: ActivatedRoute,
     private router: Router,
     private loadingController: LoadingController,
@@ -155,7 +152,7 @@ export class UpdateComponent implements OnInit {
                 this.updateForm.patchValue(updateFormValue);
               },
               (errorResponse: HttpErrorResponse) => {
-                this.presentToast('Error - Errores no estandarizados');
+                this.intermediaryService.presentToastError('Error - Errores no estandarizados');
               }
             );
           }
@@ -206,11 +203,11 @@ export class UpdateComponent implements OnInit {
             ) => {
               this.dismissLoading();
               this.modalController.dismiss();
-              this.presentToast(`Pasillo ${res.body.data.hall} actualizado`);
+              this.intermediaryService.presentToastSuccess(`Pasillo ${res.body.data.hall} actualizado`, TimesToastType.DURATION_SUCCESS_TOAST_3750);
             },
             (errorResponse: HttpErrorResponse) => {
               this.dismissLoading();
-              this.presentToast('Error - Errores no estandarizados');
+              this.intermediaryService.presentToastError('Error - Errores no estandarizados');
             }
           );
         }
@@ -232,24 +229,15 @@ export class UpdateComponent implements OnInit {
             ) => {
               this.dismissLoading();
               this.modalController.dismiss();
-              this.presentToast(`Usuario ${res.body.data.name} actualizado`);
+              this.intermediaryService.presentToastSuccess(`Usuario ${res.body.data.name} actualizado`, TimesToastType.DURATION_SUCCESS_TOAST_3750);
             },
             (errorResponse: HttpErrorResponse) => {
               this.dismissLoading();
-              this.presentToast('Error - Errores no estandarizados');
+              this.intermediaryService.presentToastError('Error - Errores no estandarizados');
             }
           );
         }
       );
-  }
-
-  async presentToast(msg) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750
-    });
-    toast.present();
   }
 
   async presentLoading() {

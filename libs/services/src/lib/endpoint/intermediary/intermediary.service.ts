@@ -14,28 +14,53 @@ export class IntermediaryService {
   /**
    * Show error message
    * @param message - message to be toasted
+   * @param position
+   * @param durationToast
    */
-  async presentToastError(message:string,duration=1000) {
+  async presentToastError(message:string, position: any = "top", durationToast=4000) {
     let toast = (await this.toastCtrl.create({
       message: message,
-      duration: duration,
+      duration: durationToast,
       color: 'danger',
-      position: 'top'
+      position: position
     })).present();
   }
 
   /**
    * Show toast
    * @param message - message to be presented
-   * @param duration - te duration of the visible toast
+   * @param durationToast - te duration of the visible toast
    */
-  async presentToastSuccess(message:string,duration=1000){
+  async presentToastSuccess(message:string, durationToast=1000, position: any = "top"){
     let toast = (await this.toastCtrl.create({
-      message:message,
-      duration:duration,
+      message: message,
+      duration: durationToast,
       color:'success',
-      position:'top'
-    }))
+      position: position
+    }));
+
+    return toast.present();
+  }
+
+  async presentToastPrimary(message:string, durationToast=3750, position: any = "top"){
+    let toast = (await this.toastCtrl.create({
+      message: message,
+      duration: durationToast,
+      color:'primary',
+      position: position
+    }));
+
+    return toast.present();
+  }
+
+  async presentToastWarning(message:string, durationToast=3000, position: any = "top"){
+    let toast = (await this.toastCtrl.create({
+      message: message,
+      duration: durationToast,
+      color:'warning',
+      position: position
+    }));
+
     return toast.present();
   }
 

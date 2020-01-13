@@ -276,7 +276,7 @@ export class PickingOnlineStoreVerifyComponent implements OnInit {
     } else {
       errorMessage = error.message;
     }
-    await this.intermediaryService.presentToastError(errorMessage, 1500)
+    await this.intermediaryService.presentToastError(errorMessage)
   }
 }
 

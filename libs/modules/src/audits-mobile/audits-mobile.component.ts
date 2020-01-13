@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuditsService } from '@suite/services';
-import { ToastController } from '@ionic/angular';
+import { AuditsService, IntermediaryService } from '@suite/services';
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {Router, ActivatedRoute} from '@angular/router';
 import { Subject } from 'rxjs';
 import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-audits-mobile',
@@ -19,7 +19,7 @@ export class AuditsMobileComponent implements OnInit {
 
   constructor(
     private audit : AuditsService,
-    private toast : ToastController,
+    private intermediaryService : IntermediaryService,
     private toolbarProvider: ToolbarProvider,
     private router : Router,
     private activeRoute: ActivatedRoute,
@@ -39,24 +39,15 @@ export class AuditsMobileComponent implements OnInit {
     this.audit.getAll().subscribe(res =>{
       this.Auditories = res.data;
     },err =>{
-      this.presentToast(err.error.result.reason,'danger');
+      this.intermediaryService.presentToastError(err.error.result.reason);
     })
   }
 
   closeAuditoria(data){
     this.audit.create({packingReference:data,status:2}).subscribe(res =>{
-      this.presentToast('Auditoria Cerrada!!','success');
+      this.intermediaryService.presentToastSuccess('Auditoria Cerrada!!',TimesToastType.DURATION_SUCCESS_TOAST_3750);
       this.getAllAudits();
     })
-  }
-
-  async presentToast(message,color) {
-    const toast = await this.toast.create({
-      message: message,
-      color: color,
-      duration: 4000
-    });
-    toast.present();
   }
 
   SeeProducts(data){
@@ -72,7 +63,7 @@ export class AuditsMobileComponent implements OnInit {
   }
 
   getMessageVerifiedProducts(productsQuantity: number) : string {
-    if (productsQuantity == 0 || productsQuantity > 1) {
+    if (productsQuantity === 0 || productsQuantity > 1) {
       return `${productsQuantity} productos verificados`;
     } else {
       return `${productsQuantity} producto verificado`;

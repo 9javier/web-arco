@@ -123,7 +123,7 @@ export class ScannerRackComponent implements OnInit{
             errorMessage = 'El Almacen del producto no coincide con la estanteria Anexa';
           }
         }
-        await this.intermediaryService.presentToastError(errorMessage, 1500);
+        await this.intermediaryService.presentToastError(errorMessage);
       });
   }
 

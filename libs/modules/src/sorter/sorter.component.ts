@@ -1,21 +1,9 @@
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { Location } from "@angular/common";
-import { SelectionModel, DataSource } from "@angular/cdk/collections";
-import { RolModel, UserModel, WarehouseModel, IntermediaryService } from "@suite/services";
-import { Observable, of } from "rxjs";
-import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
-import { HallModel } from "../../../services/src/models/endpoints/Hall";
-import { HallsService } from "../../../services/src/lib/endpoint/halls/halls.service";
-import { ActivatedRoute } from "@angular/router";
-import { ModalController, ToastController, NavParams } from "@ionic/angular";
-import { WarehouseService } from "../../../services/src/lib/endpoint/warehouse/warehouse.service";
-/*import {UpdateComponent} from "../update/update.component";
-import { UpdateComponent as updateHall } from '../../halls/update/update.component';
-import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
-import {LocationsComponent} from "../locations.component";
-import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
-import { PrinterService } from "../../../services/src/lib/printer/printer.service";
+import { RolModel, UserModel, IntermediaryService } from "@suite/services";
+import { Observable } from "rxjs";
+import { HttpResponse } from "@angular/common/http";
+import { ModalController } from "@ionic/angular";
 import { CrudService } from '../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
@@ -231,10 +219,11 @@ export class SorterComponent implements OnInit {
     let repeat = false;
     let idToDelete = this.templates[index].id;
     this.toDeleteIds.forEach(id => {
-      if (id == idToDelete) {
+      if (id === idToDelete) {
         repeat = true;
       }
-    })
+    });
+
     if (!repeat) {
       this.toDeleteIds.push(idToDelete);
     }
