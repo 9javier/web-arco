@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, LoadingController, ModalController, NavParams, ToastController } from '@ionic/angular';
-import { InventoryModel, InventoryService, WarehouseService } from '@suite/services';
+import { AlertController, LoadingController, ModalController, NavParams } from '@ionic/angular';
+import { IntermediaryService, InventoryModel, InventoryService, WarehouseService } from '@suite/services';
 import { PermissionsService } from '../../../../../services/src/lib/endpoint/permissions/permissions.service';
+import { PositionsToast } from '../../../../../services/src/models/positionsToast.type';
+import { TimesToastType } from '../../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-product-relocation',
@@ -35,7 +37,7 @@ export class ProductRelocationComponent implements OnInit {
     private warehouseService: WarehouseService,
     private navParams: NavParams,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private servicePermision: PermissionsService,
     private alertController: AlertController,
     private inventoryService: InventoryService
@@ -189,14 +191,7 @@ export class ProductRelocationComponent implements OnInit {
           this.loading = null;
         }
         if (res.code === 200 || res.code === 201) {
-          await this.presentToast(
-            textToastOk ||
-              'Producto ' +
-                params.productReference +
-                ' ubicado en ' +
-                this.title,
-            'success'
-          );
+          await this.intermediaryService.presentToastSuccess(textToastOk || 'Producto ' + params.productReference + ' ubicado en ' + this.title, TimesToastType.DURATION_SUCCESS_TOAST_3750, PositionsToast.BOTTOM);
           this.products[index].container = res.data.destinationContainer;
           this.products[index].warehouse = res.data.destinationWarehouse;
           this.products[index].productShoeUnit = res.data.productShoeUnit;
@@ -220,7 +215,7 @@ export class ProductRelocationComponent implements OnInit {
               }
             }
           }
-          await this.presentToast(errorMessage, 'danger');
+          await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
         }
 
         await this.close(true);
@@ -233,20 +228,10 @@ export class ProductRelocationComponent implements OnInit {
         if (error.error.code === 428) {
           await this.showWarningToForce(params, index, textToastOk);
         } else {
-          await this.presentToast(error.message, 'danger');
+          this.intermediaryService.presentToastError(error.message, PositionsToast.BOTTOM);
         }
       }
     );
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || 'primary'
-    });
-    toast.present();
   }
 
   async showWarningToForce(inventoryProcess, index, textToastOk) {
@@ -260,12 +245,7 @@ export class ProductRelocationComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            this.presentToast(
-              `No se ha registrado la ubicación del producto ${
-                inventoryProcess.productReference
-              } en el contenedor`,
-              'danger'
-            );
+            this.intermediaryService.presentToastError(`No se ha registrado la ubicación del producto ${ inventoryProcess.productReference } en el contenedor`, PositionsToast.BOTTOM);
           }
         },
         {

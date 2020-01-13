@@ -4,22 +4,20 @@ import { Router } from '@angular/router';
 import {
   ResponseLogin,
   RequestLogin,
-  ErrorResponseLogin,
   Oauth2Service,
   IntermediaryService
 } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import { ToastController, AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { AppInfo } from 'config/base';
 import { Platform } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Observable, interval } from 'rxjs';
+import { interval } from 'rxjs';
 import { AppVersionService } from '../../../services/src/lib/endpoint/app-version/app-version.service';
 import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
 import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
-import { stringify } from '@angular/core/src/render3/util';
 import {config} from "../../../services/src/config/config";
 
 const interUpdateVersion = interval(300000);
@@ -47,7 +45,6 @@ export class LoginComponent implements OnInit {
     private loginService: Oauth2Service,
     private router: Router,
     private authenticationService: AuthenticationService,
-    public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
     private intermediaryService: IntermediaryService,
@@ -164,15 +161,6 @@ export class LoginComponent implements OnInit {
         }
       );
     });
-  }
-
-  async presentToast(msg) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 2750
-    });
-    toast.present();
   }
 
   async showLoading(message: string) {

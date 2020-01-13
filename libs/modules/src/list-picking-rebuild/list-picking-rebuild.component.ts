@@ -4,10 +4,9 @@ import {PickingModel} from "../../../services/src/models/endpoints/Picking";
 import {WorkwavesService} from "../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {PickingService} from "../../../services/src/lib/endpoint/picking/picking.service";
-import {AlertController, LoadingController, ToastController} from "@ionic/angular";
-import {UserTimeModel, UserTimeService} from "@suite/services";
-import { filter, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import {AlertController, LoadingController } from "@ionic/angular";
+import { IntermediaryService, UserTimeModel, UserTimeService } from '@suite/services';
+import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'list-picking-rebuild',
@@ -38,7 +37,7 @@ export class ListPickingRebuildComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private workwavesService: WorkwavesService,
     private pickingService: PickingService,
     private userTimeService: UserTimeService
@@ -62,7 +61,7 @@ export class ListPickingRebuildComponent implements OnInit {
     this.isLoadingPickings = true;
 
     let subscribeResponseListPickings = (res: Array<PickingModel.PendingPickings>) => {
-      
+
       this.listPickings = res;
       this.isLoadingPickings = false;
       this.listIdsPickingsSelected = [];
@@ -107,7 +106,7 @@ export class ListPickingRebuildComponent implements OnInit {
 
   async changeUserSelected() {
     if (this.listEmployeesToChange.usersActive.length < 1 && this.listEmployeesToChange.usersInactive.length < 1) {
-      this.presentToast('No hay usuarios para cambiar.', 'warning');
+      this.intermediaryService.presentToastWarning('No hay usuarios para cambiar.');
       return;
     }
 
@@ -134,7 +133,7 @@ export class ListPickingRebuildComponent implements OnInit {
         {
           text: 'Cambiar',
           handler: (data) => {
-            if (typeof data == 'undefined' || !data) {
+            if (typeof data === 'undefined' || !data) {
               return false;
             }
             this.showLoading('Cambiando usuarios...').then(() => {
@@ -157,7 +156,7 @@ export class ListPickingRebuildComponent implements OnInit {
         this.loading.dismiss();
         this.loading = null;
       }
-      this.presentToast('Usuarios actualizados correctamente.', 'success');
+      this.intermediaryService.presentToastSuccess('Usuarios actualizados correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
       this.listIdsPickingsSelected = new Array<number>();
       this.loadPickingsList();
     };
@@ -167,7 +166,7 @@ export class ListPickingRebuildComponent implements OnInit {
         this.loading.dismiss();
         this.loading = null;
       }
-      this.presentToast('Ha ocurrido un error al intentar actualizar los usuarios de los picking.', 'danger');
+      this.intermediaryService.presentToastError('Ha ocurrido un error al intentar actualizar los usuarios de los picking.');
     };
 
     if (this.idWorkwave) {
@@ -184,14 +183,14 @@ export class ListPickingRebuildComponent implements OnInit {
   pickingSelected(data) {
     if (data.value) {
       this.listIdsPickingsSelected.push(data.id);
-      
+
       this.usersNoSelectedToChangeUser = false;
-      this.usersNoSelectedToDelete = this.listIdsPickingsSelected.length == 1 && !data.delete;
+      this.usersNoSelectedToDelete = this.listIdsPickingsSelected.length === 1 && !data.delete;
       if (!data.delete) {
         this.quantityPickingsSelectedAndInitiated++;
       }
     } else {
-      this.listIdsPickingsSelected = this.listIdsPickingsSelected.filter((id) => id != data.id);
+      this.listIdsPickingsSelected = this.listIdsPickingsSelected.filter((id) => id !== data.id);
       if (this.listIdsPickingsSelected.length < 1) {
         this.usersNoSelectedToChangeUser = true;
         this.usersNoSelectedToDelete = true;
@@ -203,7 +202,7 @@ export class ListPickingRebuildComponent implements OnInit {
   }
 
   selectAllPickings() {
-    if (this.listIdsPickingsSelected.length == this.listPickings.length) {
+    if (this.listIdsPickingsSelected.length === this.listPickings.length) {
       this.usersNoSelectedToChangeUser = true;
       this.usersNoSelectedToDelete = true;
       this.quantityPickingsSelectedAndInitiated = 0;
@@ -222,8 +221,8 @@ export class ListPickingRebuildComponent implements OnInit {
       for (let picking of this.listPickings) {
         picking.selected = true;
         this.listIdsPickingsSelected.push(picking.id);
-        
-        if (picking.status == this.STATUS_PICKING_INITIATED) {
+
+        if (picking.status === this.STATUS_PICKING_INITIATED) {
           this.quantityPickingsSelectedAndInitiated++;
         }
       }
@@ -259,17 +258,16 @@ export class ListPickingRebuildComponent implements OnInit {
             return;
           }
         }
-        
+
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
         }
-
-        this.presentToast('Tareas de picking eliminadas correctamente.', 'success');
+        this.intermediaryService.presentToastSuccess('Tareas de picking eliminadas correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
         this.usersNoSelectedToDelete = true;
-        
-        
-        
+
+
+
         this.loadPickingsList();
         this.loadEmployees();
 
@@ -279,7 +277,7 @@ export class ListPickingRebuildComponent implements OnInit {
           this.loading.dismiss();
           this.loading = null;
         }
-        this.presentToast('Ha ocurrido un error al intentar eliminar los picking seleccionados.', 'danger');
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar eliminar los picking seleccionados.');
       });
   }
 
@@ -319,16 +317,6 @@ export class ListPickingRebuildComponent implements OnInit {
       translucent: true,
     });
     return await this.loading.present();
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 
 }

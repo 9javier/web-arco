@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {SettingsService} from "../../../services/src/lib/storage/settings/settings.service";
-import {ToastController} from "@ionic/angular";
 import {PrinterConnectionService} from "../../../services/src/lib/printer-connection/printer-connection.service";
+import { IntermediaryService } from '@suite/services';
+import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'app-settings',
@@ -19,7 +20,7 @@ export class SettingsComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private settingsService: SettingsService,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private printerConnectionService: PrinterConnectionService,
   ) {
   }
@@ -37,19 +38,9 @@ export class SettingsComponent implements OnInit {
   submit(): void {
     this.settingsService.saveDeviceSettings(this.form.value)
       .then(() => {
-        this.presentToast("Ajustes guardados", "success");
+        this.intermediaryService.presentToastSuccess("Ajustes guardados", TimesToastType.DURATION_SUCCESS_TOAST_3750);
         this.printerConnectionService.disconnect();
         this.printerConnectionService.connect();
       });
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 }

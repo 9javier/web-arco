@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {AlertController, LoadingController, ModalController, NavParams, ToastController} from "@ionic/angular";
+import {AlertController, LoadingController, ModalController, NavParams} from "@ionic/angular";
 import {InventoryService} from "../../../../services/src/lib/endpoint/inventory/inventory.service";
 import {InventoryModel} from "../../../../services/src/models/endpoints/Inventory";
 import {Observable} from "rxjs";
@@ -7,7 +7,7 @@ import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {WarehouseService} from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
-import { TimesToastType } from '../../../../services/src/models/timesToastType';
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'suite-update',
@@ -48,7 +48,7 @@ export class UpdateComponent implements OnInit {
     private alertController: AlertController,
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private warehouseService: WarehouseService,
     private dateTimeParserService: DateTimeParserService,
     private printerService: PrinterService
@@ -195,18 +195,8 @@ export class UpdateComponent implements OnInit {
     return await this.loading.present();
   }
 
-  async presentToast(msg, color, durationToast = 3740) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: durationToast,
-      color: color || "primary"
-    });
-    toast.present();
-  }
-
   static validateProductReference(reference: string) : boolean {
-    return !(typeof reference == 'undefined' || !reference || reference == '' || reference.length != 18);
+    return !(typeof reference === 'undefined' || !reference || reference === '' || reference.length !== 18);
   }
 
   private changeSelect(source) {
@@ -266,9 +256,9 @@ export class UpdateComponent implements OnInit {
   }
 
   public async saveDataMovement(product) {
-    if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
+    if (this.warehouseSelected && typeof this.warehouseSelected === 'number') {
       let idWarehouseOrigin = product.warehouseId;
-      if (this.warehouseSelected != idWarehouseOrigin) {
+      if (this.warehouseSelected !== idWarehouseOrigin) {
         let alertRequestMovement = await this.alertController.create({
           header: 'Atención',
           message: 'Está a punto de mover un producto entre almacenes y/o tiendas. ¿Quiere generar un escaneo de destino en Avelon para el movimiento?',
@@ -335,7 +325,7 @@ export class UpdateComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            this.presentToast(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
+            this.intermediaryService.presentToastError(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`);
           }
         }, {
           text: 'Forzar',
@@ -351,7 +341,7 @@ export class UpdateComponent implements OnInit {
   }
 
   private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
-    if (typeof generateAvelonMovement != 'undefined') {
+    if (typeof generateAvelonMovement !== 'undefined') {
       params.avoidAvelonMovement = generateAvelonMovement;
     }
 
@@ -362,16 +352,16 @@ export class UpdateComponent implements OnInit {
           this.loading.dismiss();
           this.loading = null;
         }
-        if (res.code == 200 || res.code == 201) {
-          this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
+        if (res.code === 200 || res.code === 201) {
+          this.intermediaryService.presentToastSuccess(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title));
           this.loadProducts();
           this.loadProductsHistory();
-        } else if (res.code == 428) {
+        } else if (res.code === 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
           let errorMessage = res.message;
           if (res.errors) {
-            if (typeof res.errors == 'string') {
+            if (typeof res.errors === 'string') {
               errorMessage = res.errors;
             } else {
               if (res.errors.productReference && res.errors.productReference.message) {
@@ -379,17 +369,17 @@ export class UpdateComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 'danger', TimesToastType.DURATION_ERROR_TOAST);
+          this.intermediaryService.presentToastError(errorMessage);
         }
       }, (error: HttpErrorResponse) => {
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
         }
-        if (error.error.code == 428) {
+        if (error.error.code === 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
-          this.presentToast(error.message, 'danger', TimesToastType.DURATION_ERROR_TOAST);
+          this.intermediaryService.presentToastError(error.message);
         }
       });
   }

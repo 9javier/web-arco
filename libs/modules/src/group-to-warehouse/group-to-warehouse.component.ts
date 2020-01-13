@@ -7,8 +7,7 @@ import {
   IntermediaryService
 } from '@suite/services';
 import { Observable } from 'rxjs';
-import {HttpResponse, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import { ToastController } from '@ionic/angular';
+import {HttpResponse, HttpErrorResponse} from '@angular/common/http';
 import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 
@@ -27,8 +26,7 @@ export class GroupToWarehouseComponent implements OnInit {
   constructor(
     private groupsService: GroupsService,
     private warehousesService: WarehousesService,
-    private toastController: ToastController,
-    private intermediaryService:IntermediaryService
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -73,13 +71,11 @@ export class GroupToWarehouseComponent implements OnInit {
       .then((data: Observable<HttpResponse<WarehouseModel.ResponseUpdate>>) => {
         data.subscribe(
           (res: HttpResponse<WarehouseModel.ResponseUpdate>) => {
-            this.presentToast(
-              `El grupo ${group.name} ha sido asignado a la tienda ${warehouse.name} `
-            );
+            this.intermediaryService.presentToastSuccess(`El grupo ${group.name} ha sido asignado a la tienda ${warehouse.name} `, TimesToastType.DURATION_SUCCESS_TOAST_4550);
             this.initGroups();
           },
           (errorResponse: HttpErrorResponse) => {
-            this.presentToast( `${errorResponse.status} - ${errorResponse.message}`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
+            this.intermediaryService.presentToastError(`${errorResponse.status} - ${errorResponse.message}`);
             this.initGroups();
           }
         );
@@ -95,28 +91,16 @@ export class GroupToWarehouseComponent implements OnInit {
       .then((data: Observable<HttpResponse<WarehouseModel.ResponseDelete>>) => {
         data.subscribe(
           (res: HttpResponse<WarehouseModel.ResponseDelete>) => {
-            this.presentToast(
-              `El grupo ${group.name} ha sido desvinculado de la tienda ${warehouse.name} `
-            );
+            this.intermediaryService.presentToastSuccess(`El grupo ${group.name} ha sido desvinculado de la tienda ${warehouse.name} `, TimesToastType.DURATION_SUCCESS_TOAST_4550);
             this.initGroups();
           },
           (errorResponse: HttpErrorResponse) => {
-            this.presentToast( `${errorResponse.status} - ${errorResponse.message}`, 'danger', TimesToastType.DURATION_ERROR_TOAST);
+            this.intermediaryService.presentToastError(`${errorResponse.status} - ${errorResponse.message}`);
             this.initGroups();
           }
         );
       });
     }
-
-  async presentToast(msg, color = "primary", durationToast  = 4550) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      color: color,
-      duration: durationToast
-    });
-    toast.present();
-  }
 }
 
 

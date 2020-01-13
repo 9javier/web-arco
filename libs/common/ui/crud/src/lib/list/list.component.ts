@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import {
   trigger,
   state,
@@ -7,31 +7,26 @@ import {
   transition
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
-import { MatTableDataSource } from '@angular/material';
-import { UserModel, RolModel, JailModel } from '@suite/services';
+import { UserModel, RolModel, JailModel, IntermediaryService } from '@suite/services';
 import { CrudService } from '../service/crud.service';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Router, NavigationStart, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { filter, last, take, distinctUntilChanged } from 'rxjs/operators';
+import { filter} from 'rxjs/operators';
 import {
   AlertController,
-  ToastController,
   ModalController,
   LoadingController
 } from '@ionic/angular';
 import { Location } from '@angular/common';
 import { UpdateComponent as updateUser } from '../../../../../../modules/src/users/update/update.component';
 import { StoreComponent as storeUser } from '../../../../../../modules/src/users/store/store.component';
-
-//import { StoreComponent as storeUser } from "../../../../../../../apps/sga/src/app/users/store/store.component";
 import { StoreComponent as storeRol } from "../../../../../../modules/src/roles/store/store.component";
 import { StoreComponent as storeHall } from "../../../../../../modules/src/halls/store/store.component";
 import { StoreComponent as storeWarehouse } from "../../../../../../modules/src/warehouses/store/store.component";
 import { StoreComponent as storeJail } from "../../../../../../modules/src/jail/store/store.component";
 import { StoreComponent as storePallet } from "../../../../../../modules/src/pallets/store/store.component";
 import { StoreComponent as storeGroup } from "../../../../../../modules/src/groups/store/store.component";
-//import { UpdateComponent as updateUser } from "../../../../../../../apps/sga/src/app/users/update/update.component";
 import { UpdateComponent as updateRol } from "../../../../../../modules/src/roles/update/update.component";
 import { UpdateComponent as updateHall } from "../../../../../../modules/src/halls/update/update.component";
 import { UpdateComponent as updateWarehouse } from "../../../../../../modules/src/warehouses/update/update.component";
@@ -43,6 +38,7 @@ import { HallModel } from "../../../../../../services/src/models/endpoints/Hall"
 import { WarehouseService } from "../../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { PrinterService } from "../../../../../../services/src/lib/printer/printer.service";
 import { PdfGeneratorService } from "../../../../../../services/src/lib/pdf-generator/pdf-generator.service";
+import { TimesToastType } from '../../../../../../services/src/models/timesToastType';
 
 
 @Component({
@@ -67,7 +63,7 @@ export class ListComponent implements OnInit {
     private crudService: CrudService,
     private router: Router,
     private alertController: AlertController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private modalController: ModalController,
     public loadingController: LoadingController,
     private hallsService: HallsService,
@@ -422,12 +418,12 @@ export class ListComponent implements OnInit {
                           //   response.body.message
                           //   }`
                           // );
-                          this.presentToast(successMsg);
+                          this.intermediaryService.presentToastSuccess(successMsg, TimesToastType.DURATION_SUCCESS_TOAST_2750);
                           this.initUsers();
                           this.dismissLoading();
                         },
                         (errorResponse: HttpErrorResponse) => {
-                          this.presentToast(errorResponse.message);
+                          this.intermediaryService.presentToastError(errorResponse.message);
                           // console.log(errorResponse);
                           this.dismissLoading();
                           this.initUsers();
@@ -508,12 +504,12 @@ export class ListComponent implements OnInit {
                           //   response.body.message
                           //   }`
                           // );
-                          this.presentToast(successMsg);
+                          this.intermediaryService.presentToastSuccess(successMsg, TimesToastType.DURATION_SUCCESS_TOAST_2750);
                           this.initUsers();
                           this.dismissLoading();
                         },
                         (errorResponse: HttpErrorResponse) => {
-                          this.presentToast(errorResponse.message);
+                          this.intermediaryService.presentToastError(errorResponse.message);
                           // console.log(errorResponse);
                           this.dismissLoading();
                           this.initUsers();
@@ -529,15 +525,6 @@ export class ListComponent implements OnInit {
     });
 
     await alert.present();
-  }
-
-  async presentToast(msg) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 2750
-    });
-    toast.present();
   }
 
   async presentLoading() {

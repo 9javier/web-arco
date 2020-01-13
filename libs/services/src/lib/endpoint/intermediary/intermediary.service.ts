@@ -31,12 +31,34 @@ export class IntermediaryService {
    * @param message - message to be presented
    * @param durationToast - te duration of the visible toast
    */
-  async presentToastSuccess(message:string, durationToast=1000){
+  async presentToastSuccess(message:string, durationToast=1000, position: any = "top"){
     let toast = (await this.toastCtrl.create({
       message: message,
       duration: durationToast,
       color:'success',
-      position:'top'
+      position: position
+    }));
+
+    return toast.present();
+  }
+
+  async presentToastPrimary(message:string, durationToast=3750, position: any = "top"){
+    let toast = (await this.toastCtrl.create({
+      message: message,
+      duration: durationToast,
+      color:'primary',
+      position: position
+    }));
+
+    return toast.present();
+  }
+
+  async presentToastWarning(message:string, durationToast=3000, position: any = "top"){
+    let toast = (await this.toastCtrl.create({
+      message: message,
+      duration: durationToast,
+      color:'warning',
+      position: position
     }));
 
     return toast.present();

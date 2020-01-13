@@ -1,11 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingController, ToastController} from "@ionic/angular";
+import {LoadingController} from "@ionic/angular";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import {SettingsService} from "../../../../services/src/lib/storage/settings/settings.service";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
+import { IntermediaryService } from '@suite/services';
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'suite-input-codes',
@@ -30,7 +33,7 @@ export class InputCodesComponent implements OnInit {
 
   constructor(
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private settingsService: SettingsService,
     private carriersService: CarriersService,
     private itemReferencesProvider: ItemReferencesProvider,
@@ -49,7 +52,7 @@ export class InputCodesComponent implements OnInit {
   keyUpInput(event) {
     let dataWrote = (this.codeWrote || "").trim();
 
-    if (event.keyCode == 13 && dataWrote) {
+    if (event.keyCode === 13 && dataWrote) {
       this.settingsService.saveDeviceSettings({ transferPackingLastMethod: 'laser' });
 
       this.codeWrote = null;
@@ -63,7 +66,7 @@ export class InputCodesComponent implements OnInit {
       }
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
-      if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PACKING) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.isProcessStarted) {
           this.transferAmongPackings(dataWrote);
         } else {
@@ -73,20 +76,32 @@ export class InputCodesComponent implements OnInit {
           this.msgTop = this.disableTransferProductByProduct ? 'Escanea el embalaje de destino' : 'Escanea los productos a traspasar';
           this.placeholderDataToWrite = this.disableTransferProductByProduct ? 'EMBALAJE' : 'PRODUCTO';
         }
-      } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PRODUCT
-        || this.itemReferencesProvider.checkCodeValue(dataWrote) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT
+        || this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT_MODEL) {
         if (this.isProcessStarted) {
           if (this.disableTransferProductByProduct) {
             this.audioProvider.playDefaultError();
-            this.presentToast('Funcionalidad de traspaso de producto por producto no disponible actualmente.', 'danger');
+            this.intermediaryService.presentToastError('Funcionalidad de traspaso de producto por producto no disponible actualmente.', PositionsToast.BOTTOM).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              },500);
+            });
           }
         } else {
           this.audioProvider.playDefaultError();
-          this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+          this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         }
       } else {
         this.audioProvider.playDefaultError();
-        this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+        this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          },500);
+        });
       }
     }
   }
@@ -96,10 +111,14 @@ export class InputCodesComponent implements OnInit {
       this.carriersService
         .postTransferAmongPackings({ origin: this.packingReferenceOrigin, destiny: destinyPacking })
         .then((res: CarrierModel.ResponseTransferAmongPackings) => {
-          if (res.code == 200 || res.code == 201) {
+          if (res.code === 200 || res.code === 201) {
             this.hideLoading();
             this.audioProvider.playDefaultOk();
-            this.presentToast('Traspaso de productos entre embalajes realizado.', 'success');
+            this.intermediaryService.presentToastSuccess('Traspaso de productos entre embalajes realizado.', TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              },500);
+            });
             this.packingReferenceOrigin = null;
             this.isProcessStarted = false;
             this.msgTop = "Escanea el embalaje de origen";
@@ -108,19 +127,31 @@ export class InputCodesComponent implements OnInit {
           } else {
             this.hideLoading();
             this.audioProvider.playDefaultError();
-            this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+            this.intermediaryService.presentToastError('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', PositionsToast.BOTTOM).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              },500);
+            });
           }
         }, (error) => {
           this.hideLoading();
           this.audioProvider.playDefaultError();
           console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
-          this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         })
         .catch((error) => {
           this.hideLoading();
           this.audioProvider.playDefaultError();
           console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
-          this.presentToast('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', 'danger');
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         });
     });
   }
@@ -138,22 +169,6 @@ export class InputCodesComponent implements OnInit {
       this.loading.dismiss();
       this.loading = null;
     }
-  }
-
-  private async presentToast(msg: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: 1500,
-      color: color
-    });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        },500);
-      });
   }
 
 }
