@@ -7,21 +7,6 @@
   align-items: center;
   justify-content: center;
 
-  & > .mp-mapping-create-button-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 50px;
-    width: 100%;
-    button {
-      background-color: #000;
-      color: #fff;
-      font-size: 11px;
-      width: 202px;
-      padding: 12px;
-    }
-  }
-
   & > mat-accordion {
     width: 100%;
     --border: none;

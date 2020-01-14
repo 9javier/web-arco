@@ -60,9 +60,4 @@ export class MappingsComponent implements OnInit {
     console.log(e)
   }
 
-  createMapping() {
-    console.log('create')
-    this.router.navigate(['create-mapping']);
-  }
-
 }
