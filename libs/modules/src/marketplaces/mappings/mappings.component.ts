@@ -10,36 +10,33 @@ import { ActivatedRoute } from '@angular/router';
 export class MappingsComponent implements OnInit {
 
   // Brands
-  brands_data = [
+  private dataSourceBrands = [
     {id: 1, origin: 'ADIDAS SL', destination: 'ADIDAS' },
     {id: 2, origin: 'AMANDA A.', destination: 'AMANDA' },
     {id: 3, origin: 'ASICS', destination: 'ASICS' },
   ];
 
-  displayedBrandsColumns: string[] = ['id', 'origin', 'destination'];
-  dataSourceBrands = this.brands_data;
+  displayedBrandsColumns: string[] = ['blank', 'id', 'origin', 'destination'];
 
   // Colors
 
-  colors_data = [
+  private dataSourceColors = [
     {id: 1, origin: 'AZUL', destination: 'AZUL' },
     {id: 2, origin: 'ROJO', destination: 'ROJO' },
     {id: 3, origin: 'VERDE', destination: 'VERDE' },
   ];
 
-  displayedColorsColumns: string[] = ['id', 'origin', 'destination'];
-  dataSourceColors = this.colors_data;
+  displayedColorsColumns: string[] = ['blank', 'id', 'origin', 'destination'];
 
   // Sizes
 
-  sizes_data = [
+  private dataSourceSizes = [
     {id: 1, origin: 'GRANDE', destination: 'GRANDE' },
     {id: 2, origin: 'MEDIANA', destination: 'MEDIANA' },
     {id: 3, origin: 'PEQUEÑA', destination: 'PEQUEÑA' },
   ];
 
-  displayedSizesColumns: string[] = ['id', 'origin', 'destination'];
-  dataSourceSizes = this.sizes_data;
+  displayedSizesColumns: string[] = ['blank', 'id', 'origin', 'destination'];
 
   constructor(private route: ActivatedRoute) {
     console.log(this.route.snapshot.data['name']) 
