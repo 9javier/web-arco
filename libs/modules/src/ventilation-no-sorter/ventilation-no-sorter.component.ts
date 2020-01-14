@@ -1,14 +1,19 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import {AudioProvider} from "../../../services/src/providers/audio-provider/audio-provider.provider";
-import {CarrierService, IntermediaryService, SizeModel, WarehouseModel, WarehousesService} from "@suite/services";
+import {
+  CarrierService,
+  IntermediaryService,
+  InventoryService,
+  SizeModel, UsersService,
+  WarehouseModel,
+  WarehousesService
+} from "@suite/services";
 import {ScannerManualComponent} from "../components/scanner-manual/scanner-manual.component";
 import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-store/picking-store.service";
 import Warehouse = WarehouseModel.Warehouse;
 import Size = SizeModel.Size;
-import {PackingInventoryService} from "../../../services/src/lib/endpoint/packing-inventory/packing-inventory.service";
 import {CarrierModel} from "../../../services/src/models/endpoints/carrier.model";
-import {PackingInventoryModel} from "../../../services/src/models/endpoints/PackingInventory";
 
 @Component({
   selector: 'app-ventilation-no-sorter',
@@ -20,18 +25,20 @@ export class VentilationNoSorterComponent implements OnInit {
 
   @ViewChild('scannerManual') scannerManual: ScannerManualComponent;
 
-  inputValue: string = null;
+  inputValue: string = '';
   showScanner: boolean = true;
   originScan;
-  warehouse: Warehouse;
+  destinyWarehouse: Warehouse;
   waitingForPacking: boolean = false;
   scannedCode: string;
   scannedPacking: string;
   size: Size;
-  newDestiny: boolean = true;
+  newDestiny: boolean;
   scanMessage: string = '¡Hola! Escanea un artículo para comenzar';
   packingPhase: boolean = false;
   packing: CarrierModel.Carrier;
+  destinies: string[] = [];
+  packingMessage: string;
 
   constructor(
     private itemReferencesProvider: ItemReferencesProvider,
@@ -39,12 +46,12 @@ export class VentilationNoSorterComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private pickingStoreService: PickingStoreService,
     private warehousesService: WarehousesService,
-    private packingInventoryService: PackingInventoryService,
+    private inventoryService: InventoryService,
     private carrierService: CarrierService
   ) {}
 
   ngOnInit() {
-    setTimeout(()=>this.scannerManual.focusToInput(),500);
+    this.scannerManual.focusToInput();
   }
 
   updateValue(event){
@@ -52,7 +59,7 @@ export class VentilationNoSorterComponent implements OnInit {
   }
 
   async scan(){
-    await this.intermediaryService.presentLoading('Procesando...');
+    if (!this.intermediaryService.loading) await this.intermediaryService.presentLoading('Procesando...');
     if(!this.packingPhase) {
       if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PRODUCT) {
         await this.pickingStoreService.getByProductReference({reference: this.inputValue})
@@ -65,9 +72,16 @@ export class VentilationNoSorterComponent implements OnInit {
             size: this.originScan.product_shoes_unit_sizeId
           })
             .then(response => {
-              this.warehouse = response.data.warehouse;
+              this.destinyWarehouse = response.data.warehouse;
               this.size = response.data.size;
             });
+          if(this.destinies[this.destinyWarehouse.reference]){
+            this.newDestiny = false;
+            this.packingMessage = 'ASIGNAR A EMBALAJE '+this.destinies[this.destinyWarehouse.reference];
+          }else{
+            this.newDestiny = true;
+            this.packingMessage = 'ASIGNAR A EMBALAJE';
+          }
           this.scannedCode = this.inputValue;
           this.resetScanner();
           this.showScanner = false;
@@ -90,6 +104,7 @@ export class VentilationNoSorterComponent implements OnInit {
         this.scannedPacking = this.inputValue;
         this.carrierService.getSingle(this.scannedPacking).subscribe(value => {
           this.packing = value;
+          this.destinies[this.destinyWarehouse.reference] = this.packing.reference;
           this.resetScanner();
           this.assignToPacking();
         });
@@ -102,32 +117,37 @@ export class VentilationNoSorterComponent implements OnInit {
         this.assignToPacking();
       }
     }
-    await this.intermediaryService.dismissLoading();
+    if (this.intermediaryService.loading) await this.intermediaryService.dismissLoading();
   }
 
   scanPacking(){
     this.scanMessage = 'Escanea un embalaje para continuar';
     this.waitingForPacking = false;
     this.showScanner = true;
-    setTimeout(()=>this.scannerManual.focusToInput(),500);
+    this.scannerManual.focusToInput();
   }
 
   async assignToPacking(){
-    //llamar función de back que asigne
-    let packingInventory: PackingInventoryModel.PackingInventory = {
-      packingType: 1,
-      packingId: this.packing.id,
-      productId: this.originScan.product_shoes_unit_id,
-      userId: 8
+    if (!this.intermediaryService.loading) await this.intermediaryService.presentLoading('Procesando...');
+    let inventoryProcess = {
+      productReference: this.scannedCode,
+      packingReference: this.scannedPacking,
+      warehouseId: this.originScan.product_shoes_unit_initialWarehouseId,
+      force: false
     };
-    await this.packingInventoryService.postAdd(packingInventory);
-    //volver a la vista inicial para escanear otro artículo
-
+    await this.inventoryService.postStore(inventoryProcess);
+    this.resetScanner();
+    this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
+    this.waitingForPacking = false;
+    this.showScanner = true;
+    this.packingPhase = false;
+    this.scannerManual.focusToInput();
+    if (this.intermediaryService.loading) await this.intermediaryService.dismissLoading();
   }
 
   resetScanner(){
     this.scannerManual.value = '';
-    this.inputValue = null;
+    this.inputValue = '';
   }
 
 }

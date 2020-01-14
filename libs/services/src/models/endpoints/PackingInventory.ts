@@ -10,11 +10,4 @@ export namespace PackingInventoryModel {
     code: number
   }
 
-  export interface PackingInventory {
-    packingType: number,
-    packingId: number,
-    productId: number,
-    userId: number
-  }
-
 }
