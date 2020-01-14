@@ -7,8 +7,8 @@ export namespace PredistributionModel {
   export interface Predistribution {
     id?: number;
     warehouse?: Warehouse;
-    article?: Product;
-    date_service: string;
+    article?: string;
+    date_service?: string;
     distribution?: boolean;
     reserved?: boolean;
   }
