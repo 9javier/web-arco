@@ -1,7 +1,5 @@
 
 <div class="container-mapping">
-  <button (click)="createMapping()" class="buttonCreate">Crear</button>
-
   <mat-accordion>
     <mat-expansion-panel>
       <mat-expansion-panel-header>
@@ -12,26 +10,41 @@
       <mat-form-field>
         <input matInput (keyup)="brandsFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
-      <table mat-table [dataSource]="dataSourceBrands" class="mat-elevation-z8">
-
-        <ng-container matColumnDef="id">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
-          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="origin">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-          <td mat-cell *matCellDef="let element"> {{element.origin}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="destination">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-          <td mat-cell *matCellDef="let element"> {{element.destination}} </td>
-        </ng-container>
-      
-        <tr mat-header-row *matHeaderRowDef="displayedBrandsColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedBrandsColumns;"></tr>
-      </table>
+        <table mat-table [dataSource]="dataSourceBrands" class="mat-elevation-z8">
+  
+          <ng-container matColumnDef="avelonData">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="marketData">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
+            <td mat-cell *matCellDef="let element"> 
+              <mat-select (selectionChange)="changeBrandSelect($event)">
+                <mat-option *ngFor="let item of brandsList" [value]="item">
+                  {{item}}
+                </mat-option>
+              </mat-select>
+            </td>
+          </ng-container>
+          <!--<ng-container matColumnDef="id">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="origin">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
+            <td mat-cell *matCellDef="let element"> {{element.originDataId}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="destination">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
+            <td mat-cell *matCellDef="let element"> {{element.marketDataId}} </td>
+          </ng-container>-->
+        
+          <tr mat-header-row *matHeaderRowDef="displayedBrandsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedBrandsColumns;"></tr>
+        </table>
 
     </mat-expansion-panel>
 
@@ -45,27 +58,41 @@
       <mat-form-field>
         <input matInput (keyup)="colorsFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
-      <table mat-table [dataSource]="dataSourceColors" class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSourceColors" class="mat-elevation-z8">
 
-        <ng-container matColumnDef="id">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
-          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="origin">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-          <td mat-cell *matCellDef="let element"> {{element.origin}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="destination">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-          <td mat-cell *matCellDef="let element"> {{element.destination}} </td>
-        </ng-container>
-      
-        <tr mat-header-row *matHeaderRowDef="displayedColorsColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColorsColumns;"></tr>
-      </table>
-
+          <ng-container matColumnDef="avelonData">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="marketData">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
+            <td mat-cell *matCellDef="let element"> 
+              <mat-select (selectionChange)="changeColorSelect($event)">
+                <mat-option *ngFor="let item of colorsList" [value]="item">
+                  {{item}}
+                </mat-option>
+              </mat-select>
+            </td>
+          </ng-container>
+          <!--<ng-container matColumnDef="id">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="origin">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
+            <td mat-cell *matCellDef="let element"> {{element.originDataId}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="destination">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
+            <td mat-cell *matCellDef="let element"> {{element.marketDataId}} </td>
+          </ng-container>-->
+        
+          <tr mat-header-row *matHeaderRowDef="displayedColorsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColorsColumns;"></tr>
+        </table>
     </mat-expansion-panel>
 
     <mat-expansion-panel>
@@ -78,26 +105,40 @@
       <mat-form-field>
         <input matInput (keyup)="sizesFilter($event.target.value)" placeholder="Filter">
       </mat-form-field>
-      <table mat-table [dataSource]="dataSourceSizes" class="mat-elevation-z8">
-
-        <ng-container matColumnDef="id">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
-          <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="origin">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-          <td mat-cell *matCellDef="let element"> {{element.origin}} </td>
-        </ng-container>
-      
-        <ng-container matColumnDef="destination">
-          <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-          <td mat-cell *matCellDef="let element"> {{element.destination}} </td>
-        </ng-container>
-      
-        <tr mat-header-row *matHeaderRowDef="displayedSizesColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedSizesColumns;"></tr>
-      </table>
+        <table mat-table [dataSource]="dataSourceSizes" class="mat-elevation-z8">
+          <ng-container matColumnDef="avelonData">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="marketData">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
+            <td mat-cell *matCellDef="let element"> 
+              <mat-select (selectionChange)="changeSizeSelect($event)">
+                <mat-option *ngFor="let item of sizesList" [value]="item">
+                  {{item}}
+                </mat-option>
+              </mat-select>
+            </td>
+          </ng-container>
+          <!--<ng-container matColumnDef="id">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
+            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="origin">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
+            <td mat-cell *matCellDef="let element"> {{element.originDataId}} </td>
+          </ng-container>
+        
+          <ng-container matColumnDef="destination">
+            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
+            <td mat-cell *matCellDef="let element"> {{element.marketDataId}} </td>
+          </ng-container>-->
+        
+          <tr mat-header-row *matHeaderRowDef="displayedSizesColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedSizesColumns;"></tr>
+        </table>
     </mat-expansion-panel>
 
   </mat-accordion>

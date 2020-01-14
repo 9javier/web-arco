@@ -350,14 +350,14 @@ const routes: Routes = [
       name: 'Marketplaces'
     }
   }, 
-  {
+  /*{
     path:'create-mapping',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/marketplaces/create-mapping/create-mapping.module#CreateMappingModule',
     data: {
       name: 'Crear mapeo'
     }
-  }
+  }*/
 ];
 
 @NgModule({
