@@ -7,15 +7,15 @@ import { AclService } from '../../../../services/src/lib/endpoint/acl/acl.servic
 import { ACLModel } from '../../../../services/src/models/endpoints/ACL';
 import { Observable } from 'rxjs';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { ToastController, ModalController } from '@ionic/angular';
-import { MatSelectionListChange, MatListOption } from '@angular/material/list';
-import { mergeMap } from 'rxjs/operators';
+import { ModalController } from '@ionic/angular';
+import { MatListOption } from '@angular/material/list';
 import { StoreComponent } from "../../roles/store/store.component";
 import { UpdateComponent } from "../../roles/update/update.component";
 import { UpdateComponent as UpdateRolComponent} from './modals/update/update.component';
-import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../../utils/validators';
 import { IntermediaryService } from '../../../../services/src/lib/endpoint/intermediary/intermediary.service';
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 interface ShowRolPermissions extends PermissionsModel.Permission {
   selected?: boolean;
@@ -56,7 +56,6 @@ export class PermissionToRolComponent implements OnInit {
     private rolesService: RolesService,
     private aclService: AclService,
     private modalController: ModalController,
-    private toastController: ToastController
   ) { }
 
   /**
@@ -70,7 +69,7 @@ export class PermissionToRolComponent implements OnInit {
       componentProps:{
         rol:rol
       }
-      
+
     }));
     modal.present();
     modal.onDidDismiss().then(data=>{
@@ -214,15 +213,11 @@ export class PermissionToRolComponent implements OnInit {
             (res: HttpResponse<ACLModel.ResponseUserRoles>) => {
               this.isLoadingAssignPermissionToRole = false;
               ev.selected = true;
-              this.presentToast(
-                `Permiso ${rol.name} ha sido asignado el rol ${permission.name}`
-              );
+              this.intermediaryService.presentToastSuccess(`Permiso ${rol.name} ha sido asignado el rol ${permission.name}`, TimesToastType.DURATION_SUCCESS_TOAST_4550);
             },
             (errorResponse: HttpErrorResponse) => {
               this.isLoadingAssignPermissionToRole = false;
-              this.presentToast(
-                `${errorResponse.status} - ${errorResponse.message}`
-              );
+              this.intermediaryService.presentToastError(`${errorResponse.status} - ${errorResponse.message}`);
               ev.selected = false;
               // Unselect option due network error
               this.rolepermissionsSelected.splice(indexSelected, 1, {
@@ -246,15 +241,11 @@ export class PermissionToRolComponent implements OnInit {
               (res: HttpResponse<ACLModel.ResponseDeleteUserRol>) => {
                 this.isLoadingAssignPermissionToRole = false;
                 ev.selected = false;
-                this.presentToast(
-                  `Permiso ${permission.name} fue removido de ${rol.name}`
-                );
+                this.intermediaryService.presentToastSuccess(`Permiso ${permission.name} fue removido de ${rol.name}`, TimesToastType.DURATION_SUCCESS_TOAST_4550);
               },
               (errorResponse: HttpErrorResponse) => {
                 this.isLoadingAssignPermissionToRole = false;
-                this.presentToast(
-                  `${errorResponse.status} - ${errorResponse.message}`
-                );
+                this.intermediaryService.presentToastError(`${errorResponse.status} - ${errorResponse.message}`);
                 ev.selected = true;
                 // Unselect option due network error
                 this.rolepermissionsSelected.splice(indexSelected, 1, {
@@ -271,16 +262,6 @@ export class PermissionToRolComponent implements OnInit {
   trackById(index: number, permission: ShowRolPermissions): number {
     return permission.id;
   }
-
-  async presentToast(msg) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 4550
-    });
-    toast.present();
-  }
-
 
   async goToStore() {
     let storeComponent = StoreComponent;

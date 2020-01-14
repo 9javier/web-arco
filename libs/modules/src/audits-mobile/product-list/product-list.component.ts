@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuditsService } from '@suite/services';
-import { ToastController } from '@ionic/angular';
+import { AuditsService, IntermediaryService } from '@suite/services';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -18,9 +17,9 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private audit : AuditsService,
-    private toast : ToastController,
+    private intermediaryService : IntermediaryService,
     private activeRoute: ActivatedRoute
-  ) { 
+  ) {
     this.add = this.activeRoute.snapshot.params.add;
     this.jaula = this.activeRoute.snapshot.params.jaula;
     this.id = this.activeRoute.snapshot.params.id;
@@ -35,17 +34,8 @@ export class ProductListComponent implements OnInit {
     this.audit.getProducts({packingReference:this.jaula}).subscribe(res =>{
       this.Products = res.data;
     },err =>{
-      this.presentToast(err.error.result.reason,'danger');
+      this.intermediaryService.presentToastError(err.error.result.reason);
     })
-  }
-
-  async presentToast(message,color) {
-    const toast = await this.toast.create({
-      message: message,
-      color: color,
-      duration: 4000
-    });
-    toast.present();
   }
 
 }

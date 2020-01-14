@@ -1,11 +1,9 @@
 import { Component, OnInit , ViewChild } from '@angular/core';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatTableDataSource} from '@angular/material/table';
-import {AuditsService, ProductModel, UserModel} from '@suite/services';
+import { AuditsService, IntermediaryService } from '@suite/services';
 import { MatSort, MatDialog } from '@angular/material';
-import { ToastController } from '@ionic/angular';
 import { ProductsByAuditComponent } from './modals/products-by-audit/products-by-audit.component';
-import {CarrierModel} from "../../../services/src/models/endpoints/Carrier";
 import {AuditsModel} from "../../../services/src/models/endpoints/Audits";
 import AuditPacking = AuditsModel.AuditPacking;
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
@@ -41,13 +39,13 @@ export class AuditsComponent implements OnInit {
 
   constructor(
     private audit : AuditsService,
-    private toast : ToastController,
+    private intermediaryService : IntermediaryService,
     public dialog: MatDialog,
     private dateTimeParserService: DateTimeParserService
   ) { }
 
   ngOnInit() {
-    
+
   }
 
   getAllAudits(){
@@ -56,7 +54,7 @@ export class AuditsComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     },err =>{
-      this.presentToast(err.error.result.reason,'danger');
+      this.intermediaryService.presentToastError(err.error.result.reason);
     })
   }
 
@@ -68,7 +66,7 @@ export class AuditsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-  
+
     });
   }
 
@@ -76,20 +74,11 @@ export class AuditsComponent implements OnInit {
     this.audit.getById(item.id).subscribe(res => {
       let responseFormatted: AuditPacking = res.data;
       if (responseFormatted.sorterAuditPackingProducts.length === 0) {
-        this.presentToast(`No hay productos escaneados para la auditoría del embalaje ${responseFormatted.packing.reference}`, 'warning');
+        this.intermediaryService.presentToastWarning(`No hay productos escaneados para la auditoría del embalaje ${responseFormatted.packing.reference}`);
       } else {
         this.openProducts(responseFormatted);
       }
     })
-  }
-
-  async presentToast(message,color) {
-    const toast = await this.toast.create({
-      message: message,
-      color: color,
-      duration: 4000
-    });
-    toast.present();
   }
 
   applyFilter(event: any) {

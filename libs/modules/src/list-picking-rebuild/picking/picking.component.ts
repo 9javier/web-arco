@@ -2,10 +2,11 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {PickingModel} from "../../../../services/src/models/endpoints/Picking";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import * as moment from 'moment';
-import {ModalController, ToastController} from "@ionic/angular";
+import {ModalController} from "@ionic/angular";
 import {ListProductsComponent} from "../modal-products/modal-products.component";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {ShoesPickingService} from "../../../../services/src/lib/endpoint/shoes-picking/shoes-picking.service";
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'picking',
@@ -21,7 +22,7 @@ export class PickingComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private shoesPickingService: ShoesPickingService,
     public pickingProvider: PickingProvider
   ) {}
@@ -50,7 +51,7 @@ export class PickingComponent implements OnInit {
         this.createModalProducts();
       }, error => {
         console.error('Error::Subscribe:shoesPickingService::getListByPicking::', error);
-        this.presentToast('Ha ocurrido un error al intentar cargar los productos del picking.', 'danger');
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar los productos del picking.');
       });
   }
 
@@ -62,15 +63,4 @@ export class PickingComponent implements OnInit {
 
     return await modal.present();
   }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
-  }
-
 }

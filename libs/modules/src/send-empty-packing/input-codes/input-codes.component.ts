@@ -1,17 +1,15 @@
-import { Value } from './../../../../../config/postman/sga_localhost_environment';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { AlertController, ToastController, ModalController } from "@ionic/angular";
+import { Component, Input, OnInit } from '@angular/core';
+import { AlertController, ModalController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
 import { PriceModel, PriceService } from "@suite/services";
 import { PrintModel } from "../../../../services/src/models/endpoints/Print";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import { range } from 'rxjs';
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 import { CarrierService, IntermediaryService, WarehousesService, WarehouseModel } from '@suite/services';
 import { MatSelectChange } from '@angular/material';
-import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'suite-input-codes',
@@ -36,7 +34,6 @@ export class InputCodesComponent implements OnInit {
   warehouses:Array<WarehouseModel.Warehouse> = [];
 
   constructor(
-    private toastController: ToastController,
     private alertController: AlertController,
     private printerService: PrinterService,
     private priceService: PriceService,
@@ -58,7 +55,7 @@ export class InputCodesComponent implements OnInit {
 
   async ngOnInit() {
     this.stampe = 1;
-    this.typeTagsBoolean = this.typeTags != 1;
+    this.typeTagsBoolean = this.typeTags !== 1;
     this.printerService.stampe$.subscribe(() => {
       this.stampe = 1;
     })
@@ -86,9 +83,13 @@ export class InputCodesComponent implements OnInit {
     }
     this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
     // validate if existe joule o packing ref
-    if(this.warehouse == undefined) {
+    if(this.warehouse === undefined) {
       this.audioProvider.playDefaultError();
-      this.presentToast('Debe seleccionar el almacen de destino.', 'danger');
+      this.intermediaryService.presentToastError('Debe seleccionar el almacen de destino.', PositionsToast.BOTTOM).then(() => {
+        setTimeout(() => {
+          document.getElementById('input-ta').focus();
+        }, 500);
+      });
       this.focusToInput();
       return;
     }
@@ -110,7 +111,7 @@ export class InputCodesComponent implements OnInit {
     let dataWrote = (this.inputProduct || "").trim();
     // console.log({dataWrote});
 
-    if (event.keyCode == 13 && dataWrote) {
+    if (event.keyCode === 13 && dataWrote) {
 
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
@@ -123,9 +124,13 @@ export class InputCodesComponent implements OnInit {
       }
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
       // validate if existe joule o packing ref
-      if(this.warehouse == undefined) {
+      if(this.warehouse === undefined) {
         this.audioProvider.playDefaultError();
-        this.presentToast('Debe seleccionar el almacen de destino.', 'danger');
+        this.intermediaryService.presentToastError('Debe seleccionar el almacen de destino.', PositionsToast.BOTTOM).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          }, 500);
+        });
         this.focusToInput();
         return;
       }
@@ -166,9 +171,9 @@ export class InputCodesComponent implements OnInit {
   }
 
   private convertArrayFromPrint(data: any, outputArray?: Boolean): Array<any> {
-    let dataJoin = []
+    let dataJoin = [];
     let out;
-    if (this.stampe == 1) {
+    if (this.stampe === 1) {
       if (outputArray) {
         dataJoin.push(data);
         out = dataJoin;
@@ -190,29 +195,17 @@ export class InputCodesComponent implements OnInit {
 
     lastCodeScanned ? this.lastCodeScanned = 'start' : null;
     let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
-    if (type == 1) {
+    if (type === 1) {
       msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
-    } else if (type == 2) {
+    } else if (type === 2) {
       msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
     }
     this.audioProvider.playDefaultError();
-    this.presentToast(msg, 'danger');
-  }
-
-  private async presentToast(msg: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: 1500,
-      color: color
+    this.intermediaryService.presentToastError(msg, PositionsToast.BOTTOM).then(() => {
+      setTimeout(() => {
+        document.getElementById('input-ta').focus();
+      }, 500);
     });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        }, 500);
-      });
   }
 
   private async presentAlertSelect(listItems: any[], listProductPrices: any[]) {
@@ -229,12 +222,12 @@ export class InputCodesComponent implements OnInit {
           text: 'Seleccionar',
           handler: (data) => {
             // Avoid close alert without selection
-            if (typeof data == 'undefined') {
+            if (typeof data === 'undefined') {
               return false;
             }
 
             let price = listProductPrices[data];
-            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+            if (price.typeLabel === PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
               this.presentAlertWarningPriceWithoutTariff(price);
             } else {
               this.audioProvider.playDefaultOk();
@@ -286,7 +279,7 @@ export class InputCodesComponent implements OnInit {
   warehouse;
   selectWarehouse(event: MatSelectChange) {
     this.selectedWarehouse = event.value;
-    this.warehouses.forEach(warehouse => {if(warehouse.id == this.selectedWarehouse) this.warehouse = warehouse});
+    this.warehouses.forEach(warehouse => {if(warehouse.id === this.selectedWarehouse) this.warehouse = warehouse});
   }
   close(){
     this.modalController.dismiss();

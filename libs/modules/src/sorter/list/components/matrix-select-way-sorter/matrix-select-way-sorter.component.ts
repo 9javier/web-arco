@@ -356,7 +356,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
       /**validar que exista en la matrix */
       if (newValue !== oldValue) {
         if (newValue > this.SizeMatrix) {
-          this.intermediaryService.presentToastError("¡El número de calle introducida es superior a las disponibles!", 2000);
+          this.intermediaryService.presentToastError("¡El número de calle introducida es superior a las disponibles!");
           event.target.value = oldValue;
         } else {
           let currentZone = this.dataPriorities.find(dataPriority => dataPriority.zone == this.zoneSelect.id);
