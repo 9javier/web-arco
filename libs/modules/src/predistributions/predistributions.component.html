@@ -80,12 +80,12 @@
 
       <ng-container matColumnDef="article">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Artículo </th>
-        <td mat-cell *matCellDef="let element"> {{element.product.reference}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.article}} </td>
       </ng-container>
 
       <ng-container matColumnDef="store">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Tienda </th>
-        <td mat-cell *matCellDef="let element"> {{element.destinyShop.name}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.warehouse.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="date_service">
