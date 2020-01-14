@@ -39,7 +39,8 @@ export class PricesComponent implements OnInit {
 
   filterTypes: Array<PriceModel.StatusType> = [];
   pricesDeleted: Array<PriceModel.Price> = [];
-
+  minPrices: number = 0;
+  maxPrices: number = 1000;
   warehouses: Array<any> = [];
   pagerValues: Array<number> = [50, 100, 500];
 
@@ -678,13 +679,13 @@ export class PricesComponent implements OnInit {
     this.form.patchValue({ tariffId: id });
   }
   rangeChange(event){
+    this.minPrices = event.detail.value.lower;
+    this.maxPrices =event.detail.value.upper;
     this.form.patchValue({
       prices:{
         min: event.detail.value.lower,
         max: event.detail.value.upper
       }
     })
-    console.log(this.form.value.prices);
-
   }
 }
