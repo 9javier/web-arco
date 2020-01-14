@@ -40,6 +40,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   isWaitingSorterFeedback = false;
 
   ULTIMA_JAULA:string;
+  lastWarehouse = null;
+  lastWarehouseReference = null;
   ultimaReferenza:string;
   alerta:boolean;
   
@@ -375,6 +377,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
   private async assignPackingToProcess(packingReference: string) {
     this.ULTIMA_JAULA = packingReference;
+    this.lastWarehouse = null;
+    this.lastWarehouseReference = null;
 
     await this.intermediaryService.presentLoading('Asignando embalaje al proceso...');
 
@@ -384,26 +388,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         wayId: this.infoSorterOperation.wayId.toString()
       })
       .then(async (res: SorterOutputModel.ResponseAssignPackingToWay) => {
-        console.log('passa por a qui');
-        console.log(res);
-
-        let warehouse = res.data.way['warehouse'];
-        let nome = warehouse['name'];
-        console.log(nome);
-        
-        if(res.code === 405 && res.errors === "El destino del carril no coincide con el de la jaula" && this.alerta){
-          this.ULTIMA_JAULA = null;
-          this.nuevaAlert(nome)
-        }else{
-          this.ULTIMA_JAULA = res.data.packing.reference
-        }
-
-        // if(this.ULTIMA_JAULA === res.data.packing.reference){
-        //   console.log('la ultima jaula coincide');
-        //   this.ULTIMA_JAULA = res.data.packing.reference;
-        // }
 
         if (res.code === 200) {
+          this.ULTIMA_JAULA = res && res.data && res.data.packing ? res.data.packing.reference : null;
+          if(res.data && res.data.way && res.data.way['warehouse']){
+            this.lastWarehouse = res.data.way['warehouse'];
+            this.lastWarehouseReference = this.lastWarehouse && this.lastWarehouse['name'] ? this.lastWarehouse['name'] : null;
+          }
+
           // If output process is not started yet (first packing scanned) start here to check if current way have incidences
           if (!this.processStarted) {
             this.checkWayWithIncidence();
@@ -419,6 +411,10 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           await this.intermediaryService.presentToastSuccess(`Iniciando proceso con el embalaje ${packingReference}.`);
           this.focusToInput();
         } else {
+          this.ULTIMA_JAULA = null;
+          if(res.code === 405 && this.alerta){
+            this.nuevaAlert(this.lastWarehouseReference)
+          }
           this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
           if (res.errors) {
@@ -429,6 +425,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.focusToInput();
         }
       }, async (error) => {
+        this.ULTIMA_JAULA = null;
         this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
         if (error.error && error.error.errors) {
@@ -439,6 +436,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         this.focusToInput();
       })
       .catch(async (error) => {
+        this.ULTIMA_JAULA = null;
+
         this.audioProvider.playDefaultError();
         let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
         if (error.error && error.error.errors) {
