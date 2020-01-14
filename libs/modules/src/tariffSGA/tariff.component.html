@@ -31,7 +31,11 @@
                 Fecha inicio
             </th>
             <td mat-cell *matCellDef="let tariff">
-                {{ tariff?.activeFrom }}
+              <mat-form-field>
+                <input matInput matTooltip="{{tariff?.activeFrom}}" [matDatepicker]="pickerStart" placeholder="Fecha Inicio" [value]="getDate(tariff?.activeFrom)" (dateChange)="changeDateStart($event, tariff)">
+                <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                <mat-datepicker #pickerStart></mat-datepicker>
+              </mat-form-field>
             </td>
         </ng-container>
 
@@ -40,7 +44,11 @@
                 Fecha fin
             </th>
             <td mat-cell *matCellDef="let tariff">
-                {{ tariff?.activeTill }}
+              <mat-form-field>
+                <input matInput matTooltip="{{tariff?.activeTill}}" [matDatepicker]="pickerEnd" placeholder="Fecha Fin" [value]="getDate(tariff?.activeTill)" (dateChange)="changeDateEnd($event, tariff)">
+                <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #pickerEnd></mat-datepicker>
+              </mat-form-field>
             </td>
         </ng-container>
 

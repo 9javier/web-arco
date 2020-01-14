@@ -1,19 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
-import { AlertController, ModalController } from "@ionic/angular";
+import { MatDatepickerInputEvent, MatTableDataSource } from '@angular/material';
+import { AlertController, ModalController } from '@ionic/angular';
 import * as _ from 'lodash';
 
-import {
-  IntermediaryService,
-  LabelsService,
-  TariffService,
-  TariffModel,
-  WarehousesService
-} from '@suite/services';
+import { IntermediaryService, TariffModel, TariffService, WarehousesService } from '@suite/services';
 
 import { validators } from '../utils/validators';
 
-import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { TariffUpdateFilterPriceComponent } from './tariff-update-filter-price/tariff-update-filter-price.component';
@@ -355,5 +349,17 @@ export class TariffSGAComponent implements OnInit {
       // reload table.
     })
     modal.present();
+  }
+
+  getDate(date: any) {
+    return new Date(date);
+  }
+
+  changeDateStart(event: MatDatepickerInputEvent<Date>, tariff: any) {
+    tariff.activeFrom = event.value;
+  }
+
+  changeDateEnd(event: MatDatepickerInputEvent<Date>, tariff: any) {
+    tariff.activeTill = event.value;
   }
 }
