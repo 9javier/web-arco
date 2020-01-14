@@ -44,7 +44,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   lastWarehouseReference = null;
   ultimaReferenza:string;
   alerta:boolean;
-  
+
   listVariables: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
   private listTypesFromDb: Array<{ id: number, name: string }> = [];
   private listVariablesFromDb: Array<GlobalVariableModel.GlobalVariable> = new Array<GlobalVariableModel.GlobalVariable>();
@@ -156,7 +156,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {
           this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('Código de producto erróneo.', 2000);
+          await this.intermediaryService.presentToastError('Código de producto erróneo.');
           this.focusToInput();
         } else {
           console.log('passa di qui');
@@ -168,11 +168,11 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.outputProductFromSorter(dataWrote);
         } else if (this.packingIsFull) {
           this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('Escanea el nuevo embalaje a utilizar antes de continuar con los productos.', 2000);
+          await this.intermediaryService.presentToastError('Escanea el nuevo embalaje a utilizar antes de continuar con los productos.');
           this.focusToInput();
         } else {
           this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('Escanea el embalaje a utilizar antes de comenzar con los productos.', 2000);
+          await this.intermediaryService.presentToastError('Escanea el embalaje a utilizar antes de comenzar con los productos.');
           this.focusToInput();
         }
       } else {
@@ -476,7 +476,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
               if (!resData.productInSorter) {
                 this.lastProductScannedChecking = null;
                 this.audioProvider.playDefaultError();
-                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`, 2000);
+                await this.intermediaryService.presentToastError(`¡El producto ${productReference} no debería de estar en el sorter!`);
                 this.focusToInput();
               } else {
                 this.lastProductScannedChecking = {
@@ -497,7 +497,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                 this.hideRightButtonFooter = false;
                 if (this.lastProductScannedChecking.destinyWarehouse.id !== this.infoSorterOperation.destinyWarehouse.id) {
                   this.audioProvider.playDefaultError();
-                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`, 2000);
+                  await this.intermediaryService.presentToastError(`¡El producto ${productReference} tiene asignado un destino diferente al de la calle actual!`);
                   if (resData.wayWithIncidences) {
                     this.focusToInput();
                   } else {
@@ -650,7 +650,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
                 this.setWayAsEmpty().then(()=>{
                   this.packingIsFull = false;
                 })
-              }              
+              }
             });
         }},
         {
@@ -880,7 +880,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
         if (error.error && error.error.errors) {
           errorMessage = error.error.errors;
         }
-        await this.intermediaryService.presentToastError(errorMessage, 2000);
+        await this.intermediaryService.presentToastError(errorMessage);
         this.focusToInput();
       });
   }

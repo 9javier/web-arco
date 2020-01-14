@@ -7,8 +7,8 @@ import {Observable, from, BehaviorSubject} from 'rxjs';
 import {catchError, map, switchMap, finalize, filter, take} from 'rxjs/operators';
 import {Oauth2Service} from '../endpoint/oauth2/oauth2.service';
 import {IntermediaryService} from '../endpoint/intermediary/intermediary.service';
-import {ToastController} from "@ionic/angular";
 import {Location} from "@angular/common";
+import { TimesToastType } from '../../models/timesToastType';
 
 @Injectable()
 export class AddTokenToRequestInterceptor implements HttpInterceptor {
@@ -19,8 +19,7 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
     private router: Router,
     private location: Location,
     private route: ActivatedRoute,
-    private oauth2Service: Oauth2Service,
-    private toastController: ToastController
+    private oauth2Service: Oauth2Service
   ) { }
 
   isRefreshingToken: boolean = false;
@@ -68,7 +67,11 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                 if (this.authenticationService.isAuthenticated) {
                   this.authenticationService.logout();
                   if (!this.isToastVisible) {
-                    this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
+                    this.intermediaryService.presentToastError('Ha ocurrido un error al conectar con el servidor.');
+                    this.isToastVisible = true;
+                    setTimeout(() => {
+                      this.isToastVisible = false;
+                    }, TimesToastType.DURATION_ERROR_TOAST);
                   }
                 }
                 break;
@@ -83,7 +86,12 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
                 if (!customErrorManagement && err.statusText == 'Unknown Error' && this.authenticationService.isAuthenticated()) {
                   this.authenticationService.logout();
                   if (!this.isToastVisible) {
-                    this.presentToast('Ha ocurrido un error al conectar con el servidor.', 'danger');
+                    this.intermediaryService.presentToastError('Ha ocurrido un error al conectar con el servidor.');
+
+                    this.isToastVisible = true;
+                    setTimeout(() => {
+                      this.isToastVisible = false;
+                    }, TimesToastType.DURATION_ERROR_TOAST);
                   }
                 }
                 break;
@@ -99,8 +107,8 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
 
   /**
    * Handle the http 401 error(authentication) to request a new refresh token
-   * @param request 
-   * @param next 
+   * @param request
+   * @param next
    */
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
     /**the token is not current refreshing */
@@ -148,19 +156,5 @@ export class AddTokenToRequestInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return this.addTokenToRequest(request, next);
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
-    this.isToastVisible = true;
-    setTimeout(() => {
-      this.isToastVisible = false;
-    }, 3750);
   }
 }

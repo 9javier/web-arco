@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { AlertController, ToastController } from "@ionic/angular";
+import { AlertController } from "@ionic/angular";
 import { PrinterService } from "../../../../services/src/lib/printer/printer.service";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
-import { PriceModel, PriceService } from "@suite/services";
+import { IntermediaryService, PriceModel, PriceService } from '@suite/services';
 import { PrintModel } from "../../../../services/src/models/endpoints/Print";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'suite-input-codes',
@@ -31,7 +32,7 @@ export class InputCodesComponent implements OnInit {
   finestampa$: boolean;
 
   constructor(
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private alertController: AlertController,
     private printerService: PrinterService,
     private priceService: PriceService,
@@ -45,7 +46,7 @@ export class InputCodesComponent implements OnInit {
 
   async ngOnInit() {
     this.stampe = 1;
-    this.typeTagsBoolean = this.typeTags != 1;
+    this.typeTagsBoolean = this.typeTags !== 1;
     this.printerService.stampe$.subscribe(() => {
       this.stampe = 1;
     })
@@ -156,7 +157,7 @@ export class InputCodesComponent implements OnInit {
     // console.log({dataMotivo});
 
 
-    if (event.keyCode == 13 && dataWrote) {
+    if (event.keyCode === 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
         this.inputProductMotivo = null;
@@ -201,24 +202,32 @@ export class InputCodesComponent implements OnInit {
               this.priceService
                 .postPricesByProductsReferences({ references: [dataWrote] })
                 .then((prices) => {
-                  if (prices.code == 200 || prices.code == 201) {
+                  if (prices.code === 200 || prices.code === 201) {
                     let pricesData: PriceModel.PriceByModelTariff[] = prices.data;
                     let price = pricesData[0];
-                    if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                    if (price.typeLabel === PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
                       this.presentAlertWarningPriceWithoutTariff(price);
                     } else {
                       this.audioProvider.playDefaultOk();
                       this.printerService.printTagPriceUsingPrice(this.convertArrayFromPrint(price, true));
                       this.focusToInput();
                     }
-                  } else if (prices.code == 0) {
+                  } else if (prices.code === 0) {
                     this.audioProvider.playDefaultError();
-                    this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+                    this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+                      setTimeout(() => {
+                        document.getElementById('input-ta').focus();
+                      }, 500);
+                    });
                     this.focusToInput();
                   } else {
                     this.lastCodeScanned = 'start';
                     this.audioProvider.playDefaultError();
-                    this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                    this.intermediaryService.presentToastError('Ha ocurrido un error al consultar los precios del artículo escaneado.', PositionsToast.BOTTOM).then(() => {
+                      setTimeout(() => {
+                        document.getElementById('input-ta').focus();
+                      }, 500);
+                    });
                     this.focusToInput();
                   }
                 });
@@ -256,12 +265,12 @@ export class InputCodesComponent implements OnInit {
                   .then((response) => {
                     console.log(response);
 
-                    if (response.code == 200 || response.code == 201) {
+                    if (response.code === 200 || response.code === 201) {
                       let responseData = response.data;
-                      if (responseData && responseData.length == 1) {
+                      if (responseData && responseData.length === 1) {
                         this.audioProvider.playDefaultOk();
                         let price = responseData[0];
-                        if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+                        if (price.typeLabel === PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
 
                           this.presentAlertWarningPriceWithoutTariff(price);
                         } else {
@@ -275,7 +284,7 @@ export class InputCodesComponent implements OnInit {
                         // Request user select size to print
                         let listItems = responseData.map((productPrice, iProductPrice) => {
                           let label = productPrice.rangesNumbers.sizeRangeNumberMin;
-                          if (productPrice.rangesNumbers.sizeRangeNumberMax != productPrice.rangesNumbers.sizeRangeNumberMin) {
+                          if (productPrice.rangesNumbers.sizeRangeNumberMax !== productPrice.rangesNumbers.sizeRangeNumberMin) {
                             label += (' - ' + productPrice.rangesNumbers.sizeRangeNumberMax);
                           }
 
@@ -290,30 +299,50 @@ export class InputCodesComponent implements OnInit {
                       } else {
                         this.lastCodeScanned = 'start';
                         this.audioProvider.playDefaultError();
-                        this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                        this.intermediaryService.presentToastError('Ha ocurrido un error al consultar los precios del artículo escaneado.', PositionsToast.BOTTOM).then(() => {
+                          setTimeout(() => {
+                            document.getElementById('input-ta').focus();
+                          }, 500);
+                        });
                         this.focusToInput();
                       }
-                    } else if (response.code == 0) {
+                    } else if (response.code === 0) {
                       this.lastCodeScanned = 'start';
                       this.audioProvider.playDefaultError();
-                      this.presentToast('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', 'danger');
+                      this.intermediaryService.presentToastError('Ha ocurrido un problema al intentar conectarse con el servidor. Revise su conexión y pruebe de nuevo a realizar la operación.', PositionsToast.BOTTOM).then(() => {
+                        setTimeout(() => {
+                          document.getElementById('input-ta').focus();
+                        }, 500);
+                      });
                       this.focusToInput();
                     } else {
                       this.lastCodeScanned = 'start';
                       this.audioProvider.playDefaultError();
-                      this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                      this.intermediaryService.presentToastError('Ha ocurrido un error al consultar los precios del artículo escaneado.', PositionsToast.BOTTOM).then(() => {
+                        setTimeout(() => {
+                          document.getElementById('input-ta').focus();
+                        }, 500);
+                      });
                       this.focusToInput();
                     }
                   }, (error) => {
                     this.lastCodeScanned = 'start';
                     this.audioProvider.playDefaultError();
-                    this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                    this.intermediaryService.presentToastError('Ha ocurrido un error al consultar los precios del artículo escaneado.', PositionsToast.BOTTOM).then(() => {
+                      setTimeout(() => {
+                        document.getElementById('input-ta').focus();
+                      }, 500);
+                    });
                     this.focusToInput();
                   })
                   .catch((error) => {
                     this.lastCodeScanned = 'start';
                     this.audioProvider.playDefaultError();
-                    this.presentToast('Ha ocurrido un error al consultar los precios del artículo escaneado.', 'danger');
+                    this.intermediaryService.presentToastError('Ha ocurrido un error al consultar los precios del artículo escaneado.', PositionsToast.BOTTOM).then(() => {
+                      setTimeout(() => {
+                        document.getElementById('input-ta').focus();
+                      }, 500);
+                    });
                     this.focusToInput();
                   });
               }
@@ -322,7 +351,12 @@ export class InputCodesComponent implements OnInit {
               console.log('default');
 
               this.audioProvider.playDefaultError();
-              this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+              this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
+                setTimeout(() => {
+                  document.getElementById('input-ta').focus();
+                }, 500);
+              });
+
               this.focusToInput();
               break;
           }
@@ -347,9 +381,9 @@ export class InputCodesComponent implements OnInit {
   }
 
   private convertArrayFromPrint(data: any, outputArray?: Boolean): Array<any> {
-    let dataJoin = []
+    let dataJoin = [];
     let out;
-    if (this.stampe == 1) {
+    if (this.stampe === 1) {
       if (outputArray) {
         dataJoin.push(data);
         out = dataJoin;
@@ -371,29 +405,17 @@ export class InputCodesComponent implements OnInit {
 
     lastCodeScanned ? this.lastCodeScanned = 'start' : null;
     let msg = 'El código escaneado no es válido para la operación que se espera realizar.';
-    if (type == 1) {
+    if (type === 1) {
       msg = 'El código escaneado es erróneo. Escanea un código de caja para poder imprimir la etiqueta de caja.';
-    } else if (type == 2) {
+    } else if (type === 2) {
       msg = 'El código escaneado es erróneo. Escanea un código de caja o de exposición para poder imprimir la etiqueta de precio.';
     }
     this.audioProvider.playDefaultError();
-    this.presentToast(msg, 'danger');
-  }
-
-  private async presentToast(msg: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: 1500,
-      color: color
+    this.intermediaryService.presentToastError(msg, PositionsToast.BOTTOM).then(() => {
+      setTimeout(() => {
+        document.getElementById('input-ta').focus();
+      }, 500);
     });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        }, 500);
-      });
   }
 
   private async presentAlertSelect(listItems: any[], listProductPrices: any[]) {
@@ -410,12 +432,12 @@ export class InputCodesComponent implements OnInit {
           text: 'Seleccionar',
           handler: (data) => {
             // Avoid close alert without selection
-            if (typeof data == 'undefined') {
+            if (typeof data === 'undefined') {
               return false;
             }
 
             let price = listProductPrices[data];
-            if (price.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+            if (price.typeLabel === PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
               this.presentAlertWarningPriceWithoutTariff(price);
             } else {
               this.audioProvider.playDefaultOk();
