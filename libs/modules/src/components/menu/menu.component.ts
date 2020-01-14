@@ -486,6 +486,26 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Picking y Ventilación',
+      open: false,
+      type: 'wrapper',
+      icon: 'grid',
+      children: [
+        {
+          title: 'Ventilación de traspasos',
+          id: 'ventilation-transfer',
+          url: '/ventilation/transfer',
+          icon: 'swap'
+        },
+        {
+          title: 'Ventilación sin Sorter',
+          id: 'ventilation-no-sorter',
+          url: '/ventilation/no-sorter',
+          icon: 'aperture'
+        }
+      ]
+    },
+    {
       title: 'Sorter',
       open: false,
       type: 'wrapper',

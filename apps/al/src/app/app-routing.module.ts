@@ -235,6 +235,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'ventilation/transfer',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transfer-ventilation/transfer-ventilation.module#TransferVentilationModule',
+    data: {
+      name: 'Ventilación de traspasos'
+    }
+  },
+  {
     path: 'sorter',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/sorter/sorter.module#SorterModule',
