@@ -18,9 +18,9 @@ import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  // displayedColumns: string[] = ['select', 'article', 'store', 'date_service', 'distribution', 'reserved'];
-  displayedColumns: string[] = ['select', 'article', 'store'];
-  dataSource:MatTableDataSource<PredistributionModel.DataSource>
+  displayedColumns: string[] = ['select', 'article', 'store', 'date_service', 'distribution', 'reserved'];
+  // displayedColumns: string[] = ['select', 'article', 'store'];
+  dataSource
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
@@ -32,7 +32,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
-  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
 
   isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
@@ -160,26 +159,26 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
 
   isAllSelectedPredistribution() {
-    // let result = true;
+    let result = true;
 
-    // this.dataSource.data.forEach(row => {
-    //   if (row && !row.distribution) {
-    //     result = false;
-    //   }
-    // });
+    this.dataSource.data.forEach(row => {
+      if (row && !row.distribution) {
+        result = false;
+      }
+    });
 
-    // return result;
+    return result;
   }
 
   isAllSelectedReserved() {
-    // let result = true;
-    // this.dataSource.data.forEach(row => {
-    //   if (row && !row.reserved) {
-    //     result = false;
-    //   }
-    // });
+    let result = true;
+    this.dataSource.data.forEach(row => {
+      if (row && !row.reserved) {
+        result = false;
+      }
+    });
 
-    // return result;
+    return result;
   }
 
   masterToggle() {
@@ -189,35 +188,35 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
 
   predistributionToggle() {
-    // if (this.isAllSelectedPredistribution()) {
-    //   this.dataSource.data.forEach(row => {
-    //     row.distribution = false;
-    //     this.selectionPredistribution.clear();
-    //   })
-    // } else {
-    //   this.dataSource.data.forEach(row => {
-    //     row.distribution = true;
-    //     this.selectionPredistribution.select(row);
-    //     row.reserved = false;
-    //     this.selectionReserved.clear();
-    //   });
-    // }
+    if (this.isAllSelectedPredistribution()) {
+      this.dataSource.data.forEach(row => {
+        row.distribution = false;
+        this.selectionPredistribution.clear();
+      })
+    } else {
+      this.dataSource.data.forEach(row => {
+        row.distribution = true;
+        this.selectionPredistribution.select(row);
+        row.reserved = false;
+        this.selectionReserved.clear();
+      });
+    }
   }
 
   reservedToggle() {
-    // if (this.isAllSelectedReserved()) {
-    //   this.dataSource.data.forEach(row => {
-    //     row.reserved = false;
-    //     this.selectionReserved.clear();
-    //   });
-    // } else {
-    //   this.dataSource.data.forEach(row => {
-    //     row.reserved = true;
-    //     this.selectionReserved.select(row);
-    //     row.distribution = false;
-    //     this.selectionPredistribution.clear();
-    //   });
-    // }
+    if (this.isAllSelectedReserved()) {
+      this.dataSource.data.forEach(row => {
+        row.reserved = false;
+        this.selectionReserved.clear();
+      });
+    } else {
+      this.dataSource.data.forEach(row => {
+        row.reserved = true;
+        this.selectionReserved.select(row);
+        row.distribution = false;
+        this.selectionPredistribution.clear();
+      });
+    }
   }
 
   checkboxLabel(row?): string {
@@ -227,52 +226,52 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
 
-  checkboxLabelPredistribution(row?): /*string*/ {
-    // if (!row) {
-    //   return `${this.isAllSelectedPredistribution() ? 'select' : 'deselect'} all`;
-    // }
-    // return `${this.selectionPredistribution.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+  checkboxLabelPredistribution(row?): string {
+    if (!row) {
+      return `${this.isAllSelectedPredistribution() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectionPredistribution.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
 
-  checkboxLabelReserved(row?: Predistribution)/*: string*/ {
-    // if (!row) {
-    //   return `${this.isAllSelectedReserved() ? 'select' : 'deselect'} all`;
-    // }
-    // return `${this.selectionReserved.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+  checkboxLabelReserved(row?: Predistribution): string {
+    if (!row) {
+      return `${this.isAllSelectedReserved() ? 'select' : 'deselect'} all`;
+    }
+    return `${this.selectionReserved.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
 
   changePredistribution(row: Predistribution) {
-    // if (this.selectionPredistribution.isSelected(row)) {
-    //   this.selectionReserved.deselect(row);
-    // }
+    if (this.selectionPredistribution.isSelected(row)) {
+      this.selectionReserved.deselect(row);
+    }
 
-    // this.dataSource.data.forEach(dataRow => {
-    //   if (dataRow && dataRow.id === row.id) {
-    //     if (dataRow.distribution) {
-    //       dataRow.distribution = false;
-    //     } else {
-    //       dataRow.distribution = true;
-    //       dataRow.reserved = false;
-    //     }
-    //   }
-    // });
+    this.dataSource.data.forEach(dataRow => {
+      if (dataRow && dataRow.id === row.id) {
+        if (dataRow.distribution) {
+          dataRow.distribution = false;
+        } else {
+          dataRow.distribution = true;
+          dataRow.reserved = false;
+        }
+      }
+    });
   }
 
   changeReserved(row: Predistribution) {
-    // if (this.selectionReserved.isSelected(row)) {
-    //   this.selectionPredistribution.deselect(row);
-    // }
+    if (this.selectionReserved.isSelected(row)) {
+      this.selectionPredistribution.deselect(row);
+    }
 
-    // this.dataSource.data.forEach(dataRow => {
-    //   if (dataRow && dataRow.id === row.id) {
-    //     if (dataRow.reserved) {
-    //       dataRow.reserved = false;
-    //     } else {
-    //       dataRow.reserved = true;
-    //       dataRow.distribution = false;
-    //     }
-    //   }
-    // });
+    this.dataSource.data.forEach(dataRow => {
+      if (dataRow && dataRow.id === row.id) {
+        if (dataRow.reserved) {
+          dataRow.reserved = false;
+        } else {
+          dataRow.reserved = true;
+          dataRow.distribution = false;
+        }
+      }
+    });
   }
 
   savePredistributions() {
@@ -301,7 +300,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
         console.log(resp);
-        this.dataSource = new MatTableDataSource<PredistributionModel.DataSource>(resp.results)
+        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
       },
       async err => {
         await this.intermediaryService.dismissLoading()
