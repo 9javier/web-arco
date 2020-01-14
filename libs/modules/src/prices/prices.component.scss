@@ -25,7 +25,12 @@ div.list-header-filters-mobile {
   ion-grid {
     .header-mobile {
       padding: 0 0 0 16px;
-      height: 56px;
+      height: 90px;
+
+      .title-tariff-name {
+        width: 100%;
+        text-align: center;
+      }
 
       ion-col {
         height: 56px;

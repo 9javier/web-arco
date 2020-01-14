@@ -44,7 +44,7 @@ export class PricesComponent implements OnInit {
   maxPrices: number = 1000;
   warehouses: Array<any> = [];
   pagerValues: Array<number> = [50, 100, 500];
-
+  tariffName: '';
   page: number = 0;
   public itemIdSelected : any = [];
 
@@ -143,7 +143,13 @@ export class PricesComponent implements OnInit {
     private alertController: AlertController,
     private popoverController: PopoverController
   ) {
-
+    this.route.queryParams.subscribe(params => {
+      console.log('PARAMS');
+      console.log(params);
+      if (params && params.name) {
+        this.tariffName = JSON.parse(params.name);
+      }
+    });
   }
 
   getTotalStock(price : PriceModel.Price) : number{
@@ -682,7 +688,7 @@ export class PricesComponent implements OnInit {
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
   }
-  
+
   async presentPopover(ev: any) {
     const popover = await this.popoverController.create({
       component: SliderComponent,
@@ -690,7 +696,7 @@ export class PricesComponent implements OnInit {
       translucent: true,
       mode: 'ios',
       cssClass:'custom-popover',
-      componentProps: { 
+      componentProps: {
         params:{min: this.priceses.min, max:this.priceses.max},
         values:{min: this.minPrices, max:this.maxPrices}
 
@@ -705,7 +711,7 @@ export class PricesComponent implements OnInit {
           max: data.data.max
         }
     })
-      
+
     })
     return await popover.present();
   }
