@@ -500,7 +500,7 @@ export class MenuComponent implements OnInit {
         {
           title: 'Ventilación sin Sorter',
           id: 'ventilation-no-sorter',
-          url: '/ventilation/no-sorter',
+          url: '/ventilation-no-sorter',
           icon: 'aperture'
         }
       ]
