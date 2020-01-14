@@ -281,5 +281,8 @@ export  * from './send-empty-packing/send-empty-packing.module';
 
 //// *marketplaces
 
-export  * from './marketplaces/marketplaces.component'
+export  * from './marketplaces/marketplaces.component';
 export  * from './marketplaces/marketplaces.module';
+
+export  * from './marketplaces/create-mapping/create-mapping.component';
+export  * from './marketplaces/create-mapping/create-mapping.module';
