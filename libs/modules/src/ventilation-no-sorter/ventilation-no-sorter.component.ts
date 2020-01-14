@@ -39,6 +39,7 @@ export class VentilationNoSorterComponent implements OnInit {
   packing: CarrierModel.Carrier;
   destinies: string[] = [];
   packingMessage: string;
+  loading: boolean = false;
 
   constructor(
     private itemReferencesProvider: ItemReferencesProvider,
@@ -59,7 +60,10 @@ export class VentilationNoSorterComponent implements OnInit {
   }
 
   async scan(){
-    if (!this.intermediaryService.loading) await this.intermediaryService.presentLoading('Procesando...');
+    if (!this.loading){
+      await this.intermediaryService.presentLoading('Procesando...');
+      this.loading = true;
+    }
     if(!this.packingPhase) {
       if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PRODUCT) {
         await this.pickingStoreService.getByProductReference({reference: this.inputValue})
@@ -117,7 +121,10 @@ export class VentilationNoSorterComponent implements OnInit {
         this.assignToPacking();
       }
     }
-    if (this.intermediaryService.loading) await this.intermediaryService.dismissLoading();
+    if (this.loading){
+      await this.intermediaryService.dismissLoading();
+      this.loading = false;
+    }
   }
 
   scanPacking(){
@@ -128,7 +135,10 @@ export class VentilationNoSorterComponent implements OnInit {
   }
 
   async assignToPacking(){
-    if (!this.intermediaryService.loading) await this.intermediaryService.presentLoading('Procesando...');
+    if (!this.loading){
+      await this.intermediaryService.presentLoading('Procesando...');
+      this.loading = true;
+    }
     let inventoryProcess = {
       productReference: this.scannedCode,
       packingReference: this.scannedPacking,
@@ -142,7 +152,10 @@ export class VentilationNoSorterComponent implements OnInit {
     this.showScanner = true;
     this.packingPhase = false;
     this.scannerManual.focusToInput();
-    if (this.intermediaryService.loading) await this.intermediaryService.dismissLoading();
+    if (this.loading){
+      await this.intermediaryService.dismissLoading();
+      this.loading = false;
+    }
   }
 
   resetScanner(){
