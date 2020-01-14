@@ -2,6 +2,7 @@ import {Component, OnInit, ViewChild} from "@angular/core";
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import {AudioProvider} from "../../../services/src/providers/audio-provider/audio-provider.provider";
 import {
+  AuthenticationService,
   CarrierService,
   IntermediaryService,
   InventoryService,
@@ -48,7 +49,8 @@ export class VentilationNoSorterComponent implements OnInit {
     private pickingStoreService: PickingStoreService,
     private warehousesService: WarehousesService,
     private inventoryService: InventoryService,
-    private carrierService: CarrierService
+    private carrierService: CarrierService,
+    private authenticationService: AuthenticationService
   ) {}
 
   ngOnInit() {
@@ -140,7 +142,7 @@ export class VentilationNoSorterComponent implements OnInit {
     let inventoryProcess = {
       productReference: this.scannedCode,
       packingReference: this.scannedPacking,
-      warehouseId: this.originScan.product_shoes_unit_initialWarehouseId,
+      warehouseId: (await this.authenticationService.getStoreCurrentUser()).id,
       force: false
     };
     await this.inventoryService.postStore(inventoryProcess);

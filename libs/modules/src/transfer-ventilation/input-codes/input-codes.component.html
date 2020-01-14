@@ -1,10 +1,10 @@
 
 <div class="content-ta">
   <div class="table-jails" *ngIf="packingReferenceOrigin">
-    <p>Jaulas [{{totalPacking}}]: {{references.join(", ")}}</p>
+    <p>Embalajes [{{totalPacking}}]: {{references.join(", ")}}</p>
     <p>Total Artículos: {{totalProducts}}</p>
     <ion-fab class="new-jail" vertical="top" horizontal="end" *ngIf="packingReferenceOrigin">
-      <ion-button (click)="reload()" routerLink="/ventilation/transfer">Escanear Otra Jaula</ion-button>
+      <ion-button (click)="reload()" routerLink="/ventilation/transfer">Escanear Otro Embalaje</ion-button>
     </ion-fab>
   </div>
 
@@ -26,7 +26,7 @@
   </div>
 
   <p class="error-positioning"  *ngIf="!packingReferenceOrigin">{{ msgTop }}</p>
-  <input  *ngIf="!packingReferenceOrigin" id="input-ta" class="ta-positioning" [placeholder]="placeholderDataToWrite" (keyup)="keyUpInput($event)" [(ngModel)]="codeWrote">
+  <input hideKeyboard *ngIf="!packingReferenceOrigin" id="input-ta" class="ta-positioning" [placeholder]="placeholderDataToWrite" (keyup)="keyUpInput($event)" (focus)="onFocus($event)" [(ngModel)]="codeWrote">
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed" *ngIf="packingReferenceOrigin">
     <ion-fab-button>
@@ -43,8 +43,9 @@
       </div>
       <div class="custom-fab">
         <ion-button>Ubicación</ion-button>
-        <ion-fab-button size="small" routerLink="/positioning/manual"><i class="material-icons">gps_fixed</i></ion-fab-button>
+        <ion-fab-button size="small" title="Ubicación" routerLink="/positioning/manual"><i class="material-icons">gps_fixed</i></ion-fab-button>
       </div>
     </ion-fab-list>
   </ion-fab>
 </div>
+

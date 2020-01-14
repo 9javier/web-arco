@@ -12,6 +12,7 @@ import {DataModule} from "../jail/data/data.module";
 import {BreadcrumbModule} from "../components/breadcrumb/breadcrumb.module";
 import { MatFormFieldModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
+import { HideKeyboardModule } from 'hide-keyboard';
 
 @NgModule({
   declarations: [TransferVentilationComponent, InputCodesComponent],
@@ -30,7 +31,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatListModule,
     BreadcrumbModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    HideKeyboardModule
   ],
   entryComponents: [TransferVentilationComponent, InputCodesComponent]
 })

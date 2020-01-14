@@ -3,12 +3,13 @@ import {LoadingController, ToastController} from "@ionic/angular";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {CarrierModel} from 'libs/services/src/models/endpoints/carrier.model';
 import {MatTableDataSource} from '@angular/material';
 import {CarrierService, IntermediaryService} from '@suite/services';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {ShopsTransfersService} from "../../../../services/src/lib/endpoint/shops-transfers/shops-transfers.service";
 import {ShopsTransfersModel} from "../../../../services/src/models/endpoints/ShopsTransfers";
+import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
+import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'suite-input-codes',
@@ -17,10 +18,10 @@ import {ShopsTransfersModel} from "../../../../services/src/models/endpoints/Sho
 })
 export class InputCodesComponent implements OnInit {
 
-  placeholderDataToWrite: string = 'JAULA';
+  placeholderDataToWrite: string = 'EMBALAJE';
   codeWrote: string = null;
   lastCodeScanned: string = 'start';
-  msgTop: string = 'Escanea una jaula';
+  msgTop: string = 'Escanea un embalaje';
 
   private isProcessStarted: boolean = false;
   public packingReferenceOrigin: string = null;
@@ -48,6 +49,8 @@ export class InputCodesComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
+    private keyboardService: KeyboardService,
+    private toolbarProvider: ToolbarProvider,
     private shopTransfersService: ShopsTransfersService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -61,7 +64,6 @@ export class InputCodesComponent implements OnInit {
   }
 
   async getCarriers(jailReference) {
-    let flag = false;
     await this.intermediaryService.presentLoading();
     this.shopTransfersService.getInfoByPacking(jailReference).then((data: ShopsTransfersModel.ResponseInfoByPacking) => {
       if(data.code == 200){
@@ -162,6 +164,12 @@ export class InputCodesComponent implements OnInit {
           document.getElementById('input-ta').focus();
         },500);
       });
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
+    }
   }
 
 }

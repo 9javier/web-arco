@@ -45,7 +45,7 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.currentPage.subscribe((page) => {
       this.currentPage = page;
       // muesta el boton del teclado en los titulos que tengan la ocurrencia "manual" en su cadena
-      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías') || this.currentPage.includes('Ventilación sin Sorter')) {
+      if (this.currentPage.includes('manual') || this.currentPage.includes('Manual') || this.currentPage.includes('Verificación de artículos') || this.currentPage.includes('Entrada') || this.currentPage.includes('Lista de auditorias') || this.currentPage.includes('Salida') || this.currentPage.includes('Auditorías') || this.currentPage.includes('Ventilación de traspasos') || this.currentPage.includes('Ventilación sin Sorter')) {
         if(this.currentPage.includes('Código exposición manual') || this.currentPage.includes('Reetiquetado productos manual')){
           this.showKeyboard = false;
         } else {
@@ -97,7 +97,7 @@ export class ToolbarAlComponent implements OnInit {
 
   onActiveKeyboard() {
     const state = this.keyboard.isEneabled();
-    this.state = state
+    this.state = state;
     if (state === true) {
       this.keyboard.disabled();
       this.state = false;
@@ -105,7 +105,7 @@ export class ToolbarAlComponent implements OnInit {
     } else {
       this.keyboard.eneabled();
       this.state = true;
-      this.color = 'success'
+      this.color = 'success';
     }
   }
 }
