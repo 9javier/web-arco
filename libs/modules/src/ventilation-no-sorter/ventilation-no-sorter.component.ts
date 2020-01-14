@@ -142,7 +142,6 @@ export class VentilationNoSorterComponent implements OnInit {
     let inventoryProcess = {
       productReference: this.scannedCode,
       packingReference: this.scannedPacking,
-      warehouseId: (await this.authenticationService.getStoreCurrentUser()).id,
       force: false
     };
     await this.inventoryService.postStore(inventoryProcess);
