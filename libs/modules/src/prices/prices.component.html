@@ -197,13 +197,17 @@
                     </suite-tags-input>
                   </ion-col>
                   <ion-col size="6">
-                    <div class="ion-margin-vertical ion-margin-horizontal ion-text-center">
+                    <ion-label>Rango de precios</ion-label>
+                    <ion-item (click)="presentPopover($event)">
                       <ion-label>{{minPrices}}  -  {{maxPrices}}</ion-label>
-                    </div>
+                    </ion-item>
+                    <!-- <div class="ion-margin-vertical ion-margin-horizontal ion-text-center">
+                      <ion-label>{{minPrices}}  -  {{maxPrices}}</ion-label>
+                    </div> -->
                   </ion-col>
                 </ion-row>
                 <ion-row>
-                  <ion-col size="12">
+                  <!-- <ion-col size="12">
                     <div class="ion-text-center">
                       <ion-label>Precios</ion-label>
                     </div>
@@ -218,7 +222,7 @@
                         <ion-label slot="start">{{priceses.min}}</ion-label>
                         <ion-label slot="end">{{priceses.max}}</ion-label>
                     </ion-range>
-                  </ion-col>
+                  </ion-col> -->
                 </ion-row>
                 <ion-row>
                   <ion-col class="btn-remove" size="6">

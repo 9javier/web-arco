@@ -1,3 +1,4 @@
+import { SliderComponent } from './components/slider/slider.component';
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 
@@ -18,7 +19,7 @@ import {
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 
 import { validators } from '../utils/validators';
-import { AlertController, NavParams } from '@ionic/angular';
+import { AlertController, NavParams, PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -139,7 +140,8 @@ export class PricesComponent implements OnInit {
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
     private cd : ChangeDetectorRef,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private popoverController: PopoverController
   ) {
 
   }
@@ -455,7 +457,9 @@ export class PricesComponent implements OnInit {
       this.models = filters.models;
       this.families = filters.families;
       this.lifestyles = filters.lifestyles;
-      this.priceses = filters.prices
+      this.priceses = filters.prices;
+      this.minPrices = this.priceses.min;
+      this.maxPrices = this.priceses.max;
       this.form.patchValue({
         prices: filters.prices
       })
@@ -678,14 +682,31 @@ export class PricesComponent implements OnInit {
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
   }
-  rangeChange(event){
-    this.minPrices = event.detail.value.lower;
-    this.maxPrices =event.detail.value.upper;
-    this.form.patchValue({
-      prices:{
-        min: event.detail.value.lower,
-        max: event.detail.value.upper
+  
+  async presentPopover(ev: any) {
+    const popover = await this.popoverController.create({
+      component: SliderComponent,
+      event: ev,
+      translucent: true,
+      mode: 'ios',
+      cssClass:'custom-popover',
+      componentProps: { 
+        params:{min: this.priceses.min, max:this.priceses.max},
+        values:{min: this.minPrices, max:this.maxPrices}
+
       }
+    });
+    popover.onDidDismiss().then(data => {
+      this.minPrices = data.data.min;
+      this.maxPrices = data.data.max;
+      this.form.patchValue({
+        prices:{
+          min: data.data.min,
+          max: data.data.max
+        }
     })
+      
+    })
+    return await popover.present();
   }
 }

@@ -198,3 +198,10 @@ ion-toggle {
   padding-bottom: 5px;
   padding-right: 5px;
 }
+
+  .custom-popover {
+    width: 97% !important;
+    left: calc(7px - var(--ion-safe-area-right, 0px)) !important;
+  }
+
+
