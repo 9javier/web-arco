@@ -9,6 +9,7 @@ import { RouterModule,Routes } from '@angular/router';
 import { ResponsiveLayoutModule } from '../components/responsive-layout/responsive-layout.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import {PricesRangePopoverModule} from "./prices-range-popover/prices-range-popover.module";
 
 const routes: Routes = [
   {
@@ -33,7 +34,8 @@ const routes: Routes = [
     MatExpansionModule,
     MatSlideToggleModule,
     TagsInputModule,
-    PaginatorComponentModule
+    PaginatorComponentModule,
+    PricesRangePopoverModule
   ]
 })
 export class PricesModule { }
