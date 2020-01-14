@@ -113,8 +113,16 @@ export class FilterPopoverComponent implements OnInit {
   searchInFilterList(textSearched: string) {
     this.itemsToRender = [];
     if (textSearched && textSearched != '') {
+      let searchedStrings: string[] = textSearched.split(',');
       for(let i = 0; i < this.listItems.length; i++){
-        if(this.listItems[i].value.toString().includes(textSearched.toUpperCase())){
+        let isBeingSearched: boolean = false;
+        for(let iString of searchedStrings){
+          if(iString != '' && this.listItems[i].value.toString().includes(iString.toUpperCase())){
+            isBeingSearched = true;
+            break;
+          }
+        }
+        if(isBeingSearched){
           this.itemsToRender.push(this.listItems[i]);
           this.listItems[i].checked = true;
           this.listItems[i].hide = false;
