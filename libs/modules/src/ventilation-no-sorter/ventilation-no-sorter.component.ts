@@ -92,16 +92,16 @@ export class VentilationNoSorterComponent implements OnInit {
           this.waitingForPacking = true;
           this.packingPhase = true;
         } else {
-          console.log('No tengo escaneo de origen.');
-          // A implementar.
+          this.audioProvider.playDefaultError();
+          await this.intermediaryService.presentToastError('El código escaneado no tiene escaneo de salida.', 1500);
+          this.resetScanner();
+          this.scannerManual.focusToInput();
         }
       } else {
         this.audioProvider.playDefaultError();
         await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
-        this.scannerManual.focusToInput();
-        this.scannedPacking = this.inputValue;
         this.resetScanner();
-        this.assignToPacking();
+        this.scannerManual.focusToInput();
       }
     }else{
       if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PACKING){
@@ -115,10 +115,8 @@ export class VentilationNoSorterComponent implements OnInit {
       }else{
         this.audioProvider.playDefaultError();
         await this.intermediaryService.presentToastError('Escanea un código de embalaje.', 1500);
-        this.scannerManual.focusToInput();
-        this.scannedPacking = this.inputValue;
         this.resetScanner();
-        this.assignToPacking();
+        this.scannerManual.focusToInput();
       }
     }
     if (this.loading){
