@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {ToastController} from "@ionic/angular";
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
-import {PriceService} from "@suite/services";
+import { IntermediaryService, PriceService } from '@suite/services';
 import {PackingInventoryModel} from "../../../../services/src/models/endpoints/PackingInventory";
 import {PackingInventoryService} from "../../../../services/src/lib/endpoint/packing-inventory/packing-inventory.service";
 import {environment as al_environment} from "../../../../../apps/al/src/environments/environment";
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'suite-input-codes',
@@ -26,7 +26,7 @@ export class InputCodesComponent implements OnInit {
   private readonly timeMillisToResetScannedCode: number = 1000;
 
   constructor(
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private printerService: PrinterService,
     private priceService: PriceService,
     private itemReferencesProvider: ItemReferencesProvider,
@@ -47,7 +47,7 @@ export class InputCodesComponent implements OnInit {
   keyUpInput(event) {
     let dataWrote = (this.inputProduct || "").trim();
 
-    if (event.keyCode == 13 && dataWrote) {
+    if (event.keyCode === 13 && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputProduct = null;
         return;
@@ -66,7 +66,12 @@ export class InputCodesComponent implements OnInit {
           break;
         default:
           this.audioProvider.playDefaultError();
-          this.presentToast('El código escaneado no es válido para la operación que se espera realizar.', 'danger');
+          this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
+
           break;
       }
     }
@@ -76,19 +81,24 @@ export class InputCodesComponent implements OnInit {
     this.packingInventorService
       .getCarrierOfProduct(dataWrote)
       .then((res: PackingInventoryModel.ResponseGetCarrierOfProduct) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.audioProvider.playDefaultOk();
           this.printerService.print({text: [res.data.reference], type: 0})
         } else {
           this.audioProvider.playDefaultError();
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let msgError = `Ha ocurrido un error al intentar comprobar el embalaje del producto ${dataWrote}.`;
-          if (res.errors && typeof res.errors == 'string') {
+          if (res.errors && typeof res.errors === 'string') {
             msgError = res.errors;
           } else if (res.message) {
             msgError = res.message;
           }
-          this.presentToast(msgError, 'danger');
+
+          this.intermediaryService.presentToastError(msgError, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         }
       }, (error) => {
         this.audioProvider.playDefaultError();
@@ -99,11 +109,16 @@ export class InputCodesComponent implements OnInit {
             msgError = error.error.message;
           } else if (error.error.errors) {
             msgError = error.error.errors;
-          } else if (typeof error.error == 'string') {
+          } else if (typeof error.error === 'string') {
             msgError = error.error;
           }
         }
-        this.presentToast(msgError, 'danger');
+
+        this.intermediaryService.presentToastError(msgError, PositionsToast.BOTTOM).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          },500);
+        });
       })
       .catch((error) => {
         this.audioProvider.playDefaultError();
@@ -114,28 +129,16 @@ export class InputCodesComponent implements OnInit {
             msgError = error.error.message;
           } else if (error.error.errors) {
             msgError = error.error.errors;
-          } else if (typeof error.error == 'string') {
+          } else if (typeof error.error === 'string') {
             msgError = error.error;
           }
         }
-        this.presentToast(msgError, 'danger');
-      });
-  }
 
-
-  private async presentToast(msg: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: 1500,
-      color: color
-    });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        },500);
+        this.intermediaryService.presentToastError(msgError, PositionsToast.BOTTOM).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          },500);
+        });
       });
   }
 

@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
-import {ActionSheetController, LoadingController, ToastController} from "@ionic/angular";
+import {ActionSheetController, LoadingController} from "@ionic/angular";
 import {Router} from "@angular/router";
 import {PrintTagsScanditService} from "../../../../services/src/lib/scandit/print-tags/print-tags.service";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
-import {AuthenticationService, TypeModel, TypesService, WarehouseModel} from "@suite/services";
+import { AuthenticationService, IntermediaryService, TypeModel, TypesService, WarehouseModel } from '@suite/services';
 import {PrinterService} from "../../../../services/src/lib/printer/printer.service";
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'list-packing-relabel',
@@ -26,7 +27,7 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
   constructor(
     private router: Router,
     private actionSheetController: ActionSheetController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private loadingController: LoadingController,
     private authenticationService: AuthenticationService,
     private carriersService: CarriersService,
@@ -58,29 +59,38 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
       .subscribe((res: CarrierModel.ResponseListByWarehouse) => {
         this.isLoadingData = false;
 
-        if (res.code == 200) {
+        if (res.code === 200) {
           if (res.data && res.data.length > 0) {
             this.listCarriers = res.data;
           }
-        } else if (res.code != 204) {
+        } else if (res.code !== 204) {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let warehouseTypeName = 'de la tienda';
           if (!this.isStoreUser) {
             warehouseTypeName = 'del almacén';
           }
-          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
+          this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         }
       }, (error) => {
         this.isLoadingData = false;
 
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
 
-        if (error.error.code != 204) {
+        if (error.error.code !== 204) {
           let warehouseTypeName = 'de la tienda';
           if (!this.isStoreUser) {
             warehouseTypeName = 'del almacén';
           }
-          this.presentToast(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, 'danger');
+
+          this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar consultar los recipientes ${warehouseTypeName}.`, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         }
       });
   }
@@ -166,45 +176,37 @@ export class ListPackingRelabelTemplateComponent implements OnInit {
       })
       .subscribe((res: CarrierModel.ResponseGenerate) => {
         this.loading.dismiss();
-        if (res.code == 201) {
+        if (res.code === 201) {
           this.printerService.print({text: [res.data.reference], type: 0});
         } else {
           console.error('Error::Subscribe::GetCarrierOfProduct::', res);
           let msgErrorByCarrierType = 'un nuevo recipiente';
-          if (carrierType.id == 1) {
+          if (carrierType.id === 1) {
             msgErrorByCarrierType = 'una nueva jaula';
-          } else if (carrierType.id == 2) {
+          } else if (carrierType.id === 2) {
             msgErrorByCarrierType = 'un nuevo pallet';
           }
-          this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger');
+          this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            },500);
+          });
         }
       }, (error) => {
         this.loading.dismiss();
 
         console.error('Error::Subscribe::GetCarrierOfProduct::', error);
         let msgErrorByCarrierType = 'un nuevo recipiente';
-        if (carrierType.id == 1) {
+        if (carrierType.id === 1) {
           msgErrorByCarrierType = 'una nueva jaula';
-        } else if (carrierType.id == 2) {
+        } else if (carrierType.id === 2) {
           msgErrorByCarrierType = 'un nuevo pallet';
         }
-        this.presentToast(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, 'danger');
-      });
-  }
-
-  private async presentToast(msg: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: 1500,
-      color: color
-    });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        },500);
+        this.intermediaryService.presentToastError(`Ha ocurrido un error al intentar generar ${msgErrorByCarrierType}.`, PositionsToast.BOTTOM).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          },500);
+        });
       });
   }
 

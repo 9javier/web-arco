@@ -2,16 +2,15 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Location } from "@angular/common";
 import {
   GroupWarehousePickingModel,
-  GroupWarehousePickingService,
+  GroupWarehousePickingService, IntermediaryService,
   UserTimeModel,
   UserTimeService
-} from "@suite/services";
+} from '@suite/services';
 import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import { WorkwavesService } from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
-import { AlertController, Events, LoadingController, ToastController } from "@ionic/angular";
+import { AlertController, Events, LoadingController } from "@ionic/angular";
 import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import {Router} from "@angular/router";
 import {TableEmployeesComponent} from "../table-employees/table-employees.component";
 import {TableRequestsOrdersComponent} from "../table-requests-orders/table-requests-orders.component";
@@ -60,7 +59,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
     private location: Location,
     private events: Events,
     private router: Router,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private groupWarehousePickingService: GroupWarehousePickingService,
@@ -71,14 +70,14 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   ) {
 
     this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table == true) {
+      if (res.user === true && res.table === true) {
         this.employeeChanged(res.data);
 
       }
     })
 
     this.workwavesService.orderAssignment.subscribe(res => {
-      if (res.store == true && res.type == true) {
+      if (res.store === true && res.type === true) {
         this.groupWarehousesChanged(res.data);
       }
     })
@@ -87,7 +86,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
   ngOnInit() {
 
     if (this.templateToEdit) {
-      if (this.templateToEdit.type == 1) {
+      if (this.templateToEdit.type === 1) {
         this.disableEdition = true;
       }
       this.template = {
@@ -243,15 +242,15 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   saveWorkWave() {
     if (this.listEmployeesToUpdate.length < 1) {
-      this.presentToast("Seleccione almenos un usuario para generar las tareas de picking.", "danger");
+      this.intermediaryService.presentToastError("Seleccione almenos un usuario para generar las tareas de picking.");
     } else if (this.listRequestOrdersToUpdate.length < 1) {
-      this.presentToast("Seleccione almenos una operación de envío para generar las tareas de picking.", "danger");
+      this.intermediaryService.presentToastError("Seleccione almenos una operación de envío para generar las tareas de picking.");
     } else {
       let listWarehousesOverThreshold = [];
 
       for (let iWarehouse in this.listWarehousesThresholdAndSelectedQty) {
         let warehouseThreshold = this.listWarehousesThresholdAndSelectedQty[iWarehouse];
-        if (typeof warehouseThreshold.max != 'undefined' && warehouseThreshold.max != null && warehouseThreshold.max > 0 && warehouseThreshold.selected > warehouseThreshold.max) {
+        if (typeof warehouseThreshold.max !== 'undefined' && warehouseThreshold.max != null && warehouseThreshold.max > 0 && warehouseThreshold.selected > warehouseThreshold.max) {
           listWarehousesOverThreshold.push(warehouseThreshold.warehouse);
         }
       }
@@ -337,7 +336,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
         this.loading.dismiss();
         this.loading = null;
       }
-      this.presentToast("Tareas de picking generadas correctamente", "success");
+      this.intermediaryService.presentToastSuccess("Tareas de picking generadas correctamente");
       this.goPreviousPage();
     }, (error) => {
       console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', error);
@@ -350,7 +349,7 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
 
   async presentAlertWarningOverThreshold(listWarehousesOverThreshold: Array<string>) {
     let msg = '';
-    if (listWarehousesOverThreshold.length == 1) {
+    if (listWarehousesOverThreshold.length === 1) {
       msg = `Se ha superado el umbral máximo de envío a la tienda <b>${listWarehousesOverThreshold[0]}</b>. Ajuste las órdenes seleccionadas al máximo de la tienda.`
     } else {
       let warehousesOverThreshold = listWarehousesOverThreshold.join(', ');
@@ -392,15 +391,5 @@ export class ListWorkwaveTemplateRebuildComponent implements OnInit {
       translucent: true,
     });
     return await this.loading.present();
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 }

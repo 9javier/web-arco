@@ -1,15 +1,16 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { TypesService } from '@suite/services';
+import { Component, OnInit } from '@angular/core';
+import { IntermediaryService, TypesService } from '@suite/services';
 import { ProductsService, InventoryModel } from '@suite/services';
 import { PrinterService } from "../../../../../services/src/lib/printer/printer.service";
 import { PrintModel } from "../../../../../services/src/models/endpoints/Print";
 import { WarehouseService } from "../../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import { AlertController, LoadingController, ModalController, NavParams, ToastController } from "@ionic/angular";
+import { AlertController, LoadingController, ModalController, NavParams } from "@ionic/angular";
 import { InventoryService } from "../../../../../services/src/lib/endpoint/inventory/inventory.service";
 import { Observable } from "rxjs";
 import * as moment from 'moment';
-import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
+import { HttpResponse } from "@angular/common/http";
 import { DateTimeParserService } from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
+import { TimesToastType } from '../../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-product-details',
@@ -63,7 +64,7 @@ export class ProductDetailsAlComponent implements OnInit {
     private alertController: AlertController,
     private inventoryService: InventoryService,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private dateTimeParserService: DateTimeParserService,
   ) {
     this.product = this.navParams.get("product");
@@ -139,9 +140,9 @@ export class ProductDetailsAlComponent implements OnInit {
   }
 
   public async saveDataMovement(product) {
-    if (this.warehouseSelected && typeof this.warehouseSelected == 'number') {
+    if (this.warehouseSelected && typeof this.warehouseSelected === 'number') {
       let idWarehouseOrigin = this.product.warehouse.id;
-      if (this.warehouseSelected != idWarehouseOrigin) {
+      if (this.warehouseSelected !== idWarehouseOrigin) {
         let alertRequestMovement = await this.alertController.create({
           header: 'Atención',
           message: 'Está a punto de mover un producto entre almacenes y/o tiendas. ¿Quiere generar un escaneo de destino en Avelon para el movimiento?',
@@ -202,16 +203,6 @@ export class ProductDetailsAlComponent implements OnInit {
       translucent: true,
     });
     return await this.loading.present();
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 
   private changeSelect(source) {
@@ -297,7 +288,7 @@ export class ProductDetailsAlComponent implements OnInit {
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
-            this.presentToast(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`, 'danger');
+            this.intermediaryService.presentToastError(`No se ha registrado la ubicación del producto ${inventoryProcess.productReference} en el contenedor`);
           }
         }, {
           text: 'Forzar',
@@ -314,7 +305,7 @@ export class ProductDetailsAlComponent implements OnInit {
 
 
   private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
-    if (typeof generateAvelonMovement != 'undefined') {
+    if (typeof generateAvelonMovement !== 'undefined') {
       params.avoidAvelonMovement = generateAvelonMovement;
     }
 
@@ -325,9 +316,9 @@ export class ProductDetailsAlComponent implements OnInit {
           this.loading.dismiss();
           this.loading = null;
         }
-        if (res.code == 200 || res.code == 201) {
+        if (res.code === 200 || res.code === 201) {
           this.getProductHistorical();
-          this.presentToast(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), 'success');
+          this.intermediaryService.presentToastSuccess(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), TimesToastType.DURATION_SUCCESS_TOAST_3750);
           this.product.container = res.data.destinationContainer;
           this.product.warehouse = res.data.destinationWarehouse;
           this.product.productShoeUnit = res.data.productShoeUnit;
@@ -335,12 +326,12 @@ export class ProductDetailsAlComponent implements OnInit {
           this.hallSelected = null;
           this.rowSelected = null;
           this.columnSelected = null;
-        } else if (res.code == 428) {
+        } else if (res.code === 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
           let errorMessage = res.message;
           if (res.errors) {
-            if (typeof res.errors == 'string') {
+            if (typeof res.errors === 'string') {
               errorMessage = res.errors;
             } else {
               if (res.errors.productReference && res.errors.productReference.message) {
@@ -348,17 +339,17 @@ export class ProductDetailsAlComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 'danger');
+          this.intermediaryService.presentToastError(errorMessage);
         }
       }, (error) => {
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
         }
-        if (error.error.code == 428) {
+        if (error.error.code === 428) {
           this.showWarningToForce(params, textToastOk);
         } else {
-          this.presentToast(error.message, 'danger');
+          this.intermediaryService.presentToastError(error.message);
         }
       });
   }
