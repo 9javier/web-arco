@@ -253,17 +253,18 @@ export class ReceptionScanditService {
               this.scanditProvider.colorText.color,
               16);
             this.hideTextMessage(1500);
-            setTimeout(() => this.scannerPaused = false, 1.5 * 1000);
+            setTimeout(() => {
+              this.scannerPaused = false;
+              this.receptionProvider.referencePacking = null;
+              this.receptionProvider.typePacking = 0;
+              this.receptionProvider.processStarted = false;
 
-            this.receptionProvider.referencePacking = null;
-            this.receptionProvider.typePacking = 0;
-            this.receptionProvider.processStarted = false;
-
-            if (res.data.quantity > 0) {
-              // Close Scandit and navigate to list of products received
-              ScanditMatrixSimple.finish();
-              this.router.navigate(['print', 'product', 'received', 'scandit', res.data.hasNewProducts]);
-            }
+              if (res.data.quantity > 0) {
+                // Close Scandit and navigate to list of products received
+                ScanditMatrixSimple.finish();
+                this.router.navigate(['print', 'product', 'received', 'scandit', res.data.hasNewProducts]);
+              }
+            }, 1.5 * 1000);
           } else if (this.typeReception == 2) {
 
           }

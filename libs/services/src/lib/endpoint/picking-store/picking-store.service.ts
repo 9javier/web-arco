@@ -13,6 +13,7 @@ import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 })
 export class PickingStoreService {
 
+  private getByProductReferenceUrl = environment.apiBase + '/processes/picking-store/get-by-product-reference';
   private getInitiatedUrl = environment.apiBase + '/processes/picking-store/initiated';
   private getLineRequestsUrl = environment.apiBase + '/processes/picking-store/lines-request';
   private postLineRequestsPendingUrl = environment.apiBase + '/processes/picking-store/lines-request/pending';
@@ -27,6 +28,10 @@ export class PickingStoreService {
     private auth: AuthenticationService,
     private requestsProvider: RequestsProvider
   ) {}
+
+  getByProductReference(parameters: PickingStoreModel.ProductReference) : Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.post(this.getByProductReferenceUrl, parameters);
+  }
 
   getInitiated() : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getInitiatedUrl);

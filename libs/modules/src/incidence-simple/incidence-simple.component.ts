@@ -3,8 +3,9 @@ import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/i
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
-import {ToastController} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
+import { IntermediaryService } from '@suite/services';
+import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'incidence-simple',
@@ -17,7 +18,7 @@ export class IncidenceSimpleComponent implements OnInit {
 
   constructor(
     public incidencesService: IncidencesService,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     public dateTimeParserService: DateTimeParserService
   ) {}
 
@@ -40,25 +41,15 @@ export class IncidenceSimpleComponent implements OnInit {
               okMessage = 'La notificación se ha marcado como desatendida';
             }
 
-            this.presentToast(okMessage, 'success');
+            this.intermediaryService.presentToastSuccess(res.body.message, TimesToastType.DURATION_SUCCESS_TOAST_3750);
             this.incidencesService.initPreview();
           } else {
-            this.presentToast(res.body.message, 'danger');
+            this.intermediaryService.presentToastError(res.body.message);
           }
         });
       }, (error: HttpErrorResponse) => {
-        this.presentToast(error.message, 'danger');
+        this.intermediaryService.presentToastError(error.message);
       });
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 
   showDateTime(dateToFormat) : string {

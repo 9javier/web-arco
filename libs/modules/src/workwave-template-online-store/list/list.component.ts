@@ -2,20 +2,20 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Location } from "@angular/common";
 import {
   GroupWarehousePickingModel,
-  GroupWarehousePickingService,
+  GroupWarehousePickingService, IntermediaryService,
   UserTimeModel,
   UserTimeService
-} from "@suite/services";
+} from '@suite/services';
 import { PickingParametrizationProvider } from "../../../../services/src/providers/picking-parametrization/picking-parametrization.provider";
 import { WorkwavesService } from "../../../../services/src/lib/endpoint/workwaves/workwaves.service";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
-import { AlertController, Events, LoadingController, ToastController } from "@ionic/angular";
+import { AlertController, Events, LoadingController } from "@ionic/angular";
 import { TableTypesOSComponent } from "../table-types/table-types.component";
 import { TableRequestsOrdersOSComponent } from "../table-requests-orders/table-requests-orders.component";
 import { TableEmployeesOSComponent } from "../table-employees/table-employees.component";
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import {Router} from "@angular/router";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'list-workwave-template-online-store',
@@ -56,7 +56,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     private location: Location,
     private events: Events,
     private router: Router,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private groupWarehousePickingService: GroupWarehousePickingService,
@@ -65,14 +65,14 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     private pickingParametrizationProvider: PickingParametrizationProvider,
   ) {
     this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table == true) {
+      if (res.user === true && res.table === true) {
         res.data.user = this.tableEmployees.getSelectedEmployees();
         this.employeeChanged(res.data);
       }
     })
 
     this.workwavesService.orderAssignment.subscribe(res => {
-      if (res.store == true && res.type == true) {
+      if (res.store === true && res.type === true) {
         this.typeChanged(res.data.typesShippingOrders);
       }
     })
@@ -131,7 +131,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     if (this.listTypesToUpdate.length > 0) {
       this.workwavesService.postMatchLineRequestOnlineStore({ preparationLinesTypes: this.listTypesToUpdate })
         .then((res: WorkwaveModel.ResponseMatchLineRequestOnlineStore) => {
-          if (res.code == 201) {
+          if (res.code === 201) {
             this.pickingParametrizationProvider.listRequestOrdersOnlineStore = res.data;
             this.events.publish(this.REQUEST_ORDERS_LOADED);
             this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
@@ -178,7 +178,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
           userIds: this.listEmployeesToUpdate
         })
         .then((res: WorkwaveModel.ResponseAssignUserToMatchLineRequestOnlineStore) => {
-          if (res.code == 201) {
+          if (res.code === 201) {
             let resData = res.data;
             this.pickingParametrizationProvider.listTeamAssignations = resData.assignations;
             this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
@@ -214,9 +214,9 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
   saveWorkWave() {
     if (this.listEmployeesToUpdate.length < 1) {
-      this.presentToast("Seleccione almenos un usuario para generar las tareas de picking.", "danger");
+      this.intermediaryService.presentToastError('Seleccione almenos un usuario para generar las tareas de picking.', TimesToastType.DURATION_ERROR_TOAST);
     } else if (this.listRequestOrdersToUpdate.length < 1) {
-      this.presentToast("Seleccione almenos una operación de envío para generar las tareas de picking.", "danger");
+      this.intermediaryService.presentToastError('Seleccione almenos una operación de envío para generar las tareas de picking.', TimesToastType.DURATION_ERROR_TOAST);
     } else {
       this.presentAlertConfirmPickings();
     }
@@ -268,12 +268,12 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
         userIds: this.listEmployeesToUpdate
       })
       .then((res: WorkwaveModel.ResponseConfirmMatchLineRequestOnlineStore) => {
-        if (res.code == 201) {
+        if (res.code === 201) {
           if (this.loading) {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.presentToast("Tareas de picking generadas correctamente", "success");
+          this.intermediaryService.presentToastSuccess('Tareas de picking generadas correctamente', TimesToastType.DURATION_SUCCESS_TOAST_3750);
           this.goPreviousPage();
         } else {
           console.error('Error::Subscribe:workwavesService::postConfirmMatchLineRequest::', res);
@@ -300,7 +300,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
   async presentAlertWarningOverThreshold(listWarehousesOverThreshold: Array<string>) {
     let msg = '';
-    if (listWarehousesOverThreshold.length == 1) {
+    if (listWarehousesOverThreshold.length === 1) {
       msg = `Se ha superado el umbral máximo de envío a la tienda <b>${listWarehousesOverThreshold[0]}</b>. Ajuste las órdenes seleccionadas al máximo de la tienda.`
     } else {
       let warehousesOverThreshold = listWarehousesOverThreshold.join(', ');
@@ -342,15 +342,5 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
       translucent: true,
     });
     return await this.loading.present();
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 }

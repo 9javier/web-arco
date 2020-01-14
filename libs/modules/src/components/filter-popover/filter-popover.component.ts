@@ -117,7 +117,7 @@ export class FilterPopoverComponent implements OnInit {
       for(let i = 0; i < this.listItems.length; i++){
         let isBeingSearched: boolean = false;
         for(let iString of searchedStrings){
-          if(iString != '' && this.listItems[i].value.toString().includes(iString)){
+          if(iString != '' && this.listItems[i].value.toString().includes(iString.toUpperCase())){
             isBeingSearched = true;
             break;
           }

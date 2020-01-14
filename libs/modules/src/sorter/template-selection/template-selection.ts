@@ -77,13 +77,13 @@ export class TemplateSelectionComponent implements OnInit, OnDestroy {
         }, async (error: HttpRequestModel.Error) => {
           await this.intermediaryService.dismissLoading();
           if (error.error.code == 405) {
-            await this.intermediaryService.presentToastError(`La plantilla ${template.name} ya está aplicada al sorter actualmente.`, 1500);
+            await this.intermediaryService.presentToastError(`La plantilla ${template.name} ya está aplicada al sorter actualmente.`);
           } else {
             let errorMessage = `Ha ocurrido un error al intentar aplicar la plantilla ${template.name}.`;
             if (error.error && error.error.errors) {
               errorMessage = error.error.errors;
             }
-            await this.intermediaryService.presentToastError(errorMessage, 2000);
+            await this.intermediaryService.presentToastError(errorMessage);
           }
         });
     }

@@ -12,6 +12,7 @@ export class ScannerManualComponent implements OnInit {
   @Input() value: string = null;
   @Input() height: string = null;
   @Output() newValue = new EventEmitter();
+  @Output() currentValue = new EventEmitter();
 
   constructor(
     private keyboardService: KeyboardService
@@ -25,7 +26,7 @@ export class ScannerManualComponent implements OnInit {
 
   keyUpInput(event) {
     let data = (this.value || "").trim();
-
+    this.currentValue.next(data);
     if (event.keyCode == 13 && data) {
       this.newValue.next(data);
     }

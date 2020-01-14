@@ -4,14 +4,13 @@ import { Router } from '@angular/router';
 import {
   ResponseLogin,
   RequestLogin,
-  ErrorResponseLogin,
   Oauth2Service,
   IntermediaryService
 } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import {ToastController, AlertController, LoadingController} from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { AppInfo } from 'config/base';
 import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
 @Component({
@@ -32,10 +31,9 @@ export class LoginComponent implements OnInit {
     private loginService: Oauth2Service,
     private router: Router,
     private authenticationService: AuthenticationService,
-    public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
-    private intermediaryService:IntermediaryService,
+    private intermediaryService: IntermediaryService,
     private toolbarProvider: ToolbarProvider
   ) {}
 
@@ -64,15 +62,6 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  async presentToast(msg) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 2750
-    });
-    toast.present();
-  }
- 
   async showLoading(message: string) {
     this.loading = await this.loadingController.create({
       message: message,

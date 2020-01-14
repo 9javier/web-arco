@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuditsService } from '@suite/services';
-import { ToastController } from '@ionic/angular';
+import { AuditsService, IntermediaryService } from '@suite/services';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -14,7 +13,7 @@ export class PendingRevisionsComponent implements OnInit {
 
   constructor(
     private audit : AuditsService,
-    private toast : ToastController,
+    private intermediaryService : IntermediaryService,
     private router : Router,
     private activeRoute: ActivatedRoute
   ) { }
@@ -27,7 +26,7 @@ export class PendingRevisionsComponent implements OnInit {
     this.audit.getAllPendintPacking().subscribe(res =>{
       this.Auditories = res.data;
     },err =>{
-      this.presentToast(err.error.result.reason,'danger');
+      this.intermediaryService.presentToastError(err.error.result.reason);
     })
   }
 
@@ -37,15 +36,6 @@ export class PendingRevisionsComponent implements OnInit {
 
   OpenAudits(data){
     this.router.navigateByUrl('/audits/scanner-product/'+data.id+'/'+data.packing.reference+'/'+this.activeRoute.snapshot.routeConfig.path)
-  }
-
-  async presentToast(message,color) {
-    const toast = await this.toast.create({
-      message: message,
-      color: color,
-      duration: 4000
-    });
-    toast.present();
   }
 
   restartAudit(audit) {

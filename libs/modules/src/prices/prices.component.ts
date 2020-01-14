@@ -1,11 +1,8 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
-
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-
 import {
   IntermediaryService,
-  LabelsService,
   PriceModel,
   PriceService,
   WarehousesService,
@@ -13,18 +10,16 @@ import {
   ProductsService, AuthenticationService, WarehouseModel
 
 } from '@suite/services';
-
-
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
-
 import { validators } from '../utils/validators';
-import { AlertController, NavParams } from '@ionic/angular';
+import {AlertController, NavParams, PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { isNgTemplate } from '@angular/compiler';
-import {StockModel} from "../../../services/src/models/endpoints/Stock";
+import { Range } from './interfaces/range.interface';
+import {PricesRangePopoverComponent} from "./prices-range-popover/prices-range-popover.component";
+import {PricesRangePopoverProvider} from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
 
 @Component({
   selector: 'suite-prices',
@@ -64,6 +59,10 @@ export class PricesComponent implements OnInit {
     lifestyles: [],
     status: 0,
     tariffId: 0,
+    prices: this.formBuilder.group({
+      min: 0,
+      max: 100
+    }),
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -83,6 +82,7 @@ export class PricesComponent implements OnInit {
   families: Array<TagsInputOption> = [];
   lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
+  priceses: Range;
 
   /**List of SearchInContainer */
   searchsInContainer: Array<PriceModel.Price> = [];
@@ -132,7 +132,9 @@ export class PricesComponent implements OnInit {
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
     private cd : ChangeDetectorRef,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private popoverCtrl: PopoverController,
+    public pricesRangePopoverProvider: PricesRangePopoverProvider
   ) {
 
   }
@@ -204,7 +206,6 @@ export class PricesComponent implements OnInit {
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
-
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
@@ -435,7 +436,12 @@ export class PricesComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters(): void {
+    this.priceses = {
+      min: 0,
+      max: 1000
+    }
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
+
       this.colors = filters.colors;
       this.brands = filters.brands;
       this.sizes = filters.sizes;
@@ -443,8 +449,16 @@ export class PricesComponent implements OnInit {
       this.models = filters.models;
       this.families = filters.families;
       this.lifestyles = filters.lifestyles;
-
+      this.priceses = filters.prices
+      this.form.patchValue({
+        prices: filters.prices
+      })
       this.applyFilters();
+
+      this.pricesRangePopoverProvider.minValue = this.priceses.min;
+      this.pricesRangePopoverProvider.maxValue = this.priceses.max;
+      this.pricesRangePopoverProvider.minValueSelected = this.pricesRangePopoverProvider.minValue;
+      this.pricesRangePopoverProvider.maxValueSelected = this.pricesRangePopoverProvider.maxValue;
     });
   }
 
@@ -557,6 +571,13 @@ export class PricesComponent implements OnInit {
     clearTimeout(this.requestTimeout);
     this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
+      this.form.patchValue({
+        prices:{
+          min: this.pricesRangePopoverProvider.minValueSelected,
+          max: this.pricesRangePopoverProvider.maxValueSelected
+        }
+      });
+
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, 100);
   }
@@ -573,6 +594,10 @@ export class PricesComponent implements OnInit {
       status: 0,
       size: 0,
       tariffId: 0,
+      prices: {
+        min:0,
+        max:1000
+      },
       pagination: this.formBuilder.group({
         page: this.page || 1,
         limit: this.limit || this.pagerValues[0]
@@ -629,6 +654,16 @@ export class PricesComponent implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async showPricesPopover(ev) {
+    const popover = await this.popoverCtrl.create({
+      cssClass: 'popover-filter',
+      component: PricesRangePopoverComponent,
+      event: ev
+    });
+
+    await popover.present();
   }
 
   // GET & SET SECTION
