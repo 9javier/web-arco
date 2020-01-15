@@ -212,19 +212,19 @@ export class MappingsComponent implements OnInit {
             case 5:
               const dataBrand = this.dataSourceBrands.data;
               dataBrand.push({
-                id: this.dataSourceBrands.data.length + 1,
+                id: item.id,
                 avelonData: {
-                  id: this.dataSourceBrands.data.length + 1,
+                  id: item.id,
                   name: item.originDataId
                 },
                 marketData: {
-                  id: this.dataSourceBrands.data.length + 1,
+                  id: item.id,
                   name: item.marketDataId
                 }
               });
               this.dataSourceBrands.data = dataBrand;
               this.brandsList.push({
-                id: this.brandsList.length + 1,
+                id: item.id,
                 name: item.marketDataId
               });
               break;
@@ -232,26 +232,100 @@ export class MappingsComponent implements OnInit {
         });
       } else {
         console.log('error')
+        
       }
     })
   }
 
   changeBrandSelect(e, element) {
-    console.log(e.value)
-    console.log(element.avelonData.name)
-    console.log(this.brandsList[e.value-1].name)
+
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceBrands.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.brandsList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId: marketData.name,
+      typeMapped: 5,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
   }
 
   changeColorSelect(e, element) {
-    console.log(e.value)
-    console.log(element.avelonData.name)
-    console.log(this.colorsList[e.value-1].name)
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceColors.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.colorsList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId: marketData.name,
+      typeMapped: 3,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
   }
 
   changeSizeSelect(e, element) {
-    console.log(e.value)
-    console.log(element.avelonData.name)
-    console.log(this.sizesList[e.value-1].name)
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceSizes.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.sizesList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId: marketData.name,
+      typeMapped: 4,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+    
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
   }
 
   changeFeatureSelect(e) {
