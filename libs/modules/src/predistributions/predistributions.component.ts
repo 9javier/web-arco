@@ -497,10 +497,10 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     }
     if (this.lastUsedFilter != 'providers') {
       let filteredProviders = entities['provider'] as unknown as string[];
-      for (let index in this.brands) {
+      for (let index in this.providers) {
         this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
       }
-      this.filterButtonProviders.listItems = this.brands;
+      this.filterButtonProviders.listItems = this.providers;
     }
   }
   private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
