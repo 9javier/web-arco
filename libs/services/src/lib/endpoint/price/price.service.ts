@@ -73,4 +73,8 @@ export class PriceService {
 
     return this.requestsProvider.post(this.postPricesByModelUrl, parameters);
   }
+
+  getByReference(parameters){
+
+  }
 }

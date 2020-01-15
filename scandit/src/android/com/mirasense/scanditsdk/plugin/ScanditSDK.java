@@ -130,6 +130,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG = "matrixPickingStoresHideInfoProductDialog";
   private static final String SET_TIMEOUT = "setTimeout";
   private static final String MATRIX_INIT_AUDIT_MULTIPLE = "matrixInitAuditMultiple";
+  private static final String MATRIX_INIT_TARIFF_PRICES = "matrixInitTariffPrices";
   private static final String WRONG_CODE_AUDIT_MULTIPLE = "wrongCodeAuditMultiple";
   private static final String CHANGE_NOTICE_AUDIT_MULTIPLE = "changeNoticeAuditMultiple";
   private static final String LAUNCH_SOUND = "launchSound";
@@ -142,11 +143,13 @@ public class ScanditSDK extends CordovaPlugin {
     MATRIX_PRINT_TAGS,
     MATRIX_PRODUCT_INFO,
     SWITCH_TO_IONIC,
-    MATRIX_INIT_AUDIT_MULTIPLE
+    MATRIX_INIT_AUDIT_MULTIPLE,
+    MATRIX_INIT_TARIFF_PRICES
   };
 
   // REGISTER THE REQUEST_CODE USED TO START EACH NEW SCANDIT ACTIVITY
   private static final int RC_ACTIVITY_AUDIT_MULTIPLE = 6;
+  private static final int RC_ACTIVITY_TARIFF_PRICES = 7;
 
   private static final int CUSTOM_SOUND_OK = 1;
   private static final int CUSTOM_SOUND_ERROR = 2;
@@ -1670,6 +1673,11 @@ public class ScanditSDK extends CordovaPlugin {
       mCallbackContextMatrixSimple = callbackContext;
       Intent intent = new Intent(this.cordova.getActivity(), MatrixAuditMultipleActivity.class);
       this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_AUDIT_MULTIPLE);
+    } else if (action.equals(MATRIX_INIT_TARIFF_PRICES)) {
+      alertAlreadyShowed = false;
+      mCallbackContextMatrixSimple = callbackContext;
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixTariffPricesActivity.class);
+      this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_TARIFF_PRICES);
     } else if (action.equals(WRONG_CODE_AUDIT_MULTIPLE)) {
       if (!alertAlreadyShowed) {
         alertAlreadyShowed = true;
