@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'scandit',
     component: PrintReceivedProductComponent
+  },
+  {
+    path: 'scandit/:val',
+    component: PrintReceivedProductComponent
   }
 ];
 

@@ -98,6 +98,18 @@ export class ProductsComponent implements OnInit {
   suppliers: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
+  /** Filters save **/
+  colorsSelected: Array<any> = [];
+  referencesSelected: Array<any> = [];
+  modelsSelected: Array<any> = [];
+  sizesSelected: Array<any> = [];
+  warehousesSelected: Array<any> = [];
+  containersSelected: Array<any> = [];
+  brandsSelected: Array<any> = [];
+  suppliersSelected: Array<any> = [];
+  productReferencePatternSelected: Array<any> = [];
+  orderbySelected: Array<any> = [];
+
   /**List of SearchInContainer */
   searchsInContainer: Array<InventoryModel.SearchInContainer> = [];
 
@@ -160,6 +172,7 @@ export class ProductsComponent implements OnInit {
         order: "asc"
       })
     });
+    this.deleteArrow();
     this.lastUsedFilter = 'warehouses';
     this.getFilters();
   }
@@ -277,6 +290,15 @@ export class ProductsComponent implements OnInit {
     let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
     if (dirDown) htmlColumn.innerHTML += ' 🡇';
     else htmlColumn.innerHTML += ' 🡅';
+  }
+
+  deleteArrow() {
+    for (let i = 0; i < document.getElementsByClassName('title').length; i++) {
+      let iColumn = document.getElementsByClassName('title')[i] as HTMLElement;
+      if (iColumn.innerHTML.includes('🡇') || iColumn.innerHTML.includes('🡅')) {
+        iColumn.innerHTML = iColumn.innerHTML.slice(0, -2);
+      }
+    }
   }
 
   applyFilters(filters, filterType) {
@@ -525,6 +547,7 @@ export class ProductsComponent implements OnInit {
     let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
+      this.saveFilters();
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
@@ -532,6 +555,7 @@ export class ProductsComponent implements OnInit {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       });
+      this.recoverFilters();
     });
 
     /**detect changes in the form */
@@ -554,6 +578,32 @@ export class ProductsComponent implements OnInit {
       /**assign the current reference to the previous reference */
       this.previousProductReferencePattern = this.form.value.productReferencePattern;
     });
+  }
+
+  private saveFilters(){
+    this.colorsSelected = this.form.value.colors;
+    this.referencesSelected = this.form.value.references;
+    this.modelsSelected = this.form.value.models;
+    this.sizesSelected = this.form.value.sizes;
+    this.warehousesSelected = this.form.value.warehouses;
+    this.containersSelected = this.form.value.containers;
+    this.brandsSelected = this.form.value.brands;
+    this.suppliersSelected = this.form.value.suppliers;
+    this.productReferencePatternSelected = this.form.value.productReferencePattern;
+    this.orderbySelected = this.form.value.orderby;
+  }
+
+  private recoverFilters(){
+    this.form.get("colors").patchValue(this.colorsSelected, { emitEvent: false });
+    this.form.get("references").patchValue(this.referencesSelected, { emitEvent: false });
+    this.form.get("models").patchValue( this.modelsSelected, { emitEvent: false });
+    this.form.get("sizes").patchValue(this.sizesSelected, { emitEvent: false });
+    this.form.get("warehouses").patchValue(this.warehousesSelected, { emitEvent: false });
+    this.form.get("containers").patchValue(this.containersSelected, { emitEvent: false });
+    this.form.get("brands").patchValue(this.brandsSelected, { emitEvent: false });
+    this.form.get("suppliers").patchValue(this.suppliersSelected, { emitEvent: false });
+    this.form.get("productReferencePattern").patchValue(this.productReferencePatternSelected, { emitEvent: false });
+    this.form.get("orderby").patchValue(this.orderbySelected, { emitEvent: false });
   }
 
   private getFormValueCopy() {
@@ -817,7 +867,6 @@ export class ProductsComponent implements OnInit {
         this.permision = permision.body.data;
       })
     });
-    
   }
 
   private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
@@ -988,8 +1037,5 @@ export class ProductsComponent implements OnInit {
     } else {
       this.itemsIdSelected.push(product);
     }
-    
   }
 }
-
-

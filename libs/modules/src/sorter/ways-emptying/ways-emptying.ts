@@ -56,23 +56,26 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     this.disableMixed = true;
 
     this.lastWaySelected = data;
-    this.lastWaysSelected.push(this.lastWaySelected);
+    let flag = false;
+    let wayS = null;
+    for(wayS of this.lastWaysSelected){
+      if(wayS.column.way.id == this.lastWaySelected.column.way.id){
+        flag = true;
+        this.removeItemFromArr( this.lastWaysSelected, wayS );
+      }
+    }
+    if(flag == false) {
+      this.lastWaysSelected.push(this.lastWaySelected);
+    }
     this.emptyingVerification();
     this.infoWayEmptying.newWaySelected(data.column.way);
-    if(this.disableMixed == true) {
-      if (data.column.way.new_emptying == null) {
-        if (data.column.way.manual == 1) {
-          this.disableAuto = false;
-        } else {
-          this.disableManual = false;
-        }
-      } else {
-        if (data.column.way.new_emptying == 1) {
-          this.disableAuto = false;
-        } else {
-          this.disableManual = false;
-        }
-      }
+  }
+
+  removeItemFromArr( arr, item ) {
+    let i = arr.indexOf( item );
+
+    if ( i !== -1 ) {
+      arr.splice( i, 1 );
     }
   }
 
@@ -80,19 +83,35 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     let way = null;
     let haveManual = false;
     let haveAuto = false;
-    for(way of this.lastWaysSelected){
-      if( way.column.way.manual == 1){
-        haveManual = true;
-      }else{
-        if(way.column.way.manual == 0){
-          haveAuto = true;
-        }
-      }
-    }
-    if(haveManual == true && haveAuto == true){
+    if(this.lastWaysSelected.length == 0){
       this.disableAuto = true;
       this.disableManual = true;
-      this.disableMixed = false;
+      this.disableMixed = true;
+    }else{
+      for(way of this.lastWaysSelected){
+        if( way.column.way.manual == 1){
+          haveManual = true;
+        }else{
+          if(way.column.way.manual == 0){
+            haveAuto = true;
+          }
+        }
+      }
+      if(haveManual == true && haveAuto == true){
+        this.disableAuto = true;
+        this.disableManual = true;
+        this.disableMixed = false;
+      }else{
+        if(haveManual == true){
+          this.disableAuto = false;
+          this.disableManual = true;
+          this.disableMixed = true;
+        }else{
+          this.disableAuto = true;
+          this.disableManual = false;
+          this.disableMixed = true;
+        }
+      }
     }
   }
 

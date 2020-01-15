@@ -25,7 +25,12 @@ div.list-header-filters-mobile {
   ion-grid {
     .header-mobile {
       padding: 0 0 0 16px;
-      height: 56px;
+      height: 90px;
+
+      .title-tariff-name {
+        width: 100%;
+        text-align: center;
+      }
 
       ion-col {
         height: 56px;
@@ -198,3 +203,10 @@ ion-toggle {
   padding-bottom: 5px;
   padding-right: 5px;
 }
+
+  .custom-popover {
+    width: 97% !important;
+    left: calc(7px - var(--ion-safe-area-right, 0px)) !important;
+  }
+
+
