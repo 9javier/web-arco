@@ -1,144 +1,208 @@
-
-<div class="container-mapping">
+<div class="mp-mapping-wrapper">
   <mat-accordion>
-    <mat-expansion-panel>
+    <mat-expansion-panel #brands hideToggle="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Marcas
         </mat-panel-title>
+        <mat-panel-description>
+          <i class="material-icons" *ngIf="!brands.expanded">add</i>
+          <span class="white-space" *ngIf="!brands.expanded">&nbsp;</span>
+          <i class="material-icons" *ngIf="brands.expanded">remove</i>
+          <i class="material-icons" *ngIf="brands.expanded">warning</i>
+        </mat-panel-description>
       </mat-expansion-panel-header>
-      <mat-form-field>
-        <input matInput (keyup)="brandsFilter($event.target.value)" placeholder="Filter">
-      </mat-form-field>
-        <table mat-table [dataSource]="dataSourceBrands" class="mat-elevation-z8">
-  
-          <ng-container matColumnDef="avelonData">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-            <td mat-cell *matCellDef="let element"> {{element.avelonData}} </td>
+      <div class="mp-mapping-expansion-panel-content">
+        <table mat-table [dataSource]="dataSourceBrands">
+
+          <tr mat-header-row *matHeaderRowDef="displayedBrandsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedBrandsColumns;"></tr>
+
+          <ng-container matColumnDef="blank">
+            <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
+              <i class="material-icons">search</i>
+            </th>
+            <td mat-cell *matCellDef="let element" class="mp-mapping-blank-column"> &nbsp; </td>
           </ng-container>
-        
+
+          <ng-container matColumnDef="id">
+            <th class="mp-mapping-id-column" mat-header-cell *matHeaderCellDef><span>ID</span></th>
+            <td class="mp-mapping-id-column" mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="avelonData">
+            <th mat-header-cell *matHeaderCellDef><span>MARCA ORIGEN</span></th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData.name}} </td>
+          </ng-container>
+
           <ng-container matColumnDef="marketData">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-            <td mat-cell *matCellDef="let element"> 
-              <mat-select (selectionChange)="changeBrandSelect($event)">
-                <mat-option *ngFor="let item of brandsList" [value]="item">
-                  {{item}}
+            <th mat-header-cell *matHeaderCellDef><span>MARCA DESTINO</span></th>
+            <td mat-cell *matCellDef="let element">
+              <mat-select (selectionChange)="changeBrandSelect($event)" [value]="element.marketData.id">
+                <mat-option [value]="-1">-</mat-option>
+                <mat-option *ngFor="let item of brandsList" [value]="item.id">
+                  {{item.name}}
                 </mat-option>
               </mat-select>
             </td>
           </ng-container>
-          <!--<ng-container matColumnDef="id">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="origin">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-            <td mat-cell *matCellDef="let element"> {{element.originDataId}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="destination">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-            <td mat-cell *matCellDef="let element"> {{element.marketDataId}} </td>
-          </ng-container>-->
-        
-          <tr mat-header-row *matHeaderRowDef="displayedBrandsColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedBrandsColumns;"></tr>
+
         </table>
+      </div>
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel>
+    <mat-expansion-panel #features hideToggle="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Características
+        </mat-panel-title>
+        <mat-panel-description>
+          <i class="material-icons" *ngIf="!features.expanded">add</i>
+          <span class="white-space" *ngIf="!features.expanded">&nbsp;</span>
+          <i class="material-icons" *ngIf="features.expanded">remove</i>
+          <i class="material-icons" *ngIf="features.expanded">warning</i>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div class="mp-mapping-expansion-panel-content">
+        <table mat-table [dataSource]="dataSourceFeatures">
+
+          <tr mat-header-row *matHeaderRowDef="displayedFeaturesColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedFeaturesColumns;"></tr>
+
+          <ng-container matColumnDef="blank">
+            <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
+              <i class="material-icons">search</i>
+            </th>
+            <td mat-cell *matCellDef="let element" class="mp-mapping-blank-column"> &nbsp; </td>
+          </ng-container>
+
+          <ng-container matColumnDef="id">
+            <th class="mp-mapping-id-column" mat-header-cell *matHeaderCellDef><span>ID</span></th>
+            <td class="mp-mapping-id-column" mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="avelonData">
+            <th mat-header-cell *matHeaderCellDef><span>CARACTERÍSTICA ORIGEN</span></th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData.name}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="marketData">
+            <th mat-header-cell *matHeaderCellDef><span>CARACTERÍSTICA DESTINO</span></th>
+            <td mat-cell *matCellDef="let element">
+              <mat-select (selectionChange)="changeFeatureSelect($event)" [value]="element.marketData.id">
+                <mat-option [value]="-1">-</mat-option>
+                <mat-option *ngFor="let item of featuresList" [value]="item.id">
+                  {{item.name}}
+                </mat-option>
+              </mat-select>
+            </td>
+          </ng-container>
+
+        </table>
+      </div>
+    </mat-expansion-panel>
+
+    <mat-expansion-panel #colors hideToggle="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Colores
         </mat-panel-title>
+        <mat-panel-description>
+          <i class="material-icons" *ngIf="!colors.expanded">add</i>
+          <span class="white-space" *ngIf="!colors.expanded">&nbsp;</span>
+          <i class="material-icons" *ngIf="colors.expanded">remove</i>
+          <i class="material-icons" *ngIf="colors.expanded">warning</i>
+        </mat-panel-description>
       </mat-expansion-panel-header>
+      <div class="mp-mapping-expansion-panel-content">
+        <table mat-table [dataSource]="dataSourceColors">
 
-      <mat-form-field>
-        <input matInput (keyup)="colorsFilter($event.target.value)" placeholder="Filter">
-      </mat-form-field>
-        <table mat-table [dataSource]="dataSourceColors" class="mat-elevation-z8">
+          <tr mat-header-row *matHeaderRowDef="displayedColorsColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColorsColumns;"></tr>
+
+          <ng-container matColumnDef="blank">
+            <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
+              <i class="material-icons">search</i>
+            </th>
+            <td mat-cell *matCellDef="let element" class="mp-mapping-blank-column"> &nbsp; </td>
+          </ng-container>
+
+          <ng-container matColumnDef="id">
+            <th class="mp-mapping-id-column" mat-header-cell *matHeaderCellDef><span>ID</span></th>
+            <td class="mp-mapping-id-column" mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
 
           <ng-container matColumnDef="avelonData">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-            <td mat-cell *matCellDef="let element"> {{element.avelonData}} </td>
+            <th mat-header-cell *matHeaderCellDef><span>COLOR ORIGEN</span></th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData.name}} </td>
           </ng-container>
-        
+
           <ng-container matColumnDef="marketData">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-            <td mat-cell *matCellDef="let element"> 
-              <mat-select (selectionChange)="changeColorSelect($event)">
-                <mat-option *ngFor="let item of colorsList" [value]="item">
-                  {{item}}
+            <th mat-header-cell *matHeaderCellDef><span>COLOR DESTINO</span></th>
+            <td mat-cell *matCellDef="let element">
+              <mat-select (selectionChange)="changeColorSelect($event)" [value]="element.marketData.id">
+                <mat-option [value]="-1">-</mat-option>
+                <mat-option *ngFor="let item of colorsList" [value]="item.id">
+                  {{item.name}}
                 </mat-option>
               </mat-select>
             </td>
           </ng-container>
-          <!--<ng-container matColumnDef="id">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="origin">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-            <td mat-cell *matCellDef="let element"> {{element.originDataId}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="destination">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-            <td mat-cell *matCellDef="let element"> {{element.marketDataId}} </td>
-          </ng-container>-->
-        
-          <tr mat-header-row *matHeaderRowDef="displayedColorsColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColorsColumns;"></tr>
+
         </table>
+      </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel>
+    <mat-expansion-panel #sizes hideToggle="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
           Tallas
         </mat-panel-title>
+        <mat-panel-description>
+          <i class="material-icons" *ngIf="!sizes.expanded">add</i>
+          <span class="white-space" *ngIf="!sizes.expanded">&nbsp;</span>
+          <i class="material-icons" *ngIf="sizes.expanded">remove</i>
+          <i class="material-icons" *ngIf="sizes.expanded">warning</i>
+        </mat-panel-description>
       </mat-expansion-panel-header>
+      <div class="mp-mapping-expansion-panel-content">
+        <table mat-table [dataSource]="dataSourceSizes">
 
-      <mat-form-field>
-        <input matInput (keyup)="sizesFilter($event.target.value)" placeholder="Filter">
-      </mat-form-field>
-        <table mat-table [dataSource]="dataSourceSizes" class="mat-elevation-z8">
-          <ng-container matColumnDef="avelonData">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-            <td mat-cell *matCellDef="let element"> {{element.avelonData}} </td>
+          <tr mat-header-row *matHeaderRowDef="displayedSizesColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedSizesColumns;"></tr>
+
+          <ng-container matColumnDef="blank">
+            <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
+              <i class="material-icons">search</i>
+            </th>
+            <td mat-cell *matCellDef="let element" class="mp-mapping-blank-column"> &nbsp; </td>
           </ng-container>
-        
+
+          <ng-container matColumnDef="id">
+            <th class="mp-mapping-id-column" mat-header-cell *matHeaderCellDef><span>ID</span></th>
+            <td class="mp-mapping-id-column" mat-cell *matCellDef="let element"> {{element.id}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="avelonData">
+            <th mat-header-cell *matHeaderCellDef><span>TALLA ORIGEN</span></th>
+            <td mat-cell *matCellDef="let element"> {{element.avelonData.name}} </td>
+          </ng-container>
+
           <ng-container matColumnDef="marketData">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-            <td mat-cell *matCellDef="let element"> 
-              <mat-select (selectionChange)="changeSizeSelect($event)">
-                <mat-option *ngFor="let item of sizesList" [value]="item">
-                  {{item}}
+            <th mat-header-cell *matHeaderCellDef><span>TALLA DESTINO</span></th>
+            <td mat-cell *matCellDef="let element">
+              <mat-select (selectionChange)="changeSizeSelect($event)" [value]="element.marketData.id">
+                <mat-option [value]="-1">-</mat-option>
+                <mat-option *ngFor="let item of sizesList" [value]="item.id">
+                  {{item.name}}
                 </mat-option>
               </mat-select>
             </td>
           </ng-container>
-          <!--<ng-container matColumnDef="id">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> ID </th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="origin">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA ORIGEN </th>
-            <td mat-cell *matCellDef="let element"> {{element.originDataId}} </td>
-          </ng-container>
-        
-          <ng-container matColumnDef="destination">
-            <th class="table-th" mat-header-cell *matHeaderCellDef> MARCA DESTINO </th>
-            <td mat-cell *matCellDef="let element"> {{element.marketDataId}} </td>
-          </ng-container>-->
-        
-          <tr mat-header-row *matHeaderRowDef="displayedSizesColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedSizesColumns;"></tr>
+
         </table>
+      </div>
     </mat-expansion-panel>
 
   </mat-accordion>
