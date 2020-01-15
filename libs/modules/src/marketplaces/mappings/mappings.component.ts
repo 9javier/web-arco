@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
+import { MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'suite-mappings',
@@ -9,55 +11,96 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 export class MappingsComponent implements OnInit {
 
-  // Brands
-  private dataSourceBrands = [
-    {id: 1, origin: 'ADIDAS SL', destination: 'ADIDAS' },
-    {id: 2, origin: 'AMANDA A.', destination: 'AMANDA' },
-    {id: 3, origin: 'ASICS', destination: 'ASICS' },
-  ];
 
-  displayedBrandsColumns: string[] = ['blank', 'id', 'origin', 'destination'];
+  displayedBrandsColumns: string[] = ['avelonData', 'marketData'];
+  dataSourceBrands: any;
 
-  // Colors
+  displayedColorsColumns: string[] = ['avelonData', 'marketData'];
+  dataSourceColors: any;
 
-  private dataSourceColors = [
-    {id: 1, origin: 'AZUL', destination: 'AZUL' },
-    {id: 2, origin: 'ROJO', destination: 'ROJO' },
-    {id: 3, origin: 'VERDE', destination: 'VERDE' },
-  ];
+  displayedSizesColumns: string[] = ['avelonData', 'marketData'];
+  dataSourceSizes: any;
 
-  displayedColorsColumns: string[] = ['blank', 'id', 'origin', 'destination'];
+  enumTypes = [];
+  brandsList = [];
+  colorsList = [];
+  sizesList = [];
 
-  // Sizes
-
-  private dataSourceSizes = [
-    {id: 1, origin: 'GRANDE', destination: 'GRANDE' },
-    {id: 2, origin: 'MEDIANA', destination: 'MEDIANA' },
-    {id: 3, origin: 'PEQUEÑA', destination: 'PEQUEÑA' },
-  ];
-
-  displayedSizesColumns: string[] = ['blank', 'id', 'origin', 'destination'];
+  avelonDataBrands = [];
+  avelonDataColors = [];
+  avelonDataSizes = [];
 
   constructor(
       private route: ActivatedRoute,
-      private router : Router
+      private router : Router,
+      private marketplacesService: MarketplacesService
     ) {
     console.log(this.route.snapshot.data['name']) 
   }
 
   ngOnInit() {
+    this.getEntities();
+    this.getMaps();
   }
 
-  brandsFilter(e) {
-    console.log(e)
+  getEntities() {
+    this.marketplacesService.getMapEntities().subscribe(data => {
+      if(data && data.enumItem) {
+        this.enumTypes = data.enumItem;
+        console.log(this.enumTypes)
+      } else {
+        console.log('error')
+      }
+    })
   }
 
-  colorsFilter(e) {
-    console.log(e)
+  getMaps() {
+    this.marketplacesService.getMapDataRules().subscribe(data => {
+      if(data) {
+        data.forEach(item => {
+          switch(item.typeMapped) {
+            case 3:
+              this.colorsList.push(item);
+              break;
+            case 4:
+              this.sizesList.push(item);
+              break;
+            case 5:
+              this.brandsList.push(item);
+              break;
+          }
+        });
+        this.dataSourceColors = new MatTableDataSource(this.colorsList);
+        this.dataSourceSizes = new MatTableDataSource(this.sizesList);
+        this.dataSourceBrands = new MatTableDataSource(this.brandsList);
+      } else {
+        console.log('error')
+      }
+    })
   }
 
-  sizesFilter(e) {
-    console.log(e)
+  brandsFilter(filterValue: string) {
+    this.dataSourceBrands.filter = filterValue.trim().toLowerCase();
+  }
+
+  colorsFilter(filterValue: string) {
+    this.dataSourceColors.filter = filterValue.trim().toLowerCase();
+  }
+
+  sizesFilter(filterValue: string) {
+    this.dataSourceSizes.filter = filterValue.trim().toLowerCase();
+  }
+
+  changeBrandSelect(e) {
+    console.log(e.value)
+  }
+
+  changeColorSelect(e) {
+    console.log(e.value)
+  }
+
+  changeSizeSelect(e) {
+    console.log(e.value)
   }
 
 }
