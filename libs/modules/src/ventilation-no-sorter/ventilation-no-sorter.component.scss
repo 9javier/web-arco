@@ -1,6 +1,6 @@
 #main-display {
   text-align: center;
-  height: calc(100% - 210px);
+  height: calc(100% - 220px);
   padding: 40% 20px 20px;
   #filler{
     height: 180px;
@@ -13,7 +13,7 @@
     font-size: 80px;
     font-weight: 600;
   }
-  #name{
+  #name, #without-output{
     font-size: 40px;
     font-weight: 600;
   }
@@ -53,6 +53,30 @@ ion-footer {
     margin-right: 5px;
     p {
       white-space: pre-wrap;
+    }
+  }
+}
+
+ion-footer.footer-four-btn {
+  div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    ion-button {
+      height: 60%;
+      display: flex;
+      flex: 2;
+      margin-left: 5px;
+      margin-right: 5px;
+      p {
+        white-space: pre-wrap;
+      }
+    }
+
+    ion-button.other-btn {
+      height: 40%;
+      display: flex;
+      flex: 1;
     }
   }
 }

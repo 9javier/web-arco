@@ -14,8 +14,9 @@
   <div id="main-display">
     <div id="filler" *ngIf="!waitingForPacking && inputValue==''"></div>
     <span *ngIf="!waitingForPacking && inputValue==''">{{scanMessage}}</span>
-    <div id="reference" *ngIf="waitingForPacking">{{destinyWarehouse.reference}}</div>
-    <div id="name" *ngIf="waitingForPacking">{{destinyWarehouse.name}}</div>
+    <div id="reference" *ngIf="waitingForPacking && !withoutOutputScan">{{destinyWarehouse.reference}}</div>
+    <div id="name" *ngIf="waitingForPacking && !withoutOutputScan">{{destinyWarehouse.name}}</div>
+    <div id="without-output" *ngIf="waitingForPacking && withoutOutputScan">ARTÍCULO SIN ESCANEO DE SALIDA</div>
   </div>
 
   <scanner-manual
@@ -26,13 +27,32 @@
     (newValue)="scan()"
   ></scanner-manual>
 
-  <ion-footer *ngIf="waitingForPacking">
+  <ion-footer *ngIf="waitingForPacking && !withoutOutputScan">
     <ion-button [disabled]="newDestiny" expand="full" color="dark" (click)="assignToPacking()">
       <p>{{packingMessage}}</p>
     </ion-button>
     <ion-button expand="full" color="dark" (click)="scanPacking()">
       <p>ESCANEAR NUEVO EMBALAJE</p>
     </ion-button>
+  </ion-footer>
+
+  <ion-footer *ngIf="waitingForPacking && withoutOutputScan" class="footer-four-btn">
+    <div>
+      <ion-button expand="full" color="dark" (click)="assignToPacking()"  *ngIf="destinies['000']">
+        <p>EMBALAJE A 000 {{getPackingScanned('zero')}}</p>
+      </ion-button>
+      <ion-button expand="full" color="dark" (click)="scanPacking('zero')" class="other-btn">
+        <p>{{destinies['000'] ? 'OTRO' : 'NUEVO EMBALAJE A 000'}}</p>
+      </ion-button>
+    </div>
+    <div>
+      <ion-button expand="full" color="dark" (click)="assignToPacking()" *ngIf="destinies['incidence']">
+        <p>EMBALAJE DE INCIDENCIAS {{getPackingScanned('incidence')}}</p>
+      </ion-button>
+      <ion-button expand="full" color="dark" (click)="scanPacking('incidence')" class="other-btn" >
+        <p>{{destinies['incidence'] ? 'OTRO' : 'NUEVO EMBALAJE DE INCIDENCIAS'}}</p>
+      </ion-button>
+    </div>
   </ion-footer>
 
 </ion-content>
