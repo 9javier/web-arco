@@ -38,7 +38,7 @@
           <ng-container matColumnDef="marketData">
             <th mat-header-cell *matHeaderCellDef><span>MARCA DESTINO</span></th>
             <td mat-cell *matCellDef="let element">
-              <mat-select (selectionChange)="changeBrandSelect($event)" [value]="element.marketData.id">
+              <mat-select (selectionChange)="changeBrandSelect($event, element)" [value]="element.marketData.id">
                 <mat-option [value]="-1">-</mat-option>
                 <mat-option *ngFor="let item of brandsList" [value]="item.id">
                   {{item.name}}
@@ -141,7 +141,7 @@
           <ng-container matColumnDef="marketData">
             <th mat-header-cell *matHeaderCellDef><span>COLOR DESTINO</span></th>
             <td mat-cell *matCellDef="let element">
-              <mat-select (selectionChange)="changeColorSelect($event)" [value]="element.marketData.id">
+              <mat-select (selectionChange)="changeColorSelect($event, element)" [value]="element.marketData.id">
                 <mat-option [value]="-1">-</mat-option>
                 <mat-option *ngFor="let item of colorsList" [value]="item.id">
                   {{item.name}}
@@ -192,7 +192,7 @@
           <ng-container matColumnDef="marketData">
             <th mat-header-cell *matHeaderCellDef><span>TALLA DESTINO</span></th>
             <td mat-cell *matCellDef="let element">
-              <mat-select (selectionChange)="changeSizeSelect($event)" [value]="element.marketData.id">
+              <mat-select (selectionChange)="changeSizeSelect($event, element)" [value]="element.marketData.id">
                 <mat-option [value]="-1">-</mat-option>
                 <mat-option *ngFor="let item of sizesList" [value]="item.id">
                   {{item.name}}
