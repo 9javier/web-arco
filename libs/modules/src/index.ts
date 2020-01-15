@@ -47,6 +47,8 @@ export * from './audits/audits.module';
 export * from './audits-mobile/audits-mobile.component';
 export * from './audits-mobile/audits-mobile.module';
 
+export * from './audits-mobile/add-audits/add-audits.component';
+
 
 // Incidences Button
 export * from './incidences-button/incidences-button.component';

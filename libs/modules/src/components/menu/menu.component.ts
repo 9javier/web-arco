@@ -542,6 +542,18 @@ export class MenuComponent implements OnInit {
           id: 'audit-rv',
           url: '/audits/pending-revisions',
           icon: 'list-box'
+        },
+        {
+          title: 'Escaneo total (láser)',
+          id: 'add-audits',
+          url: '/audits/add',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Escaneo aleatorio (cámara)',
+          id: 'audit-scan',
+          url: 'audits/scan',
+          icon: 'aperture'
         }
       ]
     },
@@ -700,6 +712,8 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.receptionScanditService.reception(2);
+    } else if(p.url === 'audits/scan'){
+      this.auditMultipleScanditService.init();
     }
   }
 
@@ -721,7 +735,9 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
-    } else {
+    } else if (p.url === 'audits/scan') {
+      this.auditMultipleScanditService.init();
+    }else {
       this.returnTitle(p);
     }
     if (p.id === 'workwaves-scheduled-1') {
