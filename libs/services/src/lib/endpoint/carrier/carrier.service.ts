@@ -14,13 +14,13 @@ export class CarrierService {
 
   /**Private urls for Carrier service */
   private carrierUrl:string = environment.apiBase+"/packing";
-  private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/meWarehouses';
+  private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/me-warehouses';
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
   private packingUrl:string = environment.apiBase+"/types/packing";
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
-  private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carriesEmptyPacking`
+  private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carries-empty-packing`
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
   private sendPackingUrl = environment.apiBase + "/packing/send";
   private postSealsList = environment.apiBase+"/packing/seal-lista";
