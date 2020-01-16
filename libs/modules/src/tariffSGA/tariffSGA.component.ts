@@ -108,6 +108,7 @@ export class TariffSGAComponent implements OnInit {
     let previousPageSize = this.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
+      this.intermediaryService.dismissLoading();
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
@@ -165,6 +166,7 @@ export class TariffSGAComponent implements OnInit {
 
     this.tariffService.getIsCalculating().subscribe(
       data => {
+        this.intermediaryService.dismissLoading();
         this.processing = data.isCalculating;
         this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
@@ -181,6 +183,7 @@ export class TariffSGAComponent implements OnInit {
       },
       () => {
         this.processing = true;
+        this.intermediaryService.dismissLoading();
       }
     );
   }
@@ -256,7 +259,7 @@ export class TariffSGAComponent implements OnInit {
 
     // });
 
-    this.intermediaryService.presentLoading("Modificando los seleccionados");
+    this.intermediaryService.presentLoading("Modificando los seleccionados 2");
     this.tariffService.updateEnabled(this.tariffsUpdate).subscribe(result => {
       this.intermediaryService.dismissLoading();
       this.listenChanges();
@@ -283,7 +286,7 @@ export class TariffSGAComponent implements OnInit {
         {
           text: 'Confirmar',
           handler: () => {
-            this.intermediaryService.presentLoading("Modificando los seleccionados");
+            this.intermediaryService.presentLoading("Modificando los seleccionados 1");
             this.dataSource = [];
             this.tariffService.syncTariff().subscribe(result => {
               this.intermediaryService.dismissLoading();
@@ -357,9 +360,23 @@ export class TariffSGAComponent implements OnInit {
 
   changeDateStart(event: MatDatepickerInputEvent<Date>, tariff: any) {
     tariff.activeFrom = event.value;
+
+    let object = {
+      id: tariff.id,
+      enabled: tariff.enabled,
+      activeFromChange: tariff.activeFrom
+    };
+    this.tariffsUpdate.push(object);
   }
 
   changeDateEnd(event: MatDatepickerInputEvent<Date>, tariff: any) {
     tariff.activeTill = event.value;
+
+    let object = {
+      id: tariff.id,
+      enabled: tariff.enabled,
+      activeTillChange: tariff.activeTill
+    };
+    this.tariffsUpdate.push(object);
   }
 }
