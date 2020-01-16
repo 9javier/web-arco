@@ -259,7 +259,7 @@ export class TariffSGAComponent implements OnInit {
 
     // });
 
-    this.intermediaryService.presentLoading("Modificando los seleccionados 2");
+    this.intermediaryService.presentLoading("Modificando los seleccionados");
     this.tariffService.updateEnabled(this.tariffsUpdate).subscribe(result => {
       this.intermediaryService.dismissLoading();
       this.listenChanges();
@@ -286,7 +286,7 @@ export class TariffSGAComponent implements OnInit {
         {
           text: 'Confirmar',
           handler: () => {
-            this.intermediaryService.presentLoading("Modificando los seleccionados 1");
+            this.intermediaryService.presentLoading("Modificando los seleccionados");
             this.dataSource = [];
             this.tariffService.syncTariff().subscribe(result => {
               this.intermediaryService.dismissLoading();
