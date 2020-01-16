@@ -12,11 +12,13 @@
   </ion-grid>
 
   <div id="main-display">
-    <div id="filler" *ngIf="!waitingForPacking && inputValue==''"></div>
-    <span *ngIf="!waitingForPacking && inputValue==''">{{scanMessage}}</span>
-    <div id="reference" *ngIf="waitingForPacking && !withoutOutputScan">{{destinyWarehouse.reference}}</div>
-    <div id="name" *ngIf="waitingForPacking && !withoutOutputScan">{{destinyWarehouse.name}}</div>
-    <div id="without-output" *ngIf="waitingForPacking && withoutOutputScan">ARTÍCULO SIN ESCANEO DE SALIDA</div>
+    <div class="content">
+      <div id="filler" *ngIf="!waitingForPacking && inputValue==''"></div>
+      <span *ngIf="!waitingForPacking && inputValue==''">{{scanMessage}}</span>
+      <div id="reference" *ngIf="waitingForPacking && !withoutOutputScan">{{destinyWarehouse.reference}}</div>
+      <div id="name" *ngIf="waitingForPacking && !withoutOutputScan">{{destinyWarehouse.name}}</div>
+      <div id="without-output" *ngIf="waitingForPacking && withoutOutputScan">ARTÍCULO SIN ESCANEO DE SALIDA</div>
+    </div>
   </div>
 
   <scanner-manual
