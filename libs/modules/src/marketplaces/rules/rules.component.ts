@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { NewRuleComponent } from './new-rule/new-rule.component';
+import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 
 @Component({
   selector: 'suite-rules',
@@ -141,7 +142,8 @@ export class RulesComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private marketplacesService: MarketplacesService
   ) { 
     console.log(this.route.snapshot.data['name'])
   }
@@ -150,6 +152,13 @@ export class RulesComponent implements OnInit {
     for (let ruleByPrice of this.dataSourcePrice) {
       ruleByPrice.price = <any>ruleByPrice.price.toFixed(2);
     }
+    this.marketplacesService.getRulesFilter().subscribe(data => {
+      if(data) {
+        console.log(data)
+      } else {
+        console.log('error get rules filter')
+      }
+    })
   }
 
   async openModalNewRule(ruleFilterType): Promise<void> {

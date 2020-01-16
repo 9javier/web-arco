@@ -19,6 +19,7 @@ export class MarketplacesService {
   private getRulesFilterTypesUrl = this.apiBase + "/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/RuleFilter";
   private postRulesFilterUrl = this.apiBase + "/RuleFilter";
+  private getRulesFilterByTypeUrl = this.apiBase + "/RuleFilter/{{type}}";
   private getMarketsUrl = this.apiBase + "/Markets";
 
   constructor(
@@ -66,7 +67,13 @@ export class MarketplacesService {
   }
 
   postRulesFilter(data):Observable<any> {
-    return this.http.post<any>(this.getRulesFilterUrl, data, {}).pipe(map(response=>{
+    return this.http.post<any>(this.postRulesFilterUrl, data, {}).pipe(map(response=>{
+      return response;
+    }));
+  }
+
+  getRulesFilterByType(type):Observable<any> {
+    return this.http.get<any>(this.getRulesFilterByTypeUrl.replace('{{type}}', type.toString()), {}).pipe(map(response=>{
       return response;
     }));
   }
