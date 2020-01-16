@@ -5,46 +5,58 @@
         <ion-title>Filtros</ion-title>
       </ion-col>
       <ion-col size="4"  >
-        <ion-label>Modelos</ion-label>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonModels [title]="'Modelos'" [listItems]="entities.models"
-            [isFiltering]="isFilteringModels != entities.models.length"
-            (applyFilters)="applyFilters($event, 'models')">
-          </suite-filter-button>
+        <ion-item lines="none">
+          <ion-label>Modelos</ion-label>
+          <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Modelos'" [listItems]="entities.models"
+              [isFiltering]="isFilteringModels != entities.models.length"
+              (applyFilters)="applyFilters($event, 'models')">
+            </suite-filter-button>
+        </ion-item>
       </ion-col>
       <ion-col size="4"  >
-        <ion-label>Marcas</ion-label>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonBrands [title]="'Marcas'" [listItems]="entities.brands"
-            [isFiltering]="isFilteringBrands != entities.brands.length"
-            (applyFilters)="applyFilters($event, 'brands')">
-          </suite-filter-button>
+        <ion-item lines="none">
+          <ion-label>Marcas</ion-label>
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonBrands [title]="'Marcas'" [listItems]="entities.brands"
+              [isFiltering]="isFilteringBrands != entities.brands.length"
+              (applyFilters)="applyFilters($event, 'brands')">
+            </suite-filter-button>
+        </ion-item>
       </ion-col>
       <ion-col size="4"  >
-        <ion-label>Tallas</ion-label>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonSizes [title]="'Tallas'" [listItems]="entities.sizes"
-            [isFiltering]="isFilteringSizes != entities.sizes.length"
-            (applyFilters)="applyFilters($event, 'sizes')">
-          </suite-filter-button>
+        <ion-item lines="none">
+          <ion-label>Tallas</ion-label>
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonSizes [title]="'Tallas'" [listItems]="entities.sizes"
+              [isFiltering]="isFilteringSizes != entities.sizes.length"
+              (applyFilters)="applyFilters($event, 'sizes')">
+            </suite-filter-button>
+        </ion-item>
       </ion-col>
       <ion-col size="4"  >
-        <ion-label>Colores</ion-label>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonColors [title]="'Colores'" [listItems]="entities.colors"
-            [isFiltering]="isFilteringColors != entities.colors.length"
-            (applyFilters)="applyFilters($event, 'colors')">
-          </suite-filter-button>
+        <ion-item lines="none">
+          <ion-label>Colores</ion-label>
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonColors [title]="'Colores'" [listItems]="entities.colors"
+              [isFiltering]="isFilteringColors != entities.colors.length"
+              (applyFilters)="applyFilters($event, 'colors')">
+            </suite-filter-button>
+        </ion-item>
       </ion-col>
       <ion-col size="4"  >
-        <ion-label>Tiendas</ion-label>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouses [title]="'Tiendas'" [listItems]="entities.destinyShop"
-            [isFiltering]="isFilteringWarehouses != entities.destinyShop.length"
-            (applyFilters)="applyFilters($event, 'warehouses')">
-          </suite-filter-button>
+        <ion-item lines="none">
+          <ion-label>Tiendas</ion-label>
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouses [title]="'Tiendas'" [listItems]="entities.destinyShop"
+              [isFiltering]="isFilteringWarehouses != entities.destinyShop.length"
+              (applyFilters)="applyFilters($event, 'warehouses')">
+            </suite-filter-button>
+        </ion-item>
       </ion-col>
       <ion-col size="4"  >
-        <ion-label>Proveedores</ion-label>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Prveedores'" [listItems]="entities.provider"
-            [isFiltering]="isFilteringProviders != entities.colors.length"
-            (applyFilters)="applyFilters($event, 'providers')">
-          </suite-filter-button>
+        <ion-item lines="none">
+          <ion-label>Proveedores</ion-label>
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
+              [isFiltering]="isFilteringProviders != entities.colors.length"
+              (applyFilters)="applyFilters($event, 'providers')">
+            </suite-filter-button>
+        </ion-item>
       </ion-col>
     </ion-row>
   </ion-grid >
@@ -152,7 +164,8 @@
           (click)="selection.toggle(row)">
       </tr> 
     </table>
-    <mat-paginator [pageSize]="50" [pageSizeOptions]="[50, 100, 1000]" showFirstLastButtons></mat-paginator>
+    <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+    <!-- <mat-paginator [length]="length"  [pageSizeOptions]="pagerValues" showFirstLastButtons></mat-paginator> -->
   </div>
 </ion-content>
 <ion-footer>
