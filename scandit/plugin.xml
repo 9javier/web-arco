@@ -268,6 +268,7 @@
     <source-file src="src/android/layout/references_matrix_picking_stores.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrix_print_tags.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/references_matrix_product_info.xml" target-dir="res/layout"/>
+    <source-file src="src/android/layout/tariff_prices.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/column_sizes_extended_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/table_sizes_extended_product_info.xml" target-dir="res/layout"/>
     <source-file src="src/android/layout/extended_product_info.xml" target-dir="res/layout"/>

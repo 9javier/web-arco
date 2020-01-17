@@ -5,7 +5,14 @@ import {ModelModel} from "@suite/services";
 import {StockModel} from "./Stock";
 import {HttpRequestModel} from "./HttpRequest";
 export namespace PriceModel{
-    
+
+    export interface SizeRange{
+      rangesNumbers: {
+        sizeRangeNumberMin: string,
+        sizeRangeNumberMax: string
+      }
+    }
+
     export interface Price{
         createdAt: string,
         updatedAt: string,
@@ -73,7 +80,8 @@ export namespace PriceModel{
     }
 
     export interface ProductsReferences {
-      references: string[]
+      references: string[],
+      tariffId?: number
     }
 
     export interface PriceByModelTariff extends Request.Success{
@@ -96,6 +104,9 @@ export namespace PriceModel{
         tariffName: string,
         numRange: number,
         hash: string,
+        hashPrices?: string,
+        status?: number,
+        enabled?: boolean,
         warehouse:WarehouseModel.Warehouse,
         tariff: TariffModel.Tariff,
         model: {
@@ -134,10 +145,10 @@ export namespace PriceModel{
           endRange: number,
           isAvelon: boolean
         },
-      rangesNumbers?: {
-        sizeRangeNumberMin: string,
-        sizeRangeNumberMax: string
-      }
+        rangesNumbers?: {
+          sizeRangeNumberMin: string,
+          sizeRangeNumberMax: string
+        }
     }
 
 }

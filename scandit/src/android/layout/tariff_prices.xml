@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <FrameLayout
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="20"
+    android:orientation="vertical">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="3"
+      android:background="@color/transparentScanner"
+      android:gravity="center"
+      android:orientation="horizontal"
+      android:paddingStart="5dp"
+      android:paddingEnd="5dp"
+      android:paddingBottom="10dp" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="130dp"
+      android:layout_weight="5"
+      android:orientation="horizontal">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner" />
+
+      <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="8">
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:layout_alignParentStart="true"
+          android:background="@drawable/corner_top_left" />
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:layout_alignParentEnd="true"
+          android:background="@drawable/corner_top_right" />
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:layout_alignParentStart="true"
+          android:layout_alignParentBottom="true"
+          android:background="@drawable/corner_bottom_left" />
+
+        <View
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:layout_alignParentEnd="true"
+          android:layout_alignParentBottom="true"
+          android:background="@drawable/corner_bottom_right" />
+
+      </RelativeLayout>
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/transparentScanner" />
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="357dp"
+      android:layout_weight="12"
+      android:background="@color/transparentScanner"
+      android:orientation="vertical">
+
+      <LinearLayout
+        android:id="@+id/llPBExtendedProductInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:visibility="gone">
+
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:text="Cargando producto..."
+          android:textColor="@color/transparentWhite"
+          android:textSize="12sp" />
+
+        <ProgressBar
+          style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:indeterminate="true"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp" />
+      </LinearLayout>
+
+      <include
+        android:id="@+id/llExtendedProductInfo"
+        layout="@layout/extended_product_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" />
+    </LinearLayout>
+
+  </LinearLayout>
+
+</RelativeLayout>

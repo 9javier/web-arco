@@ -1,16 +1,17 @@
 package com.mirasense.scanditsdk.plugin;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.scandit.barcodepicker.BarcodePicker;
 import com.scandit.barcodepicker.ScanOverlay;
 import com.scandit.barcodepicker.ScanSettings;
@@ -18,40 +19,48 @@ import com.scandit.matrixscan.MatrixScan;
 import com.scandit.recognition.Barcode;
 import com.scandit.recognition.SymbologySettings;
 
-import org.apache.cordova.PluginResult;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class MatrixTariffPricesActivity extends Activity {
 
-  public static Activity matrixAuditMultipleActivity;
+  public static Activity matrixProductInfo;
   private BarcodePicker mPicker;
   private MatrixSimpleOverlayListener matrixScanListener;
   private FrameLayout pickerContainer;
-  private TextView tvActionToUser;
 
   private String package_name;
   private Resources resources;
 
-  public static final int NOTICE_BUBBLE_ACTION = 1;
-  public static final int NOTICE_BUBBLE_ERROR = 2;
-
+  @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    Bundle b = getIntent().getExtras();
+    String title = "AL Krack";
+    String backgroundTitle = "#FFFFFF";
+    String colorTitle = "#424242";
+    if (b != null) {
+      title = b.getString("title", "AL Krack");
+      backgroundTitle = b.getString("backgroundTitle", "#FFFFFF");
+      colorTitle = b.getString("colorTitle", "#424242");
+    }
 
     package_name = getApplication().getPackageName();
     resources = getApplication().getResources();
 
     ActionBar actionBar = getActionBar();
-    if (actionBar != null) {
-      actionBar.hide();
-    }
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor(backgroundTitle)));
+    actionBar.setCustomView(resources.getIdentifier("title_bar_matrixsimple", "layout", package_name));
+    ScanditSDK.setActionBar(actionBar);
 
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-    setContentView(resources.getIdentifier("audit_multiple_activity", "layout", package_name));
+    setContentView(resources.getIdentifier("tariff_prices", "layout", package_name));
+
+    ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setText(title);
+    ((TextView) findViewById(resources.getIdentifier("action_bar_title", "id", package_name))).setTextColor(Color.parseColor(colorTitle));
 
     ScanditSDK.setViewDataMatrixSimple(this.findViewById(android.R.id.content).getRootView());
 
@@ -74,13 +83,14 @@ public class MatrixTariffPricesActivity extends Activity {
     settings.setMaxNumberOfCodesPerFrame(1);
     settings.setCodeRejectionEnabled(true);
 
-    settings.setActiveScanningArea(ScanSettings.ORIENTATION_PORTRAIT, new RectF(0.0f, 0.0f, 1f, 1f));
-    settings.setActiveScanningArea(ScanSettings.ORIENTATION_LANDSCAPE, new RectF(0.0f, 0.0f, 1f, 1f));
+    settings.setActiveScanningArea(ScanSettings.ORIENTATION_PORTRAIT, new RectF(0.1f, 0.15f, 0.9f, 0.4f));
+    settings.setActiveScanningArea(ScanSettings.ORIENTATION_LANDSCAPE, new RectF(0.4f, 0.2f, 0.6f, 0.8f));
 
     // Instantiate the barcode picker by using the settings defined above.
     mPicker = new BarcodePicker(this, settings);
 
     matrixScanListener = new MatrixSimpleOverlayListener();
+    matrixScanListener.setContextActivity(this);
 
     MatrixScan matrixScan = new MatrixScan(mPicker, matrixScanListener);
 
@@ -96,56 +106,11 @@ public class MatrixTariffPricesActivity extends Activity {
     pickerContainer.addView(mPicker);
     mPicker.startScanning();
 
-    ImageButton arrowBack = findViewById(resources.getIdentifier("ibBack", "id", package_name));
-    arrowBack.setOnClickListener(v -> exitFromAuditMultiple(false));
+    ImageButton arrowBack = findViewById(resources.getIdentifier("arrow_back_button", "id", package_name));
+    arrowBack.setOnClickListener(v -> finish());
 
-    tvActionToUser = findViewById(resources.getIdentifier("tvActionToUser", "id", package_name));
-    changeNoticeBubble("Escanea el artículo a imprimir", NOTICE_BUBBLE_ACTION);
-
-    matrixAuditMultipleActivity = this;
-    ScanditSDK.setActivityStarted(matrixAuditMultipleActivity);
-  }
-
-  public void exitFromAuditMultiple(boolean gotToManualScanner) {
-    JSONObject jsonObject = new JSONObject();
-    try {
-      jsonObject.put("result", false);
-      jsonObject.put("exit", true);
-      jsonObject.put("manual", gotToManualScanner);
-    } catch (JSONException e) {
-      e.printStackTrace();
-    }
-    PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
-    pResult.setKeepCallback(true);
-    ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
-    finish();
-  }
-
-  public void changeNoticeBubble(String text, int type) {
-    Log.i("Test::6", "changeNoticeBubble");
-    this.runOnUiThread(() -> {
-      Log.i("Test::7", "runOnUiThread");
-      Log.i("Test::8", text);
-      Log.i("Test::9", String.valueOf(type));
-      if (tvActionToUser != null) {
-        Log.i("Test::10", "Element tvActionToUser NOT null");
-        int backgroundResourceId;
-        if (type == NOTICE_BUBBLE_ERROR) {
-          Log.i("Test::11", "NOTICE_BUBBLE_ERROR");
-          backgroundResourceId = resources.getIdentifier("bg_rounded_notice_red", "drawable", package_name);
-        } else {
-          Log.i("Test::12", "else NOTICE_BUBBLE_ERROR");
-          backgroundResourceId = resources.getIdentifier("bg_rounded_notice_black", "drawable", package_name);
-        }
-        Log.i("Test::13", "change style");
-        tvActionToUser.setBackgroundResource(backgroundResourceId);
-        Log.i("Test::14", "change text");
-        tvActionToUser.setText(text);
-        Log.i("Test::15", "already changed");
-      } else {
-        Log.i("Test::16", "Element tvActionToUser IS null");
-      }
-    });
+    matrixProductInfo = this;
+    ScanditSDK.setActivityStarted(matrixProductInfo);
   }
 
   @Override
@@ -172,7 +137,7 @@ public class MatrixTariffPricesActivity extends Activity {
 
   @Override
   public void onBackPressed() {
-    exitFromAuditMultiple(false);
+    super.onBackPressed();
   }
 
 }

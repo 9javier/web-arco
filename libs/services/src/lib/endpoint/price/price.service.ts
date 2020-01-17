@@ -68,9 +68,10 @@ export class PriceService {
     return this.requestsProvider.post(this.postPricesByProductsReferencesUrl, parameters);
   }
 
-  postPricesByModel(model: string): Promise<HttpRequestModel.Response> {
+  postPricesByModel(model: string, tariffId?: number): Promise<HttpRequestModel.Response> {
     let parameters = {
-      reference: model
+      reference: model,
+      tariffId: tariffId
     };
 
     return this.requestsProvider.post(this.postPricesByModelUrl, parameters);
@@ -79,4 +80,5 @@ export class PriceService {
   getByReference(parameters: FilterPriceModel.FilterPriceRequest): Promise<HttpRequestModel.Response>{
     return this.requestsProvider.post(this.postGetByReferenceUrl, parameters);
   }
+
 }

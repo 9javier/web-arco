@@ -1674,9 +1674,23 @@ public class ScanditSDK extends CordovaPlugin {
       Intent intent = new Intent(this.cordova.getActivity(), MatrixAuditMultipleActivity.class);
       this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_AUDIT_MULTIPLE);
     } else if (action.equals(MATRIX_INIT_TARIFF_PRICES)) {
-      alertAlreadyShowed = false;
       mCallbackContextMatrixSimple = callbackContext;
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
       Intent intent = new Intent(this.cordova.getActivity(), MatrixTariffPricesActivity.class);
+      intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_TARIFF_PRICES);
     } else if (action.equals(WRONG_CODE_AUDIT_MULTIPLE)) {
       if (!alertAlreadyShowed) {
