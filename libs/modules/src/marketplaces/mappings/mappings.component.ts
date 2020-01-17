@@ -241,15 +241,27 @@ export class MappingsComponent implements OnInit {
   saveMock() {
     this.dataSourceBrands.filteredData.forEach(item => {
       this.brandsList.forEach(brand => {
-        if(item.id == brand.id && item.marketData.name != null) {
-          let brandMockToSave = {
-            id: item.id,
-            originDataId: item.avelonData.name,
-            marketDataId: brand.name,
-            typeMapped: 5,
-            marketId: 1,
-            aditionalMapInfo: 'more info'
-          };
+        if(item.id == brand.id) {
+          let brandMockToSave = {};
+          if(item.marketData.name != null) {
+            brandMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: brand.name,
+              typeMapped: 5,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          } else {
+            brandMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: null,
+              typeMapped: 5,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          }
 
           this.marketplacesService.postMapDataRules(brandMockToSave).subscribe(data => {
             console.log(data)
@@ -260,15 +272,27 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceColors.filteredData.forEach(item => {
       this.colorsList.forEach(color => {
-        if(item.id == color.id && item.marketData.name != null) {
-          let colorsMockToSave = {
-            id: item.id,
-            originDataId: item.avelonData.name,
-            marketDataId: color.name,
-            typeMapped: 5,
-            marketId: 1,
-            aditionalMapInfo: 'more info'
-          };
+        if(item.id == color.id) {
+          let colorsMockToSave = {};
+          if(item.marketData.name != null) {
+            colorsMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: color.name,
+              typeMapped: 5,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          } else {
+            colorsMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: null,
+              typeMapped: 5,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          }
 
           this.marketplacesService.postMapDataRules(colorsMockToSave).subscribe(data => {
             console.log(data)
@@ -279,15 +303,27 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceSizes.filteredData.forEach(item => {
       this.sizesList.forEach(size => {
-        if(item.id == size.id && item.marketData.name != null) {
-          let sizesMockToSave = {
-            id: item.id,
-            originDataId: item.avelonData.name,
-            marketDataId: size.name,
-            typeMapped: 5,
-            marketId: 1,
-            aditionalMapInfo: 'more info'
-          };
+        if(item.id == size.id) {
+          let sizesMockToSave = {};
+          if(item.marketData.name != null) {
+            sizesMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: size.name,
+              typeMapped: 5,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          } else {
+            sizesMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: null,
+              typeMapped: 5,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          }
 
           this.marketplacesService.postMapDataRules(sizesMockToSave).subscribe(data => {
             console.log(data)
@@ -314,10 +350,17 @@ export class MappingsComponent implements OnInit {
       }
     });
 
+    let marketDataId = '';
+    if(marketData) {
+      marketDataId = marketData.name;
+    } else {
+      marketDataId = null;
+    }
+
     let dataSend = {
       id,
       originDataId: originData.avelonData.name,
-      marketDataId: marketData.name,
+      marketDataId,
       typeMapped: 5,
       marketId: 1,
       aditionalMapInfo: 'more info'
@@ -344,10 +387,17 @@ export class MappingsComponent implements OnInit {
       }
     });
 
+    let marketDataId = '';
+    if(marketData) {
+      marketDataId = marketData.name;
+    } else {
+      marketDataId = null;
+    }
+
     let dataSend = {
       id,
       originDataId: originData.avelonData.name,
-      marketDataId: marketData.name,
+      marketDataId,
       typeMapped: 3,
       marketId: 1,
       aditionalMapInfo: 'more info'
@@ -374,10 +424,17 @@ export class MappingsComponent implements OnInit {
       }
     });
 
+    let marketDataId = '';
+    if(marketData) {
+      marketDataId = marketData.name;
+    } else {
+      marketDataId = null;
+    }
+
     let dataSend = {
       id,
       originDataId: originData.avelonData.name,
-      marketDataId: marketData.name,
+      marketDataId,
       typeMapped: 4,
       marketId: 1,
       aditionalMapInfo: 'more info'
