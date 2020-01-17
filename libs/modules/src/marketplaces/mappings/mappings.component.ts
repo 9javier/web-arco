@@ -241,7 +241,7 @@ export class MappingsComponent implements OnInit {
   saveMock() {
     this.dataSourceBrands.filteredData.forEach(item => {
       this.brandsList.forEach(brand => {
-        if(item.id == brand.id) {
+        if(item.id == brand.id && item.marketData.name != null) {
           let brandMockToSave = {
             id: item.id,
             originDataId: item.avelonData.name,
@@ -260,7 +260,7 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceColors.filteredData.forEach(item => {
       this.colorsList.forEach(color => {
-        if(item.id == color.id) {
+        if(item.id == color.id && item.marketData.name != null) {
           let colorsMockToSave = {
             id: item.id,
             originDataId: item.avelonData.name,
@@ -279,7 +279,7 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceSizes.filteredData.forEach(item => {
       this.sizesList.forEach(size => {
-        if(item.id == size.id) {
+        if(item.id == size.id && item.marketData.name != null) {
           let sizesMockToSave = {
             id: item.id,
             originDataId: item.avelonData.name,
