@@ -9,6 +9,7 @@ import { FilterButtonComponent } from '../components/filter-button/filter-button
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
+import { PaginatorComponent } from '../components/paginator/paginator.component';
 
 @Component({
   selector: 'suite-predistributions',
@@ -16,7 +17,7 @@ import { FiltersModel } from '../../../services/src/models/endpoints/filters';
   styleUrls: ['./predistributions.component.scss'],
 })
 export class PredistributionsComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['select', 'article', 'store', 'date_service', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
@@ -53,7 +54,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   entities 
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
-  pagerValues = [50, 100, 1000];
+  // pagerValues = [50, 100, 1000];
+  pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
     brands: [],
     references: [],
@@ -71,6 +73,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       order: "asc"
     })
   });
+  length: any;
 
 
   constructor(
@@ -93,8 +96,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getFilters()
     this.getList(this.form)
     this.listenChanges() 
-    this.paginator._intl.itemsPerPageLabel = 'Ver';
-    this.paginator._intl.getRangeLabel = this.getRangeLabel;
+    // this.paginator._intl.itemsPerPageLabel = 'Ver';
+    // this.paginator._intl.getRangeLabel = this.getRangeLabel;
     // this.dataSource.results.forEach(row => {
     //   if (row.distribution) {
     //     this.selectionPredistribution.select(row);
@@ -110,12 +113,14 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
+      console.log(page);
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       });
+      this.getList(this.form)
     });
   }
   initEntity() {
@@ -129,13 +134,15 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     }
   }
   initForm() {
-    this.form.value.brands =[]
-    this.form.value.colors =[]
-    this.form.value.models =[]
-    this.form.value.providers =[]
-    this.form.value.references =[]
-    this.form.value.sizes =[]
-    this.form.value.warehouses =[]
+    this.form.patchValue({
+      brands:[],
+      colors:[],
+      models:[],
+      providers:[],
+      references:[],
+      sizes:[],
+      warehouses:[],
+    })
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -301,6 +308,13 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       (resp:any) => {
         console.log(resp);
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
+        const paginator = resp.pagination;
+        console.log(paginator);
+        
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+        
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -335,7 +349,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         for (let model of filters) {
           console.log(model);
           
-          if (model.checked) modelsFiltered.push(model.name);
+          if (model.checked) modelsFiltered.push(model.id);
         }
         console.log(modelsFiltered);
           console.log(modelsFiltered.length, '>=' ,this.models.length);
@@ -378,7 +392,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       case 'sizes':
         let sizesFiltered: number[] = [];
         for (let size of filters) {
-          if (size.checked) sizesFiltered.push(size.value);
+          if (size.checked) sizesFiltered.push(size.id);
         }
         if (sizesFiltered.length >= this.sizes.length) {
           this.form.value.sizes = [];
@@ -415,15 +429,15 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         break;
       case 'providers':
         let providersFiltered: number[] = [];
-        for (let container of filters) {
-          if (container.checked) providersFiltered.push(container.id);
+        for (let providers of filters) {
+          if (providers.checked) providersFiltered.push(providers.id);
         }
         if (providersFiltered.length >= this.providers.length) {
-          this.form.value.containers = [];
+          this.form.value.providers = [];
           this.isFilteringProviders = this.providers.length;
         } else {
           if (providersFiltered.length > 0) {
-            this.form.value.containers = providersFiltered;
+            this.form.value.providers = providersFiltered;
             this.isFilteringProviders = providersFiltered.length;
           } else {
             this.form.value.containers = [99999];
@@ -434,7 +448,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       case 'brands':
         let brandsFiltered: number[] = [];
         for (let brand of filters) {
-          if (brand.checked) brandsFiltered.push(brand.value);
+          if (brand.checked) brandsFiltered.push(brand.id);
         }
         if (brandsFiltered.length >= this.brands.length) {
           this.form.value.brands = [];
@@ -497,10 +511,10 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     }
     if (this.lastUsedFilter != 'providers') {
       let filteredProviders = entities['provider'] as unknown as string[];
-      for (let index in this.brands) {
+      for (let index in this.providers) {
         this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
       }
-      this.filterButtonProviders.listItems = this.brands;
+      this.filterButtonProviders.listItems = this.providers;
     }
   }
   private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
@@ -512,6 +526,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       brand.hide = false;
       return brand;
     });
+    console.log(this.brands);
+    
     if (value && value.length) {
       this.form.get("brands").patchValue(value, { emitEvent: false });
     }
@@ -539,7 +555,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
     this.warehouses = warehouses.map(warehouse => {
-      warehouse.name = warehouse.reference + " - " + warehouse.name;
+      warehouse.name = warehouse.name;
       warehouse.value = warehouse.name;
       warehouse.checked = true;
       warehouse.hide = false;
@@ -555,12 +571,14 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     let value = this.form.get("models").value;
     this.models = models.map(model => {
       model.id = <number>(<unknown>model.id);
-      model.name = `${model.id}`;
+      model.name = model.name;
       model.value = model.name;
       model.checked = true;
       model.hide = false;
       return model;
     });
+    console.log(this.models);
+    
     if (value && value.length) {
       this.form.get("models").patchValue(value, { emitEvent: false });
     }
@@ -571,7 +589,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     let value = this.form.get("providers").value;
     this.providers = providers.map(provider => {
       provider.id = <number>(<unknown>provider.id);
-      provider.name = `${provider.id}`;
+      provider.name = provider.name;
       provider.value = provider.name;
       provider.checked = true;
       provider.hide = false;

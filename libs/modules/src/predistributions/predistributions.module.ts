@@ -11,11 +11,12 @@ import {
   MatTableModule
 } from '@angular/material';
 import { FilterButtonModule } from '../components/filter-button/filter-button.module';
+import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 
 const routes: Routes = [
   {
     path: '',
-    component: PredistributionsComponent
+  component: PredistributionsComponent
   }
 ];
 
@@ -32,7 +33,9 @@ const routes: Routes = [
     MatRippleModule,
     MatPaginatorModule,
     MatSortModule,
-    FilterButtonModule
+    FilterButtonModule,
+    PaginatorComponentModule,
+
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
