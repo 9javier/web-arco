@@ -2,8 +2,8 @@
   <div class="cp-modal-header-wrapper">
     <div>
       {{numberOfProducts}}&nbsp;
-      <span *ngIf="numberOfProducts.length == 1"> producto seleccionado</span>
-      <span *ngIf="numberOfProducts.length != 1"> productos seleccionados</span>
+      <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
+      <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
     </div>
     <div (click)="close();">
       X
@@ -20,23 +20,22 @@
           </div>
           <div>
             <div>
-              <mat-select (selectionChange)="changeSelectedCategoryFilter($event)" [value]="2">
+              <mat-select (selectionChange)="changeselectedCategoryGroupFilter($event)" [(ngModel)]="selectedCategoryGroupFilter">
                 <mat-option *ngFor="let item of categoryList" [value]="item.id">
                   {{item.name}}
                 </mat-option>
               </mat-select>
             </div>
             <div>
-              <div *ngFor="let category of selectedCategoryFilter.items">
-                <span *ngIf="mode == 'edit' && !rule.categories.includes(category)">{{category.name}}</span>
-                <span class="bold-category" *ngIf="mode == 'edit' && rule.categories.includes(category)">{{category.name}}</span>
-                <span *ngIf="mode == 'create'">{{category.name}}</span>
+              <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
+                <span *ngIf="!selectedCategories.includes(category)">{{category.name}}</span>
+                <span class="bold-category" *ngIf="selectedCategories.includes(category)">{{category.name}}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="rule-filter-price" *ngIf="ruleFilterType == 'price'">
-          <input matInput type="text" placeholder="Precio mínimo" [(ngModel)]="minPriceFilter"/>
+          <input matInput type="text" placeholder="Precio mínimo" [(ngModel)]="minPriceFilter" (keydown)="formatCurrency($event);" (blur)="formatCurrency($event)"/>
         </div>
         <div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
           <input matInput type="text" placeholder="Stock de seguridad" [(ngModel)]="stockFilter"/>
@@ -45,12 +44,12 @@
       <div class="nr-filter-selected-wrapper">
         <div>Filtro</div>
         <div class="nr-filter-list">
-          Familia: mujer, descripción: botas, Color: blanco
+          {{filterDescription}}
         </div>
         <div>
           {{numberOfProducts}}&nbsp;
-          <span *ngIf="numberOfProducts.length == 1"> producto seleccionado</span>
-          <span *ngIf="numberOfProducts.length != 1"> productos seleccionados</span>
+          <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
+          <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
         </div>
       </div>
       <div class="nr-action-selection-wrapper">
@@ -115,6 +114,6 @@
         </span>
     </div>
     <div *ngIf="mode == 'create'" class="nr-rule-button" (click)="createRule()">CREAR REGLA</div>
-    <div *ngIf="mode == 'edit'" class="nr-rule-button" (click)="createRule()">EDITAR REGLA</div>
+    <div *ngIf="mode == 'edit'" class="nr-rule-button" (click)="editRule()">EDITAR REGLA</div>
   </div>
 </ion-footer>
