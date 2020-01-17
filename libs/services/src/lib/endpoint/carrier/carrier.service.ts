@@ -26,6 +26,7 @@ export class CarrierService {
   private postSealsList = environment.apiBase+"/packing/seal-lista";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
+  private postCheckPackingAvailabilityUrl = environment.apiBase + '/packing/availability/check';
 
   constructor(
     private http:HttpClient,
@@ -136,5 +137,9 @@ export class CarrierService {
 
   postCheckProductsDestiny(params: CarrierModel.ParamsCheckProductsDestiny) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postCheckProductsDestinyUrl, params);
+  }
+
+  postCheckPackingAvailability(params: CarrierModel.ParamsCheckPackingAvailability) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCheckPackingAvailabilityUrl, params);
   }
 }
