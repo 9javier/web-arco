@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
-import { AlertController } from "@ionic/angular";
+import { AlertController, ModalController } from "@ionic/angular";
 import { ItemReferencesProvider } from "../../../../services/src/providers/item-references/item-references.provider";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
+import { ListasProductosComponent } from '../../picking-manual/lista/listas-productos/listas-productos.component';
+import { CarrierService } from '../../../../services/src/lib/endpoint/carrier/carrier.service';
 
 @Component({
   selector: 'suite-textarea',
@@ -39,6 +41,8 @@ export class TextareaComponent implements OnInit {
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
+    private carrierService: CarrierService,
+    private modalCtrl: ModalController
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -47,6 +51,8 @@ export class TextareaComponent implements OnInit {
   }
 
   async ngOnInit() {
+    console.log('siamo qui');
+    
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
@@ -59,12 +65,63 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  keyUpInput(event) {
+  /**
+   * @author Gaetano Sabino
+   * @param event 
+   * @description Crear la modal 
+   */
+  private async modalList(productos:any[], jaula:string, data:any){
+    let modal = await this.modalCtrl.create({
+      
+      component: ListasProductosComponent,
+      componentProps: {
+        productos,
+        jaula,
+        data
+      }
+      
+    })
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+      if(data.data === undefined && data.role === undefined){
+        this.focusToInput();
+        return;
+      }
+      
+      if(data.data && data.role === undefined){
+        if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
+          console.log('passo di qui ',this.lastCodeScanned);
+          
+          this.focusToInput();
+          this.inputPositioning = data.data;
+          this.processInitiated = false;
+          this.keyUpInput(KeyboardEvent['KeyCode'] = 13,true);
+          return;
+        }else if(data.role === 'navigate'){
+          this.focusToInput();
+        }
+      }
+      
+    })
+    modal.present();
+  }
+
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    },500);
+  }
+
+
+  keyUpInput(event?,prova:boolean=false) {
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
+    // console.log('chiamo metodo Key',dataWrited,this.processInitiated);
 
-    if (event.keyCode === 13 && dataWrited && !this.processInitiated) {
-
+    if (event.keyCode === 13 || prova && dataWrited && !this.processInitiated) {
+      // console.log('passo di primo');
+      // console.log(dataWrited,this.lastCodeScanned);
+      
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
         return;
@@ -78,6 +135,8 @@ export class TextareaComponent implements OnInit {
 
       this.processInitiated = true;
       if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
+        // console.log('passa qui');
+        
         this.processInitiated = false;
         this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
           setTimeout(() => {
@@ -108,18 +167,25 @@ export class TextareaComponent implements OnInit {
 
         this.errorMessage = null;
       } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
-        this.processInitiated = false;
-        this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
-          setTimeout(() => {
-            document.getElementById('input-ta').focus();
-          }, 500);
-        });
-        this.audioProvider.playDefaultOk();
-        this.containerReference = null;
-        this.packingReference = dataWrited;
-        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
-        this.inputPositioning = null;
-        this.errorMessage = null;
+        // console.log('passa qui por Jaula');
+        this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
+          if(data.packingInventorys.length > 0 && !prova){
+            this.modalList(data.packingInventorys,this.lastCodeScanned,data);
+          }else{
+            this.processInitiated = false;
+            this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              }, 500);
+            });
+            this.audioProvider.playDefaultOk();
+            this.containerReference = null;
+            this.packingReference = dataWrited;
+            this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
+            this.inputPositioning = null;
+            this.errorMessage = null;
+          }
+        })
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;

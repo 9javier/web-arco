@@ -275,7 +275,7 @@ export class JailComponent implements OnInit {
     if (listaCarrier.length > 0) {
 
       listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status != 4 && x.carrierWarehousesDestiny.length === 1) {
+        if (x.packingInventorys.length > 0 && x.status !== 4 && x.carrierWarehousesDestiny.length === 1) {
           return x;
         }
       })

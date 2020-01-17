@@ -22,7 +22,7 @@ export class PickingTasksComponent implements OnInit {
   async ngOnInit() {
     this.route.paramMap.subscribe((params: any )=> {
       let paramsReceived = params.params;
-      if (typeof paramsReceived.method == 'string' && paramsReceived.method == 'manual') {
+      if (typeof paramsReceived.method === 'string' && paramsReceived.method === 'manual') {
         this.pickingProvider.method = 'manual';
       } else {
         this.pickingProvider.method = 'scanner';

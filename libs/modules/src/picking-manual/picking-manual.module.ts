@@ -8,6 +8,8 @@ import { PickingManualRoutingModule } from "./picking-manual-routing.module";
 import { CdkTableModule } from "@angular/cdk/table";
 import { TextareaComponent } from "./textarea/textarea.component";
 import { HideKeyboardModule } from 'hide-keyboard';
+import { ListasProductosComponent } from './lista/listas-productos/listas-productos.component';
+import { ListaModule } from './lista/lista.module';
 
 
 @NgModule({
@@ -22,8 +24,9 @@ import { HideKeyboardModule } from 'hide-keyboard';
     CdkTableModule,
     FormsModule,
     MatGridListModule,
-    HideKeyboardModule
+    HideKeyboardModule,
+    ListaModule
   ],
-  entryComponents: [PickingManualComponent, TextareaComponent]
+  entryComponents: [PickingManualComponent, TextareaComponent, ListasProductosComponent]
 })
 export class PickingManualModule { }
