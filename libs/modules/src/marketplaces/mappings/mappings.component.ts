@@ -118,16 +118,16 @@ export class MappingsComponent implements OnInit {
 
   /////////////////////////////////////////////////////////////////////////////////////
 
-  private displayedBrandsColumns: string[] = ['blank', 'id', 'avelonData', 'marketData'];
+  private displayedBrandsColumns: string[] = ['blank', 'avelonData', 'marketData'];
   //private dataSourceBrands: any;
 
-  private displayedColorsColumns: string[] = ['blank', 'id', 'avelonData', 'marketData'];
+  private displayedColorsColumns: string[] = ['blank', 'avelonData', 'marketData'];
   //private dataSourceColors: any;
 
-  private displayedSizesColumns: string[] = ['blank', 'id', 'avelonData', 'marketData'];
+  private displayedSizesColumns: string[] = ['blank', 'avelonData', 'marketData'];
   //private dataSourceSizes: any;
 
-  private displayedFeaturesColumns: string[] = ['blank', 'id', 'avelonData', 'marketData'];
+  private displayedFeaturesColumns: string[] = ['blank', 'avelonData', 'marketData'];
   //private dataSourceFeatures: any;
 
   private enumTypes = [];
