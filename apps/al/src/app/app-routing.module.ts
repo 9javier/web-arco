@@ -227,6 +227,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'print/product/list-products-carrier',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/page-list-products-carrier/page-list-products-carrier.module#PageListProductsCarrierModule',
+    data: {
+      name: 'Lista de Productos en Jaula'
+    }
+  },
+  {
     path: 'packing/transfer',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/transfer-packing/transfer-packing.module#TransferPackingModule',
