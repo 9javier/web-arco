@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import { MatTableDataSource } from '@angular/material';
@@ -14,7 +14,7 @@ export class MappingsComponent implements OnInit {
 
   /// DATOS ESTÁTICOS. BORRAR CUANDO LAS CONEXIONES CON KRACKONLINE, AVELON Y MIDDLEWARE/RULE-ENGINE ESTÉN LISTAS
   //  Brands
-  private dataSourceBrands = [
+  private dataSourceBrands: MatTableDataSource<any> = new MatTableDataSource([
     {
       id: 1,
       avelonData: {id: 1, name: 'ADIDAS SL'},
@@ -30,7 +30,7 @@ export class MappingsComponent implements OnInit {
       avelonData: {id: 3, name: 'ASICS'},
       marketData: {id: 3, name: 'ASICS'}
     }
-  ];
+  ]);
 
   private brandsList = [
     {id: 1, name: 'ADIDAS'},
@@ -40,54 +40,54 @@ export class MappingsComponent implements OnInit {
 
   // Colors
 
-  private dataSourceColors = [
+  private dataSourceColors: MatTableDataSource<any> = new MatTableDataSource([
     {
-      id: 1,
-      avelonData: {id: 1, name: 'AZUL'},
-      marketData: {id: 1, name: 'AZUL OSCURO'}
+      id: 4,
+      avelonData: {id: 4, name: 'AZUL'},
+      marketData: {id: 4, name: 'AZUL OSCURO'}
     },
     {
-      id: 2,
-      avelonData: {id: 2, name: 'ROJO'},
-      marketData: {id: 2, name: 'ROJO'}
+      id: 5,
+      avelonData: {id: 5, name: 'ROJO'},
+      marketData: {id: 5, name: 'ROJO'}
     },
     {
-      id: 3,
-      avelonData: {id: 3, name: 'AMARILLO'},
+      id: 6,
+      avelonData: {id: 6, name: 'AMARILLO'},
       marketData: {id: -1, name: null}
     }
-  ];
+  ]);
 
   private colorsList = [
-    {id: 1, name: 'AZUL OSCURO'},
-    {id: 2, name: 'ROJO'},
-    {id: 3, name: 'AMARILLO'}
+    {id: 4, name: 'AZUL OSCURO'},
+    {id: 5, name: 'ROJO'},
+    {id: 6, name: 'AMARILLO'}
   ];
 
   // Sizes
 
-  private dataSourceSizes = [
+  private dataSourceSizes: MatTableDataSource<any> = new MatTableDataSource([
     {
-      id: 1,
-      avelonData: {id: 1, name: '20'},
+      id: 7,
+      avelonData: {id: 7, name: '20'},
       marketData: {id: -1, name: null}
     },
     {
-      id: 2,
-      avelonData: {id: 2, name: '21'},
-      marketData: {id: 2, name: '38'}
+      id: 8,
+      avelonData: {id: 8, name: '21'},
+      marketData: {id: 8, name: '38'}
     },
     {
-      id: 3,
-      avelonData: {id: 3, name: '22'},
-      marketData: {id: 3, name: '39'}
+      id: 9,
+      avelonData: {id: 9, name: '22'},
+      marketData: {id: 9, name: '39'}
     }
-  ];
+  ]);
 
   private sizesList = [
-    {id: 1, name: '37'},
-    {id: 2, name: '38'},
-    {id: 3, name: '39'},
+    {id: 7, name: '37'},
+    {id: 8, name: '38'},
+    {id: 9, name: '39'},
   ];
 
   // Features
@@ -153,6 +153,7 @@ export class MappingsComponent implements OnInit {
   ngOnInit() {
     //this.getEntities();
     //this.getMaps();
+    this.saveMock();
   }
 
   getEntities() {
@@ -172,36 +173,219 @@ export class MappingsComponent implements OnInit {
         data.forEach(item => {
           switch(item.typeMapped) {
             case 3:
-              this.colorsList.push(item);
+              const dataColor = this.dataSourceColors.data;
+              dataColor.push({
+                id: item.id,
+                avelonData: {
+                  id: item.id,
+                  name: item.originDataId
+                },
+                marketData: {
+                  id: item.id,
+                  name: item.marketDataId
+                }
+              });
+              this.dataSourceColors.data = dataColor;
+              this.colorsList.push({
+                id: item.id,
+                name: item.marketDataId
+              });
               break;
             case 4:
-              this.sizesList.push(item);
+              const dataSize = this.dataSourceSizes.data;
+              dataSize.push({
+                id: item.id,
+                avelonData: {
+                  id: item.id,
+                  name: item.originDataId
+                },
+                marketData: {
+                  id: item.id,
+                  name: item.marketDataId
+                }
+              });
+              this.dataSourceSizes.data = dataSize;
+              this.sizesList.push({
+                id: item.id,
+                name: item.marketDataId
+              });
               break;
             case 5:
-              this.brandsList.push(item);
+              const dataBrand = this.dataSourceBrands.data;
+              dataBrand.push({
+                id: item.id,
+                avelonData: {
+                  id: item.id,
+                  name: item.originDataId
+                },
+                marketData: {
+                  id: item.id,
+                  name: item.marketDataId
+                }
+              });
+              this.dataSourceBrands.data = dataBrand;
+              this.brandsList.push({
+                id: item.id,
+                name: item.marketDataId
+              });
               break;
           }
         });
-        /*this.dataSourceColors = new MatTableDataSource(this.colorsList);
-        this.dataSourceSizes = new MatTableDataSource(this.sizesList);
-        this.dataSourceBrands = new MatTableDataSource(this.brandsList);
-        this.dataSourceFeatures = new MatTableDataSource(this.featuresList);*/
       } else {
-        console.log('error')
+        console.log('error get map data rules')
+        
       }
     })
   }
 
-  changeBrandSelect(e) {
-    console.log(e.value)
+  saveMock() {
+    this.dataSourceBrands.filteredData.forEach(item => {
+      this.brandsList.forEach(brand => {
+        if(item.id == brand.id) {
+          let brandMockToSave = {
+            id: item.id,
+            originDataId: item.avelonData.name,
+            marketDataId: brand.name,
+            typeMapped: 5,
+            marketId: 1,
+            aditionalMapInfo: 'more info'
+          };
+
+          this.marketplacesService.postMapDataRules(brandMockToSave).subscribe(data => {
+            console.log(data)
+          })
+        }
+      });
+    });
+
+    this.dataSourceColors.filteredData.forEach(item => {
+      this.colorsList.forEach(color => {
+        if(item.id == color.id) {
+          let colorsMockToSave = {
+            id: item.id,
+            originDataId: item.avelonData.name,
+            marketDataId: color.name,
+            typeMapped: 5,
+            marketId: 1,
+            aditionalMapInfo: 'more info'
+          };
+
+          this.marketplacesService.postMapDataRules(colorsMockToSave).subscribe(data => {
+            console.log(data)
+          })
+        }
+      });
+    });
+
+    this.dataSourceSizes.filteredData.forEach(item => {
+      this.sizesList.forEach(size => {
+        if(item.id == size.id) {
+          let sizesMockToSave = {
+            id: item.id,
+            originDataId: item.avelonData.name,
+            marketDataId: size.name,
+            typeMapped: 5,
+            marketId: 1,
+            aditionalMapInfo: 'more info'
+          };
+
+          this.marketplacesService.postMapDataRules(sizesMockToSave).subscribe(data => {
+            console.log(data)
+          })
+        }
+      });
+    });
   }
 
-  changeColorSelect(e) {
-    console.log(e.value)
+  changeBrandSelect(e, element) {
+
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceBrands.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.brandsList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId: marketData.name,
+      typeMapped: 5,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
   }
 
-  changeSizeSelect(e) {
-    console.log(e.value)
+  changeColorSelect(e, element) {
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceColors.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.colorsList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId: marketData.name,
+      typeMapped: 3,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
+  }
+
+  changeSizeSelect(e, element) {
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceSizes.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.sizesList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId: marketData.name,
+      typeMapped: 4,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+    
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
   }
 
   changeFeatureSelect(e) {
