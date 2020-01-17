@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 import { MatListModule } from '@angular/material/list';
-import { MatTableModule } from '@angular/material'  
+import {MatRadioModule, MatSelectModule, MatTableModule} from '@angular/material'
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { NewRuleComponent } from './new-rule/new-rule.component';
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -16,7 +17,10 @@ import { NewRuleComponent } from './new-rule/new-rule.component';
     IonicModule,
     MatListModule,
     MatTableModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSelectModule,
+    MatRadioModule,
+    FormsModule
   ], 
   entryComponents: [NewRuleComponent]
 })

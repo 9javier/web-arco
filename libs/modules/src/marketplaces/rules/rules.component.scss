@@ -5,9 +5,11 @@
   height: 100vh;
   align-items: center;
   justify-content: flex-start;
+  overflow-y: auto;
 
   & > mat-accordion {
     margin-top: 120px;
+    margin-bottom: 40px;
     width: 100%;
     --border: none;
 
@@ -75,83 +77,40 @@
         margin-right: -24px;
         display: flex;
         flex-direction: column;
-        max-height: 480px;
         min-height: 480px;
-        overflow-y: auto;
 
-        & > table {
-          width: 100%;
+        & > div {
+          max-height: 406px;
+          overflow-y: auto;
 
-          tr {
-            height: fit-content;
+          & > table {
+            width: 100%;
 
-            td {
-              padding: 5px 0!important;
-              font-size: 11px;
-              border-top: none;
-              border-bottom: none;
-              color: #000;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow-x: hidden;
-              text-align: left;
-              vertical-align: middle;
+            tr {
+              height: fit-content;
 
-              & > span {
-                padding: 8px;
-                background-color: #f5f4f6;
-                display: block;
-                height: 36px;
-
-                .capitalized-property {
-                  text-transform: capitalize;
-                }
-
-              }
-
-              &.mp-rules-table-name-column {
-                width: 35%;
-              }
-
-              &.mp-rules-table-filter-column {
-                width: 45%;
-              }
-
-              &.mp-rules-table-products-column {
-                width: 20%;
-              }
-
-              &.mp-rules-table-edit-column {
-                width: fit-content;
-
-                span {
-                  text-align: center;
-
-                  i {
-                    cursor: pointer;
-                    font-size: 11px;
-                    padding: 4px;
-                    color: #fff;
-                    background-color: #000;
-                  }
-
-                }
-
-              }
-
-            }
-
-            &:first-of-type {
-              th {
-                padding: 0!important;
+              td {
+                padding: 5px 0!important;
                 font-size: 11px;
-                padding-bottom: 2px!important;
-                color: #000;
+                border-top: none;
                 border-bottom: none;
+                color: #000;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+                text-align: left;
                 vertical-align: middle;
 
-                span {
+                & > span {
                   padding: 8px;
+                  background-color: #f5f4f6;
+                  display: block;
+                  height: 36px;
+
+                  .capitalized-property {
+                    text-transform: capitalize;
+                  }
+
                 }
 
                 &.mp-rules-table-name-column {
@@ -168,10 +127,57 @@
 
                 &.mp-rules-table-edit-column {
                   width: fit-content;
+
+                  span {
+                    text-align: center;
+
+                    i {
+                      cursor: pointer;
+                      font-size: 11px;
+                      padding: 4px;
+                      color: #fff;
+                      background-color: #000;
+                    }
+
+                  }
+
                 }
 
               }
+
+              &:first-of-type {
+                th {
+                  padding: 0!important;
+                  font-size: 11px;
+                  padding-bottom: 2px!important;
+                  color: #000;
+                  border-bottom: none;
+                  vertical-align: middle;
+
+                  span {
+                    padding: 8px;
+                  }
+
+                  &.mp-rules-table-name-column {
+                    width: 35%;
+                  }
+
+                  &.mp-rules-table-filter-column {
+                    width: 45%;
+                  }
+
+                  &.mp-rules-table-products-column {
+                    width: 20%;
+                  }
+
+                  &.mp-rules-table-edit-column {
+                    width: fit-content;
+                  }
+
+                }
+              }
             }
+
           }
 
         }

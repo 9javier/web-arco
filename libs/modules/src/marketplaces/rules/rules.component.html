@@ -13,25 +13,26 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <table mat-table [dataSource]="dataSourceCategories">
+        <div>
+          <table mat-table [dataSource]="dataSourceCategories">
 
-          <tr mat-header-row *matHeaderRowDef="displayedCategoriesColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedCategoriesColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedCategoriesColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedCategoriesColumns;"></tr>
 
-          <ng-container matColumnDef="name">
-            <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
-              <span>Nombre</span>
-            </th>
-            <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
-              <span>{{element.name}}</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="name">
+              <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
+                <span>Nombre</span>
+              </th>
+              <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
+                <span>{{element.name}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="categories">
-            <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-              <span>Categorías</span>
-            </th>
-            <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
+            <ng-container matColumnDef="categories">
+              <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
+                <span>Categorías</span>
+              </th>
+              <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
               <span>
                 <span *ngFor="let category of element.categories; let i = index">
                   <span *ngIf="i == 0" class="capitalized-property">{{category.name}},&nbsp;</span>
@@ -39,31 +40,32 @@
                   <span *ngIf="i == element.categories.length -1">{{category.name}}</span>
                 </span>
               </span>
-            </td>
-          </ng-container>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="products">
-            <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
-              <span></span>
-            </th>
-            <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
-              <span *ngIf="element.products == 1">{{element.products}} producto</span>
-              <span *ngIf="element.products != 1">{{element.products}} productos</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="products">
+              <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
+                <span></span>
+              </th>
+              <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
+                <span *ngIf="element.products == 1">{{element.products}} producto</span>
+                <span *ngIf="element.products != 1">{{element.products}} productos</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="edit">
-            <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
-              <span>Editar</span>
-            </th>
-            <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
+            <ng-container matColumnDef="edit">
+              <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
+                <span>Editar</span>
+              </th>
+              <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
               <span>
                 <i class="material-icons" (click)="editRule('category', element)">edit</i>
               </span>
-            </td>
-          </ng-container>
+              </td>
+            </ng-container>
 
-        </table>
+          </table>
+        </div>
         <button class="mp-rules-new-rule-button" (click)="openModalNewRule('category')">NUEVA REGLA</button>
       </div>
 
@@ -82,51 +84,53 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <table mat-table [dataSource]="dataSourcePrice">
+        <div>
+          <table mat-table [dataSource]="dataSourcePrice">
 
-          <tr mat-header-row *matHeaderRowDef="displayedPriceColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedPriceColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedPriceColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedPriceColumns;"></tr>
 
-          <ng-container matColumnDef="name">
-            <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
-              <span>Nombre</span>
-            </th>
-            <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
-              <span>{{element.name}}</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="name">
+              <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
+                <span>Nombre</span>
+              </th>
+              <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
+                <span>{{element.name}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="price">
-            <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-              <span>Precio mínimo</span>
-            </th>
-            <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-              <span>{{element.price}} €</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="price">
+              <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
+                <span>Precio mínimo</span>
+              </th>
+              <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
+                <span>{{element.price}} €</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="products">
-            <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
-              <span></span>
-            </th>
-            <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
-              <span *ngIf="element.products == 1">{{element.products}} producto</span>
-              <span *ngIf="element.products != 1">{{element.products}} productos</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="products">
+              <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
+                <span></span>
+              </th>
+              <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
+                <span *ngIf="element.products == 1">{{element.products}} producto</span>
+                <span *ngIf="element.products != 1">{{element.products}} productos</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="edit">
-            <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
-              <span>Editar</span>
-            </th>
-            <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
+            <ng-container matColumnDef="edit">
+              <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
+                <span>Editar</span>
+              </th>
+              <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
               <span>
                 <i class="material-icons" (click)="editRule('price', element)">edit</i>
               </span>
-            </td>
-          </ng-container>
+              </td>
+            </ng-container>
 
-        </table>
+          </table>
+        </div>
         <button class="mp-rules-new-rule-button" (click)="openModalNewRule('price')">NUEVA REGLA</button>
       </div>
 
@@ -145,51 +149,53 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <table mat-table [dataSource]="dataSourceStocks">
+        <div>
+          <table mat-table [dataSource]="dataSourceStocks">
 
-          <tr mat-header-row *matHeaderRowDef="displayedStocksColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedStocksColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedStocksColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedStocksColumns;"></tr>
 
-          <ng-container matColumnDef="name">
-            <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
-              <span>Nombre</span>
-            </th>
-            <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
-              <span>{{element.name}}</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="name">
+              <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
+                <span>Nombre</span>
+              </th>
+              <td class="mp-rules-table-name-column" mat-cell *matCellDef="let element">
+                <span>{{element.name}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="stock">
-            <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-              <span>Stock de seguridad</span>
-            </th>
-            <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-              <span>{{element.stock}}</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="stock">
+              <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
+                <span>Stock de seguridad</span>
+              </th>
+              <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
+                <span>{{element.stock}}</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="products">
-            <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
-              <span></span>
-            </th>
-            <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
-              <span *ngIf="element.products == 1">{{element.products}} producto</span>
-              <span *ngIf="element.products != 1">{{element.products}} productos</span>
-            </td>
-          </ng-container>
+            <ng-container matColumnDef="products">
+              <th class="mp-rules-table-products-column" mat-header-cell *matHeaderCellDef>
+                <span></span>
+              </th>
+              <td class="mp-rules-table-products-column" mat-cell *matCellDef="let element">
+                <span *ngIf="element.products == 1">{{element.products}} producto</span>
+                <span *ngIf="element.products != 1">{{element.products}} productos</span>
+              </td>
+            </ng-container>
 
-          <ng-container matColumnDef="edit">
-            <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
-              <span>Editar</span>
-            </th>
-            <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
+            <ng-container matColumnDef="edit">
+              <th class="mp-rules-table-edit-column" mat-header-cell *matHeaderCellDef>
+                <span>Editar</span>
+              </th>
+              <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
               <span>
                 <i class="material-icons" (click)="editRule('stock', element)">edit</i>
               </span>
-            </td>
-          </ng-container>
+              </td>
+            </ng-container>
 
-        </table>
+          </table>
+        </div>
         <button class="mp-rules-new-rule-button" (click)="openModalNewRule('stock')">NUEVA REGLA</button>
       </div>
     </mat-expansion-panel>

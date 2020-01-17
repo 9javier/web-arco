@@ -1,56 +1,120 @@
 <ion-header>
-  <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-          <ion-button (click)="close()">
-              <ion-icon name="close" class="toogleArrow"></ion-icon>
-          </ion-button>
-      </ion-buttons>
-  </ion-toolbar>
+  <div class="cp-modal-header-wrapper">
+    <div>
+      {{numberOfProducts}}&nbsp;
+      <span *ngIf="numberOfProducts.length == 1"> producto seleccionado</span>
+      <span *ngIf="numberOfProducts.length != 1"> productos seleccionados</span>
+    </div>
+    <div (click)="close();">
+      X
+    </div>
+  </div>
 </ion-header>
-<ion-content color="light">
-  <ion-select class="select" value="family" okText="Okay" cancelText="Dismiss">
-    <ion-select-option value="family">Familia</ion-select-option>
-  </ion-select>
+<ion-content>
+  <div class="nr-modal-body-wrapper">
+    <div class="nr-modal-content">
+      <div class="nr-filter-selection-wrapper">
+        <div class="rule-filter-category" *ngIf="ruleFilterType == 'category'">
+          <div>
+            <i class="material-icons">search</i>
+          </div>
+          <div>
+            <div>
+              <mat-select (selectionChange)="changeSelectedCategoryFilter($event)" [value]="2">
+                <mat-option *ngFor="let item of categoryList" [value]="item.id">
+                  {{item.name}}
+                </mat-option>
+              </mat-select>
+            </div>
+            <div>
+              <div *ngFor="let category of selectedCategoryFilter.items">
+                <span *ngIf="mode == 'edit' && !rule.categories.includes(category)">{{category.name}}</span>
+                <span class="bold-category" *ngIf="mode == 'edit' && rule.categories.includes(category)">{{category.name}}</span>
+                <span *ngIf="mode == 'create'">{{category.name}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rule-filter-price" *ngIf="ruleFilterType == 'price'">
+          <input matInput type="text" placeholder="Precio mínimo" [(ngModel)]="minPriceFilter"/>
+        </div>
+        <div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
+          <input matInput type="text" placeholder="Stock de seguridad" [(ngModel)]="stockFilter"/>
+        </div>
+      </div>
+      <div class="nr-filter-selected-wrapper">
+        <div>Filtro</div>
+        <div class="nr-filter-list">
+          Familia: mujer, descripción: botas, Color: blanco
+        </div>
+        <div>
+          {{numberOfProducts}}&nbsp;
+          <span *ngIf="numberOfProducts.length == 1"> producto seleccionado</span>
+          <span *ngIf="numberOfProducts.length != 1"> productos seleccionados</span>
+        </div>
+      </div>
+      <div class="nr-action-selection-wrapper">
+        <div>Acción</div>
+        <mat-radio-group [name]="'Acción'" [value]="action" [(ngModel)]="action">
+          <mat-radio-button [value]="'activation'">Activar</mat-radio-button>
+          <mat-radio-button [value]="'categories'">Añadir categorías</mat-radio-button>
+          <mat-radio-button [value]="'stock'">Restar stock</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="nr-action-selected-wrapper">
+        <div class="action-categories" *ngIf="action == 'categories'">
+          <div>Seleccionar categorías destino</div>
+          <div>
+            <div>
+              <div>&nbsp;</div>
+              <div>ID</div>
+              <div>Nombre</div>
+            </div>
+            <div>
+              <div *ngFor="let category of destinationCategories">
+                <div>
+                  <ion-checkbox></ion-checkbox>
+                </div>
+                <div>
+                  {{category.id}}
+                </div>
+                <div>
+                  {{category.name}}
+                </div>
+              </div>
+            </div>
 
-  <mat-list role="list" class="categories-list">
-    <mat-list-item role="listitem">Item 1</mat-list-item>
-    <mat-list-item role="listitem">Item 2</mat-list-item>
-    <mat-list-item role="listitem">Item 3</mat-list-item>
-  </mat-list>
-
-  <div class="filter-area">
-    <span>Filtro</span>
-    <p class="tag-area">Familia: mujer, descripción: botas, color: blanco</p> 
-    <span class="product-quantity-tag">57 productos seleccionados</span>
+          </div>
+        </div>
+        <div class="action-stock" *ngIf="action == 'stock'">
+          <div>Indicar stock a restar</div>
+          <input matInput type="text" placeholder="Stock a restar" [(ngModel)]="stockToReduce"/>
+        </div>
+        <div *ngIf="action == 'activation'">
+          &nbsp;
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="categories">
-    <span>Seleccionar categorias destino</span>
-
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-      <ng-container matColumnDef="check">
-        <th mat-header-cell *matHeaderCellDef>  </th>
-        <td mat-cell *matCellDef="let element"> <mat-checkbox></mat-checkbox> </td>
-      </ng-container>
-
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> ID </th>
-        <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Nombre </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
-
-  <div class="create-footer">
-    <span>3 categorias seleccionadas</span>
-    <button class="buttonCreate" (click)="createRule()">CREAR REGLA</button>
-  </div>
-
 </ion-content>
+<ion-footer>
+  <div class="nr-modal-buttons-wrapper">
+    <div class="nr-selected-action-description">
+        <span *ngIf="action == 'categories'">
+          {{selectedDestinationCategories.length}}&nbsp;
+          <span *ngIf="selectedDestinationCategories.length == 1">categoría seleccionada</span>
+          <span *ngIf="selectedDestinationCategories.length != 1">categorías seleccionadas</span>
+        </span>
+      <span *ngIf="action == 'stock'">
+        Stock a reducir:&nbsp;
+        <span *ngIf="stockToReduce">{{stockToReduce}}</span>
+        <span *ngIf="!stockToReduce">0</span>
+        </span>
+      <span *ngIf="action == 'activation'">
+
+        </span>
+    </div>
+    <div *ngIf="mode == 'create'" class="nr-rule-button" (click)="createRule()">CREAR REGLA</div>
+    <div *ngIf="mode == 'edit'" class="nr-rule-button" (click)="createRule()">EDITAR REGLA</div>
+  </div>
+</ion-footer>

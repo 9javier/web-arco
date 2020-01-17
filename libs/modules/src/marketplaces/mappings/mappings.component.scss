@@ -5,9 +5,11 @@
   height: 100vh;
   align-items: center;
   justify-content: flex-start;
+  overflow-y: auto;
 
   & > mat-accordion {
     margin-top: 120px;
+    margin-bottom: 40px;
     width: 100%;
     --border: none;
 
@@ -74,76 +76,38 @@
         margin-left: -32px;
         margin-right: -24px;
 
-        & > table {
+        & > div {
           width: 50%;
+          max-height: 444px;
+          overflow-y: auto;
+          & > table {
+            width: 100%;
 
-          tr {
-            height: 34px;
+            tr {
+              height: 34px;
 
-            td {
-              padding: 0!important;
-              width: 45%;
-              font-size: 11px;
-              border-top: none;
-              border-bottom: none;
-              border-right: 1px solid #c7c8ce;
-              background-color: #f5f4f6;
-              color: #000;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow-x: hidden;
-              text-align: center;
-              vertical-align: middle;
-
-              &.mp-mapping-blank-column {
-                padding: 0 5px!important;
-                width: fit-content;
-                border-right: none;
-                margin-bottom: 0;
-                background-color: #fff;
-
-              }
-
-              &.mp-mapping-id-column {
-                width: 10%;
-              }
-
-            }
-
-            &:first-of-type {
-              th {
+              td {
                 padding: 0!important;
                 width: 45%;
                 font-size: 11px;
-                font-weight: 600;
+                border-top: none;
                 border-bottom: none;
                 border-right: 1px solid #c7c8ce;
-                vertical-align: top;
-
-                span {
-                  background-color: #f5f4f6;
-                  margin-bottom: 24px;
-                  display: block;
-                  padding: 9px;
-                  text-align: center;
-                  color: #000;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  overflow-x: hidden;
-                  font-weight: 500;
-                }
+                background-color: #f5f4f6;
+                color: #000;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+                text-align: center;
+                vertical-align: middle;
 
                 &.mp-mapping-blank-column {
-                  padding: 2px 5px!important;
+                  padding: 0 5px!important;
                   width: fit-content;
                   border-right: none;
                   margin-bottom: 0;
-                  display: flex;
+                  background-color: #fff;
 
-                  i {
-                    margin-top: 42px;
-                    opacity: .5;
-                  }
                 }
 
                 &.mp-mapping-id-column {
@@ -151,9 +115,52 @@
                 }
 
               }
-            }
-          }
 
+              &:first-of-type {
+                th {
+                  padding: 0!important;
+                  width: 45%;
+                  font-size: 11px;
+                  font-weight: 600;
+                  border-bottom: none;
+                  border-right: 1px solid #c7c8ce;
+                  vertical-align: top;
+
+                  span {
+                    background-color: #f5f4f6;
+                    margin-bottom: 24px;
+                    display: block;
+                    padding: 9px;
+                    text-align: center;
+                    color: #000;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow-x: hidden;
+                    font-weight: 500;
+                  }
+
+                  &.mp-mapping-blank-column {
+                    padding: 2px 5px!important;
+                    width: fit-content;
+                    border-right: none;
+                    margin-bottom: 0;
+                    display: flex;
+
+                    i {
+                      margin-top: 42px;
+                      opacity: .5;
+                    }
+                  }
+
+                  &.mp-mapping-id-column {
+                    width: 10%;
+                  }
+
+                }
+              }
+            }
+
+          }
         }
 
       }

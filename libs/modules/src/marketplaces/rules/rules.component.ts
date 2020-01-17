@@ -36,7 +36,8 @@ export class RulesComponent implements OnInit {
           name: 'todo mujer'
         }
       ],
-      products: 3655
+      products: 3655,
+      action: 'categories'
     },
     {
       id: 2,
@@ -63,7 +64,8 @@ export class RulesComponent implements OnInit {
           name: 'todo hombre'
         }
       ],
-      products: 3655
+      products: 3655,
+      action: 'stock'
     },
     {
       id: 3,
@@ -90,7 +92,8 @@ export class RulesComponent implements OnInit {
           name: 'kids outlet'
         }
       ],
-      products: 3655
+      products: 3655,
+      action: 'categories'
     }
   ];
 
@@ -101,19 +104,22 @@ export class RulesComponent implements OnInit {
       id: 1,
       name: 'Mayores de 100 €',
       price: 100,
-      products: 343
+      products: 343,
+      action: 'activation'
     },
     {
       id: 2,
       name: 'Mayores de 300 €',
       price: 300,
-      products: 343
+      products: 343,
+      action: 'activation'
     },
     {
       id: 3,
       name:  'Mayores de 433.99 €',
       price: 433.99,
-      products: 343
+      products: 343,
+      action: 'activation'
     }
   ];
 
@@ -123,17 +129,20 @@ export class RulesComponent implements OnInit {
     {
       name: 'Stock mayor que 30',
       stock: 30,
-      products: 7894
+      products: 7894,
+      action: 'stock'
     },
     {
       name: 'Stock mayor que 58',
       stock: 58,
-      products: 2344
+      products: 2344,
+      action: 'activation'
     },
     {
       name: 'Stock mayor que 25',
       stock: 25,
-      products: 9665
+      products: 9665,
+      action: 'categories'
     }
   ];
 
