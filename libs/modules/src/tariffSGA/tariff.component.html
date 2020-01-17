@@ -32,7 +32,8 @@
             </th>
             <td mat-cell *matCellDef="let tariff">
               <mat-form-field>
-                <input matInput [disabled]="processing" matTooltip="{{tariff?.activeFromChange | date:'dd/MM/yyyy'}}" [matDatepicker]="pickerStart" placeholder="Fecha Inicio" [value]="getDate(tariff?.activeFrom)" (dateChange)="changeDateStart($event, tariff)">
+                <mat-icon matPrefix *ngIf="tariff?.activeFromChange" class="icon-date">replay</mat-icon>
+                <input matInput [disabled]="processing" matTooltip="{{getTooltipFromChange(tariff)}}" [matDatepicker]="pickerStart" placeholder="Fecha SGA" [value]="getDate(tariff?.activeFrom)" (dateChange)="changeDateStart($event, tariff)">
                 <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
                 <mat-datepicker #pickerStart [disabled]="processing"></mat-datepicker>
               </mat-form-field>
@@ -45,7 +46,8 @@
             </th>
             <td mat-cell *matCellDef="let tariff">
               <mat-form-field>
-                <input matInput [disabled]="processing" matTooltip="{{tariff?.activeTillChange | date:'dd/MM/yyyy'}}" [matDatepicker]="pickerEnd" placeholder="Fecha Fin" [value]="getDate(tariff?.activeTill)" (dateChange)="changeDateEnd($event, tariff)">
+                <mat-icon matPrefix  *ngIf="tariff?.activeTillChange" class="icon-date">replay</mat-icon>
+                <input matInput [disabled]="processing" matTooltip="{{getTooltipTillChange(tariff)}}" [matDatepicker]="pickerEnd" placeholder="Fecha SGA" [value]="getDate(tariff?.activeTill)" (dateChange)="changeDateEnd($event, tariff)">
                 <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
                 <mat-datepicker #pickerEnd [disabled]="processing"></mat-datepicker>
               </mat-form-field>

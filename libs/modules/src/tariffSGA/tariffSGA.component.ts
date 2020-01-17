@@ -11,6 +11,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { TariffUpdateFilterPriceComponent } from './tariff-update-filter-price/tariff-update-filter-price.component';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'suite-tariff',
@@ -378,5 +379,27 @@ export class TariffSGAComponent implements OnInit {
       activeTillChange: tariff.activeTill
     };
     this.tariffsUpdate.push(object);
+  }
+
+  getTooltipFromChange(tariff: any) {
+    console.log('GET TOOLTIP FROM CHANGE');
+    console.log(tariff);
+    if (tariff && tariff.change && tariff.activeFromChange) {
+      const date = formatDate(new Date(tariff.activeFromChange), 'dd/MM/yyyy', 'es');
+      return `Fecha Avelon: ${date}`;
+    }
+
+    return;
+  }
+
+  getTooltipTillChange(tariff: any) {
+    console.log('GET TOOLTIP TILL CHANGE');
+    console.log(tariff);
+    if (tariff && tariff.change && tariff.activeTillChange) {
+      const date = formatDate(new Date(tariff.activeTillChange), 'dd/MM/yyyy', 'es');
+      return `Fecha Avelon: ${date}`;
+    }
+
+    return;
   }
 }

@@ -9,7 +9,7 @@ import {
   MatTableModule,
   MatPaginatorModule,
   MatFormFieldModule,
-  MatDatepickerModule, MatInputModule, MatTooltipModule
+  MatDatepickerModule, MatInputModule, MatTooltipModule, MatIconModule
 } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
@@ -40,7 +40,8 @@ const routes:Routes = [
     MatFormFieldModule,
     MatDatepickerModule,
     MatInputModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatIconModule
   ],
   entryComponents: [
     TariffUpdateFilterPriceComponent
