@@ -1430,7 +1430,7 @@ public class ScanditSDK extends CordovaPlugin {
       }
 
       if (listSizesToPrint != null && listSizesToPrint.length > 0) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MatrixPrintTags.matrixPrintTags);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityStarted);
         builder.setTitle(title);
         builder.setItems(listSizesToPrint, (dialogInterface, i) -> {
           JSONObject jsonObject = new JSONObject();

@@ -400,7 +400,8 @@ export class PricesComponent implements OnInit {
       icon: 'qr-scanner',
       label: 'Escáner',
       action: async () => {
-        this.tariffPricesScanditService.init();
+        let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+        this.tariffPricesScanditService.init(warehouseId, this.tariffId);
       }
     }];
     this.toolbarProvider.optionsActions.next(buttons);

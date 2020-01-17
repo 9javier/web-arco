@@ -100,7 +100,7 @@ public class MatrixTariffPricesActivity extends Activity {
     arrowBack.setOnClickListener(v -> exitFromAuditMultiple(false));
 
     tvActionToUser = findViewById(resources.getIdentifier("tvActionToUser", "id", package_name));
-    changeNoticeBubble("Escanea el embalaje a revisar", NOTICE_BUBBLE_ACTION);
+    changeNoticeBubble("Escanea el artículo a imprimir", NOTICE_BUBBLE_ACTION);
 
     matrixAuditMultipleActivity = this;
     ScanditSDK.setActivityStarted(matrixAuditMultipleActivity);
