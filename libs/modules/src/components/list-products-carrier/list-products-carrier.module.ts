@@ -12,10 +12,13 @@ import {
 } from '@angular/material';
 import { PaginatorComponentModule } from '../paginator/paginator.component.module';
 import { PopoverFiltersModule } from '../../audits-mobile/sccaner-product/popover-filters/popover-filters.module';
+import { TagsInputModule } from '../tags-inputag/tags-input.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FiltersListComponent } from './filters-list/filters-list.component';
 
 @NgModule({
-  entryComponents: [ListProductsCarrierComponent],
-  declarations: [ListProductsCarrierComponent],
+  entryComponents: [ListProductsCarrierComponent, FiltersListComponent],
+  declarations: [ListProductsCarrierComponent, FiltersListComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -26,7 +29,9 @@ import { PopoverFiltersModule } from '../../audits-mobile/sccaner-product/popove
     MatListModule,
     MatIconModule,
     MatButtonModule,
-    PopoverFiltersModule
+    PopoverFiltersModule,
+    TagsInputModule,
+    ReactiveFormsModule
   ],
   exports: [ListProductsCarrierComponent]
 })

@@ -144,8 +144,6 @@ export class PricesComponent implements OnInit {
     private popoverController: PopoverController
   ) {
     this.route.queryParams.subscribe(params => {
-      console.log('PARAMS');
-      console.log(params);
       if (params && params.name) {
         this.tariffName = JSON.parse(params.name);
       }

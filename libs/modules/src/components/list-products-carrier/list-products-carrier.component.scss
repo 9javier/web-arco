@@ -80,6 +80,14 @@ div.content {
         mat-icon.not-audit {
           color: var(--ion-color-warning-shade);
         }
+
+        h3, p {
+          padding-left: 40px !important;
+        }
+
+        .text-reference {
+          position: absolute;
+        }
       }
     }
     mat-list.product-list-smaller {
@@ -91,5 +99,12 @@ div.content {
       top: 8px;
       right: 8px;
     }
+  }
+}
+
+ion-footer {
+  padding-right: 5px;
+  ion-button {
+    width: 100%;
   }
 }

@@ -2,121 +2,41 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { RequestsProvider } from '../../../providers/requests/requests.provider';
+import { environment } from '@suite/services';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListProductsCarrierService {
-
+  private urlPackingShow = '/packing/show';
+  private getAllFiltersUrl = '/packing/show/entities';
   constructor(
     private http: HttpClient,
     private requestsProvider: RequestsProvider
   ) { }
 
-  getProducts():Observable<any>{
-    const dataReturn = [
-      {
-        product: {
-          reference: '001280160650399954',
-          model: {
-            reference: '12801',
-            brand: {
-              name: 'KRACK NAME 1'
-            }
-          },
-          size: {
-            name: '35'
-          }
-        },
-        audit: {
-          isAudit: true,
-          hasSorter: false,
-          incidence: true,
-          rightAudit: false
-        },
-        destinyProduct: {
-          reference: 'REFERENCE0001',
-          name: 'NAME001'
-        }
-      },
-      {
-        product: {
-          reference: '001280260650399954',
-          model: {
-            reference: '12802',
-            brand: {
-              name: 'KRACK NAME 2'
-            }
-          },
-          size: {
-            name: '40'
-          }
-        },
-        audit: {
-          isAudit: true,
-          hasSorter: false,
-          incidence: true,
-          rightAudit: false
-        },
-        destinyProduct: {
-          reference: 'REFERENCE0002',
-          name: 'NAME002'
-        }
-      },
-      {
-        product: {
-          reference: '001280360650399954',
-          model: {
-            reference: '12803',
-            brand: {
-              name: 'KRACK NAME 3'
-            }
-          },
-          size: {
-            name: '38'
-          }
-        },
-        audit: {
-          isAudit: true,
-          hasSorter: false,
-          incidence: true,
-          rightAudit: false
-        },
-        destinyProduct: {
-          reference: 'REFERENCE0003',
-          name: 'NAME003'
-        }
-      },
-      {
-        product: {
-          reference: '001280460650399954',
-          model: {
-            reference: '12804',
-            brand: {
-              name: 'KRACK NAME 4'
-            }
-          },
-          size: {
-            name: '43'
-          }
-        },
-        audit: {
-          isAudit: true,
-          hasSorter: false,
-          incidence: true,
-          rightAudit: false
-        },
-        destinyProduct: {
-          reference: 'REFERENCE0004',
-          name: 'NAME004'
-        }
+  getProducts(carrierReference: string, data = null):Observable<any>{
+    return this.http.post(environment.apiBase + this.urlPackingShow, {
+      reference: carrierReference,
+      "products": data ? data.products : [],
+      "warehouses": data ? data.warehouses : [],
+      "orderBy": data ? data.orderby ? {
+        "type": data.orderby.type,
+        "order": data.orderby.order
+      } : {
+        "type":1,
+        "order": "asc"
+      } : {
+        "type":1,
+        "order": "asc"
       }
-    ];
+    }).pipe();
+  }
 
-    return new Observable(observer => {
-      setTimeout(() => {
-        observer.next({ data: dataReturn});
-      }, 1000);
-    });
+  getAllFilters(body: any):Observable<any>{
+    return this.http.post(environment.apiBase + this.getAllFiltersUrl, body).pipe(map((response:any)=>{
+      return response.data;
+    }));
   }
 }

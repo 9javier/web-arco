@@ -16,7 +16,7 @@ export class PageListProductsCarrierComponent implements OnInit {
   async openComponent() {
     let modal = (await this.modalController.create({
       component: ListProductsCarrierComponent,
-      componentProps: { carrier: 'J0005'}
+      componentProps: { carrierReference: 'J0005'}
     }));
 
     modal.onDidDismiss().then((response) => {
