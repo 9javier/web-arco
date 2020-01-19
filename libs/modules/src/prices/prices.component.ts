@@ -1,3 +1,4 @@
+import { SliderComponent } from './components/slider/slider.component';
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
@@ -12,14 +13,14 @@ import {
 } from '@suite/services';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
-import {AlertController, NavParams, PopoverController} from '@ionic/angular';
+import { AlertController, NavParams, PopoverController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { Range } from './interfaces/range.interface';
-import {PricesRangePopoverComponent} from "./prices-range-popover/prices-range-popover.component";
-import {PricesRangePopoverProvider} from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
+import { PricesRangePopoverComponent } from "./prices-range-popover/prices-range-popover.component";
+import { PricesRangePopoverProvider } from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
 
 @Component({
   selector: 'suite-prices',
@@ -33,12 +34,13 @@ export class PricesComponent implements OnInit {
 
   filterTypes: Array<PriceModel.StatusType> = [];
   pricesDeleted: Array<PriceModel.Price> = [];
-
+  minPrices: number = 0;
+  maxPrices: number = 1000;
   warehouses: Array<any> = [];
   pagerValues: Array<number> = [50, 100, 500];
-
+  tariffName: '';
   page: number = 0;
-  public itemIdSelected : any = [];
+  public itemIdSelected: any = [];
 
   limit: number = this.pagerValues[0];
 
@@ -131,17 +133,22 @@ export class PricesComponent implements OnInit {
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
-    private cd : ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
     private alertController: AlertController,
     private popoverCtrl: PopoverController,
-    public pricesRangePopoverProvider: PricesRangePopoverProvider
+    public pricesRangePopoverProvider: PricesRangePopoverProvider,
+    private popoverController: PopoverController
   ) {
-
+    this.route.queryParams.subscribe(params => {
+      if (params && params.name) {
+        this.tariffName = JSON.parse(params.name);
+      }
+    });
   }
 
-  getTotalStock(price : PriceModel.Price) : number{
-    let stock : number = 0;
-    if(price.stockStore) {
+  getTotalStock(price: PriceModel.Price): number {
+    let stock: number = 0;
+    if (price.stockStore) {
       for (let stockStore of price.stockStore) {
         stock += stockStore.cantidad;
       }
@@ -149,8 +156,8 @@ export class PricesComponent implements OnInit {
     return stock;
   }
 
-  switchPrintAllStock(){
-   this.printAllStock = !this.printAllStock;
+  switchPrintAllStock() {
+    this.printAllStock = !this.printAllStock;
   }
 
   /**
@@ -238,7 +245,7 @@ export class PricesComponent implements OnInit {
   }
 
   // Item seleccionados
-  itemSelected(item){
+  itemSelected(item) {
     const index = this.itemIdSelected.indexOf(item, 0);
     if (index > -1) {
       this.itemIdSelected.splice(index, 1);
@@ -247,7 +254,7 @@ export class PricesComponent implements OnInit {
     }
   }
 
-  changeStatusImpress(){
+  changeStatusImpress() {
     this.prices.forEach((price) => {
       if (this.itemIdSelected.includes(price.id)) {
         price.status = 4;
@@ -299,7 +306,7 @@ export class PricesComponent implements OnInit {
       if (items[i].status == 3 || items[i].status == 7) {
         let priceDeleted: any = items[i];
         let object = {
-          warehouseId: this.isStoreUser ? this.storeUserObj.id: null,
+          warehouseId: this.isStoreUser ? this.storeUserObj.id : null,
           modelId: priceDeleted.model.id,
           numRange: priceDeleted.numRange
         };
@@ -336,9 +343,9 @@ export class PricesComponent implements OnInit {
 
     let prices = [];
 
-    for(let i = 0; i < this.selectedForm.value.toSelect.length; i++){
-      if(this.selectedForm.value.toSelect[i] && items[i].status != 3){
-        if(this.printAllStock) {
+    for (let i = 0; i < this.selectedForm.value.toSelect.length; i++) {
+      if (this.selectedForm.value.toSelect[i] && items[i].status != 3) {
+        if (this.printAllStock) {
           for (let j = 0; j < items[i].stockStore.length; j++) {
             prices.push({
               warehouseId: warehouseId,
@@ -347,7 +354,7 @@ export class PricesComponent implements OnInit {
               numRange: items[i].numRange
             });
           }
-        }else{
+        } else {
           prices.push({
             warehouseId: warehouseId,
             tariffId: items[i].tariff.id,
@@ -449,7 +456,9 @@ export class PricesComponent implements OnInit {
       this.models = filters.models;
       this.families = filters.families;
       this.lifestyles = filters.lifestyles;
-      this.priceses = filters.prices
+      this.priceses = filters.prices;
+      this.minPrices = this.priceses.min;
+      this.maxPrices = this.priceses.max;
       this.form.patchValue({
         prices: filters.prices
       })
@@ -572,7 +581,7 @@ export class PricesComponent implements OnInit {
     this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
       this.form.patchValue({
-        prices:{
+        prices: {
           min: this.pricesRangePopoverProvider.minValueSelected,
           max: this.pricesRangePopoverProvider.maxValueSelected
         }
@@ -595,8 +604,8 @@ export class PricesComponent implements OnInit {
       size: 0,
       tariffId: 0,
       prices: {
-        min:0,
-        max:1000
+        min: 0,
+        max: 1000
       },
       pagination: this.formBuilder.group({
         page: this.page || 1,
@@ -633,8 +642,8 @@ export class PricesComponent implements OnInit {
 
   async presentAlertConfirm(warehouseId: number, items) {
     const num = this.pricesDeleted.length;
-    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
-    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
+    const messageSingular = `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
+    const messagePlural = `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
     const alert = await this.alertController.create({
       header: '¡Confirmar!',
       message: num > 1 ? messagePlural : messageSingular,
@@ -644,11 +653,11 @@ export class PricesComponent implements OnInit {
           handler: () => {
             this.printPricesWithDeleted(warehouseId, items);
           }
-        },{
+        }, {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {}
+          handler: () => { }
         }
       ]
     });
@@ -689,5 +698,32 @@ export class PricesComponent implements OnInit {
 
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
+  }
+
+  async presentPopover(ev: any) {
+    const popover = await this.popoverController.create({
+      component: SliderComponent,
+      event: ev,
+      translucent: true,
+      mode: 'ios',
+      cssClass: 'custom-popover',
+      componentProps: {
+        params: { min: this.priceses.min, max: this.priceses.max },
+        values: { min: this.minPrices, max: this.maxPrices }
+
+      }
+    });
+    popover.onDidDismiss().then(data => {
+      this.minPrices = data.data.min;
+      this.maxPrices = data.data.max;
+      this.form.patchValue({
+        prices: {
+          min: data.data.min,
+          max: data.data.max
+        }
+      })
+
+    })
+    return await popover.present();
   }
 }

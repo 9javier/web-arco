@@ -26,6 +26,7 @@ export class CarrierService {
   private postSealsList = environment.apiBase+"/packing/seal-lista";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
+  private postVaciarCalle = environment.apiBase+'/packing/empty';
 
   constructor(
     private http:HttpClient,
@@ -41,6 +42,7 @@ export class CarrierService {
       return response.data;
     }));
   }
+  
 
   getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{
@@ -52,6 +54,17 @@ export class CarrierService {
   postSealList(reference:string[]){
     let body={reference};
     return this.http.post(this.postSealsList,body)
+  }
+
+  // TODO Nuove Service Calle Vacia
+  /**
+   * @author Gaetano Sabino
+   * @description recibe referencia o id Jaula de una Jaula para vaciar Jaula 
+   * @param id number o string
+   */
+  postPackingEmpty(id:number | string){
+    let body = {packingIdOrReference:id}
+    return this.requestsProvider.post(this.postVaciarCalle,body)
   }
 
   getPackingTypes(){

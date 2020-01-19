@@ -7,11 +7,32 @@ export namespace PredistributionModel {
   export interface Predistribution {
     id?: number;
     warehouse?: Warehouse;
-    article?: Product;
-    date_service: string;
+    article?: string;
+    date_service?: string;
     distribution?: boolean;
     reserved?: boolean;
   }
+  export interface DataSource {
+    filters: Array<Filters>
+    pagination: Pagination,
+    results: Array<any>
+  }
+  interface Filters { 
+    id: number, 
+    name: string 
+  }
+
+
+  interface Pagination {
+    firstPage: number,
+    lastPage: number,
+    limit: number,
+    selectPage: number,
+    totalResults: number
+  }
+
+  
+
   export interface ResponseIndex {
     data: Predistribution[];
   }
@@ -38,4 +59,23 @@ export namespace PredistributionModel {
     message: string;
     code: number;
   }
+   export interface IndexRequest {
+    references: Array<number | string>,
+    wharehouses: Array<number | string>,
+    providers: Array<number | string>,
+    brands: Array<number | string>,
+    colors: Array<number | string>,
+    sizes: Array<number | string>,
+    orderBy: OrderBy
+    pagination: Pagination
+   }
+   interface Pagination {
+    page:number;
+    limit:number;
+   }
+
+   interface OrderBy {
+    type:number,
+    order:string
+   }
 }

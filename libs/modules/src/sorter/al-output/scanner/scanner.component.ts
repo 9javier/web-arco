@@ -5,7 +5,7 @@ import {ItemReferencesProvider} from "../../../../../services/src/providers/item
 import { GlobalVariableService, GlobalVariableModel, IntermediaryService } from "@suite/services";
 import { OutputSorterModel } from "../../../../../services/src/models/endpoints/OutputSorter";
 import { ProductSorterModel } from "../../../../../services/src/models/endpoints/ProductSorter";
-import { AlertController } from "@ionic/angular";
+import { AlertController, ModalController } from "@ionic/angular";
 import { ExecutionSorterModel } from "../../../../../services/src/models/endpoints/ExecutionSorter";
 import { HttpRequestModel } from "../../../../../services/src/models/endpoints/HttpRequest";
 import { SorterExecutionService } from "../../../../../services/src/lib/endpoint/sorter-execution/sorter-execution.service";
@@ -17,6 +17,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { WaySorterModel } from 'libs/services/src/models/endpoints/WaySorter';
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 import {Events} from "@ionic/angular";
+import { CarrierService } from '../../../../../services/src/lib/endpoint/carrier/carrier.service';
+import { ListasProductosComponent } from 'libs/modules/src/picking-manual/lista/listas-productos/listas-productos.component';
 
 @Component({
   selector: 'sorter-output-scanner',
@@ -75,12 +77,14 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     private alertController: AlertController,
     private intermediaryService: IntermediaryService,
     private sorterExecutionService: SorterExecutionService,
-    public sorterProvider: SorterProvider,
+    public  sorterProvider: SorterProvider,
     private sorterOutputService: SorterOutputService,
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
-    public events: Events,
+    private carrier: CarrierService,
+    public  events: Events,
+    private modalCtrl: ModalController,
     private globalVariableService: GlobalVariableService,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -131,14 +135,52 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
     }, 500);
   }
 
-  async keyUpInput(event) {
+
+  private async modalList(productos:any[], jaula:string, data:any){
+    let modal = await this.modalCtrl.create({
+      
+      component: ListasProductosComponent,
+      componentProps: {
+        productos,
+        jaula,
+        data
+      }
+      
+    })
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+      if(data.data === undefined && data.role === undefined){
+        this.focusToInput();
+        return;
+      }
+      
+      if(data.data && data.role === undefined){
+        if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
+          // console.log('passo di qui ',this.lastCodeScanned);
+          
+          this.focusToInput();
+          this.inputValue = data.data;
+          this.ultimaReferenza = data.data;
+          // this.processInitiated = false;
+          this.keyUpInput(KeyboardEvent['KeyCode'] = 13,true);
+          return;
+        }else if(data.role === 'navigate'){
+          this.focusToInput();
+        }
+      }
+      
+    })
+    modal.present();
+  }
+
+  async keyUpInput(event?,test = false) {
     let dataWrote = (this.inputValue || "").trim();
     
     // TODO Utima referenza 
     this.ultimaReferenza = dataWrote;
     // console.log(this.ultimaReferenza);
     
-    if (event.keyCode === 13 && dataWrote) {
+    if (event.keyCode === 13 || test && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
         this.inputValue = null;
         this.focusToInput();
@@ -159,9 +201,15 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           await this.intermediaryService.presentToastError('Código de producto erróneo.');
           this.focusToInput();
         } else {
-          console.log('passa di qui');
+          // console.log('passa di qui');
+          this.carrier.getSingle(dataWrote).subscribe(data => {
+            if(data.packingInventorys.length > 0 && !test){
+              this.modalList(data.packingInventorys,dataWrote,data)
+            }else{
+              this.assignPackingToProcess(dataWrote);
+            }
+          })
           
-          this.assignPackingToProcess(dataWrote);
         }
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (this.processStarted && this.infoSorterOperation.packingReference) {

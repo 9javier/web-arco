@@ -199,6 +199,10 @@ export * from './print-relabel-packing/print-relabel-packing.module';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.component';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.module';
 
+/**List Product Carrier*/
+export * from './page-list-products-carrier/page-list-products-carrier.component';
+export * from './page-list-products-carrier/page-list-products-carrier.module';
+
 /**Group picking */
 export * from './group-warehouse-picking/group-warehouse-picking.component';
 export * from './group-warehouse-picking/group-warehouse-picking.module';

@@ -38,6 +38,8 @@ import { SorterInfoWayEmptyingComponent } from "./ways-emptying/info-way/info-wa
 import { ScannerRackComponent } from './al-input/scanner-rack/scanner-rack.component';
 import {MatrixOutputSorterComponent} from "./al-output/matrix-output/matrix-output.component";
 import { HideKeyboardModule } from 'hide-keyboard';
+import { ListaModule } from '../picking-manual/lista/lista.module';
+import { ListasProductosComponent } from '../picking-manual/lista/listas-productos/listas-productos.component';
 
 const routes: Routes = [
   {
@@ -138,6 +140,7 @@ const routes: Routes = [
     SorterInfoWayEmptyingComponent,
     MatrixOutputSorterComponent
   ],
+  entryComponents:[ListasProductosComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -156,7 +159,8 @@ const routes: Routes = [
     CommonUiCrudModule,
     RacksModule,
     MatExpansionModule,
-    HideKeyboardModule
+    HideKeyboardModule,
+    ListaModule
   ]
 })
 export class SorterModule { }

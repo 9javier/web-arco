@@ -343,6 +343,12 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
+        },
+        {
+          title: 'Listado de productos en Jaula',
+          id: 'list-products-carrier',
+          url: '/print/product/list-products-carrier',
+          icon: 'list'
         }
       ]
     },

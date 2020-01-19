@@ -15,7 +15,7 @@
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
-        <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goPrices(row.tariffId)"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="goPrices(row)"></tr>
 
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="name">
