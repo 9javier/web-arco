@@ -50,31 +50,31 @@ export class ListasProductosComponent implements OnInit {
       this.modalControler.dismiss(this.jaula);
     }else{
       this.modalControler.dismiss();
-
     }
   };
 
   async navigate(ruta:string){
     console.log(ruta);
-
     this.route.navigateByUrl(ruta);
-    this.modalControler.dismiss(ruta,'navigate')
+    this.modalControler.dismiss(ruta,'navigate');
     
   }
 
   async vaciar(){
     // TODO llamar el metodo vaciarCalle
     this.intermediaryService.presentLoading();
+    
     await this.carrierService.postPackingEmpty(this.jaula).then(res => {
       if(res.code === 200){
         this.audioProvider.playDefaultOk();
         this.intermediaryService.presentToastSuccess(`La Jaula ${this.jaula} se ha vaciado corectamente`);
-      }
-      if(res.code !== 200){
+        this.intermediaryService.dismissLoading();
+        this.modalControler.dismiss(this.jaula);
+      }else{
+        this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
         this.intermediaryService.presentToastError(res.errors);
       }
-      this.intermediaryService.dismissLoading();
 
     }).catch(error => {
       this.intermediaryService.dismissLoading();

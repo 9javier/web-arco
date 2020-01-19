@@ -26,7 +26,7 @@ export class CarrierService {
   private postSealsList = environment.apiBase+"/packing/seal-lista";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
-  private postVaciarCalle = environment.apiBase+'/packing/carrierProductIncidence';
+  private postVaciarCalle = environment.apiBase+'/packing/empty';
 
   constructor(
     private http:HttpClient,
@@ -63,7 +63,7 @@ export class CarrierService {
    * @param id number o string
    */
   postPackingEmpty(id:number | string){
-    let body = {reference:id}
+    let body = {packingIdOrReference:id}
     return this.requestsProvider.post(this.postVaciarCalle,body)
   }
 
