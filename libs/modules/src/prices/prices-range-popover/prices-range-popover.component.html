@@ -1,0 +1,14 @@
+<div>
+  <p>PRECIOS</p>
+  <ion-range
+    [min]="pricesRangePopover.minValue" [max]="pricesRangePopover.maxValue"
+    dualKnobs="true" pin="true"
+    snaps="true" step="1"
+    ticks="true" [value]="{lower: pricesRangePopover.minValueSelected, upper: pricesRangePopover.maxValueSelected }"
+    color="primary"
+    (ionChange)="rangeChange($event)"
+  >
+    <ion-label slot="start">{{pricesRangePopover.minValue}}</ion-label>
+    <ion-label slot="end">{{pricesRangePopover.maxValue}}</ion-label>
+  </ion-range>
+</div>

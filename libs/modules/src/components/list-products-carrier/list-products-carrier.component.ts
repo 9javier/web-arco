@@ -51,7 +51,7 @@ export class ListProductsCarrierComponent implements OnInit {
 
   private async getProducts(data = null) {
     await this.intermediaryService.presentLoading();
-    this.listProductsCarrierService.getProducts(this.carrierReference, data).subscribe(async (res: any) => {
+    await this.listProductsCarrierService.getProducts(this.carrierReference, data).subscribe(async (res: any) => {
       if (res.data.results && res.data.results.length > 0) {
         this.packingProducts = res.data.results[0].packingInventorys;
       } else {
@@ -74,6 +74,23 @@ export class ListProductsCarrierComponent implements OnInit {
 
     popover.onDidDismiss().then(async (res) => {
       if (res.data) {
+        const arrayProducts = [];
+        const arrayWarehouses = [];
+
+        Object.keys(res.data.items.products).map(function(key){
+          arrayProducts.push(res.data.items.products[key].value);
+          return arrayProducts;
+        });
+
+        res.data.items.products = arrayProducts;
+
+        Object.keys(res.data.items.warehouses).map(function(key){
+          arrayWarehouses.push(res.data.items.warehouses[key].value);
+          return arrayWarehouses;
+        });
+
+        res.data.items.warehouses = arrayWarehouses;
+
         await this.getProducts(res.data.items);
         this.form = res.data.form;
       }

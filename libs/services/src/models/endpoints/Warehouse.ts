@@ -29,6 +29,11 @@ export namespace WarehouseModel {
     code: number;
   }
 
+  export interface WarehouseAndSizeId {
+    warehouse: number;
+    size: number;
+  }
+
   export interface ResponseShow {
     data: Warehouse;
   }

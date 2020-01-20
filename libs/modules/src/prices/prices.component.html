@@ -194,36 +194,19 @@
                 <ion-row>
                   <ion-col size="6">
                     <ion-label>Talla:</ion-label>
-                    <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes" multiple="true">
+                    <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes"
+                      multiple="true">
                     </suite-tags-input>
                   </ion-col>
                   <ion-col size="6">
-                    <ion-label>Rango de precios</ion-label>
-                    <ion-item (click)="presentPopover($event)">
-                      <ion-label>{{minPrices}}  -  {{maxPrices}}</ion-label>
+                    <ion-label>Precios</ion-label>
+                    <ion-item (click)="showPricesPopover($event)">
+                      <ion-label>
+                        {{pricesRangePopoverProvider.minValueSelected}} -
+                        {{pricesRangePopoverProvider.maxValueSelected}} <span>€</span>
+                      </ion-label>
                     </ion-item>
-                    <!-- <div class="ion-margin-vertical ion-margin-horizontal ion-text-center">
-                      <ion-label>{{minPrices}}  -  {{maxPrices}}</ion-label>
-                    </div> -->
                   </ion-col>
-                </ion-row>
-                <ion-row>
-                  <!-- <ion-col size="12">
-                    <div class="ion-text-center">
-                      <ion-label>Precios</ion-label>
-                    </div>
-                    <ion-range
-                      [min]="priceses.min" [max]="priceses.max"
-                      dualKnobs="true" pin="true"
-                      snaps="true" step="1"
-                      ticks="true" [value]="{lower: minPrices, upper: maxPrices}"
-                      color="primary"
-                      (ionChange)="rangeChange($event)"
-                      >
-                        <ion-label slot="start">{{priceses.min}}</ion-label>
-                        <ion-label slot="end">{{priceses.max}}</ion-label>
-                    </ion-range>
-                  </ion-col> -->
                 </ion-row>
                 <ion-row>
                   <ion-col class="btn-remove" size="6">
@@ -248,8 +231,7 @@
                 <ion-grid>
                   <ion-row class="custom-panel-header">
                     <ion-col size="1" class="check-print">
-                      <ion-checkbox
-                        [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
                         (click)="$event.stopPropagation();itemSelected(price.id);">
                       </ion-checkbox>
                     </ion-col>
