@@ -151,6 +151,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       if(data.data === undefined && data.role === undefined){
         this.focusToInput();
         return;
+        // TODO prova commit
+        
       }
 
       if(data.data && data.role === undefined){
