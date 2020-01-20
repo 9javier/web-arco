@@ -1,0 +1,48 @@
+<form [formGroup]="form">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Producto:</ion-label>
+        <suite-tags-input placeholder="Producto" [options]="products" formControlName="products"
+                          multiple="true"></suite-tags-input>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Almacén:</ion-label>
+        <suite-tags-input placeholder="Almacén" [options]="warehouses" formControlName="warehouses" multiple="true">
+        </suite-tags-input>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col size="6">
+        <ion-label>Tipo:</ion-label>
+        <ion-item formGroupName="orderby" lines="none">
+          <ion-select formControlName="type" interface="popover">
+            <ion-select-option value="1">Producto</ion-select-option>
+            <ion-select-option value="2">Almacén</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col size="6">
+        <ion-label>Orden:</ion-label>
+        <ion-item formGroupName="orderby">
+          <ion-select formControlName="order" interface="popover">
+            <ion-select-option value="asc">Asc</ion-select-option>
+            <ion-select-option value="desc">Desc</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="btn-remove" size="6">
+        <ion-button (click)="clearFilters()">
+          Borra Filtros
+        </ion-button>
+      </ion-col>
+      <ion-col class="btn-apply" size="6">
+        <ion-button (click)="applyFilters()">
+          Aplicar Filtros
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</form>

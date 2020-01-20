@@ -68,7 +68,7 @@ export class IntermediaryService {
    * launch loading
    * @param message - the message to be showed in loading
    */
-  async presentLoading(message:string = ""){
+  async presentLoading(message:string = "", callback: () => any = ()=>{}){
     if(!this.loading){
       this.loading = true;
       this.loadingCtrl.create({
@@ -76,8 +76,12 @@ export class IntermediaryService {
       }).then(loading=>{
         loading.present().then(()=>{
           this.created = true;
-          if(!this.loading)
+          if(callback && typeof callback == 'function'){
+            callback();
+          }
+          if(!this.loading){
             this.dismissLoading();
+          }
         });
       })
     }

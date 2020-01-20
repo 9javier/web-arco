@@ -12,6 +12,10 @@ export namespace PickingStoreModel {
     packingReferences: string[]
   }
 
+  export interface ProductReference {
+    reference: string
+  }
+
   export interface SendProcess {
     productReference: string,
     filters: ParamsFiltered

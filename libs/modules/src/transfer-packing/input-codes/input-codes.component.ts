@@ -127,7 +127,11 @@ export class InputCodesComponent implements OnInit {
           } else {
             this.hideLoading();
             this.audioProvider.playDefaultError();
-            this.intermediaryService.presentToastError('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', PositionsToast.BOTTOM).then(() => {
+            let errorMsg = 'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.';
+            if (res.errors) {
+              errorMsg = res.errors;
+            }
+            this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
               setTimeout(() => {
                 document.getElementById('input-ta').focus();
               },500);
@@ -136,8 +140,11 @@ export class InputCodesComponent implements OnInit {
         }, (error) => {
           this.hideLoading();
           this.audioProvider.playDefaultError();
-          console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
-          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', PositionsToast.BOTTOM).then(() => {
+          let errorMsg = 'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.';
+          if (error.error && error.error.errors) {
+            errorMsg = error.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
             setTimeout(() => {
               document.getElementById('input-ta').focus();
             },500);
@@ -146,8 +153,11 @@ export class InputCodesComponent implements OnInit {
         .catch((error) => {
           this.hideLoading();
           this.audioProvider.playDefaultError();
-          console.error('Error::Subscribe:carriersService::postTransferAmongPackings::', error);
-          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.', PositionsToast.BOTTOM).then(() => {
+          let errorMsg = 'Ha ocurrido un error al intentar realizar el traspaso de productos entre embalajes.';
+          if (error.error && error.error.errors) {
+            errorMsg = error.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
             setTimeout(() => {
               document.getElementById('input-ta').focus();
             },500);

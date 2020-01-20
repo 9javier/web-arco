@@ -35,6 +35,9 @@ export * from './groups/groups.module';
 export * from './products/products.component';
 export * from './products/products.module';
 
+export * from './ventilation-no-sorter/ventilation-no-sorter.component';
+export * from './ventilation-no-sorter/ventilation-no-sorter.module';
+
 export * from './products-al/products-al.component';
 export * from './products-al/products-al.module';
 
@@ -196,6 +199,10 @@ export * from './print-relabel-packing/print-relabel-packing.module';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.component';
 export * from './print-relabel-packing-manual/print-relabel-packing-manual.module';
 
+/**List Product Carrier*/
+export * from './page-list-products-carrier/page-list-products-carrier.component';
+export * from './page-list-products-carrier/page-list-products-carrier.module';
+
 /**Group picking */
 export * from './group-warehouse-picking/group-warehouse-picking.component';
 export * from './group-warehouse-picking/group-warehouse-picking.module';
@@ -239,6 +246,10 @@ export * from './components/filter-popover/filter-popover.module';
 /** Transfer Packing */
 export * from './transfer-packing/transfer-packing.component';
 export * from './transfer-packing/transfer-packing.module';
+
+/** Transfer Ventilation */
+export * from './transfer-ventilation/transfer-ventilation.component';
+export * from './transfer-ventilation/transfer-ventilation.module';
 
 /** Toolbar AL */
 export * from './components/toolbar-al/toolbar-al.component';

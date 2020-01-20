@@ -60,59 +60,60 @@ export class InputCodesComponent implements OnInit {
       this.inputProduct = null;
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
-        await this.intermediaryService.presentLoading();
-        this.carriersService
-          .postSeal({
-            reference: dataWrote
-          })
-          .then((res: CarrierModel.ResponseSeal) => {
-            this.intermediaryService.dismissLoading();
-            if (res.code === 200) {
-              this.audioProvider.playDefaultOk();
-              this.intermediaryService.presentToastPrimary('El embalaje se ha precintado correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM).then(() => {
-                setTimeout(() => {
-                  document.getElementById('input-ta').focus();
-                },500);
-              });
-            } else {
-              if (res.code === 404) {
-                this.audioProvider.playDefaultError();
-                let errorMsg = res && res.error && res.error.errors ? res.error.errors : res.errors;
-                this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
+        this.intermediaryService.presentLoading("Precintando embalaje...", ()=>{
+          this.carriersService
+            .postSeal({
+              reference: dataWrote
+            })
+            .then((res: CarrierModel.ResponseSeal) => {
+              this.intermediaryService.dismissLoading();
+              if (res.code === 200) {
+                this.audioProvider.playDefaultOk();
+                this.intermediaryService.presentToastPrimary('El embalaje se ha precintado correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM).then(() => {
                   setTimeout(() => {
                     document.getElementById('input-ta').focus();
                   },500);
                 });
               } else {
-                this.audioProvider.playDefaultError();
-                let errorMsg = res && res.error && res.error.errors ? res.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
-                this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
-                  setTimeout(() => {
-                    document.getElementById('input-ta').focus();
-                  },500);
-                });
+                if (res.code === 404) {
+                  this.audioProvider.playDefaultError();
+                  let errorMsg = res && res.error && res.error.errors ? res.error.errors : res.errors;
+                  this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
+                    setTimeout(() => {
+                      document.getElementById('input-ta').focus();
+                    },500);
+                  });
+                } else {
+                  this.audioProvider.playDefaultError();
+                  let errorMsg = res && res.error && res.error.errors ? res.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+                  this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
+                    setTimeout(() => {
+                      document.getElementById('input-ta').focus();
+                    },500);
+                  });
+                }
               }
-            }
-          }, (error) => {
-            this.intermediaryService.dismissLoading();
-            this.audioProvider.playDefaultError();
-            let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
-            this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
-              setTimeout(() => {
-                document.getElementById('input-ta').focus();
-              },500);
+            }, (error) => {
+              this.intermediaryService.dismissLoading();
+              this.audioProvider.playDefaultError();
+              let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+              this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
+                setTimeout(() => {
+                  document.getElementById('input-ta').focus();
+                },500);
+              });
+            })
+            .catch((error) => {
+              this.intermediaryService.dismissLoading();
+              this.audioProvider.playDefaultError();
+              let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
+              this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
+                setTimeout(() => {
+                  document.getElementById('input-ta').focus();
+                },500);
+              });
             });
-          })
-          .catch((error) => {
-            this.intermediaryService.dismissLoading();
-            this.audioProvider.playDefaultError();
-            let errorMsg = error && error.error && error.error.errors ? error.error.errors : 'Ha ocurrido un error al intentar precintar el recipiente.';
-            this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
-              setTimeout(() => {
-                document.getElementById('input-ta').focus();
-              },500);
-            });
-          });
+        });
       } else {
         this.audioProvider.playDefaultError();
         this.intermediaryService.presentToastError('El código escaneado no es válido para la operación que se espera realizar.', PositionsToast.BOTTOM).then(() => {

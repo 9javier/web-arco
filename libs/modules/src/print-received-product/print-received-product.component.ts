@@ -27,7 +27,7 @@ export class PrintReceivedProductComponent implements OnInit {
   ngOnInit() {
     this.route.url.subscribe((url: any )=> {
       if (url && url.length > 0 && url[0].path == 'scandit') {
-        if (url[1].path) {
+        if (url[1].path === 'true') {
           this.presentSnackbar('Nuevos productos para la tienda detectados.', 'VER');
         }
 

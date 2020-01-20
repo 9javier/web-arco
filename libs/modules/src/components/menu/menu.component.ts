@@ -343,6 +343,12 @@ export class MenuComponent implements OnInit {
           id: 'print-product-manual',
           url: '/print/product/relabel',
           icon: 'barcode'
+        },
+        {
+          title: 'Listado de productos en Jaula',
+          id: 'list-products-carrier',
+          url: '/print/product/list-products-carrier',
+          icon: 'list'
         }
       ]
     },
@@ -482,6 +488,26 @@ export class MenuComponent implements OnInit {
           id: 'send-empty-packing',
           url: '/sendEmptyPacking',
           icon: 'send'
+        }
+      ]
+    },
+    {
+      title: 'Picking y Ventilación',
+      open: false,
+      type: 'wrapper',
+      icon: 'grid',
+      children: [
+        {
+          title: 'Ventilación de traspasos',
+          id: 'ventilation-transfer',
+          url: '/ventilation/transfer',
+          icon: 'swap'
+        },
+        {
+          title: 'Ventilación sin Sorter',
+          id: 'ventilation-no-sorter',
+          url: '/ventilation-no-sorter',
+          icon: 'aperture'
         }
       ]
     },
