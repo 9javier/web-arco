@@ -586,6 +586,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         if (res.code == 201) {
           this.destiniesWithPacking[this.destinyCodeToGetPacking] = packingReferenceToSet;
           await this.intermediaryService.presentToastSuccess(`El artículo se ha asignado al embalaje ${packingReferenceToSet}`, 4 * 1000, 'bottom');
+          this.resetLastScanProcess();
+          this.audioProvider.playDefaultOk();
         } else {
           this.audioProvider.playDefaultError();
           let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;
@@ -594,7 +596,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           }
           await this.intermediaryService.presentToastError(errorMessage, 'bottom');
         }
-        this.resetLastScanProcess();
       })
       .catch(async (error) => {
         console.log('Test::catch', error);
@@ -605,7 +606,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           errorMessage = error.error.errors;
         }
         await this.intermediaryService.presentToastError(errorMessage, 'bottom');
-        this.resetLastScanProcess();
       });
   }
 
