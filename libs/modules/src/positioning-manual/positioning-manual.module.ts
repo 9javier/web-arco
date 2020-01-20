@@ -10,6 +10,8 @@ import { TextareaComponent } from "./textarea/textarea.component";
 import { HideKeyboardModule } from 'hide-keyboard';
 import { ListasProductosComponent } from '../picking-manual/lista/listas-productos/listas-productos.component';
 import { ListaModule } from '../picking-manual/lista/lista.module';
+import { ListProductsCarrierModule } from '../components/list-products-carrier/list-products-carrier.module';
+import { ListProductsCarrierComponent } from '../components/list-products-carrier/list-products-carrier.component';
 
 @NgModule({
   declarations: [PositioningManualComponent, TextareaComponent],
@@ -24,8 +26,9 @@ import { ListaModule } from '../picking-manual/lista/lista.module';
     FormsModule,
     MatGridListModule,
     HideKeyboardModule,
-    ListaModule
+    ListaModule,
+    ListProductsCarrierModule
   ],
-  entryComponents: [PositioningManualComponent, TextareaComponent, ListasProductosComponent]
+  entryComponents: [PositioningManualComponent, TextareaComponent, ListasProductosComponent, ListProductsCarrierComponent]
 })
 export class PositioningManualModule { }

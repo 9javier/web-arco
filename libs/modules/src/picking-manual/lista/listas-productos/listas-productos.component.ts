@@ -20,7 +20,7 @@ export class ListasProductosComponent implements OnInit {
     {name:'Talla',   size:"2"},
     {name:'Color',   size:"3"}
   ]
-  
+
 
   constructor(
     private modalControler: ModalController,
@@ -57,13 +57,13 @@ export class ListasProductosComponent implements OnInit {
     console.log(ruta);
     this.route.navigateByUrl(ruta);
     this.modalControler.dismiss(ruta,'navigate');
-    
+
   }
 
   async vaciar(){
     // TODO llamar el metodo vaciarCalle
-    this.intermediaryService.presentLoading();
-    
+    await this.intermediaryService.presentLoading();
+
     await this.carrierService.postPackingEmpty(this.jaula).then(res => {
       if(res.code === 200){
         this.audioProvider.playDefaultOk();

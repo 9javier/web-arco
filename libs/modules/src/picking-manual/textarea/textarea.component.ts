@@ -22,6 +22,7 @@ import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.se
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListasProductosComponent } from '../lista/listas-productos/listas-productos.component';
+import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 
 @Component({
   selector: 'suite-textarea',
@@ -110,14 +111,12 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  private async modalList(productos:any[], jaula:string, data:any){
+  private async modalList( jaula:string){
     let modal = await this.modalCtrl.create({
       
-      component: ListasProductosComponent,
+      component: ListProductsCarrierComponent,
       componentProps: {
-        productos,
-        jaula,
-        data
+        carrierReference:jaula
       }
       
     })
@@ -173,7 +172,7 @@ export class TextareaComponent implements OnInit {
           if(data.packingInventorys.length > 0 && !prova){
             // console.log('abre modal');
             // console.log(data);
-            this.modalList(data.packingInventorys,this.lastCodeScanned,data);
+            this.modalList(this.lastCodeScanned);
           }else{
             console.log('no tiene lista');
             if (this.listProducts.length !== 0) {
