@@ -79,6 +79,14 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param priceData
+   */
+  loadPriceInfo: function (successCallback, priceData) {
+    exec(successCallback, null, PLUGIN_NAME, "loadPriceInfo", [priceData]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color

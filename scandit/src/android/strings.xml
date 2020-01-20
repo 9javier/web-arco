@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">### Krack Logística</string>
+    <string name="launcher_name">@string/app_name</string>
+    <string name="activity_name">@string/launcher_name</string>
+    <string name="ejemplo">Ejemplo</string>
+    <string name="estado">Estado:</string>
+    <string name="mensaje_de_ejemplo">Mensaje de ejemplo</string>
+    <string name="familia">Familia:</string>
+    <string name="estilo">Estilo:</string>
+    <string name="unidades">Unidades:</string>
+    <string name="talla">Talla:</string>
+    <string name="precio">Precio:</string>
+    <string name="marca">Marca:</string>
+    <string name="referencia">Referencia:</string>
+    <string name="imprimir">Imprimir</string>
+</resources>

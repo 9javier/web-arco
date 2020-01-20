@@ -131,6 +131,7 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String SET_TIMEOUT = "setTimeout";
   private static final String MATRIX_INIT_AUDIT_MULTIPLE = "matrixInitAuditMultiple";
   private static final String MATRIX_INIT_TARIFF_PRICES = "matrixInitTariffPrices";
+  private static final String LOAD_PRICE_INFO = "loadPriceInfo";
   private static final String WRONG_CODE_AUDIT_MULTIPLE = "wrongCodeAuditMultiple";
   private static final String CHANGE_NOTICE_AUDIT_MULTIPLE = "changeNoticeAuditMultiple";
   private static final String LAUNCH_SOUND = "launchSound";
@@ -1692,6 +1693,25 @@ public class ScanditSDK extends CordovaPlugin {
       Intent intent = new Intent(this.cordova.getActivity(), MatrixTariffPricesActivity.class);
       intent.putExtras(b);
       this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_TARIFF_PRICES);
+    }else if (action.equals(LOAD_PRICE_INFO)) {
+
+      String[] priceData = new String[9];
+      try {
+        JSONArray data = args.getJSONArray(0);
+        for(int i = 0; i < data.length(); i++){
+          priceData[i] = data.getString(i);
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          LinearLayout layout = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("PriceInfo", "id", packageName));
+          MatrixTariffPricesActivity.loadPriceInfo(layout, priceData);
+        }
+      });
     } else if (action.equals(WRONG_CODE_AUDIT_MULTIPLE)) {
       if (!alertAlreadyShowed) {
         alertAlreadyShowed = true;
