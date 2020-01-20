@@ -10,6 +10,7 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListasProductosComponent } from '../../picking-manual/lista/listas-productos/listas-productos.component';
 import { CarrierService } from '../../../../services/src/lib/endpoint/carrier/carrier.service';
+import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 
 @Component({
   selector: 'suite-textarea',
@@ -73,7 +74,7 @@ export class TextareaComponent implements OnInit {
   private async modalList(jaula:string){
     let modal = await this.modalCtrl.create({
 
-      component: ListasProductosComponent,
+      component: ListProductsCarrierComponent,
       componentProps: {
         carrierReference:jaula
       }
