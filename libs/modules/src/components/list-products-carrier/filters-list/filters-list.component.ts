@@ -12,7 +12,7 @@ import { ListProductsCarrierService } from '../../../../../services/src/lib/endp
 export class FiltersListComponent implements OnInit {
 
   /**Filters */
-  products: Array<TagsInputOption> = [];
+  products = [];
   warehouses: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
 
@@ -93,8 +93,21 @@ export class FiltersListComponent implements OnInit {
 
   getFilters() {
     this.listProductsCarrierService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
-      this.products = filters.products;
-      this.warehouses = filters.warehouses;
+      const arrayProducts = [];
+      const arrayWarehouse = [];
+
+      Object.keys(filters.products).map(function(key){
+        arrayProducts.push({'display': filters.products[key].name, 'value': filters.products[key].id});
+        return arrayProducts;
+      });
+      this.products = arrayProducts;
+
+      Object.keys(filters.warehouses).map(function(key){
+        arrayWarehouse.push({'display': filters.warehouses[key].name, 'value': filters.warehouses[key].id});
+        return arrayWarehouse;
+      });
+
+      this.warehouses = arrayWarehouse;
     });
   }
 }
