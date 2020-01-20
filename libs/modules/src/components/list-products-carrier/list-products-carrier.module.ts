@@ -15,6 +15,7 @@ import { PopoverFiltersModule } from '../../audits-mobile/sccaner-product/popove
 import { TagsInputModule } from '../tags-inputag/tags-input.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FiltersListComponent } from './filters-list/filters-list.component';
+import { TagInputModule } from 'ngx-chips';
 
 @NgModule({
   entryComponents: [ListProductsCarrierComponent, FiltersListComponent],
@@ -31,7 +32,8 @@ import { FiltersListComponent } from './filters-list/filters-list.component';
     MatButtonModule,
     PopoverFiltersModule,
     TagsInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TagInputModule
   ],
   exports: [ListProductsCarrierComponent]
 })
