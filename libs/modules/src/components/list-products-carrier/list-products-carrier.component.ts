@@ -45,7 +45,7 @@ export class ListProductsCarrierComponent implements OnInit {
 
   private async getProducts(data = null) {
     await this.intermediaryService.presentLoading();
-    this.listProductsCarrierService.getProducts(this.carrierReference, data).subscribe(async (res: any) => {
+    await this.listProductsCarrierService.getProducts(this.carrierReference, data).subscribe(async (res: any) => {
       if (res.data.results && res.data.results.length > 0) {
         this.packingProducts = res.data.results[0].packingInventorys;
       } else {

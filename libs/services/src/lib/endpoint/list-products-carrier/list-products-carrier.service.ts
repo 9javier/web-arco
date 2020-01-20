@@ -17,20 +17,33 @@ export class ListProductsCarrierService {
   ) { }
 
   getProducts(carrierReference: string, data = null):Observable<any>{
-    return this.http.post(environment.apiBase + this.urlPackingShow, {
-      reference: carrierReference,
-      "products": data ? data.products : [],
-      "warehouses": data ? data.warehouses : [],
-      "orderBy": data ? data.orderby ? {
+    let products = [];
+    if (data && data.products) {
+      products = data.products;
+    }
+
+    let warehouses = [];
+    if (data && data.warehouses) {
+      warehouses = data.warehouses;
+    }
+
+    let orderBy = {
+      "type": 1,
+      "order": "asc"
+    };
+
+    if (data && data.orderby) {
+      orderBy = {
         "type": data.orderby.type,
         "order": data.orderby.order
-      } : {
-        "type":1,
-        "order": "asc"
-      } : {
-        "type":1,
-        "order": "asc"
-      }
+      };
+    }
+
+    return this.http.post(environment.apiBase + this.urlPackingShow, {
+      reference: carrierReference,
+      "products": products,
+      "warehouses": warehouses,
+      "orderBy": orderBy
     }).pipe();
   }
 
