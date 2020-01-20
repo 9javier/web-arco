@@ -120,6 +120,11 @@ ion-content {
             font-size: 14px;
             width: 100%;
             padding: 5px 10px;
+
+            &.incorrect-input-value {
+              color: #f00;
+            }
+
           }
 
         }
@@ -132,6 +137,10 @@ ion-content {
             font-size: 14px;
             width: 100%;
             padding: 5px 10px;
+
+            &.incorrect-input-value {
+              color: #f00;
+            }
           }
         }
 
@@ -281,6 +290,9 @@ ion-content {
             font-size: 14px;
             width: 100%;
             padding: 5px 10px;
+            &.incorrect-input-value {
+              color: #f00;
+            }
           }
         }
 

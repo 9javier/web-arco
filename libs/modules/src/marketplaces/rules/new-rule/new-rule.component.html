@@ -20,7 +20,7 @@
           </div>
           <div>
             <div>
-              <mat-select (selectionChange)="changeselectedCategoryGroupFilter($event)" [(ngModel)]="selectedCategoryGroupFilter">
+              <mat-select (selectionChange)="changeSelectedCategoryGroupFilter($event)" [(ngModel)]="selectedCategoryGroupFilter">
                 <mat-option *ngFor="let item of categoryList" [value]="item.id">
                   {{item.name}}
                 </mat-option>
@@ -35,10 +35,10 @@
           </div>
         </div>
         <div class="rule-filter-price" *ngIf="ruleFilterType == 'price'">
-          <input matInput type="text" placeholder="Precio mínimo" [(ngModel)]="minPriceFilter" (keydown)="formatCurrency($event);" (blur)="formatCurrency($event)"/>
+          <input matInput #priceInput type="text" placeholder="Precio mínimo" [ngClass]="formatCurrency() ? '' : 'incorrect-input-value'" [(ngModel)]="minPriceFilter" (keydown)="checkEnterKeyPriceInput($event);" (blur)="blurCurrencyInput()"/>
         </div>
         <div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
-          <input matInput type="text" placeholder="Stock de seguridad" [(ngModel)]="stockFilter"/>
+          <input matInput #stockInput type="text" placeholder="Stock de seguridad" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockFilter" (keydown)="checkEnterKeyStockInput($event);" (blur)="blurStockInput()"/>
         </div>
       </div>
       <div class="nr-filter-selected-wrapper">
@@ -54,7 +54,7 @@
       </div>
       <div class="nr-action-selection-wrapper">
         <div>Acción</div>
-        <mat-radio-group [name]="'Acción'" [value]="action" [(ngModel)]="action">
+        <mat-radio-group [name]="'Acción'" [value]="action" [(ngModel)]="action" (ngModelChange)="actionChange()">
           <mat-radio-button [value]="'activation'">Activar</mat-radio-button>
           <mat-radio-button [value]="'categories'">Añadir categorías</mat-radio-button>
           <mat-radio-button [value]="'stock'">Restar stock</mat-radio-button>
@@ -70,9 +70,9 @@
               <div>Nombre</div>
             </div>
             <div>
-              <div *ngFor="let category of destinationCategories">
+              <div *ngFor="let category of destinationCategoriesCopy">
                 <div>
-                  <ion-checkbox></ion-checkbox>
+                  <ion-checkbox [checked]="checkCategorySelected(category)" (ionChange)="selectCategoryRow(category)"></ion-checkbox>
                 </div>
                 <div>
                   {{category.id}}
@@ -87,7 +87,7 @@
         </div>
         <div class="action-stock" *ngIf="action == 'stock'">
           <div>Indicar stock a restar</div>
-          <input matInput type="text" placeholder="Stock a restar" [(ngModel)]="stockToReduce"/>
+          <input matInput #reduceStockInput type="text" placeholder="Stock a restar" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockToReduce" (keydown)="checkEnterKeyReduceStockInput($event);" (blur)="blurReduceStockInput()"/>
         </div>
         <div *ngIf="action == 'activation'">
           &nbsp;
@@ -106,12 +106,10 @@
         </span>
       <span *ngIf="action == 'stock'">
         Stock a reducir:&nbsp;
-        <span *ngIf="stockToReduce">{{stockToReduce}}</span>
-        <span *ngIf="!stockToReduce">0</span>
+        <span *ngIf="stockToReduceDescription != ''">{{stockToReduceDescription}}</span>
+        <span *ngIf="stockToReduceDescription == ''">0</span>
         </span>
-      <span *ngIf="action == 'activation'">
-
-        </span>
+      <span *ngIf="action == 'activation'"></span>
     </div>
     <div *ngIf="mode == 'create'" class="nr-rule-button" (click)="createRule()">CREAR REGLA</div>
     <div *ngIf="mode == 'edit'" class="nr-rule-button" (click)="editRule()">EDITAR REGLA</div>
