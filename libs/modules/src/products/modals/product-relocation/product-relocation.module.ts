@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ProductRelocationComponent } from './product-relocation.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { MatTooltipModule } from '@angular/material';
 
 @NgModule({
   declarations: [ProductRelocationComponent],
@@ -11,6 +12,7 @@ import { IonicModule } from '@ionic/angular';
     ReactiveFormsModule,
     IonicModule,
     FormsModule,
+    MatTooltipModule
   ],
   entryComponents: [ProductRelocationComponent],
 

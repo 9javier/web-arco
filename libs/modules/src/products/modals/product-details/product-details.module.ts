@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { ProductDetailsComponent } from './product-details.component';
+import { MatTooltipModule } from '@angular/material';
 
 
 
@@ -13,6 +14,7 @@ import { ProductDetailsComponent } from './product-details.component';
     ReactiveFormsModule,
     IonicModule,
     FormsModule,
+    MatTooltipModule
   ],
   entryComponents: [
     ProductDetailsComponent
