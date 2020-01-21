@@ -34,10 +34,10 @@
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
               <span>
-                <span *ngFor="let category of element.categories; let i = index">
+                <span *ngFor="let category of element.categoriesFilter; let i = index">
                   <span *ngIf="i == 0" class="capitalized-property">{{category.name}}, </span>
-                  <span *ngIf="i > 0 && i < element.categories.length -1">{{category.name}}, </span>
-                  <span *ngIf="i == element.categories.length -1">{{category.name}}</span>
+                  <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
+                  <span *ngIf="i == element.categoriesFilter.length -1">{{category.name}}</span>
                 </span>
               </span>
               </td>
@@ -104,7 +104,7 @@
                 <span>Precio mínimo</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-                <span>{{element.price}} €</span>
+                <span>{{element.minPriceFilter}} €</span>
               </td>
             </ng-container>
 
@@ -169,7 +169,7 @@
                 <span>Stock de seguridad</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-                <span>{{element.stock}}</span>
+                <span>{{element.stockFilter}}</span>
               </td>
             </ng-container>
 

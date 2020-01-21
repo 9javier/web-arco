@@ -42,7 +42,7 @@ export class NewRuleComponent implements OnInit {
 
   ngOnInit() {
     this.mode = this.navParams.get('mode');
-    this.numberOfProducts = 0;
+    this.numberOfProducts = 230;
     this.action = 'activation';
     /*if (this.mode == 'edit') {
       this.rule = this.navParams.get('rule');
@@ -451,7 +451,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: this.selectedCategories,
-                minPriceFilter: 0.00,
+                minPriceFilter: "0.00",
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: [],
@@ -477,8 +477,8 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: [],
-                minPriceFilter: 0.00,
-                stockFilter: this.stockFilter,
+                minPriceFilter: "0.00",
+                stockFilter: parseInt(this.stockFilter),
                 products: this.numberOfProducts,
                 destinationCategories: [],
                 stockToReduce: 0
@@ -498,7 +498,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: this.selectedCategories,
-                minPriceFilter: 0.00,
+                minPriceFilter: "0.00",
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: this.selectedDestinationCategories,
@@ -524,8 +524,8 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: [],
-                minPriceFilter: 0.00,
-                stockFilter: this.stockFilter,
+                minPriceFilter: "0.00",
+                stockFilter: parseInt(this.stockFilter),
                 products: this.numberOfProducts,
                 destinationCategories: this.selectedDestinationCategories,
                 stockToReduce: 0
@@ -545,11 +545,11 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: this.selectedCategories,
-                minPriceFilter: 0.00,
+                minPriceFilter: "0.00",
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: [],
-                stockToReduce: this.stockToReduce
+                stockToReduce: parseInt(this.stockToReduce)
               };
               break;
             case 'price':
@@ -562,7 +562,7 @@ export class NewRuleComponent implements OnInit {
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: [],
-                stockToReduce: this.stockToReduce
+                stockToReduce: parseInt(this.stockToReduce)
               };
               break;
             case 'stock':
@@ -571,11 +571,11 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: [],
-                minPriceFilter: 0.00,
-                stockFilter: this.stockFilter,
+                minPriceFilter: "0.00",
+                stockFilter: parseInt(this.stockFilter),
                 products: this.numberOfProducts,
                 destinationCategories: [],
-                stockToReduce: this.stockToReduce
+                stockToReduce: parseInt(this.stockToReduce)
               };
               break;
           }
