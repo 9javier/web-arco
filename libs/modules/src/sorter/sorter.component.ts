@@ -238,10 +238,8 @@ export class SorterComponent implements OnInit {
         }))
       });
     }
-
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
-
     deletions.subscribe(() => {
       this.intermediaryService.dismissLoading();
       this.getTemplates();
@@ -250,10 +248,18 @@ export class SorterComponent implements OnInit {
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
-    }, () => {
+    }, (error) => {
       this.intermediaryService.dismissLoading();
       this.getTemplates();
-      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+      if(error.error.statusCode == 405){
+        this.intermediaryService.presentToastError(error.error.errors);
+      }else{
+        this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+      }
+      const controlArray = <FormArray>this.selectedForm.get('toSelect');
+      controlArray.controls.forEach((control, i) => {
+        control.setValue(false);
+      });
     });
   }
 

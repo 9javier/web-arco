@@ -38,7 +38,7 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'isSend', "update", 'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'assigned_incidences', 'isSend', "update", 'buttons-print'];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
