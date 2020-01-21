@@ -2,7 +2,14 @@ import { Request } from './request';
 import { Mode } from '@ionic/core';
 import { Enum } from "@suite/services";
 export namespace FiltersModel{
-
+    export interface Default extends Enum {
+      id:number;
+      reference?:number;
+      name:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
     export interface Reference extends Enum {
       id:number;
       reference:string;

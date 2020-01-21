@@ -7,7 +7,7 @@ div.content {
     background-color: var(--ion-color-primary);
     font-size: 16px;
     margin: 0;
-    padding: 18px 24px;
+    padding: 8px 10px;
 
     ion-col {
       font-weight: 600;
@@ -51,6 +51,10 @@ div.content {
       }
     }
   }
+  div.new-packing-scan {
+    position: absolute;
+    text-align: center;
+  }
   div.start-message-guide, p.message-guide {
     top: calc(50% - 65px);
     position: absolute;
@@ -93,26 +97,34 @@ div.content {
     height: 100%;
     .content-color {
       width: 100%;
-      height: calc(100% - 100px);
+      height: calc(100% - 84px);
       display: table;
-
       .content-labels {
         display: table-cell;
         vertical-align: middle;
-
         .label-destiny {
           font-weight: 600;
           text-align: center;
         }
-        #label-reference {
+        .label-destiny.main-text {
           font-size: 80px;
         }
-
-        #label-name {
-          font-size: 40px;
+        .label-destiny.info-text {
+          font-size: 20px;
         }
       }
     }
+  }
+
+  i.btn-cancel {
+    position: absolute;
+    right: 16px;
+    font-size: 32px;
+    color: var(--ion-color-primary);
+  }
+  i.cancel-packing {
+    bottom: -48px;
+    color: var(--ion-color-primary);
   }
 
   div.waiting-way-free {
@@ -157,8 +169,39 @@ ion-footer {
     flex: 1;
     margin-left: 5px;
     margin-right: 5px;
+    font-size: 12px;
     p {
       white-space: pre-wrap;
+    }
+  }
+}
+
+ion-footer.footer-exception {
+  display: flex;
+  flex-direction: row;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-bottom: 8px;
+  height: 116px;
+  div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    ion-button {
+      height: 60%;
+      display: flex;
+      flex: 2;
+      margin-left: 5px;
+      margin-right: 5px;
+      p {
+        white-space: pre-wrap;
+      }
+    }
+
+    ion-button.other-btn {
+      height: 40%;
+      display: flex;
+      flex: 1;
     }
   }
 }

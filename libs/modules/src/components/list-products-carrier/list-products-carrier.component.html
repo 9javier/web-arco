@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center"> {{ carrierReference }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="product-list">
+    <mat-list [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
+      <mat-list-item *ngFor="let packingProduct of packingProducts">
+        <span class="text-reference">{{getReferenceWarehouse(packingProduct)}}</span>
+        <h3 matLine><b>{{packingProduct.product.reference}}</b></h3>
+        <p matLine>
+          <span> {{packingProduct.product.model.reference}} - {{packingProduct.product.model.brand.name}} </span>
+        </p>
+        <p matLine>
+          <span> T - {{packingProduct.product.size.name}} </span>
+        </p>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <ion-fab *ngIf="packingProducts && packingProducts.length >= 0" horizontal="end" vertical="top" slot="fixed">
+    <ion-fab-button (click)="filterProducts()">
+      <mat-icon>filter_list</mat-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+<ion-footer>
+  <ion-row>
+    <ion-col size="4">
+      <ion-button (click)="btnContinue(true)">Continuar</ion-button>
+    </ion-col>
+    <ion-col size="4">
+      <ion-button (click)="btnCarrierEmpty()">Embalaje<br>Vacio</ion-button>
+    </ion-col>
+    <ion-col size="4">
+      <ion-button (click)="btnPosition('positioning/manual')">Ubicar</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-footer>

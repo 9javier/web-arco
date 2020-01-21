@@ -10,9 +10,9 @@ import {
   IntermediaryService,
   CarrierService
 } from '@suite/services';
-import {AlertController, Events} from "@ionic/angular";
+import {AlertController, Events, ModalController} from "@ionic/angular";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
-import {switchMap} from "rxjs/operators";
+import {switchMap, map, filter} from "rxjs/operators";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {Location} from "@angular/common";
 import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
@@ -21,6 +21,8 @@ import {AudioProvider} from "../../../../services/src/providers/audio-provider/a
 import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
+import { ListasProductosComponent } from '../lista/listas-productos/listas-productos.component';
+import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 
 @Component({
   selector: 'suite-textarea',
@@ -72,14 +74,19 @@ export class TextareaComponent implements OnInit {
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
     private carrierService: CarrierService,
+    private modalCtrl: ModalController,
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.focusToInput();
   }
 
   ngOnInit() {
+    console.log('passiamo di qui');
+    
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
+    // console.log(this.listProducts);
+    
     this.typePacking = this.pickingProvider.typePacking;
     this.typePicking = this.pickingProvider.typePicking;
     this.packingReference = this.pickingProvider.packingReference;
@@ -104,16 +111,49 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  keyUpInput(event) {
+  private async modalList( jaula:string){
+    let modal = await this.modalCtrl.create({
+      
+      component: ListProductsCarrierComponent,
+      componentProps: {
+        carrierReference:jaula
+      }
+      
+    })
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+      if(data.data === undefined && data.role === undefined){
+        this.focusToInput();
+        return;
+      }
+      
+      if(data.data && data.role === undefined){
+        if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
+          this.focusToInput();
+          this.inputPicking = data.data;
+          this.keyUpInput(KeyboardEvent['KeyCode'] = 13,true);
+          return;
+        }else if(data.role === 'navigate'){
+          this.focusToInput();
+        }
+      }
+      
+    })
+    modal.present();
+  }
+
+  keyUpInput(event?,prova:boolean=false) {
+    // console.log(event);
     let dataWrited = (this.inputPicking || "").trim();
-
-    if (event.keyCode === 13 && dataWrited) {
-
+    // console.log(dataWrited);
+    if (event.keyCode === 13 || prova && dataWrited) {
+      // console.log('passa por aqui');
       if (dataWrited === this.lastCodeScanned) {
         this.inputPicking = null;
         return;
       }
       this.lastCodeScanned = dataWrited;
+
 
       if (this.timeoutStarted) {
         clearTimeout(this.timeoutStarted);
@@ -121,123 +161,141 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputPicking = null;
+      // TODO creamos metodos para saber si la jaula esta llena
+      
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
-        if (this.listProducts.length !== 0) {
-          let typePackingScanned = 0;
-          if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
-            typePackingScanned = 1;
-          } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
-            typePackingScanned = 2;
-          } else {
-            typePackingScanned = 3;
-          }
-
-          if ((this.packingReference && this.packingReference === dataWrited) || !this.packingReference) {
-            this.timeLastCodeScanned = new Date().getTime();
-            this.lastCarrierScanned = dataWrited;
-            if ((this.typePacking && typePackingScanned === this.typePacking) || !this.typePacking) {
-              this.intermediaryService.presentLoading();
-              this.postVerifyPacking({
-                status: 2,
-                pickingId: this.pickingId,
-                packingReference: dataWrited
-              })
-                .subscribe((res) => {
-                  this.intermediaryService.dismissLoading();
-                  if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
-                    this.typePacking = 1;
-                  } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
-                    this.typePacking = 2;
-                  } else {
-                    this.typePacking = 3;
-                  }
-                  if (res) {
-                    if (res.code === 200 || res.code === 201) {
-                      if (res.data.packingStatus === 2) {
-                        this.processInitiated = true;
-                        this.audioProvider.playDefaultOk();
-                        this.inputPicking = null;
-                        this.focusToInput();
-                        this.jailReference = dataWrited;
-                        this.dataToWrite = 'PRODUCTO';
-                        if (!this.packingReference) {
-                          this.packingReference = this.jailReference;
-                        }
-                        this.setNexProductToScan(this.listProducts[0]);
-                        this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`,
-                          TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
-
-                        this.showTextStartScanPacking(false, this.typePacking, '');
-                      } else if (res.data.packingStatus === 3) {
-                        if (this.typePicking === 1) {
-                          this.alertSealPackingIntermediate(this.jailReference);
+        this.carrierService.getSingle(this.lastCodeScanned)
+        .pipe(
+          // map(x => x.packingInventorys),
+        )
+        .subscribe(data => {
+          if(data.packingInventorys.length > 0 && !prova){
+            // console.log('abre modal');
+            // console.log(data);
+            this.modalList(this.lastCodeScanned);
+          }else{
+            console.log('no tiene lista');
+            if (this.listProducts.length !== 0) {
+              let typePackingScanned = 0;
+              if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
+                typePackingScanned = 1;
+              } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
+                typePackingScanned = 2;
+              } else {
+                typePackingScanned = 3;
+              }
+              if ((this.packingReference && this.packingReference === dataWrited) || !this.packingReference) {
+                this.timeLastCodeScanned = new Date().getTime();
+                this.lastCarrierScanned = dataWrited;
+                if ((this.typePacking && typePackingScanned === this.typePacking) || !this.typePacking) {
+                  this.intermediaryService.presentLoading();
+                  this.postVerifyPacking({
+                    status: 2,
+                    pickingId: this.pickingId,
+                    packingReference: dataWrited
+                  })
+                    .subscribe((res) => {
+                      this.intermediaryService.dismissLoading();
+                      if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
+                        this.typePacking = 1;
+                      } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
+                        this.typePacking = 2;
+                      } else {
+                        this.typePacking = 3;
+                      }
+                      if (res) {
+                        if (res.code === 200 || res.code === 201) {
+                          // console.log('passa di qui',res);
+                          
+                          if (res.data.packingStatus === 2) {
+                            this.processInitiated = true;
+                            this.audioProvider.playDefaultOk();
+                            this.inputPicking = null;
+                            this.focusToInput();
+                            this.jailReference = dataWrited;
+                            this.dataToWrite = 'PRODUCTO';
+                            if (!this.packingReference) {
+                              this.packingReference = this.jailReference;
+                            }
+                            this.setNexProductToScan(this.listProducts[0]);
+                            this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`,
+                              TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
+    
+                            this.showTextStartScanPacking(false, this.typePacking, '');
+                          } else if (res.data.packingStatus === 3) {
+                            if (this.typePicking === 1) {
+                              this.alertSealPackingIntermediate(this.jailReference);
+                            } else {
+                              this.endProcessIntermediate(this.jailReference);
+                            }
+                          } else {
+                            this.processInitiated = false;
+                            this.audioProvider.playDefaultError();
+                            this.inputPicking = null;
+                            this.focusToInput();
+                            this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+                          }
                         } else {
-                          this.endProcessIntermediate(this.jailReference);
+                          this.processInitiated = false;
+                          this.audioProvider.playDefaultError();
+                          this.inputPicking = null;
+                          this.focusToInput();
+                          this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
                         }
                       } else {
+                        this.audioProvider.playDefaultOk();
                         this.processInitiated = false;
-                        this.audioProvider.playDefaultError();
                         this.inputPicking = null;
                         this.focusToInput();
-                        this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+                        this.jailReference = null;
+                        this.dataToWrite = 'CONTENEDOR';
+                        this.packingReference = this.jailReference;
+                        this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_packing_empty}${dataWrited}.`,
+                          TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
+                        this.showNexProductToScan(false);
+                        this.showTextStartScanPacking(true, this.typePacking, '');
                       }
-                    } else {
-                      this.processInitiated = false;
-                      this.audioProvider.playDefaultError();
+                    }, (error) => {
                       this.inputPicking = null;
+                      this.intermediaryService.dismissLoading();
+                      this.audioProvider.playDefaultError();
+                      if (error.error.code === 404) {
+                        this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+                      } else {
+                        this.intermediaryService.presentToastError(error.error.errors, PositionsToast.BOTTOM);
+                      }
                       this.focusToInput();
-                      this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
-                    }
-                  } else {
-                    this.audioProvider.playDefaultOk();
-                    this.processInitiated = false;
-                    this.inputPicking = null;
-                    this.focusToInput();
-                    this.jailReference = null;
-                    this.dataToWrite = 'CONTENEDOR';
-                    this.packingReference = this.jailReference;
-                    this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_packing_empty}${dataWrited}.`,
-                      TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
-                    this.showNexProductToScan(false);
-                    this.showTextStartScanPacking(true, this.typePacking, '');
-                  }
-                }, (error) => {
+                    }, () => {
+                      this.intermediaryService.dismissLoading();
+                    });
+                } else {
                   this.inputPicking = null;
-                  this.intermediaryService.dismissLoading();
                   this.audioProvider.playDefaultError();
-                  if (error.error.code === 404) {
-                    this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
-                  } else {
-                    this.intermediaryService.presentToastError(error.error.errors, PositionsToast.BOTTOM);
-                  }
                   this.focusToInput();
-                }, () => {
-                  this.intermediaryService.dismissLoading();
-                });
-            } else {
+                  this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_packing, PositionsToast.BOTTOM);
+                }
+              } else {
+                this.inputPicking = null;
+                this.audioProvider.playDefaultError();
+                this.focusToInput();
+                this.intermediaryService.presentToastError(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, PositionsToast.BOTTOM);
+              }
+            } else if (this.jailReference && this.jailReference !== dataWrited) {
               this.inputPicking = null;
               this.audioProvider.playDefaultError();
               this.focusToInput();
-              this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_packing, PositionsToast.BOTTOM);
+              this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_process_finished, PositionsToast.BOTTOM);
+            } else {
+              if (this.typePicking === 1) {
+                this.alertSealPackingFinal(this.jailReference);
+              } else {
+                this.endProcessPacking(this.jailReference);
+              }
             }
-          } else {
-            this.inputPicking = null;
-            this.audioProvider.playDefaultError();
-            this.focusToInput();
-            this.intermediaryService.presentToastError(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, PositionsToast.BOTTOM);
           }
-        } else if (this.jailReference && this.jailReference !== dataWrited) {
-          this.inputPicking = null;
-          this.audioProvider.playDefaultError();
-          this.focusToInput();
-          this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_process_finished, PositionsToast.BOTTOM);
-        } else {
-          if (this.typePicking === 1) {
-            this.alertSealPackingFinal(this.jailReference);
-          } else {
-            this.endProcessPacking(this.jailReference);
-          }
-        }
+          
+        })
+        
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (!this.processInitiated) {
           this.audioProvider.playDefaultError();
@@ -352,6 +410,8 @@ export class TextareaComponent implements OnInit {
                 this.putProductNotFound(this.pickingId, productNotFoundId)
                   .subscribe((res3: ShoesPickingModel.ResponseProductNotFound) => {
                     if (res3.code === 200 || res3.code === 201) {
+                      // console.log('passa di qui',res);
+                      
                       this.scanContainerToNotFound = null;
                       this.dataToWrite = "PRODUCTO";
                       this.focusToInput();
@@ -551,7 +611,7 @@ export class TextareaComponent implements OnInit {
       if (listCarriers && listCarriers.length > 0) {
         const alertWarning = await this.alertController.create({
           header: 'Atención',
-          message: `<b>Jaulas que se van a precintar. ¿Está seguro?</b></br></br>${listShow}</br>`,
+          message: `<b>¿Desea precintar los embalajes utilizados?</b></br></br>${listShow}</br>`,
           backdropDismiss: false,
           buttons: [
             {
@@ -563,7 +623,7 @@ export class TextareaComponent implements OnInit {
             {
               text: 'Si',
               handler: () => {
-                this.sealPackingFinal(listCarriers);
+                this.sealPackingFinal(listCarriers, packingReference);
               }
             }]
         });
@@ -578,7 +638,7 @@ export class TextareaComponent implements OnInit {
   async alertSealPackingIntermediate(packingReference: string) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      message: packingReference ? `¿Desea precintar la Jaula ${packingReference}?` : '¿Desea precintar la Jaula?',
+      message: `¿Desea precintar el embalaje ${packingReference}?`,
       backdropDismiss: false,
       buttons: [
         {
@@ -612,10 +672,27 @@ export class TextareaComponent implements OnInit {
     this.intermediaryService.dismissLoading();
   }
 
-  private sealPackingFinal(listCarriers: string[]) {
-    if (listCarriers && listCarriers.length > 0) {
-      this.intermediaryService.presentLoading('Precintando Jaulas');
-      this.carrierService.postSealList(listCarriers).subscribe(async () => {
+  private sealPackingFinal(listCarriers: string[], packingReferenceLast: string) {
+    this.intermediaryService.presentLoading('Finalizando proceso y precintando embalajes');
+    this.postVerifyPacking({
+      status: 3,
+      pickingId: this.pickingId,
+      packingReference: packingReferenceLast
+    }).subscribe((res) => {
+      if (listCarriers && listCarriers.length > 0) {
+        this.carrierService.postSealList(listCarriers).subscribe(async () => {
+          this.audioProvider.playDefaultOk();
+          this.intermediaryService.dismissLoading();
+          this.inputPicking = null;
+          this.intermediaryService.presentToastSuccess('Proceso finalizado correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+          this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
+          this.clearTimeoutCleanLastCodeScanned();
+          setTimeout(() => {
+            this.location.back();
+            this.events.publish('picking:remove');
+          }, 1.5 * 1000);
+        });
+      } else {
         this.audioProvider.playDefaultOk();
         this.intermediaryService.dismissLoading();
         this.inputPicking = null;
@@ -626,8 +703,21 @@ export class TextareaComponent implements OnInit {
           this.location.back();
           this.events.publish('picking:remove');
         }, 1.5 * 1000);
-      });
-    }
+      }
+    }, (error) => {
+      this.intermediaryService.dismissLoading();
+      this.audioProvider.playDefaultError();
+      this.inputPicking = null;
+      this.focusToInput();
+      this.clearTimeoutCleanLastCodeScanned();
+      if (error.error.code === 404) {
+        this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+      } else {
+        this.intermediaryService.presentToastError(error.error.errors, PositionsToast.BOTTOM);
+      }
+    }, () => {
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   private sealPackingIntermediate(packingReference: any) {

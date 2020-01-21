@@ -91,6 +91,8 @@ export class ListPickingTasksTemplateComponent implements OnInit {
   }
 
   initPicking() {
+    // console.log('passiamo per este metodo');
+    
     this.showLoading('Cargando productos...').then(() => {
       this.carriersService
         .getUpdatePackingStatusInPicking(this.pickingProvider.pickingSelectedToStart.id)
@@ -115,7 +117,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
           this.pickingProvider.typePacking = this.pickingProvider.pickingSelectedToStart.packingType;
           this.pickingProvider.typePicking = this.pickingProvider.pickingSelectedToStart.typePicking.id;
           this.pickingProvider.packingReference = this.pickingProvider.pickingSelectedToStart.packingRef;
-          if (this.pickingProvider.method == 'manual') {
+          if (this.pickingProvider.method === 'manual') {
             this.router.navigate(['picking/manual']);
           } else {
             this.scanditService.picking(this.pickingProvider.pickingSelectedToStart.id, listProducts, this.pickingProvider.pickingSelectedToStart.packingType, this.pickingProvider.typePicking);

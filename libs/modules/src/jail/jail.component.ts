@@ -38,7 +38,7 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'isSend', "update", 'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'assigned_incidences', 'isSend', "update", 'buttons-print'];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
@@ -275,7 +275,7 @@ export class JailComponent implements OnInit {
     if (listaCarrier.length > 0) {
 
       listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status != 4 && x.carrierWarehousesDestiny.length === 1) {
+        if (x.packingInventorys.length > 0 && x.status !== 4 && x.carrierWarehousesDestiny.length === 1) {
           return x;
         }
       })
