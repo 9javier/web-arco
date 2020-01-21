@@ -35,8 +35,8 @@
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
               <span>
                 <span *ngFor="let category of element.categories; let i = index">
-                  <span *ngIf="i == 0" class="capitalized-property">{{category.name}},&nbsp;</span>
-                  <span *ngIf="i > 0 && i < element.categories.length -1">{{category.name}},&nbsp;</span>
+                  <span *ngIf="i == 0" class="capitalized-property">{{category.name}}, </span>
+                  <span *ngIf="i > 0 && i < element.categories.length -1">{{category.name}}, </span>
                   <span *ngIf="i == element.categories.length -1">{{category.name}}</span>
                 </span>
               </span>

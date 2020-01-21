@@ -178,6 +178,14 @@ export class RulesComponent implements OnInit {
         mode: 'create'
       }
     });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.data) {
+        // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
+        // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
+      }
+    });
+
     modal.present();
   }
 

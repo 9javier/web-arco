@@ -5,7 +5,7 @@
       <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
       <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
     </div>
-    <div (click)="close();">
+    <div (click)="close(null);">
       X
     </div>
   </div>
@@ -47,7 +47,7 @@
           {{filterDescription}}
         </div>
         <div>
-          {{numberOfProducts}}&nbsp;
+          {{numberOfProducts}}
           <span *ngIf="numberOfProducts.length == 1">producto seleccionado</span>
           <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
         </div>
@@ -87,7 +87,7 @@
         </div>
         <div class="action-stock" *ngIf="action == 'stock'">
           <div>Indicar stock a restar</div>
-          <input matInput #reduceStockInput type="text" placeholder="Stock a restar" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockToReduce" (keydown)="checkEnterKeyReduceStockInput($event);" (blur)="blurReduceStockInput()"/>
+          <input matInput #reduceStockInput type="text" placeholder="Stock a restar" [ngClass]="formatReduceStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockToReduce" (keydown)="checkEnterKeyReduceStockInput($event);" (blur)="blurReduceStockInput()"/>
         </div>
         <div *ngIf="action == 'activation'">
           &nbsp;
@@ -100,18 +100,41 @@
   <div class="nr-modal-buttons-wrapper">
     <div class="nr-selected-action-description">
         <span *ngIf="action == 'categories'">
-          {{selectedDestinationCategories.length}}&nbsp;
+          {{selectedDestinationCategories.length}}
           <span *ngIf="selectedDestinationCategories.length == 1">categoría seleccionada</span>
           <span *ngIf="selectedDestinationCategories.length != 1">categorías seleccionadas</span>
         </span>
       <span *ngIf="action == 'stock'">
-        Stock a reducir:&nbsp;
+        Stock a reducir:
         <span *ngIf="stockToReduceDescription != ''">{{stockToReduceDescription}}</span>
         <span *ngIf="stockToReduceDescription == ''">0</span>
         </span>
       <span *ngIf="action == 'activation'"></span>
     </div>
-    <div *ngIf="mode == 'create'" class="nr-rule-button" (click)="createRule()">CREAR REGLA</div>
-    <div *ngIf="mode == 'edit'" class="nr-rule-button" (click)="editRule()">EDITAR REGLA</div>
+    <div *ngIf="createRuleButtonActivation();" class="nr-rule-button" (click)="createRule()">
+      <span *ngIf="mode == 'create'">CREAR REGLA</span>
+      <span *ngIf="mode == 'edit'">EDITAR REGLA</span>
+    </div>
+    <div *ngIf="!createRuleButtonActivation();" class="nr-rule-button-disabled">
+      <span *ngIf="mode == 'create'">CREAR REGLA</span>
+      <span *ngIf="mode == 'edit'">EDITAR REGLA</span>
+    </div>
   </div>
 </ion-footer>
+
+<div #ruleNameWindow class="rule-name-window">
+  <div>
+    <input matInput type="text" placeholder="Nombre de la regla" [(ngModel)]="ruleName"/>
+    <div class="rule-name-window-buttons">
+      <div (click)="cancelRuleNaming()" class="rule-name-window-cancel-button">
+        CANCELAR
+      </div>
+      <div *ngIf="ruleName != ''" (click)="finishCreateRule()" class="rule-name-window-create-button">
+        ACEPTAR
+      </div>
+      <div *ngIf="ruleName == ''" class="rule-name-window-create-button-disabled">
+        ACEPTAR
+      </div>
+    </div>
+  </div>
+</div>
