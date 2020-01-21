@@ -68,7 +68,7 @@ export class ListProductsCarrierComponent implements OnInit {
     const popover = await this.popoverController.create({
       cssClass: 'popover-filter',
       component: FiltersListComponent,
-      componentProps: { form: this.form },
+      componentProps: { form: this.form, carrierReference: this.carrierReference },
       event
     });
 
