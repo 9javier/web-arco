@@ -21,6 +21,9 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 import { Range } from './interfaces/range.interface';
 import { PricesRangePopoverComponent } from "./prices-range-popover/prices-range-popover.component";
 import { PricesRangePopoverProvider } from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
+import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import {TariffPricesScanditService} from "../../../services/src/lib/scandit/tariff-prices/tariff-prices.service";
 
 @Component({
   selector: 'suite-prices',
@@ -137,7 +140,9 @@ export class PricesComponent implements OnInit {
     private alertController: AlertController,
     private popoverCtrl: PopoverController,
     public pricesRangePopoverProvider: PricesRangePopoverProvider,
-    private popoverController: PopoverController
+    private popoverController: PopoverController,
+    private toolbarProvider: ToolbarProvider,
+    private tariffPricesScanditService: TariffPricesScanditService
   ) {
     this.route.queryParams.subscribe(params => {
       if (params && params.name) {
@@ -382,6 +387,7 @@ export class PricesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.addScannerButton();
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
@@ -390,6 +396,23 @@ export class PricesComponent implements OnInit {
     this.getWarehouses();
 
     this.clearFilters();
+    this.toolbarProvider.currentPage.next(this.tariffName);
+  }
+
+  ngOnDestroy(){
+    this.toolbarProvider.optionsActions.next([]);
+  }
+
+  addScannerButton(){
+    const buttons = [{
+      icon: 'qr-scanner',
+      label: 'Escáner',
+      action: async () => {
+        let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+        this.tariffPricesScanditService.init(warehouseId, this.tariffId);
+      }
+    }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   ngAfterViewInit(): void {

@@ -130,6 +130,8 @@ public class ScanditSDK extends CordovaPlugin {
   private static final String MATRIX_PICKING_STORES_HIDE_INFO_PRODUCT_DIALOG = "matrixPickingStoresHideInfoProductDialog";
   private static final String SET_TIMEOUT = "setTimeout";
   private static final String MATRIX_INIT_AUDIT_MULTIPLE = "matrixInitAuditMultiple";
+  private static final String MATRIX_INIT_TARIFF_PRICES = "matrixInitTariffPrices";
+  private static final String LOAD_PRICE_INFO = "loadPriceInfo";
   private static final String WRONG_CODE_AUDIT_MULTIPLE = "wrongCodeAuditMultiple";
   private static final String CHANGE_NOTICE_AUDIT_MULTIPLE = "changeNoticeAuditMultiple";
   private static final String LAUNCH_SOUND = "launchSound";
@@ -142,11 +144,13 @@ public class ScanditSDK extends CordovaPlugin {
     MATRIX_PRINT_TAGS,
     MATRIX_PRODUCT_INFO,
     SWITCH_TO_IONIC,
-    MATRIX_INIT_AUDIT_MULTIPLE
+    MATRIX_INIT_AUDIT_MULTIPLE,
+    MATRIX_INIT_TARIFF_PRICES
   };
 
   // REGISTER THE REQUEST_CODE USED TO START EACH NEW SCANDIT ACTIVITY
   private static final int RC_ACTIVITY_AUDIT_MULTIPLE = 6;
+  private static final int RC_ACTIVITY_TARIFF_PRICES = 7;
 
   private static final int CUSTOM_SOUND_OK = 1;
   private static final int CUSTOM_SOUND_ERROR = 2;
@@ -1427,7 +1431,7 @@ public class ScanditSDK extends CordovaPlugin {
       }
 
       if (listSizesToPrint != null && listSizesToPrint.length > 0) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MatrixPrintTags.matrixPrintTags);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityStarted);
         builder.setTitle(title);
         builder.setItems(listSizesToPrint, (dialogInterface, i) -> {
           JSONObject jsonObject = new JSONObject();
@@ -1670,6 +1674,44 @@ public class ScanditSDK extends CordovaPlugin {
       mCallbackContextMatrixSimple = callbackContext;
       Intent intent = new Intent(this.cordova.getActivity(), MatrixAuditMultipleActivity.class);
       this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_AUDIT_MULTIPLE);
+    } else if (action.equals(MATRIX_INIT_TARIFF_PRICES)) {
+      mCallbackContextMatrixSimple = callbackContext;
+      String title = "";
+      String backgroundTitle = "";
+      String colorTitle = "";
+      try {
+        title = args.getString(0);
+        backgroundTitle = args.getString(1);
+        colorTitle = args.getString(2);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      Bundle b = new Bundle();
+      b.putString("title", title);
+      b.putString("backgroundTitle", backgroundTitle);
+      b.putString("colorTitle", colorTitle);
+      Intent intent = new Intent(this.cordova.getActivity(), MatrixTariffPricesActivity.class);
+      intent.putExtras(b);
+      this.cordova.startActivityForResult(this, intent, RC_ACTIVITY_TARIFF_PRICES);
+    }else if (action.equals(LOAD_PRICE_INFO)) {
+
+      String[] priceData = new String[9];
+      try {
+        JSONArray data = args.getJSONArray(0);
+        for(int i = 0; i < data.length(); i++){
+          priceData[i] = data.getString(i);
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+
+      final View viewDataMatrixSimpleFinal = this.viewDataMatrixSimple;
+      cordova.getActivity().runOnUiThread(() -> {
+        if (viewDataMatrixSimpleFinal != null) {
+          LinearLayout layout = viewDataMatrixSimpleFinal.findViewById(resources.getIdentifier("PriceInfo", "id", packageName));
+          MatrixTariffPricesActivity.loadPriceInfo(layout, priceData);
+        }
+      });
     } else if (action.equals(WRONG_CODE_AUDIT_MULTIPLE)) {
       if (!alertAlreadyShowed) {
         alertAlreadyShowed = true;
