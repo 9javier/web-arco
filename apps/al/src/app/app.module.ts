@@ -51,8 +51,8 @@ registerLocaleData(localeEs);
     MatDatepickerModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: DateAdapter, useClass: MondayStartingDateAdapterService },
-    { provide: LOCALE_ID, useValue: 'es' },
-    { provide: MAT_DATE_LOCALE, useValue: 'es' },
+    { provide: LOCALE_ID, useValue: 'es-ES' },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AddTokenToRequestInterceptor,
