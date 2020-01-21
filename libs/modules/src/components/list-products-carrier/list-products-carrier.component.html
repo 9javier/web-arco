@@ -12,7 +12,7 @@
   <div class="product-list">
     <mat-list [ngClass]="destinyPacking ? 'product-list-smaller' : ''">
       <mat-list-item *ngFor="let packingProduct of packingProducts">
-        <span class="text-reference">{{packingProduct.sorterControlProduct.warehouseDestiny.reference}}</span>
+        <span class="text-reference">{{getReferenceWarehouse(packingProduct)}}</span>
         <h3 matLine><b>{{packingProduct.product.reference}}</b></h3>
         <p matLine>
           <span> {{packingProduct.product.model.reference}} - {{packingProduct.product.model.brand.name}} </span>
