@@ -126,6 +126,8 @@ export class PricesComponent implements OnInit {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private isLoadingProductPrices: boolean = false;
+
   constructor(
     private printerService: PrinterService,
     private priceService: PriceService,
@@ -393,10 +395,18 @@ export class PricesComponent implements OnInit {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
     }
 
-    this.getWarehouses();
-
-    this.clearFilters();
     this.toolbarProvider.currentPage.next(this.tariffName);
+
+    if (!this.isLoadingProductPrices) {
+      this.isLoadingProductPrices = true;
+      this.intermediaryService.presentLoading().then(() => {
+        this.clearFilters();
+      });
+    } else {
+      this.clearFilters();
+    }
+
+    this.getWarehouses();
   }
 
   ngOnDestroy(){
@@ -499,21 +509,40 @@ export class PricesComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters): void {
-    this.intermediaryService.presentLoading();
-    this.priceService.getIndex(parameters).subscribe(prices => {
-      this.showFiltersMobileVersion = false;
-      this.prices = prices.results;
-      this.initSelectForm(this.prices);
-      this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
-      let paginator = prices.pagination;
-      this.paginatorComponent.length = paginator.totalResults;
-      this.paginatorComponent.pageIndex = paginator.selectPage;
-      this.paginatorComponent.lastPage = paginator.lastPage;
-      this.groups = prices.filters.ordertypes;
-      this.intermediaryService.dismissLoading();
-    }, () => {
-      this.intermediaryService.dismissLoading();
-    });
+    if (!this.isLoadingProductPrices) {
+      this.isLoadingProductPrices = true;
+      this.intermediaryService.presentLoading().then(() => {
+        this.priceService.getIndex(parameters).subscribe(prices => {
+          this.showFiltersMobileVersion = false;
+          this.prices = prices.results;
+          this.initSelectForm(this.prices);
+          this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+          let paginator = prices.pagination;
+          this.paginatorComponent.length = paginator.totalResults;
+          this.paginatorComponent.pageIndex = paginator.selectPage;
+          this.paginatorComponent.lastPage = paginator.lastPage;
+          this.groups = prices.filters.ordertypes;
+          this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+        }, () => {
+          this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+        });
+      })
+    } else {
+      this.priceService.getIndex(parameters).subscribe(prices => {
+        this.showFiltersMobileVersion = false;
+        this.prices = prices.results;
+        this.initSelectForm(this.prices);
+        this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+        let paginator = prices.pagination;
+        this.paginatorComponent.length = paginator.totalResults;
+        this.paginatorComponent.pageIndex = paginator.selectPage;
+        this.paginatorComponent.lastPage = paginator.lastPage;
+        this.groups = prices.filters.ordertypes;
+        this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+      }, () => {
+        this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+      });
+    }
   }
 
   private getFormValueCopy() {
