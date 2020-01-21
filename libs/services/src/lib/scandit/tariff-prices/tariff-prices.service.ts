@@ -7,6 +7,7 @@ import {PriceModel, PriceService} from "@suite/services";
 import {PrinterService} from "../../printer/printer.service";
 import Price = PriceModel.Price;
 import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
+import {PrintModel} from "../../../models/endpoints/Print";
 
 declare let ScanditMatrixSimple;
 
@@ -40,12 +41,40 @@ export class TariffPricesScanditService {
     this.lastBarcode = null;
     ScanditMatrixSimple.initTariffPrices(
       response => {
-        if(response.barcode != undefined && response.barcode.data) this.checkAndPrint(response.barcode.data);
-        else if(response.size_selected != undefined){
+        if(response.barcode != undefined && response.barcode.data) {
+          this.checkAndPrint(response.barcode.data);
+        } else if(response.size_selected != undefined){
           this.priceToPrint = this.priceOptions[response.size_selected];
           this.print();
+        } else if(response.button != undefined) {
+          this.buttonClick();
+        } else if (response.action == 'print_pvp_label') {
+          if (response.response) {
+            this.priceToPrint.typeLabel = PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF;
+          } else {
+            this.priceToPrint = null;
+          }
+          this.print();
+        } else if (response.action == 'print_current_tariff') {
+          if (!response.response) {
+            this.priceToPrint = null;
+          }
+          this.print();
+        } else if (response.action == 'print_current_tariff_select_size') {
+          if (response.response) {
+            let sizeRanges: PriceModel.SizeRange[] = [];
+            for(let iPrice of this.priceOptions){
+              sizeRanges.push({rangesNumbers: {
+                  sizeRangeNumberMax: iPrice.rangesNumbers.sizeRangeNumberMax,
+                  sizeRangeNumberMin: iPrice.rangesNumbers.sizeRangeNumberMin
+                }});
+            }
+            ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona la talla:', sizeRanges);
+          } else {
+            this.priceToPrint = null;
+            this.print();
+          }
         }
-        else if(response.button != undefined) this.buttonClick();
       },
       'Tarifa '+this.tariffName,
       this.scanditProvider.colorsHeader.background.color,
@@ -54,8 +83,6 @@ export class TariffPricesScanditService {
   }
 
   checkAndPrint(barcode: string) {
-    console.log('Ejecutando checkAndPrint()');
-    console.log('Código escaneado:',barcode);
     if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
@@ -70,7 +97,6 @@ export class TariffPricesScanditService {
       }else if(this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL){
         this.priceService.postPricesByModel(barcode, this.tariffId).then(response=>{
           this.priceOptions = response.data;
-          console.log('prices of model:',this.priceOptions);
           switch (this.priceOptions.length) {
             case 0:
               this.priceToPrint = null;
@@ -78,17 +104,25 @@ export class TariffPricesScanditService {
               break;
             case 1:
               this.priceToPrint = response.data[0];
-              this.print();
+              if (this.priceToPrint.tariff.id == this.tariffId) {
+                this.print();
+              } else {
+                ScanditMatrixSimple.showWarning(true, `No hay registrado un precio para el artículo en la tarifa ${this.tariffName}. ¿Desea imprimir el precio de su tarifa vigente (${this.priceToPrint.tariffName})?`, 'print_current_tariff', 'Sí', 'No');
+              }
               break;
             default:
-              let sizeRanges: PriceModel.SizeRange[] = [];
-              for(let iPrice of this.priceOptions){
-                sizeRanges.push({rangesNumbers: {
-                    sizeRangeNumberMax: iPrice.rangesNumbers.sizeRangeNumberMax,
-                    sizeRangeNumberMin: iPrice.rangesNumbers.sizeRangeNumberMin
-                  }});
+              if (response.data[0].tariff.id == this.tariffId) {
+                let sizeRanges: PriceModel.SizeRange[] = [];
+                for(let iPrice of this.priceOptions){
+                  sizeRanges.push({rangesNumbers: {
+                      sizeRangeNumberMax: iPrice.rangesNumbers.sizeRangeNumberMax,
+                      sizeRangeNumberMin: iPrice.rangesNumbers.sizeRangeNumberMin
+                    }});
+                }
+                ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona la talla:', sizeRanges);
+              } else {
+                ScanditMatrixSimple.showWarning(true, `No hay registrado un precio para el artículo en la tarifa ${this.tariffName}. ¿Desea imprimir un precio de su tarifa vigente (${this.priceToPrint.tariffName})?`, 'print_current_tariff_select_size', 'Sí', 'No');
               }
-              ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona la talla:', sizeRanges);
           }
         });
       }
@@ -96,92 +130,80 @@ export class TariffPricesScanditService {
   }
 
   print(){
-    console.log('Ejecutando print()');
-    console.log('price to print:',this.priceToPrint);
     this.priceData = [];
     if(this.priceToPrint != null) {
-      this.priceData[1] = this.priceToPrint.model.reference;
-      this.priceData[2] = this.priceToPrint.model.brand.name;
-      this.priceData[3] = this.priceToPrint.model.lifestyle.name;
-      this.priceData[5] = this.priceToPrint.priceDiscountOutlet;
-      switch (this.priceToPrint.status) {
-        case 1:
-          this.priceData[4] = 'Nuevo';
-          this.priceData[0] = 'Imprimiendo...';
-          console.log('priceData:',this.priceData);
-          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-            this.printerService.printNotify([this.priceToPrint.id]);
-            this.priceData[0] = 'Artículo impreso con éxito.';
-            console.log('priceData:',this.priceData);
+      if (this.priceToPrint.typeLabel == PrintModel.LabelTypes.LABEL_PRICE_WITHOUT_TARIF_OUTLET) {
+        ScanditMatrixSimple.showWarning(true, 'Este artículo no tiene tarifa outlet. ¿Desea imprimir su etiqueta de PVP?', 'print_pvp_label', 'Sí', 'No');
+      } else {
+        this.priceData[1] = this.priceToPrint.model.reference;
+        this.priceData[2] = this.priceToPrint.model.brand.name;
+        this.priceData[3] = this.priceToPrint.model.lifestyle.name;
+        this.priceData[5] = this.priceToPrint.priceDiscountOutlet;
+        switch (this.priceToPrint.status) {
+          case 1:
+            this.priceData[4] = 'Nuevo';
+            this.priceData[0] = 'Imprimiendo...';
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          }, ()=>{
-            this.priceData[0] = 'Error de conexión con la impresora.';
-            console.log('priceData:',this.priceData);
+            this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
+              this.printerService.printNotify([this.priceToPrint.id]);
+              this.priceData[0] = 'Artículo impreso con éxito.';
+              ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+            }, ()=>{
+              this.priceData[0] = 'Error de conexión con la impresora.';
+              ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+            });
+            break;
+          case 2:
+            this.priceData[4] = 'Actualizado';
+            this.priceData[0] = 'Imprimiendo...';
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          });
-          break;
-        case 2:
-          this.priceData[4] = 'Actualizado';
-          this.priceData[0] = 'Imprimiendo...';
-          console.log('priceData:',this.priceData);
-          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-            this.printerService.printNotify([this.priceToPrint.id]);
-            this.priceData[0] = 'Artículo impreso con éxito.';
-            console.log('priceData:',this.priceData);
+            this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
+              this.printerService.printNotify([this.priceToPrint.id]);
+              this.priceData[0] = 'Artículo impreso con éxito.';
+              ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+            }, ()=>{
+              this.priceData[0] = 'Error de conexión con la impresora.';
+              ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+            });
+            break;
+          case 3:
+          case 7:
+            this.priceData[4] = 'Eliminado';
+            this.priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
+            this.reprint = false;
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          }, ()=>{
-            this.priceData[0] = 'Error de conexión con la impresora.';
-            console.log('priceData:',this.priceData);
+            break;
+          case 4:
+            this.priceData[4] = 'Impreso';
+            this.priceData[0] = 'Este artículo ya está impreso, ¿desea volver a imprimirlo?';
+            this.reprint = true;
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          });
-          break;
-        case 3:
-        case 7:
-          this.priceData[4] = 'Eliminado';
-          this.priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
-          this.reprint = false;
-          console.log('priceData:',this.priceData);
-          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          break;
-        case 4:
-          this.priceData[4] = 'Impreso';
-          this.priceData[0] = 'Este artículo ya está impreso, ¿desea volver a imprimirlo?';
-          this.reprint = true;
-          console.log('priceData:',this.priceData);
-          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-          break;
-        default:
-          this.priceData[4] = 'Desconocido';
-          this.priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
-          this.reprint = false;
-          console.log('priceData:',this.priceData);
-          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+            break;
+          default:
+            this.priceData[4] = 'Desconocido';
+            this.priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
+            this.reprint = false;
+            ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+        }
       }
     }else{
       this.priceData[0] = 'Error: no hay precios asociados al modelo con referencia '+this.lastBarcode+'.';
-      console.log('priceData:',this.priceData);
       ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
     }
   }
 
   buttonClick(){
-    console.log('Ejecutando buttonClick()');
     if(this.reprint){
       this.priceData[6] = 'button reprint';
       this.priceData[0] = 'Imprimiendo...';
-      console.log('priceData:',this.priceData);
       ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
       this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
         this.printerService.printNotify([this.priceToPrint.id]);
         this.priceData[0] = 'Artículo re-impreso con éxito.';
-        console.log('priceData:',this.priceData);
         ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
       }, ()=>{
         this.priceData.splice(6,1);
         this.priceData[0] = 'Error de conexión con la impresora.';
-        console.log('priceData:',this.priceData);
         ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
       });
     }else{
@@ -194,16 +216,13 @@ export class TariffPricesScanditService {
         }
         this.priceData[6] = 'button invalid';
         this.priceData[0] = 'Imprimiendo...';
-        console.log('priceData:',this.priceData);
         ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
         this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
           this.priceData[0] = 'Artículo vigente impreso con éxito.';
-          console.log('priceData:',this.priceData);
           ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
         }, ()=>{
           this.priceData.splice(6,1);
           this.priceData[0] = 'Error de conexión con la impresora.';
-          console.log('priceData:',this.priceData);
           ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
         });
       });
