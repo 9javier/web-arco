@@ -78,4 +78,11 @@ export namespace PredistributionModel {
     type:number,
     order:string
    }
+   export interface BlockReservedRequest {
+    reserved: boolean,
+    distribution: boolean,
+    modelId: number,
+    sizeId: number,
+    warehouseId: number
+   }
 }

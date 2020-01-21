@@ -281,8 +281,35 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  savePredistributions() {
-
+  async savePredistributions() {
+    let list = [];
+    this.dataSource.data.forEach(dataRow => {
+      list.push({
+        reserved: dataRow.reserved,
+        distribution: dataRow.distribution,
+        modelId: dataRow.model.id,
+        sizeId: dataRow.size.id,
+        warehouseId: dataRow.warehouse.id
+      })      
+    });
+    // call to services ..
+    this.intermediaryService.presentLoading();
+    let This = this;
+    await this.predistributionsService.updateBlockReserved(list).subscribe(function(data){
+      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");  
+      console.log('debug', data);
+      // reload page   
+      This.initEntity()
+      This.initForm()
+      This.getFilters()
+      This.getList(this.form)
+      This.listenChanges()  
+    }, (error) => {
+      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");  
+      This.intermediaryService.dismissLoading();
+    }, () => {
+      This.intermediaryService.dismissLoading();
+    });  
   }
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {

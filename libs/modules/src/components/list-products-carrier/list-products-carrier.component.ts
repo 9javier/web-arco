@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ListProductsCarrierService } from '../../../../services/src/lib/endpoint/list-products-carrier/list-products-carrier.service';
-import { IntermediaryService } from '@suite/services';
+import { CarrierService, IntermediaryService } from '@suite/services';
 import { ModalController, NavParams, PopoverController } from '@ionic/angular';
 import { FiltersAuditProvider } from '../../../../services/src/providers/filters-audit/filters-audit.provider';
 import { FiltersListComponent } from './filters-list/filters-list.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AudioProvider } from '../../../../services/src/providers/audio-provider/audio-provider.provider';
 
 @Component({
   selector: 'suite-list-products-carrier',
@@ -33,6 +35,10 @@ export class ListProductsCarrierComponent implements OnInit {
     private popoverController: PopoverController,
     private filtersAuditProvider: FiltersAuditProvider,
     private navParams: NavParams,
+    private route: Router,
+    private carrierService: CarrierService,
+
+    private audioProvider: AudioProvider,
   ) {
     this.carrierReference = this.navParams.get('carrierReference');
   }
@@ -62,8 +68,8 @@ export class ListProductsCarrierComponent implements OnInit {
     const popover = await this.popoverController.create({
       cssClass: 'popover-filter',
       component: FiltersListComponent,
-      componentProps: { form: this.form },
-      event: event
+      componentProps: { form: this.form, carrierReference: this.carrierReference },
+      event
     });
 
     popover.onDidDismiss().then(async (res) => {
@@ -93,19 +99,57 @@ export class ListProductsCarrierComponent implements OnInit {
     await popover.present();
   }
 
-  async close() {
-    await this.modalController.dismiss();
+  async close(con = false) {
+     await this.modalController.dismiss();
   }
 
-  btnContinue() {
+  async btnContinue(con = false) {
     console.log('Continuar');
+    if(con){
+      await this.modalController.dismiss(this.carrierReference);
+    }else{
+      await this.modalController.dismiss();
+    }
   }
 
-  btnCarrierEmpty() {
+  async btnCarrierEmpty() {
     console.log('Jaula vacía');
+    await this.intermediaryService.presentLoading();
+
+    await this.carrierService.postPackingEmpty(this.carrierReference).then(res => {
+      if(res.code === 200){
+        this.audioProvider.playDefaultOk();
+        this.intermediaryService.presentToastSuccess(`La Jaula ${this.carrierReference} se ha vaciado corectamente`);
+        this.intermediaryService.dismissLoading();
+        this.modalController.dismiss(this.carrierReference);
+      }else{
+        this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
+        this.intermediaryService.presentToastError(res.errors);
+      }
+
+    }).catch(error => {
+      this.intermediaryService.dismissLoading();
+      this.audioProvider.playDefaultError();
+      this.intermediaryService.presentToastError(error.message);
+    })
+
   }
 
-  btnPosition() {
+  async btnPosition(ruta:string) {
     console.log('Posicionar');
+    await this.route.navigateByUrl(ruta);
+    await this.modalController.dismiss(ruta,'navigate');
+  }
+
+  getReferenceWarehouse(packingProduct: any) {
+    let reference = '';
+
+    if (packingProduct && packingProduct.sorterControlProduct
+      && packingProduct.sorterControlProduct.warehouseDestiny
+      && packingProduct.sorterControlProduct.warehouseDestiny.reference) {
+      reference = packingProduct.sorterControlProduct.warehouseDestiny.reference;
+    }
+    return reference;
   }
 }

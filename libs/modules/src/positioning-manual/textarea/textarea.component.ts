@@ -10,6 +10,7 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { ListasProductosComponent } from '../../picking-manual/lista/listas-productos/listas-productos.component';
 import { CarrierService } from '../../../../services/src/lib/endpoint/carrier/carrier.service';
+import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 
 @Component({
   selector: 'suite-textarea',
@@ -52,7 +53,7 @@ export class TextareaComponent implements OnInit {
 
   async ngOnInit() {
     console.log('siamo qui');
-    
+
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
@@ -67,19 +68,17 @@ export class TextareaComponent implements OnInit {
 
   /**
    * @author Gaetano Sabino
-   * @param event 
-   * @description Crear la modal 
+   * @param event
+   * @description Crear la modal
    */
-  private async modalList(productos:any[], jaula:string, data:any){
+  private async modalList(jaula:string){
     let modal = await this.modalCtrl.create({
-      
-      component: ListasProductosComponent,
+
+      component: ListProductsCarrierComponent,
       componentProps: {
-        productos,
-        jaula,
-        data
+        carrierReference:jaula
       }
-      
+
     })
     modal.onDidDismiss().then((data) => {
       console.log(data);
@@ -87,11 +86,11 @@ export class TextareaComponent implements OnInit {
         this.focusToInput();
         return;
       }
-      
+
       if(data.data && data.role === undefined){
         if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
           console.log('passo di qui ',this.lastCodeScanned);
-          
+
           this.focusToInput();
           this.inputPositioning = data.data;
           this.processInitiated = false;
@@ -101,7 +100,7 @@ export class TextareaComponent implements OnInit {
           this.focusToInput();
         }
       }
-      
+
     })
     modal.present();
   }
@@ -121,7 +120,7 @@ export class TextareaComponent implements OnInit {
     if (event.keyCode === 13 || prova && dataWrited && !this.processInitiated) {
       // console.log('passo di primo');
       // console.log(dataWrited,this.lastCodeScanned);
-      
+
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
         return;
@@ -136,7 +135,7 @@ export class TextareaComponent implements OnInit {
       this.processInitiated = true;
       if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
         // console.log('passa qui');
-        
+
         this.processInitiated = false;
         this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
           setTimeout(() => {
@@ -170,7 +169,7 @@ export class TextareaComponent implements OnInit {
         // console.log('passa qui por Jaula');
         this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
           if(data.packingInventorys.length > 0 && !prova){
-            this.modalList(data.packingInventorys,this.lastCodeScanned,data);
+            this.modalList(this.lastCodeScanned);
           }else{
             this.processInitiated = false;
             this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
@@ -231,8 +230,8 @@ export class TextareaComponent implements OnInit {
         } else if (res.code === 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
-        } else if (res.code == 401) {
-          if (res.message == 'UserConfirmationRequiredException') {
+        } else if (res.code === 401) {
+          if (res.message === 'UserConfirmationRequiredException') {
             this.warningToForce(params, res.errors, false, 'Continuar');
           } else {
             /** Comprobando si tienes permisos para el forzado */
