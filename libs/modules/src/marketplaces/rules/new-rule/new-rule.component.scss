@@ -36,7 +36,7 @@ ion-content {
     justify-content: space-between;
 
     .nr-modal-content {
-      width: calc(100% - 90px);
+      width: calc(100% - 50px);
 
       .nr-filter-selection-wrapper {
         display: flex;
@@ -53,7 +53,7 @@ ion-content {
 
             &:first-of-type {
               padding-top: 29px;
-              padding-left: 56px;
+              padding-left: 16px;
               padding-right: 10px;
               text-align: center;
 
@@ -114,7 +114,7 @@ ion-content {
 
         .rule-filter-price {
           margin-bottom: 20px;
-          padding-left: 90px;
+          padding-left: 50px;
 
           input {
             font-size: 14px;
@@ -131,7 +131,7 @@ ion-content {
 
         .rule-filter-stock {
           margin-bottom: 20px;
-          padding-left: 90px;
+          padding-left: 50px;
 
           input {
             font-size: 14px;
@@ -149,7 +149,7 @@ ion-content {
       .nr-filter-selected-wrapper {
         display: flex;
         flex-direction: column;
-        margin-left: 90px;
+        margin-left: 50px;
         margin-bottom: 20px;
         & > div {
           font-size: 14px;
@@ -175,7 +175,7 @@ ion-content {
       }
 
       .nr-action-selection-wrapper {
-        margin-left: 90px;
+        margin-left: 50px;
         margin-bottom: 20px;
         display: flex;
         flex-direction: column;
@@ -205,7 +205,7 @@ ion-content {
 
       .nr-action-selected-wrapper {
         margin-bottom: 20px;
-        margin-left: 90px;
+        margin-left: 50px;
 
         & > .action-categories {
           display: flex;
@@ -312,7 +312,7 @@ ion-footer {
     justify-content: flex-end;
     align-items: center;
     height: 40px;
-    padding: 0 110px;
+    padding: 0 70px;
     margin: 20px 0;
 
     .nr-selected-action-description {
@@ -420,7 +420,74 @@ ion-footer {
 }
 
 @media (max-width: 767px) {
-  ion-footer {
 
+  ion-content {
+
+    .nr-modal-body-wrapper {
+
+      .nr-modal-content {
+        width: calc(100% - 34px);
+
+        .nr-filter-selection-wrapper {
+
+          .rule-filter-category {
+
+            & > div {
+
+              &:first-of-type {
+                padding-left: 0;
+
+              }
+
+            }
+          }
+
+          .rule-filter-price {
+            padding-left: 34px;
+
+          }
+
+          .rule-filter-stock {
+            padding-left: 34px;
+          }
+
+        }
+
+        .nr-filter-selected-wrapper {
+          margin-left: 34px;
+        }
+
+        .nr-action-selection-wrapper {
+          margin-left: 34px;
+
+        }
+
+        .nr-action-selected-wrapper {
+          margin-left: 34px;
+        }
+
+      }
+    }
+
+  }
+
+  ion-footer {
+    .nr-modal-buttons-wrapper {
+      padding: 0 54px;
+
+      .nr-selected-action-description {
+        width: 50%;
+
+      }
+
+      .nr-rule-button {
+        width: 50%;
+      }
+
+      .nr-rule-button-disabled {
+        width: 50%;
+      }
+
+    }
   }
 }

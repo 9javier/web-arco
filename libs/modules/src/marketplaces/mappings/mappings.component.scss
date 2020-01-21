@@ -162,3 +162,26 @@
   }
 
 }
+
+@media (max-width: 767px) {
+  .mp-mapping-wrapper {
+
+    & > mat-accordion {
+
+      & > mat-expansion-panel {
+
+        .mp-mapping-expansion-panel-content {
+
+          & > div {
+            width: 100%;
+            padding-right: 34px;
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+}

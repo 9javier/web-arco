@@ -12,7 +12,7 @@ export class NewRuleComponent implements OnInit {
   @ViewChild('priceInput') priceInput;
   @ViewChild('stockInput') stockInput;
   @ViewChild('reduceStockInput') reduceStockInput;
-  @ViewChild('ruleNameWindow') ruleNameWindow
+  @ViewChild('ruleNameWindow') ruleNameWindow;
 
   private mode;
   private rule;
