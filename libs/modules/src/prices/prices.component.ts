@@ -396,6 +396,7 @@ export class PricesComponent implements OnInit {
     this.getWarehouses();
 
     this.clearFilters();
+    this.toolbarProvider.currentPage.next(this.tariffName);
   }
 
   ngOnDestroy(){
