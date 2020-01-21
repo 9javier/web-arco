@@ -37,7 +37,7 @@
   <p *ngIf="isFirstProductScanned && !wrongCodeScanned && !packingIsFull" class="message-guide-finish">
     Si quedan artículos en la calle, por favor, escanee el último artículo.
   </p>
-  <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted" class="message-guide-wrong-code">
+  <p *ngIf="wrongCodeScanned && !packingIsFull && processStarted && !outputWithIncidencesClear" class="message-guide-wrong-code">
     ¡Escanea cada artículo y revisa destino!
   </p>
 
@@ -48,7 +48,7 @@
     <br/>
     <span>para comenzar</span>
   </div>
-  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted" [ngClass]="wrongCodeScanned ? 'align-bottom' : ''">{{messageGuide}}</p>
+  <p class="message-guide" (click)="focusToInput()" *ngIf="!inputValue && processStarted && !outputWithIncidencesClear" [ngClass]="wrongCodeScanned ? 'align-bottom' : ''">{{messageGuide}}</p>
 
   <input hideKeyboard id="input" class="output-sorter" (keyup)="keyUpInput($event)" [(ngModel)]="inputValue" (focus)="onFocus($event)" [ngClass]="wrongCodeScanned ? 'wrong-code' : ''">
 
