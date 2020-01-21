@@ -1,10 +1,12 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Input} from '@angular/core';
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {Router} from "@angular/router";
 import {ScanditModel} from "../../../models/scandit/Scandit";
 import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 import {PriceModel, PriceService} from "@suite/services";
 import {PrinterService} from "../../printer/printer.service";
+import Price = PriceModel.Price;
+import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
 
 declare let ScanditMatrixSimple;
 
@@ -15,39 +17,45 @@ export class TariffPricesScanditService {
 
   warehouseId: number;
   tariffId: number;
+  tariffName;
   lastBarcode: string = null;
+  priceToPrint: PriceModel.PriceByModelTariff;
   priceOptions: PriceModel.PriceByModelTariff[];
+  reprint: boolean;
+  priceData: string[];
 
   constructor(
     private router: Router,
     private scanditProvider: ScanditProvider,
     private itemReferencesProvider: ItemReferencesProvider,
     private priceService: PriceService,
-    private printerService: PrinterService
+    private printerService: PrinterService,
+    private localStorageProvider: LocalStorageProvider
   ) {}
 
   public init(warehouseId: number, tariffId: number) {
     this.warehouseId = warehouseId;
     this.tariffId = tariffId;
-    // this.checkAndPrint({result: true, barcode:{data: '000834751400178907', id: 1}});
-    // this.checkAndPrint({result: true, barcode:{data: '083475', id: 1}});
+    this.tariffName = Object.values(this.localStorageProvider.get('tariffName'))[1];
     ScanditMatrixSimple.initTariffPrices(
       response => {
-        if(response.barcode != undefined) this.checkAndPrint(response);
-        else if(response.size_selected != undefined) this.print(this.priceOptions[response.size_selected]);
+        if(response.barcode != undefined && response.barcode.data) this.checkAndPrint(response.barcode.data);
+        else if(response.size_selected != undefined){
+          this.priceToPrint = this.priceOptions[response.size_selected];
+          this.print();
+        }
         else if(response.button != undefined) this.buttonClick();
       },
-      'Tarifa '+this.tariffId,
+      'Tarifa '+this.tariffName,
       this.scanditProvider.colorsHeader.background.color,
       this.scanditProvider.colorsHeader.color.color
     );
   }
 
-  checkAndPrint(response: ScanditModel.Response) {
+  checkAndPrint(barcode: string) {
     console.log('Ejecutando checkAndPrint()');
-    if (response.barcode.data != this.lastBarcode) {
-      let barcode = response.barcode.data;
-      console.log('Código escaneado:',barcode);
+    console.log('Código escaneado:',barcode);
+    if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let reference: PriceModel.ProductsReferences = {
@@ -55,29 +63,30 @@ export class TariffPricesScanditService {
           tariffId: this.tariffId
         };
         this.priceService.postPricesByProductsReferences(reference).then(response => {
-          let price: PriceModel.PriceByModelTariff = response.data[0];
-          this.print(price);
+          this.priceToPrint = response.data[0];
+          this.print();
         });
       }else if(this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT_MODEL){
         this.priceService.postPricesByModel(barcode, this.tariffId).then(response=>{
-          let prices: PriceModel.PriceByModelTariff[] = response.data;
-          console.log('prices of model:',prices);
-          switch (prices.length) {
+          this.priceOptions = response.data;
+          console.log('prices of model:',this.priceOptions);
+          switch (this.priceOptions.length) {
             case 0:
-              this.print(null);
+              this.priceToPrint = null;
+              this.print();
               break;
             case 1:
-              this.print(prices[0]);
+              this.priceToPrint = response.data[0];
+              this.print();
               break;
             default:
               let sizeRanges: PriceModel.SizeRange[] = [];
-              for(let iPrice of prices){
+              for(let iPrice of this.priceOptions){
                 sizeRanges.push({rangesNumbers: {
                     sizeRangeNumberMax: iPrice.rangesNumbers.sizeRangeNumberMax,
                     sizeRangeNumberMin: iPrice.rangesNumbers.sizeRangeNumberMin
                   }});
               }
-              this.priceOptions = prices;
               ScanditMatrixSimple.showAlertSelectSizeToPrint('Selecciona la talla:', sizeRanges);
           }
         });
@@ -85,48 +94,119 @@ export class TariffPricesScanditService {
     }
   }
 
-  print(price: PriceModel.PriceByModelTariff){
+  print(){
     console.log('Ejecutando print()');
-    console.log('price to print:',price);
-    let priceData: String[] = [];
-    if(price != null) {
-      priceData[1] = price.model.reference;
-      priceData[2] = price.model.brand.name;
-      priceData[3] = price.model.lifestyle.name;
-      priceData[5] = price.priceDiscountOutlet;
-      switch (price.status) {
+    console.log('price to print:',this.priceToPrint);
+    this.priceData = [];
+    if(this.priceToPrint != null) {
+      this.priceData[1] = this.priceToPrint.model.reference;
+      this.priceData[2] = this.priceToPrint.model.brand.name;
+      this.priceData[3] = this.priceToPrint.model.lifestyle.name;
+      this.priceData[5] = this.priceToPrint.priceDiscountOutlet;
+      switch (this.priceToPrint.status) {
         case 1:
-          this.printerService.printTagPriceUsingPrice([price]);
-          priceData[0] = 'Artículo impreso con éxito';
-          priceData[4] = 'Nuevo';
+          this.priceData[4] = 'Nuevo';
+          this.priceData[0] = 'Imprimiendo...';
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+          this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
+            this.printerService.printNotify([this.priceToPrint.id]);
+            this.priceData[0] = 'Artículo impreso con éxito.';
+            console.log('priceData:',this.priceData);
+            ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+          }, ()=>{
+            this.priceData[0] = 'Error de conexión con la impresora.';
+            console.log('priceData:',this.priceData);
+            ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+          });
           break;
         case 2:
-          this.printerService.printTagPriceUsingPrice([price]);
-          priceData[0] = 'Artículo impreso con éxito';
-          priceData[4] = 'Actualizado';
+          this.priceData[4] = 'Actualizado';
+          this.priceData[0] = 'Imprimiendo...';
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+          this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
+            this.printerService.printNotify([this.priceToPrint.id]);
+            this.priceData[0] = 'Artículo impreso con éxito.';
+            console.log('priceData:',this.priceData);
+            ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+          }, ()=>{
+            this.priceData[0] = 'Error de conexión con la impresora.';
+            console.log('priceData:',this.priceData);
+            ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+          });
           break;
         case 3:
         case 7:
-          priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
-          priceData[4] = 'Eliminado';
+          this.priceData[4] = 'Eliminado';
+          this.priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
+          this.reprint = false;
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
           break;
         case 4:
-          priceData[0] = 'Este artículo ya está impreso, ¿desea volver a imprimirlo?';
-          priceData[4] = 'Impreso';
+          this.priceData[4] = 'Impreso';
+          this.priceData[0] = 'Este artículo ya está impreso, ¿desea volver a imprimirlo?';
+          this.reprint = true;
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
           break;
         default:
-          priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
-          priceData[4] = 'Desconocido';
+          this.priceData[4] = 'Desconocido';
+          this.priceData[0] = 'La tarifa no está vigente para este artículo, ¿desea imprimir el precio de la tarifa vigente?';
+          this.reprint = false;
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
       }
     }else{
-     priceData[0] = 'Error: no hay precios asociados con ese modelo.';
+      this.priceData[0] = 'Error: no hay precios asociados al modelo con referencia '+this.lastBarcode+'.';
+      console.log('priceData:',this.priceData);
+      ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
     }
-    console.log('priceData:',priceData);
-    ScanditMatrixSimple.loadPriceInfo(null, priceData);
   }
 
   buttonClick(){
-
+    console.log('Ejecutando buttonClick()');
+    if(this.reprint){
+      this.priceData[6] = 'button reprint';
+      this.priceData[0] = 'Imprimiendo...';
+      console.log('priceData:',this.priceData);
+      ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+      this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
+        this.printerService.printNotify([this.priceToPrint.id]);
+        this.priceData[0] = 'Artículo re-impreso con éxito.';
+        console.log('priceData:',this.priceData);
+        ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+      }, ()=>{
+        this.priceData.splice(6,1);
+        this.priceData[0] = 'Error de conexión con la impresora.';
+        console.log('priceData:',this.priceData);
+        ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+      });
+    }else{
+      this.priceService.postPricesByModel(this.priceToPrint.model.reference).then(response => {
+        for(let iOption of response.data){
+          if(iOption.status != 3 && iOption.status != 4 && iOption.numRange == this.priceToPrint.numRange){
+            this.priceToPrint = iOption;
+            break;
+          }
+        }
+        this.priceData[6] = 'button invalid';
+        this.priceData[0] = 'Imprimiendo...';
+        console.log('priceData:',this.priceData);
+        ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+        this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
+          this.priceData[0] = 'Artículo vigente impreso con éxito.';
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+        }, ()=>{
+          this.priceData.splice(6,1);
+          this.priceData[0] = 'Error de conexión con la impresora.';
+          console.log('priceData:',this.priceData);
+          ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
+        });
+      });
+    }
   }
 
 }

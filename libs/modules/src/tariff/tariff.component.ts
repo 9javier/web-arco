@@ -17,6 +17,7 @@ import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { Router } from '@angular/router';
 import {SortModel} from "../../../services/src/models/endpoints/Sort";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {LocalStorageProvider} from "../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'suite-tariff',
@@ -65,7 +66,8 @@ export class TariffComponent implements OnInit {
     private formBuilder: FormBuilder,
     private tariffService: TariffService,
     private router: Router,
-    private warehousesService: WarehousesService
+    private warehousesService: WarehousesService,
+    private localStorageProvider: LocalStorageProvider
   ) {}
 
   ngOnInit() {
@@ -102,6 +104,12 @@ export class TariffComponent implements OnInit {
    */
   goPrices(id: number): void {
     let a: TariffModel.Tariff;
+    for(let iData of this.dataSource.data){
+      if(iData.tariffId == id){
+        this.localStorageProvider.set('tariffName',iData.tariffName);
+        break;
+      }
+    }
     this.router.navigate(['prices', id]);
   }
 

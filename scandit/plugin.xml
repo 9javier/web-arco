@@ -145,6 +145,7 @@
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixProductInfo"/>
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.SwitchToIonicActivity"/>
       <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixAuditMultipleActivity"/>
+      <activity android:screenOrientation="portrait" android:name="com.mirasense.scanditsdk.plugin.MatrixTariffPricesActivity"/>
     </config-file>
     <!-- The .so/.jar and resources are all contained in the ScanditBarcodeScanner.aar file, which we reference from build.gradle -->
     <framework custom="true" src="src/android/build.gradle" type="gradleReference"/>
@@ -157,6 +158,7 @@
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/IPickerController.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/Marshal.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/PhonegapParamParser.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
+    <source-file src="src/android/com/mirasense/scanditsdk/plugin/MatrixTariffPricesActivity.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/PickerControllerBase.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/PickerStateMachine.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
     <source-file src="src/android/com/mirasense/scanditsdk/plugin/ResultRelay.java" target-dir="src/com/mirasense/scanditsdk/plugin"/>
@@ -289,6 +291,7 @@
     <source-file src="src/android/layout/minimalist_action_bar.xml" target-dir="res/layout"/>
     <source-file src="src/android/colors.xml" target-dir="res/values"/>
     <source-file src="src/android/styles.xml" target-dir="res/values"/>
+    <source-file src="src/android/strings.xml" target-dir="res/values"/>
     <source-file src="src/android/raw/response_request_error.wav" target-dir="res/raw"/>
     <source-file src="src/android/raw/response_request_ok.wav" target-dir="res/raw"/>
 

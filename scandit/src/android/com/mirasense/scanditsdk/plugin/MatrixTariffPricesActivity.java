@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -18,6 +19,9 @@ import com.scandit.barcodepicker.ScanOverlay;
 import com.scandit.barcodepicker.ScanSettings;
 import com.scandit.matrixscan.MatrixScan;
 import com.scandit.recognition.Barcode;
+import org.apache.cordova.PluginResult;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MatrixTariffPricesActivity extends Activity {
 
@@ -92,9 +96,22 @@ public class MatrixTariffPricesActivity extends Activity {
     ImageButton arrowBack = findViewById(resources.getIdentifier("arrow_back_button", "id", package_name));
     arrowBack.setOnClickListener(v -> finish());
 
-    findViewById(resources.getIdentifier("button", "id", package_name)).setVisibility(View.INVISIBLE);
+    Button button = findViewById(resources.getIdentifier("button", "id", package_name));
+    button.setVisibility(View.INVISIBLE);
     findViewById(resources.getIdentifier("TopInfo", "id", package_name)).setVisibility(View.INVISIBLE);
     findViewById(resources.getIdentifier("BottomInfo", "id", package_name)).setVisibility(View.INVISIBLE);
+
+    button.setOnClickListener(v -> {
+      JSONObject jsonObject = new JSONObject();
+      try {
+        jsonObject.put("button", true);
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+      PluginResult pResult = new PluginResult(PluginResult.Status.OK, jsonObject);
+      pResult.setKeepCallback(true);
+      ScanditSDK.mCallbackContextMatrixSimple.sendPluginResult(pResult);
+    });
 
     matrixProductInfo = this;
     ScanditSDK.setActivityStarted(matrixProductInfo);
