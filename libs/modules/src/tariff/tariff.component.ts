@@ -104,12 +104,7 @@ export class TariffComponent implements OnInit {
    */
   goPrices(row: any): void {
     let a: TariffModel.Tariff;
-    for(let iData of this.dataSource.data){
-      if(iData.tariffId == id){
-        this.localStorageProvider.set('tariffName',iData.tariffName);
-        break;
-      }
-    }
+    this.localStorageProvider.set('tariffName',row.tariffName);
     let navigationExtras: NavigationExtras = {
       queryParams: {
         name: JSON.stringify(row.tariffName)

@@ -37,6 +37,7 @@ export class TariffPricesScanditService {
     this.warehouseId = warehouseId;
     this.tariffId = tariffId;
     this.tariffName = Object.values(this.localStorageProvider.get('tariffName'))[1];
+    this.lastBarcode = null;
     ScanditMatrixSimple.initTariffPrices(
       response => {
         if(response.barcode != undefined && response.barcode.data) this.checkAndPrint(response.barcode.data);
