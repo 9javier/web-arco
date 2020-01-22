@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  apiBase: 'http://mga.krack.es:8080/api',
-  apiSorter: 'http://mga.krack.es:8080/api',
-  urlBase: 'http://mga.krack.es:8080',
+  apiBase: 'http://localhost:8080/api',
+  apiSorter: 'http://localhost:8080/api',
+  urlBase: 'http://localhost:8080',
   sga: {
     client_id: "krack-client-sga",
     client_secret: "fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"
