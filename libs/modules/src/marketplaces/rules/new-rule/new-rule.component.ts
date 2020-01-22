@@ -1,6 +1,5 @@
 import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
-import {ModalController, NavParams, ToastController} from '@ionic/angular';
-import {switchTap} from "@angular/router/src/operators/switch_tap";
+import {ModalController, NavParams} from '@ionic/angular';
 import { MarketplacesService } from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 
 @Component({
@@ -33,6 +32,7 @@ export class NewRuleComponent implements OnInit {
   private stockToReduceDescription;
   private filterDescription;
   private ruleName;
+  private originalRuleName;
 
   constructor(
     private modalController: ModalController,
@@ -44,14 +44,8 @@ export class NewRuleComponent implements OnInit {
 
   ngOnInit() {
     this.mode = this.navParams.get('mode');
-    this.numberOfProducts = 230;
+    this.numberOfProducts = 0;
     this.action = 'activation';
-    /*if (this.mode == 'edit') {
-      this.rule = this.navParams.get('rule');
-      this.numberOfProducts = this.rule.products;
-      this.action = this.rule.action;
-      this.reorganizeDestinationCategories();
-    }*/
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];
     this.filterDescription = '';
@@ -168,6 +162,45 @@ export class NewRuleComponent implements OnInit {
       {id: 49, group: 2, name: 'Hombre rebajas'},
     ];
     this.destinationCategoriesCopy = this.destinationCategories.slice();
+
+    if (this.mode == 'edit') {
+      this.rule = this.navParams.get('rule');
+      this.action = this.navParams.get('action');
+      this.ruleName = this.navParams.get('ruleName');
+      this.originalRuleName = this.ruleName;
+      this.selectedCategories = this.navParams.get('selectedCategories');
+      this.minPriceFilter = this.navParams.get('minPriceFilter') == 0 ? '' : this.navParams.get('minPriceFilter');
+      this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
+      this.numberOfProducts = this.navParams.get('numberOfProducts');
+      this.selectedDestinationCategories = this.navParams.get('selectedDestinationCategories');
+      this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
+      this.reorganizeDestinationCategories();
+
+      if (this.action == 'stock') {
+        this.addReduceStockFilter();
+      }
+
+      switch (this.ruleFilterType) {
+        case 'category':
+          this.filterDescription = '';
+          for (let category of this.selectedCategories) {
+            let group = this.categoryList.find(x => x.id === category.group);
+            this.filterDescription += group.name + ': ' + category.name;
+            if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+              this.filterDescription += ', ';
+            }
+          }
+          break;
+
+        case 'price':
+          this.addPriceFilter();
+          break;
+
+        case 'stock':
+          this.addStockFilter();
+          break;
+      }
+    }
   }
 
   close(data) {
@@ -177,13 +210,11 @@ export class NewRuleComponent implements OnInit {
   changeSelectedCategoryGroupFilter($event) {
     this.selectedCategoryGroupFilter = $event.value;
     this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === $event.value);
-    console.log(this.selectedCategoryGroupFilter);
-    console.log(this.selectedCategoryGroupFilterObject);
   }
 
   addCategoryToCategoriesFilter(category) {
-    if (this.selectedCategories.includes(category)) {
-      this.selectedCategories.splice(this.selectedCategories.indexOf(category), 1);
+    if (this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
+      this.selectedCategories.splice(this.selectedCategories.map(cat => cat.id).indexOf(category.id), 1);
     } else {
       this.selectedCategories.push(category);
       this.selectedCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
@@ -304,8 +335,8 @@ export class NewRuleComponent implements OnInit {
   }
 
   selectCategoryRow(category) {
-    if (this.selectedDestinationCategories.includes(category)) {
-      this.selectedDestinationCategories.splice(this.selectedDestinationCategories.indexOf(category), 1);
+    if (this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
+      this.selectedDestinationCategories.splice(this.selectedDestinationCategories.map(cat => cat.id).indexOf(category.id), 1);
     } else {
       this.selectedDestinationCategories.push(category);
       this.selectedDestinationCategories.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
@@ -313,7 +344,7 @@ export class NewRuleComponent implements OnInit {
   }
 
   checkCategorySelected(category) {
-    return this.selectedDestinationCategories.includes(category);
+    return this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
   filterProducts(filter) {
@@ -339,13 +370,12 @@ export class NewRuleComponent implements OnInit {
       for (let destinationCategory of this.destinationCategoriesCopy) {
         if (destinationCategory.id == category.id) {
           this.destinationCategoriesCopy.splice(this.destinationCategoriesCopy.indexOf(destinationCategory), 1);
-          if (this.selectedDestinationCategories.includes(destinationCategory)) {
-            this.selectedDestinationCategories.splice(this.selectedDestinationCategories.indexOf(destinationCategory), 1);
+          if (this.selectedDestinationCategories.some(cat => (cat.id == destinationCategory.id && cat.group == destinationCategory.group))) {
+            this.selectedDestinationCategories.splice(this.selectedDestinationCategories.map(cat => cat.id).indexOf(destinationCategory.id), 1);
           }
         }
       }
     }
-    console.log('selectedDestinationCategories', this.selectedDestinationCategories);
   }
 
   actionChange() {
@@ -360,7 +390,11 @@ export class NewRuleComponent implements OnInit {
 
   cancelRuleNaming() {
     this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'none');
-    this.ruleName = '';
+    if (this.mode == 'create') {
+      this.ruleName = '';
+    } else {
+      this.ruleName = this.originalRuleName;
+    }
   }
 
   createRuleButtonActivation() {
@@ -453,7 +487,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: this.selectedCategories,
-                minPriceFilter: "0.00",
+                minPriceFilter: 0,
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: [],
@@ -479,7 +513,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: [],
-                minPriceFilter: "0.00",
+                minPriceFilter: 0,
                 stockFilter: parseInt(this.stockFilter),
                 products: this.numberOfProducts,
                 destinationCategories: [],
@@ -500,7 +534,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: this.selectedCategories,
-                minPriceFilter: "0.00",
+                minPriceFilter: 0,
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: this.selectedDestinationCategories,
@@ -526,7 +560,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: [],
-                minPriceFilter: "0.00",
+                minPriceFilter: 0,
                 stockFilter: parseInt(this.stockFilter),
                 products: this.numberOfProducts,
                 destinationCategories: this.selectedDestinationCategories,
@@ -547,7 +581,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: this.selectedCategories,
-                minPriceFilter: "0.00",
+                minPriceFilter: 0,
                 stockFilter: 0,
                 products: this.numberOfProducts,
                 destinationCategories: [],
@@ -573,7 +607,7 @@ export class NewRuleComponent implements OnInit {
                 filterType: this.ruleFilterType,
                 action: this.action,
                 categoriesFilter: [],
-                minPriceFilter: "0.00",
+                minPriceFilter: 0,
                 stockFilter: parseInt(this.stockFilter),
                 products: this.numberOfProducts,
                 destinationCategories: [],
@@ -588,6 +622,10 @@ export class NewRuleComponent implements OnInit {
       this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'none');
       this.close(rule);
     }
+  }
+
+  selectedCategoriesIncludes(category) {
+    return this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
 }
