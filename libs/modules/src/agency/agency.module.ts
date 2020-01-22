@@ -9,6 +9,7 @@ import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from './modals/modals.module';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -27,10 +28,11 @@ const routes: Routes = [
     MatTableModule,
     MatPaginatorModule,
     BreadcrumbModule,
-    ModalsModule, 
+    ModalsModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MatTooltipModule
   ]
 })
 export class AgencyModule { }

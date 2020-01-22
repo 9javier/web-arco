@@ -7,10 +7,10 @@
           <suite-breadcrumb></suite-breadcrumb>
         </ion-col>
         <ion-col class="ion-align-self-center bt-right">
-          <ion-button matTooltip="Descargar excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
+          <ion-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
             <ion-icon name="document"></ion-icon>
           </ion-button>
-          <ion-button matTooltip="Restablecer filtros" matTooltipClass="tooltip" color="primary" (click)="eraseFilters()">
+          <ion-button matTooltip="Restablecer Filtros" matTooltipClass="tooltip" color="primary" (click)="eraseFilters()">
             <ion-icon name="refresh" [matTooltip]="'Reiniciar filtros'"></ion-icon>
           </ion-button>
         </ion-col>
@@ -144,22 +144,22 @@
 </ion-content>
 
 <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-  <ion-fab-button matTooltip="Imprimir precio" matTooltipClass="tooltip" (click)="printPriceProducts()" *ngIf="isMobileApp && selectedForm['controls']?.toSelect && selectedForm.valid">
+  <ion-fab-button matTooltip="Imprimir Precio" matTooltipClass="tooltip" (click)="printPriceProducts()" *ngIf="isMobileApp && selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
     <ion-icon name="logo-usd"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
-  <ion-fab-button matTooltip="Imprimir etiqueta" matTooltipClass="tooltip" (click)="printLabelProducts()" *ngIf="isMobileApp && selectedForm['controls']?.toSelect && selectedForm.valid">
+  <ion-fab-button matTooltip="Imprimir Etiqueta" matTooltipClass="tooltip" (click)="printLabelProducts()" *ngIf="isMobileApp && selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
     <ion-icon name="pricetag"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
-  <ion-fab-button matTooltip="Reubicar" matTooltipClass="tooltip" (click)="presentAlertRelocation()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+  <ion-fab-button matTooltip="Reubicar Productos" matTooltipClass="tooltip" (click)="presentAlertRelocation()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="swap"></ion-icon>
   </ion-fab-button>
   <div style="height: 5px"></div>
 
-  <ion-fab-button matTooltip="Eliminar" matTooltipClass="tooltip" (click)="presentAlertDeleteConfirm()" *ngIf="selectedForm['controls']?.toSelect
+  <ion-fab-button matTooltip="Eliminar Productos" matTooltipClass="tooltip" (click)="presentAlertDeleteConfirm()" *ngIf="selectedForm['controls']?.toSelect
    && selectedForm.valid && hasDeleteProduct" color="danger">
     <i class="material-icons">delete</i>
   </ion-fab-button>

@@ -8,13 +8,14 @@ import {MatListModule, MatTableModule, MatPaginatorModule, MatSortModule} from '
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import { MatTooltipModule } from "@angular/material";
 
 const routes:Routes = [
   {
     path: '',
     component: TariffComponent
   }
-]; 
+];
 
 @NgModule({
   declarations: [TariffComponent],
@@ -30,7 +31,8 @@ const routes:Routes = [
     RouterModule.forChild(routes),
     TagsInputModule,
     MatSortModule,
-    PaginatorComponentModule
+    PaginatorComponentModule,
+    MatTooltipModule
   ]
 })
 export class TariffModule { }

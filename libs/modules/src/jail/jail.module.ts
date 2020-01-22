@@ -17,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent],
@@ -35,7 +36,8 @@ import { SendJailComponent } from './send-jail/send-jail.component';
     FormsModule,
     BreadcrumbModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ], entryComponents: [
     StoreComponent,
     SendComponent,

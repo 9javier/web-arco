@@ -35,9 +35,9 @@
         </ng-container>
         <ng-container matColumnDef="warehoures">
           <mat-header-cell *matHeaderCellDef class="custom-col col-stores">Tiendas</mat-header-cell>
-          <mat-cell *matCellDef="let element" class="custom-col col-stores">
+          <mat-cell  *matCellDef="let element" class="custom-col col-stores">
             <span>
-              <i (click)="openWarehousesModal(element.id)" class="material-icons">store_mall_directory</i>
+              <i matTooltip="Seleccionar tienda" matTooltipClass="tooltip" (click)="openWarehousesModal(element.id)" class="material-icons">store_mall_directory</i>
             </span>
           </mat-cell>
         </ng-container>
@@ -66,7 +66,7 @@
             </mat-radio-group>
           </mat-cell>
         </ng-container>
-          
+
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" matRipple class="element-row"
           [class.expanded]="expandedElement == row"></mat-row>

@@ -40,7 +40,7 @@
             <ng-container matColumnDef="isSend">
                 <th mat-header-cell *matHeaderCellDef class="right-content left-border"></th>
                 <td mat-cell *matCellDef="let element" class="right-content left-border">
-                    <i *ngIf="isAvailableSend(element)" (click)="toSend($event,element)" class="material-icons action-icon">send</i>
+                    <i matTooltip="Enviar {{typeById(element.packingType)?.name | lowercase}} {{ element.packingInventorys && element.packingInventorys.length > 0 ? '' : 'vacía' }}" matTooltipClass="tooltip" *ngIf="isAvailableSend(element)" (click)="toSend($event,element)" class="material-icons action-icon">send</i>
                 </td>
             </ng-container>
             <ng-container matColumnDef="update">
@@ -48,13 +48,13 @@
                   <i class="material-icons settings-header">settings</i>
                 </th>
                 <td mat-cell *matCellDef="let element" class="center-content">
-                    <i (click)="toUpdate($event,element)" class="material-icons action-icon">edit</i>
+                    <i matTooltip="Actualizar {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip" (click)="toUpdate($event,element)" class="material-icons action-icon">edit</i>
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="buttons-print">
                 <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons action-icon">print</i> </td>
+                <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip" mat-cell *matCellDef="let element"><i (click)="print($event,element)" class="material-icons action-icon">print</i> </td>
             </ng-container>
 
             <ng-container matColumnDef="sendPacking">
@@ -64,7 +64,7 @@
 
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
-            
+
                 </td>
             </ng-container>
 
@@ -78,9 +78,9 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button (click)="delete()" *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
-    <ion-fab-button (click)="print($event)" *ngIf="hasToDelete()"><i class="material-icons">print</i></ion-fab-button>
-    <ion-fab-button (click)="newJail()" *ngIf="hasToDelete()" color="warning"><i class="material-icons">launch</i></ion-fab-button>
-    <ion-fab-button (click)="toStore()"><i class="material-icons">add</i></ion-fab-button>
+    <ion-fab-button matTooltip="Eliminar seleccionado" matTooltipClass="tooltip" (click)="delete()" *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
+    <ion-fab-button matTooltip="Imprimir seleccionado" matTooltipClass="tooltip" (click)="print($event)" *ngIf="hasToDelete()"><i class="material-icons">print</i></ion-fab-button>
+    <ion-fab-button matTooltip="Agregar embalaje" matTooltipClass="tooltip" (click)="newJail()" *ngIf="hasToDelete()" color="warning"><i class="material-icons">launch</i></ion-fab-button>
+    <ion-fab-button matTooltip="Añadir a embalaje" matTooltipClass="tooltip" (click)="toStore()"><i class="material-icons">add</i></ion-fab-button>
   </ion-fab>
 </ion-footer>
