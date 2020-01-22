@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ModalController } from '@ionic/angular';
 import { NewRuleComponent } from './new-rule/new-rule.component';
 import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
+import { MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'suite-rules',
@@ -11,7 +12,7 @@ import { MarketplacesService } from '../../../../services/src/lib/endpoint/marke
 })
 export class RulesComponent implements OnInit {
 
-  private dataSourceCategories = [
+  private dataSourceCategories: MatTableDataSource<any> = new MatTableDataSource([
     {
       id: 1,
       name: "Rebajas para botas",
@@ -60,11 +61,11 @@ export class RulesComponent implements OnInit {
       destinationCategories: [],
       stockToReduce: 0
     }
-  ];
+  ]);
 
   private displayedCategoriesColumns: string[] = ['name', 'categories', 'products', 'edit'];
 
-  private dataSourcePrice = [
+  private dataSourcePrice: MatTableDataSource<any> = new MatTableDataSource([
     {
       id: 4,
       name: "Envíar mayores de 45.00 €",
@@ -103,11 +104,11 @@ export class RulesComponent implements OnInit {
       destinationCategories: [],
       stockToReduce: 5
     }
-  ];
+  ]);
 
   private displayedPriceColumns: string[] = ['name', 'price', 'products', 'edit'];
 
-  private dataSourceStocks = [
+  private dataSourceStocks: MatTableDataSource<any> = new MatTableDataSource([
     {
       id: 7,
       name: "Envíar productos con stock mayor a 10",
@@ -146,7 +147,7 @@ export class RulesComponent implements OnInit {
       destinationCategories: [],
       stockToReduce: 32
     }
-  ];
+  ]);
 
   private displayedStocksColumns: string[] = ['name', 'stock', 'products', 'edit'];
 
@@ -159,16 +160,46 @@ export class RulesComponent implements OnInit {
   }
 
   ngOnInit() {
-    for (let ruleByPrice of this.dataSourcePrice) {
+    for (let ruleByPrice of this.dataSourcePrice.data) {
       ruleByPrice.minPriceFilter = <any>parseFloat(ruleByPrice.minPriceFilter).toFixed(2);
     }
     this.marketplacesService.getRulesFilter().subscribe(data => {
+      if(data) {
+        data.forEach(rule => {
+          if(rule.ruleFilterType == 1) {
+            const dataCategories = this.dataSourceCategories.data;
+            let category = {
+              id: rule.id,
+              name: rule.name,
+              action: "categories",
+              filterType: "category",
+              categoriesFilter: [
+                {id: 78, group: 2, name: rule.dataGroup}
+              ],
+              minPriceFilter: "0.00",
+              stockFilter: 0,
+              products: 10,
+              destinationCategories: [],
+              stockToReduce: 0
+            };
+
+            dataCategories.push(category);
+            this.dataSourceCategories.data = dataCategories;
+            console.log(this.dataSourceCategories)
+          }
+        })
+      } else {
+        console.log('error get rules filter')
+      }
+    })
+    this.marketplacesService.getRulesFilterTypes().subscribe(data => {
       if(data) {
         console.log(data)
       } else {
         console.log('error get rules filter')
       }
     })
+    
   }
 
   async openModalNewRule(ruleFilterType): Promise<void> {
@@ -183,8 +214,33 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
         console.log(data.data);
-        // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
-        // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
+
+        let categoriesToSend = ''
+
+        data.data.categoriesFilter.forEach(item => {
+          categoriesToSend = categoriesToSend.concat(item.name);
+          categoriesToSend = categoriesToSend.concat(',')
+        })
+        
+        categoriesToSend = categoriesToSend.slice(0,-1);
+
+        let dataToSend = {
+         filterToAdd: {
+          id: 789,
+          name: data.data.name,
+          ruleFilterType: 1,
+          externalId: "1",
+          dataGroup: categoriesToSend,
+          status: 0,
+         },
+          marketsIds: [
+            "1"
+          ]
+        }
+
+        this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
+          console.log(data)
+        })
       }
     });
 

@@ -1,6 +1,7 @@
 import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController, NavParams, ToastController} from '@ionic/angular';
 import {switchTap} from "@angular/router/src/operators/switch_tap";
+import { MarketplacesService } from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 
 @Component({
   selector: 'suite-new-rule',
@@ -36,7 +37,8 @@ export class NewRuleComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private navParams: NavParams,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private marketplacesService: MarketplacesService
   ) {
   }
 
