@@ -179,7 +179,7 @@ export class RulesComponent implements OnInit {
       if(data) {
         data.forEach(rule => {
           if(rule.ruleFilterType == 1) {
-            const dataCategories = this.dataSourceCategories.data;
+            const dataCategoriesGet = this.dataSourceRulesCategories.data;
             let category = {
               id: rule.id,
               name: rule.name,
@@ -195,8 +195,8 @@ export class RulesComponent implements OnInit {
               stockToReduce: 0
             };
 
-            dataCategories.push(category);
-            this.dataSourceCategories.data = dataCategories;
+            dataCategoriesGet.push(category);
+            this.dataSourceRulesCategories.data = dataCategoriesGet;
             console.log(this.dataSourceCategories)
           }
         })

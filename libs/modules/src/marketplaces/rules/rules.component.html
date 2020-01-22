@@ -13,13 +13,8 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-<<<<<<< HEAD
-        <div *ngIf="dataSourceCategories.data.length">
-          <table mat-table [dataSource]="dataSourceCategories">
-=======
         <div *ngIf="dataSourceCategories.length">
-          <table mat-table [dataSource]="dataSourceRulesCategories">
->>>>>>> 69986733955575c29f52b354f07d9930a16841ae
+          <table mat-table [dataSource]="dataSourceCategories">
 
             <tr mat-header-row *matHeaderRowDef="displayedCategoriesColumns; sticky: true;"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedCategoriesColumns;"></tr>
@@ -95,13 +90,8 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-<<<<<<< HEAD
-        <div *ngIf="dataSourcePrice.data.length">
-          <table mat-table [dataSource]="dataSourcePrice">
-=======
         <div *ngIf="dataSourcePrice.length">
-          <table mat-table [dataSource]="dataSourceRulesPrice">
->>>>>>> 69986733955575c29f52b354f07d9930a16841ae
+          <table mat-table [dataSource]="dataSourcePrice">
 
             <tr mat-header-row *matHeaderRowDef="displayedPriceColumns; sticky: true;"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedPriceColumns;"></tr>
@@ -165,13 +155,8 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-<<<<<<< HEAD
-        <div *ngIf="dataSourceStocks.data.length">
-          <table mat-table [dataSource]="dataSourceStocks">
-=======
         <div *ngIf="dataSourceStocks.length">
-          <table mat-table [dataSource]="dataSourceRulesStocks">
->>>>>>> 69986733955575c29f52b354f07d9930a16841ae
+          <table mat-table [dataSource]="dataSourceStocks">
 
             <tr mat-header-row *matHeaderRowDef="displayedStocksColumns; sticky: true;"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedStocksColumns;"></tr>
