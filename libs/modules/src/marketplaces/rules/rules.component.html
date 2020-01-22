@@ -13,7 +13,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div *ngIf="dataSourceCategories.length">
+        <div *ngIf="dataSourceCategories.data.length">
           <table mat-table [dataSource]="dataSourceCategories">
 
             <tr mat-header-row *matHeaderRowDef="displayedCategoriesColumns; sticky: true;"></tr>
@@ -90,7 +90,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div *ngIf="dataSourcePrice.length">
+        <div *ngIf="dataSourcePrice.data.length">
           <table mat-table [dataSource]="dataSourcePrice">
 
             <tr mat-header-row *matHeaderRowDef="displayedPriceColumns; sticky: true;"></tr>
@@ -155,7 +155,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div *ngIf="dataSourceStocks.length">
+        <div *ngIf="dataSourceStocks.data.length">
           <table mat-table [dataSource]="dataSourceStocks">
 
             <tr mat-header-row *matHeaderRowDef="displayedStocksColumns; sticky: true;"></tr>

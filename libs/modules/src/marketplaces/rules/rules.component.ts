@@ -273,36 +273,36 @@ export class RulesComponent implements OnInit {
 
           switch (ruleToEdit.filterType) {
             case 'category':
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
-              this.dataSourceCategories[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
+              this.dataSourceCategories.data[this.dataSourceCategories.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
               break;
 
             case 'price':
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
-              this.dataSourcePrice[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
+              this.dataSourcePrice.data[this.dataSourcePrice.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
               break;
 
             case 'stock':
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
-              this.dataSourceStocks[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
+              this.dataSourceStocks.data[this.dataSourceStocks.data.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
               break;
           }
 
