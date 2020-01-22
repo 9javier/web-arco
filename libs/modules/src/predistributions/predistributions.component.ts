@@ -302,7 +302,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       This.initEntity()
       This.initForm()
       This.getFilters()
-      This.getList(this.form)
+      This.getList(This.form)
       This.listenChanges()  
     }, (error) => {
       This.intermediaryService.presentToastError("Error Actualizado predistribuciones");  
@@ -341,7 +341,14 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
-        
+        this.dataSource.data.forEach(row => {
+        if (row.distribution) {
+          this.selectionPredistribution.select(row);
+        }
+        if (row.reserved) {
+           this.selectionReserved.select(row);
+        }
+       });
       },
       async err => {
         await this.intermediaryService.dismissLoading()
