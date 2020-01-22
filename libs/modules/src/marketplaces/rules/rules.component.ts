@@ -197,7 +197,42 @@ export class RulesComponent implements OnInit {
 
             dataCategoriesGet.push(category);
             this.dataSourceRulesCategories.data = dataCategoriesGet;
-            console.log(this.dataSourceCategories)
+          } else if(rule.ruleFilterType == 2) {
+            const dataPricesGet = this.dataSourceRulesPrice.data;
+            let price = {
+              id: rule.id,
+              name: rule.name,
+              filterType: "price",
+              action: "categories",
+              categoriesFilter: [
+                {id: 78, group: 2, name: rule.dataGroup}
+              ],
+              minPriceFilter: "0.00",
+              stockFilter: 0,
+              products: 10,
+              destinationCategories: [],
+              stockToReduce: 0
+            };
+
+            dataPricesGet.push(price);
+            this.dataSourceRulesPrice.data = dataPricesGet;
+          } else if(rule.ruleFilterType == 3) {
+            const dataStocksGet = this.dataSourceRulesStocks.data;
+            let stock = {
+              id: rule.id,
+              name: rule.name,
+              filterType: "stock",
+              action: "stock",
+              categoriesFilter: [],
+              minPriceFilter: "0.00",
+              stockFilter: 10,
+              products: 100,
+              destinationCategories: [],
+              stockToReduce: 5
+            };
+
+            dataStocksGet.push(stock);
+            this.dataSourceRulesStocks.data = dataStocksGet;
           }
         })
       } else {
@@ -227,6 +262,20 @@ export class RulesComponent implements OnInit {
       if (data.data) {
         console.log(data.data);
 
+        let filterType = 0;
+
+        switch(data.data.filterType) {
+          case 'category':
+            filterType = 1;
+            break;
+          case 'price':
+            filterType = 2;
+            break;
+          case 'stock':
+            filterType = 3;
+            break;
+        } 
+
         let categoriesToSend = ''
 
         data.data.categoriesFilter.forEach(item => {
@@ -240,7 +289,7 @@ export class RulesComponent implements OnInit {
          filterToAdd: {
           id: 789,
           name: data.data.name,
-          ruleFilterType: 1,
+          ruleFilterType: filterType,
           externalId: "1",
           dataGroup: categoriesToSend,
           status: 0,
