@@ -28,8 +28,8 @@
             </div>
             <div>
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
-                <span *ngIf="!selectedCategories.includes(category)">{{category.name}}</span>
-                <span class="bold-category" *ngIf="selectedCategories.includes(category)">{{category.name}}</span>
+                <span *ngIf="!selectedCategoriesIncludes(category)">{{category.name}}</span>
+                <span class="bold-category" *ngIf="selectedCategoriesIncludes(category)">{{category.name}}</span>
               </div>
             </div>
           </div>

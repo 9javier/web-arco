@@ -82,6 +82,7 @@
         & > div {
           max-height: 406px;
           overflow-y: auto;
+          margin-bottom: 5px;
 
           & > table {
             width: 100%;
@@ -119,6 +120,12 @@
 
                 &.mp-rules-table-filter-column {
                   width: 45%;
+
+                  .no-items-list-text {
+                    opacity: .7;
+                    font-style: italic;
+                  }
+
                 }
 
                 &.mp-rules-table-products-column {
@@ -183,7 +190,6 @@
         }
 
         .mp-rules-new-rule-button {
-          margin-top: 5px;
           font-size: 11px;
           background-color: #000;
           color: #fff;

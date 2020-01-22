@@ -12,7 +12,7 @@ import { MarketplacesService } from '../../../../services/src/lib/endpoint/marke
 export class RulesComponent implements OnInit {
 
   private dataSourceCategories = [
-    {
+   /* {
       id: 1,
       name: "Rebajas para botas",
       filterType: "category",
@@ -59,7 +59,7 @@ export class RulesComponent implements OnInit {
       products: 79,
       destinationCategories: [],
       stockToReduce: 0
-    }
+    }*/
   ];
 
   private displayedCategoriesColumns: string[] = ['name', 'categories', 'products', 'edit'];
@@ -184,23 +184,122 @@ export class RulesComponent implements OnInit {
       if (data.data) {
         console.log(data.data);
         // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
-        // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
+        // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
       }
     });
 
     modal.present();
   }
 
-  async editRule(ruleFilterType, rule): Promise<void> {
+  async editRule(ruleToEdit): Promise<void> {
+    let rule = JSON.parse(JSON.stringify(ruleToEdit));
     let modal = await this.modalController.create({
       component: NewRuleComponent,
       componentProps: {
-        ruleFilterType,
-        rule,
+        ruleFilterType: rule.filterType,
+        action: rule.action,
+        ruleName: rule.name,
+        selectedCategories: rule.categoriesFilter,
+        minPriceFilter: rule.minPriceFilter,
+        stockFilter: rule.stockFilter,
+        numberOfProducts: rule.products,
+        selectedDestinationCategories: rule.destinationCategories,
+        stockToReduce: rule.stockToReduce,
         mode: 'edit'
       }
     });
+    modal.onDidDismiss().then((data) => {
+      if (data.data) {
+        let editedRule = data.data;
+        if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
+
+          // EL SIGUIENTE BLOQUE ES ALGO TEMPORAL PARA ACTUALIZAR EN EL FRONT LAS LISTAS DE REGLAS. EN UN FUTURO SE MANDARA LA REGLA EDITADA A LA API Y ALLI SE ACTUALIZARÁ, Y A CONTINUACIÓN SE HARÁ LA CONSULTA DE LA LISTA DE NUEVO PARA QUE YA RECOGA EL DATO ACTUALIZADO DESDE LAS TABLAS
+
+          switch (ruleToEdit.filterType) {
+            case 'category':
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
+              break;
+
+            case 'price':
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
+              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
+              break;
+
+            case 'stock':
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].action = editedRule.action;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].name = editedRule.name;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].categoriesFilter = editedRule.categoriesFilter;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].minPriceFilter = editedRule.minPriceFilter;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].stockFilter = editedRule.stockFilter;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].products = editedRule.products;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].destinationCategories = editedRule.destinationCategories;
+              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)].stockToReduce = editedRule.stockToReduce;
+              break;
+          }
+
+          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+          // LLAMAR AL ENDPOINT PARA ACTUALIZAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
+          // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
+        }
+      }
+    });
     modal.present();
+  }
+
+  checkForRuleEdition(rule, editedRule) {
+
+    if (rule.name == editedRule.name && rule.action == editedRule.action && rule.minPriceFilter == editedRule.minPriceFilter && rule.stockFilter == editedRule.stockFilter && rule.products == editedRule.products && rule.stockToReduce == editedRule.stockToReduce) {
+      if (rule.categoriesFilter.length != editedRule.categoriesFilter.length) {
+        return false;
+      }
+
+      if (rule.destinationCategories.length != editedRule.destinationCategories.length) {
+        return false;
+      }
+
+      if (rule.categoriesFilter.length) {
+        rule.categoriesFilter.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+        editedRule.categoriesFilter.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+
+        for (let i = 0; i < rule.categoriesFilter.length; i++) {
+          if (rule.categoriesFilter[i].id != editedRule.categoriesFilter[i].id) {
+            return false;
+          }
+        }
+
+      }
+      if (rule.destinationCategories.length) {
+        rule.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+        editedRule.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+
+        for (let i = 0; i < rule.destinationCategories.length; i++) {
+          if (rule.destinationCategories[i].id != editedRule.destinationCategories[i].id) {
+            return false;
+          }
+        }
+
+      }
+
+      return true;
+
+    } else {
+      return false;
+    }
   }
 
 }

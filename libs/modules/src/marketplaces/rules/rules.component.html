@@ -13,7 +13,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div>
+        <div *ngIf="dataSourceCategories.length">
           <table mat-table [dataSource]="dataSourceCategories">
 
             <tr mat-header-row *matHeaderRowDef="displayedCategoriesColumns; sticky: true;"></tr>
@@ -33,11 +33,17 @@
                 <span>Categorías</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-              <span>
+              <span *ngIf="element.categoriesFilter.length">
                 <span *ngFor="let category of element.categoriesFilter; let i = index">
-                  <span *ngIf="i == 0" class="capitalized-property">{{category.name}}, </span>
+                  <span *ngIf="i == 0 && i != element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}, </span>
+                  <span *ngIf="i == 0 && i == element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}</span>
                   <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
-                  <span *ngIf="i == element.categoriesFilter.length -1">{{category.name}}</span>
+                  <span *ngIf="i != 0 && i == element.categoriesFilter.length -1">{{category.name}}</span>
+                </span>
+              </span>
+                <span *ngIf="!element.categoriesFilter.length">
+                <span class="no-items-list-text">
+                  Sin filtro (todos los productos)
                 </span>
               </span>
               </td>
@@ -59,7 +65,7 @@
               </th>
               <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
               <span>
-                <i class="material-icons" (click)="editRule('category', element)">edit</i>
+                <i class="material-icons" (click)="editRule(element)">edit</i>
               </span>
               </td>
             </ng-container>
@@ -84,7 +90,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div>
+        <div *ngIf="dataSourcePrice.length">
           <table mat-table [dataSource]="dataSourcePrice">
 
             <tr mat-header-row *matHeaderRowDef="displayedPriceColumns; sticky: true;"></tr>
@@ -124,7 +130,7 @@
               </th>
               <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
               <span>
-                <i class="material-icons" (click)="editRule('price', element)">edit</i>
+                <i class="material-icons" (click)="editRule(element)">edit</i>
               </span>
               </td>
             </ng-container>
@@ -149,7 +155,7 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div>
+        <div *ngIf="dataSourceStocks.length">
           <table mat-table [dataSource]="dataSourceStocks">
 
             <tr mat-header-row *matHeaderRowDef="displayedStocksColumns; sticky: true;"></tr>
@@ -189,7 +195,7 @@
               </th>
               <td class="mp-rules-table-edit-column" mat-cell *matCellDef="let element">
               <span>
-                <i class="material-icons" (click)="editRule('stock', element)">edit</i>
+                <i class="material-icons" (click)="editRule(element)">edit</i>
               </span>
               </td>
             </ng-container>
