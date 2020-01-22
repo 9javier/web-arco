@@ -207,7 +207,7 @@ export class RulesComponent implements OnInit {
               categoriesFilter: [
                 {id: 78, group: 2, name: rule.dataGroup}
               ],
-              minPriceFilter: "0.00",
+              minPriceFilter: rule.dataGroup,
               stockFilter: 0,
               products: 10,
               destinationCategories: [],
@@ -225,7 +225,7 @@ export class RulesComponent implements OnInit {
               action: "stock",
               categoriesFilter: [],
               minPriceFilter: "0.00",
-              stockFilter: 10,
+              stockFilter: rule.dataGroup,
               products: 100,
               destinationCategories: [],
               stockToReduce: 5
@@ -264,34 +264,35 @@ export class RulesComponent implements OnInit {
 
         let filterType = 0;
 
+        let dataGroupToSend = '';
+
         switch(data.data.filterType) {
           case 'category':
             filterType = 1;
+
+            data.data.categoriesFilter.forEach(item => {
+              dataGroupToSend = dataGroupToSend.concat(item.name);
+              dataGroupToSend = dataGroupToSend.concat(',')
+            })
+            
+            dataGroupToSend = dataGroupToSend.slice(0,-1);
             break;
           case 'price':
             filterType = 2;
+            dataGroupToSend = data.data.minPriceFilter;
             break;
           case 'stock':
             filterType = 3;
+            dataGroupToSend = data.data.stockFilter;
             break;
         } 
 
-        let categoriesToSend = ''
-
-        data.data.categoriesFilter.forEach(item => {
-          categoriesToSend = categoriesToSend.concat(item.name);
-          categoriesToSend = categoriesToSend.concat(',')
-        })
-        
-        categoriesToSend = categoriesToSend.slice(0,-1);
-
         let dataToSend = {
          filterToAdd: {
-          id: 789,
           name: data.data.name,
           ruleFilterType: filterType,
           externalId: "1",
-          dataGroup: categoriesToSend,
+          dataGroup: dataGroupToSend,
           status: 0,
          },
           marketsIds: [
