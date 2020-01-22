@@ -138,7 +138,15 @@ export class TariffPricesScanditService {
         this.priceData[1] = this.priceToPrint.model.reference;
         this.priceData[2] = this.priceToPrint.model.brand.name;
         this.priceData[3] = this.priceToPrint.model.lifestyle.name;
-        this.priceData[5] = this.priceToPrint.priceDiscountOutlet;
+        this.priceData[5] = this.priceToPrint.totalPrice;
+
+        if (this.priceToPrint.priceDiscountOutlet
+          && this.priceToPrint.priceDiscountOutlet !== '0.00'
+          && this.priceToPrint.priceDiscountOutlet !== '0,00'
+          && this.priceToPrint.priceOriginal !== this.priceToPrint.priceDiscountOutlet) {
+          this.priceData[5] = this.priceToPrint.priceDiscountOutlet;
+        }
+
         switch (this.priceToPrint.status) {
           case 1:
             this.priceData[4] = 'Nuevo';
