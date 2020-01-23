@@ -25,8 +25,9 @@ this.loadPicking();
   }
 loadPicking(){
     this.intermediaryService.presentLoading("Refrescando listado");
-    return this.listProducts = this.pickingProvider.listProductsFromPickingHistory;
+    const response = this.listProducts = this.pickingProvider.listProductsFromPickingHistory;
     this.intermediaryService.dismissLoading();
+    return response
 }
   goToList() {
     this.modalController.dismiss();
