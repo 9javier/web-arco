@@ -1,3 +1,56 @@
-<p>
-  role-assignment works!
-</p>
+<ion-content>
+  <h3 class="title-h3-table" padding>{{title}}</h3>
+  <div class="table-container" *ngIf="dataSourceUsers">
+    <mat-table [dataSource]="dataSourceUsers">
+      <ng-container matColumnDef="warehouse">
+        <mat-header-cell *matHeaderCellDef>Warehouse</mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.warehouseName}} </mat-cell>
+      </ng-container>
+      <ng-container *ngFor="let role of dataSourceRoles;let i = index" matColumnDef="{{ role.id }}">
+        <mat-header-cell *matHeaderCellDef class="centre-header">{{ role.name }}</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="centre-cell">
+          <mat-checkbox [ngModel] = element.roles[i] (change)="changeCheckRol($event, element, i)"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="clear">
+        <mat-header-cell *matHeaderCellDef class="centre-header">Limpiar</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="centre-cell buttons">
+          <div class="content-button-cell">
+            <button matTooltip="Limpiar" matTooltipClass="tooltip" mat-icon-button (click)="clearRow(element)">
+              <mat-icon class="mat-18">undo</mat-icon>
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <mat-header-cell *matHeaderCellDef class="centre-header">Eliminar</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="centre-cell buttons">
+          <div class="content-button-cell">
+            <button matTooltip="Eliminar" matTooltipClass="tooltip" mat-icon-button (click)="deleteRow(element)">
+              <mat-icon class="mat-18">delete</mat-icon>
+            </button>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'collapsed': !row.expanded }"></mat-row>
+      <ng-container matColumnDef="groupHeader">
+        <mat-cell colspan="999" *matCellDef="let group">
+          <mat-icon *ngIf="group.expanded">expand_less</mat-icon>
+          <mat-icon *ngIf="!group.expanded">expand_more</mat-icon>
+          <strong>{{group.userName}}</strong>
+        </mat-cell>
+      </ng-container>
+      <mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup" (click)="groupHeaderClick(row)"> </mat-row>
+    </mat-table>
+  </div>
+</ion-content>
+
+<ion-fab vertical="bottom" horizontal="end" class="horizontal-fab" *ngIf="listToUpdate.length > 0">
+  <ion-fab-button color="light"  matTooltip="Guardar" matTooltipClass="tooltip"  (click)="saveChanges()">
+    <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
