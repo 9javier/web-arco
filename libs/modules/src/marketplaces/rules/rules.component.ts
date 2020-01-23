@@ -14,15 +14,15 @@ export class RulesComponent implements OnInit {
 
   private dataSourceCategories;
   private dataSourceRulesCategories;
-  private displayedCategoriesColumns: string[] = ['name', 'categories', 'products', 'edit'];
+  private displayedCategoriesColumns;
 
   private dataSourcePrice;
   private dataSourceRulesPrice;
-  private displayedPriceColumns: string[] = ['name', 'price', 'products', 'edit'];
+  private displayedPriceColumns;
 
   private dataSourceStocks;
   private dataSourceRulesStocks;
-  private displayedStocksColumns: string[] = ['name', 'stock', 'products', 'edit'];
+  private displayedStocksColumns;
 
   constructor(
     private route: ActivatedRoute,
@@ -87,6 +87,7 @@ export class RulesComponent implements OnInit {
        }*/
     ];
     this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
+    this.displayedCategoriesColumns = ['name', 'categories', 'products', 'edit'];
 
     this.dataSourcePrice = [
       /*{
@@ -129,6 +130,7 @@ export class RulesComponent implements OnInit {
       }*/
     ];
     this.dataSourceRulesPrice = new MatTableDataSource(this.dataSourcePrice);
+    this.displayedPriceColumns = ['name', 'price', 'products', 'edit'];
 
     this.dataSourceStocks = [
       /*{
@@ -171,6 +173,7 @@ export class RulesComponent implements OnInit {
       }*/
     ];
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
+    this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
