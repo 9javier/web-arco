@@ -9,6 +9,7 @@ import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/mate
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { IonicModule } from '@ionic/angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -28,7 +29,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     MatListModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatTooltipModule
   ]
 })
 export class BuildingModule { }

@@ -16,6 +16,8 @@ export class ListWorkwavesScheduleComponent implements OnInit {
 
   public workWaves: any[];
 
+  showTooltip: boolean = false;
+
   constructor(
     private alertController: AlertController,
     private workwavesService: WorkwavesService,

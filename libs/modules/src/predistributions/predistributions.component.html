@@ -60,7 +60,7 @@
       </ion-col>
     </ion-row>
   </ion-grid >
-  
+
   <div class="content-table-distributions">
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
     <ng-container matColumnDef="select">
@@ -130,7 +130,7 @@
             </mat-checkbox>
           </ng-container>
         </td>
-      </ng-container> 
+      </ng-container>
 
 <ng-container matColumnDef="reserved">
         <th mat-header-cell *matHeaderCellDef class="header-checkbox">
@@ -162,7 +162,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"
           (click)="selection.toggle(row)">
-      </tr> 
+      </tr>
     </table>
     <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
     <!-- <mat-paginator [length]="length"  [pageSizeOptions]="pagerValues" showFirstLastButtons></mat-paginator> -->
@@ -170,7 +170,7 @@
 </ion-content>
 <ion-footer>
   <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="savePredistributions()">
+    <ion-fab-button matTooltip="Guardar Predistibuciones" matTooltipClass="tooltip" (click)="savePredistributions()">
       <ion-icon name="save"></ion-icon>
     </ion-fab-button>
   </ion-fab>

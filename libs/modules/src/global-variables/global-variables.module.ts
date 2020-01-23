@@ -7,6 +7,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { MatListModule, MatTableModule, MatPaginatorModule } from '@angular/material';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from './modals/modals.module';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -27,7 +28,8 @@ const routes: Routes = [
     BreadcrumbModule,
     ModalsModule,
     RouterModule.forChild(routes),
-    FormsModule
+    FormsModule,
+    MatTooltipModule
   ]
 })
 export class GlobalVariablesModule { }

@@ -8,13 +8,13 @@
                 <mat-accordion multi="false">
 									<mat-expansion-panel *ngFor="let group of groupsWarehousePicking">
 											<mat-expansion-panel-header>
-													<mat-panel-title> 
-														<ion-checkbox 
+													<mat-panel-title>
+														<ion-checkbox
 															style="margin-right: 5px"
 															(click)="activateDelete(group.id)"
 														>
-														</ion-checkbox> 
-														{{ group.name }} 
+														</ion-checkbox>
+														{{ group.name }}
 													</mat-panel-title>
 													<mat-panel-description></mat-panel-description>
 											</mat-expansion-panel-header>
@@ -23,15 +23,15 @@
 											<mat-selection-list #warehousesSelection *ngFor="
 												let warehouse of warehouses;
 											">
-											
+
 												<mat-list-option *ngIf="!selectCheck(warehouse.id, group.id)" [selected]="false" [value]="warehouse.name" (click)="assignToGroupWarehousePicking(warehouse, group)">
 													<p>{{ warehouse.reference }} {{ warehouse.name }}</p>
 												</mat-list-option>
-	
+
 												<mat-list-option *ngIf="selectCheck(warehouse.id, group.id)" [selected]="true" [value]="warehouse.name" (click)="remoToGroupWarehousePicking(warehouse, group)">
 													<p>{{ warehouse.reference }} {{ warehouse.name }}</p>
 												</mat-list-option>
-		
+
 											</mat-selection-list>
 										</mat-expansion-panel>
 								</mat-accordion>
@@ -40,10 +40,10 @@
     </ion-grid>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="toDeleteGroup" (click)="deleteGroup()" color="danger">
+    <ion-fab-button matTooltip="Eliminar Grupo de Picking" matTooltipClass="tooltip" *ngIf="toDeleteGroup" (click)="deleteGroup()" color="danger">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
-    <ion-fab-button (click)="store()">
+    <ion-fab-button matTooltip="Agregar un Grupo de Picking" matTooltipClass="tooltip" (click)="store()">
         <ion-icon name="add"></ion-icon>
     </ion-fab-button>
 </ion-fab>

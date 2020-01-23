@@ -8,20 +8,20 @@
 							<mat-accordion multi="false">
 								<mat-expansion-panel *ngFor="let agency of agencies">
 										<mat-expansion-panel-header>
-											<mat-panel-title> 
-													<ion-checkbox 
+											<mat-panel-title>
+													<ion-checkbox
 															style="margin-right: 5px"
 															(click)="activateDelete(agency.id)"
 													>
-													</ion-checkbox> 
-														{{ agency.name }} 
+													</ion-checkbox>
+														{{ agency.name }}
 												</mat-panel-title>
 											<mat-panel-description></mat-panel-description>
 										</mat-expansion-panel-header>
 											<span (click)="update(agency)" class="edit"><b class="edit">Editar agencia</b></span>
 											<h2 class="example-h2"> Warehouses </h2>
 											<mat-selection-list #warehousesSelection *ngFor="let warehouse of warehouses;">
-												
+
 											<mat-list-option *ngIf="!selectCheck(warehouse.id, agency.id)" [selected]="false" [value]="warehouse.name" (click)="assignToAgency(warehouse, agency)">
 												<p>{{ warehouse.reference }} {{ warehouse.name }}</p>
 											</mat-list-option>
@@ -38,11 +38,11 @@
     </ion-grid>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button (click)="store()">
+    <ion-fab-button matTooltip="Agregar agencia" matTooltipClass="tooltip" (click)="store()">
         <ion-icon name="add"></ion-icon>
     </ion-fab-button>
     <div style="height: 5px"></div>
-    <ion-fab-button *ngIf="toDeleteAgency" (click)="deleteAgency()" color="danger">
+    <ion-fab-button matTooltip="Eliminar seleccionado" matTooltipClass="tooltip" *ngIf="toDeleteAgency" (click)="deleteAgency()" color="danger">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
 </ion-fab>
