@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthenticationService } from '../authentication/authentication.service';
-import { RequestsProvider } from 'libs/services/src/providers/requests/requests.provider';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
