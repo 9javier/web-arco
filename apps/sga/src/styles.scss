@@ -84,3 +84,10 @@ ion-item.item-label-floating {
 .mat-tooltip{
   white-space: pre;
 }
+
+.mat-tooltip.tooltip
+{
+  font-size: 13px;   // current default is 10px :-/
+  color: #eeeeee;
+  background: #000000;
+}

@@ -45,13 +45,19 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     public sorterProvider: SorterProvider
   ) { }
-  
+
   ngOnInit() {
-    this.loadDataOnInit();
+this.loadData();
+  }
+  loadDataFirst(){
+    this.intermediaryService.presentLoading("Refrescando listado");
+    const response = this.loadDataOnInit();
     this.events.subscribe(this.LOAD_DATA_INPUT_SORTER, () => {
       this.sorterOperationCancelled();
       this.loadDataOnInit();
     });
+    this.intermediaryService.dismissLoading();
+    return response;
   }
 
   ngOnDestroy() {

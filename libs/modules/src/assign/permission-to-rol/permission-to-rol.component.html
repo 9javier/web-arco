@@ -27,11 +27,11 @@
 
     <!-- fab placed to the bottom end -->
     <ion-fab vertical="bottom" horizontal="end">
-        <ion-fab-button color="light" *ngIf="form.valid" (click)="confirmDeletion()">
+        <ion-fab-button matTooltip="Eliminar Roles" matTooltipClass="tooltip"  color="light" *ngIf="form.valid" (click)="confirmDeletion()">
             <ion-icon name="trash"></ion-icon>
         </ion-fab-button>
         <div style="height: 10px"></div>
-        <ion-fab-button (click)="goToStore()">
+        <ion-fab-button matTooltip="Añadir Roles" matTooltipClass="tooltip" (click)="goToStore()">
             <ion-icon name="add"></ion-icon>
         </ion-fab-button>
     </ion-fab>

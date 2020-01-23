@@ -20,7 +20,7 @@
         <ng-container matColumnDef="btnAttend">
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element" class="btn-attend">
-                <ion-button (click)="attendIncidence($event, element)">
+                <ion-button matTooltip="Marcar como atendida" matTooltipClass="tooltip" (click)="attendIncidence($event, element)">
                     <ion-icon name="checkbox-outline"></ion-icon>
                 </ion-button>
             </td>

@@ -47,6 +47,8 @@ export * from './audits/audits.module';
 export * from './audits-mobile/audits-mobile.component';
 export * from './audits-mobile/audits-mobile.module';
 
+export * from './audits-mobile/add-audits/add-audits.component';
+
 
 // Incidences Button
 export * from './incidences-button/incidences-button.component';
@@ -90,6 +92,9 @@ export * from './workwaves-history/workwaves-history.module';
 
 export * from './user-manager/user-manager.component';
 export * from './user-manager/user-manager.module';
+
+export * from './role-assignment/role-assignment.component';
+export * from './role-assignment/role-assignment.module';
 
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';

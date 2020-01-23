@@ -9,6 +9,7 @@ import { MatExpansionModule, MatListModule, MatCheckboxModule } from '@angular/m
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-inputag/tags-input.module';
 import { ModalsModule } from './modals/modals.module';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -31,7 +32,8 @@ const routes: Routes = [
     MatCheckboxModule,
     BreadcrumbModule,
     TagsInputModule,
-    ModalsModule
+    ModalsModule,
+    MatTooltipModule
   ]
 })
 export class CalendarSgaModule { }

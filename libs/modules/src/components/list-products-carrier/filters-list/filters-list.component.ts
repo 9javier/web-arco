@@ -12,10 +12,10 @@ import { ListProductsCarrierService } from '../../../../../services/src/lib/endp
 export class FiltersListComponent implements OnInit {
 
   /**Filters */
-  products: Array<TagsInputOption> = [];
+  products = [];
   warehouses: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
-
+  carrierReference = '';
   form: FormGroup = this.formBuilder.group({
     products: [],
     warehouses: [],
@@ -37,6 +37,7 @@ export class FiltersListComponent implements OnInit {
     this.clearFilters();
     this.getFilters();
     this.form = this.navParams.data.form as FormGroup;
+    this.carrierReference = this.navParams.data.carrierReference;
   }
 
   clearFilters() {
@@ -88,13 +89,28 @@ export class FiltersListComponent implements OnInit {
         object[key] = [];
       }
     });
+
+    object.reference = this.carrierReference;
     return object;
   }
 
   getFilters() {
     this.listProductsCarrierService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
-      this.products = filters.products;
-      this.warehouses = filters.warehouses;
+      const arrayProducts = [];
+      const arrayWarehouse = [];
+
+      Object.keys(filters.products).map(function(key){
+        arrayProducts.push({'display': filters.products[key].name, 'value': filters.products[key].id});
+        return arrayProducts;
+      });
+      this.products = arrayProducts;
+
+      Object.keys(filters.warehouses).map(function(key){
+        arrayWarehouse.push({'display': filters.warehouses[key].name, 'value': filters.warehouses[key].id});
+        return arrayWarehouse;
+      });
+
+      this.warehouses = arrayWarehouse;
     });
   }
 }

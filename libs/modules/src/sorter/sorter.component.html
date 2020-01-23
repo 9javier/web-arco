@@ -10,7 +10,7 @@
 
           <mat-cell *matCellDef="let element; let i = index" class="custom-col col-select-del">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-              <ion-checkbox (click)="toDeleteTemplate(i)"
+              <ion-checkbox matTooltip="Eliminar" matTooltipClass="tooltip" (click)="toDeleteTemplate(i)"
                 [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
             </ng-template>
           </mat-cell>
@@ -75,11 +75,11 @@
     </div>
   </ion-grid>
   <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
+    <ion-fab-button matTooltip="Eliminar seleccionado" matTooltipClass="tooltip" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="delete()">
       <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
     <br>
-    <ion-fab-button (click)="store()">
+    <ion-fab-button matTooltip="Añadir plantilla" matTooltipClass="tooltip" (click)="store()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>

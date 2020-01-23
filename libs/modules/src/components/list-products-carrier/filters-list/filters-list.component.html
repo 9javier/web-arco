@@ -1,15 +1,19 @@
 <form [formGroup]="form">
   <ion-grid>
     <ion-row>
-      <ion-col size="6">
+      <ion-col size="12">
         <ion-label>Producto:</ion-label>
-        <suite-tags-input placeholder="Producto" [options]="products" formControlName="products"
-                          multiple="true"></suite-tags-input>
+        <tag-input placeholder="+ Producto" secondaryPlaceholder="Ingrese la referencia del producto" formControlName="products" [separatorKeyCodes]="[32]" [onlyFromAutocomplete]="true">
+          <tag-input-dropdown [autocompleteItems]="products" [showDropdownIfEmpty]="true"></tag-input-dropdown>
+        </tag-input>
       </ion-col>
-      <ion-col size="6">
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
         <ion-label>Almacén:</ion-label>
-        <suite-tags-input placeholder="Almacén" [options]="warehouses" formControlName="warehouses" multiple="true">
-        </suite-tags-input>
+        <tag-input placeholder="+ Almacén" secondaryPlaceholder="Ingrese el nombre del almacén" formControlName="warehouses" [separatorKeyCodes]="[32]" [onlyFromAutocomplete]="true">
+          <tag-input-dropdown [autocompleteItems]="warehouses" [showDropdownIfEmpty]="true"></tag-input-dropdown>
+        </tag-input>
       </ion-col>
     </ion-row>
     <ion-row>

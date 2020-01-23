@@ -2,7 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatTableModule, MatCheckboxModule, MatPaginatorModule, MatListModule } from '@angular/material';
+import {
+  MatTableModule,
+  MatCheckboxModule,
+  MatPaginatorModule,
+  MatListModule,
+  MatTooltipModule
+} from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { JailRoutingModule } from './jail-routing.module';
 import { JailComponent } from './jail.component';
@@ -35,7 +41,8 @@ import { SendJailComponent } from './send-jail/send-jail.component';
     FormsModule,
     BreadcrumbModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ], entryComponents: [
     StoreComponent,
     SendComponent,

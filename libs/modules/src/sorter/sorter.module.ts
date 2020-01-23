@@ -40,6 +40,9 @@ import {MatrixOutputSorterComponent} from "./al-output/matrix-output/matrix-outp
 import { HideKeyboardModule } from 'hide-keyboard';
 import { ListaModule } from '../picking-manual/lista/lista.module';
 import { ListasProductosComponent } from '../picking-manual/lista/listas-productos/listas-productos.component';
+import { ListProductsCarrierModule } from '../components/list-products-carrier/list-products-carrier.module';
+import { ListProductsCarrierComponent } from '../components/list-products-carrier/list-products-carrier.component';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -140,7 +143,7 @@ const routes: Routes = [
     SorterInfoWayEmptyingComponent,
     MatrixOutputSorterComponent
   ],
-  entryComponents:[ListasProductosComponent],
+  entryComponents:[ListasProductosComponent, ListProductsCarrierComponent],
   imports: [
     CommonModule,
     FormsModule,
@@ -160,7 +163,9 @@ const routes: Routes = [
     RacksModule,
     MatExpansionModule,
     HideKeyboardModule,
-    ListaModule
+    ListaModule,
+    ListProductsCarrierModule,
+    MatTooltipModule
   ]
 })
 export class SorterModule { }

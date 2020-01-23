@@ -18,7 +18,6 @@ export class ListsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.datos); 
     this.datos.forEach(elem => {
       if (elem.selected) {
         this.seleccionado.emit(elem)
@@ -27,7 +26,7 @@ export class ListsComponent implements OnInit {
       }
     });
   }
-  
+
   selected(dato: ReceptionAvelonModel.Data) {
      dato.selected = !dato.selected
      if (dato.selected) {
@@ -40,6 +39,5 @@ export class ListsComponent implements OnInit {
         elem.selected = false
       }
      });
-     console.log(dato.selected)
   }
 }

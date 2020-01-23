@@ -1,0 +1,43 @@
+.centre-header.mat-header-cell {
+  text-align: center;
+  display: inline-grid;
+}
+
+.centre-cell.mat-cell {
+  text-align: center;
+  display: inline-grid;
+}
+
+.centre-cell.mat-cell.buttons {
+  .content-button-cell {
+    padding-left: 30px;
+    padding-right: 30px;
+    button {
+      text-align: center;
+      width: 100%;
+      background: #000000;
+      border-radius: 6px;
+
+      mat-icon {
+        color: #eeeeee;
+      }
+    }
+  }
+}
+
+.table-container {
+  ::ng-deep {
+
+    .collapsed {
+      display: none !important;
+    }
+
+    .mat-checkbox-checked .mat-checkbox-background {
+      background-color: #000000 !important;
+    }
+
+    .mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {
+      background-color: #000000 !important;
+    }
+  }
+}
