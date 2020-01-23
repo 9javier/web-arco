@@ -12,126 +12,9 @@ import { MatTableDataSource } from '@angular/material';
 export class MappingsComponent implements OnInit {
 
 
-<<<<<<< HEAD
-  /// DATOS ESTÁTICOS. BORRAR CUANDO LAS CONEXIONES CON KRACKONLINE, AVELON Y MIDDLEWARE/RULE-ENGINE ESTÉN LISTAS
-  //  Brands
-  private dataSourceBrands: MatTableDataSource<any> = new MatTableDataSource([
-    {
-      id: 1,
-      avelonData: {id: 1, name: 'ADIDAS SL'},
-      marketData: {id: 1, name: 'ADIDAS'}
-    },
-    {
-      id: 2,
-      avelonData: {id: 2, name: 'AMANDA A.'},
-      marketData: {id: -1, name: null}
-    },
-    {
-      id: 3,
-      avelonData: {id: 3, name: 'ASICS'},
-      marketData: {id: 3, name: 'ASICS'}
-    }
-  ]);
-
-  private brandsList = [
-    {id: 1, name: 'ADIDAS'},
-    {id: 2, name: 'AMANDA'},
-    {id: 3, name: 'ASICS'},
-  ];
-
-  // Colors
-
-  private dataSourceColors: MatTableDataSource<any> = new MatTableDataSource([
-    {
-      id: 4,
-      avelonData: {id: 4, name: 'AZUL'},
-      marketData: {id: 4, name: 'AZUL OSCURO'}
-    },
-    {
-      id: 5,
-      avelonData: {id: 5, name: 'ROJO'},
-      marketData: {id: 5, name: 'ROJO'}
-    },
-    {
-      id: 6,
-      avelonData: {id: 6, name: 'AMARILLO'},
-      marketData: {id: -1, name: null}
-    }
-  ]);
-
-  private colorsList = [
-    {id: 4, name: 'AZUL OSCURO'},
-    {id: 5, name: 'ROJO'},
-    {id: 6, name: 'AMARILLO'}
-  ];
-
-  // Sizes
-
-  private dataSourceSizes: MatTableDataSource<any> = new MatTableDataSource([
-    {
-      id: 7,
-      avelonData: {id: 7, name: '20'},
-      marketData: {id: -1, name: null}
-    },
-    {
-      id: 8,
-      avelonData: {id: 8, name: '21'},
-      marketData: {id: 8, name: '38'}
-    },
-    {
-      id: 9,
-      avelonData: {id: 9, name: '22'},
-      marketData: {id: 9, name: '39'}
-    }
-  ]);
-
-  private sizesList = [
-    {id: 7, name: '37'},
-    {id: 8, name: '38'},
-    {id: 9, name: '39'},
-  ];
-
-  // Features
-
-  private dataSourceFeatures: MatTableDataSource<any> = new MatTableDataSource([
-    {
-      id: 10,
-      avelonData: {id: 10, name: 'FAMILIA: NIÑO'},
-      marketData: {id: 10, name: 'NIÑO'}
-    },
-    {
-      id: 11,
-      avelonData: {id: 11, name: 'DESCRIPCIÓN: BOTAS'},
-      marketData: {id: 11, name: 'BOTAS'}
-    },
-    {
-      id: 12,
-      avelonData: {id: 12, name: 'DESCRIPCIÓN: BOTINES'},
-      marketData: {id: 12, name: 'BOTINES'}
-    }
-  ]);
-
-  private featuresList = [
-    {id: 10, name: 'NIÑO'},
-    {id: 11, name: 'BOTAS'},
-    {id: 12, name: 'BOTINES'},
-  ];
-
-  /////////////////////////////////////////////////////////////////////////////////////
-
-  private displayedBrandsColumns: string[] = ['blank', 'avelonData', 'marketData'];
-  //private dataSourceBrands: any;
-
-  private displayedColorsColumns: string[] = ['blank', 'avelonData', 'marketData'];
-  //private dataSourceColors: any;
-
-  private displayedSizesColumns: string[] = ['blank', 'avelonData', 'marketData'];
-  //private dataSourceSizes: any;
-=======
   private dataSourceBrands;
   private dataSourceMappingBrands;
   private brandsList;
->>>>>>> 39314093e0bc41ead4ed3b676af7cda2e937b583
 
   private dataSourceColors;
   private dataSourceMappingColors;
@@ -278,17 +161,10 @@ export class MappingsComponent implements OnInit {
   }
 
   getMaps() {
-<<<<<<< HEAD
-    this.dataSourceBrands = new MatTableDataSource([]);
-    this.dataSourceColors = new MatTableDataSource([]);
-    this.dataSourceSizes = new MatTableDataSource([]); 
-    this.dataSourceFeatures = new MatTableDataSource([]); 
-=======
     this.dataSourceMappingBrands = new MatTableDataSource([]);
     this.dataSourceMappingColors = new MatTableDataSource([]);
     this.dataSourceMappingSizes = new MatTableDataSource([]);
     this.dataSourceMappingFeatures = new MatTableDataSource([]);
->>>>>>> 39314093e0bc41ead4ed3b676af7cda2e937b583
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
