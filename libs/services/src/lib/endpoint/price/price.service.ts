@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { PriceModel } from 'libs/services/src/models/endpoints/Price';
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import {FilterPriceModel} from "../../../models/endpoints/FilterPrice";
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class PriceService {
   private postPricesByProductsReferencesUrl: string = environment.apiBase + "/tariffs/references-products";
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
   private postPricesByModelUrl: string = environment.apiBase + "/tariffs/model";
+  private postGetByReferenceUrl: string = environment.apiBase + "/filter/prices/reference";
 
   constructor(
     private http: HttpClient,
@@ -66,11 +68,17 @@ export class PriceService {
     return this.requestsProvider.post(this.postPricesByProductsReferencesUrl, parameters);
   }
 
-  postPricesByModel(model: string): Promise<HttpRequestModel.Response> {
+  postPricesByModel(model: string, tariffId?: number): Promise<HttpRequestModel.Response> {
     let parameters = {
-      reference: model
+      reference: model,
+      tariffId: tariffId
     };
 
     return this.requestsProvider.post(this.postPricesByModelUrl, parameters);
   }
+
+  getByReference(parameters: FilterPriceModel.FilterPriceRequest): Promise<HttpRequestModel.Response>{
+    return this.requestsProvider.post(this.postGetByReferenceUrl, parameters);
+  }
+
 }

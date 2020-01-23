@@ -2,7 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MatTableModule, MatCheckboxModule, MatPaginatorModule, MatListModule } from '@angular/material';
+import {
+  MatTableModule,
+  MatCheckboxModule,
+  MatPaginatorModule,
+  MatListModule,
+  MatTooltipModule
+} from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { JailRoutingModule } from './jail-routing.module';
 import { JailComponent } from './jail.component';
@@ -17,7 +23,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
-import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent],

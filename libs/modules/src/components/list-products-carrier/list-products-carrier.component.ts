@@ -68,7 +68,7 @@ export class ListProductsCarrierComponent implements OnInit {
     const popover = await this.popoverController.create({
       cssClass: 'popover-filter',
       component: FiltersListComponent,
-      componentProps: { form: this.form },
+      componentProps: { form: this.form, carrierReference: this.carrierReference },
       event
     });
 
@@ -140,5 +140,16 @@ export class ListProductsCarrierComponent implements OnInit {
     console.log('Posicionar');
     await this.route.navigateByUrl(ruta);
     await this.modalController.dismiss(ruta,'navigate');
+  }
+
+  getReferenceWarehouse(packingProduct: any) {
+    let reference = '';
+
+    if (packingProduct && packingProduct.sorterControlProduct
+      && packingProduct.sorterControlProduct.warehouseDestiny
+      && packingProduct.sorterControlProduct.warehouseDestiny.reference) {
+      reference = packingProduct.sorterControlProduct.warehouseDestiny.reference;
+    }
+    return reference;
   }
 }

@@ -611,7 +611,7 @@ export class TextareaComponent implements OnInit {
       if (listCarriers && listCarriers.length > 0) {
         const alertWarning = await this.alertController.create({
           header: 'Atención',
-          message: `<b>Jaulas que se van a precintar. ¿Está seguro?</b></br></br>${listShow}</br>`,
+          message: `<b>¿Desea precintar los embalajes utilizados?</b></br></br>${listShow}</br>`,
           backdropDismiss: false,
           buttons: [
             {
@@ -623,7 +623,7 @@ export class TextareaComponent implements OnInit {
             {
               text: 'Si',
               handler: () => {
-                this.sealPackingFinal(listCarriers);
+                this.sealPackingFinal(listCarriers, packingReference);
               }
             }]
         });
@@ -638,7 +638,7 @@ export class TextareaComponent implements OnInit {
   async alertSealPackingIntermediate(packingReference: string) {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
-      message: packingReference ? `¿Desea precintar la Jaula ${packingReference}?` : '¿Desea precintar la Jaula?',
+      message: `¿Desea precintar el embalaje ${packingReference}?`,
       backdropDismiss: false,
       buttons: [
         {
@@ -672,10 +672,27 @@ export class TextareaComponent implements OnInit {
     this.intermediaryService.dismissLoading();
   }
 
-  private sealPackingFinal(listCarriers: string[]) {
-    if (listCarriers && listCarriers.length > 0) {
-      this.intermediaryService.presentLoading('Precintando Jaulas');
-      this.carrierService.postSealList(listCarriers).subscribe(async () => {
+  private sealPackingFinal(listCarriers: string[], packingReferenceLast: string) {
+    this.intermediaryService.presentLoading('Finalizando proceso y precintando embalajes');
+    this.postVerifyPacking({
+      status: 3,
+      pickingId: this.pickingId,
+      packingReference: packingReferenceLast
+    }).subscribe((res) => {
+      if (listCarriers && listCarriers.length > 0) {
+        this.carrierService.postSealList(listCarriers).subscribe(async () => {
+          this.audioProvider.playDefaultOk();
+          this.intermediaryService.dismissLoading();
+          this.inputPicking = null;
+          this.intermediaryService.presentToastSuccess('Proceso finalizado correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_1500, PositionsToast.BOTTOM);
+          this.showTextEndScanPacking(false, this.typePacking, this.jailReference);
+          this.clearTimeoutCleanLastCodeScanned();
+          setTimeout(() => {
+            this.location.back();
+            this.events.publish('picking:remove');
+          }, 1.5 * 1000);
+        });
+      } else {
         this.audioProvider.playDefaultOk();
         this.intermediaryService.dismissLoading();
         this.inputPicking = null;
@@ -686,8 +703,21 @@ export class TextareaComponent implements OnInit {
           this.location.back();
           this.events.publish('picking:remove');
         }, 1.5 * 1000);
-      });
-    }
+      }
+    }, (error) => {
+      this.intermediaryService.dismissLoading();
+      this.audioProvider.playDefaultError();
+      this.inputPicking = null;
+      this.focusToInput();
+      this.clearTimeoutCleanLastCodeScanned();
+      if (error.error.code === 404) {
+        this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+      } else {
+        this.intermediaryService.presentToastError(error.error.errors, PositionsToast.BOTTOM);
+      }
+    }, () => {
+      this.intermediaryService.dismissLoading();
+    });
   }
 
   private sealPackingIntermediate(packingReference: any) {

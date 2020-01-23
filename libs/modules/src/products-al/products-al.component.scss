@@ -15,3 +15,75 @@ table {
 .mat-cell, .mat-header-cell {
   padding: 10px 10px 10px 0;
 }
+
+ion-select {
+  max-width: 100%;
+  width: 100%;
+}
+
+.align-right {
+  text-align: right;
+}
+
+ion-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+div.list-header-filters-mobile {
+  ion-grid {
+    .header-mobile {
+      padding: 0 0 0 0px;
+      height: 44px;
+
+      ion-col {
+        height: 44px;
+      }
+
+      ion-col.check-all, ion-col.information, ion-col.filters-mobile {
+        padding: 0;
+        div.check-all, div.information, div.filters-mobile {
+          display: table;
+          height: 44px;
+          ion-checkbox, h5, i {
+            display: table-cell;
+            vertical-align: middle;
+            margin: 0;
+          }
+        }
+        div.information {
+          width: 100%;
+        }
+        div.filters-mobile {
+          margin: auto;
+          text-align: center;
+          width: 32px;
+          i {
+            width: 32px;
+            height: 32px;
+          }
+        }
+        div.filters-mobile.filters-opened {
+          padding: 6px 0;
+          margin-top: 0px;
+          i {
+            background-color: black;
+            color: white;
+            border-radius: 50%;
+          }
+        }
+      }
+    }
+  }
+
+  ion-col.btn-remove {
+    ion-button {
+      --background: white;
+      background: white;
+      color: var(--ion-color-primary);
+    }
+  }
+  ion-col.btn-remove, ion-col.btn-apply {
+    text-align: center;
+  }
+}

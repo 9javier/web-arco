@@ -23,4 +23,11 @@ export namespace FilterPriceModel {
     status: number,
     enabled: boolean,
   }
+
+  export interface FilterPriceRequest{
+    warehouseId: number,
+    tariffId: number,
+    reference: string,
+    sizeId?: number
+  }
 }
