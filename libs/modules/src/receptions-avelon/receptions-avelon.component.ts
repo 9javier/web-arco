@@ -1,10 +1,11 @@
 import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService } from '@suite/services';
+import { ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService } from '@suite/services';
 import { Component, OnInit, OnDestroy, } from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
 import { element } from 'protractor';
+import { Reception } from './classes/reception.class';
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -23,8 +24,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   typeScreen: number;
 
   objectType = Type;
-
+  filterData: ReceptionAvelonModel.Reception;
   result: ReceptionAvelonModel.Print = {
+    reference: undefined,
     brandId: undefined,
     colorId: undefined,
     sizeId: undefined,
@@ -41,17 +43,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
+    private productsService:ProductsService
   ) { }
 
   ngOnInit() {
     this.intermediaryService.presentLoading('Cargando');
-    this.response = {
-      brands: [],
-      models: [],
-      sizes: [],
-      colors: [],
-      ean: ''
-    };
+    this.response = new Reception();
+    this.filterData = new Reception();
 
     this.isProviderAviable = false;
     this.subscriptions = this.reception.getAllProviders().subscribe((data: Array<ReceptionAvelonModel.Providers>) => {
@@ -109,7 +107,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   proveedorSelected(e, item) {
-    console.log(e);
     if (e.detail.value) {
       this.providerId = e.detail.value;
       e.target.value = null
@@ -123,14 +120,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         this.alertMessage('El numero de expedicion no puede estar vacio');
         return
       }
-      // console.log(data);
 
       this.checkProvider(data)
     }
   }
 
   optionClick(e) {
-    console.log(e);
 
   }
 
@@ -148,7 +143,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
             this.response.models = this.clearSelected(this.response.models);
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
-            this.ocrFake();
+            this.filterData.brands = this.filterData.brands.concat(this.clearSelected(info.brands));
+            this.filterData.models = this.filterData.models.concat(this.clearSelected(info.models));
+            this.filterData.colors = this.filterData.colors.concat(this.clearSelected(info.colors));
+            this.filterData.sizes = this.filterData.sizes.concat(this.clearSelected(info.sizes));
+            // this.ocrFake();
           })
         }
 
@@ -177,33 +176,110 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   sizeSelected(e) {
     if (e) {
       this.result.sizeId = e.id
+      this.updateList(e.dato)
     } else {
       this.result.sizeId = undefined
+      this.reset()
     }
 
   }
+  updateList(dato) {
+    let model = [];
+    let brand = [];
+    let size = [];
+    let color = [];
+    let findResult;
+    if(dato.belongsModels){
+      
+      dato.belongsModels.forEach(id => {
+        model = model.concat(this.response.models.filter(elem => elem.id == id))
+        size = size.concat(this.response.sizes.filter(elem => {
+          const result = elem.belongsModels.find(model => model == id)
+          findResult = color.find(elem => elem.id == dato.id)
+          if (result && !findResult) {
+            return elem
+          }
+        }))
+        brand = brand.concat(this.response.brands.filter(elem => {
+          const result = elem.belongsModels.find(model => model == id)
+          findResult = color.find(elem => elem.id == dato.id)
+          if (result && !findResult) {
+            return elem
+          }
+        }))
+        color = color.concat(this.response.colors.filter(elem => {
+          const result = elem.belongsModels.find(model => model == id)
+          findResult = color.find(elem => elem.id == dato.id)
+          if (result && !findResult) {
+            return elem
+          }
+        }))
+      });
+    } else {
+      model = model.concat(this.response.models.filter(elem => elem.id == dato.id))
+      size = size.concat(this.response.sizes.filter(elem => {
+        const result = elem.belongsModels.find(model => model == dato.id)
+        if (result) {
+          return elem
+        }
+      }))
+      brand = brand.concat(this.response.brands.filter(elem => {
+        const result = elem.belongsModels.find(model => model == dato.id)
+        if (result) {
+          return elem
+        }
+      }))
 
+      color = color.concat(this.response.colors.filter(elem => {
+        const result = elem.belongsModels.find(model => model == dato.id)
+        if (result) {
+          return elem
+        }
+      }))
+    }
+    this.response.models = model;
+    this.response.brands = brand;
+    this.response.colors = color;
+    this.response.sizes = size;
+    
+    
+  }
+
+  reset(dato?: ReceptionAvelonModel.Data) {
+    this.response.models = this.filterData.models
+    this.response.sizes = this.filterData.sizes
+    this.response.colors = this.filterData.colors
+    this.response.brands = this.filterData.brands
+  }
+ 
   listSelected(e: any) {
+    
     switch (e.type) {
       case 'brands':
         if (e.dato) {
           this.result.brandId = e.dato.id
+          this.updateList(e.dato)
         } else {
           this.result.brandId = undefined
+          this.reset()
         }
         break;
       case 'models':
         if (e.dato) {
           this.result.modelId = e.dato.id
+          this.updateList(e.dato)
         } else {
           this.result.modelId = undefined
+          this.reset()
         }
         break;
       case 'colors':
         if (e.dato) {
           this.result.colorId = e.dato.id
+          this.updateList(e.dato)
         } else {
           this.result.colorId = undefined
+          this.reset()
         }
         break;
 
@@ -236,30 +312,40 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
 
     this.intermediaryService.presentLoading('Enviando');
-
-    this.reception.printReceptionLabel(this.result).subscribe(
-      resp => {
-        
-        this.reception.getReceptions(this.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
-          this.response = info;
-          this.response.brands = this.clearSelected(this.response.brands);
-          this.response.models = this.clearSelected(this.response.models);
-          this.response.colors = this.clearSelected(this.response.colors);
-          this.response.sizes = this.clearSelected(this.response.sizes);
-
-        },
-        e => console.log(e),
-        () => this.typeScreen = resp.type
-        )
+    const body = {
+      modelId: this.result.modelId,
+        colorId: this.result.colorId,
+        sizeId: this.result.sizeId
+    }
+    this.productsService.relablePrint(body).subscribe(
+      resp =>{
+        this.result.reference = resp.data.reference;
+        this.reception.printReceptionLabel(this.result).subscribe(
+          resp => {
+            
+            this.reception.getReceptions(this.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
+              this.response = info;
+              this.response.brands = this.clearSelected(this.response.brands);
+              this.response.models = this.clearSelected(this.response.models);
+              this.response.colors = this.clearSelected(this.response.colors);
+              this.response.sizes = this.clearSelected(this.response.sizes);
+    
+            },
+            () => this.typeScreen = resp.type
+            )
+          },
+          e => {
+            this.intermediaryService.dismissLoading()
+          },
+          () => {
+            this.intermediaryService.dismissLoading()
+          }
+        );
       },
-      e => {
-        console.log(e);
-        this.intermediaryService.dismissLoading()
-      },
-      () => {
-        this.intermediaryService.dismissLoading()
-      }
-    );
+      e => this.intermediaryService.dismissLoading(),
+      () => this.intermediaryService.dismissLoading()
+    )
+    
   }
 
   ocrFake(){
@@ -309,7 +395,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   setSelected(array: Array<ReceptionAvelonModel.Data>, data: any, type?: number) {
-    console.log(data);
 
     const findIndexResult: number = array.findIndex(element => element.id === data.id);
     if (findIndexResult >= 0) {
@@ -363,7 +448,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   onKey(e){
     if (e.keyCode == 13) {
-      console.log('enter');
 
       this.response.brands = this.clearSelected(this.response.brands);
       this.response.colors = this.clearSelected(this.response.colors);
@@ -383,7 +467,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   screenExit(e){
-    console.log(e);
     this.typeScreen = undefined
   }
 }
