@@ -14,10 +14,10 @@
       </mat-expansion-panel-header>
       <div class="mp-mapping-expansion-panel-content">
         <div>
-          <table mat-table [dataSource]="dataSourceBrands">
+          <table mat-table [dataSource]="dataSourceMappingBrands">
 
-            <tr mat-header-row *matHeaderRowDef="displayedBrandsColumns; sticky: true;"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedBrandsColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             <ng-container matColumnDef="blank">
               <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
@@ -63,10 +63,10 @@
       </mat-expansion-panel-header>
       <div class="mp-mapping-expansion-panel-content">
         <div>
-          <table mat-table [dataSource]="dataSourceFeatures">
+          <table mat-table [dataSource]="dataSourceMappingFeatures">
 
-            <tr mat-header-row *matHeaderRowDef="displayedFeaturesColumns; sticky: true;"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedFeaturesColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             <ng-container matColumnDef="blank">
               <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
@@ -111,10 +111,10 @@
       </mat-expansion-panel-header>
       <div class="mp-mapping-expansion-panel-content">
         <div>
-          <table mat-table [dataSource]="dataSourceColors">
+          <table mat-table [dataSource]="dataSourceMappingColors">
 
-            <tr mat-header-row *matHeaderRowDef="displayedColorsColumns; sticky: true;"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColorsColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             <ng-container matColumnDef="blank">
               <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>
@@ -159,10 +159,10 @@
       </mat-expansion-panel-header>
       <div class="mp-mapping-expansion-panel-content">
         <div>
-          <table mat-table [dataSource]="dataSourceSizes">
+          <table mat-table [dataSource]="dataSourceMappingSizes">
 
-            <tr mat-header-row *matHeaderRowDef="displayedSizesColumns; sticky: true;"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedSizesColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
             <ng-container matColumnDef="blank">
               <th class="mp-mapping-blank-column" mat-header-cell *matHeaderCellDef>

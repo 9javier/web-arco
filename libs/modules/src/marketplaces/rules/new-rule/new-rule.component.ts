@@ -44,7 +44,7 @@ export class NewRuleComponent implements OnInit {
 
   ngOnInit() {
     this.mode = this.navParams.get('mode');
-    this.numberOfProducts = 10;
+    this.numberOfProducts = 0;
     this.action = 'activation';
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];

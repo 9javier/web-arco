@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ModalController, NavParams} from "@ionic/angular";
+import {MatTableDataSource} from "@angular/material";
 @Component({
   selector: 'categorize-products',
   templateUrl: './categorize-products.component.html',
@@ -7,71 +8,11 @@ import {ModalController, NavParams} from "@ionic/angular";
 })
 export class CategorizeProductsComponent implements OnInit {
 
-  private selectedProducts = [];
+  private selectedProducts;
   private selectedCategories;
-  private productCategoriesTableData = [
-    {
-      id: 2,
-      name: 'Mujer',
-      products: 465
-    },
-    {
-      id: 3,
-      name: 'Hombre',
-      products: 368
-    },
-    {
-      id: 24,
-      name: 'Deportivas de mujer',
-      products: 134
-    },
-    {
-      id: 25,
-      name: 'Deportivas de plataforma',
-      products: 79
-    },
-    {
-      id: 27,
-      name: 'Deportivas de hombre',
-      products: 102
-    },
-    {
-      id: 26,
-      name: 'Deportivas blancas',
-      products: 175
-    },
-    {
-      id: 2,
-      name: 'Mujer',
-      products: 465
-    },
-    {
-      id: 3,
-      name: 'Hombre',
-      products: 0
-    },
-    {
-      id: 24,
-      name: 'Deportivas de mujer',
-      products: 134
-    },
-    {
-      id: 25,
-      name: 'Deportivas de plataforma',
-      products: 79
-    },
-    {
-      id: 27,
-      name: 'Deportivas de hombre',
-      products: 1
-    },
-    {
-      id: 26,
-      name: 'Deportivas blancas',
-      products: 175
-    },
-  ];
-  private productCategoriesTableHeader: string[] = ['select', 'id', 'name', 'products'];
+  private productCategoriesData;
+  private productCategoriesTableData;
+  private productCategoriesTableHeader;
 
   constructor(
     private modalController: ModalController,
@@ -82,6 +23,71 @@ export class CategorizeProductsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.productCategoriesData = [
+      {
+        id: 2,
+        name: 'Mujer',
+        products: 465
+      },
+      {
+        id: 3,
+        name: 'Hombre',
+        products: 368
+      },
+      {
+        id: 24,
+        name: 'Deportivas de mujer',
+        products: 134
+      },
+      {
+        id: 25,
+        name: 'Deportivas de plataforma',
+        products: 79
+      },
+      {
+        id: 27,
+        name: 'Deportivas de hombre',
+        products: 102
+      },
+      {
+        id: 26,
+        name: 'Deportivas blancas',
+        products: 175
+      },
+      {
+        id: 2,
+        name: 'Mujer',
+        products: 465
+      },
+      {
+        id: 3,
+        name: 'Hombre',
+        products: 0
+      },
+      {
+        id: 24,
+        name: 'Deportivas de mujer',
+        products: 134
+      },
+      {
+        id: 25,
+        name: 'Deportivas de plataforma',
+        products: 79
+      },
+      {
+        id: 27,
+        name: 'Deportivas de hombre',
+        products: 1
+      },
+      {
+        id: 26,
+        name: 'Deportivas blancas',
+        products: 175
+      },
+    ];
+    this.productCategoriesTableData = new MatTableDataSource(this.productCategoriesData);
+    this.productCategoriesTableHeader = ['select', 'id', 'name', 'products'];
+
     this.selectedProducts = this.navParams.get('selectedProducts');
     this.selectedCategories = [];
   }

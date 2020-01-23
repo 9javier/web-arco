@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import { MatTableDataSource } from '@angular/material';
@@ -12,6 +12,7 @@ import { MatTableDataSource } from '@angular/material';
 export class MappingsComponent implements OnInit {
 
 
+<<<<<<< HEAD
   /// DATOS ESTÁTICOS. BORRAR CUANDO LAS CONEXIONES CON KRACKONLINE, AVELON Y MIDDLEWARE/RULE-ENGINE ESTÉN LISTAS
   //  Brands
   private dataSourceBrands: MatTableDataSource<any> = new MatTableDataSource([
@@ -126,21 +127,26 @@ export class MappingsComponent implements OnInit {
 
   private displayedSizesColumns: string[] = ['blank', 'avelonData', 'marketData'];
   //private dataSourceSizes: any;
+=======
+  private dataSourceBrands;
+  private dataSourceMappingBrands;
+  private brandsList;
+>>>>>>> 39314093e0bc41ead4ed3b676af7cda2e937b583
 
-  private displayedFeaturesColumns: string[] = ['blank', 'avelonData', 'marketData'];
-  //private dataSourceFeatures: any;
+  private dataSourceColors;
+  private dataSourceMappingColors;
+  private colorsList;
 
-  private enumTypes = [];
+  private dataSourceSizes;
+  private dataSourceMappingSizes;
+  private sizesList;
 
-  // private brandsList = [];
-  // private colorsList = [];
-  // private sizesList = [];
-  // private featuresList = [];
+  private dataSourceFeatures;
+  private dataSourceMappingFeatures;
+  private featuresList;
 
-  private avelonDataBrands = [];
-  private avelonDataColors = [];
-  private avelonDataSizes = [];
-  private avelonDataFeatures = [];
+  private displayedColumns;
+  private enumTypes;
 
   constructor(
       private route: ActivatedRoute,
@@ -151,6 +157,110 @@ export class MappingsComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    /// DATOS ESTÁTICOS. BORRAR CUANDO LAS CONEXIONES CON KRACKONLINE, AVELON Y MIDDLEWARE/RULE-ENGINE ESTÉN LISTAS
+
+    this.dataSourceBrands = [
+      {
+        id: 1,
+        avelonData: {id: 1, name: 'ADIDAS SL'},
+        marketData: {id: 1, name: 'ADIDAS'}
+      },
+      {
+        id: 2,
+        avelonData: {id: 2, name: 'AMANDA A.'},
+        marketData: {id: -1, name: null}
+      },
+      {
+        id: 3,
+        avelonData: {id: 3, name: 'ASICS'},
+        marketData: {id: 3, name: 'ASICS'}
+      }
+    ];
+    this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
+    this.brandsList = [
+      {id: 1, name: 'ADIDAS'},
+      {id: 2, name: 'AMANDA'},
+      {id: 3, name: 'ASICS'},
+    ];
+
+    this.dataSourceColors = [
+      {
+        id: 4,
+        avelonData: {id: 4, name: 'AZUL'},
+        marketData: {id: 4, name: 'AZUL OSCURO'}
+      },
+      {
+        id: 5,
+        avelonData: {id: 5, name: 'ROJO'},
+        marketData: {id: 5, name: 'ROJO'}
+      },
+      {
+        id: 6,
+        avelonData: {id: 6, name: 'AMARILLO'},
+        marketData: {id: -1, name: null}
+      }
+    ];
+    this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
+    this.colorsList = [
+      {id: 4, name: 'AZUL OSCURO'},
+      {id: 5, name: 'ROJO'},
+      {id: 6, name: 'AMARILLO'}
+    ];
+
+    this.dataSourceSizes = [
+      {
+        id: 7,
+        avelonData: {id: 7, name: '20'},
+        marketData: {id: -1, name: null}
+      },
+      {
+        id: 8,
+        avelonData: {id: 8, name: '21'},
+        marketData: {id: 8, name: '38'}
+      },
+      {
+        id: 9,
+        avelonData: {id: 9, name: '22'},
+        marketData: {id: 9, name: '39'}
+      }
+    ];
+    this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+    this.sizesList = [
+      {id: 7, name: '37'},
+      {id: 8, name: '38'},
+      {id: 9, name: '39'},
+    ];
+
+    this.dataSourceFeatures = [
+      {
+        id: 1,
+        avelonData: {id: 1, name: 'FAMILIA: NIÑO'},
+        marketData: {id: 1, name: 'NIÑO'}
+      },
+      {
+        id: 2,
+        avelonData: {id: 2, name: 'DESCRIPCIÓN: BOTAS'},
+        marketData: {id: 2, name: 'BOTAS'}
+      },
+      {
+        id: 3,
+        avelonData: {id: 3, name: 'DESCRIPCIÓN: BOTINES'},
+        marketData: {id: 3, name: 'BOTINES'}
+      }
+    ];
+    this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+    this.featuresList = [
+      {id: 1, name: 'NIÑO'},
+      {id: 2, name: 'BOTAS'},
+      {id: 3, name: 'BOTINES'},
+    ];
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    this.displayedColumns = ['blank', 'avelonData', 'marketData'];
+    this.enumTypes = [];
+
     //this.getEntities();
     //this.getMaps();
     this.saveMock();
@@ -168,17 +278,24 @@ export class MappingsComponent implements OnInit {
   }
 
   getMaps() {
+<<<<<<< HEAD
     this.dataSourceBrands = new MatTableDataSource([]);
     this.dataSourceColors = new MatTableDataSource([]);
     this.dataSourceSizes = new MatTableDataSource([]); 
     this.dataSourceFeatures = new MatTableDataSource([]); 
+=======
+    this.dataSourceMappingBrands = new MatTableDataSource([]);
+    this.dataSourceMappingColors = new MatTableDataSource([]);
+    this.dataSourceMappingSizes = new MatTableDataSource([]);
+    this.dataSourceMappingFeatures = new MatTableDataSource([]);
+>>>>>>> 39314093e0bc41ead4ed3b676af7cda2e937b583
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
         data.forEach(item => {
           switch(item.typeMapped) {
             case 3:
-              const dataColor = this.dataSourceColors.data;
+              const dataColor = this.dataSourceMappingColors.data;
 
               let colorMarket = {id: 0, name: ''};
 
@@ -203,10 +320,10 @@ export class MappingsComponent implements OnInit {
                   name: colorMarket.name
                 }
               });
-              this.dataSourceColors.data = dataColor;
+              this.dataSourceMappingColors.data = dataColor;
               break;
             case 4:
-              const dataSize = this.dataSourceSizes.data;
+              const dataSize = this.dataSourceMappingSizes.data;
               
               let sizeMarket = {id: 0, name: ''};
 
@@ -232,10 +349,10 @@ export class MappingsComponent implements OnInit {
                   name: sizeMarket.name
                 }
               });
-              this.dataSourceSizes.data = dataSize;
+              this.dataSourceMappingSizes.data = dataSize;
               break;
             case 5:
-              const dataBrand = this.dataSourceBrands.data;
+              const dataBrand = this.dataSourceMappingBrands.data;
 
               let brandMarket = {id: 0, name: ''};
 
@@ -261,7 +378,7 @@ export class MappingsComponent implements OnInit {
                   name: brandMarket.name
                 }
               });
-              this.dataSourceBrands.data = dataBrand;
+              this.dataSourceMappingBrands.data = dataBrand;
               break;
             case 8:
                 const dataFeature = this.dataSourceFeatures.data;
@@ -302,7 +419,7 @@ export class MappingsComponent implements OnInit {
   }
 
   saveMock() {
-    this.dataSourceBrands.filteredData.forEach(item => {
+    this.dataSourceMappingBrands.filteredData.forEach(item => {
       this.brandsList.forEach(brand => {
         if(item.id == brand.id) {
           let brandMockToSave = {};
@@ -333,7 +450,7 @@ export class MappingsComponent implements OnInit {
       });
     });
 
-    this.dataSourceColors.filteredData.forEach(item => {
+    this.dataSourceMappingColors.filteredData.forEach(item => {
       this.colorsList.forEach(color => {
         if(item.id == color.id) {
           let colorsMockToSave = {};
@@ -364,7 +481,7 @@ export class MappingsComponent implements OnInit {
       });
     });
 
-    this.dataSourceSizes.filteredData.forEach(item => {
+    this.dataSourceMappingSizes.filteredData.forEach(item => {
       this.sizesList.forEach(size => {
         if(item.id == size.id) {
           let sizesMockToSave = {};
@@ -433,7 +550,7 @@ export class MappingsComponent implements OnInit {
     let originData;
     let marketData;
     let id = element.id;
-    this.dataSourceBrands.filteredData.forEach(item => {
+    this.dataSourceMappingBrands.filteredData.forEach(item => {
       if(item.id == element.id) {
         originData = item;
       }
@@ -470,7 +587,7 @@ export class MappingsComponent implements OnInit {
     let originData;
     let marketData;
     let id = element.id;
-    this.dataSourceColors.filteredData.forEach(item => {
+    this.dataSourceMappingColors.filteredData.forEach(item => {
       if(item.id == element.id) {
         originData = item;
       }
@@ -507,7 +624,7 @@ export class MappingsComponent implements OnInit {
     let originData;
     let marketData;
     let id = element.id;
-    this.dataSourceSizes.filteredData.forEach(item => {
+    this.dataSourceMappingSizes.filteredData.forEach(item => {
       if(item.id == element.id) {
         originData = item;
       }
@@ -578,15 +695,15 @@ export class MappingsComponent implements OnInit {
   }
 
   /*brandsFilter(filterValue: string) {
-    this.dataSourceBrands.filter = filterValue.trim().toLowerCase();
+    this.dataSourceMappingBrands.filter = filterValue.trim().toLowerCase();
   }
 
   colorsFilter(filterValue: string) {
-    this.dataSourceColors.filter = filterValue.trim().toLowerCase();
+    this.dataSourceMappingColors.filter = filterValue.trim().toLowerCase();
   }
 
   sizesFilter(filterValue: string) {
-    this.dataSourceSizes.filter = filterValue.trim().toLowerCase();
+    this.dataSourceMappingSizes.filter = filterValue.trim().toLowerCase();
   }*/
 
 }
