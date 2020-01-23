@@ -8,6 +8,7 @@ import {PrinterService} from "../../printer/printer.service";
 import Price = PriceModel.Price;
 import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
 import {PrintModel} from "../../../models/endpoints/Print";
+import {Events} from "@ionic/angular";
 
 declare let ScanditMatrixSimple;
 
@@ -31,7 +32,8 @@ export class TariffPricesScanditService {
     private itemReferencesProvider: ItemReferencesProvider,
     private priceService: PriceService,
     private printerService: PrinterService,
-    private localStorageProvider: LocalStorageProvider
+    private localStorageProvider: LocalStorageProvider,
+    private events: Events
   ) {}
 
   public init(warehouseId: number, tariffId: number) {
@@ -152,8 +154,9 @@ export class TariffPricesScanditService {
             this.priceData[4] = 'Nuevo';
             this.priceData[0] = 'Imprimiendo...';
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-            this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-              this.printerService.printNotify([this.priceToPrint.id]);
+            this.printerService.printTagPriceUsingPrice([this.priceToPrint], async ()=>{
+              await this.printerService.printNotifyPromiseReturned([this.priceToPrint.id]);
+              this.events.publish('setProductAsPrinted');
               this.priceData[0] = 'Artículo impreso con éxito.';
               ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
             }, ()=>{
@@ -165,8 +168,9 @@ export class TariffPricesScanditService {
             this.priceData[4] = 'Actualizado';
             this.priceData[0] = 'Imprimiendo...';
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-            this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-              this.printerService.printNotify([this.priceToPrint.id]);
+            this.printerService.printTagPriceUsingPrice([this.priceToPrint], async ()=>{
+              await this.printerService.printNotifyPromiseReturned([this.priceToPrint.id]);
+              this.events.publish('setProductAsPrinted');
               this.priceData[0] = 'Artículo impreso con éxito.';
               ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
             }, ()=>{
@@ -205,8 +209,9 @@ export class TariffPricesScanditService {
       this.priceData[6] = 'button reprint';
       this.priceData[0] = 'Imprimiendo...';
       ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-      this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-        this.printerService.printNotify([this.priceToPrint.id]);
+      this.printerService.printTagPriceUsingPrice([this.priceToPrint], async ()=>{
+        await this.printerService.printNotifyPromiseReturned([this.priceToPrint.id]);
+        this.events.publish('setProductAsPrinted');
         this.priceData[0] = 'Artículo re-impreso con éxito.';
         ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
       }, ()=>{
