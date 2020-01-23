@@ -33,6 +33,7 @@ export class NewRuleComponent implements OnInit {
   private filterDescription;
   private ruleName;
   private originalRuleName;
+  private idToEdit;
 
   constructor(
     private modalController: ModalController,
@@ -55,6 +56,7 @@ export class NewRuleComponent implements OnInit {
     this.stockToReduceDescription = '';
     this.selectedCategories = [];
     this.ruleName = '';
+    this.idToEdit = this.navParams.get('id');
 
     // DATOS ESTÁTICOS. CAMBIAR CUANDO APIS LISTAS
 
@@ -620,6 +622,7 @@ export class NewRuleComponent implements OnInit {
       }
 
       this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'none');
+      rule['id'] = this.idToEdit;
       this.close(rule);
     }
   }

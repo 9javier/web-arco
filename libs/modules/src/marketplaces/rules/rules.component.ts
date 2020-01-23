@@ -398,12 +398,55 @@ export class RulesComponent implements OnInit {
         numberOfProducts: rule.products,
         selectedDestinationCategories: rule.destinationCategories,
         stockToReduce: rule.stockToReduce,
+        id: rule.id,
         mode: 'edit'
       }
     });
     modal.onDidDismiss().then((data) => {
       if (data.data) {
+
         let editedRule = data.data;
+
+        console.log(editedRule)
+
+        let filterType = 0;
+
+        let dataGroupToSend = '';
+
+        switch(editedRule.filterType) {
+          case 'category':
+            filterType = 1;
+
+            editedRule.categoriesFilter.forEach(item => {
+              dataGroupToSend = dataGroupToSend.concat(item.name);
+              dataGroupToSend = dataGroupToSend.concat(',')
+            })
+            
+            dataGroupToSend = dataGroupToSend.slice(0,-1);
+            break;
+          case 'price':
+            filterType = 2;
+            dataGroupToSend = editedRule.minPriceFilter;
+            break;
+          case 'stock':
+            filterType = 3;
+            dataGroupToSend = editedRule.stockFilter;
+            break;
+        } 
+
+        let dataToSend = {
+          id: editedRule.id,
+          name: editedRule.name,
+          ruleFilterType: filterType,
+          externalId: "1",
+          dataGroup: dataGroupToSend,
+          status: 0
+        }
+
+        this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
+          console.log(data)
+        })
+
         if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
           // EL SIGUIENTE BLOQUE ES ALGO TEMPORAL PARA ACTUALIZAR EN EL FRONT LAS LISTAS DE REGLAS. EN UN FUTURO SE MANDARA LA REGLA EDITADA A LA API Y ALLI SE ACTUALIZARÁ, Y A CONTINUACIÓN SE HARÁ LA CONSULTA DE LA LISTA DE NUEVO PARA QUE YA RECOGA EL DATO ACTUALIZADO DESDE LAS TABLAS

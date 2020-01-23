@@ -19,6 +19,7 @@ export class MarketplacesService {
   private getRulesFilterTypesUrl = this.apiBase + "/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/RuleFilter";
   private postRulesFilterUrl = this.apiBase + "/RuleFilter";
+  private updateRulesFilterUrl = this.apiBase + "/RuleFilter/{{id}}";
   private getRulesFilterByTypeUrl = this.apiBase + "/RuleFilter/{{type}}";
   private getMarketsUrl = this.apiBase + "/Markets";
 
@@ -45,10 +46,6 @@ export class MarketplacesService {
   }
 
   updateMapDataRules(mapDataId: number, data):Observable<any> { 
-
-    console.log(mapDataId)
-    console.log(data)
-
     return this.http.put<any>(this.updateMapDataRulesUrl.replace('{{id}}', mapDataId.toString()), data, {}).pipe(map(response=>{
       return response;
     }));
@@ -68,6 +65,12 @@ export class MarketplacesService {
 
   postRulesFilter(data):Observable<any> {
     return this.http.post<any>(this.postRulesFilterUrl, data, {}).pipe(map(response=>{
+      return response;
+    }));
+  }
+
+  updateRulesFilter(ruleFilterId: number, data):Observable<any> { 
+    return this.http.put<any>(this.updateRulesFilterUrl.replace('{{id}}', ruleFilterId.toString()), data, {}).pipe(map(response=>{
       return response;
     }));
   }
