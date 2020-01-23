@@ -14,6 +14,7 @@ import {Events} from "@ionic/angular";
 import {TemplateColorsService} from "../../../../services/src/lib/endpoint/template-colors/template-colors.service";
 import {TemplateColorsModel} from "../../../../services/src/models/endpoints/TemplateColors";
 import {HttpRequestModel} from "../../../../services/src/models/endpoints/HttpRequest";
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'sorter-input-al',
@@ -45,13 +46,19 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
     private authenticationService: AuthenticationService,
     public sorterProvider: SorterProvider
   ) { }
-  
+
   ngOnInit() {
-    this.loadDataOnInit();
+this.loadData();
+  }
+  loadData(){
+    this.intermediaryService.presentLoading("Refrescando listado");
+    const response = this.loadDataOnInit();
     this.events.subscribe(this.LOAD_DATA_INPUT_SORTER, () => {
       this.sorterOperationCancelled();
       this.loadDataOnInit();
     });
+    this.intermediaryService.dismissLoading();
+    return response;
   }
 
   ngOnDestroy() {
