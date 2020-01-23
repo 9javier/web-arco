@@ -83,7 +83,7 @@
             <ng-container matColumnDef="marketData">
               <th mat-header-cell *matHeaderCellDef><span>CARACTERÍSTICA DESTINO</span></th>
               <td mat-cell *matCellDef="let element">
-                <mat-select (selectionChange)="changeFeatureSelect($event)" [value]="element.marketData.id">
+                <mat-select (selectionChange)="changeFeatureSelect($event, element)" [value]="element.marketData.id">
                   <mat-option [value]="-1">-</mat-option>
                   <mat-option *ngFor="let item of featuresList" [value]="item.id">
                     {{item.name}}

@@ -92,28 +92,28 @@ export class MappingsComponent implements OnInit {
 
   // Features
 
-  private dataSourceFeatures = [
+  private dataSourceFeatures: MatTableDataSource<any> = new MatTableDataSource([
     {
-      id: 1,
-      avelonData: {id: 1, name: 'FAMILIA: NIÑO'},
-      marketData: {id: 1, name: 'NIÑO'}
+      id: 10,
+      avelonData: {id: 10, name: 'FAMILIA: NIÑO'},
+      marketData: {id: 10, name: 'NIÑO'}
     },
     {
-      id: 2,
-      avelonData: {id: 2, name: 'DESCRIPCIÓN: BOTAS'},
-      marketData: {id: 2, name: 'BOTAS'}
+      id: 11,
+      avelonData: {id: 11, name: 'DESCRIPCIÓN: BOTAS'},
+      marketData: {id: 11, name: 'BOTAS'}
     },
     {
-      id: 3,
-      avelonData: {id: 3, name: 'DESCRIPCIÓN: BOTINES'},
-      marketData: {id: 3, name: 'BOTINES'}
+      id: 12,
+      avelonData: {id: 12, name: 'DESCRIPCIÓN: BOTINES'},
+      marketData: {id: 12, name: 'BOTINES'}
     }
-  ];
+  ]);
 
   private featuresList = [
-    {id: 1, name: 'NIÑO'},
-    {id: 2, name: 'BOTAS'},
-    {id: 3, name: 'BOTINES'},
+    {id: 10, name: 'NIÑO'},
+    {id: 11, name: 'BOTAS'},
+    {id: 12, name: 'BOTINES'},
   ];
 
   /////////////////////////////////////////////////////////////////////////////////////
@@ -171,6 +171,7 @@ export class MappingsComponent implements OnInit {
     this.dataSourceBrands = new MatTableDataSource([]);
     this.dataSourceColors = new MatTableDataSource([]);
     this.dataSourceSizes = new MatTableDataSource([]); 
+    this.dataSourceFeatures = new MatTableDataSource([]); 
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
@@ -262,6 +263,35 @@ export class MappingsComponent implements OnInit {
               });
               this.dataSourceBrands.data = dataBrand;
               break;
+            case 8:
+                const dataFeature = this.dataSourceFeatures.data;
+  
+                let featureMarket = {id: 0, name: ''};
+  
+                if(item.marketDataId == null) {
+                  featureMarket.name = item.marketDataId;
+                  featureMarket.id = -1;
+                } else {
+                  this.featuresList.forEach(feature => {
+                    if(feature.name == item.marketDataId){
+                      featureMarket = feature;
+                    }
+                  })
+                }
+  
+                dataFeature.push({
+                  id: item.id,
+                  avelonData: {
+                    id: item.id,
+                    name: item.originDataId
+                  },
+                  marketData: {
+                    id: featureMarket.id,
+                    name: featureMarket.name
+                  }
+                });
+                this.dataSourceFeatures.data = dataFeature;
+                break;
           }
         });
       } else {
@@ -312,7 +342,7 @@ export class MappingsComponent implements OnInit {
               id: item.id,
               originDataId: item.avelonData.name,
               marketDataId: color.name,
-              typeMapped: 5,
+              typeMapped: 3,
               marketId: 1,
               aditionalMapInfo: 'more info'
             };
@@ -321,7 +351,7 @@ export class MappingsComponent implements OnInit {
               id: item.id,
               originDataId: item.avelonData.name,
               marketDataId: null,
-              typeMapped: 5,
+              typeMapped: 3,
               marketId: 1,
               aditionalMapInfo: 'more info'
             };
@@ -343,12 +373,44 @@ export class MappingsComponent implements OnInit {
               id: item.id,
               originDataId: item.avelonData.name,
               marketDataId: size.name,
-              typeMapped: 5,
+              typeMapped: 4,
               marketId: 1,
               aditionalMapInfo: 'more info'
             };
           } else {
             sizesMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: null,
+              typeMapped: 4,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          }
+
+          this.marketplacesService.postMapDataRules(sizesMockToSave).subscribe(data => {
+            console.log(data)
+          })
+        }
+      });
+    });
+
+
+    this.dataSourceFeatures.filteredData.forEach(item => {
+      this.featuresList.forEach(feature => {
+        if(item.id == feature.id) {
+          let featuresMockToSave = {};
+          if(item.marketData.name != null) {
+            featuresMockToSave = {
+              id: item.id,
+              originDataId: item.avelonData.name,
+              marketDataId: feature.name,
+              typeMapped: 8,
+              marketId: 1,
+              aditionalMapInfo: 'more info'
+            };
+          } else {
+            featuresMockToSave = {
               id: item.id,
               originDataId: item.avelonData.name,
               marketDataId: null,
@@ -358,7 +420,7 @@ export class MappingsComponent implements OnInit {
             };
           }
 
-          this.marketplacesService.postMapDataRules(sizesMockToSave).subscribe(data => {
+          this.marketplacesService.postMapDataRules(featuresMockToSave).subscribe(data => {
             console.log(data)
           })
         }
@@ -478,8 +540,41 @@ export class MappingsComponent implements OnInit {
     })
   }
 
-  changeFeatureSelect(e) {
-    console.log(e.value)
+  changeFeatureSelect(e, element) {
+    let originData;
+    let marketData;
+    let id = element.id;
+    this.dataSourceFeatures.filteredData.forEach(item => {
+      if(item.id == element.id) {
+        originData = item;
+      }
+    });
+
+    this.featuresList.forEach(item => {
+      if(item.id == e.value) {
+        marketData = item;
+      }
+    });
+
+    let marketDataId = '';
+    if(marketData) {
+      marketDataId = marketData.name;
+    } else {
+      marketDataId = null;
+    }
+
+    let dataSend = {
+      id,
+      originDataId: originData.avelonData.name,
+      marketDataId,
+      typeMapped: 8,
+      marketId: 1,
+      aditionalMapInfo: 'more info'
+    };
+    
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+      console.log(data)
+    })
   }
 
   /*brandsFilter(filterValue: string) {
