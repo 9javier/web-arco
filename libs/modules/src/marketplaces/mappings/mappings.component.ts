@@ -117,26 +117,26 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceFeatures = [
       {
-        id: 1,
-        avelonData: {id: 1, name: 'FAMILIA: NIÑO'},
-        marketData: {id: 1, name: 'NIÑO'}
+        id: 10,
+        avelonData: {id: 10, name: 'FAMILIA: NIÑO'},
+        marketData: {id: 10, name: 'NIÑO'}
       },
       {
-        id: 2,
-        avelonData: {id: 2, name: 'DESCRIPCIÓN: BOTAS'},
-        marketData: {id: 2, name: 'BOTAS'}
+        id: 11,
+        avelonData: {id: 11, name: 'DESCRIPCIÓN: BOTAS'},
+        marketData: {id: 11, name: 'BOTAS'}
       },
       {
-        id: 3,
-        avelonData: {id: 3, name: 'DESCRIPCIÓN: BOTINES'},
-        marketData: {id: 3, name: 'BOTINES'}
+        id: 12,
+        avelonData: {id: 12, name: 'DESCRIPCIÓN: BOTINES'},
+        marketData: {id: 12, name: 'BOTINES'}
       }
     ];
     this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
     this.featuresList = [
-      {id: 1, name: 'NIÑO'},
-      {id: 2, name: 'BOTAS'},
-      {id: 3, name: 'BOTINES'},
+      {id: 10, name: 'NIÑO'},
+      {id: 11, name: 'BOTAS'},
+      {id: 12, name: 'BOTINES'},
     ];
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -257,7 +257,7 @@ export class MappingsComponent implements OnInit {
               this.dataSourceMappingBrands.data = dataBrand;
               break;
             case 8:
-                const dataFeature = this.dataSourceFeatures.data;
+                const dataFeature = this.dataSourceMappingFeatures.data;
   
                 let featureMarket = {id: 0, name: ''};
   
@@ -283,7 +283,7 @@ export class MappingsComponent implements OnInit {
                     name: featureMarket.name
                   }
                 });
-                this.dataSourceFeatures.data = dataFeature;
+                this.dataSourceMappingFeatures.data = dataFeature;
                 break;
           }
         });
@@ -389,7 +389,7 @@ export class MappingsComponent implements OnInit {
     });
 
 
-    this.dataSourceFeatures.filteredData.forEach(item => {
+    this.dataSourceMappingFeatures.filteredData.forEach(item => {
       this.featuresList.forEach(feature => {
         if(item.id == feature.id) {
           let featuresMockToSave = {};
@@ -537,7 +537,7 @@ export class MappingsComponent implements OnInit {
     let originData;
     let marketData;
     let id = element.id;
-    this.dataSourceFeatures.filteredData.forEach(item => {
+    this.dataSourceMappingFeatures.filteredData.forEach(item => {
       if(item.id == element.id) {
         originData = item;
       }
