@@ -8,7 +8,7 @@ import {TitlePickingComponent} from "./title/title.component";
 import {PickingComponent} from "./picking/picking.component";
 import {ListPickingRebuildComponent} from "./list-picking-rebuild.component";
 import {ListProductsComponent} from "./modal-products/modal-products.component";
-
+import {MatTooltipModule} from '@angular/material/tooltip';
 @NgModule({
   declarations: [ListPickingRebuildComponent, TitlePickingComponent, PickingComponent, ListProductsComponent],
   imports: [
@@ -20,7 +20,8 @@ import {ListProductsComponent} from "./modal-products/modal-products.component";
     CdkTableModule,
     MatGridListModule,
     FormsModule,
-    MatRadioModule
+    MatRadioModule,
+    MatTooltipModule
   ],
   entryComponents: [ListPickingRebuildComponent, TitlePickingComponent, PickingComponent, ListProductsComponent]
 })

@@ -8,6 +8,7 @@ import {AlertController, LoadingController } from "@ionic/angular";
 import { IntermediaryService, UserTimeModel, UserTimeService } from '@suite/services';
 import { TimesToastType } from '../../../services/src/models/timesToastType';
 
+
 @Component({
   selector: 'list-picking-rebuild',
   templateUrl: './list-picking-rebuild.component.html',

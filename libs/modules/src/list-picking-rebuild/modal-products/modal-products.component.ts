@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {ShoesPickingModel} from "../../../../services/src/models/endpoints/ShoesPicking";
 import {ModalController} from "@ionic/angular";
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'list-products',
@@ -15,16 +16,23 @@ export class ListProductsComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+    private intermediaryService: IntermediaryService,
   ) {}
 
   ngOnInit() {
-    this.listProducts = this.pickingProvider.listProductsFromPickingHistory;
+this.loadPicking();
   }
-
+loadPicking(){
+    this.intermediaryService.presentLoading("Refrescando listado");
+    return this.listProducts = this.pickingProvider.listProductsFromPickingHistory;
+    this.intermediaryService.dismissLoading();
+}
   goToList() {
     this.modalController.dismiss();
   }
+
+
 
   getProductStatusName(product: ShoesPickingModel.ShoesPicking): string {
     if (product && product.status) {

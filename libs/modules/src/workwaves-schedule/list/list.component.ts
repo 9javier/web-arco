@@ -6,6 +6,7 @@ import {WorkwaveModel} from "../../../../services/src/models/endpoints/Workwaves
 import {Event as NavigationEvent, NavigationExtras, NavigationStart, Router} from "@angular/router";
 import {filter} from "rxjs/operators";
 import {AlertController} from "@ionic/angular";
+import { IntermediaryService } from '@suite/services';
 
 @Component({
   selector: 'list-workwaves-schedule',
@@ -19,8 +20,10 @@ export class ListWorkwavesScheduleComponent implements OnInit {
   constructor(
     private alertController: AlertController,
     private workwavesService: WorkwavesService,
-    private router: Router
-  ) {
+    private router: Router,
+    private intermediaryService: IntermediaryService
+  )
+  {
     this.router.events
       .pipe(
         filter((event: NavigationEvent) => {
@@ -40,12 +43,13 @@ export class ListWorkwavesScheduleComponent implements OnInit {
   }
 
   loadWorkWaves() {
+    this.intermediaryService.presentLoading("Refrescando listado");
     this.workwavesService
       .getListScheduled()
       .then((data: Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>) => {
         data.subscribe((res: HttpResponse<WorkwaveModel.ResponseListScheduled>) => {
           this.workWaves = res.body.data;
-        });
+        });this.intermediaryService.dismissLoading();
       });
   }
 
