@@ -10,6 +10,7 @@ import { StoreComponent } from './list/store/store.component';
 import { UpdateComponent } from './list/update/update.component';
 import { MatListModule } from '@angular/material/list';
 import { BreadcrumbModule } from '../../../../../modules/src/components/breadcrumb/breadcrumb.module';
+import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { BreadcrumbModule } from '../../../../../modules/src/components/breadcru
     MatCheckboxModule,
     CdkTableModule,
     BreadcrumbModule,
-    RouterModule.forChild([{ path: '', component: ListComponent }])
+    RouterModule.forChild([{ path: '', component: ListComponent }]),
+    MatTooltipModule
   ],
   exports: [ListComponent, StoreComponent, UpdateComponent],
   declarations: [ListComponent, StoreComponent, UpdateComponent],

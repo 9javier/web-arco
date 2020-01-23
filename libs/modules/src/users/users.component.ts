@@ -15,6 +15,7 @@ export class UsersComponent implements OnInit {
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Users')
     .name;
   routePath = '/users';
+  tooltipMessage = 'Agregar usuario';
 
   constructor(private modalCtrl:ModalController) {}
 

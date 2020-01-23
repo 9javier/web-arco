@@ -13,6 +13,7 @@ export class GroupsComponent implements OnInit {
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Group')
     .name;
   routePath = '/groups';
+  tooltipMessage = 'Agregar un grupo';
 
   constructor() {}
 

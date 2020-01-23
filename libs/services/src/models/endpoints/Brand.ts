@@ -7,7 +7,8 @@ export namespace BrandModel {
     avelonId: number,
     datasetHash: string,
     name: string,
-    supplierName: string
+    supplierName: string,
+    providerId?: number
   }
 
 }

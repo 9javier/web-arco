@@ -449,7 +449,8 @@ export class ProductsComponent implements OnInit {
         break;
     }
     this.lastUsedFilter = filterType;
-    this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+    let flagApply = true;
+    this.searchInContainer(this.sanitize(this.getFormValueCopy()), flagApply);
   }
 
   /**
@@ -630,8 +631,12 @@ export class ProductsComponent implements OnInit {
   /**
    * search products in container by criteria
    * @param parameters - parameters to search
+   * @param applyFilter - parameters to search
    */
-  searchInContainer(parameters): void {
+  searchInContainer(parameters, applyFilter: boolean = false): void {
+    if(applyFilter){
+      parameters.pagination.page = 1;
+    }
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer => {
       this.intermediaryService.dismissLoading();
@@ -700,6 +705,14 @@ export class ProductsComponent implements OnInit {
           this.suppliers[index].hide = !filteredSuppliers.includes(this.suppliers[index].value);
         }
         this.filterButtonSuppliers.listItems = this.suppliers;
+      }
+      if(applyFilter){
+        this.saveFilters();
+        this.form.get("pagination").patchValue({
+          limit: this.form.value.pagination.limit,
+          page: 1
+        }, { emitEvent: false });
+        this.recoverFilters();
       }
     }, () => {
       this.intermediaryService.dismissLoading();

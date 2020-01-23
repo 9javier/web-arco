@@ -86,6 +86,8 @@ export class ListComponent implements OnInit {
   @Input() displayedColumns: string[];
   @Input() routePath: string;
   @Input() printable: boolean;
+  @Input() tooltipMessage:string[];
+
 
   // Presentation Layer
   dataSource: any[] = [];
@@ -376,8 +378,8 @@ export class ListComponent implements OnInit {
       successMsg = `${selectedUsers.selected.length} usuarios eliminados`;
     } else {
       header = 'Eliminar Usuario';
-      msg = `Estas a punto de eliminar <br> 
-      el usuario ${selectedUsers.selected.map(value => value.name.bold())}.<br> 
+      msg = `Estas a punto de eliminar <br>
+      el usuario ${selectedUsers.selected.map(value => value.name.bold())}.<br>
       ¿Esta seguro? `;
       successMsg = `Usuario ${selectedUsers.selected.map(
         value => value.name
@@ -456,8 +458,8 @@ export class ListComponent implements OnInit {
       successMsg = `${selectedJails.selected.length} referencias eliminadas`;
     } else {
       header = 'Eliminar Referencia';
-      msg = `Estas a punto de eliminar <br> 
-      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br> 
+      msg = `Estas a punto de eliminar <br>
+      la referencia ${selectedJails.selected.map(value => value.reference.bold())}.<br>
       ¿Esta seguro? `;
       successMsg = `Referencia ${selectedJails.selected.map(
         value => value.reference
