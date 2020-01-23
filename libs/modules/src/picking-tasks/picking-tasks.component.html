@@ -1,4 +1,12 @@
+<div *ngIf="isHomeRoute()">
+  <ion-fab vertical="top" horizontal="end" class="scandit-fab">
+    <ion-fab-button (click)="returnMenuPikingTask()">
+      <i class="material-icons">crop_free</i>
+    </ion-fab-button>
+  </ion-fab>
+</div>
 <ion-content>
-  <list-picking-tasks-template *ngIf="isStoreChecked && !isStore"></list-picking-tasks-template>
+  <list-picking-tasks-template *ngIf="isStoreChecked && !isStore">
+  </list-picking-tasks-template>
   <list-stores-picking-tasks-template *ngIf="isStoreChecked && isStore"></list-stores-picking-tasks-template>
 </ion-content>

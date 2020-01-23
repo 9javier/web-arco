@@ -10,6 +10,7 @@ import {Router} from "@angular/router";
 import {PickingProvider} from "../../../../services/src/providers/picking/picking.provider";
 import {PickingScanditService} from "../../../../services/src/lib/scandit/picking/picking.service";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
+import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'list-picking-tasks-template',
@@ -35,7 +36,8 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     private shoesPickingService: ShoesPickingService,
     private pickingScanditService: PickingScanditService,
     private carriersService: CarriersService,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+    private toolbarProvider: ToolbarProvider
   ) {}
 
   async ngOnInit() {
@@ -88,6 +90,12 @@ export class ListPickingTasksTemplateComponent implements OnInit {
 
   ngOnDestroy() {
     this.events.unsubscribe('picking:remove');
+  }
+
+  /*return to picking*/
+  returnPickings(){
+    this.toolbarProvider.currentPage.next("Tareas de Picking");
+    this.router.navigate(['/picking-tasks']);
   }
 
   initPicking() {
