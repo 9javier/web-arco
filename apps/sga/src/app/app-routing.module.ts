@@ -150,6 +150,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'role-assignment',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/role-assignment/role-assignment.module#RoleAssignmentModule',
+    data: {
+      name: 'Asignación de roles'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',

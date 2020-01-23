@@ -146,6 +146,12 @@ export class MenuComponent implements OnInit {
           icon: 'people'
         },
         {
+          title: 'Asignación de roles',
+          id: 'role-assignment',
+          url: '/role-assignment',
+          icon: 'key'
+        },
+        {
           title: 'Roles',
           id: 'roles',
           url: '/roles/menu',
