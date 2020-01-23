@@ -27,6 +27,18 @@ export namespace InputSorterModel {
     wayBusyByAnotherUser: boolean
   }
 
+  export interface ProductScanException {
+    error: {
+      type: string,
+      message: string
+    },
+    info?: {
+      destinyWarehouse: WarehouseModel.Warehouse,
+      colorSelected: ColorSorterModel.ColorSorter,
+      product: ProductModel.Product
+    }
+  }
+
   export interface RackScan {
     logUser: number,
     destinationWarehouse: WarehouseModel.Warehouse,
@@ -37,7 +49,7 @@ export namespace InputSorterModel {
   }
 
   export interface ResponseProductScan extends HttpRequestModel.Response {
-    data: ProductScan
+    data: ProductScan|ProductScanException
   }
 
   export interface ResponseRackScan {

@@ -114,6 +114,7 @@ export class ProductRelocationComponent implements OnInit {
           ' . ' +
           Number(this.referenceContainer.substring(5, 7));
         textToastOk += ' en Ubicación ' + location;
+        this.locateProductFunction(textToastOk, generateAvelonMovement);
       } else {
         textToastOk += ' de tienda.';
         this.locateProductFunction(textToastOk, generateAvelonMovement);

@@ -10,6 +10,7 @@ import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '../../../common/ui/crud/src//lib/common-ui-crud.module';
 import { ComponentsModule } from '../components/components.module';
+import { MatTooltipModule } from "@angular/material";
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { ComponentsModule } from '../components/components.module';
     WarehousesRoutingModule,
     CommonUiCrudModule,
     CdkTableModule,
-    ComponentsModule
+    ComponentsModule,
+    MatTooltipModule
   ],
   entryComponents: [
     StoreComponent

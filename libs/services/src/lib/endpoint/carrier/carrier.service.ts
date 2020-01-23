@@ -14,18 +14,19 @@ export class CarrierService {
 
   /**Private urls for Carrier service */
   private carrierUrl:string = environment.apiBase+"/packing";
-  private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/meWarehouses';
+  private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/me-warehouses';
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
   private packingUrl:string = environment.apiBase+"/types/packing";
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
-  private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carriesEmptyPacking`
+  private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carries-empty-packing`
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
   private sendPackingUrl = environment.apiBase + "/packing/send";
   private postSealsList = environment.apiBase+"/packing/seal-lista";
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
+  private postCheckPackingAvailabilityUrl = environment.apiBase + '/packing/availability/check';
   private postVaciarCalle = environment.apiBase+'/packing/empty';
 
   constructor(
@@ -42,7 +43,6 @@ export class CarrierService {
       return response.data;
     }));
   }
-  
 
   getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{
@@ -56,10 +56,9 @@ export class CarrierService {
     return this.http.post(this.postSealsList,body)
   }
 
-  // TODO Nuove Service Calle Vacia
   /**
    * @author Gaetano Sabino
-   * @description recibe referencia o id Jaula de una Jaula para vaciar Jaula 
+   * @description recibe referencia o id Jaula de una Jaula para vaciar Jaula
    * @param id number o string
    */
   postPackingEmpty(id:number | string){
@@ -149,5 +148,9 @@ export class CarrierService {
 
   postCheckProductsDestiny(params: CarrierModel.ParamsCheckProductsDestiny) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postCheckProductsDestinyUrl, params);
+  }
+
+  postCheckPackingAvailability(params: CarrierModel.ParamsCheckPackingAvailability) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postCheckPackingAvailabilityUrl, params);
   }
 }

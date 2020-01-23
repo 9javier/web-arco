@@ -26,10 +26,10 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
+    <ion-fab-button matTooltip="Eliminar Picking seleccionados" matTooltipClass="tooltip" *ngIf="deleteOptionEnabled && !usersNoSelectedToDelete" (click)="deletePickingsSelected()">
       <i class="material-icons">delete</i>
     </ion-fab-button>
-    <ion-fab-button *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
+    <ion-fab-button matTooltip="Seleccionar todo" matTooltipClass="tooltip" *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
       <i class="material-icons">select_all</i>
     </ion-fab-button>
   </ion-fab>

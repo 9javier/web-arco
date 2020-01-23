@@ -516,7 +516,7 @@ export class PrinterService {
     return observable;
   }
 
-  public printTagPriceUsingPrice(price) {
+  public printTagPriceUsingPrice(price, callbackSuccess?: () => any, callbackFail?: () => any) {
 
     console.debug("PRINT::printTagPriceUsingPrice 1 [" + new Date().toJSON() + "]", price);
     let dataToPrint = this.processProductToPrintTagPrice(price);
@@ -525,7 +525,7 @@ export class PrinterService {
     console.debug("PRINT::printTagPriceUsingPrice 2 [" + new Date().toJSON() + "]", dataToPrint);
     if (dataToPrint) {
 
-      this.toPrintFromString(dataToPrint.valuePrint);
+      this.toPrintFromString(dataToPrint.valuePrint, callbackSuccess, callbackFail);
     }
   }
 
@@ -644,8 +644,7 @@ export class PrinterService {
    * @param textToPrint - string to be printed
    * @param failed - the solicitude comes from a failed request
    */
-  private async toPrintFromString(textToPrint: string, macAddress?) {
-
+  private async toPrintFromString(textToPrint: string, callbackSuccess?: () => any, callbackFail?: () => any,  macAddress?) {
 
 
     console.debug("PRINT::toPrintFromString 1 [" + new Date().toJSON() + "]", { textToPrint, macAddress });
@@ -679,6 +678,9 @@ export class PrinterService {
                 console.debug("PRINT::toPrintFromString 10 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                 //console.debug("Zbtprinter print success: " + success, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                 this.stampe$.next(true);
+                if(callbackSuccess){
+                  callbackSuccess();
+                }
                 resolve(true);
               }, (fail) => {
                 console.debug("PRINT::toPrintFromString 11 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
@@ -686,6 +688,9 @@ export class PrinterService {
                   console.debug("PRINT::toPrintFromString 12 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });
                   //console.debug("Zbtprinter print finally fail:" + fail, { text: printOptions.text || printOptions.product.productShoeUnit.reference, mac: this.address, textToPrint: textToPrint });
                   this.intermediaryService.presentToastError('No ha sido posible conectarse con la impresora', TimesToastType.DURATION_ERROR_TOAST);
+                  if(callbackFail){
+                    callbackFail();
+                  }
                   reject(false);
                 } else {
                   console.debug("PRINT::toPrintFromString 13 [" + new Date().toJSON() + "]", { textToPrint, macAddress: this.address, printAttempts });

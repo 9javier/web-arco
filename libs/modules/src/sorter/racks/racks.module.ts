@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RacksRoutingModule } from './racks-routing.module';
 import { RacksComponent } from './racks.component';
 import { IonicModule } from '@ionic/angular';
+import { MatTooltipModule } from "@angular/material";
 import {
   MatCheckboxModule,
   MatFormFieldModule,
@@ -29,7 +30,8 @@ import { NgxMaskModule } from 'ngx-mask';
     MatInputModule,
     MatIconModule,
     NgxMaskModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ]
 })
 export class RacksModule { }

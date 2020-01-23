@@ -46,4 +46,17 @@ export namespace CarrierModel{
     export interface ResponseCheckProductsDestiny extends HttpRequestModel.Response {
       data: CheckProductsDestiny
     }
+
+    // Check packing-products destiny
+    export interface ParamsCheckPackingAvailability {
+      packingReference: string,
+      destinyReference?: string,
+      forIncidences?: boolean
+    }
+    export interface CheckPackingAvailability {
+      someProductWithDifferentDestiny: boolean
+    }
+    export interface ResponseCheckPackingAvailability extends HttpRequestModel.Response {
+      data: CheckPackingAvailability
+    }
 }

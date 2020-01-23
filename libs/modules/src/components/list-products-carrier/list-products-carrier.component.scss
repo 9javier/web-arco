@@ -96,6 +96,14 @@ ion-content {
   }
 }
 
+ion-header {
+  ::ng-deep {
+    ion-buttons {
+      position: absolute;
+    }
+  }
+}
+
 ion-footer {
   padding-right: 5px;
   ion-button {
@@ -122,6 +130,10 @@ ion-footer {
         border-bottom: 0 !important;
     }
 
+    tag {
+      color: #eeeeee !important;
+      background: #000000 !important;
+    }
     tag-input-form {
       width: 100%;
       form {

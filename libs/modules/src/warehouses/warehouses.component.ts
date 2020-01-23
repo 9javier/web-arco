@@ -14,6 +14,7 @@ export class WarehousesComponent implements OnInit {
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses')
     .name;
   routePath = '/warehouses';
+  tooltipMessage: string[] = ['Agregar un Almacen','Eliminar de Almacen'];
 
   constructor(private modalCtrl:ModalController) {}
 
