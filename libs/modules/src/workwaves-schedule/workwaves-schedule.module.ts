@@ -13,6 +13,7 @@ import {WorkwaveListWorkwavesScheduleComponent} from "./list/list-workwave/list-
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import {MondayStartingDateAdapterService} from "../../../services/src/lib/monday-starting-date-adapter/monday-starting-date-adapter.service";
 import {ListPickingRebuildModule} from "../list-picking-rebuild/list-picking-rebuild.module";
+import { MatTooltipModule } from "@angular/material";
 
 @NgModule({
   declarations: [WorkwavesScheduleComponent, ListWorkwavesScheduleComponent, TitleListWorkwavesScheduleComponent, WorkwaveListWorkwavesScheduleComponent],
@@ -28,7 +29,8 @@ import {ListPickingRebuildModule} from "../list-picking-rebuild/list-picking-reb
     FormsModule,
     BreadcrumbModule,
     MatGridListModule,
-    ListPickingRebuildModule
+    ListPickingRebuildModule,
+    MatTooltipModule
   ],
   providers: [
     { provide: DateAdapter, useClass: MondayStartingDateAdapterService },

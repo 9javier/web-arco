@@ -53,11 +53,11 @@
 
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="deleteBuildings()">
+    <ion-fab-button matTooltip="Eliminar seleccionados" matTooltipClass="tooltip" *ngIf="selectedForm.valid && selectedForm['controls']?.toSelect" color="danger" (click)="deleteBuildings()">
         <ion-icon name="trash"></ion-icon>
     </ion-fab-button>
     <br>
-    <ion-fab-button (click)="storeBuilding()">
+    <ion-fab-button matTooltip="Agregar edificio" matTooltipClass="tooltip" (click)="storeBuilding()">
         <ion-icon name="add"></ion-icon>
     </ion-fab-button>
 </ion-fab>

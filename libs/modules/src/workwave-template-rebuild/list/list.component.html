@@ -2,7 +2,7 @@
   <h2 class="workwave-title">
     <span (click)="goPreviousPage()" class="return-workwaves">Listado ></span> {{template.name}}
     <div id="top" class="buttons-action">
-      <ion-icon [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
+      <ion-icon matTooltip="{{enlarged ? 'Contraer' : 'Expandir'}}" matTooltipClass="tooltip" [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
     </div>
   </h2>
 </div>
@@ -36,7 +36,7 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-    <ion-fab-button (click)="saveWorkWave()" [disabled]="disableEdition">
+    <ion-fab-button matTooltip="Ejecutar Ola de Trabajo " matTooltipClass="tooltip" (click)="saveWorkWave()" [disabled]="disableEdition">
       <i class="material-icons">play_arrow</i>
     </ion-fab-button>
   </ion-fab>

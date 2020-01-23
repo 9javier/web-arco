@@ -9,6 +9,7 @@ import { HallsComponent } from "./halls.component";
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
 import { CommonUiCrudModule } from '@suite/common/ui/crud';
+import { MatTooltipModule } from "@angular/material";
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { CommonUiCrudModule } from '@suite/common/ui/crud';
     MatCheckboxModule,
     HallsRoutingModule,
     CommonUiCrudModule,
-    CdkTableModule
+    CdkTableModule,
+    MatTooltipModule
   ],
   entryComponents: [
     StoreComponent

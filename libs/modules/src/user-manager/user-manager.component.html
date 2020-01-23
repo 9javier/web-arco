@@ -75,7 +75,7 @@
     <ion-row class="fab-row-actions">
 
         <ion-col size="2" size-xs offset="8" offset-lg="10">
-            <ion-fab>
+            <ion-fab matTooltip="Recargar" matTooltipClass="tooltip">
                 <ion-fab-button color="light" (click)="undo()">
                     <ion-icon name="refresh"></ion-icon>
                 </ion-fab-button>
@@ -83,7 +83,7 @@
         </ion-col>
 
         <ion-col size="2" size-xs>
-            <ion-fab (click)="submit()">
+            <ion-fab matTooltip="Guardar" matTooltipClass="tooltip" (click)="submit()">
                 <ion-fab-button color="light">
                     <ion-icon name="save"></ion-icon>
                 </ion-fab-button>
@@ -91,7 +91,7 @@
         </ion-col>
 
         <ion-col size="2" size-xs>
-            <ion-fab>
+            <ion-fab matTooltip="Limpiar" matTooltipClass="tooltip">
                 <ion-fab-button color="light">
                     <ion-icon name="backspace" (click)="clear()"></ion-icon>
                 </ion-fab-button>

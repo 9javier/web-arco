@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { UsersComponent } from './users.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(routes),MatTooltipModule],
   exports: [RouterModule]
 })
 export class UsersRoutingModule {}

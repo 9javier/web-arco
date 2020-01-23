@@ -15,12 +15,14 @@ export class ListProductsComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+
   ) {}
 
   ngOnInit() {
     this.listProducts = this.pickingProvider.listProductsFromPickingHistory;
   }
+
 
   goToList() {
     this.modalController.dismiss();
