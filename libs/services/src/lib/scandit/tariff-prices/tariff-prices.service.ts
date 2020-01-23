@@ -9,6 +9,7 @@ import Price = PriceModel.Price;
 import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
 import {PrintModel} from "../../../models/endpoints/Print";
 import {Events} from "@ionic/angular";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let ScanditMatrixSimple;
 
@@ -25,6 +26,8 @@ export class TariffPricesScanditService {
   priceOptions: PriceModel.PriceByModelTariff[];
   reprint: boolean;
   priceData: string[];
+  private readonly timeMillisToResetScannedCode: number = 1000;
+  private timeoutStarted = null;
 
   constructor(
     private router: Router,
@@ -34,13 +37,15 @@ export class TariffPricesScanditService {
     private printerService: PrinterService,
     private localStorageProvider: LocalStorageProvider,
     private events: Events
-  ) {}
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   public init(warehouseId: number, tariffId: number) {
     this.warehouseId = warehouseId;
     this.tariffId = tariffId;
     this.tariffName = Object.values(this.localStorageProvider.get('tariffName'))[1];
-    this.lastBarcode = null;
+    this.lastBarcode = 'start';
     ScanditMatrixSimple.initTariffPrices(
       response => {
         if(response.barcode != undefined && response.barcode.data) {
@@ -87,6 +92,11 @@ export class TariffPricesScanditService {
   checkAndPrint(barcode: string) {
     if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
+      if (this.timeoutStarted) {
+        clearTimeout(this.timeoutStarted);
+      }
+      this.timeoutStarted = setTimeout(() => this.lastBarcode = 'start', this.timeMillisToResetScannedCode);
+
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let reference: PriceModel.ProductsReferences = {
           references: [barcode],
