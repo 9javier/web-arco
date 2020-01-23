@@ -23,7 +23,7 @@ export class ProductsService {
   private getInfoUrl: string = environment.apiBase + '/products/info/';
   private postRelabelUrl: string = environment.apiBase + '/products/relabel';
   private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
-  
+  private relabelPrint: string = environment.apiBase + '/products/relabel/print';
   private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
 
   constructor(
@@ -40,7 +40,11 @@ export class ProductsService {
       observe: 'response'
     });
   }
-
+  relablePrint(body: ProductModel.ParamsRelabelPrint): Observable<HttpRequestModel.Response>{
+    return this.http.post<HttpRequestModel.Response>(this.relabelPrint, body).pipe(
+      map(resp => resp.data)
+    );
+  }
   /**
    * Get the historical of a product
    * @param id the id of the product
