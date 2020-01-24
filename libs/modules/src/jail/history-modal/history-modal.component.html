@@ -1,0 +1,26 @@
+
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+        <ion-button (click)="close()">
+            <ion-icon name="close" class="toogleArrow"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+    <ion-title>Detalles de Embalaje</ion-title>
+</ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list *ngFor="let pieceOfInfo of carrierHistoryInfo">
+    <ion-label>{{this.carrierHistoryInfo.carrier.createdAt}}</ion-label>
+    <ion-label>{{this.carrierHistoryInfo.typeAction}}</ion-label>
+    <ion-label>{{this.carrierHistoryInfo.carrier.reference}}</ion-label>
+    <ion-label>{{this.carrierHistoryInfo.warehouse.name}}</ion-label>
+    <ion-label>{{this.carrierHistoryInfo.warehouse.description}}</ion-label> 
+  </ion-list>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+</ion-toolbar>
+</ion-footer>

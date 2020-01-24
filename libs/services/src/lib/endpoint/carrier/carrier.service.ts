@@ -28,6 +28,7 @@ export class CarrierService {
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
   private postCheckPackingAvailabilityUrl = environment.apiBase + '/packing/availability/check';
   private postVaciarCalle = environment.apiBase+'/packing/empty';
+  private getCarrierHistoryURL = environment.apiBase+'/packing/history';
 
   constructor(
     private http:HttpClient,
@@ -153,4 +154,18 @@ export class CarrierService {
   postCheckPackingAvailability(params: CarrierModel.ParamsCheckPackingAvailability) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postCheckPackingAvailabilityUrl, params);
   }
+
+
+
+  carrierHistory(ref:string):Observable<CarrierModel.HistoryModal>{
+    let refString = String(ref) // crea un objeto de String
+    let body=JSON.parse(JSON.stringify({reference:ref}));
+    return  this.http.post<CarrierModel.HistoryModal>(this.getCarrierHistoryURL,{reference:ref}).pipe(map(response=>{
+      return response.data;
+    }));
+    
+  }
+
+
+
 }
