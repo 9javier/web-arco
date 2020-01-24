@@ -11,7 +11,8 @@ import {
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
+import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
 
 export interface WarehouseElement {
   rowParentId: number,
@@ -27,6 +28,7 @@ export interface GroupBy {
   userName: string;
   isGroupBy: boolean;
   hasPermits: boolean;
+  hasAllWarehouse: boolean,
   expanded: boolean;
 }
 
@@ -54,19 +56,32 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     private rolesService: RolesService,
     private warehousesService: WarehousesService,
     private alertController: AlertController,
-  ) { }
+    private modalController: ModalController,
+  ) {
+    this.getWarehouses();
+  }
 
   async ngOnInit() {}
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit() {
+    await this.getRolesAndUsers();
+  }
+
+  async getRolesAndUsers(userId: number = null) {
+    await this.intermediaryService.presentLoading('Un momento ...');
     this.getRoles().then(async () => {
-      this.getUsers().then(async () => {
-        await this.intermediaryService.dismissLoading();
+      this.getUsers(userId).then(async () => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.dismissLoading();
       });
     });
   }
 
-  async getUsers() {
+  async getUsers(userId: number = null) {
+    this.ELEMENT_DATA = [];
+    this.ELEMENT_DATA_ORIGINAL = [];
+    this.dataSourceUsers = [];
     await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
         const users = res.body.data;
@@ -74,7 +89,9 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
         if (users && users.length > 0) {
           users.forEach((user: any) => {
             const hasPermits = user.permits.length > 0;
-            const rowId = this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, isGroupBy: true, hasPermits: hasPermits, expanded: false});
+            const hasAllWarehouse = user.permits.length === this.dataSourceWarehouses.length;
+            const expanded = user.id === userId;
+            const rowId = this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, isGroupBy: true, hasPermits: hasPermits, hasAllWarehouse: hasAllWarehouse, expanded: expanded});
 
             if (user.permits && user.permits.length > 0) {
               user.permits.forEach((permit: any) => {
@@ -90,7 +107,7 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
                     }
                   });
 
-                  this.ELEMENT_DATA.push({rowParentId: rowId-1, parentUser: user.id, warehouseId: permit.warehouse.id, warehouseName: permit.warehouse.name, roles: roles, expanded: false});
+                  this.ELEMENT_DATA.push({rowParentId: rowId-1, parentUser: user.id, warehouseId: permit.warehouse.id, warehouseName: permit.warehouse.name, roles: roles, expanded: expanded});
                 }
               })
             }
@@ -108,7 +125,7 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
   }
 
   async getRoles() {
-    await this.intermediaryService.presentLoading('Un momento ...');
+    this.displayedColumns = ['warehouse'];
     this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
         this.dataSourceRoles = res.body.data;
@@ -160,45 +177,6 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
   }
 
   async deleteRow(id: number, element: any) {
-    console.log('DELETE');
-    console.log(element);
-
-    await this.presentAlertDelete(id, element);
-  }
-
-  clearRow(id: number, element: any) {
-    const dataOriginal = <any>this.ELEMENT_DATA_ORIGINAL[id];
-
-    dataOriginal.roles.forEach((rolOri, index) => {
-      element.roles[index].checked = rolOri.checked;
-    });
-
-    this.deleteElementArray(id);
-  }
-
-  changeCheckRol(event, id: number, element: WarehouseElement, i: number) {
-    const data = <any>this.ELEMENT_DATA_ORIGINAL[id];
-    element.roles[i].checked = event.checked;
-
-    if (JSON.stringify(element.roles) === JSON.stringify(data.roles)) {
-      this.deleteElementArray(id);
-    } else {
-      this.addElementArray(id, element);
-    }
-
-    console.log(this.listToUpdate);
-  }
-
-  saveChanges() {
-    console.log('SAVE');
-  }
-
-  addRol(group: any) {
-    console.log('ADD ROLE');
-    console.log(group);
-  }
-
-  async presentAlertDelete(id: number, element: any) {
     const alert = await this.alertController.create({
       header: '¡Alerta!',
       message: `¿Está seguro que desea eliminar ${element.warehouseName} del registro?`,
@@ -221,17 +199,114 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     await alert.present();
   }
 
+  clearRow(id: number, element: any) {
+    const dataOriginal = <any>this.ELEMENT_DATA_ORIGINAL[id];
+
+    dataOriginal.roles.forEach((rolOri, index) => {
+      element.roles[index].checked = rolOri.checked;
+    });
+
+    this.deleteElementArray(element.parentUser, id);
+  }
+
+  changeCheckRol(event, id: number, element: WarehouseElement, i: number) {
+    const data = <any>this.ELEMENT_DATA_ORIGINAL[id];
+    element.roles[i].checked = event.checked;
+
+    if (JSON.stringify(element.roles) === JSON.stringify(data.roles)) {
+      this.deleteElementArray(element.parentUser, id);
+    } else {
+      this.addElementArray(element.parentUser, id);
+    }
+  }
+
+  saveChanges(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.intermediaryService.presentLoading('Un momento ...');
+
+    const aux = JSON.parse(JSON.stringify(this.listToUpdate));
+    this.listToUpdate = [];
+
+    const data = <any>this.ELEMENT_DATA;
+    const body = [];
+    aux.forEach((item) => {
+      body.push(this.fillBodyEndPoint(data, item.userId));
+    });
+
+    this.sendDataEndPoint(body);
+  }
+
+  async addRol(id: number, group: any) {
+    this.intermediaryService.presentLoading('Un momento ...');
+    const data = <any>this.ELEMENT_DATA;
+    const warehousesUser = data.filter((x) => x.parentUser === group.userId);
+    const warehouses = this.dataSourceWarehouses.filter((warehouse) => {
+      const index = warehousesUser.findIndex((x) => x.warehouseId === warehouse.id);
+      return index === -1;
+    });
+
+    const modal = await this.modalController.create({
+      component: AddRoleAssignmentComponent,
+      componentProps: {
+        userName: group.userName,
+        warehouses: warehouses
+      }
+    });
+
+    modal.onDidDismiss().then((dataReturn) => {
+      if (dataReturn.data !== undefined){
+        this.saveAddedRole(dataReturn.data, group);
+      }
+    });
+
+    return await modal.present().then(() => {
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
+  saveAddedRole(dataForm: any, group: GroupBy) {
+    this.intermediaryService.presentLoading('Un momento ...');
+    const data = <any>this.ELEMENT_DATA;
+    const body = [];
+    body.push(this.fillBodyEndPoint(data, group.userId));
+
+    const index = body.findIndex((x) => x.id === group.userId);
+
+    const roles = [];
+    dataForm.roles.forEach((role) => {
+      if (role.isChecked) {
+        roles.push({ rol: role.value });
+      }
+    });
+
+    if (index !== -1) {
+      body[index].permits.push({
+        warehouse: dataForm.warehouseId,
+        roles: roles
+      });
+    }
+
+    this.sendDataEndPoint(body, group.userId);
+  }
+
   private saveDeleteRole(id: number, element: any) {
-    this.intermediaryService.presentLoading();
+    this.intermediaryService.presentLoading('Un momento ...');
 
     const data = <any>this.ELEMENT_DATA;
     this.ELEMENT_DATA.splice(id, 1);
-    const indexParent = data.findIndex((x) => x.userId === element.parentUser);
-    const permits = data.filter((x) => x.parentUser === element.parentUser);
-    const body = [{
-      id: element.parentUser,
+    const body = [];
+    body.push(this.fillBodyEndPoint(data, element.parentUser));
+
+    this.sendDataEndPoint(body, element.parentUser);
+  }
+
+  private fillBodyEndPoint(data, userId: number) {
+    const permits = data.filter((x) => x.parentUser === userId);
+    const body = {
+      id: userId,
       permits: []
-    }];
+    };
 
     permits.forEach((permit) => {
       const roles = [];
@@ -241,28 +316,20 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
         }
       });
 
-      const index = body.findIndex((x) => x.id === permit.parentUser);
-      if (index !== -1) {
-        body[index].permits.push({
-          warehouse: permit.warehouseId,
-          roles: roles
-        });
-      }
+      body.permits.push({
+        warehouse: permit.warehouseId,
+        roles: roles
+      });
     });
-
-    if (indexParent !== -1 && body[0].permits.length === 0) {
-      this.ELEMENT_DATA[indexParent]['hasPermits'] = false;
-    }
-
-    this.sendDataEndPoint(body);
+    return body;
   }
 
-  private sendDataEndPoint(body) {
+  private sendDataEndPoint(body, userId: number = null) {
     this.usersService.updateWarehouseInUser(body)
       .then((data: Observable<HttpResponse<UserModel.ResponseShow>>) => {
         data.subscribe((res: HttpResponse<UserModel.ResponseShow>) => {
-          this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
           this.intermediaryService.dismissLoading();
+          this.getRolesAndUsers(userId);
           }, (err) => {
             console.log(err);
             this.intermediaryService.dismissLoading();
@@ -273,29 +340,35 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private deleteElementArray(id: number) {
+  private deleteElementArray(userId: number, idRow: number) {
     if (this.listToUpdate.length > 0) {
-      const index = this.listToUpdate.findIndex((x) => x.id === id);
+      const index = this.listToUpdate.findIndex((x) => x.userId === userId);
 
       if (index !== -1) {
-        this.listToUpdate.splice(index, 1);
+        const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
+
+        if (indexRow !== -1) {
+          this.listToUpdate[index].rows.splice(indexRow, 1);
+
+          if (this.listToUpdate[index].rows.length === 0) {
+            this.listToUpdate.splice(index, 1);
+          }
+        }
       }
     }
-
-    console.log(this.listToUpdate);
   }
 
-  private addElementArray(id: number, element: any) {
-    if (this.listToUpdate.length > 0) {
-      const index = this.listToUpdate.findIndex((x) => x.id === id);
+  private addElementArray(userId: number, idRow: number) {
+    const index = this.listToUpdate.findIndex((x) => x.userId === userId);
 
-      if (index === -1) {
-        this.listToUpdate.push({id, element});
-      }
+    if (index === -1) {
+      this.listToUpdate.push({userId, rows: [{idRow}]});
     } else {
-      this.listToUpdate.push({id, element});
-    }
+      const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
 
-    console.log(this.listToUpdate);
+      if (indexRow === -1) {
+        this.listToUpdate[index].rows.push({idRow});
+      }
+    }
   }
 }

@@ -40,12 +40,12 @@
         <mat-cell colspan="999" *matCellDef="let group" (click)="groupHeaderClick(group)">
           <mat-icon *ngIf="group.expanded" [class.opacity-icon]="!group.hasPermits">expand_less</mat-icon>
           <mat-icon *ngIf="!group.expanded" [class.opacity-icon]="!group.hasPermits">expand_more</mat-icon>
-          <strong>{{group.userName}} {{group.hasPermits ? '' : ' ---- Sin roles asignados'}}</strong>
+          <strong>{{group.userName}} {{group.hasPermits ? '' : ' ---- No tiene roles asignados'}}</strong>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="buttonGroup">
-        <mat-cell colspan="999" *matCellDef="let group">
-          <button class="button-add-role" matTooltip="Agregar" matTooltipClass="tooltip" mat-icon-button (click)="addRol(group)">
+        <mat-cell colspan="999" *matCellDef="let group; let id = index">
+          <button *ngIf="!group.hasAllWarehouse" class="button-add-role" matTooltip="Agregar" matTooltipClass="tooltip" mat-icon-button (click)="addRol(id, group)">
             <mat-icon class="mat-18">add</mat-icon>
           </button>
         </mat-cell>
@@ -56,7 +56,7 @@
 </ion-content>
 
 <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab" *ngIf="listToUpdate.length > 0">
-  <ion-fab-button color="light"  matTooltip="Guardar" matTooltipClass="tooltip"  (click)="saveChanges()">
+  <ion-fab-button color="light"  matTooltip="Guardar" matTooltipClass="tooltip"  (click)="saveChanges($event)">
     <ion-icon name="save"></ion-icon>
   </ion-fab-button>
 </ion-fab>

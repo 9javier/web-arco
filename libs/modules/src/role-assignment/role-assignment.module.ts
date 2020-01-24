@@ -9,11 +9,12 @@ import { ResponsiveLayoutModule } from '../components/responsive-layout/responsi
 import {
   MatButtonModule,
   MatCheckboxModule,
-  MatExpansionModule, MatFormFieldModule, MatIconModule,
+  MatExpansionModule, MatFormFieldModule, MatIconModule, MatInputModule,
   MatListModule, MatSelectModule,
   MatSlideToggleModule,
   MatTableModule, MatTooltipModule
 } from '@angular/material';
+import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
 
 const routes: Routes = [
   {
@@ -23,7 +24,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [RoleAssignmentComponent],
+  declarations: [RoleAssignmentComponent, AddRoleAssignmentComponent],
+  entryComponents: [AddRoleAssignmentComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -37,7 +39,8 @@ const routes: Routes = [
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatInputModule
   ]
 })
 export class RoleAssignmentModule { }
