@@ -38,7 +38,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     private pickingScanditService: PickingScanditService,
     private carriersService: CarriersService,
     private pickingProvider: PickingProvider,
-    private toolbarProvider: ToolbarProvider
+    private toolbarProvider: ToolbarProvider,
     private intermediaryService: IntermediaryService
   ) {}
 
