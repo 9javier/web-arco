@@ -11,6 +11,7 @@ import { AssignRoutingModule } from './assign-routing.module';
 import { PermissionToRolComponent } from './permission-to-rol/permission-to-rol.component';
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { ModalsModule } from './permission-to-rol/modals/modals.module';
+import { MatTooltipModule } from "@angular/material";
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { ModalsModule } from './permission-to-rol/modals/modals.module';
     MatListModule,
     BreadcrumbModule,
     MatTableModule,
-    ModalsModule
+    ModalsModule,
+    MatTooltipModule
 
   ],
   exports: [PermissionToRolComponent]

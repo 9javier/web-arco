@@ -18,6 +18,7 @@ import {ListStoresPickingTasksTemplateComponent} from "./list-stores/list-stores
 import {StoresPickingTaskTemplateComponent} from "./list-stores/list-stores-items/list-stores-items.component";
 import {StoresPickingTaskInitiatedTemplateComponent} from "./list-stores/list-stores-initiated/list-stores-initiated.component";
 import {PopoverListStoresComponent} from "./list/list-items/popover-list-stores/popover-list-stores.component";
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [PickingTasksComponent, ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent, StoresPickingTaskInitiatedTemplateComponent, PopoverListStoresComponent],
@@ -33,7 +34,8 @@ import {PopoverListStoresComponent} from "./list/list-items/popover-list-stores/
     FormsModule,
     MatGridListModule,
     MatExpansionModule,
-    MatRadioModule
+    MatRadioModule,
+    MatTooltipModule
   ],
   entryComponents: [
     ListPickingTasksTemplateComponent, PickingTaskTemplateComponent, ListStoresPickingTasksTemplateComponent, StoresPickingTaskTemplateComponent, StoresPickingTaskInitiatedTemplateComponent, PopoverListStoresComponent

@@ -11,6 +11,7 @@ import {PickingProvider} from "../../../../services/src/providers/picking/pickin
 import {PickingScanditService} from "../../../../services/src/lib/scandit/picking/picking.service";
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import { ToolbarProvider } from "../../../../services/src/providers/toolbar/toolbar.provider";
+import {IntermediaryService} from "@suite/services";
 
 @Component({
   selector: 'list-picking-tasks-template',
@@ -38,6 +39,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
     private carriersService: CarriersService,
     private pickingProvider: PickingProvider,
     private toolbarProvider: ToolbarProvider
+    private intermediaryService: IntermediaryService
   ) {}
 
   async ngOnInit() {
@@ -45,30 +47,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
 
     this.userId = await this.authenticationService.getCurrentUserId();
 
-    this.pickingService
-      .getListByUser(this.userId)
-      .subscribe((res: PickingModel.ResponseShow) => {
-        if (res.code == 200 || res.code == 201) {
-          this.pickingService.pickingAssignments = res.data;
-          this.isLoadingPickings = false;
-          if (res.data.length > 0) {
-            this.pickingProvider.pickingSelectedToStart = this.pickingService.pickingAssignments[0];
-            let pickingsStarted = this.pickingService.pickingAssignments.filter(picking => picking.status == 2);
-            if (pickingsStarted.length > 0) {
-              this.pickingProvider.pickingSelectedToStart = pickingsStarted[0];
-            }
-            this.hasPickingsLoaded = true;
-          } else {
-            this.hasPickingsLoaded = true;
-          }
-        } else {
-          this.isLoadingPickings = false;
-          this.hasPickingsLoaded = false;
-        }
-      }, (error: PickingModel.ErrorResponse) => {
-        this.isLoadingPickings = false;
-        this.hasPickingsLoaded = false;
-      });
+this.loadPickings();
 
     this.events.subscribe('picking:remove', () => {
       if (this.removePickingFinished) {
@@ -87,7 +66,37 @@ export class ListPickingTasksTemplateComponent implements OnInit {
       }
     });
   }
+loadPickings(){
+  this.intermediaryService.presentLoading("Refrescando listado");
+  const response = this.pickingService
+    .getListByUser(this.userId)
+    .subscribe((res: PickingModel.ResponseShow) => {
 
+      if (res.code == 200 || res.code == 201) {
+        this.pickingService.pickingAssignments = res.data;
+        this.isLoadingPickings = false;
+        if (res.data.length > 0) {
+          this.pickingProvider.pickingSelectedToStart = this.pickingService.pickingAssignments[0];
+          let pickingsStarted = this.pickingService.pickingAssignments.filter(picking => picking.status == 2);
+          if (pickingsStarted.length > 0) {
+            this.pickingProvider.pickingSelectedToStart = pickingsStarted[0];
+          }
+          this.hasPickingsLoaded = true;
+        } else {
+          this.hasPickingsLoaded = true;
+        }
+      } else {
+        this.isLoadingPickings = false;
+        this.hasPickingsLoaded = false;
+      }
+      this.intermediaryService.dismissLoading();
+    }, (error: PickingModel.ErrorResponse) => {
+      this.isLoadingPickings = false;
+      this.hasPickingsLoaded = false;
+      this.intermediaryService.dismissLoading();
+    });
+    return response;
+}
   ngOnDestroy() {
     this.events.unsubscribe('picking:remove');
   }
@@ -100,7 +109,7 @@ export class ListPickingTasksTemplateComponent implements OnInit {
 
   initPicking() {
     // console.log('passiamo per este metodo');
-    
+
     this.showLoading('Cargando productos...').then(() => {
       this.carriersService
         .getUpdatePackingStatusInPicking(this.pickingProvider.pickingSelectedToStart.id)

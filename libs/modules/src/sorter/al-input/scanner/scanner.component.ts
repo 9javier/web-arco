@@ -537,7 +537,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.carrierService
       .postCheckPackingAvailability(params)
       .then(async (res: CarrierModel.ResponseCheckPackingAvailability) => {
-        console.log('Test::res', res);
         if (res.code == 200) {
           this.assignToPacking(packingReference, false);
         } else {
@@ -552,7 +551,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         }
       })
       .catch(async (error) => {
-        console.log('Test::catch', error);
         await this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
         let errorMessage = `Ha ocurrido un error al intentar utilizar el embalaje ${packingReference}.`;
@@ -574,14 +572,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       avoidAvelonMovement: true,
       packingReference: packingReferenceToSet,
     };
-
-    if (this.productScanned && this.productScanned.destinyWarehouse && this.productScanned.destinyWarehouse.reference == '000') {
-      params.avoidAvelonMovement = false;
-    }
     this.inventoryService
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
-        console.log('Test::res', res);
         await this.intermediaryService.dismissLoading();
         if (res.code == 201) {
           this.destiniesWithPacking[this.destinyCodeToGetPacking] = packingReferenceToSet;
@@ -598,7 +591,6 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
         }
       })
       .catch(async (error) => {
-        console.log('Test::catch', error);
         await this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
         let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;

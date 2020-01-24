@@ -114,11 +114,11 @@
 
         <ion-footer class="footer-products">
             <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-                <ion-fab-button color="light" (click)="scanProduct()">
+                <ion-fab-button matTooltip="Escanear nuevo producto" matTooltipClass="tooltip" color="light" (click)="scanProduct()">
                     <ion-icon name="barcode"></ion-icon>
                 </ion-fab-button>
-                <ion-fab-button color="light" (click)="printBarcode()"><i class="material-icons">print</i></ion-fab-button>
-                <ion-fab-button (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
+                <ion-fab-button matTooltip="Imprimir codigo de barras" matTooltipClass="tooltip" color="light" (click)="printBarcode()"><i class="material-icons">print</i></ion-fab-button>
+                <ion-fab-button matTooltip="Agregar una entrada" matTooltipClass="tooltip" (click)="addProduct()"><i class="material-icons">add</i></ion-fab-button>
             </ion-fab>
         </ion-footer>
 

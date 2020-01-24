@@ -109,6 +109,14 @@ export namespace ProductModel {
     locationReference?: string
   }
 
+  export interface ParamsRelabelPrint {
+    modelId: number;
+    colorId: number;
+    sizeId: number;
+    
+  }
+
+
   export interface ResponseRelabel {
     data?: Product,
     errors?: string,

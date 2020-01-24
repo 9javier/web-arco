@@ -14,6 +14,7 @@ export class HallsComponent implements OnInit {
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Warehouses Maps')
     .name;
   routePath = '/halls';
+  tooltipMessage = 'Agregar un pasillo';
 
   constructor(private modalCtrl:ModalController) {}
 

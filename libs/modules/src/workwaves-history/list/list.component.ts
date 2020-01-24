@@ -34,6 +34,7 @@ export class ListWorkwavesHistoryComponent implements OnInit {
       .then((data: Observable<HttpResponse<WorkwaveModel.ResponseListExecuted>>) => {
         data.subscribe((res: HttpResponse<WorkwaveModel.ResponseListExecuted>) => {
           this.workwavesHistory = res.body.data;
+          console.log(this.workwavesHistory);
         });
       });
   }

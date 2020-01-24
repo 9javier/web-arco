@@ -12,6 +12,7 @@ import {
 } from '@angular/material';
 import { FilterButtonModule } from '../components/filter-button/filter-button.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -35,7 +36,7 @@ const routes: Routes = [
     MatSortModule,
     FilterButtonModule,
     PaginatorComponentModule,
-
+    MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
