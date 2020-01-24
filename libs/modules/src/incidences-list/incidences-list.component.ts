@@ -24,7 +24,9 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 })
 export class IncidencesListComponent implements OnInit {
 
-  public displayedColumns = ['id', 'title', 'typeIncidence', 'btnAttend'];
+  public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'warehouse', 'location', 'destiny', 'sorter-way', 'history', 'status', 'user-status', 'date-status', 'time-status'];
+  public incidences: Incidences[] = [];
+
   public expandedElement: IncidenceModel.Incidence | null;
   private actualPageFilter: IncidenceModel.SearchParameters;
   public typeSelected: TypeModel.Type;
@@ -32,7 +34,6 @@ export class IncidencesListComponent implements OnInit {
   public attendedSelected: AttendedOption;
   public textToSearch: string;
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  // @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     public incidencesService: IncidencesService,
@@ -41,6 +42,515 @@ export class IncidencesListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.incidences = [
+      {
+        id: 1,
+        type: 'Nuevo artículo registrado',
+        process: 'Ubicación',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Pendiente',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 2,
+        type: 'Ubicación desactivada',
+        process: 'Gestión almacén',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Gestionado',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 3,
+        type: 'Ubicación activada',
+        process: 'Gestión almacén',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Pendiente',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 4,
+        type: 'Movimiento global',
+        process: 'Gestión almacén',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Gestionado',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 5,
+        type: 'Ubicación bloqueada',
+        process: 'Gestión almacén',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Pendiente',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 6,
+        type: 'Ubicación desbloqueada',
+        process: 'Gestión almacén',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Gestionado',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 7,
+        type: 'Producto reetiquetado',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Pendiente',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 8,
+        type: 'Calle errónea',
+        process: 'Sorter',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Gestionado',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 9,
+        type: 'Sin escaneo de entrada',
+        process: 'Sorter',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Pendiente',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 10,
+        type: 'Jaula vaciada',
+        process: 'Ubicación',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Pendiente',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 11,
+        type: 'Jaula vaciada',
+        process: 'Picking',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Gestionado',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 12,
+        type: 'Jaula vaciada',
+        process: 'Vaciado sorter',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Gestionado',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      },
+      {
+        id: 13,
+        type: 'Productos no encontrados',
+        process: 'Picking',
+        user: {
+          id: 1,
+          name: 'Paco'
+        },
+        date: '22/01/2020',
+        time: '18:05',
+        product: {
+          reference: '001234567891234567',
+          model: {
+            name: 'Zapato Adidas',
+            reference: '123456'
+          },
+          brand: 'Adidas',
+          color: 'ROJO',
+          size: 45,
+          lifestyle: 'Hombre',
+          season: 'Invierno',
+          location: {
+            location: 'P002A02C003',
+            warehouse: '601'
+          },
+          destiny: '006',
+          history: true,
+          sorterWay: null
+        },
+        status: {
+          date: '24/01/2020',
+          time: '08:00',
+          status: 'Mantener en almacén',
+          user: {
+            id: 2,
+            name: 'Galvintec'
+          }
+        }
+      }
+    ];
+
     this.incidencesService.init();
     this.incidencesService.incidencesQuantityList
     this.typeSelected = this.incidencesService.listIncidencesTypes[0];
@@ -153,4 +663,44 @@ export class IncidencesListComponent implements OnInit {
     return this.dateTimeParserService.dateTime(dateToFormat);
   }
 
+}
+
+interface Incidences {
+  id: number;
+  type: string,
+  process?: string,
+  date?: string,
+  time?: string,
+  user?: {
+    id: number,
+    name: string
+  },
+  product: {
+    reference: string,
+    model: {
+      reference: string,
+      name: string
+    },
+    size: number,
+    brand: string,
+    color: string,
+    lifestyle: string,
+    season: string,
+    location: {
+      warehouse: string,
+      location: string
+    },
+    destiny: string,
+    sorterWay: number,
+    history: true
+  },
+  status: {
+    status: string,
+    user: {
+      id: number,
+      name: string
+    },
+    date: string,
+    time: string
+  }
 }
