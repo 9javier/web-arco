@@ -69,6 +69,24 @@ var ScanditMatrixSimple = {
   },
   /**
    *
+   * @param successCallback
+   * @param title
+   * @param titleBackground
+   * @param titleColor
+   */
+  initTariffPrices: function (successCallback, title, titleBackground, titleColor) {
+    exec(successCallback, null, PLUGIN_NAME, "matrixInitTariffPrices", [title, titleBackground, titleColor]);
+  },
+  /**
+   *
+   * @param successCallback
+   * @param priceData
+   */
+  loadPriceInfo: function (successCallback, priceData) {
+    exec(successCallback, null, PLUGIN_NAME, "loadPriceInfo", [priceData]);
+  },
+  /**
+   *
    * @param text
    * @param background
    * @param color

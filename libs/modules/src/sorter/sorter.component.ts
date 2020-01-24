@@ -1,21 +1,9 @@
-import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { animate, state, style, transition, trigger } from "@angular/animations";
-import { Location } from "@angular/common";
-import { SelectionModel, DataSource } from "@angular/cdk/collections";
-import { RolModel, UserModel, WarehouseModel, IntermediaryService } from "@suite/services";
-import { Observable, of } from "rxjs";
-import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
-import { HallModel } from "../../../services/src/models/endpoints/Hall";
-import { HallsService } from "../../../services/src/lib/endpoint/halls/halls.service";
-import { ActivatedRoute } from "@angular/router";
-import { ModalController, ToastController, NavParams } from "@ionic/angular";
-import { WarehouseService } from "../../../services/src/lib/endpoint/warehouse/warehouse.service";
-/*import {UpdateComponent} from "../update/update.component";
-import { UpdateComponent as updateHall } from '../../halls/update/update.component';
-import { EnableLockContainerComponent } from '../modals/enable-lock-container/enable-lock-container.component';
-import {LocationsComponent} from "../locations.component";
-import {MoveProductsComponent} from "../modals/move-products/move-products.component";*/
-import { PrinterService } from "../../../services/src/lib/printer/printer.service";
+import { RolModel, UserModel, IntermediaryService } from "@suite/services";
+import { Observable } from "rxjs";
+import { HttpResponse } from "@angular/common/http";
+import { ModalController } from "@ionic/angular";
 import { CrudService } from '../../../common/ui/crud/src/lib/service/crud.service';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
@@ -79,7 +67,6 @@ export class SorterComponent implements OnInit {
         validators: validators.haveItems('toSelect')
       }
     );
-    console.log(this.selectedForm);
 
     this.selectedFormActive = this.formBuilder.group(
       {
@@ -128,7 +115,6 @@ export class SorterComponent implements OnInit {
       );
     this.sorterTemplateService.getIndex().subscribe((data) => {
       this.templates = data.data;
-      console.log(this.templates)
       this.initSelectActive(this.templates);
     })
   }
@@ -213,8 +199,6 @@ export class SorterComponent implements OnInit {
 
   active(element, check) {
     event.stopPropagation();
-    console.log('active')
-    console.log(check.value)
     let payload = element;
     payload = {
       active: check.value,
@@ -222,12 +206,10 @@ export class SorterComponent implements OnInit {
     }
     this.intermediaryService.presentLoading();
     this.sorterTemplateService.updateTemplateSorter(payload, payload.id).subscribe((data) => {
-      console.log(data);
     }, (err) => {
       console.log(err)
     }, () => {
       this.getTemplates();
-      console.log(this.templates)
       this.intermediaryService.dismissLoading();
     });
   }
@@ -237,10 +219,11 @@ export class SorterComponent implements OnInit {
     let repeat = false;
     let idToDelete = this.templates[index].id;
     this.toDeleteIds.forEach(id => {
-      if (id == idToDelete) {
+      if (id === idToDelete) {
         repeat = true;
       }
-    })
+    });
+
     if (!repeat) {
       this.toDeleteIds.push(idToDelete);
     }
@@ -255,10 +238,8 @@ export class SorterComponent implements OnInit {
         }))
       });
     }
-
     this.toDeleteIds = [];
     this.intermediaryService.presentLoading();
-
     deletions.subscribe(() => {
       this.intermediaryService.dismissLoading();
       this.getTemplates();
@@ -267,10 +248,18 @@ export class SorterComponent implements OnInit {
       controlArray.controls.forEach((control, i) => {
         control.setValue(false);
       });
-    }, () => {
+    }, (error) => {
       this.intermediaryService.dismissLoading();
       this.getTemplates();
-      this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+      if(error.error.statusCode == 405){
+        this.intermediaryService.presentToastError(error.error.errors);
+      }else{
+        this.intermediaryService.presentToastError("No se pudieron eliminar algunas de las plantillas");
+      }
+      const controlArray = <FormArray>this.selectedForm.get('toSelect');
+      controlArray.controls.forEach((control, i) => {
+        control.setValue(false);
+      });
     });
   }
 

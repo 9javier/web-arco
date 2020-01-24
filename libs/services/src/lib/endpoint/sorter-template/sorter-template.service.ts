@@ -27,14 +27,13 @@ export class SorterTemplateService {
   }
 
   postCreate(data: TemplateSorterModel.Template): Observable<TemplateSorterModel.ResponseTemplateCreate> {
-    console.log(data)
+
     return this.http.post<TemplateSorterModel.ResponseTemplateCreate>(this.postCreateTemplateSorterUrl, data)
     .pipe(
       map(response => {
        return response;
       },
       catchError((err) => {
-        console.log('caught rethrown error, providing fallback value');
         return of([]);
       })
     ));

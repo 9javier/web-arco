@@ -1,16 +1,17 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {AuditsService, CarrierService, IntermediaryService} from '@suite/services';
-import {PopoverController, ToastController} from '@ionic/angular';
+import {PopoverController} from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuditsMobileComponent } from '../../audits-mobile/audits-mobile.component';
 import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {ScanditProvider} from "../../../../services/src/providers/scandit/scandit.provider";
+import {ItemReferencesProvider} from "../../../../services/src/providers/item-references/item-references.provider";
 import {ScannerManualComponent} from "../../components/scanner-manual/scanner-manual.component";
 import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import {AuditsModel} from "../../../../services/src/models/endpoints/Audits";
 import {Location} from "@angular/common";
 import {PopoverFiltersComponent} from "./popover-filters/popover-filters.component";
 import {FiltersAuditProvider} from "../../../../services/src/providers/filters-audit/filters-audit.provider";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'suite-sccaner-product',
@@ -30,11 +31,10 @@ export class SccanerProductComponent implements OnInit {
 
   constructor(
     private audit : AuditsService,
-    private toast : ToastController,
     private activeRoute: ActivatedRoute,
     private router : Router,
     private audioProvider: AudioProvider,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private carrierService: CarrierService,
     private intermediaryService: IntermediaryService,
     private locattion: Location,
@@ -55,18 +55,18 @@ export class SccanerProductComponent implements OnInit {
   }
 
   userTyping(codeScanned: string) {
-    if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
+    if (this.itemReferencesProvider.checkCodeValue(codeScanned) === this.itemReferencesProvider.codeValue.PRODUCT) {
       this.scannerManual.setValue(null);
       this.addProduct(codeScanned, false);
     } else {
       this.scannerManual.setValue(null);
       this.scannerManual.focusToInput();
       this.audioProvider.playDefaultError();
-      this.presentToast('Escanea un producto para validar', 'danger');
+      this.intermediaryService.presentToastError('Escanea un producto para validar');
     }
   }
 
-  backView(){ 
+  backView(){
     AuditsMobileComponent.returned.next(false);
     this.locattion.back();
   }
@@ -86,10 +86,10 @@ export class SccanerProductComponent implements OnInit {
 
     this.audit.addProduct(data).subscribe((res: AuditsModel.ResponseAuditProductInPacking) => {
       if (res.data.auditCorrect) {
-        this.presentToast('Producto válido', 'success');
+        this.intermediaryService.presentToastError('Producto válido', TimesToastType.DURATION_SUCCESS_TOAST_2000);
         this.audioProvider.playDefaultOk();
       } else {
-        this.presentToast('El producto no debería estar en la jaula', 'danger');
+        this.intermediaryService.presentToastError('El producto no debería estar en la jaula');
         this.audioProvider.playDefaultError();
       }
       this.scannerManual.setValue(null);
@@ -100,13 +100,13 @@ export class SccanerProductComponent implements OnInit {
       this.scannerManual.setValue(null);
       this.scannerManual.focusToInput();
       this.audioProvider.playDefaultError();
-      if (err.error.code == 510) {
+      if (err.error.code === 510) {
         let forceProductAudit = () => {
           this.addProduct(codeScanned, true);
         };
         this.intermediaryService.presentConfirm(err.error.errors, forceProductAudit, () => this.scannerManual.focusToInput());
       } else {
-        this.presentToast(err.error.errors,'danger');
+        this.intermediaryService.presentToastError(err.error.errors);
         this.getProducts();
         this.getPackingDestiny();
       }
@@ -169,9 +169,9 @@ export class SccanerProductComponent implements OnInit {
         }
 
         if (aFieldToSort < bFieldToSort) {
-          return this.filtersAuditProvider.sort.type == 'DESC' ? 1 : -1;
+          return this.filtersAuditProvider.sort.type === 'DESC' ? 1 : -1;
         } else if (aFieldToSort > bFieldToSort) {
-          return this.filtersAuditProvider.sort.type == 'DESC' ? -1 : 1;
+          return this.filtersAuditProvider.sort.type === 'DESC' ? -1 : 1;
         } else {
           return 0;
         }
@@ -187,7 +187,7 @@ export class SccanerProductComponent implements OnInit {
       this.packingProductsOriginal = res.data;
       this.filterProductsList();
     },err =>{
-      this.presentToast(err.error.errors,'danger');
+      this.intermediaryService.presentToastError(err.error.errors);
     })
   }
 
@@ -195,20 +195,11 @@ export class SccanerProductComponent implements OnInit {
     this.carrierService
       .getGetPackingDestiny(this.jaula)
       .then((res: CarrierModel.ResponseGetPackingDestiny) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           if (res.data) {
             this.destinyPacking = `${res.data.warehouse.reference} ${res.data.warehouse.name}`;
           }
         }
       });
-  }
-
-  private async presentToast(message,color) {
-    const toast = await this.toast.create({
-      message: message,
-      color: color,
-      duration: 2000
-    });
-    toast.present();
   }
 }

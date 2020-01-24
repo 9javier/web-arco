@@ -4,6 +4,7 @@ import {ScanditModel} from "../../../models/scandit/Scandit";
 import {Router} from "@angular/router";
 import {AuditsService} from "@suite/services";
 import {AuditsModel} from "../../../models/endpoints/Audits";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let ScanditMatrixSimple;
 
@@ -24,7 +25,8 @@ export class AuditMultipleScanditService {
   constructor(
     private router: Router,
     private auditsService: AuditsService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider
   ) {}
 
   public init() {
@@ -33,7 +35,7 @@ export class AuditMultipleScanditService {
     ScanditMatrixSimple.initAuditMultiple((response: ScanditModel.ResponseAuthMultiple) => {
       if (response.result && response.barcode) {
         let codeScanned = response.barcode.data;
-        if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PRODUCT) {
+        if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PRODUCT) {
           if (this.packingReference) {
             this.checkProductInPacking(this.packingReference, codeScanned);
           } else {
@@ -43,8 +45,7 @@ export class AuditMultipleScanditService {
               this.changeNotice("Escanea el embalaje a revisar", this.NOTICE_BUBBLE_ACTION);
             }, 2 * 1000);
           }
-        } else if (this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.PALLET
-          || this.scanditProvider.checkCodeValue(codeScanned) == this.scanditProvider.codeValue.JAIL) {
+        } else if (this.itemReferencesProvider.checkCodeValue(codeScanned) == this.itemReferencesProvider.codeValue.PACKING) {
           if (!this.packingAuditsCreated[codeScanned]) {
             this.createAudit(codeScanned);
           } else {

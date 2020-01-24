@@ -1,13 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/incidences.service";
-import {ToastController} from "@ionic/angular";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {MatPaginator, PageEvent} from "@angular/material";
+import {PageEvent} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import {TypeModel} from "@suite/services";
+import { IntermediaryService, TypeModel } from '@suite/services';
 import AttendedOption = IncidenceModel.AttendedOption;
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 
@@ -38,7 +37,7 @@ export class IncidencesListComponent implements OnInit {
   constructor(
     public incidencesService: IncidencesService,
     private dateTimeParserService: DateTimeParserService,
-    private toastController: ToastController
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -47,7 +46,7 @@ export class IncidencesListComponent implements OnInit {
     this.typeSelected = this.incidencesService.listIncidencesTypes[0];
     this.listenPaginatorChanges();
     this.actualPageFilter = this.incidencesService.defaultFilters;
-    
+
 
     this.listAttendedOptions = [
       {
@@ -84,7 +83,7 @@ export class IncidencesListComponent implements OnInit {
       .putUpdate(incidenceId, incidenceAttended)
       .then((data: Observable<HttpResponse<IncidenceModel.ResponseUpdate>>) => {
         data.subscribe((res: HttpResponse<IncidenceModel.ResponseUpdate>) => {
-          if (res.body.code == 200 || res.body.code == 201) {
+          if (res.body.code === 200 || res.body.code === 201) {
             let okMessage = '';
             if (incidenceAttended) {
               okMessage = 'La notificación se ha marcado como atendida';
@@ -92,14 +91,14 @@ export class IncidencesListComponent implements OnInit {
               okMessage = 'La notificación se ha marcado como desatendida';
             }
 
-            this.presentToast(okMessage, 'success');
+            this.intermediaryService.presentToastSuccess(okMessage);
             this.incidencesService.init(this.actualPageFilter);
           } else {
-            this.presentToast(res.body.message, 'danger');
+            this.intermediaryService.presentToastError(res.body.message);
           }
         });
       }, (error: HttpErrorResponse) => {
-        this.presentToast(error.message, 'danger');
+        this.intermediaryService.presentToastError(error.message);
       });
   }
 
@@ -108,13 +107,13 @@ export class IncidencesListComponent implements OnInit {
     this.attendedSelected = data.attended;
     this.textToSearch = data.text;
 
-    if (this.typeSelected.id == 0) {
+    if (this.typeSelected.id === 0) {
       delete this.actualPageFilter.type;
     } else {
       this.actualPageFilter.type = this.typeSelected.id;
     }
 
-    if (this.attendedSelected.id == 0) {
+    if (this.attendedSelected.id === 0) {
       delete this.actualPageFilter.attended;
     } else {
       this.actualPageFilter.attended = this.attendedSelected.id;
@@ -135,7 +134,7 @@ export class IncidencesListComponent implements OnInit {
     this.incidencesService
       .postSearch(parameters)
       .then((res: IncidenceModel.ResponseSearch) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           this.incidencesService.incidencesQuantityList = res.data.count_search;
           this.paginator.length = res.data.count;
           this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.actualPageFilter.page;
@@ -148,16 +147,6 @@ export class IncidencesListComponent implements OnInit {
       }, (error) => {
         console.error('Error to try search Incidences with Filters', error);
       });
-  }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
   }
 
   showDateTime(dateToFormat) : string {

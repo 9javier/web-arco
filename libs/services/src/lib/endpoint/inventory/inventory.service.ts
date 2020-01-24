@@ -29,6 +29,7 @@ export class InventoryService {
 
   private postGlobalUrl: string = environment.apiBase + "/processes/positioner-main/global";
   private postPickingDirectUrl: string = environment.apiBase + "/processes/picking-main/direct";
+  private postPendingSealUrl: string = environment.apiBase + "/processes/picking-main/pending-seal";
   private postPickingConsolidatedUrl: string = environment.apiBase + '/processes/picking-main/consolidated';
   private postPickingOnlineStoreUrl: string = environment.apiBase + '/processes/picking-main/ot';
 
@@ -77,7 +78,7 @@ export class InventoryService {
   getFileExcell(parameters: ExcellModell.fileExcell) {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
       // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      console.log(parameters);
+
 
       let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
 
@@ -151,5 +152,9 @@ export class InventoryService {
 
   postPickingOnlineStore(picking: InventoryModel.Picking): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postPickingOnlineStoreUrl, picking);
+  }
+
+  getPendingSeal(pickingId: number): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postPendingSealUrl, { pickingId: pickingId });
   }
 }

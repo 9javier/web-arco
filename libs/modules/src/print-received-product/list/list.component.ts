@@ -91,7 +91,10 @@ export class ListReceivedProductTemplateComponent implements OnInit, AfterViewIn
 
     if (productReferences.length > 0) {
       this.printerService.printTagPrices(productReferences)
-        .subscribe(() => {
+        .subscribe((result) => {
+          if(result && typeof result !== "boolean"){
+            result.subscribe(r=>{});
+          }
           for (let iSelected in this.selectedForm.value.toSelect) {
             if (this.selectedForm.value.toSelect[iSelected]) {
               this.productsReceived[iSelected].filterPrice.impress = true;

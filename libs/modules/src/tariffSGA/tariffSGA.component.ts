@@ -1,22 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
-import { AlertController, ModalController } from "@ionic/angular";
+import { MatDatepickerInputEvent, MatTableDataSource } from '@angular/material';
+import { AlertController, ModalController } from '@ionic/angular';
 import * as _ from 'lodash';
 
-import {
-  IntermediaryService,
-  LabelsService,
-  TariffService,
-  TariffModel,
-  WarehousesService
-} from '@suite/services';
+import { IntermediaryService, TariffModel, TariffService, WarehousesService } from '@suite/services';
 
 import { validators } from '../utils/validators';
 
-import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import { TariffUpdateFilterPriceComponent } from './tariff-update-filter-price/tariff-update-filter-price.component';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'suite-tariff',
@@ -114,6 +109,7 @@ export class TariffSGAComponent implements OnInit {
     let previousPageSize = this.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
+      this.intermediaryService.dismissLoading();
       /**true if only change the number of results */
       let flag = previousPageSize == page.pageSize;
       previousPageSize = page.pageSize;
@@ -150,8 +146,8 @@ export class TariffSGAComponent implements OnInit {
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
         this.tariffs = data.results.map(result => {
-          result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
-          result.activeTill = new Date(result.activeTill).toLocaleDateString();
+          result.activeFrom = result.activeFrom;
+          result.activeTill = result.activeTill;
           return result;
         });
         this.initSelectForm(this.tariffs);
@@ -171,6 +167,7 @@ export class TariffSGAComponent implements OnInit {
 
     this.tariffService.getIsCalculating().subscribe(
       data => {
+        this.intermediaryService.dismissLoading();
         this.processing = data.isCalculating;
         this.tarifProcessing = (data.tariff) ? data.tariff : null;
         if (!this.processing) {
@@ -187,6 +184,7 @@ export class TariffSGAComponent implements OnInit {
       },
       () => {
         this.processing = true;
+        this.intermediaryService.dismissLoading();
       }
     );
   }
@@ -355,5 +353,53 @@ export class TariffSGAComponent implements OnInit {
       // reload table.
     })
     modal.present();
+  }
+
+  getDate(date: any) {
+    return new Date(date);
+  }
+
+  getDateISO(date: any) {
+    return new Date(date).toISOString();
+  }
+
+  changeDateStart(event: MatDatepickerInputEvent<Date>, tariff: any) {
+    tariff.activeFrom = event.value;
+
+    let object = {
+      id: tariff.id,
+      enabled: tariff.enabled,
+      activeFromChange: tariff.activeFrom
+    };
+    this.tariffsUpdate.push(object);
+  }
+
+  changeDateEnd(event: MatDatepickerInputEvent<Date>, tariff: any) {
+    tariff.activeTill = event.value;
+
+    let object = {
+      id: tariff.id,
+      enabled: tariff.enabled,
+      activeTillChange: tariff.activeTill
+    };
+    this.tariffsUpdate.push(object);
+  }
+
+  getTooltipFromChange(tariff: any) {
+    if (tariff && tariff.change && tariff.activeFromChange) {
+      const date = formatDate(new Date(tariff.activeFromChange), 'dd/MM/yyyy', 'es');
+      return `Fecha Avelon: ${date}`;
+    }
+
+    return;
+  }
+
+  getTooltipTillChange(tariff: any) {
+    if (tariff && tariff.change && tariff.activeTillChange) {
+      const date = formatDate(new Date(tariff.activeTillChange), 'dd/MM/yyyy', 'es');
+      return `Fecha Avelon: ${date}`;
+    }
+
+    return;
   }
 }

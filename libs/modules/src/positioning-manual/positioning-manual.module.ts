@@ -8,6 +8,10 @@ import { PositioningManualRoutingModule } from "./positioning-manual-routing.mod
 import { CdkTableModule } from "@angular/cdk/table";
 import { TextareaComponent } from "./textarea/textarea.component";
 import { HideKeyboardModule } from 'hide-keyboard';
+import { ListasProductosComponent } from '../picking-manual/lista/listas-productos/listas-productos.component';
+import { ListaModule } from '../picking-manual/lista/lista.module';
+import { ListProductsCarrierModule } from '../components/list-products-carrier/list-products-carrier.module';
+import { ListProductsCarrierComponent } from '../components/list-products-carrier/list-products-carrier.component';
 
 @NgModule({
   declarations: [PositioningManualComponent, TextareaComponent],
@@ -21,8 +25,10 @@ import { HideKeyboardModule } from 'hide-keyboard';
     CdkTableModule,
     FormsModule,
     MatGridListModule,
-    HideKeyboardModule
+    HideKeyboardModule,
+    ListaModule,
+    ListProductsCarrierModule
   ],
-  entryComponents: [PositioningManualComponent, TextareaComponent]
+  entryComponents: [PositioningManualComponent, TextareaComponent, ListasProductosComponent, ListProductsCarrierComponent]
 })
 export class PositioningManualModule { }

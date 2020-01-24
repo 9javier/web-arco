@@ -153,7 +153,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
         this.selectWay.forEach(way => {
           way.columns.forEach(column => {
             if(column.waysId === waySelect.waysId){
-              console.log(column);
+
               if(column.zone === '' && column.color === ''){
                 column.zone = this.zoneSelect.id;
                 column.color = this.zoneSelect.color.hex;
@@ -287,7 +287,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
           });
         });
 
-        console.log(this.dataPriorities);
+
         this.data = [];
         this.dataPriorities.forEach(priority => {
           if(priority.zone === this.zoneSelect.id){
@@ -356,7 +356,7 @@ export class MatrixSelectWaySorterComponent implements OnInit {
       /**validar que exista en la matrix */
       if (newValue !== oldValue) {
         if (newValue > this.SizeMatrix) {
-          this.intermediaryService.presentToastError("¡El número de calle introducida es superior a las disponibles!", 2000);
+          this.intermediaryService.presentToastError("¡El número de calle introducida es superior a las disponibles!");
           event.target.value = oldValue;
         } else {
           let currentZone = this.dataPriorities.find(dataPriority => dataPriority.zone == this.zoneSelect.id);

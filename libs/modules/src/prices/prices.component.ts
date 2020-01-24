@@ -1,11 +1,9 @@
+import { SliderComponent } from './components/slider/slider.component';
 import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource, MatPaginator } from '@angular/material';
-
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
-
 import {
   IntermediaryService,
-  LabelsService,
   PriceModel,
   PriceService,
   WarehousesService,
@@ -13,17 +11,19 @@ import {
   ProductsService, AuthenticationService, WarehouseModel
 
 } from '@suite/services';
-
-
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
-
 import { validators } from '../utils/validators';
-import { AlertController, NavParams } from '@ionic/angular';
+import {AlertController, Events, NavParams, PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { isNgTemplate } from '@angular/compiler';
+import { Range } from './interfaces/range.interface';
+import { PricesRangePopoverComponent } from "./prices-range-popover/prices-range-popover.component";
+import { PricesRangePopoverProvider } from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
+import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import {TariffPricesScanditService} from "../../../services/src/lib/scandit/tariff-prices/tariff-prices.service";
 
 @Component({
   selector: 'suite-prices',
@@ -37,12 +37,13 @@ export class PricesComponent implements OnInit {
 
   filterTypes: Array<PriceModel.StatusType> = [];
   pricesDeleted: Array<PriceModel.Price> = [];
-
+  minPrices: number = 0;
+  maxPrices: number = 1000;
   warehouses: Array<any> = [];
   pagerValues: Array<number> = [50, 100, 500];
-
+  tariffName: '';
   page: number = 0;
-  public itemIdSelected : any = [];
+  public itemIdSelected: any = [];
 
   limit: number = this.pagerValues[0];
 
@@ -63,6 +64,10 @@ export class PricesComponent implements OnInit {
     lifestyles: [],
     status: 0,
     tariffId: 0,
+    prices: this.formBuilder.group({
+      min: 0,
+      max: 100
+    }),
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -82,6 +87,7 @@ export class PricesComponent implements OnInit {
   families: Array<TagsInputOption> = [];
   lifestyles: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
+  priceses: Range;
 
   /**List of SearchInContainer */
   searchsInContainer: Array<PriceModel.Price> = [];
@@ -110,6 +116,8 @@ export class PricesComponent implements OnInit {
   displayedColumns: string[] = ['select', 'impress', 'model', 'range', 'family', 'lifestyle', 'brand', 'stock', 'price', 'image'];
   dataSource: any;
 
+  printAllStock: boolean = false;
+
   public disableExpansionPanel: boolean = true;
 
   public mobileVersionTypeList: 'list' | 'table' = 'list';
@@ -117,6 +125,8 @@ export class PricesComponent implements OnInit {
 
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
+
+  private isLoadingProductPrices: boolean = false;
 
   constructor(
     private printerService: PrinterService,
@@ -128,13 +138,35 @@ export class PricesComponent implements OnInit {
     private warehouseService: WarehouseService,
     private productsService: ProductsService,
     private authenticationService: AuthenticationService,
-    private cd : ChangeDetectorRef,
-    private alertController: AlertController
+    private cd: ChangeDetectorRef,
+    private alertController: AlertController,
+    private popoverCtrl: PopoverController,
+    public pricesRangePopoverProvider: PricesRangePopoverProvider,
+    private popoverController: PopoverController,
+    private toolbarProvider: ToolbarProvider,
+    private tariffPricesScanditService: TariffPricesScanditService,
+    private events: Events
   ) {
-
+    this.route.queryParams.subscribe(params => {
+      if (params && params.name) {
+        this.tariffName = JSON.parse(params.name);
+      }
+    });
   }
 
+  getTotalStock(price: PriceModel.Price): number {
+    let stock: number = 0;
+    if (price.stockStore) {
+      for (let stockStore of price.stockStore) {
+        stock += stockStore.cantidad;
+      }
+    }
+    return stock;
+  }
 
+  switchPrintAllStock() {
+    this.printAllStock = !this.printAllStock;
+  }
 
   /**
    * clear empty values of objecto to sanitize it
@@ -189,7 +221,6 @@ export class PricesComponent implements OnInit {
 
       this.form.value.pagination.page = this.page;
       this.form.value.pagination.limit = this.limit;
-
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     });
   }
@@ -222,17 +253,16 @@ export class PricesComponent implements OnInit {
   }
 
   // Item seleccionados
-  itemSelected(item){
+  itemSelected(item) {
     const index = this.itemIdSelected.indexOf(item, 0);
     if (index > -1) {
       this.itemIdSelected.splice(index, 1);
     } else {
       this.itemIdSelected.push(item);
     }
-    console.log(this.itemIdSelected);
   }
 
-  changeStatusImpress(){
+  changeStatusImpress() {
     this.prices.forEach((price) => {
       if (this.itemIdSelected.includes(price.id)) {
         price.status = 4;
@@ -284,7 +314,7 @@ export class PricesComponent implements OnInit {
       if (items[i].status == 3 || items[i].status == 7) {
         let priceDeleted: any = items[i];
         let object = {
-          warehouseId: this.isStoreUser ? this.storeUserObj.id: null,
+          warehouseId: this.isStoreUser ? this.storeUserObj.id : null,
           modelId: priceDeleted.model.id,
           numRange: priceDeleted.numRange
         };
@@ -319,18 +349,29 @@ export class PricesComponent implements OnInit {
       }
     }
 
-    let prices = this.selectedForm.value.toSelect.map((price, i) => {
-      if (items[i].status != 3) {
-        let object = {
-          warehouseId: warehouseId,
-          tariffId: items[i].tariff.id,
-          modelId: items[i].model.id,
-          numRange: items[i].numRange
-        };
-        return price ? object : false;
+    let prices = [];
+
+    for (let i = 0; i < this.selectedForm.value.toSelect.length; i++) {
+      if (this.selectedForm.value.toSelect[i] && items[i].status != 3) {
+        if (this.printAllStock) {
+          for (let j = 0; j < items[i].stockStore.length; j++) {
+            prices.push({
+              warehouseId: warehouseId,
+              tariffId: items[i].tariff.id,
+              modelId: items[i].model.id,
+              numRange: items[i].numRange
+            });
+          }
+        } else {
+          prices.push({
+            warehouseId: warehouseId,
+            tariffId: items[i].tariff.id,
+            modelId: items[i].model.id,
+            numRange: items[i].numRange
+          });
+        }
       }
-    })
-      .filter(price => price);
+    }
 
     this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
     this.printerService.printPrices({ references: prices }).subscribe(result => {
@@ -349,14 +390,43 @@ export class PricesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.addScannerButton();
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
     }
 
+    this.toolbarProvider.currentPage.next(this.tariffName);
+
+    if (!this.isLoadingProductPrices) {
+      this.isLoadingProductPrices = true;
+      this.intermediaryService.presentLoading().then(() => {
+        this.clearFilters();
+      });
+    } else {
+      this.clearFilters();
+    }
+
     this.getWarehouses();
 
-    this.clearFilters();
+    this.events.subscribe('setProductAsPrinted', () => this.applyFilters());
+  }
+
+  ngOnDestroy(){
+    this.toolbarProvider.optionsActions.next([]);
+    this.events.unsubscribe('setProductAsPrinted');
+  }
+
+  addScannerButton(){
+    const buttons = [{
+      icon: 'qr-scanner',
+      label: 'Escáner',
+      action: async () => {
+        let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+        this.tariffPricesScanditService.init(warehouseId, this.tariffId);
+      }
+    }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   ngAfterViewInit(): void {
@@ -410,7 +480,12 @@ export class PricesComponent implements OnInit {
    * get all filters to fill the selects
    */
   getFilters(): void {
+    this.priceses = {
+      min: 0,
+      max: 1000
+    }
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
+
       this.colors = filters.colors;
       this.brands = filters.brands;
       this.sizes = filters.sizes;
@@ -418,8 +493,18 @@ export class PricesComponent implements OnInit {
       this.models = filters.models;
       this.families = filters.families;
       this.lifestyles = filters.lifestyles;
-
+      this.priceses = filters.prices;
+      this.minPrices = this.priceses.min;
+      this.maxPrices = this.priceses.max;
+      this.form.patchValue({
+        prices: filters.prices
+      })
       this.applyFilters();
+
+      this.pricesRangePopoverProvider.minValue = this.priceses.min;
+      this.pricesRangePopoverProvider.maxValue = this.priceses.max;
+      this.pricesRangePopoverProvider.minValueSelected = this.pricesRangePopoverProvider.minValue;
+      this.pricesRangePopoverProvider.maxValueSelected = this.pricesRangePopoverProvider.maxValue;
     });
   }
 
@@ -428,21 +513,40 @@ export class PricesComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters): void {
-    this.intermediaryService.presentLoading();
-    this.priceService.getIndex(parameters).subscribe(prices => {
-      this.showFiltersMobileVersion = false;
-      this.prices = prices.results;
-      this.initSelectForm(this.prices);
-      this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
-      let paginator = prices.pagination;
-      this.paginatorComponent.length = paginator.totalResults;
-      this.paginatorComponent.pageIndex = paginator.selectPage;
-      this.paginatorComponent.lastPage = paginator.lastPage;
-      this.groups = prices.filters.ordertypes;
-      this.intermediaryService.dismissLoading();
-    }, () => {
-      this.intermediaryService.dismissLoading();
-    });
+    if (!this.isLoadingProductPrices) {
+      this.isLoadingProductPrices = true;
+      this.intermediaryService.presentLoading().then(() => {
+        this.priceService.getIndex(parameters).subscribe(prices => {
+          this.showFiltersMobileVersion = false;
+          this.prices = prices.results;
+          this.initSelectForm(this.prices);
+          this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+          let paginator = prices.pagination;
+          this.paginatorComponent.length = paginator.totalResults;
+          this.paginatorComponent.pageIndex = paginator.selectPage;
+          this.paginatorComponent.lastPage = paginator.lastPage;
+          this.groups = prices.filters.ordertypes;
+          this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+        }, () => {
+          this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+        });
+      })
+    } else {
+      this.priceService.getIndex(parameters).subscribe(prices => {
+        this.showFiltersMobileVersion = false;
+        this.prices = prices.results;
+        this.initSelectForm(this.prices);
+        this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+        let paginator = prices.pagination;
+        this.paginatorComponent.length = paginator.totalResults;
+        this.paginatorComponent.pageIndex = paginator.selectPage;
+        this.paginatorComponent.lastPage = paginator.lastPage;
+        this.groups = prices.filters.ordertypes;
+        this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+      }, () => {
+        this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+      });
+    }
   }
 
   private getFormValueCopy() {
@@ -532,6 +636,13 @@ export class PricesComponent implements OnInit {
     clearTimeout(this.requestTimeout);
     this.paginatorComponent.pageIndex = 0;
     this.requestTimeout = setTimeout(() => {
+      this.form.patchValue({
+        prices: {
+          min: this.pricesRangePopoverProvider.minValueSelected,
+          max: this.pricesRangePopoverProvider.maxValueSelected
+        }
+      });
+
       this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, 100);
   }
@@ -548,6 +659,10 @@ export class PricesComponent implements OnInit {
       status: 0,
       size: 0,
       tariffId: 0,
+      prices: {
+        min: 0,
+        max: 1000
+      },
       pagination: this.formBuilder.group({
         page: this.page || 1,
         limit: this.limit || this.pagerValues[0]
@@ -583,8 +698,8 @@ export class PricesComponent implements OnInit {
 
   async presentAlertConfirm(warehouseId: number, items) {
     const num = this.pricesDeleted.length;
-    const messageSingular =  `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
-    const messagePlural =  `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
+    const messageSingular = `Existe ${num} tarifa eliminada. ¿Desea imprimir el precio actual?`;
+    const messagePlural = `Existen ${num} tarifas eliminadas. ¿Desea imprimir el precio actual?`;
     const alert = await this.alertController.create({
       header: '¡Confirmar!',
       message: num > 1 ? messagePlural : messageSingular,
@@ -594,16 +709,26 @@ export class PricesComponent implements OnInit {
           handler: () => {
             this.printPricesWithDeleted(warehouseId, items);
           }
-        },{
+        }, {
           text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
-          handler: () => {}
+          handler: () => { }
         }
       ]
     });
 
     await alert.present();
+  }
+
+  async showPricesPopover(ev) {
+    const popover = await this.popoverCtrl.create({
+      cssClass: 'popover-filter',
+      component: PricesRangePopoverComponent,
+      event: ev
+    });
+
+    await popover.present();
   }
 
   // GET & SET SECTION
@@ -629,5 +754,32 @@ export class PricesComponent implements OnInit {
 
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
+  }
+
+  async presentPopover(ev: any) {
+    const popover = await this.popoverController.create({
+      component: SliderComponent,
+      event: ev,
+      translucent: true,
+      mode: 'ios',
+      cssClass: 'custom-popover',
+      componentProps: {
+        params: { min: this.priceses.min, max: this.priceses.max },
+        values: { min: this.minPrices, max: this.maxPrices }
+
+      }
+    });
+    popover.onDidDismiss().then(data => {
+      this.minPrices = data.data.min;
+      this.maxPrices = data.data.max;
+      this.form.patchValue({
+        prices: {
+          min: data.data.min,
+          max: data.data.max
+        }
+      })
+
+    })
+    return await popover.present();
   }
 }

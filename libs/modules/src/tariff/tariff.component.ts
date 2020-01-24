@@ -14,9 +14,10 @@ import {
 import { validators } from '../utils/validators';
 
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import {SortModel} from "../../../services/src/models/endpoints/Sort";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {LocalStorageProvider} from "../../../services/src/providers/local-storage/local-storage.provider";
 
 @Component({
   selector: 'suite-tariff',
@@ -65,7 +66,8 @@ export class TariffComponent implements OnInit {
     private formBuilder: FormBuilder,
     private tariffService: TariffService,
     private router: Router,
-    private warehousesService: WarehousesService
+    private warehousesService: WarehousesService,
+    private localStorageProvider: LocalStorageProvider
   ) {}
 
   ngOnInit() {
@@ -100,9 +102,15 @@ export class TariffComponent implements OnInit {
    * Go to product view
    * @param id - the id of the selected tariff
    */
-  goPrices(id: number): void {
+  goPrices(row: any): void {
     let a: TariffModel.Tariff;
-    this.router.navigate(['prices', id]);
+    this.localStorageProvider.set('tariffName',row.tariffName);
+    let navigationExtras: NavigationExtras = {
+      queryParams: {
+        name: JSON.stringify(row.tariffName)
+      }
+    };
+    this.router.navigate(['prices', row.tariffId], navigationExtras);
   }
 
   getWarehouses(): void {
@@ -154,7 +162,7 @@ export class TariffComponent implements OnInit {
       },()=>{
         this.intermediaryService.dismissLoading();
       })
-      
+
     },()=>{
       this.intermediaryService.dismissLoading();
     })

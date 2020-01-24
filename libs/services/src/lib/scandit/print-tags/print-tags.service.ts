@@ -7,6 +7,7 @@ import {PackingInventoryService} from "../../endpoint/packing-inventory/packing-
 import {PackingInventoryModel} from "../../../models/endpoints/PackingInventory";
 import {PrintModel} from "../../../models/endpoints/Print";
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
+import {ItemReferencesProvider} from "../../../providers/item-references/item-references.provider";
 
 declare let Scandit;
 declare let GScandit;
@@ -44,7 +45,8 @@ export class PrintTagsScanditService {
     private packingInventorService: PackingInventoryService,
     private productsService: ProductsService,
     private authService: AuthenticationService,
-    private scanditProvider: ScanditProvider
+    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
   }
@@ -91,8 +93,8 @@ export class PrintTagsScanditService {
 
           ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
 
-          switch (this.scanditProvider.checkCodeValue(codeScanned)) {
-            case this.scanditProvider.codeValue.PRODUCT:
+          switch (this.itemReferencesProvider.checkCodeValue(codeScanned)) {
+            case this.itemReferencesProvider.codeValue.PRODUCT:
               switch (this.typeTags) {
                 case 1:
                   this.printerService.printTagBarcode([codeScanned])
@@ -165,7 +167,7 @@ export class PrintTagsScanditService {
                   break;
               }
               break;
-            case this.scanditProvider.codeValue.PRODUCT_MODEL:
+            case this.itemReferencesProvider.codeValue.PRODUCT_MODEL:
               switch (this.typeTags) {
                 case 1:
                   ScanditMatrixSimple.setText(

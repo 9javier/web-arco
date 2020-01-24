@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { TypeUsersProcesses, UserProcessesService } from "@suite/services";
+import { IntermediaryService, TypeUsersProcesses, UserProcessesService } from '@suite/services';
 import { PickingModel } from "../../../../services/src/models/endpoints/Picking";
 import { PickingService } from "../../../../services/src/lib/endpoint/picking/picking.service";
-import { AlertController, LoadingController, ToastController } from "@ionic/angular";
+import { AlertController, LoadingController } from "@ionic/angular";
 import { Router } from "@angular/router";
 import { SetWorkwaveAliveService } from "../../../../services/src/lib/endpoint/set-workwave-alive/set-workwave-alive.service";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'list-user-assignment-template',
@@ -23,7 +24,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
     private pickingService: PickingService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController,
+    private intermediaryService: IntermediaryService,
     private router: Router,
     private setWorkwaveAliveService: SetWorkwaveAliveService
   ) { }
@@ -32,7 +33,7 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
     this.pickingService
       .getShow(this.workwaveId)
       .subscribe((res: PickingModel.ResponseShow) => {
-        if (res.code == 200 || res.code == 201) {
+        if (res.code === 200 || res.code === 201) {
           this.pickingAssignments = res.data;
         } else {
 
@@ -95,18 +96,18 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
             this.loading.dismiss();
             this.loading = null;
           }
-          if (res.code == 200 || res.code == 201) {
-            this.presentToast('Se ha guardado la asignación de usuarios dada para las tareas picking.', 'success');
+          if (res.code === 200 || res.code === 201) {
+            this.intermediaryService.presentToastSuccess('Se ha guardado la asignación de usuarios dada para las tareas picking.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
             this.router.navigate(['workwaves-scheduled']);
           } else {
-            this.presentToast('Ha ocurrido un error al guardar la asignación de usuarios para las tareas picking.', 'danger');
+            this.intermediaryService.presentToastError('Ha ocurrido un error al guardar la asignación de usuarios para las tareas picking.');
           }
         }, (error: PickingModel.ErrorResponse) => {
           if (this.loading) {
             this.loading.dismiss();
             this.loading = null;
           }
-          this.presentToast('Ha ocurrido un error al guardar la asignación de usuarios para las tareas picking.', 'danger');
+          this.intermediaryService.presentToastError('Ha ocurrido un error al guardar la asignación de usuarios para las tareas picking.');
         });
     });
   }
@@ -118,15 +119,4 @@ export class ListUserAssignmentTemplateComponent implements OnInit {
     });
     return await this.loading.present();
   }
-
-  async presentToast(msg, color) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 3750,
-      color: color || "primary"
-    });
-    toast.present();
-  }
-
 }

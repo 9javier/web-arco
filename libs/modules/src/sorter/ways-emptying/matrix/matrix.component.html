@@ -8,7 +8,7 @@
       <div class="height" *ngFor="let sorterHeight of sorterTemplateMatrix; let iHeight = index">
         <div class="column"
              *ngFor="let sorterColumn of sorterHeight.columns; let iCol = index"
-             [ngStyle]="{'background-color': getBackgroundForSelected(sorterColumn)}"
+             [ngStyle]="{'background-color': getBackground(sorterColumn)}"
              (click)="selectWay(sorterColumn, iHeight, iCol)">
           <div class="emptying-type">
             {{ getEmptyingType(sorterColumn) }}

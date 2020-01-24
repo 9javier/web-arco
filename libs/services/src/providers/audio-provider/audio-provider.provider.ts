@@ -45,7 +45,7 @@ export class AudioProvider {
       audioAsset.play();
     } else {
       this.nativeAudio.play(audio.asset).then((res) => {
-        console.log(res);
+
       }, (err) => {
         console.log(err);
       });
@@ -62,7 +62,7 @@ export class AudioProvider {
       audioAsset.play();
     } else {
       this.nativeAudio.stop(audio.asset).then((res) => {
-        console.log(res);
+
       }, (err) => {
         console.log(err);
       });

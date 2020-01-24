@@ -224,7 +224,6 @@ export class CalendarSgaComponent implements OnInit {
    */
   getCalendarDates(): void {
     this.calendarService.getCalendarDates().subscribe(dates => {
-      console.log(dates);
       this.listaFescasDb$ = dates;
 
       this.manageHaveClass(dates);
@@ -678,7 +677,6 @@ export class CalendarSgaComponent implements OnInit {
   deleteAllFechasSelect(){
 
     this.calendarService.postDateDelete(this.ListaFechas$).subscribe(data=>{
-      console.log(data);
       if(data.length > 0){
         this.clear();
         this.intermediaryService.presentToastSuccess("Fechas eliminada con éxito");

@@ -120,10 +120,11 @@
               </ion-col>
               <ion-col size="9" class="information">
                 <div class="information">
-                  <h5>Información</h5>
+                  <ion-toggle (ionChange)="switchPrintAllStock()"></ion-toggle>
+                  <span>Imp. nº stock</span>
                 </div>
               </ion-col>
-              <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
+              <ion-col size="1" class="filters-mobile" (click)="openFiltersMobile()">
                 <div class="filters-mobile" [ngClass]="showFiltersMobileVersion ? 'filters-opened' : ''">
                   <i class="material-icons">filter_list</i>
                 </div>
@@ -192,8 +193,18 @@
                 <ion-row>
                   <ion-col size="6">
                     <ion-label>Talla:</ion-label>
-                    <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes" multiple="true">
+                    <suite-tags-input [literal]="true" placeholder="Talla" [options]="sizes" formControlName="sizes"
+                      multiple="true">
                     </suite-tags-input>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-label>Precios</ion-label>
+                    <ion-item (click)="showPricesPopover($event)">
+                      <ion-label>
+                        {{pricesRangePopoverProvider.minValueSelected}} -
+                        {{pricesRangePopoverProvider.maxValueSelected}} <span>€</span>
+                      </ion-label>
+                    </ion-item>
                   </ion-col>
                 </ion-row>
                 <ion-row>
@@ -219,8 +230,7 @@
                 <ion-grid>
                   <ion-row class="custom-panel-header">
                     <ion-col size="1" class="check-print">
-                      <ion-checkbox
-                        [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
                         (click)="$event.stopPropagation();itemSelected(price.id);">
                       </ion-checkbox>
                     </ion-col>
@@ -254,7 +264,7 @@
                           </ion-col>
                           <ion-col class="stock" size="6">
                             <p>
-                              {{ price.stockStore ? price.stockStore.cantidad : 0 }} Uds.
+                              {{getTotalStock(price)}} Uds.
                             </p>
                           </ion-col>
                         </ion-row>

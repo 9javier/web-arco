@@ -51,7 +51,7 @@ export class RailsConfigurationComponent implements OnInit {
   }
 
   submit():void{
-    console.log('submit')
+
   }
 
   getColumn(index: number, column: number, height: number): void {
@@ -65,13 +65,13 @@ export class RailsConfigurationComponent implements OnInit {
         if(column == columns[i].ways_number) {
           columns[i]['adjacent'] = false;
           columns[i]['selected'] = true;
-          console.log('Current: '+column)
+
           if(columns[i-1] && !columns[i-1]['selected']) {
-            console.log('Left: '+columns[i-1].ways_number);
+
             columns[i-1]['adjacent'] = true;
           }
           if(columns[i+1] && !columns[i+1]['selected']) {
-            console.log('Right: '+columns[i+1].ways_number);
+
             columns[i+1]['adjacent'] = true;
           }
         }
@@ -84,7 +84,7 @@ export class RailsConfigurationComponent implements OnInit {
           if(this.rails[i-1]) {
             for(let j = 0; j < this.rails[i-1].columns.length; j++) {
               if(j == index && !this.rails[i-1].columns[j]['selected']){
-                console.log('Top: '+ this.rails[i-1].columns[j].ways_number);
+
                 this.rails[i-1].columns[j]['adjacent'] = true;
               }
             }
@@ -92,7 +92,7 @@ export class RailsConfigurationComponent implements OnInit {
           if(this.rails[i+1]) {
             for(let j = 0; j < this.rails[i+1].columns.length; j++) {
               if(j == index && !this.rails[i+1].columns[j]['selected']){
-                console.log('Bottom: '+ this.rails[i+1].columns[j].ways_number);
+
                 this.rails[i+1].columns[j]['adjacent'] = true;
               }
             }
@@ -102,7 +102,6 @@ export class RailsConfigurationComponent implements OnInit {
   }
 
   cleanStyles() {
-    console.log(this.rails)
     this.rails.forEach(rail => {
       rail.columns.forEach(column => {
         column['adjacent'] = false;

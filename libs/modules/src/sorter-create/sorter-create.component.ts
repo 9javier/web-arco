@@ -107,13 +107,11 @@ export class SorterCreateComponent implements OnInit {
       );
     this.templateColorsService.getIndex().subscribe((data) => {
       this.colors = data.data;
-      console.log(data.data)
     })
     this.sorteService
       .getIndex().subscribe((data) => {
         this.intermediaryService.dismissLoading();
         this.sorters = data.data;
-        console.log(this.sorters)
       });
   }
 
@@ -123,7 +121,6 @@ export class SorterCreateComponent implements OnInit {
     .getIndex().subscribe((data) => {
       this.intermediaryService.dismissLoading();
       this.sorters = data.data;
-      console.log(this.sorters)
     });
   }
 
@@ -244,7 +241,6 @@ export class SorterDataSource extends DataSource<any> {
   connect(): Observable<Element[]> {
     const rows = [];
     this.data.forEach(element => rows.push(element, { detailRow: true, element }));
-    console.log(rows);
     return of(rows);
   }
 

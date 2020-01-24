@@ -4,8 +4,17 @@ import { TariffModel } from './Tariff';
 import {ModelModel} from "@suite/services";
 import {StockModel} from "./Stock";
 import {HttpRequestModel} from "./HttpRequest";
+import {BrandModel} from "./Brand";
+import {LifestyleModel} from "./Lifestyle";
 export namespace PriceModel{
-    
+
+    export interface SizeRange{
+      rangesNumbers: {
+        sizeRangeNumberMin: string,
+        sizeRangeNumberMax: string
+      }
+    }
+
     export interface Price{
         createdAt: string,
         updatedAt: string,
@@ -29,7 +38,7 @@ export namespace PriceModel{
         tariffId: number,
         model: ModelModel.Model,
         status?: number,
-        stockStore?: StockModel.Stock
+        stockStore?: Array<StockModel.Stock>
     }
 
     export interface StatusType{
@@ -73,7 +82,8 @@ export namespace PriceModel{
     }
 
     export interface ProductsReferences {
-      references: string[]
+      references: string[],
+      tariffId?: number
     }
 
     export interface PriceByModelTariff extends Request.Success{
@@ -87,27 +97,50 @@ export namespace PriceModel{
         tariffFuture: boolean,
         percent: number,
         percentOutlet: number,
-        totalPrice: number,
-        priceOriginal: number,
-        priceDiscount: number,
-        priceDiscountOutlet: number,
+        totalPrice: string,
+        priceOriginal: string,
+        priceDiscount: string,
+        priceDiscountOutlet: string,
         activeTill: string,
         activeFrom: string,
         tariffName: string,
         numRange: number,
         hash: string,
+        hashPrices?: string,
+        status?: number,
+        enabled?: boolean,
         warehouse:WarehouseModel.Warehouse,
-        tariff: TariffModel.Tariff,
+        tariff: {
+          createdAt: string,
+          updatedAt: string,
+          id: number,
+          name: string,
+          activeFrom: string,
+          activeTill: string,
+          avelonId: number,
+          datasetHash: string,
+          discountReasonId: number,
+          processing: boolean,
+          softDeleted: boolean,
+          enabled: boolean
+        },
         model: {
             createdAt: string,
             updatedAt: string,
             id: number,
             reference: string,
             name: string,
-            datasetHash: number,
-            hash: number,
+            hash: string,
             avelonInternalBrandId: number,
-            season: number,
+            detailColor: string,
+            season: {
+              createdAt: string,
+              updatedAt: string,
+              id: number,
+              name: string,
+              avelonId: string,
+              datasetHash: string
+            },
             color: {
                 createdAt: string,
                 updatedAt: string,
@@ -120,12 +153,32 @@ export namespace PriceModel{
             },
             domainSize: {
                 id: number,
-                reference: number,
-                name: number
+                reference: string,
+                name: string
             },
-            brand: any
+            brand: BrandModel.Brand,
+            lifestyle: {
+              createdAt: string,
+              updatedAt: string,
+              id: number,
+              avelonId: string,
+              reference: string,
+              name: string,
+              groupNumber: number,
+              datasetHash: string
+            },
+            category:{
+              createdAt: string,
+              updatedAt: string,
+              id: number,
+              avelonId: string,
+              reference: string,
+              name: string,
+              groupNumber: number,
+              datasetHash: string
+            }
         },
-        range?: {
+        sizeModelRange?: {
           createdAt: string,
           updatedAt: string,
           id: number,
@@ -134,10 +187,10 @@ export namespace PriceModel{
           endRange: number,
           isAvelon: boolean
         },
-      rangesNumbers?: {
-        sizeRangeNumberMin: string,
-        sizeRangeNumberMax: string
-      }
+        rangesNumbers?: {
+          sizeRangeNumberMin: string,
+          sizeRangeNumberMax: string
+        }
     }
 
 }

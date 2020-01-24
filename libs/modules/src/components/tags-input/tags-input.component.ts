@@ -81,7 +81,14 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
   ids: Array<any> = [];
 
   filterOptions(options: Array<TagsInputOption>, text: string): Array<TagsInputOption> {
-    return options.filter(option => option.name.toLowerCase().includes(text.trim().toLowerCase()));
+    let searchedStrings: string[] = text.split(',');
+    return options.filter(option => {
+      for(let iString of searchedStrings) {
+        if (iString != '' && option.name.toUpperCase().includes(iString.toUpperCase())) {
+          return true;
+        }
+      }
+    });
   }
 
 
@@ -207,15 +214,17 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
    */
   onKeyUp(event) {
     let key = event.key;
-    if (key == 'Enter') {
-      this.selectOption(this.filteredOptions[this.optionPointerIndex]);
+    if (key == 'Enter'){
+      if(this.filteredOptions.length > 1) this.filteredOptions.shift();
+      for(let iOption of this.filteredOptions){
+        this.selectOption(iOption);
+      }
     }
     if (key == 'ArrowUp') {
       this.optionPointerIndex = this.optionPointerIndex - 1;
-      if (this.optionPointerIndex < 0)
-        this.optionPointerIndex = this.filterOptions.length;
-    } if (key == 'ArrowDown')
-      this.optionPointerIndex = Math.abs(this.optionPointerIndex + 1) % this.filteredOptions.length;
+      if (this.optionPointerIndex < 0) this.optionPointerIndex = this.filterOptions.length;
+    }
+    if (key == 'ArrowDown') this.optionPointerIndex = Math.abs(this.optionPointerIndex + 1) % this.filteredOptions.length;
     this.scrollElement(this.optionsElements, this.optionPointerIndex);
   }
 
@@ -318,14 +327,24 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     return offset - 1;
   }
 
+  lastInputLength: number = 0;
   /**
    * Function that be triggered when user input a text
    * @summary this function is not an angular way for dataBinding
    */
   onInput(event): void {
     /**nodo sobre el cual se está escribiendo*/
-    // console.log(event);
-    
+    let currentInput: string = event.data;
+    if (currentInput == null) {
+      let event = {key: 'Backspace'};
+      this.onKeyPress(event);
+      this.lastInputLength = 0;
+    }else if(currentInput.length < this.lastInputLength){
+      let event = {key: 'Backspace'};
+      this.onKeyPress(event);
+      this.lastInputLength = currentInput.length;
+    }
+
     let node = window.getSelection().anchorNode;
     this.lastNode = node;
     /**y eso es lo que vamos a usar para filtrar */
