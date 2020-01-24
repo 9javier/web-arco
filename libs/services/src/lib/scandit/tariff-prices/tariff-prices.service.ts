@@ -48,7 +48,9 @@ export class TariffPricesScanditService {
     this.lastBarcode = 'start';
     ScanditMatrixSimple.initTariffPrices(
       response => {
-        if(response.barcode != undefined && response.barcode.data) {
+        if(response && response.result && response.actionIonic){
+          this.executeAction(response.actionIonic, response.params);
+        } else if(response.barcode != undefined && response.barcode.data) {
           this.checkAndPrint(response.barcode.data);
         } else if(response.size_selected != undefined){
           this.priceToPrint = this.priceOptions[response.size_selected];
@@ -92,11 +94,7 @@ export class TariffPricesScanditService {
   checkAndPrint(barcode: string) {
     if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
-      if (this.timeoutStarted) {
-        clearTimeout(this.timeoutStarted);
-      }
-      this.timeoutStarted = setTimeout(() => this.lastBarcode = 'start', this.timeMillisToResetScannedCode);
-
+      ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let reference: PriceModel.ProductsReferences = {
           references: [barcode],
@@ -249,6 +247,21 @@ export class TariffPricesScanditService {
           ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
         });
       });
+    }
+  }
+
+  private executeAction(action: string, paramsString: string){
+    let params = [];
+    try{
+      params = JSON.parse(paramsString);
+    } catch (e) {
+
+    }
+
+    switch (action){
+      case 'lastCodeScannedStart':
+        this.lastBarcode = 'start';
+        break;
     }
   }
 
