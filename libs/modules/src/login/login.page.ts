@@ -4,22 +4,20 @@ import { Router } from '@angular/router';
 import {
   ResponseLogin,
   RequestLogin,
-  ErrorResponseLogin,
   Oauth2Service,
   IntermediaryService
 } from '@suite/services';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { AuthenticationService } from '@suite/services';
 
-import { ToastController, AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { AppInfo } from 'config/base';
 import { Platform } from '@ionic/angular';
 import { AppVersion } from '@ionic-native/app-version/ngx';
-import { Observable, interval } from 'rxjs';
+import { interval } from 'rxjs';
 import { AppVersionService } from '../../../services/src/lib/endpoint/app-version/app-version.service';
 import { AppVersionModel } from '../../../services/src/models/endpoints/appVersion.model';
 import { ToolbarProvider } from 'libs/services/src/providers/toolbar/toolbar.provider';
-import { stringify } from '@angular/core/src/render3/util';
 import {config} from "../../../services/src/config/config";
 
 const interUpdateVersion = interval(300000);
@@ -47,7 +45,6 @@ export class LoginComponent implements OnInit {
     private loginService: Oauth2Service,
     private router: Router,
     private authenticationService: AuthenticationService,
-    public toastController: ToastController,
     public alertController: AlertController,
     private loadingController: LoadingController,
     private intermediaryService: IntermediaryService,
@@ -77,7 +74,6 @@ export class LoginComponent implements OnInit {
 
               const resultCompare = this.compareVersions(`${response.data['majorRelease']}.${response.data['minorRelease']}.${response.data['patchRelease']}`, this.versionNumber);
               if (resultCompare === 1) {
-                console.log('VERSION MAYOR');
                 this.isNewVersion = true;
                 this.loginService.availableVersion.next({ status: true, version: response.data['majorRelease'] });
               } else {
@@ -138,7 +134,12 @@ export class LoginComponent implements OnInit {
     return 0;
   }
 
-  login(user: RequestLogin) {
+  login(form) {
+    const user: RequestLogin = {
+      username: form.form.value.email,
+      password: form.form.value.password,
+      grant_type: 'password'
+    };
     this.showLoading('Iniciando sesión...').then(() => {
       this.loginService.post_login(user, AppInfo.Name.Sga).subscribe(
         (data: HttpResponse<ResponseLogin>) => {
@@ -158,22 +159,15 @@ export class LoginComponent implements OnInit {
             this.loading = null;
           }
           if (errorResponse.status === 0) {
-            this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor");
+            this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor. \nRevise su conexión a internet antes de continuar.");
+          } else if (errorResponse.status == 401) {
+            this.intermediaryService.presentToastError("Los datos de usuario o contraseña introducidos son incorrectos. Inténtelo de nuevo.");
           } else {
-            this.intermediaryService.presentToastError("Error en usuario o contraseña");
+            this.intermediaryService.presentToastError("Ha ocurrido un error al intentar conectar con el servidor. \nVuelva a intentarlo en un rato o contacte con su encargado en caso de que el problema persista.");
           }
         }
       );
     });
-  }
-
-  async presentToast(msg) {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'top',
-      duration: 2750
-    });
-    toast.present();
   }
 
   async showLoading(message: string) {

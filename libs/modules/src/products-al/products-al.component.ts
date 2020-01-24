@@ -45,7 +45,7 @@ export class ProductsAlComponent implements OnInit {
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
 
-  @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
 
   form:FormGroup = this.formBuilder.group({
@@ -75,6 +75,8 @@ export class ProductsAlComponent implements OnInit {
   products: ProductModel.Product[] = [];
   displayedColumns: string[] = ['select', 'reference', 'model', 'color', 'size', 'warehouse', 'container'];
   dataSource: any;
+  flagPageChange: boolean = false;
+  flagSizeChange: boolean = false;
 
   /**Filters */
   colors:Array<TagsInputOption> = [];
@@ -175,6 +177,9 @@ export class ProductsAlComponent implements OnInit {
     let references = this.selectedForm.value.toSelect.map((product,i)=>product?this.searchsInContainer[i].productShoeUnit.reference:false).filter(product=>product);
     this.intermediaryService.presentLoading("Imprimiendo los productos seleccionados");
     this.printerService.printTagPrices(references).subscribe(result=>{
+      if(result && typeof result !== "boolean"){
+        result.subscribe(r=>{});
+      }
       this.intermediaryService.dismissLoading();
     },error=>{
       this.intermediaryService.dismissLoading();
@@ -191,36 +196,60 @@ export class ProductsAlComponent implements OnInit {
    */
   listenChanges():void{
     let previousPageSize = this.form.value.pagination.limit;
+    let previousPageIndex = this.form.value.pagination.page;
     /**detect changes in the paginator */
-    this.paginator.page.subscribe(page=>{
+    this.paginatorComponent.page.subscribe(page=>{
       /**true if only change the number of results */
-      let flag = previousPageSize == page.pageSize;
+      let flagSize = previousPageSize != page.pageSize;
+      let flagIndex = previousPageIndex != page.pageIndex;
+      this.flagSizeChange = flagSize;
+      this.flagPageChange = flagIndex;
       previousPageSize = page.pageSize;
-      this.form.get("pagination").patchValue({
-        limit:page.pageSize,
-        page:flag?page.pageIndex:1
-      });
+      previousPageIndex = page.pageIndex;
+      if(flagIndex){
+        this.form.get("pagination").patchValue({
+          limit: previousPageSize,
+          page: page.pageIndex
+        });
+      }else if(flagSize){
+        this.form.get("pagination").patchValue({
+          limit: page.pageSize,
+          page: 1
+        });
+      }else{
+        this.form.get("pagination").patchValue({
+          limit: previousPageSize,
+          page: previousPageIndex
+        });
+      }
     });
 
     /**detect changes in the form */
     this.form.statusChanges.subscribe(change=>{
-      if (this.pauseListenFormChange) return;
-      ///**format the reference */
-      /**cant send a request in every keypress of reference, then cancel the previous request */
-      clearTimeout(this.requestTimeout)
-      /**it the change of the form is in reference launch new timeout with request in it */
-      if(this.form.value.productReferencePattern != this.previousProductReferencePattern){
-        /**Just need check the vality if the change happens in the reference */
-        if(this.form.valid)
-          this.requestTimeout = setTimeout(()=>{
-            this.searchInContainer(this.sanitize(this.getFormValueCopy()));
-        },1000);
+      if(this.flagSizeChange || this.flagPageChange){
+        if (this.pauseListenFormChange) return;
+        ///**format the reference */
+        /**cant send a request in every keypress of reference, then cancel the previous request */
+        clearTimeout(this.requestTimeout)
+        /**it the change of the form is in reference launch new timeout with request in it */
+        if(this.form.value.productReferencePattern != this.previousProductReferencePattern){
+          /**Just need check the vality if the change happens in the reference */
+          if(this.form.valid){
+            this.requestTimeout = setTimeout(() => {
+              this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+            }, 1000);
+          }
+        }else{
+          /**reset the paginator to the 0 page */
+          this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        }
+        /**assign the current reference to the previous reference */
+        this.previousProductReferencePattern = this.form.value.productReferencePattern;
+        this.flagPageChange = false;
+        this.flagSizeChange = false;
       }else{
-        /**reset the paginator to the 0 page */
-        this.searchInContainer(this.sanitize(this.getFormValueCopy()));
+        return;
       }
-      /**assign the current reference to the previous reference */
-      this.previousProductReferencePattern = this.form.value.productReferencePattern;
     });
   }
 
@@ -248,8 +277,12 @@ export class ProductsAlComponent implements OnInit {
   /**
    * search products in container by criteria
    * @param parameters - parameters to search
+   * @param applyFilter - parameters to search
    */
-  searchInContainer(parameters):void{
+  searchInContainer(parameters, applyFilter: boolean = false): void {
+    if(applyFilter){
+      parameters.pagination.page = 1;
+    }
     this.intermediaryService.presentLoading();
     this.inventoryServices.searchInContainer(parameters).subscribe(searchsInContainer=>{
       this.showFiltersMobileVersion = false;
@@ -259,10 +292,18 @@ export class ProductsAlComponent implements OnInit {
       this.dataSource = new MatTableDataSource<InventoryModel.SearchInContainer>(this.searchsInContainer);
       let paginator: any = searchsInContainer.data.pagination;
 
-      this.paginator.length = paginator.totalResults;
-      this.paginator.pageIndex = paginator.selectPage;
-      this.paginator.lastPage = paginator.lastPage;
+      this.paginatorComponent.length = paginator.totalResults;
+      this.paginatorComponent.pageIndex = paginator.selectPage;
+      this.paginatorComponent.lastPage = paginator.lastPage;
 
+      if(applyFilter){
+        //this.saveFilters();
+        this.form.get("pagination").patchValue({
+          limit: this.form.value.pagination.limit,
+          page: 1
+        }, { emitEvent: false });
+        //this.recoverFilters();
+      }
     },()=>{
       this.intermediaryService.dismissLoading();
     });
@@ -412,6 +453,47 @@ export class ProductsAlComponent implements OnInit {
     this.groups = ordertypes;
     this.form.get("orderby").get("type").patchValue(value, {emitEvent: false});
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+  applyFilters() {
+    if (this.pauseListenFormChange) return;
+    ///**format the reference */
+    /**cant send a request in every keypress of reference, then cancel the previous request */
+    clearTimeout(this.requestTimeout)
+    /**it the change of the form is in reference launch new timeout with request in it */
+    if(this.form.value.productReferencePattern != this.previousProductReferencePattern){
+      /**Just need check the vality if the change happens in the reference */
+      if(this.form.valid)
+        this.requestTimeout = setTimeout(()=>{
+          let flagApply = true;
+          this.searchInContainer(this.sanitize(this.getFormValueCopy()), flagApply);
+        },1000);
+    }else{
+      /**reset the paginator to the 0 page */
+      let flagApply = true;
+      this.searchInContainer(this.sanitize(this.getFormValueCopy()), flagApply);
+    }
+    /**assign the current reference to the previous reference */
+    this.previousProductReferencePattern = this.form.value.productReferencePattern;
+  }
+
+  clearFilters() {
+    this.form = this.formBuilder.group({
+      containers: [],
+      models: [],
+      colors: [],
+      sizes: [],
+      productReferencePattern: [],
+      warehouses:[],
+      pagination: this.formBuilder.group({
+        page: 1,
+        limit: this.pagerValues[0]
+      }),
+      orderby:this.formBuilder.group( {
+        type: '',
+        order: "asc"
+      })
+    });
   }
 }
 

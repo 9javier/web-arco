@@ -220,7 +220,7 @@ export class ListComponent implements OnInit {
 
   clickShowExpasion(row: any) {
     event.stopPropagation();
-    console.log(row)
+
     this.expandedElement = row;
     this.showExpasion = !this.showExpasion;
     row.dropdown = this.showExpasion;
@@ -289,7 +289,7 @@ export class ListComponent implements OnInit {
       this.intermediaryService.presentLoading();
       this.templateZonesService.getIndex(parseInt(this.id)).subscribe((data) => {
         this.zones = data.data;
-        console.log(this.zones);
+
         this.radioButton = this.zones[0].id;
         this.radioForm = this.formBuilder.group({
           selectRadio: [this.radioButton]
@@ -313,7 +313,7 @@ export class ListComponent implements OnInit {
           if (column == columns[i].ways_number) {
             columns[i]['selected'] = true;
             columns[i]['adjacent'] = false;
-            console.log('Current: ' + column)
+
             if (columns[i - 1] && !columns[i - 1]['selected']) {
               columns[i - 1]['adjacent'] = true;
             }
@@ -346,8 +346,7 @@ export class ListComponent implements OnInit {
 
     let wayNumber: number;
     let wayColumn: number;
-    console.log(way)
-    console.log(this.zoneId)
+
     let zones = [
       {
         zone: this.zoneId,
@@ -365,7 +364,7 @@ export class ListComponent implements OnInit {
     }
 
     this.templateZonesService.assignWays(payload, Number(this.id)).subscribe(data => {
-      console.log(data);
+
     }, err => {
       console.log(err);
     })
@@ -446,7 +445,7 @@ export class ListComponent implements OnInit {
 
 
   cleanStyles() {
-    console.log(this.rails)
+
     this.rails.forEach(rail => {
       rail.columns.forEach(column => {
         column['adjacent'] = false;
@@ -456,7 +455,7 @@ export class ListComponent implements OnInit {
 
   active() {
     event.stopPropagation();
-    console.log('active')
+
   }
 
   toDeleteZone(event, index) {
@@ -506,7 +505,6 @@ export class ListComponent implements OnInit {
 
   async openWarehousesModal(id) {
     let zoneByWarehouses = this.zones.filter(zone => zone.id == id);
-    console.log(zoneByWarehouses[0].zoneWarehouses)
     event.stopPropagation();
     let modal = (await this.modalController.create({
       component: WarehousesModalComponent,

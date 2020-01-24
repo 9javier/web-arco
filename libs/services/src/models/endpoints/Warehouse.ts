@@ -17,6 +17,7 @@ export namespace WarehouseModel {
     is_outlet?: boolean;
     prefix_container?: string;
     thresholdShippingStore?: number;
+    packingType?: number;
   }
 
   export interface ResponseSingle extends Request.Success{
@@ -27,6 +28,11 @@ export namespace WarehouseModel {
     data: Warehouse[];
     message: string;
     code: number;
+  }
+
+  export interface WarehouseAndSizeId {
+    warehouse: number;
+    size: number;
   }
 
   export interface ResponseShow {

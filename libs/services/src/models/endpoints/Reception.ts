@@ -15,7 +15,8 @@ export namespace ReceptionModel {
   export interface ResponseReceive extends HttpRequestModel.Response {
     data: {
       pickingId: number,
-      quantity: number
+      quantity: number,
+      hasNewProducts: boolean
     },
     message: string,
     code: number,
@@ -42,7 +43,8 @@ export namespace ReceptionModel {
   export interface ResponseReceptionProduct extends HttpRequestModel.Response {
     data: {
       remainingProducts: number,
-      inventoryPacking: any
+      inventoryPacking: any,
+      hasNewProducts: boolean
     },
     message: string,
     code: number,

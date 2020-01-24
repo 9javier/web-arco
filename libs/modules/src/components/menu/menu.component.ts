@@ -393,12 +393,6 @@ export class MenuComponent implements OnInit {
           icon: 'basket'
         },
         {
-          title: 'Nuevos Productos',
-          id: 'new-products',
-          url: '/new-products',
-          icon: 'basket'
-        },
-        {
           title: 'Consulta',
           id: 'products-info',
           url: 'products/info',
@@ -450,6 +444,12 @@ export class MenuComponent implements OnInit {
           id: 'print-price-tag-manual',
           url: '/print-tag/manual/price',
           icon: 'pricetags'
+        },
+        {
+          title: 'Nuevos Productos',
+          id: 'new-products',
+          url: '/new-products',
+          icon: 'basket'
         }
       ]
     },
@@ -558,6 +558,26 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Picking y Ventilación',
+      open: false,
+      type: 'wrapper',
+      icon: 'grid',
+      children: [
+        {
+          title: 'Ventilación de traspasos',
+          id: 'ventilation-transfer',
+          url: '/ventilation/transfer',
+          icon: 'swap'
+        },
+        {
+          title: 'Ventilación sin Sorter',
+          id: 'ventilation-no-sorter',
+          url: '/ventilation-no-sorter',
+          icon: 'aperture'
+        }
+      ]
+    },
+    {
       title: 'Sorter',
       open: false,
       type: 'wrapper',
@@ -596,10 +616,16 @@ export class MenuComponent implements OnInit {
           icon: 'list-box'
         },
         {
-          title: 'Escaneo múltiple',
-          id: 'audit-al-multiple',
-          url: 'audits/multiple',
-          icon: 'list'
+          title: 'Escaneo total (láser)',
+          id: 'add-audits',
+          url: '/audits/add',
+          icon: 'qr-scanner'
+        },
+        {
+          title: 'Escaneo aleatorio (cámara)',
+          id: 'audit-scan',
+          url: 'audits/scan',
+          icon: 'aperture'
         }
       ]
     },
@@ -758,6 +784,8 @@ export class MenuComponent implements OnInit {
       this.receptionScanditService.reception(1);
     } else if (p.url == 'reception/empty-carrier') {
       this.receptionScanditService.reception(2);
+    } else if(p.url === 'audits/scan'){
+      this.auditMultipleScanditService.init();
     }
   }
 
@@ -779,9 +807,9 @@ export class MenuComponent implements OnInit {
       this.productInfoScanditService.init();
     } else if (p.url === 'positioning') {
       this.scanditService.positioning();
-    } else if (p.url === 'audits/multiple') {
+    } else if (p.url === 'audits/scan') {
       this.auditMultipleScanditService.init();
-    } else {
+    }else {
       this.returnTitle(p);
     }
     if (p.id === 'workwaves-scheduled-1') {
@@ -839,6 +867,10 @@ export class MenuComponent implements OnInit {
     }, (error) => {
         console.error('Error to try check if exists new tariffs', error);
     })
+  }
+
+  checkIfChildrenHasNewTariffs(element): boolean {
+    return !!element.children.find(c => c.notification)
   }
 
 }

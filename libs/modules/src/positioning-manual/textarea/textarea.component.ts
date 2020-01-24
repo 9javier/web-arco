@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
-import { Observable } from "rxjs";
-import { HttpErrorResponse, HttpResponse } from "@angular/common/http";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
-import { AlertController, ToastController } from "@ionic/angular";
-import { ScanditProvider } from "../../../../services/src/providers/scandit/scandit.provider";
+import { AlertController, ModalController } from "@ionic/angular";
+import { ItemReferencesProvider } from "../../../../services/src/providers/item-references/item-references.provider";
 import { environment as al_environment } from "../../../../../apps/al/src/environments/environment";
 import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
-import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
+import { TimesToastType } from '../../../../services/src/models/timesToastType';
+import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
+import { ListasProductosComponent } from '../../picking-manual/lista/listas-productos/listas-productos.component';
+import { CarrierService } from '../../../../services/src/lib/endpoint/carrier/carrier.service';
+import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
 
 @Component({
   selector: 'suite-textarea',
@@ -32,14 +35,15 @@ export class TextareaComponent implements OnInit {
 
   constructor(
     private alertController: AlertController,
-    private toastController: ToastController,
     private warehouseService: WarehouseService,
     private inventoryService: InventoryService,
     private authenticationService: AuthenticationService,
     private intermediaryService: IntermediaryService,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
+    private carrierService: CarrierService,
+    private modalCtrl: ModalController
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     setTimeout(() => {
@@ -48,6 +52,8 @@ export class TextareaComponent implements OnInit {
   }
 
   async ngOnInit() {
+    console.log('siamo qui');
+
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
@@ -60,11 +66,60 @@ export class TextareaComponent implements OnInit {
     }
   }
 
-  keyUpInput(event) {
+  /**
+   * @author Gaetano Sabino
+   * @param event
+   * @description Crear la modal
+   */
+  private async modalList(jaula:string){
+    let modal = await this.modalCtrl.create({
+
+      component: ListProductsCarrierComponent,
+      componentProps: {
+        carrierReference:jaula
+      }
+
+    })
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+      if(data.data === undefined && data.role === undefined){
+        this.focusToInput();
+        return;
+      }
+
+      if(data.data && data.role === undefined){
+        if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
+          console.log('passo di qui ',this.lastCodeScanned);
+
+          this.focusToInput();
+          this.inputPositioning = data.data;
+          this.processInitiated = false;
+          this.keyUpInput(KeyboardEvent['KeyCode'] = 13,true);
+          return;
+        }else if(data.role === 'navigate'){
+          this.focusToInput();
+        }
+      }
+
+    })
+    modal.present();
+  }
+
+  private focusToInput() {
+    setTimeout(() => {
+      document.getElementById('input-ta').focus();
+    },500);
+  }
+
+
+  keyUpInput(event?,prova:boolean=false) {
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
+    // console.log('chiamo metodo Key',dataWrited,this.processInitiated);
 
-    if (event.keyCode == 13 && dataWrited && !this.processInitiated) {
+    if (event.keyCode === 13 || prova && dataWrited && !this.processInitiated) {
+      // console.log('passo di primo');
+      // console.log(dataWrited,this.lastCodeScanned);
 
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
@@ -78,16 +133,22 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.processInitiated = true;
-      if (!this.isStoreUser && (dataWrited.match(/([A-Z]){1,4}([0-9]){3}A([0-9]){2}C([0-9]){3}$/) || dataWrited.match(/P([0-9]){2}[A-Z]([0-9]){2}$/))) {
+      if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
+        // console.log('passa qui');
+
+        this.processInitiated = false;
+        this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+          setTimeout(() => {
+            document.getElementById('input-ta').focus();
+          }, 500);
+        });
         this.audioProvider.playDefaultOk();
-        this.presentToast(`Inicio de ubicación en la posición ${dataWrited}`, 2000, 'success');
         this.containerReference = dataWrited;
         this.packingReference = null;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
         this.inputPositioning = null;
         this.errorMessage = null;
-        this.processInitiated = false;
-      } else if (dataWrited.match(/([0]){2}([0-9]){6}([0-9]){2}([0-9]){3}([0-9]){5}$/)) {
+      } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
         let params: any = {
           productReference: dataWrited,
           warehouseId: warehouseId,
@@ -99,20 +160,31 @@ export class TextareaComponent implements OnInit {
         } else if (!this.isStoreUser && this.packingReference) {
           params.packingReference = this.packingReference;
         }
+        this.inputPositioning = null;
 
         this.storeProductInContainer(params);
 
-        this.inputPositioning = null;
         this.errorMessage = null;
-      } else if (!this.isStoreUser && (this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.PALLET || this.scanditProvider.checkCodeValue(dataWrited) == this.scanditProvider.codeValue.JAIL)) {
-        this.audioProvider.playDefaultOk();
-        this.presentToast(`Inicio de ubicación en el embalaje ${dataWrited}`, 2000, 'success');
-        this.containerReference = null;
-        this.packingReference = dataWrited;
-        this.dataToWrite = 'PRODUCTO / CONTENEDOR / EMBALAJE';
-        this.inputPositioning = null;
-        this.errorMessage = null;
-        this.processInitiated = false;
+      } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
+        // console.log('passa qui por Jaula');
+        this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
+          if(data.packingInventorys.length > 0 && !prova){
+            this.modalList(this.lastCodeScanned);
+          }else{
+            this.processInitiated = false;
+            this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              }, 500);
+            });
+            this.audioProvider.playDefaultOk();
+            this.containerReference = null;
+            this.packingReference = dataWrited;
+            this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
+            this.inputPositioning = null;
+            this.errorMessage = null;
+          }
+        })
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;
@@ -137,8 +209,7 @@ export class TextareaComponent implements OnInit {
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
-        if (res.code == 200 || res.code == 201) {
-          this.audioProvider.playDefaultOk();
+        if (res.code === 200 || res.code === 201) {
           let msgSetText = '';
           if (this.isStoreUser) {
             msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
@@ -149,20 +220,29 @@ export class TextareaComponent implements OnInit {
               msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
             }
           }
-          this.presentToast(msgSetText, 2000, 'success');
           this.processInitiated = false;
-        } else if (res.code == 428) {
+          this.intermediaryService.presentToastSuccess(msgSetText, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            }, 500);
+          });
+          this.audioProvider.playDefaultOk();
+        } else if (res.code === 428) {
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
-        } else if (res.code == 401) {
-          /** Comprobando si tienes permisos para el forzado */
-          const permission = await this.inventoryService.checkUserPermissions();
-          /** Forzado de empaquetado */
-          if (permission.data) {
-            this.warningToForce(params, res.errors);
+        } else if (res.code === 401) {
+          if (res.message === 'UserConfirmationRequiredException') {
+            this.warningToForce(params, res.errors, false, 'Continuar');
           } else {
-            this.presentAlert(res.errors);
-            this.processInitiated = false;
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions();
+            /** Forzado de empaquetado */
+            if (permission.data) {
+              this.warningToForce(params, res.errors);
+            } else {
+              this.presentAlert(res.errors);
+              this.processInitiated = false;
+            }
           }
         } else {
           let errorMessage = res.message;
@@ -175,22 +255,30 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          this.presentToast(errorMessage, 2000, 'danger');
+          this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            }, 500);
+          });
           this.processInitiated = false;
         }
       }, (error) => {
         this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
-        if (error.error.code == 428) {
+        if (error.error.code === 428) {
           this.showWarningToForce(params);
         } else {
-          this.presentToast(error.message, 1500, 'danger');
+          this.intermediaryService.presentToastError(error.message, PositionsToast.BOTTOM).then(() => {
+            setTimeout(() => {
+              document.getElementById('input-ta').focus();
+            }, 500);
+          });
           this.processInitiated = false;
         }
       });
   }
 
-  private async warningToForce(params, subHeader) {
+  private async warningToForce(params, subHeader, checkPermissionToForce: boolean = true, btnOkMessage: string = 'Forzar') {
     const alertWarning = await this.alertController.create({
       header: 'Atención',
       subHeader,
@@ -199,22 +287,33 @@ export class TextareaComponent implements OnInit {
         {
           text: 'Cancelar',
           handler: () => {
-            this.presentToast('El producto no se ha ubicado.', 2000, 'danger');
+            this.intermediaryService.presentToastError('El producto no se ha ubicado.', PositionsToast.BOTTOM).then(() => {
+              setTimeout(() => {
+                document.getElementById('input-ta').focus();
+              }, 500);
+            });
+
             this.processInitiated = false;
           }
         },
         {
-          text: 'Forzar',
+          text: btnOkMessage,
           handler: async () => {
-            // Consultando si el usuario tiene permisos para forzar
-            const permissions = await this.inventoryService.checkUserPermissions();
-            if (permissions.data) {
+            if (checkPermissionToForce) {
+              // Consultando si el usuario tiene permisos para forzar
+              const permissions = await this.inventoryService.checkUserPermissions();
+              if (permissions.data) {
+                params.force = true;
+                this.storeProductInContainer(params);
+                this.processInitiated = false;
+              } else {
+                this.alertController.dismiss();
+                this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
+                this.processInitiated = false;
+              }
+            } else {
               params.force = true;
               this.storeProductInContainer(params);
-              this.processInitiated = false;
-            } else {
-              this.alertController.dismiss();
-              this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
               this.processInitiated = false;
             }
           }
@@ -259,24 +358,8 @@ export class TextareaComponent implements OnInit {
     return await alertWarning.present();
   }
 
-  private async presentToast(msg: string, duration: number = 2000, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: msg,
-      position: 'bottom',
-      duration: duration,
-      color: color
-    });
-
-    toast.present()
-      .then(() => {
-        setTimeout(() => {
-          document.getElementById('input-ta').focus();
-        }, 500);
-      });
-  }
-
-  public onFocus(event){
-    if(event && event.target && event.target.id){
+  public onFocus(event) {
+    if (event && event.target && event.target.id) {
       this.keyboardService.setInputFocused(event.target.id);
     }
   }

@@ -38,7 +38,7 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'isSend', "update", 'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'assigned_incidences', 'isSend', "update", 'buttons-print'];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
@@ -172,7 +172,6 @@ export class JailComponent implements OnInit {
 
   cleanSelect(closeAlert?: boolean) {
     this.carrierService.getIndex().subscribe(carriers => {
-      console.log(carriers);
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
@@ -195,7 +194,6 @@ export class JailComponent implements OnInit {
   getCarriers(): void {
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
-      console.log(carriers);
 
       this.carriers = carriers;
       //this.carriers = this.carriers.map(this.isAvailableSend);
@@ -213,36 +211,10 @@ export class JailComponent implements OnInit {
   }
 
   isAvailableSend(carrier) {
-    let isAvailable =
-      carrier.packingSends.length > 0
-        ? carrier.packingSends[carrier.packingSends.length -1].isReception == false
-        : true;
+    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[carrier.packingSends.length - 1].isReception : true;
     if (isAvailable) {
-      // console.log('passa di qui');
-
-      if (isAvailable) {
-        let res =
-          carrier.carrierWarehousesDestiny.length == 0 ||
-          carrier.carrierWarehousesDestiny.length == 1;
-        return res;
-      }
-    }else{
-      // console.log(`${carrier.reference} passa da qui`);
-
-      let isAvailable2 =
-      carrier.packingSends.length > 0
-        ? carrier.packingSends[carrier.packingSends.length -1].isSend == true
-        : true;
-    if (isAvailable2) {
-      if (!isAvailable) {
-        let res =
-          carrier.carrierWarehousesDestiny.length == 0 ||
-          carrier.carrierWarehousesDestiny.length == 1;
-        return res;
-      }
+      return carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
     }
-    }
-
     return false;
   }
 
@@ -303,7 +275,7 @@ export class JailComponent implements OnInit {
     if (listaCarrier.length > 0) {
 
       listaSend = listaCarrier.filter(x => {
-        if (x.packingInventorys.length > 0 && x.status != 4 && x.carrierWarehousesDestiny.length === 1) {
+        if (x.packingInventorys.length > 0 && x.status !== 4 && x.carrierWarehousesDestiny.length === 1) {
           return x;
         }
       })

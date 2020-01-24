@@ -60,6 +60,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'ventilation-no-sorter',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/ventilation-no-sorter/ventilation-no-sorter.module#VentilationNoSorterModule',
+    data: {
+      name: 'Ventilación sin Sorter'
+    }
+  },
+  {
     path: 'new-products',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/new-products/new-products.module#NewProductsModule',
@@ -227,11 +235,27 @@ const routes: Routes = [
     }
   },
   {
+    path: 'print/product/list-products-carrier',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/page-list-products-carrier/page-list-products-carrier.module#PageListProductsCarrierModule',
+    data: {
+      name: 'Lista de Productos en Jaula'
+    }
+  },
+  {
     path: 'packing/transfer',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/transfer-packing/transfer-packing.module#TransferPackingModule',
     data: {
       name: 'Traspaso'
+    }
+  },
+  {
+    path: 'ventilation/transfer',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/transfer-ventilation/transfer-ventilation.module#TransferVentilationModule',
+    data: {
+      name: 'Ventilación de traspasos'
     }
   },
   {

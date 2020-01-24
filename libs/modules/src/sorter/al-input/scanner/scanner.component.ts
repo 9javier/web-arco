@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
-import {ScanditProvider} from "../../../../../services/src/providers/scandit/scandit.provider";
-import {IntermediaryService} from "@suite/services";
+import {ItemReferencesProvider} from "../../../../../services/src/providers/item-references/item-references.provider";
+import {CarrierService, IntermediaryService, InventoryModel, InventoryService} from "@suite/services";
 import {ProductSorterModel} from "../../../../../services/src/models/endpoints/ProductSorter";
 import {SorterInputService} from "../../../../../services/src/lib/endpoint/sorter-input/sorter-input.service";
 import {InputSorterModel} from "../../../../../services/src/models/endpoints/InputSorter";
@@ -15,6 +15,7 @@ import {Events, ModalController} from '@ionic/angular';
 import { ScannerRackComponent } from '../scanner-rack/scanner-rack.component';
 import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
+import {CarrierModel} from "../../../../../services/src/models/endpoints/carrier.model";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -38,6 +39,13 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
   productScanned: ProductSorterModel.ProductSorter = null;
 
+  productScanWithException: boolean = false;
+  destinyForProductScanWithException: boolean = false;
+  needScanNewPacking: boolean = false;
+
+  destinyCodeToGetPacking: string = null;
+  destiniesWithPacking: string[] = [];
+
   // Reset of scanner to scan same code multiple times
   private timeoutStarted = null;
   private readonly timeMillisToResetScannedCode: number = 1000;
@@ -53,10 +61,12 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     private sorterInputService: SorterInputService,
     private sorterExecutionService: SorterExecutionService,
     public sorterProvider: SorterProvider,
-    private scanditProvider: ScanditProvider,
+    private itemReferencesProvider: ItemReferencesProvider,
     private toolbarProvider: ToolbarProvider,
     private audioProvider: AudioProvider,
-    private keyboardService: KeyboardService
+    private keyboardService: KeyboardService,
+    private inventoryService: InventoryService,
+    private carrierService: CarrierService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
@@ -165,23 +175,31 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
 
     this.inputValue = null;
 
-    if (this.isWaitingSorterFeedback) {
-      if (this.productToSetInSorter !== dataWrote) {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 2000);
+    if (this.needScanNewPacking) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
+        this.checkPackingToUse(dataWrote);
       } else {
         this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError(`¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`, 2000);
+        await this.intermediaryService.presentToastError('El código escaneado no corresponde con el de un embalaje.', 'bottom');
+        this.focusToInput();
+      }
+    } else if (this.isWaitingSorterFeedback) {
+      if (this.productToSetInSorter !== dataWrote) {
+        this.audioProvider.playDefaultError();
+        await this.intermediaryService.presentToastError(`¡El producto ${this.productToSetInSorter} escaneado antes todavía no ha pasado por el sorter!`, 'bottom');
+      } else {
+        this.audioProvider.playDefaultError();
+        await this.intermediaryService.presentToastError(`¡Ya ha escanadeo el producto ${this.productToSetInSorter}! Introdúzcalo en el sorter para continuar.`, 'bottom');
       }
       this.focusToInput();
     } else {
-      if (this.scanditProvider.checkCodeValue(dataWrote) === this.scanditProvider.codeValue.PRODUCT) {
+      if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PRODUCT) {
         this.addScannerRackButton();
         await this.intermediaryService.presentLoading('Registrando entrada de producto...');
         this.inputProductInSorter(dataWrote);
       } else {
         this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
+        await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 'bottom');
         this.focusToInput();
       }
     }
@@ -266,7 +284,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       .then(async (res: InputSorterModel.ResponseProductScan) => {
         let resCode = res.code;
         if (resCode == 200) {
-          let resData = res.data;
+          const resData = res.data as InputSorterModel.ProductScan;
           this.productToSetInSorter = productReference;
           this.messageGuide = 'COLOQUE EL ARTÍCULO EN LA CALLE INDICADA';
 
@@ -297,6 +315,32 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
             this.checkProductInWay(productReference);
           }
           this.focusToInput();
+        } else if (resCode == 202) {
+          this.productToSetInSorter = productReference;
+          const resDataException = res.data as InputSorterModel.ProductScanException;
+          await this.intermediaryService.dismissLoading();
+          this.processStarted = true;
+          this.productScanWithException = true;
+          this.audioProvider.playDefaultOk();
+          if (resDataException.error.type == 'no_origin_scan') {
+            this.destinyForProductScanWithException = null;
+          } else if (resDataException.error.type == 'no_way_for_destiny') {
+            this.productScanned = {
+              reference: resDataException.info.product.reference,
+              model: {
+                reference: resDataException.info.product.model.reference
+              },
+              size: {
+                name: resDataException.info.product.size.name
+              },
+              destinyWarehouse: resDataException.info.destinyWarehouse ? {
+                id: resDataException.info.destinyWarehouse.id,
+                reference: resDataException.info.destinyWarehouse.reference,
+                name: resDataException.info.destinyWarehouse.name
+              } : null
+            };
+            this.destinyForProductScanWithException = null;
+          }
         } else {
           let resError = res.errors;
           await this.intermediaryService.dismissLoading();
@@ -429,6 +473,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     this.isWaitingSorterFeedback = false;
     this.isWaitingWayWillFree = false;
     this.lastProductIsToBusyWay = false;
+    this.productScanWithException = false;
+    this.destinyForProductScanWithException = false;
+    this.needScanNewPacking = false;
     this.productToSetInSorter = null;
     this.messageGuide = 'ESCANEE EL SIGUIENTE ARTÍCULO';
     this.productScanned = null;
@@ -472,5 +519,101 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     if(event && event.target && event.target.id){
       this.keyboardService.setInputFocused(event.target.id);
     }
+  }
+
+  async checkPackingToUse(packingReference: string) {
+    await this.intermediaryService.presentLoading('Comprobando embalaje y asignando al artículo...');
+
+    const params: CarrierModel.ParamsCheckPackingAvailability = {
+      packingReference: packingReference
+    };
+
+    if (this.destinyCodeToGetPacking == 'incidence') {
+      params.forIncidences = true;
+    } else {
+      params.destinyReference = this.destinyCodeToGetPacking;
+    }
+
+    this.carrierService
+      .postCheckPackingAvailability(params)
+      .then(async (res: CarrierModel.ResponseCheckPackingAvailability) => {
+        if (res.code == 200) {
+          this.assignToPacking(packingReference, false);
+        } else {
+          await this.intermediaryService.dismissLoading();
+          this.audioProvider.playDefaultError();
+          let errorMessage = `Ha ocurrido un error al intentar utilizar el embalaje ${packingReference}.`;
+          if (res.errors) {
+            errorMessage = res.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+          this.focusToInput();
+        }
+      })
+      .catch(async (error) => {
+        await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
+        let errorMessage = `Ha ocurrido un error al intentar utilizar el embalaje ${packingReference}.`;
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+        this.focusToInput();
+      });
+  }
+
+  async assignToPacking(packingReferenceToSet: string, showLoading: boolean = true) {
+    if (showLoading) {
+      await this.intermediaryService.presentLoading('Asignando artículo al embalaje...');
+    }
+
+    const params = {
+      productReference: this.productToSetInSorter,
+      avoidAvelonMovement: true,
+      packingReference: packingReferenceToSet,
+    };
+    this.inventoryService
+      .postStore(params)
+      .then(async (res: InventoryModel.ResponseStore) => {
+        await this.intermediaryService.dismissLoading();
+        if (res.code == 201) {
+          this.destiniesWithPacking[this.destinyCodeToGetPacking] = packingReferenceToSet;
+          await this.intermediaryService.presentToastSuccess(`El artículo se ha asignado al embalaje ${packingReferenceToSet}`, 4 * 1000, 'bottom');
+          this.resetLastScanProcess();
+          this.audioProvider.playDefaultOk();
+        } else {
+          this.audioProvider.playDefaultError();
+          let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;
+          if (res.errors && typeof res.errors == 'string') {
+            errorMessage = res.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+        }
+      })
+      .catch(async (error) => {
+        await this.intermediaryService.dismissLoading();
+        this.audioProvider.playDefaultError();
+        let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+      });
+  }
+
+  scanPacking(destinyPacking: string) {
+    this.destinyCodeToGetPacking = destinyPacking;
+    this.inputValue = null;
+    this.needScanNewPacking = true;
+    this.focusToInput();
+  }
+
+  cancelScanPacking() {
+    this.destinyCodeToGetPacking = null;
+    this.needScanNewPacking = false;
+  }
+
+  getPackingScanned(destinyToGet: string): string {
+    return this.destiniesWithPacking[destinyToGet] ? `(${this.destiniesWithPacking[destinyToGet]})` : '';
   }
 }
