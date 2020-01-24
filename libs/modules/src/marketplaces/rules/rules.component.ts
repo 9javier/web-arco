@@ -4,6 +4,7 @@ import { ModalController } from '@ionic/angular';
 import { NewRuleComponent } from './new-rule/new-rule.component';
 import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import { MatTableDataSource } from '@angular/material';
+import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 
 @Component({
   selector: 'suite-rules',
@@ -27,9 +28,10 @@ export class RulesComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private modalController: ModalController,
-    private marketplacesService: MarketplacesService
+    private marketplacesService: MarketplacesService,
+    private marketplacesMgaService: MarketplacesMgaService
   ) { 
-    console.log(this.route.snapshot.data['name'])
+    console.log(this.route.snapshot.data['name']);
   }
 
   ngOnInit() {
@@ -445,7 +447,7 @@ export class RulesComponent implements OnInit {
 
         this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
           console.log(data)
-        })
+        });
 
         if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 

@@ -12,6 +12,7 @@ import {MatInputModule, MatSelectModule} from '@angular/material';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
 import {MatListModule} from '@angular/material/list';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 //Components
 import { CatalogComponent } from './catalog/catalog.component';
@@ -130,7 +131,8 @@ const routes: Routes = [
     RulesModule,
     CategorizeProductsModule,
     RulesModule,
-    MatListModule
+    MatListModule,
+    MatPaginatorModule
   ]
 })
 export class MarketplacesModule { }

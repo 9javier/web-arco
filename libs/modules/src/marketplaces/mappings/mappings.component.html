@@ -42,8 +42,12 @@
                 </mat-select>
               </td>
             </ng-container>
-
           </table>
+          <mat-paginator
+            *ngIf="dataSourceMappingBrands?.filteredData.length > 10"
+            [length]="dataSourceMappingBrands?.filteredData.length"
+            [pageSize]="10">
+          </mat-paginator>
         </div>
       </div>
 
@@ -91,8 +95,12 @@
                 </mat-select>
               </td>
             </ng-container>
-
           </table>
+          <mat-paginator
+            *ngIf="dataSourceMappingFeatures?.filteredData.length > 10"
+            [length]="dataSourceMappingFeatures?.filteredData.length"
+            [pageSize]="10">
+          </mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>
@@ -139,8 +147,12 @@
                 </mat-select>
               </td>
             </ng-container>
-
           </table>
+          <mat-paginator
+            *ngIf="dataSourceMappingColors?.filteredData.length > 10"
+            [length]="dataSourceMappingColors?.filteredData.length"
+            [pageSize]="10">
+          </mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>
@@ -187,8 +199,12 @@
                 </mat-select>
               </td>
             </ng-container>
-
           </table>
+          <mat-paginator
+            *ngIf="dataSourceMappingSizes?.filteredData.length > 10"
+            [length]="dataSourceMappingSizes?.filteredData.length"
+            [pageSize]="10">
+          </mat-paginator>
         </div>
       </div>
     </mat-expansion-panel>

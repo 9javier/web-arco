@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
-import { MatTableDataSource } from '@angular/material';
+import { MarketplacesPrestaService } from '../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
+import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'suite-mappings',
@@ -11,7 +13,7 @@ import { MatTableDataSource } from '@angular/material';
 
 export class MappingsComponent implements OnInit {
 
-
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   private dataSourceBrands;
   private dataSourceMappingBrands;
   private brandsList;
@@ -34,7 +36,9 @@ export class MappingsComponent implements OnInit {
   constructor(
       private route: ActivatedRoute,
       private router : Router,
-      private marketplacesService: MarketplacesService
+      private marketplacesService: MarketplacesService,
+      private marketplacesPrestaService: MarketplacesPrestaService,
+      private marketplacesMgaService: MarketplacesMgaService
     ) {
     console.log(this.route.snapshot.data['name']) 
   }
@@ -60,12 +64,39 @@ export class MappingsComponent implements OnInit {
         marketData: {id: 3, name: 'ASICS'}
       }
     ];
+
+    this.marketplacesMgaService.getBrands().subscribe(data => {
+      if(data) {
+        data.forEach(brand => {
+          this.dataSourceBrands.push({
+            id: brand.id,
+            avelonData: {id: brand.id, name: brand.name},
+            marketData: {id: -1, name: null}
+          })
+        })
+      }
+    });
+
     this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
+    setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
+
     this.brandsList = [
       {id: 1, name: 'ADIDAS'},
       {id: 2, name: 'AMANDA'},
       {id: 3, name: 'ASICS'},
     ];
+
+    this.marketplacesPrestaService.getBrands().subscribe(data => {
+      if(data) {
+        data.data.results.forEach(brand => {
+          this.brandsList.push({
+            id: brand.id_manufacturer,
+            name: brand.name
+          })
+        });
+      }
+    });
+
 
     this.dataSourceColors = [
       {
@@ -84,12 +115,38 @@ export class MappingsComponent implements OnInit {
         marketData: {id: -1, name: null}
       }
     ];
+
+    this.marketplacesMgaService.getColors().subscribe(data => {
+      if(data) {
+        data.forEach(color => {
+          this.dataSourceColors.push({
+            id: color.id,
+            avelonData: {id: color.id, name: color.name},
+            marketData: {id: -1, name: null}
+          });
+        });
+      }
+    });
+
     this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
+    setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
+
     this.colorsList = [
       {id: 4, name: 'AZUL OSCURO'},
       {id: 5, name: 'ROJO'},
       {id: 6, name: 'AMARILLO'}
     ];
+
+    this.marketplacesPrestaService.getColors().subscribe(data => {
+      if(data) {
+        data.data.results.forEach(color => {
+          this.colorsList.push({
+            id: color.id_attribute,
+            name: color.name
+          });
+        });
+      }
+    });
 
     this.dataSourceSizes = [
       {
@@ -108,12 +165,39 @@ export class MappingsComponent implements OnInit {
         marketData: {id: 9, name: '39'}
       }
     ];
+
+    this.marketplacesMgaService.getSizes().subscribe(data => {
+      if(data) {
+        data.forEach(size => {
+          this.dataSourceSizes.push({
+            id: size.id,
+            avelonData: {id: size.id, name: size.name},
+            marketData: {id: -1, name: null}
+          });
+        });
+      }
+    });
+
     this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+    setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
+
+
     this.sizesList = [
       {id: 7, name: '37'},
       {id: 8, name: '38'},
       {id: 9, name: '39'},
     ];
+
+    this.marketplacesPrestaService.getSizes().subscribe(data => {
+      if(data) {
+        data.data.results.forEach(size => {
+          this.sizesList.push({
+            id: size.id_attribute,
+            name: size.name
+          });
+        });
+      }
+    });
 
     this.dataSourceFeatures = [
       {
@@ -132,12 +216,38 @@ export class MappingsComponent implements OnInit {
         marketData: {id: 12, name: 'BOTINES'}
       }
     ];
+
+    this.marketplacesMgaService.getFeaturesByMarket(1).subscribe(data => {
+      if(data) {
+        data.forEach(feature => {
+          this.dataSourceFeatures.push({
+            id: feature.id,
+            avelonData: {id: feature.id, name: feature.name},
+            marketData: {id: -1, name: null}
+          });
+        });
+      }
+    });
+
     this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+    setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+
     this.featuresList = [
       {id: 10, name: 'NIÑO'},
       {id: 11, name: 'BOTAS'},
       {id: 12, name: 'BOTINES'},
     ];
+
+    this.marketplacesPrestaService.getFeatures().subscribe(data => {
+      if(data) {
+        data.data.results.forEach(feature => {
+          this.featuresList.push({
+            id: feature.id,
+            name: feature.name
+          })
+        });
+      }
+    });
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
