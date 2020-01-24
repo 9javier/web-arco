@@ -22,7 +22,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   interval: any;
   option:any;
   typeScreen: number;
-
+  filter
   objectType = Type;
   filterData: ReceptionAvelonModel.Reception;
   result: ReceptionAvelonModel.Print = {
@@ -35,7 +35,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     expedition: '',
     ean: ''
   };
-
+  providersAux
+  value
   getReceptionsNotifiedProviders$: Subscription;
 
   constructor(
@@ -54,6 +55,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.isProviderAviable = false;
     this.subscriptions = this.reception.getAllProviders().subscribe((data: Array<ReceptionAvelonModel.Providers>) => {
       this.providers = data;
+      this.providersAux = data;
     },
       e => {
         this.intermediaryService.dismissLoading()
@@ -195,22 +197,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         model = model.concat(this.response.models.filter(elem => elem.id == id))
         size = size.concat(this.response.sizes.filter(elem => {
           const result = elem.belongsModels.find(model => model == id)
-          findResult = color.find(elem => elem.id == dato.id)
-          if (result && !findResult) {
+          if (result && size.find(elem => elem.id == dato.id) == undefined) {
             return elem
           }
         }))
         brand = brand.concat(this.response.brands.filter(elem => {
           const result = elem.belongsModels.find(model => model == id)
-          findResult = color.find(elem => elem.id == dato.id)
-          if (result && !findResult) {
+          if (result && brand.find(elem => elem.id == dato.id) == undefined) {
             return elem
           }
         }))
         color = color.concat(this.response.colors.filter(elem => {
           const result = elem.belongsModels.find(model => model == id)
-          findResult = color.find(elem => elem.id == dato.id)
-          if (result && !findResult) {
+          if (result && color.find(elem => elem.id == dato.id) == undefined) {
             return elem
           }
         }))
@@ -468,5 +467,45 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   screenExit(e){
     this.typeScreen = undefined
+  }
+
+  changeProvider(e) {
+    const value: string = e.detail.value
+    if (value.length > 0) {
+      this.filter = true
+    } else {
+      this.filter = false
+    }
+    console.log(this.filter);
+    
+    this.providers = this.providersAux
+
+    // if the value is an empty string don't filter the items
+    if (value && value.trim() != '') {
+      this.providers = this.providers.filter((item) => {
+        return (item.name.toLowerCase().indexOf(value.toLowerCase()) > -1);
+      })
+    }
+    
+  }
+  click(e){
+    this.filter= true
+  }
+  load(item){
+      this.value = item.name
+      this.filter= false
+      this.providerId = item.id;
+      const data: ReceptionAvelonModel.CheckProvider = {
+        expedition: this.expedition,
+        providerId: this.providerId
+      }
+
+      if (data.expedition === undefined || data.expedition.length === 0) {
+        this.alertMessage('El numero de expedicion no puede estar vacio');
+        return
+      }
+
+      this.checkProvider(data)
+
   }
 }

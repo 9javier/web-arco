@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Agregar Roles - {{userName}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div class="controls-container">
+    <p>
+      <mat-form-field appearance="outline">
+        <mat-label>Almacen*</mat-label>
+        <mat-icon matPrefix>format_line_spacing</mat-icon>
+        <mat-select (selectionChange)="changeSelect($event.value)" [(value)]="warehouses[0].id">
+          <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
+            {{warehouse.reference}} - {{warehouse.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error>Este campo es requerido.</mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-label class="float-label">Roles*</mat-label>
+      <mat-form-field appearance="outline" class="content-checkbox">
+        <input matInput [hidden] = true>
+        <ion-list>
+          <ion-item *ngFor="let rol of form.roles">
+            <ion-label>{{rol.name}}</ion-label>
+            <ion-checkbox [value]="rol.value" [ngModel]="rol.isChecked" (ionChange)="changeCheckbox(rol.value, rol.isChecked)" color="dark" slot="start"></ion-checkbox>
+          </ion-item>
+        </ion-list>
+      </mat-form-field>
+    </p>
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button slot="end" color="primary" type="submit" [disabled]="form.invalid" (click)="onSubmit()">Guardar</ion-button>
+  </ion-toolbar>
+</ion-footer>

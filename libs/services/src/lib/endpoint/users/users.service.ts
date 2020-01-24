@@ -31,6 +31,7 @@ export class UsersService {
   private getShowUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private putUpdateUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private delDestroyUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
+  private addWarehouseInUserUrl:string = environment.apiBase+"/gestion-permissions/users/newUpRoles";
   private hasDeleteProductPermissionUrl:string = environment.apiBase+"/gestion-permissions/users/has-delete-product-permission";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
@@ -108,5 +109,14 @@ export class UsersService {
         headers: headers,
         observe: 'response'
       });
+  }
+
+  async updateWarehouseInUser(body: any): Promise<Observable<HttpResponse<UserModel.ResponseStore>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<UserModel.ResponseStore>(this.addWarehouseInUserUrl, body, {
+      headers: headers,
+      observe: 'response'
+    });
   }
 }

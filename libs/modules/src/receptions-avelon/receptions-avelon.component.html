@@ -12,12 +12,20 @@
         <ion-col size="4">
           <ion-item lines="none">
             <ion-label>Proveedor</ion-label>
-            <ion-select (ionChange)="proveedorSelected($event)">
+            <ion-input [value]="value" type="text" (click)="click($event)" (ionChange)="changeProvider($event)" ></ion-input>
+            <!-- <ion-select (ionChange)="proveedorSelected($event)">
               <ion-select-option  *ngFor="let item of providers" [value]="item.id">
                  {{item.name}}
               </ion-select-option>
-            </ion-select>
+            </ion-select> -->
           </ion-item>
+          <ng-container *ngIf="filter" >
+            <ion-list>
+              <ion-item class="item-filter" (click)="load(provier)" *ngFor="let provier of providers"  lines="none"> 
+                <ion-label>{{provier.name}}</ion-label>
+              </ion-item>
+            </ion-list>
+          </ng-container>
         </ion-col>
         <ion-col *ngIf="isProviderAviable" size="4">
           <ion-button class="ion-float-end" (click)="reset()">
