@@ -27,6 +27,7 @@ export class UsersService {
 
   /**Urls for users service */
   private getIndexUrl:string = environment.apiBase+"/gestion-permissions/users";
+  private getAllUserWarehouseUrl:string = environment.apiBase+"/gestion-permissions/users/usersroleswarehouses";
   private postStoreUrl:string = environment.apiBase+"/gestion-permissions/users";
   private getShowUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private putUpdateUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
@@ -44,6 +45,16 @@ export class UsersService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  async getUserRolesWarehouse(): Promise<Observable<HttpResponse<UserModel.ResponseIndex>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.get<UserModel.ResponseIndex>(
+      this.getAllUserWarehouseUrl, {
+        headers: headers,
+        observe: 'response'
+      });
   }
 
   async postStore(
