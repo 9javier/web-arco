@@ -102,21 +102,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if(this.sorterProvider.infoSorterOutputOperation){
-      // console.log(this.sorterProvider);
-    }
     this.infoSorterOperation = this.sorterProvider.infoSorterOutputOperation;
-    // if(this.infoSorterOperation.packingReference){
-    //   if(this.infoSorterOperation.packingReference !== null){
-    //     this.assignPackingToProcess(this.infoSorterOperation.packingReference.toString())
-    //     console.log(this.infoSorterOperation.packingReference.toString());
-    //   }
-    //   if(this.infoSorterOperation.packingReference === null || this.infoSorterOperation.packingReference === undefined){
-    //     console.log('nullo');
-
-    //   }
-    //   console.log(this.infoSorterOperation);
-    // }
     this.getTypes();
     this.getGlobalVariables();
   }
@@ -151,8 +137,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       if(data.data === undefined && data.role === undefined){
         this.focusToInput();
         return;
-        // TODO prova commit
-
       }
 
       if(data.data && data.role === undefined){
@@ -177,9 +161,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   async keyUpInput(event?,test = false) {
     let dataWrote = (this.inputValue || "").trim();
     
-    // TODO Utima referenza 
     this.ultimaReferenza = dataWrote;
-    // console.log(this.ultimaReferenza);
 
     if (event.keyCode === 13 || test && dataWrote) {
       if (dataWrote === this.lastCodeScanned) {
@@ -405,16 +387,13 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   /**
    * @description Alert cuando terminan las calles por warehoise
    */
-  private async nuevaAlert(almacen:string | null = null ){
+  private async nuevaAlert(){
+    const referenceWarehouseEmptying = this.infoSorterOperation.destinyWarehouse.reference;
     this.alerta = false;
-    let message = `No hay calles para vaciar por Almacen ${almacen} <br>,
-                   escanear nueva Jaula, 
-                   la ${this.sorterProvider.infoSorterOutputOperation.packingReference} 
-                   tiene destino diferente`;
+
     let alert = await this.alertController.create({
-      header: '¡Calles terminadas!',
-      message,
-      buttons:['OK']
+      message: `No hay más calles a vaciar para la tienda ${referenceWarehouseEmptying}.<br/>Deberá escanear un nuevo embalaje para continuar el vaciado de otras calles con otro destino.`,
+      buttons: ['Continuar']
     });
 
     await alert.present();
@@ -457,8 +436,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.focusToInput();
         } else {
           this.ULTIMA_JAULA = null;
-          if(res.code === 405 && this.alerta){
-            this.nuevaAlert(this.lastWarehouseReference)
+          if(res.code === 405 && this.alerta) {
+            this.nuevaAlert()
           }
           this.audioProvider.playDefaultError();
           let errorMessage = 'Ha ocurrido un error al intentar asignar el embalaje escaneado al proceso.';
@@ -609,7 +588,6 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
       });
   }
 
-  // TODO registra el paking come lleno
   private async setPackingAsFull() {
 
     await this.intermediaryService.presentLoading('Registrado embalaje como lleno...');
@@ -629,7 +607,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
           this.hideLeftButtonFooter = true;
           this.hideRightButtonFooter = true;
           this.infoSorterOperation.packingReference = null;
-          this.messageGuide = 'Escanea una jaula nueva para continuar';
+          this.messageGuide = 'Escanea un embalaje nuevo para continuar';
           await this.intermediaryService.presentToastSuccess('Embalaje registrado como lleno en el sistema. Escanea un nuevo embalaje para continuar con el proceso.');
           await this.intermediaryService.dismissLoading();
           this.focusToInput();
@@ -668,8 +646,7 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
   private async jaulaLlena(){
     this.alerta = false;
     let alert = await this.alertController.create({
-      header:`¿La Jaula ${this.infoSorterOperation.packingReference} esta llena? `,
-      // message:'¿La Calle esta vacia desea cambiar la Jaula?',
+      header:`¿El embalaje ${this.infoSorterOperation.packingReference} está lleno? `,
       buttons:[
         {
           text:'SI',

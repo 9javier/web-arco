@@ -36,7 +36,8 @@ export class PrinterService {
     private intermediaryService: IntermediaryService,
     private settingsService: SettingsService,
     private priceService: PriceService,
-    private requestsProvider: RequestsProvider) { }
+    private requestsProvider: RequestsProvider
+  ) { }
 
   public async openConnection(showAlert: boolean = false) {
     this.address = await this.getConfiguredAddress();
@@ -327,6 +328,14 @@ export class PrinterService {
       console.debug("PRINT::printNotify 2 [" + new Date().toJSON() + "]", ids);
       return true;
     }));
+  }
+
+  /**
+   * Send notification to server after print any labels and return the result inside a promise because the observable fails with android activity
+   * @param ids - the ids of printed labels
+   */
+  printNotifyPromiseReturned(ids: number[]): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.printNotifyUrl, { references: ids });
   }
 
   printNotifyNewProduct(optionPrice: any): Observable<boolean> {

@@ -134,7 +134,12 @@ export class LoginComponent implements OnInit {
     return 0;
   }
 
-  login(user: RequestLogin) {
+  login(form) {
+    const user: RequestLogin = {
+      username: form.form.value.email,
+      password: form.form.value.password,
+      grant_type: 'password'
+    };
     this.showLoading('Iniciando sesión...').then(() => {
       this.loginService.post_login(user, AppInfo.Name.Sga).subscribe(
         (data: HttpResponse<ResponseLogin>) => {
@@ -154,9 +159,11 @@ export class LoginComponent implements OnInit {
             this.loading = null;
           }
           if (errorResponse.status === 0) {
-            this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor");
+            this.intermediaryService.presentToastError("Ha ocurrido un error al conectar con el servidor. \nRevise su conexión a internet antes de continuar.");
+          } else if (errorResponse.status == 401) {
+            this.intermediaryService.presentToastError("Los datos de usuario o contraseña introducidos son incorrectos. Inténtelo de nuevo.");
           } else {
-            this.intermediaryService.presentToastError("Error en usuario o contraseña");
+            this.intermediaryService.presentToastError("Ha ocurrido un error al intentar conectar con el servidor. \nVuelva a intentarlo en un rato o contacte con su encargado en caso de que el problema persista.");
           }
         }
       );
