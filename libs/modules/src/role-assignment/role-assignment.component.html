@@ -8,15 +8,15 @@
       </ng-container>
       <ng-container *ngFor="let role of dataSourceRoles;let i = index" matColumnDef="{{ role.id }}">
         <mat-header-cell *matHeaderCellDef class="centre-header">{{ role.name }}</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="centre-cell">
-          <mat-checkbox [ngModel] = element.roles[i] (change)="changeCheckRol($event, element, i)"></mat-checkbox>
+        <mat-cell *matCellDef="let element; let id = index" class="centre-cell">
+          <mat-checkbox [ngModel] = element.roles[i].checked (change)="changeCheckRol($event, id, element, i)"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <ng-container matColumnDef="clear">
         <mat-header-cell *matHeaderCellDef class="centre-header">Limpiar</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="centre-cell buttons">
+        <mat-cell *matCellDef="let element; let id = index" class="centre-cell buttons">
           <div class="content-button-cell">
-            <button matTooltip="Limpiar" matTooltipClass="tooltip" mat-icon-button (click)="clearRow(element)">
+            <button matTooltip="Limpiar" matTooltipClass="tooltip" mat-icon-button (click)="clearRow(id, element)">
               <mat-icon class="mat-18">undo</mat-icon>
             </button>
           </div>
@@ -25,9 +25,9 @@
 
       <ng-container matColumnDef="delete">
         <mat-header-cell *matHeaderCellDef class="centre-header">Eliminar</mat-header-cell>
-        <mat-cell *matCellDef="let element" class="centre-cell buttons">
+        <mat-cell *matCellDef="let element; let id = index" class="centre-cell buttons">
           <div class="content-button-cell">
-            <button matTooltip="Eliminar" matTooltipClass="tooltip" mat-icon-button (click)="deleteRow(element)">
+            <button matTooltip="Eliminar" matTooltipClass="tooltip" mat-icon-button (click)="deleteRow(id, element)">
               <mat-icon class="mat-18">delete</mat-icon>
             </button>
           </div>
@@ -37,13 +37,20 @@
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{ 'collapsed': !row.expanded }"></mat-row>
       <ng-container matColumnDef="groupHeader">
-        <mat-cell colspan="999" *matCellDef="let group">
-          <mat-icon *ngIf="group.expanded">expand_less</mat-icon>
-          <mat-icon *ngIf="!group.expanded">expand_more</mat-icon>
-          <strong>{{group.userName}}</strong>
+        <mat-cell colspan="999" *matCellDef="let group" (click)="groupHeaderClick(group)">
+          <mat-icon *ngIf="group.expanded" [class.opacity-icon]="!group.hasPermits">expand_less</mat-icon>
+          <mat-icon *ngIf="!group.expanded" [class.opacity-icon]="!group.hasPermits">expand_more</mat-icon>
+          <strong>{{group.userName}} {{group.hasPermits ? '' : ' ---- Sin roles asignados'}}</strong>
         </mat-cell>
       </ng-container>
-      <mat-row *matRowDef="let row; columns: ['groupHeader']; when: isGroup" (click)="groupHeaderClick(row)"> </mat-row>
+      <ng-container matColumnDef="buttonGroup">
+        <mat-cell colspan="999" *matCellDef="let group">
+          <button class="button-add-role" matTooltip="Agregar" matTooltipClass="tooltip" mat-icon-button (click)="addRol(group)">
+            <mat-icon class="mat-18">add</mat-icon>
+          </button>
+        </mat-cell>
+      </ng-container>
+      <mat-row *matRowDef="let row; columns: ['groupHeader', 'buttonGroup']; when: isGroup"> </mat-row>
     </mat-table>
   </div>
 </ion-content>
