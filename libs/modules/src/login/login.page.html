@@ -1,5 +1,6 @@
 <ion-content class="ion-padding">
-  <ion-grid class="wrapper-login-form ion-justify-content-between ion-text-center">
+  <form  #form="ngForm" (ngSubmit)="login(form)">
+    <ion-grid class="wrapper-login-form ion-justify-content-between ion-text-center">
     <ion-row *ngIf="isNewVersion">
       <ion-col>
          <div>
@@ -15,69 +16,69 @@
         </div>
       </ion-col>
     </ion-row>
-    <ion-row class="input-wrapper">
-      <ion-col>
-        <div>
-          <ion-item lines="full">
-            <ion-icon name="person"></ion-icon
-            ><ion-input
+      <ion-row class="input-wrapper">
+        <ion-col>
+          <div>
+            <ion-item lines="full">
+              <ion-icon name="person"></ion-icon
+              ><ion-input
+                (ionFocus)="hide()"
+                (ionBlur)="recover()"
+                placeholder="usuario"
+                class="ion-margin-horizontal"
+                [(ngModel)]="user.username"
+                name="email" ngModel required
+              ></ion-input>
+            </ion-item>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div>
+            <ion-item>
+              <ion-icon name="lock"></ion-icon>
+              <ion-input
               (ionFocus)="hide()"
-              (ionBlur)="recover()"
-              placeholder="Nombre"
-              class="ion-margin-horizontal"
-              [(ngModel)]="user.username"
-              type="email"
-              email
-            ></ion-input>
-          </ion-item>
-        </div>
-      </ion-col>
-      <ion-col>
-        <div>
-          <ion-item>
-            <ion-icon name="lock"></ion-icon>
-            <ion-input
-            (ionFocus)="hide()"
-              (ionBlur)="recover()"
-              placeholder="Contraseña"
-              class="ion-margin-horizontal"
-              [(ngModel)]="user.password"
-              type="password"
-              #passwordInput
-            ></ion-input>
-            <ion-icon
-              *ngIf="passwordInput.type === 'password'"
-              name="eye"
-              (click)="
-                passwordInput.type === 'password'
-                  ? (passwordInput.type = 'text')
-                  : (passwordInput.type = 'password')
-              "
-            ></ion-icon>
-            <ion-icon
-              *ngIf="passwordInput.type === 'text'"
-              name="eye-off"
-              (click)="
-                passwordInput.type === 'password'
-                  ? (passwordInput.type = 'text')
-                  : (passwordInput.type = 'password')
-              "
-            >
-            </ion-icon>
-          </ion-item>
-        </div>
-      </ion-col>
-    </ion-row>
-    <ion-row class="actions-wrapper">
-      <ion-col>
-        <div>
-          <ion-button expand="full" (click)="login(user)" z>Entrar</ion-button>
-          <a (click)="presentPasswordAlert()" color="dark">¿Contraseña?</a>
-          <p class="version-number" *ngIf="isMobileApp">
-            V {{versionNumber}}
-          </p>
-        </div>
-      </ion-col>
-    </ion-row>
+                (ionBlur)="recover()"
+                placeholder="contraseña"
+                class="ion-margin-horizontal"
+                type="password"
+                #passwordInput
+              name="password" ngModel required
+              ></ion-input>
+              <ion-icon
+                *ngIf="passwordInput.type === 'password'"
+                name="eye"
+                (click)="
+                  passwordInput.type === 'password'
+                    ? (passwordInput.type = 'text')
+                    : (passwordInput.type = 'password')
+                "
+              ></ion-icon>
+              <ion-icon
+                *ngIf="passwordInput.type === 'text'"
+                name="eye-off"
+                (click)="
+                  passwordInput.type === 'password'
+                    ? (passwordInput.type = 'text')
+                    : (passwordInput.type = 'password')
+                "
+              >
+              </ion-icon>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row class="actions-wrapper">
+        <ion-col>
+          <div>
+            <ion-button expand="full" type="submit" [disabled]="form.invalid">Entrar</ion-button>
+            <a (click)="presentPasswordAlert()" color="dark">¿Contraseña?</a>
+            <p class="version-number" *ngIf="isMobileApp">
+              V {{versionNumber}}
+            </p>
+          </div>
+        </ion-col>
+      </ion-row>
   </ion-grid>
+  </form>
 </ion-content>

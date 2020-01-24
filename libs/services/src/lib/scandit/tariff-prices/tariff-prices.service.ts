@@ -8,6 +8,8 @@ import {PrinterService} from "../../printer/printer.service";
 import Price = PriceModel.Price;
 import {LocalStorageProvider} from "../../../providers/local-storage/local-storage.provider";
 import {PrintModel} from "../../../models/endpoints/Print";
+import {Events} from "@ionic/angular";
+import {environment as al_environment} from "../../../../../../apps/al/src/environments/environment";
 
 declare let ScanditMatrixSimple;
 
@@ -24,6 +26,8 @@ export class TariffPricesScanditService {
   priceOptions: PriceModel.PriceByModelTariff[];
   reprint: boolean;
   priceData: string[];
+  private readonly timeMillisToResetScannedCode: number = 1000;
+  private timeoutStarted = null;
 
   constructor(
     private router: Router,
@@ -31,17 +35,22 @@ export class TariffPricesScanditService {
     private itemReferencesProvider: ItemReferencesProvider,
     private priceService: PriceService,
     private printerService: PrinterService,
-    private localStorageProvider: LocalStorageProvider
-  ) {}
+    private localStorageProvider: LocalStorageProvider,
+    private events: Events
+  ) {
+    this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
+  }
 
   public init(warehouseId: number, tariffId: number) {
     this.warehouseId = warehouseId;
     this.tariffId = tariffId;
     this.tariffName = Object.values(this.localStorageProvider.get('tariffName'))[1];
-    this.lastBarcode = null;
+    this.lastBarcode = 'start';
     ScanditMatrixSimple.initTariffPrices(
       response => {
-        if(response.barcode != undefined && response.barcode.data) {
+        if(response && response.result && response.actionIonic){
+          this.executeAction(response.actionIonic, response.params);
+        } else if(response.barcode != undefined && response.barcode.data) {
           this.checkAndPrint(response.barcode.data);
         } else if(response.size_selected != undefined){
           this.priceToPrint = this.priceOptions[response.size_selected];
@@ -85,6 +94,7 @@ export class TariffPricesScanditService {
   checkAndPrint(barcode: string) {
     if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
+      ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
         let reference: PriceModel.ProductsReferences = {
           references: [barcode],
@@ -152,8 +162,9 @@ export class TariffPricesScanditService {
             this.priceData[4] = 'Nuevo';
             this.priceData[0] = 'Imprimiendo...';
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-            this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-              this.printerService.printNotify([this.priceToPrint.id]);
+            this.printerService.printTagPriceUsingPrice([this.priceToPrint], async ()=>{
+              await this.printerService.printNotifyPromiseReturned([this.priceToPrint.id]);
+              this.events.publish('setProductAsPrinted');
               this.priceData[0] = 'Artículo impreso con éxito.';
               ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
             }, ()=>{
@@ -165,8 +176,9 @@ export class TariffPricesScanditService {
             this.priceData[4] = 'Actualizado';
             this.priceData[0] = 'Imprimiendo...';
             ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-            this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-              this.printerService.printNotify([this.priceToPrint.id]);
+            this.printerService.printTagPriceUsingPrice([this.priceToPrint], async ()=>{
+              await this.printerService.printNotifyPromiseReturned([this.priceToPrint.id]);
+              this.events.publish('setProductAsPrinted');
               this.priceData[0] = 'Artículo impreso con éxito.';
               ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
             }, ()=>{
@@ -205,8 +217,9 @@ export class TariffPricesScanditService {
       this.priceData[6] = 'button reprint';
       this.priceData[0] = 'Imprimiendo...';
       ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
-      this.printerService.printTagPriceUsingPrice([this.priceToPrint], ()=>{
-        this.printerService.printNotify([this.priceToPrint.id]);
+      this.printerService.printTagPriceUsingPrice([this.priceToPrint], async ()=>{
+        await this.printerService.printNotifyPromiseReturned([this.priceToPrint.id]);
+        this.events.publish('setProductAsPrinted');
         this.priceData[0] = 'Artículo re-impreso con éxito.';
         ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
       }, ()=>{
@@ -234,6 +247,21 @@ export class TariffPricesScanditService {
           ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
         });
       });
+    }
+  }
+
+  private executeAction(action: string, paramsString: string){
+    let params = [];
+    try{
+      params = JSON.parse(paramsString);
+    } catch (e) {
+
+    }
+
+    switch (action){
+      case 'lastCodeScannedStart':
+        this.lastBarcode = 'start';
+        break;
     }
   }
 
