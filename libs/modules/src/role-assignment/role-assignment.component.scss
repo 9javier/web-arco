@@ -10,11 +10,9 @@
 
 .centre-cell.mat-cell.buttons {
   .content-button-cell {
-    padding-left: 30px;
-    padding-right: 30px;
     button {
       text-align: center;
-      width: 100%;
+      width: 60px;
       background: #000000;
       border-radius: 6px;
 
@@ -27,6 +25,24 @@
 
 .table-container {
   ::ng-deep {
+
+    .button-add-role {
+      z-index: 99999;
+      position: absolute;
+      right: 20px;
+      text-align: center;
+      width: 60px;
+      background: #000000;
+      border-radius: 6px;
+
+      mat-icon {
+        color: #eeeeee;
+      }
+    }
+
+    .opacity-icon {
+      opacity: 0 !important;
+    }
 
     .collapsed {
       display: none !important;

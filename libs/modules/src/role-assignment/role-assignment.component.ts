@@ -11,12 +11,15 @@ import {
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
+import { AlertController, ModalController } from '@ionic/angular';
+import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
 
 export interface WarehouseElement {
+  rowParentId: number,
   parentUser: number,
   warehouseId: number,
   warehouseName: string;
-  roles: boolean[];
+  roles: {id: number, checked: boolean};
   expanded: boolean;
 }
 
@@ -24,6 +27,8 @@ export interface GroupBy {
   userId: number;
   userName: string;
   isGroupBy: boolean;
+  hasPermits: boolean;
+  hasAllWarehouse: boolean,
   expanded: boolean;
 }
 
@@ -40,7 +45,7 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
   dataSourceRoles: RolModel.Rol[];
   displayedColumns: string[] = ['warehouse'];
   selectWarehouse;
-  listToUpdate: WarehouseElement[] = [];
+  listToUpdate = [];
 
   ELEMENT_DATA: (WarehouseElement | GroupBy)[] = [];
   ELEMENT_DATA_ORIGINAL: (WarehouseElement | GroupBy)[] = [];
@@ -50,48 +55,65 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     private usersService: UsersService,
     private rolesService: RolesService,
     private warehousesService: WarehousesService,
-  ) { }
+    private alertController: AlertController,
+    private modalController: ModalController,
+  ) {
+    this.getWarehouses();
+  }
 
   async ngOnInit() {}
 
-  ngAfterViewInit(): void {
-    this.getRoles().then(async () => {
-      this.getUsers().then(async () => {
-        await this.intermediaryService.dismissLoading();
+  async ngAfterViewInit() {
+    await this.getRolesAndUsers();
+  }
+
+  async getRolesAndUsers(userId: number = null) {
+    await this.intermediaryService.presentLoading('Un momento ...');
+    await this.getRoles().then(async () => {
+      await this.getUsers(userId).then(async () => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.dismissLoading();
       });
     });
   }
 
-  async getUsers() {
+  async getUsers(userId: number = null) {
+    this.ELEMENT_DATA = [];
+    this.ELEMENT_DATA_ORIGINAL = [];
+    this.dataSourceUsers = [];
     await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
         const users = res.body.data;
 
         if (users && users.length > 0) {
           users.forEach((user: any) => {
-            this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, isGroupBy: true, expanded: false});
+            const hasPermits = user.permits.length > 0;
+            const hasAllWarehouse = user.permits.length === this.dataSourceWarehouses.length;
+            const expanded = user.id === userId;
+            const rowId = this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, isGroupBy: true, hasPermits: hasPermits, hasAllWarehouse: hasAllWarehouse, expanded: expanded});
 
             if (user.permits && user.permits.length > 0) {
               user.permits.forEach((permit: any) => {
                 if (permit.warehouse && permit.roles && permit.roles.length > 0) {
-                  const roles = [];
+                  const roles = <any>[];
 
                   this.dataSourceRoles.forEach((dataRol) => {
                     const find = permit.roles.find(x => x.rol.id === dataRol.id);
                     if (find) {
-                      roles.push(true);
+                      roles.push({id: dataRol.id, checked: true});
                     } else {
-                      roles.push(false);
+                      roles.push({id: dataRol.id, checked: false});
                     }
                   });
 
-                  this.ELEMENT_DATA.push({parentUser: user.id, warehouseId: permit.warehouse.id, warehouseName: permit.warehouse.name, roles: roles, expanded: false});
+                  this.ELEMENT_DATA.push({rowParentId: rowId-1, parentUser: user.id, warehouseId: permit.warehouse.id, warehouseName: permit.warehouse.name, roles: roles, expanded: expanded});
                 }
               })
             }
           });
 
-          this.ELEMENT_DATA_ORIGINAL = this.ELEMENT_DATA;
+          this.ELEMENT_DATA_ORIGINAL = JSON.parse(JSON.stringify(this.ELEMENT_DATA));
 
           this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
         }
@@ -103,7 +125,7 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
   }
 
   async getRoles() {
-    await this.intermediaryService.presentLoading('Un momento ...');
+    this.displayedColumns = ['warehouse'];
     this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
         this.dataSourceRoles = res.body.data;
@@ -141,86 +163,212 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     return item.isGroupBy;
   }
 
-  groupHeaderClick(row: any) {
-    row.expanded = !row.expanded;
-    this.ELEMENT_DATA.forEach((element: any) => {
-      if (element.parentUser === row.userId){
-        element.expanded = row.expanded;
+  groupHeaderClick(group: any) {
+    if (group.hasPermits) {
+      group.expanded = !group.expanded;
+      this.ELEMENT_DATA.forEach((element: any) => {
+        if (element.parentUser === group.userId){
+          element.expanded = group.expanded;
+        }
+      });
+
+      this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
+    }
+  }
+
+  async deleteRow(id: number, element: any) {
+    const alert = await this.alertController.create({
+      header: '¡Alerta!',
+      message: `¿Está seguro que desea eliminar ${element.warehouseName} del registro?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {}
+        },
+        {
+          text: 'Aceptar',
+          cssClass: 'secondary',
+          handler: () => {
+            this.saveDeleteRole(id, element);
+          }
+        },
+      ]
+    });
+    await alert.present();
+  }
+
+  clearRow(id: number, element: any) {
+    const dataOriginal = <any>this.ELEMENT_DATA_ORIGINAL[id];
+
+    dataOriginal.roles.forEach((rolOri, index) => {
+      element.roles[index].checked = rolOri.checked;
+    });
+
+    this.deleteElementArray(element.parentUser, id);
+  }
+
+  changeCheckRol(event, id: number, element: WarehouseElement, i: number) {
+    const data = <any>this.ELEMENT_DATA_ORIGINAL[id];
+    element.roles[i].checked = event.checked;
+
+    if (JSON.stringify(element.roles) === JSON.stringify(data.roles)) {
+      this.deleteElementArray(element.parentUser, id);
+    } else {
+      this.addElementArray(element.parentUser, id);
+    }
+  }
+
+  saveChanges(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.intermediaryService.presentLoading('Un momento ...');
+
+    const aux = JSON.parse(JSON.stringify(this.listToUpdate));
+    this.listToUpdate = [];
+
+    const data = <any>this.ELEMENT_DATA;
+    const body = [];
+    aux.forEach((item) => {
+      body.push(this.fillBodyEndPoint(data, item.userId));
+    });
+
+    this.sendDataEndPoint(body);
+  }
+
+  async addRol(id: number, group: any) {
+    this.intermediaryService.presentLoading('Un momento ...');
+    const data = <any>this.ELEMENT_DATA;
+    const warehousesUser = data.filter((x) => x.parentUser === group.userId);
+    const warehouses = this.dataSourceWarehouses.filter((warehouse) => {
+      const index = warehousesUser.findIndex((x) => x.warehouseId === warehouse.id);
+      return index === -1;
+    });
+
+    const modal = await this.modalController.create({
+      component: AddRoleAssignmentComponent,
+      componentProps: {
+        userName: group.userName,
+        warehouses: warehouses
       }
     });
 
-    this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
+    modal.onDidDismiss().then((dataReturn) => {
+      if (dataReturn.data !== undefined){
+        this.saveAddedRole(dataReturn.data, group);
+      }
+    });
+
+    return await modal.present().then(() => {
+      this.intermediaryService.dismissLoading();
+    });
   }
 
-  deleteRow(element: any) {
-    console.log('DELETE');
-    console.log(element);
+  saveAddedRole(dataForm: any, group: GroupBy) {
+    this.intermediaryService.presentLoading('Un momento ...');
+    const data = <any>this.ELEMENT_DATA;
+    const body = [];
+    body.push(this.fillBodyEndPoint(data, group.userId));
+
+    const index = body.findIndex((x) => x.id === group.userId);
+
+    const roles = [];
+    dataForm.roles.forEach((role) => {
+      if (role.isChecked) {
+        roles.push({ rol: role.value });
+      }
+    });
+
+    if (index !== -1) {
+      body[index].permits.push({
+        warehouse: dataForm.warehouseId,
+        roles: roles
+      });
+    }
+
+    this.sendDataEndPoint(body, group.userId);
   }
 
-  clearRow(element: any) {
-    console.log('CLEAR');
-    console.log(element);
+  private saveDeleteRole(id: number, element: any) {
+    this.intermediaryService.presentLoading('Un momento ...');
+
+    const data = <any>this.ELEMENT_DATA;
+    this.ELEMENT_DATA.splice(id, 1);
+    const body = [];
+    body.push(this.fillBodyEndPoint(data, element.parentUser));
+
+    this.sendDataEndPoint(body, element.parentUser);
   }
 
-  changeCheckRol(event, element: WarehouseElement, i: number) {
-    element.roles[i] = event.checked;
+  private fillBodyEndPoint(data, userId: number) {
+    const permits = data.filter((x) => x.parentUser === userId);
+    const body = {
+      id: userId,
+      permits: []
+    };
 
-    this.listToUpdate.push(element);
+    permits.forEach((permit) => {
+      const roles = [];
+      permit.roles.forEach((role) => {
+        if (role.checked) {
+          roles.push({ rol: role.id });
+        }
+      });
 
-    // if (this.listToUpdate) {
-    //
-    //   const index = this.listToUpdate.indexOf(element, 0);
-    //   if (index > -1) {
-    //
-    //     console.log('indexdata');
-    //     console.log(indexData);
-    //     this.listToUpdate.splice(index, 1);
-    //   } else {
-    //     this.listToUpdate.push(element);
-    //   }
-    // } else {
-    //   this.listToUpdate.push(element);
-    // }
+      body.permits.push({
+        warehouse: permit.warehouseId,
+        roles: roles
+      });
+    });
+    return body;
   }
 
-  isEqualOrigin(element) {
-    let result = true;
+  private sendDataEndPoint(body, userId: number = null) {
+    this.usersService.updateWarehouseInUser(body)
+      .then((data: Observable<HttpResponse<UserModel.ResponseShow>>) => {
+        data.subscribe((res: HttpResponse<UserModel.ResponseShow>) => {
+          this.intermediaryService.dismissLoading();
+          this.getRolesAndUsers(userId);
+          }, (err) => {
+            console.log(err);
+            this.intermediaryService.dismissLoading();
+        });
+      }, (err) => {
+        console.log(err);
+        this.intermediaryService.dismissLoading();
+      });
+  }
 
-    for(let item of this.ELEMENT_DATA_ORIGINAL) {
-      const data = <any>item;
-      if (data.parentUser === element.parentUser && data.warehouseId === element.warehouseId
-        && data.warehouseName === element.warehouseName) {
-        console.log(element.roles);
-        console.log(data.roles);
-        result = this.compare(element.roles, data.roles);
-        break;
-      } else {
-        result = false;
+  private deleteElementArray(userId: number, idRow: number) {
+    if (this.listToUpdate.length > 0) {
+      const index = this.listToUpdate.findIndex((x) => x.userId === userId);
+
+      if (index !== -1) {
+        const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
+
+        if (indexRow !== -1) {
+          this.listToUpdate[index].rows.splice(indexRow, 1);
+
+          if (this.listToUpdate[index].rows.length === 0) {
+            this.listToUpdate.splice(index, 1);
+          }
+        }
       }
     }
-
-    return result;
   }
 
-  compare(arr1, arr2) {
-    if (!arr1  || !arr2) {
-      return
+  private addElementArray(userId: number, idRow: number) {
+    const index = this.listToUpdate.findIndex((x) => x.userId === userId);
+
+    if (index === -1) {
+      this.listToUpdate.push({userId, rows: [{idRow}]});
+    } else {
+      const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
+
+      if (indexRow === -1) {
+        this.listToUpdate[index].rows.push({idRow});
+      }
     }
-
-    let result;
-    arr1.forEach((e1, i)=>arr2.forEach(e2=>{
-        if (e1.length > 1 && e2.length){
-          result = this.compare(e1,e2);
-        } else {
-          result = e1 === e2;
-        }
-      })
-    );
-
-    return result
-  }
-
-  saveChanges() {
-    console.log('SAVE');
   }
 }
