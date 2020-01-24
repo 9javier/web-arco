@@ -69,8 +69,8 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
 
   async getRolesAndUsers(userId: number = null) {
     await this.intermediaryService.presentLoading('Un momento ...');
-    this.getRoles().then(async () => {
-      this.getUsers(userId).then(async () => {
+    await this.getRoles().then(async () => {
+      await this.getUsers(userId).then(async () => {
         this.intermediaryService.dismissLoading();
         this.intermediaryService.dismissLoading();
         this.intermediaryService.dismissLoading();
