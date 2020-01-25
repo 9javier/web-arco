@@ -20,7 +20,7 @@
             </ion-select> -->
           </ion-item>
           <ng-container *ngIf="filter" >
-            <ion-list>
+            <ion-list class="border-list">
               <ion-item class="item-filter" (click)="load(provier)" *ngFor="let provier of providers"  lines="none"> 
                 <ion-label>{{provier.name}}</ion-label>
               </ion-item>
