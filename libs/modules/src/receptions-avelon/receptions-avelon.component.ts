@@ -420,8 +420,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       const ocrColors: Array<
         any
       > = await this.reception.ocrColors().toPromise();
-      console.log(ocrColors);
-      console.log(this.filterData);
+      // console.log(ocrColors);
+      // console.log(this.filterData);
 
       this.addOrcData(ocrModels, 'models');
       this.addOrcData(ocrBrands, 'brands');
@@ -571,7 +571,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   load(e,item) {
-    console.log(e);
+    // console.log(e);
     this.value = item.name;
     this.filter = false;
     this.providerId = item.id;
@@ -590,7 +590,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.filter = true;
   }
   providerBlur(e) {
-    console.log(e)
+    // console.log(e)
     // if (this.value) {
     //   this.filter = false;
     // }
