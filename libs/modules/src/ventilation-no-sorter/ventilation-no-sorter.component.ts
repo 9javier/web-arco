@@ -172,10 +172,6 @@ export class VentilationNoSorterComponent implements OnInit {
         force: true,
         avoidAvelonMovement: true
       };
-
-      if (this.destinyWarehouse && this.destinyWarehouse.reference == '000') {
-        inventoryProcess.avoidAvelonMovement = false;
-      }
       await this.inventoryService.postStore(inventoryProcess);
       this.resetScanner();
       this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
