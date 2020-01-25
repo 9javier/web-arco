@@ -47,6 +47,15 @@ export class UsersService {
     });
   }
 
+  async getIndexWithFilter(body: any): Promise<Observable<HttpResponse<UserModel.ResponseIndex>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.post<UserModel.ResponseIndex>(this.getIndexUrl, body, {
+      headers: headers,
+      observe: 'response'
+    });
+  }
+
   async getUserRolesWarehouse(): Promise<Observable<HttpResponse<UserModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
     const headers = new HttpHeaders({ Authorization: currentToken });

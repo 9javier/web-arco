@@ -26,6 +26,16 @@
 .table-container {
   ::ng-deep {
 
+    mat-header-cell {
+      mat-icon {
+        display: block;
+        width: 100%;
+        text-align: right;
+        margin-right: 20px;
+        font-size: 18px;
+      }
+    }
+
     .button-add-role {
       z-index: 99999;
       position: absolute;

@@ -3,11 +3,17 @@
   <div class="table-container" *ngIf="dataSourceUsers">
     <mat-table [dataSource]="dataSourceUsers">
       <ng-container matColumnDef="user">
-        <mat-header-cell *matHeaderCellDef>Usuario</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>
+          <span class="title">Usuario</span>
+          <mat-icon matTooltipPosition="above" (click)="openFilterComponent($event, 'user')">{{body.users.length > 0 ? 'playlist_add_check' : 'reorder'}}</mat-icon>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.userName}} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="warehouse">
-        <mat-header-cell *matHeaderCellDef>Almacén</mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>
+          <span class="title">Almacén</span>
+          <mat-icon matTooltipPosition="above" (click)="openFilterComponent($event, 'warehouse')">{{body.warehouses.length > 0 ? 'playlist_add_check' : 'reorder'}}</mat-icon>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.warehouseName}} </mat-cell>
       </ng-container>
       <ng-container *ngFor="let role of dataSourceRoles;let i = index" matColumnDef="{{ role.id }}">

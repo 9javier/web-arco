@@ -5,13 +5,15 @@ import {
   RolModel,
   UserModel,
   UsersService,
-  WarehouseModel
+  WarehouseModel, WarehousesService
 } from '@suite/services';
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
+import { FiltersRoleAssignmentComponent } from './filters-role-assignment/filters-role-assignment.component';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 @Component({
   selector: 'suite-role-assignment',
@@ -29,12 +31,20 @@ export class RoleAssignmentComponent implements OnInit {
   ELEMENT_DATA: any[];
   ELEMENT_DATA_ORIGINAL: any[];
 
+  warehouses: any[];
+  users: any[];
+  body;
+  listUsers: Array<TagsInputOption> = [];
+  listWarehouses: Array<TagsInputOption> = [];
+
   constructor(
     private intermediaryService: IntermediaryService,
     private usersService: UsersService,
     private rolesService: RolesService,
     private alertController: AlertController,
     private modalController: ModalController,
+    private warehousesService: WarehousesService,
+    private popoverController: PopoverController,
   ) {}
 
   async ngOnInit() {
@@ -42,22 +52,29 @@ export class RoleAssignmentComponent implements OnInit {
   }
 
   async getRolesAndUsers() {
+    this.body = {
+      users: [],
+      warehouses: []
+    };
+
     await this.getRoles().then(async () => {
       await this.getUsers();
     });
+
+    await this.getWarehouses();
   }
 
-  async getUsers() {
+  async applyFilter() {
     this.ELEMENT_DATA = [];
     this.ELEMENT_DATA_ORIGINAL = [];
     this.intermediaryService.presentLoading('Un momento ...');
     this.dataSourceUsers = [];
-    await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
+    await this.usersService.getIndexWithFilter(this.body).then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
-        const users = res.body.data;
+        this.users = res.body.data;
 
-        if (users && users.length > 0) {
-          users.forEach((user: any) => {
+        if (this.users && this.users.length > 0) {
+          this.users.forEach((user: any) => {
             if (user.permits && user.permits.length > 0) {
               user.permits.forEach((permit: any) => {
                 const roles = <any>[];
@@ -77,6 +94,47 @@ export class RoleAssignmentComponent implements OnInit {
 
           this.ELEMENT_DATA_ORIGINAL = JSON.parse(JSON.stringify(this.ELEMENT_DATA));
           this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
+        }
+
+        await this.intermediaryService.dismissLoading();
+      }, async (err) => {
+        console.log(err);
+        await this.intermediaryService.dismissLoading();
+      });
+    });
+  }
+
+  async getUsers() {
+    this.ELEMENT_DATA = [];
+    this.ELEMENT_DATA_ORIGINAL = [];
+    this.intermediaryService.presentLoading('Un momento ...');
+    this.dataSourceUsers = [];
+    await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
+      obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
+        this.users = res.body.data;
+
+        if (this.users && this.users.length > 0) {
+          this.users.forEach((user: any) => {
+            if (user.permits && user.permits.length > 0) {
+              user.permits.forEach((permit: any) => {
+                const roles = <any>[];
+                this.dataSourceRoles.forEach((dataRol) => {
+                  const find = permit.roles.find(x => x.rol.id === dataRol.id);
+                  if (find) {
+                    roles.push({id: dataRol.id, checked: true});
+                  } else {
+                    roles.push({id: dataRol.id, checked: false});
+                  }
+                });
+
+                this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, warehouseId: permit.warehouse.id, warehouseName: `${permit.warehouse.reference} - ${permit.warehouse.name}`, roles: roles});
+              });
+            }
+          });
+
+          this.ELEMENT_DATA_ORIGINAL = JSON.parse(JSON.stringify(this.ELEMENT_DATA));
+          this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
+          this.mapFilterListUsers();
         }
 
         await this.intermediaryService.dismissLoading();
@@ -120,6 +178,18 @@ export class RoleAssignmentComponent implements OnInit {
 
     return await modal.present().then(() => {
       this.intermediaryService.dismissLoading();
+    });
+  }
+
+  async getWarehouses() {
+    this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
+      obsItem.subscribe(async (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
+        this.warehouses = res.body.data;
+        this.mapFilterListWarehouses();
+      }, async (err) => {
+        console.log(err);
+        await this.intermediaryService.dismissLoading();
+      });
     });
   }
 
@@ -248,5 +318,67 @@ export class RoleAssignmentComponent implements OnInit {
         console.log(err);
         this.intermediaryService.dismissLoading();
       });
+  }
+
+  mapFilterListUsers() {
+    this.listUsers = this.users.map(user => {
+      return {
+        id: user.id,
+        name: user.name,
+        value: user.name,
+        checked: true,
+        hide: false
+      };
+    });
+  }
+
+  mapFilterListWarehouses() {
+    this.listWarehouses = this.warehouses.map(warehouse => {
+      return {
+        id: warehouse.id,
+        name: warehouse.reference + " - " + warehouse.name,
+        value: warehouse.reference + " - " + warehouse.name,
+        checked: true,
+        hide: false
+      };
+    });
+  }
+
+  async openFilterComponent(event, type: string) {
+    let listItems = [];
+    let title = '';
+    if (type === 'user') {
+      title = 'Usuario';
+      listItems = this.listUsers;
+    } else if (type === 'warehouse') {
+      title = 'Almacén';
+      listItems = this.listWarehouses;
+    }
+
+    const popover = await this.popoverController.create({
+      cssClass: 'popover-filter',
+      component: FiltersRoleAssignmentComponent,
+      event: event,
+      componentProps: {
+        title: title,
+        listItems: listItems
+      }
+    });
+
+    popover.onDidDismiss().then(async (data) => {
+      if (data && data.data && data.data.filters) {
+        const filter = data.data.filters.filter((x) => x.checked === true);
+
+        if (type === 'user') {
+          this.body.users = filter.map((x) => x.id);
+        } else if (type === 'warehouse') {
+          this.body.warehouses = filter.map((x) => x.id);
+        }
+
+        await this.applyFilter();
+      }
+    });
+
+    await popover.present();
   }
 }
