@@ -94,7 +94,7 @@
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
     <ion-fab-button matTooltip="Eliminar seleccionado" matTooltipClass="tooltip" (click)="delete()" *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
     <ion-fab-button matTooltip="Imprimir seleccionado" matTooltipClass="tooltip" (click)="print($event)" *ngIf="hasToDelete()"><i class="material-icons">print</i></ion-fab-button>
-    <ion-fab-button matTooltip="Agregar embalaje" matTooltipClass="tooltip" (click)="newJail()" *ngIf="hasToDelete()" color="warning"><i class="material-icons">launch</i></ion-fab-button>
+    <ion-fab-button matTooltip="Precintar embalaje" matTooltipClass="tooltip" (click)="newJail()" *ngIf="hasToDelete()" color="warning"><i class="material-icons">launch</i></ion-fab-button>
     <ion-fab-button matTooltip="Añadir a embalaje" matTooltipClass="tooltip" (click)="toStore()"><i class="material-icons">add</i></ion-fab-button>
   </ion-fab>
 </ion-footer>
