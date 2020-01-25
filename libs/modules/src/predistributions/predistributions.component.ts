@@ -1,6 +1,6 @@
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PredistributionsService } from '../../../services/src/lib/endpoint/predistributions/predistributions.service';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
@@ -145,9 +145,12 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     })
   }
   ngAfterViewInit(): void {
+    let This = this;
     setTimeout(() => {
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
+      if(!!This.sort && !!this.dataSource)
+        this.dataSource.sort = This.sort;
+      if(!!This.paginator && !!this.dataSource)
+        this.dataSource.paginator = This.paginator;
     }, 2000)
   }
   
@@ -285,8 +288,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     let list = [];
     this.dataSource.data.forEach(dataRow => {
       list.push({
-        reserved: dataRow.reserved,
         distribution: dataRow.distribution,
+        reserved: !dataRow.distribution,
         modelId: dataRow.model.id,
         sizeId: dataRow.size.id,
         warehouseId: dataRow.warehouse.id
@@ -302,7 +305,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       This.initEntity()
       This.initForm()
       This.getFilters()
-      This.getList(this.form)
+      This.getList(This.form)
       This.listenChanges()  
     }, (error) => {
       This.intermediaryService.presentToastError("Error Actualizado predistribuciones");  
@@ -341,7 +344,14 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
-        
+        this.dataSource.data.forEach(row => {
+        if (row.distribution) {
+          this.selectionPredistribution.select(row);
+        }
+        if (row.reserved) {
+           this.selectionReserved.select(row);
+        }
+       });
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -656,5 +666,53 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       this.form.get("references").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+  // new
+  public changeStatusBlocked( event:MatCheckboxChange, row) {
+    this.dataSource.data.forEach(function(value){
+      if(value.expeditionLineId == row.expeditionLineId) {
+        value.distribution = event.checked;
+      }  
+    });
+  }
+  public  isCheckedStatusBlocked( element) {
+    return element.distribution;
+  }
+  public changeStatusBlockedAll( event:MatCheckboxChange) {
+    this.dataSource.data.forEach(function(value){
+      value.distribution = event.checked;  
+    });
+  }
+  public  isCheckedStatusBlockedAll() {
+    let result = true;
+    this.dataSource.data.forEach(function(value){
+      result = result && value.distribution;   
+    });
+    return result;
+  }
+  // reserved
+  public changeStatusReserved(event:MatCheckboxChange, row) {
+    this.dataSource.data.forEach(function(value){
+      if(value.expeditionLineId == row.expeditionLineId) {
+        value.distribution = !event.checked;
+      }  
+    });
+  }
+
+  public isCheckedStatusReserved( element) { 
+    return !element.distribution;
+  }
+
+  public changeStatusReservedAll( event:MatCheckboxChange) {
+    this.dataSource.data.forEach(function(value){
+      value.distribution = !event.checked;  
+    });
+  }
+  public  isCheckedStatusReservedAll() {
+    let result = true;
+    this.dataSource.data.forEach(function(value){
+      result = result && !value.distribution;   
+    });
+    return result;
   }
 }
