@@ -1,6 +1,6 @@
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PredistributionsService } from '../../../services/src/lib/endpoint/predistributions/predistributions.service';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
@@ -145,9 +145,12 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     })
   }
   ngAfterViewInit(): void {
+    let This = this;
     setTimeout(() => {
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
+      if(!!This.sort)
+        this.dataSource.sort = This.sort;
+      if(!!This.paginator)
+        this.dataSource.paginator = This.paginator;
     }, 2000)
   }
   
@@ -285,8 +288,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     let list = [];
     this.dataSource.data.forEach(dataRow => {
       list.push({
-        reserved: dataRow.reserved,
         distribution: dataRow.distribution,
+        reserved: !dataRow.distribution,
         modelId: dataRow.model.id,
         sizeId: dataRow.size.id,
         warehouseId: dataRow.warehouse.id
@@ -663,5 +666,38 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       this.form.get("references").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+  // new
+  public changeStatusBlocked( event:MatCheckboxChange, row) {
+    
+    console.log('debug >>>',event.checked);
+    console.log('debug >>>',row);
+    this.dataSource.data.forEach(function(value){
+      if(value.expeditionLineId == row.expeditionLineId) {
+        value.distribution = event.checked;
+        console.log('false ...');
+      }  
+    });
+  }
+  
+  public changeStatusReserved(event:MatCheckboxChange, row) {
+    console.log('debug 2 >>>',event.checked);
+    console.log('debug 2 >>>', row);
+    this.dataSource.data.forEach(function(value){
+      if(value.expeditionLineId == row.expeditionLineId) {
+        value.distribution = !event.checked;
+        console.log('false ...');
+      }  
+    });
+  }
+
+  public  isCheckedStatusBlocked( element) {
+    console.log('debug checked 1', element);
+    return element.distribution;
+  }
+  public isCheckedStatusReserved( element) {
+    console.log('debug checked 2', element);
+    
+    return !element.distribution;
   }
 }

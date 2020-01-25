@@ -112,21 +112,16 @@
           <ng-container *ngIf="dataSource !== undefined" >
             <div class="content-checkbox">
               <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? predistributionToggle() : null"
-                            [checked]="selectionPredistribution.hasValue() && isAllSelectedPredistribution()"
-                            [indeterminate]="selectionPredistribution.hasValue() && !isAllSelectedPredistribution()"
-                            [aria-label]="checkboxLabelPredistribution()">
+                            [matRippleColor]="'white'" class="custom-checkbox">
               </mat-checkbox>
             </div>
           </ng-container>
         </th>
-        <td mat-cell *matCellDef="let row">
+        <td mat-cell *matCellDef="let row; let element;">
           <ng-container *ngIf="dataSource !== undefined" >
-            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
-                          (change)="$event ? selectionPredistribution.toggle(row) : null; changePredistribution(row)"
-                          [checked]="selectionPredistribution.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
+            <mat-checkbox [checked]="isCheckedStatusBlocked(element)"
+                          (click)="$event.stopPropagation()"
+                          (change)="changeStatusBlocked($event, element)">
             </mat-checkbox>
           </ng-container>
         </td>
@@ -139,29 +134,24 @@
           <ng-container *ngIf="dataSource !== undefined" >
             <div class="content-checkbox">
               <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? reservedToggle() : null"
-                            [checked]="selectionReserved.hasValue() && isAllSelectedReserved()"
-                            [indeterminate]="selectionReserved.hasValue() && !isAllSelectedReserved()"
-                            [aria-label]="checkboxLabelReserved()">
-              </mat-checkbox>
-            </div>
-          </ng-container>
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <ng-container *ngIf="dataSource !== undefined" >
-            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
-                          (change)="$event ? selectionReserved.toggle(row) : null; changeReserved(row)"
-                          [checked]="selectionReserved.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
-            </mat-checkbox>
-          </ng-container>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-          (click)="selection.toggle(row)">
+                            [matRippleColor]="'white'" class="custom-checkbox">
+                          </mat-checkbox>
+                        </div>
+                      </ng-container>
+                    </th>
+                    <td mat-cell *matCellDef="let row; let element">
+                      <ng-container *ngIf="dataSource !== undefined" >
+                        <mat-checkbox [checked]="isCheckedStatusReserved(element)" 
+                                      (click)="$event.stopPropagation()"
+                                      (change)="changeStatusReserved($event, element)">
+                                    </mat-checkbox>
+                                  </ng-container>
+                      </td>
+                </ng-container>
+                              
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                              (click)="selection.toggle(row)">
       </tr>
     </table>
     <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
