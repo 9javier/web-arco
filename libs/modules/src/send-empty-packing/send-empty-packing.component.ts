@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { SendPackingManualComponent } from './send-packing-manual/send-packing-manual.component';
+import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
 
 @Component({
   selector: 'app-send-empty-packing',
@@ -53,7 +54,8 @@ export class SendEmptyPackingComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private alertControler: AlertController,
     private printerService: PrinterService,
-    private loadController: LoadingController
+    private loadController: LoadingController,
+    private holderTooltipText: HolderTooltipText,
   ) {
   }
 
@@ -100,7 +102,12 @@ export class SendEmptyPackingComponent implements OnInit {
     })
     modal.present();
   }
-  
+
+  showTooltip:boolean = false;
+  btnOnClick(idElement:string){
+    this.holderTooltipText.setTootlTip(idElement);
+  }
+
 
   getTypePacking() {
     this.intermediaryService.presentLoading();
@@ -251,9 +258,9 @@ export class SendEmptyPackingComponent implements OnInit {
     modal.onDidDismiss().then(() => {
       this.getCarriers();
     })
-    modal.present();   
+    modal.present();
   }
-  
+
   async sendAll(event){
     event.stopPropagation();
     event.preventDefault();
@@ -273,7 +280,3 @@ export class SendEmptyPackingComponent implements OnInit {
     return false;
   }
 }
-
-
-
-

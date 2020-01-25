@@ -24,6 +24,8 @@ import { PricesRangePopoverProvider } from "../../../services/src/providers/pric
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
 import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
 import {TariffPricesScanditService} from "../../../services/src/lib/scandit/tariff-prices/tariff-prices.service";
+import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
+
 
 @Component({
   selector: 'suite-prices',
@@ -144,13 +146,19 @@ export class PricesComponent implements OnInit {
     public pricesRangePopoverProvider: PricesRangePopoverProvider,
     private popoverController: PopoverController,
     private toolbarProvider: ToolbarProvider,
-    private tariffPricesScanditService: TariffPricesScanditService
+    private tariffPricesScanditService: TariffPricesScanditService,
+    private holderTooltipText: HolderTooltipText,
   ) {
     this.route.queryParams.subscribe(params => {
       if (params && params.name) {
         this.tariffName = JSON.parse(params.name);
       }
     });
+  }
+
+  showTooltip:boolean = false;
+  btnOnClick(idElement:string){
+    this.holderTooltipText.setTootlTip(idElement);
   }
 
   getTotalStock(price: PriceModel.Price): number {

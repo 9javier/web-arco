@@ -1,5 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import {MatPaginator, MatTableDataSource} from '@angular/material';
+import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
 
 import {
   ProductModel,
@@ -12,8 +13,7 @@ import {
   TypesService,
   WarehouseService,
   WarehousesService,
-  IntermediaryService
-
+  IntermediaryService,
 } from '@suite/services';
 
 import {HttpResponse} from '@angular/common/http';
@@ -28,14 +28,17 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 import { TagsInputComponent } from "../components/tags-input/tags-input.component";
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 
-
 @Component({
   selector: 'app-products',
   templateUrl: './products-al.component.html',
   styleUrls: ['./products-al.component.scss']
 })
 
+
+
 export class ProductsAlComponent implements OnInit {
+
+
 
   pagerValues = [50, 100, 1000];
 
@@ -44,6 +47,7 @@ export class ProductsAlComponent implements OnInit {
   /**previous reference to detect changes */
   previousProductReferencePattern = '';
   pauseListenFormChange = false;
+
 
   @ViewChild(PaginatorComponent) paginatorComponent: PaginatorComponent;
 
@@ -90,6 +94,7 @@ export class ProductsAlComponent implements OnInit {
   searchsInContainer:Array<InventoryModel.SearchInContainer> = [];
 
 
+
   // @ViewChild(MatPaginator) paginator: MatPaginator;
   //@ViewChild(MatSort) sort: MatSort;
 
@@ -105,12 +110,22 @@ export class ProductsAlComponent implements OnInit {
     private filterServices:FiltersService,
     private productsService: ProductsService,
     private modalController:ModalController,
-    private printerService:PrinterService
+    private printerService:PrinterService,
+    private holderTooltipText: HolderTooltipText,
   ) {}
+
+
+  showTooltip:boolean = false;
+  btnOnClick(idElement:string){
+    this.holderTooltipText.setTootlTip(idElement);
+  }
 
   openFiltersMobile() {
     this.showFiltersMobileVersion = !this.showFiltersMobileVersion;
   }
+
+
+
 
   /**
    * clear empty values of objecto to sanitize it
@@ -185,6 +200,7 @@ export class ProductsAlComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     });
   }
+
 
   ngOnInit() {
     this.getFilters();
@@ -496,5 +512,3 @@ export class ProductsAlComponent implements OnInit {
     });
   }
 }
-
-
