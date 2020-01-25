@@ -369,10 +369,18 @@ export class RoleAssignmentComponent implements OnInit {
       if (data && data.data && data.data.filters) {
         const filter = data.data.filters.filter((x) => x.checked === true);
 
-        if (type === 'user') {
-          this.body.users = filter.map((x) => x.id);
-        } else if (type === 'warehouse') {
-          this.body.warehouses = filter.map((x) => x.id);
+        if (filter.length === data.data.filters.length) {
+          if (type === 'user') {
+            this.body.users = [];
+          } else if (type === 'warehouse') {
+            this.body.warehouses = [];
+          }
+        } else {
+          if (type === 'user') {
+            this.body.users = filter.map((x) => x.id);
+          } else if (type === 'warehouse') {
+            this.body.warehouses = filter.map((x) => x.id);
+          }
         }
 
         await this.applyFilter();
