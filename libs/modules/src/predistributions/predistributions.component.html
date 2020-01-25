@@ -111,8 +111,11 @@
           <div>bloqueada</div>
           <ng-container *ngIf="dataSource !== undefined" >
             <div class="content-checkbox">
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox">
+              <mat-checkbox 
+                [checked]="isCheckedStatusBlockedAll()"
+                (click)="$event.stopPropagation()"
+                (change)="changeStatusBlockedAll($event)" 
+                class="custom-checkbox">
               </mat-checkbox>
             </div>
           </ng-container>
@@ -133,8 +136,10 @@
           <div>Reservado</div>
           <ng-container *ngIf="dataSource !== undefined" >
             <div class="content-checkbox">
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox">
+              <mat-checkbox 
+              [checked]="isCheckedStatusReservedAll()"
+              (click)="$event.stopPropagation()"
+              (change)="changeStatusReservedAll($event)">
                           </mat-checkbox>
                         </div>
                       </ng-container>

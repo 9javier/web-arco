@@ -147,9 +147,9 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     let This = this;
     setTimeout(() => {
-      if(!!This.sort)
+      if(!!This.sort && !!this.dataSource)
         this.dataSource.sort = This.sort;
-      if(!!This.paginator)
+      if(!!This.paginator && !!this.dataSource)
         this.dataSource.paginator = This.paginator;
     }, 2000)
   }
@@ -669,35 +669,50 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   // new
   public changeStatusBlocked( event:MatCheckboxChange, row) {
-    
-    console.log('debug >>>',event.checked);
-    console.log('debug >>>',row);
     this.dataSource.data.forEach(function(value){
       if(value.expeditionLineId == row.expeditionLineId) {
         value.distribution = event.checked;
-        console.log('false ...');
       }  
     });
   }
-  
+  public  isCheckedStatusBlocked( element) {
+    return element.distribution;
+  }
+  public changeStatusBlockedAll( event:MatCheckboxChange) {
+    this.dataSource.data.forEach(function(value){
+      value.distribution = event.checked;  
+    });
+  }
+  public  isCheckedStatusBlockedAll() {
+    let result = true;
+    this.dataSource.data.forEach(function(value){
+      result = result && value.distribution;   
+    });
+    return result;
+  }
+  // reserved
   public changeStatusReserved(event:MatCheckboxChange, row) {
-    console.log('debug 2 >>>',event.checked);
-    console.log('debug 2 >>>', row);
     this.dataSource.data.forEach(function(value){
       if(value.expeditionLineId == row.expeditionLineId) {
         value.distribution = !event.checked;
-        console.log('false ...');
       }  
     });
   }
 
-  public  isCheckedStatusBlocked( element) {
-    console.log('debug checked 1', element);
-    return element.distribution;
-  }
-  public isCheckedStatusReserved( element) {
-    console.log('debug checked 2', element);
-    
+  public isCheckedStatusReserved( element) { 
     return !element.distribution;
+  }
+
+  public changeStatusReservedAll( event:MatCheckboxChange) {
+    this.dataSource.data.forEach(function(value){
+      value.distribution = !event.checked;  
+    });
+  }
+  public  isCheckedStatusReservedAll() {
+    let result = true;
+    this.dataSource.data.forEach(function(value){
+      result = result && !value.distribution;   
+    });
+    return result;
   }
 }
