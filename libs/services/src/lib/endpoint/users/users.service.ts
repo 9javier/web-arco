@@ -27,10 +27,12 @@ export class UsersService {
 
   /**Urls for users service */
   private getIndexUrl:string = environment.apiBase+"/gestion-permissions/users";
+  private getAllUserWarehouseUrl:string = environment.apiBase+"/gestion-permissions/users/usersroleswarehouses";
   private postStoreUrl:string = environment.apiBase+"/gestion-permissions/users";
   private getShowUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private putUpdateUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private delDestroyUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
+  private addWarehouseInUserUrl:string = environment.apiBase+"/gestion-permissions/users/newUpRoles";
   private hasDeleteProductPermissionUrl:string = environment.apiBase+"/gestion-permissions/users/has-delete-product-permission";
 
   constructor(private http: HttpClient, private auth: AuthenticationService) {}
@@ -43,6 +45,16 @@ export class UsersService {
       headers: headers,
       observe: 'response'
     });
+  }
+
+  async getUserRolesWarehouse(): Promise<Observable<HttpResponse<UserModel.ResponseIndex>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.get<UserModel.ResponseIndex>(
+      this.getAllUserWarehouseUrl, {
+        headers: headers,
+        observe: 'response'
+      });
   }
 
   async postStore(
@@ -108,5 +120,14 @@ export class UsersService {
         headers: headers,
         observe: 'response'
       });
+  }
+
+  async updateWarehouseInUser(body: any): Promise<Observable<HttpResponse<UserModel.ResponseStore>>> {
+    const currentToken = await this.auth.getCurrentToken();
+    const headers = new HttpHeaders({ Authorization: currentToken });
+    return this.http.put<UserModel.ResponseStore>(this.addWarehouseInUserUrl, body, {
+      headers: headers,
+      observe: 'response'
+    });
   }
 }

@@ -30,7 +30,7 @@ import { MatTooltipModule } from "@angular/material";
     BreadcrumbModule,
     MatGridListModule,
     ListPickingRebuildModule,
-    MatTooltipModule,
+    MatTooltipModule
   ],
   providers: [
     { provide: DateAdapter, useClass: MondayStartingDateAdapterService },

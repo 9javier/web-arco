@@ -6,7 +6,6 @@
     </ion-button>
   </div>
 </h2>
-
 <title-picking></title-picking>
 
 <div class="loader" *ngIf="isLoadingPickings">
@@ -31,6 +30,9 @@
     </ion-fab-button>
     <ion-fab-button matTooltip="Seleccionar todo" matTooltipClass="tooltip" *ngIf="listPickings && listPickings.length > 0" (click)="selectAllPickings()">
       <i class="material-icons">select_all</i>
+    </ion-fab-button>
+    <ion-fab-button class=ion-refresh color="primary" (click)="loadPickingsList()" matTooltip="Refrescar listado" matTooltipClass="tooltip">
+      <ion-icon class="material-icons" name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-footer>

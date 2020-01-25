@@ -12,24 +12,30 @@
         <ion-col size="4">
           <ion-item lines="none">
             <ion-label>Proveedor</ion-label>
-            <ion-select (ionChange)="proveedorSelected($event)">
+            <ion-input [value]="value" type="text" (click)="click($event)" (ionChange)="changeProvider($event)" ></ion-input>
+            <!-- <ion-select (ionChange)="proveedorSelected($event)">
               <ion-select-option  *ngFor="let item of providers" [value]="item.id">
                  {{item.name}}
               </ion-select-option>
-            </ion-select>
+            </ion-select> -->
           </ion-item>
+          <ng-container *ngIf="filter" >
+            <ion-list>
+              <ion-item class="item-filter" (click)="load(provier)" *ngFor="let provier of providers"  lines="none"> 
+                <ion-label>{{provier.name}}</ion-label>
+              </ion-item>
+            </ion-list>
+          </ng-container>
+        </ion-col>
+        <ion-col *ngIf="isProviderAviable" size="4">
+          <ion-button class="ion-float-end" (click)="reset()">
+            <ion-icon slot="icon-only" name="refresh"></ion-icon>
+          </ion-button>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
         <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
-            <ion-title> Marcas </ion-title>
-            <i slot="end" class="material-icons">keyboard</i>
-          </ion-item>
-          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
-        </ion-col>
-        <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
             <ion-title> Modelos </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
@@ -37,7 +43,14 @@
           <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
         </ion-col>
         <ion-col size="4">
-          <ion-item (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
+            <ion-title> Marcas </ion-title>
+            <i slot="end" class="material-icons">keyboard</i>
+          </ion-item>
+          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
+        </ion-col>
+        <ion-col size="4">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
             <ion-title> Colores </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>

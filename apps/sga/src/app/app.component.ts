@@ -79,6 +79,11 @@ export class AppComponent implements OnInit {
           icon: 'people'
         },
         {
+          title: 'Asignación de roles',
+          url: '/role-assignment',
+          icon: 'key'
+        },
+        {
           title: 'Roles',
           url: '/roles/menu',
           icon: 'person'
@@ -132,7 +137,7 @@ export class AppComponent implements OnInit {
       url: 'logout',
       icon: 'log-out'
     }
-    
+
 
   ];
 
@@ -175,7 +180,7 @@ export class AppComponent implements OnInit {
     this.currentRoute = title;
   }
 
-  initializeApp() {    
+  initializeApp() {
     this.mainHeaderShowHide(false);
     this.displaySmallSidebar = false;
     this.showSidebar = false;
@@ -260,7 +265,7 @@ export class AppComponent implements OnInit {
     app.name = "sga";
     /**Set the dictionary of access to menu */
     this.authenticationService.dictionaryAcessState.subscribe(state=>{
-      this.dictionary = state; 
+      this.dictionary = state;
     },e =>console.log(e)
     );
     // TODO ERROR LOGIN ESTA EN ESTA FUNCION
