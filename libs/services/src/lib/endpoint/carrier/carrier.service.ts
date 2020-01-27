@@ -158,14 +158,7 @@ export class CarrierService {
 
 
   carrierHistory(ref:string):Observable<CarrierModel.HistoryModal>{
-    let refString = String(ref) // crea un objeto de String
-    let body=JSON.parse(JSON.stringify({reference:ref}));
-    return  this.http.post<CarrierModel.HistoryModal>(this.getCarrierHistoryURL,{reference:ref}).pipe(map(response=>{
-      return response.data;
-    }));
-    
+    let body=JSON.parse(JSON.stringify({ref}));
+    return this.http.post<CarrierModel.HistoryModal>(this.getCarrierHistoryURL,{"reference":"J8080"});
   }
-
-
-
 }

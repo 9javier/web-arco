@@ -12,23 +12,20 @@ import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
   styleUrls: ['./history-modal.component.scss']
 })
 export class HistoryModalComponent implements OnInit {
-  public carrierHistoryInfo:CarrierModel.HistoryModal[] = [];
-
   constructor(
     private carrierService: CarrierService,private modalController:ModalController) { 
     }
     
+    carrierHistory:[];
 
   ngOnInit() {
   }
   getreference(ref){
-    this.carrierService.carrierHistory(ref).subscribe((data)=>{
-      this.carrierHistoryInfo  = <any>data;
-      console.log(this.carrierHistoryInfo);
-    })
+ this.carrierService.carrierHistory(ref).subscribe(response => {
+ return response.data
+})
+  }
   }
 
-  close(){
-    this.modalController.dismiss();
-  }
-}
+
+

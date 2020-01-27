@@ -11,12 +11,8 @@
 </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list *ngFor="let pieceOfInfo of carrierHistoryInfo">
-    <ion-label>{{this.carrierHistoryInfo.carrier.createdAt}}</ion-label>
-    <ion-label>{{this.carrierHistoryInfo.typeAction}}</ion-label>
-    <ion-label>{{this.carrierHistoryInfo.carrier.reference}}</ion-label>
-    <ion-label>{{this.carrierHistoryInfo.warehouse.name}}</ion-label>
-    <ion-label>{{this.carrierHistoryInfo.warehouse.description}}</ion-label> 
+  <ion-list>
+    <ion-label>{{getreference().response.data}}</ion-label>
   </ion-list>
 </ion-content>
 <ion-footer>
