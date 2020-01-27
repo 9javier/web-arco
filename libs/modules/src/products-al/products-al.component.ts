@@ -115,9 +115,8 @@ export class ProductsAlComponent implements OnInit {
   ) {}
 
 
-  showTooltip:boolean = false;
-  btnOnClick(idElement:string){
-    this.holderTooltipText.setTootlTip(idElement);
+  btnOnClick(idElement:string, txtElement?:string){
+    this.holderTooltipText.setTootlTip(idElement,true,txtElement);
   }
 
   openFiltersMobile() {

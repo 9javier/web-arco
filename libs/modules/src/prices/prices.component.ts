@@ -156,9 +156,9 @@ export class PricesComponent implements OnInit {
     });
   }
 
-  showTooltip:boolean = false;
+
   btnOnClick(idElement:string){
-    this.holderTooltipText.setTootlTip(idElement);
+    this.holderTooltipText.setTootlTip(idElement,false);
   }
 
   getTotalStock(price: PriceModel.Price): number {

@@ -103,9 +103,8 @@ export class SendEmptyPackingComponent implements OnInit {
     modal.present();
   }
 
-  showTooltip:boolean = false;
   btnOnClick(idElement:string){
-    this.holderTooltipText.setTootlTip(idElement);
+    this.holderTooltipText.setTootlTip(idElement,false);
   }
 
 

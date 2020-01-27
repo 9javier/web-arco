@@ -16,6 +16,7 @@ import { SendComponent } from './send/send.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
 
 @Component({
   selector: 'app-jail',
@@ -57,7 +58,8 @@ export class JailComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private alertControler: AlertController,
     private printerService: PrinterService,
-    private loadController: LoadingController
+    private loadController: LoadingController,
+    private holderTooltipText: HolderTooltipText,
   ) {
   }
 
@@ -65,6 +67,10 @@ export class JailComponent implements OnInit {
     this.getTypePacking();
     this.getCarriers();
     this.getWarehouses();
+  }
+
+  btnOnClick(idElement:string, txtElement?:string){
+    this.holderTooltipText.setTootlTip(idElement,false);
   }
 
   /**
@@ -525,7 +531,3 @@ export class JailComponent implements OnInit {
     return await modal.present();
   }
 }
-
-
-
-

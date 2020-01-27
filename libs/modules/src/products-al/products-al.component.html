@@ -155,13 +155,13 @@
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
   <!-- (click)="printPriceProducts()" -->
-  <ion-fab-button id="btnPrintPrices" (click)="printPriceProducts(); btnOnClick('btnPrintPrices'); " [matTooltipDisabled]="showTooltip" matTooltip="Imprimir precios" matTooltipClass="tooltip"  *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+    <ion-fab-button id="btnPrintPrices" (click)="printPriceProducts();btnOnClick('btnPrintPrices'); " [matTooltipDisabled]="showTooltip" matTooltip="Imprimir precios" matTooltipClass="tooltip" matTooltipPosition="left"  *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
         <ion-icon name="print"></ion-icon>
         <ion-icon name="logo-usd"></ion-icon>
     </ion-fab-button>
     <div style="height: 5px"></div>
     <!-- printLabelProducts();  -->
-    <ion-fab-button id="btnPrintTags" (click)="printLabelProducts();btnOnClick('btnPrintTags');" [matTooltipDisabled]="showTooltip"  matTooltip="Imprimir tags" matTooltipClass="tooltip"  *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+    <ion-fab-button id="btnPrintTags" (click)="printLabelProducts();btnOnClick('btnPrintTags');" [matTooltipDisabled]="showTooltip"  matTooltip="Imprimir tags" matTooltipClass="tooltip"  matTooltipPosition="left" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
         <ion-icon name="print"></ion-icon>
         <ion-icon name="pricetag"></ion-icon>
     </ion-fab-button>
