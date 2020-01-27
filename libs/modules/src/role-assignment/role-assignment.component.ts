@@ -1,36 +1,19 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   IntermediaryService,
   RolesService,
   RolModel,
   UserModel,
   UsersService,
-  WarehouseModel,
-  WarehousesService
+  WarehouseModel, WarehousesService
 } from '@suite/services';
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, PopoverController } from '@ionic/angular';
 import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
-
-export interface WarehouseElement {
-  rowParentId: number,
-  parentUser: number,
-  warehouseId: number,
-  warehouseName: string;
-  roles: {id: number, checked: boolean};
-  expanded: boolean;
-}
-
-export interface GroupBy {
-  userId: number;
-  userName: string;
-  isGroupBy: boolean;
-  hasPermits: boolean;
-  hasAllWarehouse: boolean,
-  expanded: boolean;
-}
+import { FiltersRoleAssignmentComponent } from './filters-role-assignment/filters-role-assignment.component';
+import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 @Component({
   selector: 'suite-role-assignment',
@@ -38,85 +21,123 @@ export interface GroupBy {
   styleUrls: ['./role-assignment.component.scss'],
 })
 
-export class RoleAssignmentComponent implements OnInit, AfterViewInit {
+export class RoleAssignmentComponent implements OnInit {
   title = 'Asignación de roles';
   dataSourceUsers;
-  dataSourceWarehouses: WarehouseModel.Warehouse[];
+  displayedColumns: string[] = ['user', 'warehouse'];
   dataSourceRoles: RolModel.Rol[];
-  displayedColumns: string[] = ['warehouse'];
-  selectWarehouse;
   listToUpdate = [];
 
-  ELEMENT_DATA: (WarehouseElement | GroupBy)[] = [];
-  ELEMENT_DATA_ORIGINAL: (WarehouseElement | GroupBy)[] = [];
+  ELEMENT_DATA: any[];
+  ELEMENT_DATA_ORIGINAL: any[];
+
+  warehouses: any[];
+  users: any[];
+  body;
+  listUsers: Array<TagsInputOption> = [];
+  listWarehouses: Array<TagsInputOption> = [];
 
   constructor(
     private intermediaryService: IntermediaryService,
     private usersService: UsersService,
     private rolesService: RolesService,
-    private warehousesService: WarehousesService,
     private alertController: AlertController,
     private modalController: ModalController,
-  ) {
-    this.getWarehouses();
+    private warehousesService: WarehousesService,
+    private popoverController: PopoverController,
+  ) {}
+
+  async ngOnInit() {
+    await this.getRolesAndUsers();
   }
 
-  async ngOnInit() {}
+  async getRolesAndUsers() {
+    this.body = {
+      users: [],
+      warehouses: []
+    };
 
-  ngAfterViewInit() {
-     this.getRolesAndUsers();
-  }
-
-  getRolesAndUsers(userId: number = null) {
-    this.intermediaryService.presentLoading('Un momento ...');
-    this.getRoles().then(async () => {
-      this.getUsers(userId).then(async () => {
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.dismissLoading();
-      });
+    await this.getRoles().then(async () => {
+      await this.getUsers();
     });
+
+    await this.getWarehouses();
   }
 
-  async getUsers(userId: number = null) {
+  async applyFilter() {
     this.ELEMENT_DATA = [];
     this.ELEMENT_DATA_ORIGINAL = [];
+    this.intermediaryService.presentLoading('Un momento ...');
     this.dataSourceUsers = [];
-    await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
+    await this.usersService.getIndexWithFilter(this.body).then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
-        const users = res.body.data;
+        this.users = res.body.data;
 
-        if (users && users.length > 0) {
-          users.forEach((user: any) => {
-            const hasPermits = user.permits.length > 0;
-            const hasAllWarehouse = user.permits.length === this.dataSourceWarehouses.length;
-            const expanded = user.id === userId;
-            const rowId = this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, isGroupBy: true, hasPermits: hasPermits, hasAllWarehouse: hasAllWarehouse, expanded: expanded});
-
+        if (this.users && this.users.length > 0) {
+          this.users.forEach((user: any) => {
             if (user.permits && user.permits.length > 0) {
               user.permits.forEach((permit: any) => {
-                if (permit.warehouse && permit.roles && permit.roles.length > 0) {
-                  const roles = <any>[];
+                const roles = <any>[];
+                this.dataSourceRoles.forEach((dataRol) => {
+                  const find = permit.roles.find(x => x.rol.id === dataRol.id);
+                  if (find) {
+                    roles.push({id: dataRol.id, checked: true});
+                  } else {
+                    roles.push({id: dataRol.id, checked: false});
+                  }
+                });
 
-                  this.dataSourceRoles.forEach((dataRol) => {
-                    const find = permit.roles.find(x => x.rol.id === dataRol.id);
-                    if (find) {
-                      roles.push({id: dataRol.id, checked: true});
-                    } else {
-                      roles.push({id: dataRol.id, checked: false});
-                    }
-                  });
-
-                  this.ELEMENT_DATA.push({rowParentId: rowId-1, parentUser: user.id, warehouseId: permit.warehouse.id, warehouseName: permit.warehouse.name, roles: roles, expanded: expanded});
-                }
-              })
+                this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, warehouseId: permit.warehouse.id, warehouseName: `${permit.warehouse.reference} - ${permit.warehouse.name}`, roles: roles});
+              });
             }
           });
 
           this.ELEMENT_DATA_ORIGINAL = JSON.parse(JSON.stringify(this.ELEMENT_DATA));
-
           this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
         }
+
+        await this.intermediaryService.dismissLoading();
+      }, async (err) => {
+        console.log(err);
+        await this.intermediaryService.dismissLoading();
+      });
+    });
+  }
+
+  async getUsers() {
+    this.ELEMENT_DATA = [];
+    this.ELEMENT_DATA_ORIGINAL = [];
+    this.intermediaryService.presentLoading('Un momento ...');
+    this.dataSourceUsers = [];
+    await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
+      obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
+        this.users = res.body.data;
+
+        if (this.users && this.users.length > 0) {
+          this.users.forEach((user: any) => {
+            if (user.permits && user.permits.length > 0) {
+              user.permits.forEach((permit: any) => {
+                const roles = <any>[];
+                this.dataSourceRoles.forEach((dataRol) => {
+                  const find = permit.roles.find(x => x.rol.id === dataRol.id);
+                  if (find) {
+                    roles.push({id: dataRol.id, checked: true});
+                  } else {
+                    roles.push({id: dataRol.id, checked: false});
+                  }
+                });
+
+                this.ELEMENT_DATA.push({ userId: user.id, userName: user.name, warehouseId: permit.warehouse.id, warehouseName: `${permit.warehouse.reference} - ${permit.warehouse.name}`, roles: roles});
+              });
+            }
+          });
+
+          this.ELEMENT_DATA_ORIGINAL = JSON.parse(JSON.stringify(this.ELEMENT_DATA));
+          this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
+          this.mapFilterListUsers();
+        }
+
+        await this.intermediaryService.dismissLoading();
       }, async (err) => {
         console.log(err);
         await this.intermediaryService.dismissLoading();
@@ -125,7 +146,7 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
   }
 
   async getRoles() {
-    this.displayedColumns = ['warehouse'];
+    this.displayedColumns = ['user', 'warehouse'];
     this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
         this.dataSourceRoles = res.body.data;
@@ -135,9 +156,6 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
             this.displayedColumns.push(rol.id.toString());
           });
         }
-
-        this.displayedColumns.push('clear');
-        this.displayedColumns.push('delete');
       }, async (err) => {
         console.log(err);
         await this.intermediaryService.dismissLoading();
@@ -145,118 +163,16 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  async getWarehouses() {
-    this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
-      obsItem.subscribe(async (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
-        this.dataSourceWarehouses = res.body.data;
-        if (this.dataSourceWarehouses.length > 0) {
-          this.selectWarehouse = this.dataSourceWarehouses[0].id;
-        }
-      }, async (err) => {
-        console.log(err);
-        await this.intermediaryService.dismissLoading();
-      });
-    });
-  }
-
-  isGroup(index, item): boolean{
-    return item.isGroupBy;
-  }
-
-  groupHeaderClick(group: any) {
-    if (group.hasPermits) {
-      group.expanded = !group.expanded;
-      this.ELEMENT_DATA.forEach((element: any) => {
-        if (element.parentUser === group.userId){
-          element.expanded = group.expanded;
-        }
-      });
-
-      this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
-    }
-  }
-
-  async deleteRow(id: number, element: any) {
-    const alert = await this.alertController.create({
-      header: '¡Alerta!',
-      message: `¿Está seguro que desea eliminar ${element.warehouseName} del registro?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {}
-        },
-        {
-          text: 'Aceptar',
-          cssClass: 'secondary',
-          handler: () => {
-            this.saveDeleteRole(id, element);
-          }
-        },
-      ]
-    });
-    await alert.present();
-  }
-
-  clearRow(id: number, element: any) {
-    const dataOriginal = <any>this.ELEMENT_DATA_ORIGINAL[id];
-
-    dataOriginal.roles.forEach((rolOri, index) => {
-      element.roles[index].checked = rolOri.checked;
-    });
-
-    this.deleteElementArray(element.parentUser, id);
-  }
-
-  changeCheckRol(event, id: number, element: WarehouseElement, i: number) {
-    const data = <any>this.ELEMENT_DATA_ORIGINAL[id];
-    element.roles[i].checked = event.checked;
-
-    if (JSON.stringify(element.roles) === JSON.stringify(data.roles)) {
-      this.deleteElementArray(element.parentUser, id);
-    } else {
-      this.addElementArray(element.parentUser, id);
-    }
-  }
-
-  saveChanges(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  async addNewRol() {
     this.intermediaryService.presentLoading('Un momento ...');
-
-    const aux = JSON.parse(JSON.stringify(this.listToUpdate));
-    this.listToUpdate = [];
-
-    const data = <any>this.ELEMENT_DATA;
-    const body = [];
-    aux.forEach((item) => {
-      body.push(this.fillBodyEndPoint(data, item.userId));
-    });
-
-    this.sendDataEndPoint(body);
-  }
-
-  async addRol(id: number, group: any) {
-    this.intermediaryService.presentLoading('Un momento ...');
-    const data = <any>this.ELEMENT_DATA;
-    const warehousesUser = data.filter((x) => x.parentUser === group.userId);
-    const warehouses = this.dataSourceWarehouses.filter((warehouse) => {
-      const index = warehousesUser.findIndex((x) => x.warehouseId === warehouse.id);
-      return index === -1;
-    });
 
     const modal = await this.modalController.create({
       component: AddRoleAssignmentComponent,
-      componentProps: {
-        userName: group.userName,
-        warehouses: warehouses
-      }
     });
 
     modal.onDidDismiss().then((dataReturn) => {
-      if (dataReturn.data !== undefined){
-        this.saveAddedRole(dataReturn.data, group);
+      if (dataReturn.data !== undefined) {
+        this.saveAddedRole(dataReturn.data);
       }
     });
 
@@ -265,14 +181,38 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  saveAddedRole(dataForm: any, group: GroupBy) {
+  async getWarehouses() {
+    this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
+      obsItem.subscribe(async (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
+        this.warehouses = res.body.data;
+        this.mapFilterListWarehouses();
+      }, async (err) => {
+        console.log(err);
+        await this.intermediaryService.dismissLoading();
+      });
+    });
+  }
+
+  saveChanges(e) {
+    e.preventDefault();
+    e.stopPropagation();
     this.intermediaryService.presentLoading('Un momento ...');
-    const data = <any>this.ELEMENT_DATA;
+    const aux = JSON.parse(JSON.stringify(this.listToUpdate));
+    this.listToUpdate = [];
+
     const body = [];
-    body.push(this.fillBodyEndPoint(data, group.userId));
+    aux.forEach((item) => {
+      body.push(this.fillBodyEndPoint(item.userId));
+    });
 
-    const index = body.findIndex((x) => x.id === group.userId);
+    this.sendDataEndPoint(body);
+  }
 
+  saveAddedRole(dataForm: any) {
+    const body = [];
+    body.push(this.fillBodyEndPoint(dataForm.userId));
+
+    const index = body.findIndex((x) => x.id === dataForm.userId);
     const roles = [];
     dataForm.roles.forEach((role) => {
       if (role.isChecked) {
@@ -286,23 +226,59 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
         roles: roles
       });
     }
-
-    this.sendDataEndPoint(body, group.userId);
+    this.sendDataEndPoint(body);
   }
 
-  private saveDeleteRole(id: number, element: any) {
-    this.intermediaryService.presentLoading('Un momento ...');
+  async refreshAll() {
+    await this.getRolesAndUsers();
+  }
 
+  changeCheckRol(event, id: any, element: any, i: number) {
+    const data = <any>this.ELEMENT_DATA_ORIGINAL[id];
+    element.roles[i].checked = event.checked;
+
+    if (JSON.stringify(element.roles) === JSON.stringify(data.roles)) {
+      this.deleteElementArray(element.userId, id);
+    } else {
+      this.addElementArray(element.userId, id);
+    }
+  }
+
+  deleteElementArray(userId: number, idRow: number) {
+    if (this.listToUpdate.length > 0) {
+      const index = this.listToUpdate.findIndex((x) => x.userId === userId);
+
+      if (index !== -1) {
+        const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
+
+        if (indexRow !== -1) {
+          this.listToUpdate[index].rows.splice(indexRow, 1);
+
+          if (this.listToUpdate[index].rows.length === 0) {
+            this.listToUpdate.splice(index, 1);
+          }
+        }
+      }
+    }
+  }
+
+  addElementArray(userId: number, idRow: number) {
+    const index = this.listToUpdate.findIndex((x) => x.userId === userId);
+
+    if (index === -1) {
+      this.listToUpdate.push({userId, rows: [{idRow}]});
+    } else {
+      const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
+
+      if (indexRow === -1) {
+        this.listToUpdate[index].rows.push({idRow});
+      }
+    }
+  }
+
+  fillBodyEndPoint(userId: number) {
     const data = <any>this.ELEMENT_DATA;
-    this.ELEMENT_DATA.splice(id, 1);
-    const body = [];
-    body.push(this.fillBodyEndPoint(data, element.parentUser));
-
-    this.sendDataEndPoint(body, element.parentUser);
-  }
-
-  private fillBodyEndPoint(data, userId: number) {
-    const permits = data.filter((x) => x.parentUser === userId);
+    const permits = data.filter((x) => x.userId === userId);
     const body = {
       id: userId,
       permits: []
@@ -324,13 +300,17 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
     return body;
   }
 
-  private sendDataEndPoint(body, userId: number = null) {
+  sendDataEndPoint(body) {
+    body.forEach((element) => {
+      element.permits = element.permits.filter((x) => x.roles.length > 0);
+    });
+
     this.usersService.updateWarehouseInUser(body)
       .then((data: Observable<HttpResponse<UserModel.ResponseShow>>) => {
-        data.subscribe((res: HttpResponse<UserModel.ResponseShow>) => {
+        data.subscribe(async (res: HttpResponse<UserModel.ResponseShow>) => {
           this.intermediaryService.dismissLoading();
-          this.getRolesAndUsers(userId);
-          }, (err) => {
+          await this.getRolesAndUsers();
+        }, (err) => {
             console.log(err);
             this.intermediaryService.dismissLoading();
         });
@@ -340,35 +320,73 @@ export class RoleAssignmentComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private deleteElementArray(userId: number, idRow: number) {
-    if (this.listToUpdate.length > 0) {
-      const index = this.listToUpdate.findIndex((x) => x.userId === userId);
-
-      if (index !== -1) {
-        const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
-
-        if (indexRow !== -1) {
-          this.listToUpdate[index].rows.splice(indexRow, 1);
-
-          if (this.listToUpdate[index].rows.length === 0) {
-            this.listToUpdate.splice(index, 1);
-          }
-        }
-      }
-    }
+  mapFilterListUsers() {
+    this.listUsers = this.users.map(user => {
+      return {
+        id: user.id,
+        name: user.name,
+        value: user.name,
+        checked: true,
+        hide: false
+      };
+    });
   }
 
-  private addElementArray(userId: number, idRow: number) {
-    const index = this.listToUpdate.findIndex((x) => x.userId === userId);
+  mapFilterListWarehouses() {
+    this.listWarehouses = this.warehouses.map(warehouse => {
+      return {
+        id: warehouse.id,
+        name: warehouse.reference + " - " + warehouse.name,
+        value: warehouse.reference + " - " + warehouse.name,
+        checked: true,
+        hide: false
+      };
+    });
+  }
 
-    if (index === -1) {
-      this.listToUpdate.push({userId, rows: [{idRow}]});
-    } else {
-      const indexRow = this.listToUpdate[index].rows.findIndex((x) => x.idRow === idRow);
-
-      if (indexRow === -1) {
-        this.listToUpdate[index].rows.push({idRow});
-      }
+  async openFilterComponent(event, type: string) {
+    let listItems = [];
+    let title = '';
+    if (type === 'user') {
+      title = 'Usuario';
+      listItems = this.listUsers;
+    } else if (type === 'warehouse') {
+      title = 'Almacén';
+      listItems = this.listWarehouses;
     }
+
+    const popover = await this.popoverController.create({
+      cssClass: 'popover-filter',
+      component: FiltersRoleAssignmentComponent,
+      event: event,
+      componentProps: {
+        title: title,
+        listItems: listItems
+      }
+    });
+
+    popover.onDidDismiss().then(async (data) => {
+      if (data && data.data && data.data.filters) {
+        const filter = data.data.filters.filter((x) => x.checked === true);
+
+        if (filter.length === data.data.filters.length) {
+          if (type === 'user') {
+            this.body.users = [];
+          } else if (type === 'warehouse') {
+            this.body.warehouses = [];
+          }
+        } else {
+          if (type === 'user') {
+            this.body.users = filter.map((x) => x.id);
+          } else if (type === 'warehouse') {
+            this.body.warehouses = filter.map((x) => x.id);
+          }
+        }
+
+        await this.applyFilter();
+      }
+    });
+
+    await popover.present();
   }
 }
