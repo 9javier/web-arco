@@ -47,14 +47,6 @@
         <p>{{destinies['000'] ? 'OTRO' : 'NUEVO EMBALAJE A 000'}}</p>
       </ion-button>
     </div>
-    <div>
-      <ion-button expand="full" color="dark" (click)="assignToPacking()" *ngIf="destinies['incidence']">
-        <p>EMBALAJE DE INCIDENCIAS {{getPackingScanned('incidence')}}</p>
-      </ion-button>
-      <ion-button expand="full" color="dark" (click)="scanPacking('incidence')" class="other-btn" >
-        <p>{{destinies['incidence'] ? 'OTRO' : 'NUEVO EMBALAJE DE INCIDENCIAS'}}</p>
-      </ion-button>
-    </div>
   </ion-footer>
 
 </ion-content>
