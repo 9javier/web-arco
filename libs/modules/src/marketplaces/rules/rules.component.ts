@@ -38,146 +38,18 @@ export class RulesComponent implements OnInit {
 
     // LLAMAR AL ENDPOINT PARA RECOGER LOS DATOS. UNA VEZ OBTENIDOS, HABRÁ QUE AÑADIR CÓDIGO PARA CLASIFICAR LAS REGLAS SEGÚN SU TIPO DE FILTRO
 
-    this.dataSourceCategories = [
-      /* {
-         id: 1,
-         name: "Rebajas para botas",
-         filterType: "category",
-         action: "categories",
-         categoriesFilter: [
-           {id: 31, group: 2, name: "Mujer"},
-           {id: 83, group: 2, name: "Hombre"},
-           {id: 134, group: 2, name: "Kids"},
-         ],
-         minPriceFilter: "0.00",
-         stockFilter: 0,
-         products: 4546,
-         destinationCategories: [
-           {id: 38, group: 2, name: "Mujer rebajas"},
-           {id: 49, group: 2, name: "Hombre rebajas"}
-         ],
-         stockToReduce: 0
-       },
-       {
-         id: 2,
-         name: "Menos 20 de stock a tacón alto",
-         filterType: "category",
-         action: "stock",
-         categoriesFilter: [
-           {id: 1, group: 3, name: "Alto"}
-         ],
-         minPriceFilter: "0.00",
-         stockFilter: 0,
-         products: 230,
-         destinationCategories: [],
-         stockToReduce: 20
-       },
-       {
-         id: 3,
-         name: "Envíar deportivas azules",
-         filterType: "category",
-         action: "activation",
-         categoriesFilter: [
-           {id: 3, group: 4, name: "Deportivas"},
-           {id: 2, group: 9, name: "Azul"}
-         ],
-         minPriceFilter: "0.00",
-         stockFilter: 0,
-         products: 79,
-         destinationCategories: [],
-         stockToReduce: 0
-       }*/
-    ];
+    this.dataSourceCategories = [];
     this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
     this.displayedCategoriesColumns = ['name', 'categories', 'products', 'edit'];
 
-    this.dataSourcePrice = [
-      /*{
-        id: 4,
-        name: "Envíar mayores de 45.00 €",
-        filterType: "price",
-        action: "activation",
-        categoriesFilter: [],
-        minPriceFilter: "45.00",
-        stockFilter: 0,
-        products: 5720,
-        destinationCategories: [],
-        stockToReduce: 0
-      },
-      {
-        id: 5,
-        name: "Añadir a mujer mayores de 23.40 €",
-        filterType: "price",
-        action: "categories",
-        categoriesFilter: [],
-        minPriceFilter: "23.40",
-        stockFilter: 0,
-        products: 12230,
-        destinationCategories: [
-          {id: 31, group: 2, name: "Mujer"}
-        ],
-        stockToReduce: 0
-      },
-      {
-        id: 6,
-        name: "Restar 5 al stock de los mayores de 34.99 €",
-        filterType: "price",
-        action: "stock",
-        categoriesFilter: [],
-        minPriceFilter: "34.99",
-        stockFilter: 0,
-        products: 6677,
-        destinationCategories: [],
-        stockToReduce: 5
-      }*/
-    ];
+    this.dataSourcePrice = [];
     this.dataSourceRulesPrice = new MatTableDataSource(this.dataSourcePrice);
     this.displayedPriceColumns = ['name', 'price', 'products', 'edit'];
 
-    this.dataSourceStocks = [
-      /*{
-        id: 7,
-        name: "Envíar productos con stock mayor a 10",
-        filterType: "stock",
-        action: "activation",
-        categoriesFilter: [],
-        minPriceFilter: "0.00",
-        stockFilter: 10,
-        products: 230,
-        destinationCategories: [],
-        stockToReduce: 0
-      },
-      {
-        id: 8,
-        name: "Añadir a hombres rebajas stock mayor a 12",
-        filterType: "stock",
-        action: "categories",
-        categoriesFilter: [],
-        minPriceFilter: "0.00",
-        stockFilter: 12,
-        products: 230,
-        destinationCategories: [
-          {id: 49, group: 2, name: "Hombre rebajas"}
-        ],
-        stockToReduce: 0
-      },
-      {
-        id: 9,
-        name: "Restar 32 de stock a los que tengan 45 o más",
-        filterType: "stock",
-        action: "stock",
-        categoriesFilter: [],
-        minPriceFilter: "0.00",
-        stockFilter: 45,
-        products: 230,
-        destinationCategories: [],
-        stockToReduce: 32
-      }*/
-    ];
+    this.dataSourceStocks = [];
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
     this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     this.marketplacesService.getRulesFilter().subscribe(data => {
@@ -265,7 +137,6 @@ export class RulesComponent implements OnInit {
 
     modal.onDidDismiss().then((data) => {
       if (data.data) {
-        console.log(data.data);
 
         let filterType = 0;
 
@@ -346,11 +217,7 @@ export class RulesComponent implements OnInit {
 
     let maxId = Math.max(maxIdCategory, maxIdPrice, maxIdStock);
 
-    console.log(this.dataSourceCategories);
-
     rule.id = maxId + 1;
-
-    console.log('rule', rule);
 
     switch (rule.filterType) {
       case 'category':
@@ -380,8 +247,6 @@ export class RulesComponent implements OnInit {
 
         break;
     }
-
-    console.log(this.dataSourceCategories);
 
   }
   //////////////////////////////////////////////////////////////////////////////
