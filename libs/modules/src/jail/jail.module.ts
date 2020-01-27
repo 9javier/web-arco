@@ -23,9 +23,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { AddDestinyComponent } from './add-destiny/add-destiny.component';
 
 @NgModule({
-  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent],
+  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent, AddDestinyComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -48,7 +49,8 @@ import { SendJailComponent } from './send-jail/send-jail.component';
     SendComponent,
     SendPackingComponent,
     ShowDestinationsComponent,
-    SendJailComponent
+    SendJailComponent,
+    AddDestinyComponent
   ]
 })
 export class JailModule { }

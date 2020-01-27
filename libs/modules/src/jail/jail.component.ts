@@ -16,6 +16,8 @@ import { SendComponent } from './send/send.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { AddDestinyComponent} from './add-destiny/add-destiny.component';
+import { element } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-jail',
@@ -191,6 +193,20 @@ export class JailComponent implements OnInit {
     })
   }
 
+  addDestiny(closeAlert?: boolean){
+    //Open new Modal destiny
+
+    //this.setDestination(1,1);
+
+     
+
+
+
+    if (closeAlert) {
+      this.intermediaryService.dismissLoading();
+    }
+  }
+
   getCarriers(): void {
     this.intermediaryService.presentLoading();
     this.carrierService.getIndex().subscribe(carriers => {
@@ -224,7 +240,6 @@ export class JailComponent implements OnInit {
    * check if have items to delete
    */
   hasToDelete(): boolean {
-
 
     return !!this.toDelete.value.jails.find(jail => jail.selected);
   }
@@ -297,6 +312,8 @@ export class JailComponent implements OnInit {
   async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
     let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
     let newlista = [];
+    let idCarrier;
+    let idWarehouse=0;
     let newlistaPrint = [];
     lista.forEach(item => {
       let er = '';
@@ -318,8 +335,11 @@ export class JailComponent implements OnInit {
                   er = '- Precintada';
                 }
             }
+             idCarrier = item.reference;
+             idWarehouse = item.warehouse.id;
       newlistaPrint.push(item.reference + er);
     })
+   
     let lstShow = "";
     newlistaPrint.map(x => {
       lstShow += `${x}</br>`;
@@ -341,6 +361,14 @@ export class JailComponent implements OnInit {
         header: 'Aviso',
         message: `<b>Los siguientes embalajes no se pueden precintar</b></br></br>${lstShow}`,
         buttons: [
+          {
+            text: 'Agregar Destino',
+            role: 'send',
+            cssClass: 'primary',
+            handler: () => {
+              this.send(event,lista[0]);
+            }
+          },
           {
             text: 'Cancelar',
             role: 'cancel',
@@ -431,11 +459,12 @@ export class JailComponent implements OnInit {
    * @param event - to cancel it
    * @param jail - jail to be updated
    */
-  async send(event, jail) {
+  async send(event,jail) {
+    console.log(event);
     event.stopPropagation();
     event.preventDefault();
     let modal = (await this.modalCtrl.create({
-      component: SendComponent,
+      component: AddDestinyComponent,
       componentProps: {
         jail: jail
       },
