@@ -45,7 +45,7 @@ export class ListWorkwavesScheduleComponent implements OnInit {
   }
 
   loadWorkWaves() {
-    this.intermediaryService.presentLoading("Refrescando listado");
+    this.intermediaryService.presentLoading("Actualizando...");
     this.workwavesService
       .getListScheduled()
       .then((data: Observable<HttpResponse<WorkwaveModel.ResponseListScheduled>>) => {
