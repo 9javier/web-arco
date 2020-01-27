@@ -6,6 +6,7 @@ export namespace ReceptionAvelonModel {
     name: string;
     selected: boolean;
     newSelectd?: boolean
+    belongsModels?: Array<number>
   }
 
   export interface Reception {
@@ -31,12 +32,13 @@ export namespace ReceptionAvelonModel {
   }
 
   export interface Print {
-    ean: string,
-    expedition: string,
-    modelId: number,
-    sizeId: number,
-    colorId: number,
-    providerId: number,
-    brandId: number
+    reference: string;
+    ean: string;
+    expedition: string;
+    modelId: number;
+    sizeId: number;
+    colorId: number;
+    providerId: number;
+    brandId: number;
   }
 }

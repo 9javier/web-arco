@@ -1,5 +1,11 @@
 <suite-breadcrumb></suite-breadcrumb>
 <div class="scroll-list">
+
+  <div class="ion-button">
+  <ion-button color="primary" (click)="loadWorkWaves()" matTooltip="Refrescando listado" matTooltipClass="tooltip">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-button>
+  </div>
     <title-list-workwaves-schedule></title-list-workwaves-schedule>
     <workwave-list-workwaves-schedule *ngFor="let workWave of workWaves" [workWave]="workWave"></workwave-list-workwaves-schedule>
 </div>

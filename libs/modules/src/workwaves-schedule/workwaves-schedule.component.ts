@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+
 import { COLLECTIONS } from 'config/base';
 
 @Component({

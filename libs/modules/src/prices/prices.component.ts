@@ -13,7 +13,7 @@ import {
 } from '@suite/services';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
-import { AlertController, NavParams, PopoverController } from '@ionic/angular';
+import {AlertController, Events, NavParams, PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -148,6 +148,7 @@ export class PricesComponent implements OnInit {
     private toolbarProvider: ToolbarProvider,
     private tariffPricesScanditService: TariffPricesScanditService,
     private holderTooltipText: HolderTooltipText,
+    private events: Events
   ) {
     this.route.queryParams.subscribe(params => {
       if (params && params.name) {
@@ -415,10 +416,13 @@ export class PricesComponent implements OnInit {
     }
 
     this.getWarehouses();
+
+    this.events.subscribe('setProductAsPrinted', () => this.applyFilters());
   }
 
   ngOnDestroy(){
     this.toolbarProvider.optionsActions.next([]);
+    this.events.unsubscribe('setProductAsPrinted');
   }
 
   addScannerButton(){

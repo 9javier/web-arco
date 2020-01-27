@@ -1,32 +1,36 @@
-.wrapper-login-form {
-  display: flex;
-  flex-direction: column;
+form {
   height: 100%;
 
-  ion-row.logo-wrapper {
+  .wrapper-login-form {
     display: flex;
     flex-direction: column;
-    flex: 0 1 auto;
-    padding: 2rem;
-  }
+    height: 100%;
 
-  ion-row.input-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 0 1 120px;
-  }
+    ion-row.logo-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 0 1 auto;
+      padding: 2rem;
+    }
 
-  ion-row.actions-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex: 0 1 95px;
-  }
+    ion-row.input-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 0 1 120px;
+    }
 
-  overflow: hidden;
+    ion-row.actions-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 0 1 95px;
+    }
 
-  p.version-number {
-    text-align: end;
-    color: #949191;
-    font-size: 14px;
+    overflow: hidden;
+
+    p.version-number {
+      text-align: end;
+      color: #949191;
+      font-size: 14px;
+    }
   }
 }
