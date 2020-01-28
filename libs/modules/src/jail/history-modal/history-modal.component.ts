@@ -14,7 +14,7 @@ import * as moment from 'moment';
 export class HistoryModalComponent implements OnInit {
   reference
   packingReference
-  actionTypes = {};
+  movementTypes = {};
   dates: any[] = [];
   hours: any[] = [];
   constructor(
@@ -26,15 +26,13 @@ export class HistoryModalComponent implements OnInit {
   carrierHistory: [];
 
   ngOnInit() {
-    console.log(this.packingReference)
     this.getReference(this.packingReference)
-    this.getActionTypes()
+    this.getPackingMovementsTypes()
   }
   getReference(ref) {
     
     this.carrierService.carrierHistory(ref).subscribe((response) => {
       this.reference = response
-      console.log(this.reference);
       for (let i = 0; i < this.reference.length; i++) {
         this.dates[i] = moment(ref[i].updatedAt).format('DD/MM/YYYY');
         this.hours[i] = moment(ref[i].updatedAt).format('HH:mm:ss');
@@ -45,11 +43,11 @@ export class HistoryModalComponent implements OnInit {
   close() {
     this.modalController.dismiss()
   }
-  getActionTypes(): void {
-    this.typeService.getTypeActions().subscribe(ActionTypes => {
+  getPackingMovementsTypes(): void {
+    this.typeService.getPackingMovementsTypesActions().subscribe(MovementTypes => {
       /**fill the actionTypes dictionary */
-      ActionTypes.forEach(actionType => {
-        this.actionTypes[actionType.id] = actionType.name
+      MovementTypes.forEach(movementType => {
+        this.movementTypes[movementType.id] = movementType.name
       })
     })
   }

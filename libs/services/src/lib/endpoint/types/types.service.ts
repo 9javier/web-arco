@@ -35,6 +35,7 @@ export class TypesService {
   /**Types url */
   private getOrderProductTypesUrl = environment.apiBase+'/types/type-order-product';
   private getTypeActionsUrl = environment.apiBase+'/types/actions';
+  private getPackingMovementsTypesActionsUrl = environment.apiBase+'/types/packing-movements';
 
   private types = {
     actions: [],
@@ -74,6 +75,19 @@ export class TypesService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get<TypeModel.ResponseTypeActions>(this.getTypeActionsUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  /**
+   * Get the type actions enum
+   * @return Observable with typeactions
+   */
+  getPackingMovementsTypesActions():Observable<Array<TypeModel.TypeActions>>{
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<TypeModel.ResponseTypeActions>(this.getPackingMovementsTypesActionsUrl, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));
