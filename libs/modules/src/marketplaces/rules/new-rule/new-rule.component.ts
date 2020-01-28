@@ -133,31 +133,60 @@ export class NewRuleComponent implements OnInit {
       {
         id: 8,
         name: 'Marca',
-        items: [
-          {id: 1, group: 8, name: 'ADIDAS SL'},
-          {id: 2, group: 8, name: 'AMANDA A.'},
-          {id: 3, group: 8, name: 'ASICS'}
-        ]
+        items: []
       },
       {
         id: 9,
         name: 'Colores',
-        items: [
-          {id: 1, group: 9, name: 'Rojo'},
-          {id: 2, group: 9, name: 'Azul'},
-          {id: 3, group: 9, name: 'Amarillo'}
-        ]
+        items: []
       },
       {
         id: 10,
         name: 'Tallas',
-        items: [
-          {id: 1, group: 10, name: '34'},
-          {id: 2, group: 10, name: '35'},
-          {id: 3, group: 10, name: '36'}
-        ]
+        items: []
       }
-    ]; // LISTA DE CATEGORÍAS AGRUPADAS POR GRUPO. VIENE DE ENDPOINT
+    ]; 
+    
+    this.marketplacesMgaService.getBrands().subscribe(data => {
+      if(data) {
+        data.forEach(brand => { 
+          this.categoryList[7].items.push({
+            id: brand.id,
+            group: 8,
+            name: brand.name
+          })
+        })
+      }
+    });
+
+
+    this.marketplacesMgaService.getColors().subscribe(data => {
+      if(data) {
+        data.forEach(color => { 
+          this.categoryList[8].items.push({
+            id: color.id,
+            group: 9,
+            name: color.name
+          })
+        })
+      }
+    });
+    
+    this.marketplacesMgaService.getSizes().subscribe(data => {
+      if(data) {
+        data.forEach(size => { 
+          this.categoryList[9].items.push({
+            id: size.id,
+            group: 10,
+            name: size.name
+          })
+        })
+      }
+    });
+    
+    
+    
+    // LISTA DE CATEGORÍAS AGRUPADAS POR GRUPO. VIENE DE ENDPOINT
     this.selectedCategoryGroupFilter = this.categoryList[0].id;
     this.selectedCategoryGroupFilterObject = this.categoryList[0];
     this.destinationCategories = [ //LISTA DE CATEGORÍAS SIN AGRUPAR. SE PUEDE SACAR DE CATEGORYLIST O HACER UN ENDPOINT A PARTE
