@@ -52,6 +52,11 @@ export class AppComponent implements OnInit {
       url: '/positioning/manual'
     },
     {
+      title: 'Ubicar online/Pocisionamiento Manual',
+      icon: 'qr-scanner',
+      url: '/positioning/manual-online'
+    },
+    {
       title: 'Tareas de Picking',
       icon: 'qr-scanner',
       url: '/picking-tasks'

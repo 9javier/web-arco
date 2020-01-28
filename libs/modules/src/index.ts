@@ -145,6 +145,10 @@ export * from './components/menu/menu.module';
 export * from './positioning-manual/positioning-manual.component';
 export * from './positioning-manual/positioning-manual.module';
 
+/**Manual Positioning Online */
+export * from './positioning-manual-online/positioning-manual-online.component';
+export * from './positioning-manual-online/positioning-manual-online.module';
+
 /**Manual Picking */
 export * from './picking-manual/picking-manual.component';
 export * from './picking-manual/picking-manual.module';
