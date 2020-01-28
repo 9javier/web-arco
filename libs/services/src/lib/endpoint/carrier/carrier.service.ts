@@ -60,9 +60,10 @@ export class CarrierService {
    * @author Gaetano Sabino
    * @description recibe referencia o id Jaula de una Jaula para vaciar Jaula
    * @param id number o string
+   * @param process number
    */
-  postPackingEmpty(id:number | string){
-    let body = {packingIdOrReference:id}
+  postPackingEmpty(id:number | string, process: string){
+    let body = {packingIdOrReference:id, process};
     return this.requestsProvider.post(this.postVaciarCalle,body)
   }
 
