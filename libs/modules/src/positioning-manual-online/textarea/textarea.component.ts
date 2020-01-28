@@ -208,7 +208,7 @@ export class TextareaComponent implements OnInit {
     params.noOnline = true;
     this.intermediaryService.presentLoading();
     this.inventoryService
-      .postStore(params)
+      .postStoreOnline(params)
       .then(async (res: InventoryModel.ResponseStore) => {
         this.intermediaryService.dismissLoading();
         if (res.code === 200 || res.code === 201) {
