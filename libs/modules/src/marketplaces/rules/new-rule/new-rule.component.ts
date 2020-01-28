@@ -69,65 +69,44 @@ export class NewRuleComponent implements OnInit {
         id: 1,
         name: 'Sección',
         items: [
-          {id: 1, group: 1, name: 'Sección 1'},
+          /*{id: 1, group: 1, name: 'Sección 1'},
           {id: 2, group: 1, name: 'Sección 2'},
           {id: 3, group: 1, name: 'Sección 3'},
-          {id: 4, group: 1, name: 'Sección 4'}
+          {id: 4, group: 1, name: 'Sección 4'}*/
         ]
       },
       {
         id: 2,
         name: 'Familia',
-        items: [
-          {id: 31, group: 2, name: 'Mujer'},
-          {id: 83, group: 2, name: 'Hombre'},
-          {id: 133, group: 2, name: 'Unisex'},
-          {id: 134, group: 2, name: 'Kids'}
-        ]
+        items: []
       },
       {
         id: 3,
         name: 'Tacón',
-        items: [
-          {id: 1, group: 3, name: 'Alto'},
-          {id: 2, group: 3, name: 'Bajo'},
-          {id: 3, group: 3, name: 'Sin tacón'}
-        ]
+        items: []
       },
       {
         id: 4,
         name: 'Descripción',
-        items: [
-          {id: 1, group: 4, name: 'Botas'},
-          {id: 2, group: 4, name: 'Botines'},
-          {id: 3, group: 4, name: 'Deportivas'}
-        ]
+        items: []
       },
       {
         id: 5,
         name: 'Material exterior',
-        items: [
-          {id: 1, group: 5, name: 'Piel'},
-          {id: 2, group: 5, name: 'Tela'},
-          {id: 3, group: 5, name: 'Plástico'}
-        ]
+        items: []
       },
       {
         id: 6,
         name: 'Material interior',
-        items: [
-          {id: 1, group: 6, name: 'Piel'},
-          {id: 2, group: 6, name: 'Tela'},
-          {id: 3, group: 6, name: 'Plástico'}
-        ]
+        items: []
       },
       {
         id: 7,
         name: 'Comercial',
         items: [
-          {id: 1, group: 7, name: 'Comercial 1'},
+          /*{id: 1, group: 7, name: 'Comercial 1'},
           {id: 2, group: 7, name: 'Comercial 2'},
-          {id: 3, group: 7, name: 'Comercial 3'}
+          {id: 3, group: 7, name: 'Comercial 3'}*/
         ]
       },
       {
@@ -146,7 +125,57 @@ export class NewRuleComponent implements OnInit {
         items: []
       }
     ]; 
-    
+
+    this.marketplacesMgaService.getFeaturesByMarket(1).subscribe(data => {
+      if(data) {
+        data.forEach(item => {
+          if(item.groupNumber == 2) {
+            this.categoryList[1].items.push({
+              id: item.id,
+              group: 2,
+              name: item.name
+            })
+          } else if(item.groupNumber == 5) {
+            this.categoryList[2].items.push({
+              id: item.id,
+              group: 3,
+              name: item.name
+            })
+          } else if(item.groupNumber == 7) {
+            this.categoryList[3].items.push({
+              id: item.id,
+              group: 4,
+              name: item.name
+            })
+          } else if(item.groupNumber == 9) {
+            this.categoryList[4].items.push({
+              id: item.id,
+              group: 5,
+              name: item.name
+            })
+          } else if(item.groupNumber == 10) {
+            this.categoryList[5].items.push({
+              id: item.id,
+              group: 6,
+              name: item.name
+            })
+          } else if(item.groupNumber == 12) {
+            this.categoryList[6].items.push({
+              id: item.id,
+              group: 7,
+              name: item.name
+            })
+          } else if(item.groupNumber == 13) {
+            this.categoryList[0].items.push({
+              id: item.id,
+              group: 1,
+              name: item.name
+            })
+          }
+        })
+      }
+    });
+
     this.marketplacesMgaService.getBrands().subscribe(data => {
       if(data) {
         data.forEach(brand => { 
