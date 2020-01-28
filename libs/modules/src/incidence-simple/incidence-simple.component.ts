@@ -3,7 +3,6 @@ import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/i
 import {Observable} from "rxjs";
 import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
-import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import { IntermediaryService } from '@suite/services';
 import { TimesToastType } from '../../../services/src/models/timesToastType';
 
@@ -18,8 +17,7 @@ export class IncidenceSimpleComponent implements OnInit {
 
   constructor(
     public incidencesService: IncidencesService,
-    private intermediaryService: IntermediaryService,
-    public dateTimeParserService: DateTimeParserService
+    private intermediaryService: IntermediaryService
   ) {}
 
   ngOnInit() {
@@ -27,8 +25,8 @@ export class IncidenceSimpleComponent implements OnInit {
   }
 
   attendIncidence() {
-    let incidenceAttended: boolean = !this.incidence.attended;
-    let incidenceId: number = this.incidence.id;
+    let incidenceAttended: boolean = this.incidence.status.status.id == 1;
+    let incidenceId: number = this.incidence.info.id;
     this.incidencesService
       .putUpdate(incidenceId, incidenceAttended)
       .then((data: Observable<HttpResponse<IncidenceModel.ResponseUpdate>>) => {
@@ -50,10 +48,6 @@ export class IncidenceSimpleComponent implements OnInit {
       }, (error: HttpErrorResponse) => {
         this.intermediaryService.presentToastError(error.message);
       });
-  }
-
-  showDateTime(dateToFormat) : string {
-    return this.dateTimeParserService.dateTime(dateToFormat);
   }
 
 }

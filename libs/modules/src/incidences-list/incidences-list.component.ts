@@ -2,13 +2,11 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {IncidencesService} from "../../../services/src/lib/endpoint/incidences/incidences.service";
 import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/date-time-parser.service";
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
-import {Observable} from "rxjs";
-import {HttpErrorResponse, HttpResponse} from "@angular/common/http";
-import {PageEvent} from "@angular/material";
+import {MatSort, PageEvent, Sort} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import { IntermediaryService, TypeModel } from '@suite/services';
-import AttendedOption = IncidenceModel.AttendedOption;
+import { IntermediaryService } from '@suite/services';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {FilterButtonComponent} from "@suite/common-modules";
 
 @Component({
   selector: 'incidences-list',
@@ -25,15 +23,39 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 export class IncidencesListComponent implements OnInit {
 
   public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'warehouse', 'location', 'destiny', 'sorter-way', 'history', 'status', 'user-status', 'date-status', 'time-status'];
-  public incidences: Incidences[] = [];
+  public incidences: IncidenceModel.Incidence[] = [];
+  public typeFilters = IncidenceModel.TypeFilters;
+  public listAvailableStatus: any[] = [];
 
-  public expandedElement: IncidenceModel.Incidence | null;
-  private actualPageFilter: IncidenceModel.SearchParameters;
-  public typeSelected: TypeModel.Type;
-  public listAttendedOptions: AttendedOption[];
-  public attendedSelected: AttendedOption;
-  public textToSearch: string;
+  public paginatorPagerValues = [20, 50, 100];
+  private currentPageFilter: IncidenceModel.SearchParameters;
+
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  @ViewChild(MatSort) sort: MatSort;
+
+  @ViewChild('btnFilterTypes') btnFilterTypes: FilterButtonComponent;
+  @ViewChild('btnFilterProcesses') btnFilterProcesses: FilterButtonComponent;
+  @ViewChild('btnFilterDatesReport') btnFilterDatesReport: FilterButtonComponent;
+  @ViewChild('btnFilterTimesReport') btnFilterTimesReport: FilterButtonComponent;
+  @ViewChild('btnFilterUsersReport') btnFilterUsersReport: FilterButtonComponent;
+  @ViewChild('btnFilterProducts') btnFilterProducts: FilterButtonComponent;
+  @ViewChild('btnFilterModelReferences') btnFilterModelReferences: FilterButtonComponent;
+  @ViewChild('btnFilterSizes') btnFilterSizes: FilterButtonComponent;
+  @ViewChild('btnFilterBrands') btnFilterBrands: FilterButtonComponent;
+  @ViewChild('btnFilterModelNames') btnFilterModelNames: FilterButtonComponent;
+  @ViewChild('btnFilterColors') btnFilterColors: FilterButtonComponent;
+  @ViewChild('btnFilterLifestyles') btnFilterLifestyles: FilterButtonComponent;
+  @ViewChild('btnFilterSeasons') btnFilterSeasons: FilterButtonComponent;
+  @ViewChild('btnFilterLocationWarehouses') btnFilterLocationWarehouses: FilterButtonComponent;
+  @ViewChild('btnFilterLocations') btnFilterLocations: FilterButtonComponent;
+  @ViewChild('btnFilterDestinyWarehouses') btnFilterDestinyWarehouses: FilterButtonComponent;
+  @ViewChild('btnFilterLocationSorterWays') btnFilterLocationSorterWays: FilterButtonComponent;
+  @ViewChild('btnFilterStatus') btnFilterStatus: FilterButtonComponent;
+  @ViewChild('btnFilterUsersManage') btnFilterUsersManage: FilterButtonComponent;
+  @ViewChild('btnFilterDatesManage') btnFilterDatesManage: FilterButtonComponent;
+  @ViewChild('btnFilterTimesManage') btnFilterTimesManage: FilterButtonComponent;
+
+  private textsTypedInFilters: any = {};
 
   constructor(
     public incidencesService: IncidencesService,
@@ -42,665 +64,178 @@ export class IncidencesListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.incidences = [
-      {
-        id: 1,
-        type: 'Nuevo artículo registrado',
-        process: 'Ubicación',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Pendiente',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
+    this.currentPageFilter = {
+      order: {
+        field: 'id',
+        direction: 'ASC'
       },
-      {
-        id: 2,
-        type: 'Ubicación desactivada',
-        process: 'Gestión almacén',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Gestionado',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 3,
-        type: 'Ubicación activada',
-        process: 'Gestión almacén',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Pendiente',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 4,
-        type: 'Movimiento global',
-        process: 'Gestión almacén',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Gestionado',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 5,
-        type: 'Ubicación bloqueada',
-        process: 'Gestión almacén',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Pendiente',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 6,
-        type: 'Ubicación desbloqueada',
-        process: 'Gestión almacén',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Gestionado',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 7,
-        type: 'Producto reetiquetado',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Pendiente',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 8,
-        type: 'Calle errónea',
-        process: 'Sorter',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Gestionado',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 9,
-        type: 'Sin escaneo de entrada',
-        process: 'Sorter',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Pendiente',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 10,
-        type: 'Jaula vaciada',
-        process: 'Ubicación',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Pendiente',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 11,
-        type: 'Jaula vaciada',
-        process: 'Picking',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Gestionado',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 12,
-        type: 'Jaula vaciada',
-        process: 'Vaciado sorter',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Gestionado',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      },
-      {
-        id: 13,
-        type: 'Productos no encontrados',
-        process: 'Picking',
-        user: {
-          id: 1,
-          name: 'Paco'
-        },
-        date: '22/01/2020',
-        time: '18:05',
-        product: {
-          reference: '001234567891234567',
-          model: {
-            name: 'Zapato Adidas',
-            reference: '123456'
-          },
-          brand: 'Adidas',
-          color: 'ROJO',
-          size: 45,
-          lifestyle: 'Hombre',
-          season: 'Invierno',
-          location: {
-            location: 'P002A02C003',
-            warehouse: '601'
-          },
-          destiny: '006',
-          history: true,
-          sorterWay: null
-        },
-        status: {
-          date: '24/01/2020',
-          time: '08:00',
-          status: 'Mantener en almacén',
-          user: {
-            id: 2,
-            name: 'Galvintec'
-          }
-        }
-      }
-    ];
-
-    this.incidencesService.init();
-    this.incidencesService.incidencesQuantityList
-    this.typeSelected = this.incidencesService.listIncidencesTypes[0];
+      filters: {},
+      page: 0,
+      size: this.paginatorPagerValues[0]
+    };
     this.listenPaginatorChanges();
-    this.actualPageFilter = this.incidencesService.defaultFilters;
-
-
-    this.listAttendedOptions = [
-      {
-        id: 0,
-        value: 'Todas'
-      },
-      {
-        id: 1,
-        value: 'Atendidas'
-      },
-      {
-        id: 2,
-        value: 'No atendidas'
-      }];
-    this.attendedSelected = this.listAttendedOptions[0];
   }
 
   listenPaginatorChanges() {
     this.paginator.page.subscribe((page: PageEvent) => {
-      this.actualPageFilter.page = page.pageIndex;
-      this.actualPageFilter.size = page.pageSize;
+      this.intermediaryService.presentLoading('Cargando incidencias...').then(() => {
+        this.currentPageFilter.page = page.pageIndex;
+        this.currentPageFilter.size = page.pageSize;
 
-      this.searchIncidences(this.actualPageFilter);
-    });
-    this.searchIncidences(this.actualPageFilter);
-  }
-
-  attendIncidence(event, incidence: IncidenceModel.Incidence) {
-    event.stopPropagation();
-
-    let incidenceAttended: boolean = !incidence.attended;
-    let incidenceId: number = incidence.id;
-    this.incidencesService
-      .putUpdate(incidenceId, incidenceAttended)
-      .then((data: Observable<HttpResponse<IncidenceModel.ResponseUpdate>>) => {
-        data.subscribe((res: HttpResponse<IncidenceModel.ResponseUpdate>) => {
-          if (res.body.code === 200 || res.body.code === 201) {
-            let okMessage = '';
-            if (incidenceAttended) {
-              okMessage = 'La notificación se ha marcado como atendida';
-            } else {
-              okMessage = 'La notificación se ha marcado como desatendida';
-            }
-
-            this.intermediaryService.presentToastSuccess(okMessage);
-            this.incidencesService.init(this.actualPageFilter);
-          } else {
-            this.intermediaryService.presentToastError(res.body.message);
-          }
-        });
-      }, (error: HttpErrorResponse) => {
-        this.intermediaryService.presentToastError(error.message);
+        this.searchIncidences(this.currentPageFilter);
       });
-  }
-
-  changeFilters(data: IncidenceModel.IncidenceFilters) {
-    this.typeSelected = data.type;
-    this.attendedSelected = data.attended;
-    this.textToSearch = data.text;
-
-    if (this.typeSelected.id === 0) {
-      delete this.actualPageFilter.type;
-    } else {
-      this.actualPageFilter.type = this.typeSelected.id;
-    }
-
-    if (this.attendedSelected.id === 0) {
-      delete this.actualPageFilter.attended;
-    } else {
-      this.actualPageFilter.attended = this.attendedSelected.id;
-    }
-
-    if (this.textToSearch) {
-      this.actualPageFilter.text = this.textToSearch;
-    } else {
-      delete this.actualPageFilter.text;
-    }
-
-    this.actualPageFilter.page = 0;
-
-    this.searchIncidences(this.actualPageFilter);
+    });
+    this.sort.sortChange.subscribe((sort: Sort) => {
+      this.intermediaryService.presentLoading('Cargando incidencias...').then(() => {
+        if (sort.direction == '') {
+        this.currentPageFilter.order = {
+          field: 'id',
+          direction: 'ASC'
+        };
+      } else {
+        this.currentPageFilter.order = {
+          field: sort.active,
+          direction: sort.direction.toUpperCase()
+        };
+      }
+      this.searchIncidences(this.currentPageFilter);
+      });
+    });
+    this.intermediaryService.presentLoading('Cargando incidencias...').then(() => {
+      this.searchIncidences(this.currentPageFilter);
+    });
   }
 
   private searchIncidences(parameters: IncidenceModel.SearchParameters) {
     this.incidencesService
       .postSearch(parameters)
       .then((res: IncidenceModel.ResponseSearch) => {
+        this.intermediaryService.dismissLoading();
         if (res.code === 200) {
+          this.listAvailableStatus = res.data.listAvailableStatus;
+          this.incidences = res.data.incidences;
           this.incidencesService.incidencesQuantityList = res.data.count_search;
-          this.paginator.length = res.data.count;
-          this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.actualPageFilter.page;
-          this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count/this.actualPageFilter.size);
-          this.incidencesService.incidencesUnattendedQuantity = res.data.count;
+          this.paginator.length = res.data.count_search;
+          this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.currentPageFilter.page;
+          this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count_search/this.currentPageFilter.size);
+          this.incidencesService.incidencesUnattendedQuantity = res.data.count_search;
           this.incidencesService.incidencesList = res.data.incidences;
         } else {
-          console.error('Error to try search Incidences with Filters', res);
+          let errorMessage = 'Ha ocurrido un error al intentar cargar las incidencias';
+          if (res.errors) {
+            errorMessage = res.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
         }
       }, (error) => {
-        console.error('Error to try search Incidences with Filters', error);
+        this.intermediaryService.dismissLoading();
+        let errorMessage = 'Ha ocurrido un error al intentar cargar las incidencias';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
       });
   }
 
-  showDateTime(dateToFormat) : string {
-    return this.dateTimeParserService.dateTime(dateToFormat);
+  filterAppliedForType(type: number): boolean {
+    return !!this.currentPageFilter.filters[type];
   }
 
-}
+  applyFilters(event, type) {
+    this.intermediaryService.presentLoading('Cargando incidencias...').then(() => {
+      const filters = event.filters;
+      this.currentPageFilter.filters[type] = filters.filter(f => f.checked);
+      if (this.currentPageFilter.filters[type].length == filters.length) {
+        delete this.currentPageFilter.filters[type];
+      }
+      this.textsTypedInFilters[type] = event.typedFilter;
+      this.searchIncidences(this.currentPageFilter);
+    });
+  }
 
-interface Incidences {
-  id: number;
-  type: string,
-  process?: string,
-  date?: string,
-  time?: string,
-  user?: {
-    id: number,
-    name: string
-  },
-  product: {
-    reference: string,
-    model: {
-      reference: string,
-      name: string
-    },
-    size: number,
-    brand: string,
-    color: string,
-    lifestyle: string,
-    season: string,
-    location: {
-      warehouse: string,
-      location: string
-    },
-    destiny: string,
-    sorterWay: number,
-    history: true
-  },
-  status: {
-    status: string,
-    user: {
-      id: number,
-      name: string
-    },
-    date: string,
-    time: string
+  openFilterPopover(event, type) {
+    let btnFiltersToUse: FilterButtonComponent = null;
+    let typedTextForType: string = this.textsTypedInFilters[type];
+    let currentFilter: any[] = this.currentPageFilter.filters[type];
+
+    switch (type) {
+      case 1:
+        btnFiltersToUse = this.btnFilterTypes;
+        break;
+      case 2:
+        btnFiltersToUse = this.btnFilterProcesses;
+        break;
+      case 3:
+        btnFiltersToUse = this.btnFilterDatesReport;
+        break;
+      case 4:
+        btnFiltersToUse = this.btnFilterTimesReport;
+        break;
+      case 5:
+        btnFiltersToUse = this.btnFilterUsersReport;
+        break;
+      case 6:
+        btnFiltersToUse = this.btnFilterProducts;
+        break;
+      case 7:
+        btnFiltersToUse = this.btnFilterModelReferences;
+        break;
+      case 8:
+        btnFiltersToUse = this.btnFilterSizes;
+        break;
+      case 9:
+        btnFiltersToUse = this.btnFilterBrands;
+        break;
+      case 10:
+        btnFiltersToUse = this.btnFilterModelNames;
+        break;
+      case 11:
+        btnFiltersToUse = this.btnFilterColors;
+        break;
+      case 12:
+        btnFiltersToUse = this.btnFilterLifestyles;
+        break;
+      case 13:
+        btnFiltersToUse = this.btnFilterSeasons;
+        break;
+      case 14:
+        btnFiltersToUse = this.btnFilterLocationWarehouses;
+        break;
+      case 15:
+        btnFiltersToUse = this.btnFilterLocations;
+        break;
+      case 16:
+        btnFiltersToUse = this.btnFilterDestinyWarehouses;
+        break;
+      case 17:
+        btnFiltersToUse = this.btnFilterLocationSorterWays;
+        break;
+      case 18:
+        btnFiltersToUse = this.btnFilterStatus;
+        break;
+      case 19:
+        btnFiltersToUse = this.btnFilterUsersManage;
+        break;
+      case 20:
+        btnFiltersToUse = this.btnFilterDatesManage;
+        break;
+      case 21:
+        btnFiltersToUse = this.btnFilterTimesManage;
+        break;
+    }
+
+    if (btnFiltersToUse) {
+      this.incidencesService
+        .postGetFilters({ type, currentFilter})
+        .then((res: IncidenceModel.ResponseGetFilters) => {
+          if (res.code == 200) {
+            btnFiltersToUse.listItems = res.data;
+            btnFiltersToUse.openFilterPopover(event, typedTextForType);
+          }
+        })
+        .catch((error) => {
+          console.log('Test::error', error);
+        });
+    }
   }
 }

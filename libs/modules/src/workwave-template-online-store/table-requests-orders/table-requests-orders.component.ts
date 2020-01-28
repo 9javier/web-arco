@@ -401,7 +401,8 @@ export class TableRequestsOrdersOSComponent implements OnInit {
     this.serviceG.requestUser.next(aux);
   }
 
-  applyFilters(data: any) {
+  applyFilters(filtersResult: any) {
+    const data = filtersResult.filters;
     for (let iFilter in data) {
       data[iFilter].hide = false;
     }

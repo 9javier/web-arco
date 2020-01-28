@@ -1,9 +1,9 @@
 <ion-item>
   <ion-button slot="start" shape="round" fill="clear" (click)="attendIncidence()">
-    <span class="btn-attend" [ngClass]="incidence.attended ? 'attended' : 'not-attended'"></span>
+    <span class="btn-attend" [ngClass]="incidence.status.status.id == 1 ? 'attended' : 'not-attended'"></span>
   </ion-button>
   <ion-label>
-    <h2>{{incidence.description}}</h2>
-    <p>{{showDateTime(incidence.createdAt)}}</p>
+    <h2>#{{incidence.info.id}} {{incidence.info.type.name}}</h2>
+    <p>{{incidence.product.date}} {{incidence.product.time}}</p>
   </ion-label>
 </ion-item>

@@ -1,5 +1,5 @@
 .incidences-container {
-  height: 100%;
+  height: calc(100% - 64px); // 64px from paginator located at bottom of page
   width: 100%;
   overflow: auto;
 
@@ -27,6 +27,9 @@
       border-bottom-width: 1px;
       border-bottom-style: solid;
       border-bottom-color: var(--ion-color-primary);
+      suite-filter-button {
+        margin-right: 6px;
+      }
     }
     mat-cell {
       color: var(--ion-color-primary);
@@ -38,8 +41,8 @@
 
     /*region Custom sticky columns */
     mat-header-cell, mat-cell {
-      min-width: 100px;
-      max-width: 100px;
+      min-width: 120px;
+      max-width: 120px;
     }
 
     mat-header-cell.my-sticky-col, mat-cell.my-sticky-col {
@@ -51,26 +54,26 @@
       left: 0;
     }
     .my-sticky-col.info.type {
-      left: 100px;
+      left: 120px;
     }
     .my-sticky-col.info.process {
-      left: 250px;
+      left: 290px;
       border-right-width: 1px;
       border-right-color: var(--ion-color-primary);
       border-right-style: solid;
     }
 
     .my-sticky-col.info-status.status {
-      right: 300px;
+      right: 360px;
       border-left-width: 1px;
       border-left-color: var(--ion-color-primary);
       border-left-style: solid;
     }
     .my-sticky-col.info-status.user-status {
-      right: 200px;
+      right: 240px;
     }
     .my-sticky-col.info-status.date-status {
-      right: 100px;
+      right: 120px;
     }
     .my-sticky-col.info-status.time-status {
       right: 0;
@@ -79,22 +82,31 @@
 
     /*region Columns with custom size */
     mat-header-cell.info-product.reference, mat-cell.info-product.reference {
-      min-width: 180px;
-      max-width: 180px;
+      min-width: 200px;
+      max-width: 200px;
     }
     mat-header-cell.info.type, mat-cell.info.type {
-      min-width: 150px;
-      max-width: 150px;
+      min-width: 170px;
+      max-width: 170px;
     }
     mat-header-cell.info.process, mat-cell.info.process {
-      min-width: 125px;
-      max-width: 125px;
+      min-width: 145px;
+      max-width: 145px;
     }
     /*endregion*/
 
-    mat-cell.mat-column-star {
-      width: 20px;
-      padding-right: 8px;
+    mat-cell.info-product {
+      p {
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    mat-cell.info-product.history {
+      i {
+        cursor: pointer;
+      }
     }
 
     mat-header-cell.info:nth-child(2n+1), mat-cell.info:nth-child(2n+1) {
