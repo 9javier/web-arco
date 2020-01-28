@@ -19,7 +19,7 @@
       <ng-container *ngFor="let role of dataSourceRoles;let i = index" matColumnDef="{{ role.id }}">
         <mat-header-cell *matHeaderCellDef class="centre-header">{{ role.name }}</mat-header-cell>
         <mat-cell *matCellDef="let element; let id = index" class="centre-cell">
-          <mat-checkbox [ngModel] = element.roles[i].checked (change)="changeCheckRol($event, id, element, i)"></mat-checkbox>
+          <mat-checkbox [ngModel] = element.roles[i].checked (change)="changeCheckRol($event, element, i)"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
