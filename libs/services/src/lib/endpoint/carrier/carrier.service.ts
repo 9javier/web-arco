@@ -17,6 +17,7 @@ export class CarrierService {
   private carrierMeWarehouseUrl: string = environment.apiBase + '/packing/me-warehouses';
   private singleCarrierUrl:string = environment.apiBase+"/packing/{{id}}";
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
+  private getReference:string = environment.apiBase+"/packing/warehouse/{{reference}}";
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
   private packingUrl:string = environment.apiBase+"/types/packing";
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
@@ -32,8 +33,9 @@ export class CarrierService {
   constructor(
     private http:HttpClient,
     private requestsProvider: RequestsProvider
-  ) { }
-
+    
+  ) {
+   }
   /**
    * Get all carriers in server
    * @returns an array of carriers
@@ -44,12 +46,28 @@ export class CarrierService {
     }));
   }
 
+  getSingleCarrier(){
+    return this.http.get<CarrierModel.CarrierResponse>(this.carrierUrl).pipe(map(response=>{
+      return response.data;
+    }));
+
+    /*
+    const affected = await this.repo.createQueryBuilder()
+      .update(Cars)
+      .set(cars)
+      .where('id = :id', { id: cars.getId() })
+      .execute();
+    
+    */
+  }
+
   getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{
       return response.data;
     }));
   }
 
+  
 
   postSealList(reference:string[]){
     let body={reference};
@@ -87,6 +105,12 @@ export class CarrierService {
    */
   getSingle(id:any):Observable<CarrierModel.Carrier>{
     return this.http.get<CarrierModel.SingleCarrierResponse>(this.singleCarrierUrl.replace("{{id}}",String(id))).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  getByReference(reference:string){
+    return this.http.get<CarrierModel.SingleCarrierResponse>(this.getReference.replace("{{reference}}",String(reference))).pipe(map(response=>{
       return response.data;
     }));
   }
@@ -153,4 +177,5 @@ export class CarrierService {
   postCheckPackingAvailability(params: CarrierModel.ParamsCheckPackingAvailability) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postCheckPackingAvailabilityUrl, params);
   }
+
 }

@@ -2,10 +2,16 @@ import { Component, OnInit, ViewChild} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
 import { NavParams, ModalController } from '@ionic/angular';
-import { DataComponent } from '../data/data.component';
+import { DataComponent } from '../../group-warehouse-picking/modals/data/data.component';
 import { WarehousesService, WarehouseModel } from '@suite/services';
 import { MatSelectChange } from '@angular/material';
-import { CarrierService, IntermediaryService } from '@suite/services';
+import { CarrierService, IntermediaryService } from '@suite/services'
+import { MatFormFieldModule, MatInputModule, MatSelectModule} from '@angular/material';
+import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
+
+
+
+
 
 @Component({
   selector: 'suite-add-destiny',
@@ -19,7 +25,7 @@ export class AddDestinyComponent implements OnInit {
     .name;
 
   redirectTo = '/jails/list';
-  jail;
+  private jail: CarrierModel.Carrier;
   warehouses:Array<WarehouseModel.Warehouse> = [];
   warehouse: WarehouseModel.Warehouse;
 
@@ -50,17 +56,19 @@ export class AddDestinyComponent implements OnInit {
     this.warehouse = event.value;
   }
 
-  submit(jail) {
-    
-    //this.intermediaryService.presentLoading();
-    this.carrierService.setDestination(jail.id,this.warehouse.id).subscribe(()=>{
-      this.intermediaryService.presentToastSuccess("Destino agregado con exito"); 
+  submit() {
+  
+       this.intermediaryService.presentLoading();
+    this.carrierService.setDestination(this.jail.id,this.warehouse.id).subscribe(()=>{
+      this.intermediaryService.presentToastSuccess("Destino agregado con exito");
+      this.intermediaryService.dismissLoading();
+      this.close();
     }, (err)=>{
       this.intermediaryService.presentToastSuccess("Error al agregar destino");  
     }, ()=>{
-      this.intermediaryService.dismissLoading();
+      
+
     })
-    this.close();
   }
 
 }
