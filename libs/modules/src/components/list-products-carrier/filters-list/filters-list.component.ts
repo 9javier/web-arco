@@ -15,7 +15,7 @@ export class FiltersListComponent implements OnInit {
   products = [];
   warehouses: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
-
+  carrierReference = '';
   form: FormGroup = this.formBuilder.group({
     products: [],
     warehouses: [],
@@ -37,6 +37,7 @@ export class FiltersListComponent implements OnInit {
     this.clearFilters();
     this.getFilters();
     this.form = this.navParams.data.form as FormGroup;
+    this.carrierReference = this.navParams.data.carrierReference;
   }
 
   clearFilters() {
@@ -88,6 +89,8 @@ export class FiltersListComponent implements OnInit {
         object[key] = [];
       }
     });
+
+    object.reference = this.carrierReference;
     return object;
   }
 

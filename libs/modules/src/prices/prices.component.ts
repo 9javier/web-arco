@@ -13,7 +13,7 @@ import {
 } from '@suite/services';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
-import { AlertController, NavParams, PopoverController } from '@ionic/angular';
+import {AlertController, Events, NavParams, PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -21,6 +21,9 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 import { Range } from './interfaces/range.interface';
 import { PricesRangePopoverComponent } from "./prices-range-popover/prices-range-popover.component";
 import { PricesRangePopoverProvider } from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
+import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
+import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
+import {TariffPricesScanditService} from "../../../services/src/lib/scandit/tariff-prices/tariff-prices.service";
 
 @Component({
   selector: 'suite-prices',
@@ -123,6 +126,8 @@ export class PricesComponent implements OnInit {
   private isStoreUser: boolean = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
 
+  private isLoadingProductPrices: boolean = false;
+
   constructor(
     private printerService: PrinterService,
     private priceService: PriceService,
@@ -137,7 +142,10 @@ export class PricesComponent implements OnInit {
     private alertController: AlertController,
     private popoverCtrl: PopoverController,
     public pricesRangePopoverProvider: PricesRangePopoverProvider,
-    private popoverController: PopoverController
+    private popoverController: PopoverController,
+    private toolbarProvider: ToolbarProvider,
+    private tariffPricesScanditService: TariffPricesScanditService,
+    private events: Events
   ) {
     this.route.queryParams.subscribe(params => {
       if (params && params.name) {
@@ -382,14 +390,43 @@ export class PricesComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.addScannerButton();
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
     }
 
+    this.toolbarProvider.currentPage.next(this.tariffName);
+
+    if (!this.isLoadingProductPrices) {
+      this.isLoadingProductPrices = true;
+      this.intermediaryService.presentLoading().then(() => {
+        this.clearFilters();
+      });
+    } else {
+      this.clearFilters();
+    }
+
     this.getWarehouses();
 
-    this.clearFilters();
+    this.events.subscribe('setProductAsPrinted', () => this.applyFilters());
+  }
+
+  ngOnDestroy(){
+    this.toolbarProvider.optionsActions.next([]);
+    this.events.unsubscribe('setProductAsPrinted');
+  }
+
+  addScannerButton(){
+    const buttons = [{
+      icon: 'qr-scanner',
+      label: 'Escáner',
+      action: async () => {
+        let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
+        this.tariffPricesScanditService.init(warehouseId, this.tariffId);
+      }
+    }];
+    this.toolbarProvider.optionsActions.next(buttons);
   }
 
   ngAfterViewInit(): void {
@@ -476,21 +513,40 @@ export class PricesComponent implements OnInit {
    * @param parameters - parameters to search
    */
   searchInContainer(parameters): void {
-    this.intermediaryService.presentLoading();
-    this.priceService.getIndex(parameters).subscribe(prices => {
-      this.showFiltersMobileVersion = false;
-      this.prices = prices.results;
-      this.initSelectForm(this.prices);
-      this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
-      let paginator = prices.pagination;
-      this.paginatorComponent.length = paginator.totalResults;
-      this.paginatorComponent.pageIndex = paginator.selectPage;
-      this.paginatorComponent.lastPage = paginator.lastPage;
-      this.groups = prices.filters.ordertypes;
-      this.intermediaryService.dismissLoading();
-    }, () => {
-      this.intermediaryService.dismissLoading();
-    });
+    if (!this.isLoadingProductPrices) {
+      this.isLoadingProductPrices = true;
+      this.intermediaryService.presentLoading().then(() => {
+        this.priceService.getIndex(parameters).subscribe(prices => {
+          this.showFiltersMobileVersion = false;
+          this.prices = prices.results;
+          this.initSelectForm(this.prices);
+          this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+          let paginator = prices.pagination;
+          this.paginatorComponent.length = paginator.totalResults;
+          this.paginatorComponent.pageIndex = paginator.selectPage;
+          this.paginatorComponent.lastPage = paginator.lastPage;
+          this.groups = prices.filters.ordertypes;
+          this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+        }, () => {
+          this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+        });
+      })
+    } else {
+      this.priceService.getIndex(parameters).subscribe(prices => {
+        this.showFiltersMobileVersion = false;
+        this.prices = prices.results;
+        this.initSelectForm(this.prices);
+        this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
+        let paginator = prices.pagination;
+        this.paginatorComponent.length = paginator.totalResults;
+        this.paginatorComponent.pageIndex = paginator.selectPage;
+        this.paginatorComponent.lastPage = paginator.lastPage;
+        this.groups = prices.filters.ordertypes;
+        this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+      }, () => {
+        this.intermediaryService.dismissLoading().then(() => this.isLoadingProductPrices = false);
+      });
+    }
   }
 
   private getFormValueCopy() {

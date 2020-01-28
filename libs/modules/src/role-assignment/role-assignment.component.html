@@ -1,0 +1,43 @@
+<ion-content>
+  <h3 class="title-h3-table" padding>{{title}}</h3>
+  <div class="table-container" *ngIf="dataSourceUsers">
+    <mat-table [dataSource]="dataSourceUsers">
+      <ng-container matColumnDef="user">
+        <mat-header-cell *matHeaderCellDef>
+          <span class="title">Usuario</span>
+          <mat-icon matTooltipPosition="above" (click)="openFilterComponent($event, 'user')">{{body.users.length > 0 ? 'playlist_add_check' : 'reorder'}}</mat-icon>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.userName}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="warehouse">
+        <mat-header-cell *matHeaderCellDef>
+          <span class="title">Almacén</span>
+          <mat-icon matTooltipPosition="above" (click)="openFilterComponent($event, 'warehouse')">{{body.warehouses.length > 0 ? 'playlist_add_check' : 'reorder'}}</mat-icon>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.warehouseName}} </mat-cell>
+      </ng-container>
+      <ng-container *ngFor="let role of dataSourceRoles;let i = index" matColumnDef="{{ role.id }}">
+        <mat-header-cell *matHeaderCellDef class="centre-header">{{ role.name }}</mat-header-cell>
+        <mat-cell *matCellDef="let element; let id = index" class="centre-cell">
+          <mat-checkbox [ngModel] = element.roles[i].checked (change)="changeCheckRol($event, id, element, i)"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+  </div>
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-fab-button *ngIf="listToUpdate.length > 0" color="dark"  matTooltip="Guardar" matTooltipClass="tooltip" matTooltipPosition="left" (click)="saveChanges($event)">
+    <ion-icon name="save"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button color="dark"  matTooltip="Agregar" matTooltipClass="tooltip" matTooltipPosition="left" (click)="addNewRol()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button color="dark"  matTooltip="Limpiar" matTooltipClass="tooltip" matTooltipPosition="left" (click)="refreshAll()">
+    <ion-icon name="refresh"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+

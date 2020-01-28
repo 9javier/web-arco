@@ -327,14 +327,24 @@ export class TagsInputComponent implements OnInit, ControlValueAccessor {
     return offset - 1;
   }
 
+  lastInputLength: number = 0;
   /**
    * Function that be triggered when user input a text
    * @summary this function is not an angular way for dataBinding
    */
   onInput(event): void {
     /**nodo sobre el cual se está escribiendo*/
-    // console.log(event);
-    
+    let currentInput: string = event.data;
+    if (currentInput == null) {
+      let event = {key: 'Backspace'};
+      this.onKeyPress(event);
+      this.lastInputLength = 0;
+    }else if(currentInput.length < this.lastInputLength){
+      let event = {key: 'Backspace'};
+      this.onKeyPress(event);
+      this.lastInputLength = currentInput.length;
+    }
+
     let node = window.getSelection().anchorNode;
     this.lastNode = node;
     /**y eso es lo que vamos a usar para filtrar */

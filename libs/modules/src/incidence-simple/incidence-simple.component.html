@@ -1,5 +1,5 @@
 <ion-item>
-  <ion-button slot="start" shape="round" fill="clear" (click)="attendIncidence()">
+  <ion-button matTooltip="Marcar como atendida" matTooltipClass="tooltip" slot="start" shape="round" fill="clear" (click)="attendIncidence()">
     <span class="btn-attend" [ngClass]="incidence.attended ? 'attended' : 'not-attended'"></span>
   </ion-button>
   <ion-label>

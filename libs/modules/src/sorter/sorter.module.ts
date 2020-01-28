@@ -42,6 +42,7 @@ import { ListaModule } from '../picking-manual/lista/lista.module';
 import { ListasProductosComponent } from '../picking-manual/lista/listas-productos/listas-productos.component';
 import { ListProductsCarrierModule } from '../components/list-products-carrier/list-products-carrier.module';
 import { ListProductsCarrierComponent } from '../components/list-products-carrier/list-products-carrier.component';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -163,7 +164,8 @@ const routes: Routes = [
     MatExpansionModule,
     HideKeyboardModule,
     ListaModule,
-    ListProductsCarrierModule
+    ListProductsCarrierModule,
+    MatTooltipModule
   ]
 })
 export class SorterModule { }

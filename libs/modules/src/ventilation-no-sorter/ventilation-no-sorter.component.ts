@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild} from "@angular/core";
 import {ItemReferencesProvider} from "../../../services/src/providers/item-references/item-references.provider";
 import {AudioProvider} from "../../../services/src/providers/audio-provider/audio-provider.provider";
 import {
-  AuthenticationService,
   CarrierService,
   IntermediaryService,
   InventoryService,
@@ -31,6 +30,7 @@ export class VentilationNoSorterComponent implements OnInit {
   originScan;
   destinyWarehouse: Warehouse;
   waitingForPacking: boolean = false;
+  withoutOutputScan: boolean = false;
   scannedCode: string;
   scannedPacking: string;
   size: Size;
@@ -42,6 +42,7 @@ export class VentilationNoSorterComponent implements OnInit {
   packingMessage: string;
   loading: boolean = false;
 
+
   constructor(
     private itemReferencesProvider: ItemReferencesProvider,
     private audioProvider: AudioProvider,
@@ -49,8 +50,7 @@ export class VentilationNoSorterComponent implements OnInit {
     private pickingStoreService: PickingStoreService,
     private warehousesService: WarehousesService,
     private inventoryService: InventoryService,
-    private carrierService: CarrierService,
-    private authenticationService: AuthenticationService
+    private carrierService: CarrierService
   ) {}
 
   ngOnInit() {
@@ -66,101 +66,146 @@ export class VentilationNoSorterComponent implements OnInit {
       await this.intermediaryService.presentLoading('Procesando...');
       this.loading = true;
     }
-    if(!this.packingPhase) {
-      if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PRODUCT) {
-        await this.pickingStoreService.getByProductReference({reference: this.inputValue})
-          .then(response => {
-            this.originScan = response.data
-          });
-        if (this.originScan && this.originScan.length != 0) {
-          await this.warehousesService.getWarehouseAndSize({
-            warehouse: this.originScan.picking_store_products_destinyWarehouseId,
-            size: this.originScan.product_shoes_unit_sizeId
-          })
+    try {
+      if (!this.packingPhase) {
+        if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PRODUCT) {
+          await this.pickingStoreService.getByProductReference({reference: this.inputValue})
             .then(response => {
-              this.destinyWarehouse = response.data.warehouse;
-              this.size = response.data.size;
+              this.originScan = response.data
             });
-          if(this.destinies[this.destinyWarehouse.reference]){
-            this.newDestiny = false;
-            this.packingMessage = 'ASIGNAR A EMBALAJE '+this.destinies[this.destinyWarehouse.reference];
-          }else{
-            this.newDestiny = true;
-            this.packingMessage = 'ASIGNAR A EMBALAJE';
+          if (this.originScan && this.originScan.picking_store_products_destinyWarehouseId) {
+            await this.warehousesService.getWarehouseAndSize({
+              warehouse: this.originScan.picking_store_products_destinyWarehouseId,
+              size: this.originScan.product_shoes_unit_sizeId
+            })
+              .then(response => {
+                this.destinyWarehouse = response.data.warehouse;
+                this.size = response.data.size;
+              });
+            if (this.destinies[this.destinyWarehouse.reference]) {
+              this.newDestiny = false;
+              this.packingMessage = 'ASIGNAR A EMBALAJE ' + this.destinies[this.destinyWarehouse.reference];
+            } else {
+              this.newDestiny = true;
+              this.packingMessage = 'ASIGNAR A EMBALAJE';
+            }
+            this.scannedCode = this.inputValue;
+            this.resetScanner();
+            this.showScanner = false;
+            this.waitingForPacking = true;
+            this.withoutOutputScan = false;
+            this.packingPhase = true;
+          } else {
+            this.size = {
+              reference: this.originScan.product_shoes_unit_size_reference,
+              number: this.originScan.product_shoes_unit_size_name,
+              name: this.originScan.product_shoes_unit_size_name
+            };
+            this.scannedCode = this.inputValue;
+            this.resetScanner();
+            this.showScanner = false;
+            this.waitingForPacking = true;
+            this.withoutOutputScan = true;
+            this.packingPhase = true;
           }
-          this.scannedCode = this.inputValue;
-          this.resetScanner();
-          this.showScanner = false;
-          this.waitingForPacking = true;
-          this.packingPhase = true;
         } else {
           this.audioProvider.playDefaultError();
-          await this.intermediaryService.presentToastError('El código escaneado no tiene escaneo de salida.', 1500);
+          await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
           this.resetScanner();
           this.scannerManual.focusToInput();
         }
       } else {
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('Escanea un código de caja de producto.', 1500);
-        this.resetScanner();
-        this.scannerManual.focusToInput();
-      }
-    }else{
-      if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PACKING){
-        this.scannedPacking = this.inputValue;
-        this.carrierService.getSingle(this.scannedPacking).subscribe(value => {
-          this.packing = value;
-          this.destinies[this.destinyWarehouse.reference] = this.packing.reference;
+        if (this.itemReferencesProvider.checkCodeValue(this.inputValue) === this.itemReferencesProvider.codeValue.PACKING) {
+          this.scannedPacking = this.inputValue;
+          this.carrierService.getSingle(this.scannedPacking).subscribe(value => {
+            this.packing = value;
+            this.destinies[this.destinyWarehouse.reference] = this.packing.reference;
+            this.resetScanner();
+            this.assignToPacking();
+          });
+        } else {
+          this.audioProvider.playDefaultError();
+          await this.intermediaryService.presentToastError('Escanea un código de embalaje.', 1500);
           this.resetScanner();
-          this.assignToPacking();
-        });
-      }else{
-        this.audioProvider.playDefaultError();
-        await this.intermediaryService.presentToastError('Escanea un código de embalaje.', 1500);
-        this.resetScanner();
-        this.scannerManual.focusToInput();
+          this.scannerManual.focusToInput();
+        }
       }
-    }
-    if (this.loading){
-      await this.intermediaryService.dismissLoading();
-      this.loading = false;
+      if (this.loading){
+        await this.intermediaryService.dismissLoading();
+        this.loading = false;
+      }
+    } catch (exception) {
+      if (this.loading){
+        await this.intermediaryService.dismissLoading();
+        this.loading = false;
+      }
+      this.audioProvider.playDefaultError();
+      await this.intermediaryService.presentToastError('Ha ocurrido un error. Inténtelo de nuevo más tarde.', 1500);
+      this.resetScanner();
+      this.scannerManual.focusToInput();
     }
   }
 
-  scanPacking(){
+  scanPacking(packingToSave?: string){
+    if (packingToSave == 'zero') {
+      this.destinyWarehouse = {
+        reference: '000'
+      };
+    } else if (packingToSave == 'incidence') {
+      this.destinyWarehouse = {
+        reference: 'incidence'
+      };
+    }
+
     this.scanMessage = 'Escanea un embalaje para continuar';
     this.waitingForPacking = false;
+    this.withoutOutputScan = false;
     this.showScanner = true;
     this.scannerManual.focusToInput();
   }
 
   async assignToPacking(){
-    if (!this.loading){
-      await this.intermediaryService.presentLoading('Procesando...');
-      this.loading = true;
-    }
-    let inventoryProcess = {
-      productReference: this.scannedCode,
-      packingReference: this.scannedPacking,
-      warehouseId: (await this.authenticationService.getStoreCurrentUser()).id,
-      force: false
-    };
-    await this.inventoryService.postStore(inventoryProcess);
-    this.resetScanner();
-    this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
-    this.waitingForPacking = false;
-    this.showScanner = true;
-    this.packingPhase = false;
-    this.scannerManual.focusToInput();
-    if (this.loading){
-      await this.intermediaryService.dismissLoading();
-      this.loading = false;
+    try {
+      let inventoryProcess = {
+        productReference: this.scannedCode,
+        packingReference: this.scannedPacking,
+        force: true,
+        avoidAvelonMovement: true
+      };
+      await this.inventoryService.postStore(inventoryProcess);
+      this.resetScanner();
+      this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
+      this.waitingForPacking = false;
+      this.withoutOutputScan = false;
+      this.showScanner = true;
+      this.packingPhase = false;
+      this.scannerManual.focusToInput();
+      if (this.loading){
+        await this.intermediaryService.dismissLoading();
+        this.loading = false;
+      }
+    } catch (exception) {
+      if (this.loading){
+        await this.intermediaryService.dismissLoading();
+        this.loading = false;
+      }
     }
   }
 
   resetScanner(){
     this.scannerManual.value = '';
     this.inputValue = '';
+  }
+
+  getPackingScanned(caseToGet: string): string {
+    switch (caseToGet) {
+      case 'zero':
+        return this.destinies['000'] ? `(${this.destinies['000']})` : '';
+      case 'incidence':
+        return this.destinies['incidence'] ? `(${this.destinies['incidence']})` : '';
+    }
+
+    return '';
   }
 
 }

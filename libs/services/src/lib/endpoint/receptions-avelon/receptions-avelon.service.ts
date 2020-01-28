@@ -49,7 +49,23 @@ export class ReceptionsAvelonService {
   }
   ocrFake(){
     return this.http.get<HttpRequestModel.Response>(`${this.url}/ocr-fake/1`).pipe(map(resp => resp.data));
+  }
+  ocrBrands(){
+    return this.http.get<HttpRequestModel.Response>(`${this.url}/ocr/brands`).pipe(map(resp => resp.data));
   }  
+
+  ocrModels(){
+    return this.http.get<HttpRequestModel.Response>(`${this.url}/ocr/models`).pipe(map(resp => resp.data));
+  }  
+
+  ocrColors(){
+    return this.http.get<HttpRequestModel.Response>(`${this.url}/ocr/colors`).pipe(map(resp => resp.data));
+  }  
+
+  ocrSizes(){
+    return this.http.get<HttpRequestModel.Response>(`${this.url}/ocr/sizes`).pipe(map(resp => resp.data));
+  }  
+
 
   eanProduct(ean: string) {
     return this.http.post<HttpRequestModel.Response>(`${this.url}/ean-product`, {ean}).pipe(map(resp => resp.data));

@@ -45,5 +45,11 @@
         {{getProductStatusName(product)}}
       </ion-label>
     </ion-item>
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+      <ion-fab-button color="primary" (click)="loadPicking()" matTooltip="Refrescar" matTooltipClass="tooltip">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
   </div>
+
 </ion-content>

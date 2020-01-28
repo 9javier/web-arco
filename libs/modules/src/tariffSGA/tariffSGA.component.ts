@@ -146,8 +146,8 @@ export class TariffSGAComponent implements OnInit {
         this.intermediaryService.dismissLoading();
         /**save the data and format the dates */
         this.tariffs = data.results.map(result => {
-          result.activeFrom = new Date(result.activeFrom).toLocaleDateString();
-          result.activeTill = new Date(result.activeTill).toLocaleDateString();
+          result.activeFrom = result.activeFrom;
+          result.activeTill = result.activeTill;
           return result;
         });
         this.initSelectForm(this.tariffs);
@@ -359,6 +359,10 @@ export class TariffSGAComponent implements OnInit {
     return new Date(date);
   }
 
+  getDateISO(date: any) {
+    return new Date(date).toISOString();
+  }
+
   changeDateStart(event: MatDatepickerInputEvent<Date>, tariff: any) {
     tariff.activeFrom = event.value;
 
@@ -382,8 +386,6 @@ export class TariffSGAComponent implements OnInit {
   }
 
   getTooltipFromChange(tariff: any) {
-    console.log('GET TOOLTIP FROM CHANGE');
-    console.log(tariff);
     if (tariff && tariff.change && tariff.activeFromChange) {
       const date = formatDate(new Date(tariff.activeFromChange), 'dd/MM/yyyy', 'es');
       return `Fecha Avelon: ${date}`;
@@ -393,8 +395,6 @@ export class TariffSGAComponent implements OnInit {
   }
 
   getTooltipTillChange(tariff: any) {
-    console.log('GET TOOLTIP TILL CHANGE');
-    console.log(tariff);
     if (tariff && tariff.change && tariff.activeTillChange) {
       const date = formatDate(new Date(tariff.activeTillChange), 'dd/MM/yyyy', 'es');
       return `Fecha Avelon: ${date}`;
