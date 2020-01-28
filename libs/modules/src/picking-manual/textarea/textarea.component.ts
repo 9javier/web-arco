@@ -142,7 +142,7 @@ export class TextareaComponent implements OnInit {
     modal.present();
   }
 
-  keyUpInput(event?,prova:boolean=false) {
+  async keyUpInput(event?,prova:boolean=false) {
     // console.log(event);
     let dataWrited = (this.inputPicking || "").trim();
     // console.log(dataWrited);
@@ -318,9 +318,9 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.intermediaryService.presentLoading();
-            let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
-              this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentLoading();
+            let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
+              await this.intermediaryService.dismissLoading();
               if (res.code === 200 || res.code === 201) {
                 this.audioProvider.playDefaultOk();
                 this.listProducts = res.data.shoePickingPending;
@@ -363,7 +363,7 @@ export class TextareaComponent implements OnInit {
                     }
                   });
               }
-            };
+            });
             let subscribeError = (error) => {
               this.audioProvider.playDefaultError();
               this.intermediaryService.dismissLoading();
