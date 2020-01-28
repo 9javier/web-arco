@@ -45,25 +45,9 @@ export class MappingsComponent implements OnInit {
 
   ngOnInit() {
 
-    /// DATOS ESTÁTICOS. BORRAR CUANDO LAS CONEXIONES CON KRACKONLINE, AVELON Y MIDDLEWARE/RULE-ENGINE ESTÉN LISTAS
-
-    this.dataSourceBrands = [
-      {
-        id: 1,
-        avelonData: {id: 1, name: 'ADIDAS SL'},
-        marketData: {id: 1, name: 'ADIDAS'}
-      },
-      {
-        id: 2,
-        avelonData: {id: 2, name: 'AMANDA A.'},
-        marketData: {id: -1, name: null}
-      },
-      {
-        id: 3,
-        avelonData: {id: 3, name: 'ASICS'},
-        marketData: {id: 3, name: 'ASICS'}
-      }
-    ];
+    this.dataSourceBrands = [];
+    this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
+    this.brandsList = [];
 
     this.marketplacesMgaService.getBrands().subscribe(data => {
       if(data) {
@@ -72,19 +56,12 @@ export class MappingsComponent implements OnInit {
             id: brand.id,
             avelonData: {id: brand.id, name: brand.name},
             marketData: {id: -1, name: null}
-          })
-        })
+          });
+        });
+        this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
+        setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
       }
     });
-
-    this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
-    setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
-
-    this.brandsList = [
-      {id: 1, name: 'ADIDAS'},
-      {id: 2, name: 'AMANDA'},
-      {id: 3, name: 'ASICS'},
-    ];
 
     this.marketplacesPrestaService.getBrands().subscribe(data => {
       if(data) {
@@ -97,24 +74,9 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-
-    this.dataSourceColors = [
-      {
-        id: 4,
-        avelonData: {id: 4, name: 'AZUL'},
-        marketData: {id: 4, name: 'AZUL OSCURO'}
-      },
-      {
-        id: 5,
-        avelonData: {id: 5, name: 'ROJO'},
-        marketData: {id: 5, name: 'ROJO'}
-      },
-      {
-        id: 6,
-        avelonData: {id: 6, name: 'AMARILLO'},
-        marketData: {id: -1, name: null}
-      }
-    ];
+    this.dataSourceColors = [];
+    this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
+    this.colorsList = [];
 
     this.marketplacesMgaService.getColors().subscribe(data => {
       if(data) {
@@ -125,17 +87,10 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
+        setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
       }
     });
-
-    this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
-    setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
-
-    this.colorsList = [
-      {id: 4, name: 'AZUL OSCURO'},
-      {id: 5, name: 'ROJO'},
-      {id: 6, name: 'AMARILLO'}
-    ];
 
     this.marketplacesPrestaService.getColors().subscribe(data => {
       if(data) {
@@ -148,23 +103,9 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-    this.dataSourceSizes = [
-      {
-        id: 7,
-        avelonData: {id: 7, name: '20'},
-        marketData: {id: -1, name: null}
-      },
-      {
-        id: 8,
-        avelonData: {id: 8, name: '21'},
-        marketData: {id: 8, name: '38'}
-      },
-      {
-        id: 9,
-        avelonData: {id: 9, name: '22'},
-        marketData: {id: 9, name: '39'}
-      }
-    ];
+    this.dataSourceSizes = [];
+    this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+    this.sizesList = [];
 
     this.marketplacesMgaService.getSizes().subscribe(data => {
       if(data) {
@@ -175,18 +116,10 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+        setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
       }
     });
-
-    this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-    setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
-
-
-    this.sizesList = [
-      {id: 7, name: '37'},
-      {id: 8, name: '38'},
-      {id: 9, name: '39'},
-    ];
 
     this.marketplacesPrestaService.getSizes().subscribe(data => {
       if(data) {
@@ -199,23 +132,9 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-    this.dataSourceFeatures = [
-      {
-        id: 10,
-        avelonData: {id: 10, name: 'FAMILIA: NIÑO'},
-        marketData: {id: 10, name: 'NIÑO'}
-      },
-      {
-        id: 11,
-        avelonData: {id: 11, name: 'DESCRIPCIÓN: BOTAS'},
-        marketData: {id: 11, name: 'BOTAS'}
-      },
-      {
-        id: 12,
-        avelonData: {id: 12, name: 'DESCRIPCIÓN: BOTINES'},
-        marketData: {id: 12, name: 'BOTINES'}
-      }
-    ];
+    this.dataSourceFeatures = [];
+    this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+    this.featuresList = [];
 
     this.marketplacesMgaService.getFeaturesByMarket(1).subscribe(data => {
       if(data) {
@@ -226,17 +145,10 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+        setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
       }
     });
-
-    this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-    setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
-
-    this.featuresList = [
-      {id: 10, name: 'NIÑO'},
-      {id: 11, name: 'BOTAS'},
-      {id: 12, name: 'BOTINES'},
-    ];
 
     this.marketplacesPrestaService.getFeatures().subscribe(data => {
       if(data) {
@@ -248,8 +160,6 @@ export class MappingsComponent implements OnInit {
         });
       }
     });
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     this.displayedColumns = ['blank', 'avelonData', 'marketData'];
     this.enumTypes = [];
