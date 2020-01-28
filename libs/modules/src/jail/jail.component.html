@@ -54,6 +54,11 @@
                         class="material-icons action-icon">send</i>
                 </td>
             </ng-container>
+            <ng-container matColumnDef="sendPacking">
+              <th mat-header-cell *matHeaderCellDef> Enviar</th>
+              <td mat-cell *matCellDef="let element"><i (click)="send($event,element)" class="material-icons">send</i>
+              </td>
+            </ng-container>
             <ng-container matColumnDef="update">
                 <th mat-header-cell *matHeaderCellDef class="center-content">
                     <i class="material-icons settings-header">settings</i>
@@ -64,31 +69,16 @@
                         class="material-icons action-icon">edit</i>
                 </td>
             </ng-container>
-
-            <ng-container matColumnDef="assigned_incidences">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element">
-                    <i class="material-icons warning-icon" *ngIf="element.assigned_to_incidences"
-                        matTooltip="Asignada a incidencias">warning</i>
-                </td>
-            </ng-container>
-
-            <ng-container matColumnDef="buttons-print">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
-                    mat-cell *matCellDef="let element"><i (click)="print($event,element)"
-                        class="material-icons action-icon">print</i> </td>
-            </ng-container>
-
             <ng-container matColumnDef="open-modal">
                 <th mat-header-cell *matHeaderCellDef></th>
-                <td matTooltip="Ampliar" matTooltipClass="tooltip"
-                    mat-cell *matCellDef="let element"><i class="material-icons action-icon" (click)="viewCarrier(element)">pageview</i> </td>
+                <td matTooltip="Histórico de movimientos" matTooltipClass="tooltip"
+                    mat-cell *matCellDef="let element"><i class="material-icons action-icon" (click)="viewCarrier(element)">assignment</i> </td>
             </ng-container>
-            <ng-container matColumnDef="sendPacking">
-                <th mat-header-cell *matHeaderCellDef> Enviar</th>
-                <td mat-cell *matCellDef="let element"><i (click)="send($event,element)" class="material-icons">send</i>
-                </td>
+            <ng-container matColumnDef="buttons-print">
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
+                  mat-cell *matCellDef="let element"><i (click)="print($event,element)"
+                                                        class="material-icons action-icon">print</i> </td>
             </ng-container>
 
             <ng-container matColumnDef="expandedDetail">
