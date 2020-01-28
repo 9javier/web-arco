@@ -461,11 +461,11 @@ export class JailComponent implements OnInit {
   }
   async viewCarrier(element) {
     const reference = element.reference;
-    this.historyModalComponent.getreference(reference);
+    // this.historyModalComponent.getreference(reference);
     let modal = (await this.modalCtrl.create({
       component: HistoryModalComponent,
       componentProps: {packingReference:element.reference},
-      cssClass: 'modalStyles',
+      // cssClass: 'modalStyles',
     }))
     modal.present()
   }

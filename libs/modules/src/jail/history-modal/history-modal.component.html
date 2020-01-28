@@ -7,13 +7,33 @@
             <ion-icon name="close" class="toogleArrow"></ion-icon>
         </ion-button>
     </ion-buttons>
-    <ion-title>Detalles de Embalaje</ion-title>
+  <ion-title>{{packingReference}}</ion-title>
 </ion-toolbar>
 </ion-header>
 <ion-content>
+  <ion-segment>
+    <ion-segment-button value="historical">
+        <ion-label>Histórico</ion-label>
+    </ion-segment-button>
+</ion-segment>
+
   <ion-list>
-    <ion-label>{{getreference().response.data}}</ion-label>
+      <ion-item *ngFor="let ref of reference; let i = index">
+          <div>
+              <p>
+                  Almacén {{ ref.warehouse?.reference }} -
+                  {{ ref.warehouse?.name }}
+              </p>
+              <p>
+                  Fecha: {{dates[i]}} {{hours[i]}}
+              </p>
+              <p>
+                  Acción realizada: {{actionTypes[ref.typeAction]}}
+              </p>
+          </div>
+      </ion-item>
   </ion-list>
+
 </ion-content>
 <ion-footer>
   <ion-toolbar>
