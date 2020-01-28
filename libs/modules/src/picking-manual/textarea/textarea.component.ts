@@ -142,7 +142,7 @@ export class TextareaComponent implements OnInit {
     modal.present();
   }
 
-  keyUpInput(event?,prova:boolean=false) {
+  async keyUpInput(event?,prova:boolean=false) {
     // console.log(event);
     let dataWrited = (this.inputPicking || "").trim();
     // console.log(dataWrited);
@@ -162,7 +162,7 @@ export class TextareaComponent implements OnInit {
 
       this.inputPicking = null;
       // TODO creamos metodos para saber si la jaula esta llena
-      
+
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         this.carrierService.getSingle(this.lastCodeScanned)
         .pipe(
@@ -206,7 +206,7 @@ export class TextareaComponent implements OnInit {
                       if (res) {
                         if (res.code === 200 || res.code === 201) {
                           // console.log('passa di qui',res);
-                          
+
                           if (res.data.packingStatus === 2) {
                             this.processInitiated = true;
                             this.audioProvider.playDefaultOk();
@@ -220,7 +220,7 @@ export class TextareaComponent implements OnInit {
                             this.setNexProductToScan(this.listProducts[0]);
                             this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`,
                               TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
-    
+
                             this.showTextStartScanPacking(false, this.typePacking, '');
                           } else if (res.data.packingStatus === 3) {
                             if (this.typePicking === 1) {
@@ -293,9 +293,9 @@ export class TextareaComponent implements OnInit {
               }
             }
           }
-          
+
         })
-        
+
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (!this.processInitiated) {
           this.audioProvider.playDefaultError();
@@ -310,9 +310,9 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.intermediaryService.presentLoading();
-            let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
-              this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentLoading();
+            let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
+              await this.intermediaryService.dismissLoading();
               if (res.code === 200 || res.code === 201) {
                 this.audioProvider.playDefaultOk();
                 this.listProducts = res.data.shoePickingPending;
@@ -355,7 +355,7 @@ export class TextareaComponent implements OnInit {
                     }
                   });
               }
-            };
+            });
             let subscribeError = (error) => {
               this.audioProvider.playDefaultError();
               this.intermediaryService.dismissLoading();
