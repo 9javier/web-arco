@@ -1,18 +1,23 @@
 <div [ngStyle]="{'height': height || 'auto', 'width': width || 'auto'}" class="container">
   <div class="emptying-types">
-    <div class="automatic" *ngIf="disableMixed == true">
+    <div class="automatic" *ngIf="disableMixed === true">
       <button (click)="emptyAuto()" [disabled]="disableAuto" [ngClass]="disableAuto ? 'disabled' : ''">
         VACIADO AUTOMÁTICO
       </button>
     </div>
-    <div class="manual" *ngIf="disableMixed == true">
+    <div class="manual" *ngIf="disableMixed === true">
       <button (click)="emptyManual()" [disabled]="disableManual" [ngClass]="disableManual ? 'disabled' : ''">
         VACIADO MANUAL
       </button>
     </div>
-    <div class="mixed" *ngIf="disableMixed == false">
+    <div class="mixed" *ngIf="disableMixed === false">
       <button (click)="emptyMixed()" [disabled]="disableMixed" [ngClass]="disableMixed ? 'disabled' : ''">
         INVERTIR TIPO DE VACIADO
+      </button>
+    </div>
+    <div class="mixed" *ngIf="disableAllSelect" >
+      <button (click)="emptyAll()">
+        VACIAR CALLES
       </button>
     </div>
   </div>

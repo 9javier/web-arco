@@ -10,12 +10,14 @@
       <suite-sorter-actions-emptying
         [height]="'40vh'"
         [width]="'100%'"
+        [disableAllSelect]="disableFullSelect"
         [disableAuto]="disableAuto"
         [disableManual]="disableManual"
         [disableMixed]="disableMixed"
         (autoEmptying)="autoEmptying()"
         (manualEmptying)="manualEmptying()"
-        (mixedEmptying)="mixedEmptying()">
+        (mixedEmptying)="mixedEmptying()"
+      (allEmptying)="allEmptying()">
       </suite-sorter-actions-emptying>
     </div>
 

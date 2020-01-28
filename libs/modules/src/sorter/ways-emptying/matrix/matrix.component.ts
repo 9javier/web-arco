@@ -3,8 +3,10 @@ import {Events} from "@ionic/angular";
 import {MatrixSorterModel} from "../../../../../services/src/models/endpoints/MatrixSorter";
 import {ZoneSorterModel} from "../../../../../services/src/models/endpoints/ZoneSorter";
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
+import { FormBuilder } from '@angular/forms';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-matrix-emptying',
   templateUrl: './matrix.component.html',
   styleUrls: ['./matrix.component.scss']
@@ -20,12 +22,15 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   private listZonesWithColors: ZoneSorterModel.ZoneColor[] = [];
   private isTemplateWithEqualZones: boolean = false;
 
-  public waySelected: number = null;
+  public waySelected: number | null = null;
   public waysSelected: any[] = [];
+
+
 
   constructor(
     private events: Events,
-    private sorterProvider: SorterProvider
+    private sorterProvider: SorterProvider,
+    private fb: FormBuilder
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
@@ -43,11 +48,11 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       let way = null;
       let blueWay = false;
       for(way of this.waysSelected){
-        if (column.way.id == way.id) {
+        if (column.way.id === way.id) {
           blueWay = true;
         }
       }
-      if (blueWay == true) {
+      if (blueWay === true) {
         return 'lightskyblue';
       } else if (column.way.templateZone && column.way.templateZone.zones && column.way.templateZone.zones.color) {
         return column.way.templateZone.zones.color.hex;
@@ -65,12 +70,12 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   getEmptyingType(column: MatrixSorterModel.Column) : string {
     let emptyingType = '';
-    if (column.way.manual == 1) {
+    if (column.way.manual === 1) {
       emptyingType = 'VM';
     }
 
-    if (column.way.new_emptying != null && column.way.manual != column.way.new_emptying) {
-      if (column.way.new_emptying == 1) {
+    if (column.way.new_emptying != null && column.way.manual !== column.way.new_emptying) {
+      if (column.way.new_emptying === 1) {
         emptyingType = 'VM';
       } else {
         emptyingType = '';
@@ -82,8 +87,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   isFromSelectedZone(column: MatrixSorterModel.Column) : boolean {
     if (this.sorterProvider.idZoneSelected) {
-      if (column.way && column.way.templateZone && column.way.templateZone.zones && this.sorterProvider.idZoneSelected == column.way.templateZone.zones.id) {
-        if (this.sorterProvider.idZoneSelected == column.way.templateZone.zones.id) {
+      if (column.way && column.way.templateZone && column.way.templateZone.zones && this.sorterProvider.idZoneSelected === column.way.templateZone.zones.id) {
+        if (this.sorterProvider.idZoneSelected === column.way.templateZone.zones.id) {
           return true;
         } else {
           return false;
@@ -97,15 +102,16 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number) {
+    console.log('passa por qui',{column,iHeight,iCol});
     let wayS = null;
     let flag = false;
     for(wayS of this.waysSelected){
-      if(wayS == column.way){
+      if(wayS === column.way){
         flag = true;
         this.removeItemFromArr( this.waysSelected, wayS );
       }
     }
-    if(flag == false){
+    if(flag === false){
       this.waysSelected.push(column.way);
     }
     this.columnSelected.next({column, iHeight, iCol});
@@ -121,6 +127,21 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   refresh(){
     this.waysSelected = [];
+  }
+
+  check(lista:ZoneSorterModel.ZoneColor){
+
+      let test = [];
+      let newList = this.sorterTemplateMatrix.map((x,i) => x.columns.map((y,is) => ({way:y.way,index:is,indexx:i,column:y})));
+      newList.forEach(el => {
+        el = el.filter(r => r.way.templateZone.zones.id === lista.id);
+        test.push(el[0]);
+        this.selectWay(el[0].column,el[0].indexx,el[0].index);
+      });
+  }
+
+  test(lista){
+    console.log(lista);
   }
 
   public loadNewMatrix(newMatrix: MatrixSorterModel.MatrixTemplateSorter[]) {
@@ -144,7 +165,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
                 id: zone.zones.id,
                 name: zone.zones.name,
                 active: zone.zones.active,
-                color: zone.zones.color.hex
+                color: zone.zones.color.hex,
+                checks : false
               });
             }
           }
@@ -157,7 +179,8 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
           id: 0,
           name: 'Zona seleccionada',
           active: true,
-          color: '#87CEFA'
+          color: '#87CEFA',
+          checks :false
         })
       }
     }
