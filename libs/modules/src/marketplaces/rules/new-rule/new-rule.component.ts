@@ -1,6 +1,8 @@
 import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import { MarketplacesService } from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
+import { MarketplacesMgaService } from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import { MarketplacesPrestaService } from '../../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
 
 @Component({
   selector: 'suite-new-rule',
@@ -39,13 +41,15 @@ export class NewRuleComponent implements OnInit {
     private modalController: ModalController,
     private navParams: NavParams,
     private renderer: Renderer2,
-    private marketplacesService: MarketplacesService
+    private marketplacesService: MarketplacesService,
+    private marketplacesMgaService: MarketplacesMgaService,
+    private marketplacesPrestaService: MarketplacesPrestaService
   ) {
   }
 
   ngOnInit() {
     this.mode = this.navParams.get('mode');
-    this.numberOfProducts = 0;
+    this.numberOfProducts = 10;
     this.action = 'activation';
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];
