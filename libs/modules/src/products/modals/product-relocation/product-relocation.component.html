@@ -5,10 +5,14 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Reubicar productos</ion-title>
+    <ion-title *ngIf="products.length > 1">Reubicar productos</ion-title>
+    <ion-title *ngIf="products.length <= 1">{{products[0].productShoeUnit.reference}}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
+  <div class="references" *ngIf="products.length > 1">
+    <p>Productos: {{references.join(", ")}}</p>
+  </div>
   <div class="form-fields">
     <div class="content-select">
       <ion-label class="title-select">Almacen</ion-label>

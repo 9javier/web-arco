@@ -114,6 +114,7 @@ export class ProductsComponent implements OnInit {
   searchsInContainer: Array<InventoryModel.SearchInContainer> = [];
 
   itemsIdSelected: Array<any> = [];
+  itemsReferenceSelected: Array<any> = [];
 
   isFirst: boolean = true;
   hasDeleteProduct = false;
@@ -765,7 +766,6 @@ export class ProductsComponent implements OnInit {
     await this.intermediaryService.presentLoading('Borrando productos');
     this.inventoryServices.delete_Products(id).subscribe(async result => {
       this.getFilters();
-      console.log(result);
     }, async error => {
       await this.intermediaryService.dismissLoading();
     });
@@ -1021,10 +1021,14 @@ export class ProductsComponent implements OnInit {
   }
 
   async presentAlertRelocation() {
+    for(let item of this.itemsIdSelected ){
+      this.itemsReferenceSelected.push(item.productShoeUnit.reference)
+    }
     let modal = await this.modalController.create({
       component: ProductRelocationComponent,
       componentProps: {
         products: this.itemsIdSelected,
+        references: this.itemsReferenceSelected,
         permision:this.permision
       },
       cssClass: 'modal-relocation'
@@ -1034,16 +1038,17 @@ export class ProductsComponent implements OnInit {
       if (data.data.dismissed) {
         this.searchInContainer(this.sanitize(this.getFormValueCopy()));
         this.itemsIdSelected = [];
+        this.itemsReferenceSelected = [];
       }else if(!data.data.dismissed){
         this.selectedForm.controls.toSelect.reset()
         this.itemsIdSelected = [];
+        this.itemsReferenceSelected = [];
       }
     });
     modal.present();
   }
 
   itemSelected(product) {
-
     const index = this.itemsIdSelected.indexOf(product, 0);
     if (index > -1) {
       this.itemsIdSelected.splice(index, 1);
