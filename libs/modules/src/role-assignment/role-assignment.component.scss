@@ -67,3 +67,11 @@
     }
   }
 }
+
+mat-header-row, mat-row {
+  cursor: default;
+}
+
+mat-icon {
+  cursor: pointer;
+}
