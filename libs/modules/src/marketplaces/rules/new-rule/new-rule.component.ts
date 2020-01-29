@@ -165,7 +165,7 @@ export class NewRuleComponent implements OnInit {
               group: 7,
               name: item.name
             })
-          } else if(item.groupNumber == 13) {
+          } else if(item.groupNumber == 1) {
             this.categoryList[0].items.push({
               id: item.id,
               group: 1,
