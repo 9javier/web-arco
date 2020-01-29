@@ -9,8 +9,8 @@ import { map } from 'rxjs/operators';
 export class MarketplacesPrestaService {
 
   private apiBase = 'https://miniprecios.dev-krack.com.es/module/enodesync';
-  private getBrandsPrestaUrl = this.apiBase + '/manufacturers?task=get_manufacturers&all_info=true';
-  private getSizesPrestaUrl = this.apiBase + '/sizes?task=get_sizes&all_info=true';
+  private getBrandsPrestaUrl = this.apiBase + '/manufacturers?task=get_manufacturers_markets&all_info=true';
+  private getSizesPrestaUrl = this.apiBase + '/sizes?task=get_sizes_markets&all_info=true';
   private getColorsPrestaUrl = this.apiBase + '/colors?task=get_colors&all_info=true';
   private getFeaturesPrestaUrl = this.apiBase + '/features?task=get_features&all_info=true';
 

@@ -75,6 +75,8 @@
         padding-bottom: 14px;
         margin-left: -32px;
         margin-right: -24px;
+        display: flex;
+        flex-direction: column;
 
         & > div {
           width: 50%;
@@ -155,12 +157,43 @@
           }
         }
 
+        & > mat-paginator {
+          padding: 0;
+          width: 50%;
+        }
+
       }
 
     }
 
   }
 
+}
+
+@media (max-width: 1200px) {
+  .mp-mapping-wrapper {
+
+    & > mat-accordion {
+
+      & > mat-expansion-panel {
+
+        .mp-mapping-expansion-panel-content {
+
+          & > div {
+            width: 75%;
+          }
+
+          & > mat-paginator {
+            width: 75%;
+          }
+
+        }
+
+      }
+
+    }
+
+  }
 }
 
 @media (max-width: 767px) {
@@ -175,6 +208,11 @@
           & > div {
             width: 100%;
             padding-right: 34px;
+          }
+
+          & > mat-paginator {
+            width: 100%;
+            padding: 0 26px;
           }
 
         }
