@@ -194,10 +194,10 @@ export class ProductDetailsComponent implements OnInit {
 
   async AlertPermision(){
     let alert = await this.alertController.create({
-        header:'¡Usted no tiene los Permisos para gererar esta operacion!',
-        message:'Pedir permissos',
+        header:'Operación no permitida',
+        message:'No tiene los permisos necesarios para realizar la acción',
         buttons:[{
-          text:'OK',
+          text:'Aceptar',
           handler:()=>{
             this.close();
           }

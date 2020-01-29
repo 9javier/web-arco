@@ -132,16 +132,14 @@ export class ProductRelocationComponent implements OnInit {
 
   async AlertPermision() {
     let alert = await this.alertController.create({
-      header: '¡Usted no tiene los Permisos para gererar esta operacion!',
-      message: 'Pedir permissos',
-      buttons: [
-        {
-          text: 'OK',
-          handler: () => {
-            this.close();
-          }
+      header:'Operación no permitida',
+      message:'No tiene los permisos necesarios para realizar la acción',
+      buttons:[{
+        text:'Aceptar',
+        handler:()=>{
+          this.close();
         }
-      ]
+      }]
     });
     await alert.present();
   }
