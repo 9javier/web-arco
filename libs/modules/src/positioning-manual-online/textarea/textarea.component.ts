@@ -145,7 +145,7 @@ export class TextareaComponent implements OnInit {
         this.audioProvider.playDefaultOk();
         this.containerReference = dataWrited;
         this.packingReference = null;
-        this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
+        this.dataToWrite = 'PRODUCTO/CONTENEDOR';
         this.inputPositioning = null;
         this.errorMessage = null;
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
@@ -165,7 +165,7 @@ export class TextareaComponent implements OnInit {
         this.storeProductInContainer(params);
 
         this.errorMessage = null;
-      } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
+      } else if (false && !this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         // console.log('passa qui por Jaula');
         this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
           if(data.packingInventorys.length > 0 && !prova){
@@ -180,7 +180,7 @@ export class TextareaComponent implements OnInit {
             this.audioProvider.playDefaultOk();
             this.containerReference = null;
             this.packingReference = dataWrited;
-            this.dataToWrite = 'PRODUCTO/CONTENEDOR/EMBALAJE';
+            this.dataToWrite = 'PRODUCTO/CONTENEDOR';
             this.inputPositioning = null;
             this.errorMessage = null;
           }
@@ -188,7 +188,7 @@ export class TextareaComponent implements OnInit {
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;
-        this.errorMessage = '¡Referencia del contenedor/embalaje errónea!';
+        this.errorMessage = '¡Referencia del contenedor errónea!';
         this.processInitiated = false;
       } else {
         this.audioProvider.playDefaultError();
@@ -196,7 +196,7 @@ export class TextareaComponent implements OnInit {
         if (this.isStoreUser) {
           this.errorMessage = '¡Referencia del producto errónea!';
         } else {
-          this.errorMessage = '¡Referencia del producto/contenedor/embalaje errónea!';
+          this.errorMessage = '¡Referencia del producto/contenedor errónea!';
         }
         this.processInitiated = false;
       }
