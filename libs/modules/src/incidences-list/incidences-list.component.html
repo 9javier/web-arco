@@ -12,6 +12,7 @@
             #btnFilterTypes
             [title]="'Tipo'"
             [isFiltering]="filterAppliedForType(typeFilters.TYPE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.TYPE) ? 'Filtrar por tipo' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.TYPE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.TYPE)">
@@ -26,6 +27,7 @@
             #btnFilterProcesses
             [title]="'Operación'"
             [isFiltering]="filterAppliedForType(typeFilters.PROCESS)"
+            [matTooltip]="!filterAppliedForType(typeFilters.PROCESS) ? 'Filtrar por operación' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.PROCESS)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.PROCESS)">
@@ -42,6 +44,7 @@
             #btnFilterDatesReport
             [title]="'Fecha de reporte'"
             [isFiltering]="filterAppliedForType(typeFilters.DATE_REPORT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.DATE_REPORT) ? 'Filtrar por fecha' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.DATE_REPORT)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.DATE_REPORT)">
@@ -56,6 +59,7 @@
             #btnFilterTimesReport
             [title]="'Hora de reporte'"
             [isFiltering]="filterAppliedForType(typeFilters.TIME_REPORT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.TIME_REPORT) ? 'Filtrar por hora' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.TIME_REPORT)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.TIME_REPORT)">
@@ -70,6 +74,7 @@
             #btnFilterUsersReport
             [title]="'Usuario'"
             [isFiltering]="filterAppliedForType(typeFilters.USER_REPORT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.USER_REPORT) ? 'Filtrar por usuario' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.USER_REPORT)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.USER_REPORT)">
@@ -84,6 +89,7 @@
             #btnFilterProducts
             [title]="'Código único'"
             [isFiltering]="filterAppliedForType(typeFilters.PRODUCT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.PRODUCT) ? 'Filtrar por código único' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.PRODUCT)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.PRODUCT)">
@@ -98,6 +104,7 @@
             #btnFilterModelReferences
             [title]="'Artículo'"
             [isFiltering]="filterAppliedForType(typeFilters.MODEL_REFERENCE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.MODEL_REFERENCE) ? 'Filtrar por artículo' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.MODEL_REFERENCE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.MODEL_REFERENCE)">
@@ -112,6 +119,7 @@
             #btnFilterSizes
             [title]="'Talla'"
             [isFiltering]="filterAppliedForType(typeFilters.SIZE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.SIZE) ? 'Filtrar por talla' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.SIZE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.SIZE)">
@@ -126,6 +134,7 @@
             #btnFilterBrands
             [title]="'Marca'"
             [isFiltering]="filterAppliedForType(typeFilters.BRAND)"
+            [matTooltip]="!filterAppliedForType(typeFilters.BRAND) ? 'Filtrar por marca' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.BRAND)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.BRAND)">
@@ -140,6 +149,7 @@
             #btnFilterModelNames
             [title]="'Modelo'"
             [isFiltering]="filterAppliedForType(typeFilters.MODEL_NAME)"
+            [matTooltip]="!filterAppliedForType(typeFilters.MODEL_NAME) ? 'Filtrar por modelo' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.MODEL_NAME)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.MODEL_NAME)">
@@ -154,6 +164,7 @@
             #btnFilterColors
             [title]="'Color'"
             [isFiltering]="filterAppliedForType(typeFilters.COLOR)"
+            [matTooltip]="!filterAppliedForType(typeFilters.COLOR) ? 'Filtrar por color' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.COLOR)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.COLOR)">
@@ -168,6 +179,7 @@
             #btnFilterLifestyles
             [title]="'Lifestyle'"
             [isFiltering]="filterAppliedForType(typeFilters.LIFESTYLE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LIFESTYLE) ? 'Filtrar por lifestyle' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.LIFESTYLE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LIFESTYLE)">
@@ -182,6 +194,7 @@
             #btnFilterSeasons
             [title]="'Temporada'"
             [isFiltering]="filterAppliedForType(typeFilters.SEASON)"
+            [matTooltip]="!filterAppliedForType(typeFilters.SEASON) ? 'Filtrar por temporada' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.SEASON)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.SEASON)">
@@ -196,6 +209,7 @@
             #btnFilterLocationWarehouses
             [title]="'Almacén'"
             [isFiltering]="filterAppliedForType(typeFilters.LOCATION_WAREHOUSE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LOCATION_WAREHOUSE) ? 'Filtrar por almacén' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.LOCATION_WAREHOUSE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LOCATION_WAREHOUSE)">
@@ -210,6 +224,7 @@
             #btnFilterLocations
             [title]="'Ubicación/Jaula'"
             [isFiltering]="filterAppliedForType(typeFilters.LOCATION)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LOCATION) ? 'Filtrar por ubicación/jaula' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.LOCATION)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LOCATION)">
@@ -224,6 +239,7 @@
             #btnFilterDestinyWarehouses
             [title]="'Destino'"
             [isFiltering]="filterAppliedForType(typeFilters.DESTINY_WAREHOUSE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.DESTINY_WAREHOUSE) ? 'Filtrar por destino' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.DESTINY_WAREHOUSE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.DESTINY_WAREHOUSE)">
@@ -238,6 +254,7 @@
             #btnFilterLocationSorterWays
             [title]="'Calle sorter'"
             [isFiltering]="filterAppliedForType(typeFilters.LOCATION_SORTER_WAY)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LOCATION_SORTER_WAY) ? 'Filtrar por calle de sorter' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.LOCATION_SORTER_WAY)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LOCATION_SORTER_WAY)">
@@ -260,6 +277,7 @@
             #btnFilterStatus
             [title]="'Estado'"
             [isFiltering]="filterAppliedForType(typeFilters.STATUS)"
+            [matTooltip]="!filterAppliedForType(typeFilters.STATUS) ? 'Filtrar por estado' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.STATUS)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.STATUS)">
@@ -267,7 +285,7 @@
           Estado
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info-status status">
-          <mat-select [(ngModel)]="element.status.status.id">
+          <mat-select [(ngModel)]="element.status.status.id" matTooltip="Cambiar estado" matTooltipClass="tooltip">
             <mat-option *ngFor="let status of listAvailableStatus" [value]="status.id">
               {{status.name}}
             </mat-option>
@@ -280,6 +298,7 @@
             #btnFilterUsersManage
             [title]="'Usuario'"
             [isFiltering]="filterAppliedForType(typeFilters.USER_MANAGE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.USER_MANAGE) ? 'Filtrar por usuario' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.USER_MANAGE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.USER_MANAGE)">
@@ -294,6 +313,7 @@
             #btnFilterDatesManage
             [title]="'Fecha'"
             [isFiltering]="filterAppliedForType(typeFilters.DATE_MANAGE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.DATE_MANAGE) ? 'Filtrar por fecha' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.DATE_MANAGE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.DATE_MANAGE)">
@@ -308,6 +328,7 @@
             #btnFilterTimesManage
             [title]="'Hora'"
             [isFiltering]="filterAppliedForType(typeFilters.TIME_MANAGE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.TIME_MANAGE) ? 'Filtrar por hora' : ''" matTooltipClass="tooltip"
             [customFiltersLoad]="true"
             (applyFilters)="applyFilters($event, typeFilters.TIME_MANAGE)"
             (clickedToOpenPopover)="openFilterPopover($event, typeFilters.TIME_MANAGE)">
