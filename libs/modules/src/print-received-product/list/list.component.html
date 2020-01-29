@@ -83,6 +83,8 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="refresh()"><i
+      class="material-icons">refresh</i></ion-fab-button>
     <ion-fab-button (click)="printProductsPrices()" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
       <ion-icon name="print"></ion-icon>
     </ion-fab-button>
