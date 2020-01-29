@@ -60,7 +60,7 @@ export class MappingsComponent implements OnInit {
       if(data) {
         data.forEach(brand => {
           this.dataSourceBrands.push({
-            id: brand.id,
+            id: null,
             avelonData: {id: brand.id, name: brand.name},
             marketData: {id: -1, name: null}
           });
@@ -89,7 +89,7 @@ export class MappingsComponent implements OnInit {
       if(data) {
         data.forEach(color => {
           this.dataSourceColors.push({
-            id: color.id,
+            id: null,
             avelonData: {id: color.id, name: color.name},
             marketData: {id: -1, name: null}
           });
@@ -118,7 +118,7 @@ export class MappingsComponent implements OnInit {
       if(data) {
         data.forEach(size => {
           this.dataSourceSizes.push({
-            id: size.id,
+            id: null,
             avelonData: {id: size.id, name: size.name},
             marketData: {id: -1, name: null}
           });
@@ -147,8 +147,8 @@ export class MappingsComponent implements OnInit {
       if(data) {
         data.forEach(feature => {
           this.dataSourceFeatures.push({
-            id: feature.id,
-            avelonData: {id: feature.id, name: feature.name},
+            id: null,
+            avelonData: {id: feature.id, name: feature.name, group: feature.groupNumber},
             marketData: {id: -1, name: null}
           });
         });
@@ -172,9 +172,8 @@ export class MappingsComponent implements OnInit {
     this.enumTypes = [];
 
     //this.getEntities();
-    this.getMaps();
+    //this.getMaps();
     //this.saveMock();
-    console.log(this.dataDBsave)
   }
 
   getEntities() {
@@ -597,6 +596,29 @@ export class MappingsComponent implements OnInit {
     this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
     })
+  }
+
+  getGroupName(group) {
+    switch (group) {
+      case 2:
+        return "Familia: ";
+        break;
+      case 5:
+        return "Tacón: ";
+        break;
+      case 7:
+        return "Descripción: ";
+        break;
+      case 9:
+        return "Mat. exterior: ";
+        break;
+      case 10:
+        return "Mat. interior: ";
+        break;
+      default:
+        return "";
+        break;
+    }
   }
 
   /*brandsFilter(filterValue: string) {
