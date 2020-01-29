@@ -49,7 +49,10 @@ export class RoleAssignmentComponent implements OnInit {
 
   async ngOnInit() {
     await this.getRolesAndUsers();
-    await this.getUsersOriginal();
+    await this.getUsersOriginal(async () => {
+      this.body.warehouses = [3];
+      await this.applyFilter();
+    });
   }
 
   async getRolesAndUsers() {
@@ -142,7 +145,7 @@ export class RoleAssignmentComponent implements OnInit {
     });
   }
 
-  async getUsersOriginal() {
+  async getUsersOriginal(success?) {
     this.ELEMENT_DATA_ORIGINAL = [];
     this.intermediaryService.presentLoading('Un momento ...');
     await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
@@ -170,6 +173,8 @@ export class RoleAssignmentComponent implements OnInit {
         }
 
         await this.intermediaryService.dismissLoading();
+
+        if(success) success();
       }, async (err) => {
         console.log(err);
         await this.intermediaryService.dismissLoading();
@@ -179,7 +184,7 @@ export class RoleAssignmentComponent implements OnInit {
 
   async getRoles() {
     this.displayedColumns = ['user', 'warehouse'];
-    this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
+    await this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
         this.dataSourceRoles = res.body.data;
 
@@ -214,7 +219,7 @@ export class RoleAssignmentComponent implements OnInit {
   }
 
   async getWarehouses() {
-    this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
+    await this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
         this.warehouses = res.body.data;
         this.mapFilterListWarehouses();
