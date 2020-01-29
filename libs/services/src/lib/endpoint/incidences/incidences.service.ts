@@ -18,6 +18,7 @@ export class IncidencesService {
   private putUpdateUrl:string = environment.apiBase+"/incidences/{{id}}";
   private postSearchUrl: string = environment.apiBase+"/incidences";
   private postGetFiltersUrl: string = environment.apiBase+"/incidences/filters";
+  private postChangeStatusUrl: string = environment.apiBase+"/incidences/change/status/";
 
   private _incidencesList: IncidenceModel.Incidence[];
   private _incidencesPreviewList: IncidenceModel.Incidence[];
@@ -195,5 +196,9 @@ export class IncidencesService {
 
   public postGetFilters(params: IncidenceModel.ParamsGetFilters) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postGetFiltersUrl, params);
+  }
+
+  public postChangeStatus(incidenceId: number, params: IncidenceModel.ParamsChangeStatus) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postChangeStatusUrl + incidenceId, params);
   }
 }

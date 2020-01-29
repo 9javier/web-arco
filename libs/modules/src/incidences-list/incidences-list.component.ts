@@ -234,8 +234,42 @@ export class IncidencesListComponent implements OnInit {
           }
         })
         .catch((error) => {
-          console.log('Test::error', error);
+          console.error('catch error', error);
         });
     }
+  }
+
+  changeIncidenceStatus(incidence: IncidenceModel.Incidence) {
+    const originalStatus = JSON.parse(JSON.stringify(incidence.status));
+    setTimeout(() => {
+      incidence.status.status = incidence.status.available_status.find(s => s.id == incidence.status.status.id);
+      this.incidencesService
+        .postChangeStatus(incidence.info.id, { newStatus: incidence.status.status.id })
+        .then(async (res: IncidenceModel.ResponseChangeStatus) => {
+          if (res.code == 201 && res.data.status) {
+            incidence.status = res.data.status;
+            await this.intermediaryService.presentToastSuccess(`Estado de la incidencia #${res.data.info.id} actualizado.`);
+          } else if (res.code == 201) {
+            await this.intermediaryService.presentToastSuccess(`Estado de la incidencia #${res.data.info.id} actualizado.`);
+            this.intermediaryService.presentLoading('Recargando incidencias...').then(() => {
+              this.searchIncidences(this.currentPageFilter);
+            });
+          } else {
+            incidence.status = originalStatus;
+            let errorMessage = 'Ha ocurrido un error al intentar actualizar el estado de la incidencia.';
+            if (res.errors) {
+              errorMessage = res.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage);
+          }
+        }, async (error) => {
+          incidence.status = originalStatus;
+          let errorMessage = 'Ha ocurrido un error al intentar actualizar el estado de la incidencia.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage);
+        });
+    }, 500);
   }
 }

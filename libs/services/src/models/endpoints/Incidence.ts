@@ -69,7 +69,8 @@ export namespace IncidenceModel {
       },
       user: string,
       date: string,
-      time: string
+      time: string,
+      available_status: {id: number, name: string}[]
     }
   }
 
@@ -171,8 +172,14 @@ export namespace IncidenceModel {
     type: number,
     currentFilter: any[]
   }
-
   export interface ResponseGetFilters extends HttpRequestModel.Response {
     data: any[]
+  }
+
+  export interface ParamsChangeStatus {
+    newStatus: number
+  }
+  export interface ResponseChangeStatus extends HttpRequestModel.Response {
+    data: Incidence
   }
 }
