@@ -274,6 +274,7 @@ export class ProductRelocationComponent implements OnInit {
               const permissions = await this.inventoryService.checkUserPermissions();
               if (permissions.data) {
                 params.force = true;
+                params.avoidAvelonMovement = false;
                 this.storeProductInContainer(params, textToastOk, index);
                 this.processInitiated = false;
               } else {
