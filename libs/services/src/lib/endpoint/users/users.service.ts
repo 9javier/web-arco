@@ -13,6 +13,8 @@ import { UserModel } from '../../../models/endpoints/User';
 import { PATH } from '../../../../../../config/base';
 import { environment } from '../../../environments/environment';
 import { forkJoin, concat } from 'rxjs';
+import {RequestsProvider} from "../../../providers/requests/requests.provider";
+import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
 
 export const PATH_GET_INDEX: string = PATH('Users', 'Index');
 export const PATH_POST_STORE: string = PATH('Users', 'Store');
@@ -34,8 +36,13 @@ export class UsersService {
   private delDestroyUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private addWarehouseInUserUrl:string = environment.apiBase+"/gestion-permissions/users/newUpRoles";
   private hasDeleteProductPermissionUrl:string = environment.apiBase+"/gestion-permissions/users/has-delete-product-permission";
+  private postList:string = environment.apiBase+"/gestion-permissions/users/list";
 
-  constructor(private http: HttpClient, private auth: AuthenticationService) {}
+
+  constructor(
+    private http: HttpClient,
+    private auth: AuthenticationService,
+    private requestsProvider: RequestsProvider) {}
 
   async getIndex(): Promise<Observable<HttpResponse<UserModel.ResponseIndex>>> {
     const currentToken = await this.auth.getCurrentToken();
@@ -139,4 +146,9 @@ export class UsersService {
       observe: 'response'
     });
   }
+
+  getList(parameters?): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postList, parameters);
+  }
+
 }

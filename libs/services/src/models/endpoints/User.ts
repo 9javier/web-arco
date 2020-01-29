@@ -1,4 +1,44 @@
 export namespace UserModel {
+
+  export interface List {
+    permissions: Permission[],
+    list_roles: Role[]
+  }
+
+  export interface Permission {
+    id: number,
+    user: {
+      id: number,
+      email: string,
+      name: string,
+      hasWarehouse: boolean
+    },
+    warehouse: {
+      id: number,
+      name: string,
+      description: string,
+      reference: string,
+      is_store: boolean,
+      is_main: boolean,
+      has_racks: boolean,
+      is_outlet: boolean,
+      prefix_container: string,
+      packingType: number
+    },
+    roles: Role[]
+  }
+
+  export interface Role {
+    createdAt: string,
+    updatedAt: string,
+    id: number,
+    name: string,
+    description: string,
+    sga_enabled: boolean,
+    app_enabled: boolean,
+    status: boolean
+  }
+
   export interface User {
     id?: number;
     email?: string;
