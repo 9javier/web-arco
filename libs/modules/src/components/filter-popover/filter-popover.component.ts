@@ -43,7 +43,7 @@ export class FilterPopoverComponent implements OnInit {
     for(let item of this.listItems){
       if(item.checked) checkedItems++;
     }
-    return checkedItems < 100 || checkedItems == this.listItems.length;
+    return checkedItems < 1000 || checkedItems == this.listItems.length;
   }
 
   getMax(){
