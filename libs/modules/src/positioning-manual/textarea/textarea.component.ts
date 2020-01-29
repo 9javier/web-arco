@@ -305,6 +305,7 @@ export class TextareaComponent implements OnInit {
               const permissions = await this.inventoryService.checkUserPermissions();
               if (permissions.data) {
                 params.force = true;
+                params.avoidAvelonMovement = false;
                 this.storeProductInContainer(params);
                 this.processInitiated = false;
               } else {
