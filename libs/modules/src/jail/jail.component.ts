@@ -16,7 +16,7 @@ import { SendComponent } from './send/send.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
-
+import { HistoryModalComponent } from './history-modal/history-modal.component';
 @Component({
   selector: 'app-jail',
   templateUrl: './jail.component.html',
@@ -38,7 +38,7 @@ export class JailComponent implements OnInit {
   public routePath = '/jails';
 
   types = [];
-  displayedColumns = ['select', 'reference', 'packing', 'destiny', 'products-status', 'assigned_incidences', 'isSend', "update", 'buttons-print'];
+  displayedColumns = ['select', 'reference', 'packing','warehouse', 'destiny', 'products-status', 'sealed', 'isSend', "update", 'open-modal', 'buttons-print',];
   dataSource: MatTableDataSource<CarrierModel.Carrier>;
   expandedElement: CarrierModel.Carrier;
 
@@ -57,7 +57,8 @@ export class JailComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private alertControler: AlertController,
     private printerService: PrinterService,
-    private loadController: LoadingController
+    private loadController: LoadingController,
+    private historyModalComponent: HistoryModalComponent
   ) {
   }
 
@@ -432,6 +433,7 @@ export class JailComponent implements OnInit {
    * @param jail - jail to be updated
    */
   async send(event, jail) {
+
     event.stopPropagation();
     event.preventDefault();
     let modal = (await this.modalCtrl.create({
@@ -457,7 +459,16 @@ export class JailComponent implements OnInit {
     }))
     modal.present()
   }
-
+  async viewCarrier(element) {
+    const reference = element.reference;
+    // this.historyModalComponent.getreference(reference);
+    let modal = (await this.modalCtrl.create({
+      component: HistoryModalComponent,
+      componentProps: {packingReference:element.reference},
+      // cssClass: 'modalStyles',
+    }))
+    modal.present()
+  }
   /**
    * Change one destination
    * @param prev the previous warehouse

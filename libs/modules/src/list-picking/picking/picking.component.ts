@@ -38,7 +38,8 @@ export class PickingComponent implements OnInit {
   async createModalProducts() {
     let modalProducts = await this.modalController.create({
       component: ListProductsComponent,
-      cssClass: "picking-product-list"
+      cssClass: "picking-product-list",
+      componentProps: { id: this.pickingHistory.id }
     });
 
     return await modalProducts.present();

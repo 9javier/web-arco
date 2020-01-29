@@ -39,7 +39,7 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   private isStoreUser = false;
   private storeUserObj: WarehouseModel.Warehouse = null;
   dataSource: any;
-  displayedColumns: string[] = ['select', 'model', 'range', 'family', 'lifestyle', 'brand', 'price', 'action'];
+  displayedColumns: string[] = ['select', 'model', 'range', 'family', 'lifestyle', 'brand', 'price'];
   warehouses: Array<any> = [];
   filterTypes: Array<NewProductModel.StatusType> = [];
   pricesDeleted: Array<NewProductModel.NewProduct> = [];
@@ -77,6 +77,8 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   requestTimeout;
   stampe: number = 1;
 
+  printAllStock: boolean = false;
+
   /**List of prices */
   prices: Array<NewProductModel.NewProduct> = [];
 
@@ -112,6 +114,10 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     this.getWarehouses();
 
     this.clearFilters();
+  }
+
+  switchPrintAllStock() {
+    this.printAllStock = !this.printAllStock;
   }
 
   ngAfterViewInit(): void {
@@ -472,18 +478,28 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
       }
     }
 
-    let prices = this.selectedForm.value.toSelect.map((price, i) => {
-      if (items[i].status !== 3) {
-        let object = {
-          warehouseId: warehouseId,
-          tariffId: items[i].tariff.id,
-          modelId: items[i].model.id,
-          numRange: items[i].numRange
-        };
-        return price ? object : false;
+    let prices = [];
+    for (let i = 0; i < this.selectedForm.value.toSelect.length; i++) {
+      if (this.selectedForm.value.toSelect[i] && items[i].status != 3) {
+        if (this.printAllStock) {
+          for (let j = 0; j < items[i].stockStore.length; j++) {
+            prices.push({
+              warehouseId: warehouseId,
+              tariffId: items[i].tariff.id,
+              modelId: items[i].model.id,
+              numRange: items[i].numRange
+            });
+          }
+        } else {
+          prices.push({
+            warehouseId: warehouseId,
+            tariffId: items[i].tariff.id,
+            modelId: items[i].model.id,
+            numRange: items[i].numRange
+          });
+        }
       }
-    })
-      .filter(price => price);
+    }
 
     this.intermediaryService.presentLoading('Imprimiendo los productos seleccionados');
     this.printerService.printPrices({ references: prices }).subscribe(result => {
@@ -508,13 +524,26 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
   }
 
   private sendPrint(price: any, sizeSelect: any) {
-    let pricesReference = [{
-      warehouseId: price.warehouse.id,
-      tariffId: price.tariff.id,
-      modelId: price.model.id,
-      numRange: price.numRange,
-      sizeId: sizeSelect.id
-    }];
+    let pricesReference = [];
+    if (this.printAllStock) {
+      for (let j = 0; j < price.stockStore.length; j++) {
+        pricesReference.push({
+          warehouseId: price.warehouse.id,
+          tariffId: price.tariff.id,
+          modelId: price.model.id,
+          numRange: price.numRange,
+          sizeId: sizeSelect.id
+        });
+      }
+    }else {
+      pricesReference.push({
+        warehouseId: price.warehouse.id,
+        tariffId: price.tariff.id,
+        modelId: price.model.id,
+        numRange: price.numRange,
+        sizeId: sizeSelect.id
+      });
+    }
     this.intermediaryService.presentLoading('Imprimiendo');
     this.printerService.printPrices({ references: pricesReference }, true).subscribe(result => {
       this.intermediaryService.dismissLoading();

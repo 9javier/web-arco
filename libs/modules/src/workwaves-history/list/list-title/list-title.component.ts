@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {ListWorkwavesHistoryComponent} from "../list.component";
-import { IntermediaryService } from '@suite/services';
 
 
 
@@ -12,15 +10,8 @@ import { IntermediaryService } from '@suite/services';
 })
 export class TitleListWorkwavesHistoryComponent implements OnInit {
 
-  constructor(private listWorkwavesHistoryComponent: ListWorkwavesHistoryComponent,
-  private intermediaryService: IntermediaryService){}
+  constructor(){}
 
   ngOnInit() {}
 
-  loadWorkWave(){
-    this.intermediaryService.presentLoading("Refrescando listado");
-    const response = this.listWorkwavesHistoryComponent.loadWorkwavesTemplates();
-    this.intermediaryService.dismissLoading();
-    return response;
-  }
 }

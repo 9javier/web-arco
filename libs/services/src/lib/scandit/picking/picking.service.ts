@@ -53,7 +53,7 @@ export class PickingScanditService {
     let filtersPicking = this.pickingProvider.listFiltersPicking;
     let timeoutStarted = null;
 
-    const textPickingStoresInit = listProductsToStorePickings.length == 0 ? this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end : 'Escanea los productos a incluir';
+    const textPickingStoresInit = listProductsToStorePickings.length == 0 ? this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue : 'Escanea los productos a incluir';
 
     ScanditMatrixSimple.initPickingStores((response: ScanditModel.ResponsePickingStores) => {
       if(response && response.result && response.actionIonic){
@@ -210,7 +210,7 @@ export class PickingScanditService {
                 16);
               this.hideTextMessage(2000);
               ScanditMatrixSimple.hideLoadingDialog();
-              ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
+              ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
             }
           } else if (response.action == 'matrix_simple_scan_packings') {
             ScanditMatrixSimple.showButtonPickingStorePacking(false);
@@ -418,7 +418,7 @@ export class PickingScanditService {
           this.scanditProvider.colorText.color,
           16);
         this.hideTextMessage(2000);
-        ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].scan_packings_to_end);
+        ScanditMatrixSimple.setTextPickingStores(true, this.pickingProvider.literalsJailPallet[typePacking].press_scan_packings_to_continue);
         break;
       case 'scannedPacking':
         let codeScanned = params[0];
