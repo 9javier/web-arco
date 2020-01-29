@@ -1,4 +1,9 @@
 <ion-content>
+  <ion-row>
+    <ion-col id="reset">
+      <ion-button (click)="ngOnInit()">Reiniciar filtros</ion-button>
+    </ion-col>
+  </ion-row>
   <div class="table-container" *ngIf="dataSourceUsers">
     <mat-table [dataSource]="dataSourceUsers">
       <ng-container matColumnDef="user">
