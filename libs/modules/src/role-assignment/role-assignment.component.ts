@@ -294,7 +294,11 @@ export class RoleAssignmentComponent implements OnInit {
     this.usersService.updateWarehouseInUser(body)
       .then((data: Observable<HttpResponse<UserModel.ResponseShow>>) => {
         data.subscribe(async (res: HttpResponse<UserModel.ResponseShow>) => {
-          await this.getRolesAndUsers(async () => await this.intermediaryService.dismissLoading());
+          await this.getRoles();
+          await this.getUsers(async () =>{
+            await this.applyFilter(async () => await this.intermediaryService.dismissLoading());
+          });
+          await this.getWarehouses();
         }, (err) => {
           console.log(err);
         });
