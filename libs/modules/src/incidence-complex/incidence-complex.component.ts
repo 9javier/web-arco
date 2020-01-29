@@ -27,8 +27,8 @@ export class IncidenceComplexComponent implements OnInit {
   }
 
   attendIncidence() {
-    let incidenceAttended: boolean = !this.incidence.attended;
-    let incidenceId: number = this.incidence.id;
+    let incidenceAttended: boolean = this.incidence.status.status.id == 1;
+    let incidenceId: number = this.incidence.info.id;
     this.incidencesService
       .putUpdate(incidenceId, incidenceAttended)
       .then((data: Observable<HttpResponse<IncidenceModel.ResponseUpdate>>) => {

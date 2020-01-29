@@ -116,7 +116,8 @@ export class TextareaComponent implements OnInit {
       
       component: ListProductsCarrierComponent,
       componentProps: {
-        carrierReference:jaula
+        carrierReference:jaula,
+        process: 'picking'
       }
       
     })

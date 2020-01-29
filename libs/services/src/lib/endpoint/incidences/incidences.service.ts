@@ -17,6 +17,7 @@ export class IncidencesService {
   private getIndexUrl:string = environment.apiBase+"/incidences";
   private putUpdateUrl:string = environment.apiBase+"/incidences/{{id}}";
   private postSearchUrl: string = environment.apiBase+"/incidences";
+  private postGetFiltersUrl: string = environment.apiBase+"/incidences/filters";
 
   private _incidencesList: IncidenceModel.Incidence[];
   private _incidencesPreviewList: IncidenceModel.Incidence[];
@@ -56,12 +57,18 @@ export class IncidencesService {
     {id: 13, name: 'Sorter - producto eliminado sin jaula'}
   ];
   private _defaultFiltersPreview: IncidenceModel.SearchParameters = {
-    order: 'DESC',
+    order: {
+      field: 'id',
+      direction: 'DESC'
+    },
     page: 0,
     size: this._quantityIncidencesToShow
   };
   private _defaultFilters: IncidenceModel.SearchParameters = {
-    order: 'ASC',
+    order: {
+      field: 'id',
+      direction: 'ASC'
+    },
     page: 0,
     size: 10
   };
@@ -77,7 +84,7 @@ export class IncidencesService {
       .then((res: IncidenceModel.ResponseSearch) => {
         if (res.code == 200) {
           this._incidencesPreviewList = res.data.incidences;
-          this._incidencesUnattendedQuantity = res.data.count;
+          this._incidencesUnattendedQuantity = res.data.count_search;
           this._incidencesQuantityPopover = res.data.count_search;
         } else {
           console.error('Error to try search Incidences with Filters', res);
@@ -94,7 +101,7 @@ export class IncidencesService {
       .then((res: IncidenceModel.ResponseSearch) => {
         if (res.code == 200) {
           this._incidencesList = res.data.incidences;
-          this._incidencesUnattendedQuantity = res.data.count;
+          this._incidencesUnattendedQuantity = res.data.count_search;
           this._incidencesQuantityList = res.data.count_search;
         } else {
           console.error('Error to try search Incidences with Filters', res);
@@ -186,4 +193,7 @@ export class IncidencesService {
     return this.requestsProvider.post(this.postSearchUrl, parameters);
   }
 
+  public postGetFilters(params: IncidenceModel.ParamsGetFilters) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postGetFiltersUrl, params);
+  }
 }
