@@ -1,9 +1,9 @@
-<ion-item lines="none" text-wrap>
-  <ion-button matTooltip="Marcar como atendida" matTooltipClass="tooltip" slot="end" shape="round" fill="clear"(click)="attendIncidence()">
-    <span class="btn-attend" [ngClass]="incidence.attended ? 'attended' : 'not-attended'"></span>
-  </ion-button>
-  <div>
-    <p>{{incidence.description}}</p>
-    <p class="time-text">{{showDateTime(incidence.createdAt)}}</p>
-  </div>
+<ion-item>
+  <!--<ion-button matTooltip="Marcar como gestionada" matTooltipClass="tooltip" slot="start" shape="round" fill="clear" (click)="attendIncidence()">
+    <span class="btn-attend" [ngClass]="incidence.status.status.id == 1 ? 'not-attended' : 'attended'"></span>
+  </ion-button>-->
+  <ion-label>
+    <h2>#{{incidence.info.id}} {{incidence.info.type.name}}</h2>
+    <p>{{incidence.product.date}} {{incidence.product.time}}</p>
+  </ion-label>
 </ion-item>
