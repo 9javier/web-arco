@@ -284,13 +284,7 @@
           </suite-filter-button>
           Estado
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info-status status">
-          <mat-select [(ngModel)]="element.status.status.id" matTooltip="Cambiar estado" matTooltipClass="tooltip">
-            <mat-option *ngFor="let status of listAvailableStatus" [value]="status.id">
-              {{status.name}}
-            </mat-option>
-          </mat-select>
-        </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info-status status"> {{element.status.status.name}} </mat-cell>
       </ng-container>
       <ng-container matColumnDef="user-status">
         <mat-header-cell class="my-sticky-col info-status user-status" *matHeaderCellDef mat-sort-header>
