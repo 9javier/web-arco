@@ -6,7 +6,7 @@ import {MatSort, PageEvent, Sort} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import { IntermediaryService } from '@suite/services';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import {FilterButtonComponent} from "@suite/common-modules";
+import {FilterButtonComponent} from "../components/filter-button/filter-button.component";
 
 @Component({
   selector: 'incidences-list',
