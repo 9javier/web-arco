@@ -15,8 +15,8 @@
         INVERTIR TIPO DE VACIADO
       </button>
     </div>
-    <div class="mixed" *ngIf="disableAllSelect" >
-      <button (click)="emptyAll()">
+    <div class="mixed" *ngIf="disableMixed" >
+      <button (click)="emptyAll()" [disabled]="disableManual" [ngClass]="disableManual ? 'disabled' : ''">
         VACIAR CALLES
       </button>
     </div>
