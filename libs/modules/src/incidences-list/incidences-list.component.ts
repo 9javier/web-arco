@@ -22,7 +22,7 @@ import {FilterButtonComponent} from "@suite/common-modules";
 })
 export class IncidencesListComponent implements OnInit {
 
-  public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'warehouse', 'location', 'destiny', 'sorter-way', 'history', 'status', 'user-status', 'date-status', 'time-status'];
+  public displayedColumns = ['id', 'type', 'process', 'date', 'time', 'user', 'code', 'model', 'size', 'brand', 'model-name', 'color', 'lifestyle', 'season', 'warehouse', 'location', 'destiny', 'sorter-way', /*'history',*/ 'status', 'user-status', 'date-status', 'time-status'];
   public incidences: IncidenceModel.Incidence[] = [];
   public typeFilters = IncidenceModel.TypeFilters;
   public listAvailableStatus: any[] = [];
