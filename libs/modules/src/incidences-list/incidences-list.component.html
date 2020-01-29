@@ -266,7 +266,7 @@
       <ng-container matColumnDef="history">
         <mat-header-cell *matHeaderCellDef class="info-product">Historial</mat-header-cell>
         <mat-cell *matCellDef="let element" class="info-product history">
-          <i class="material-icons" [matTooltip]="'Ver historial ' + (element.product.product ? 'del producto' : 'de la ubicación')">assignment</i>
+          <i class="material-icons" [matTooltip]="'Ver historial ' + (element.product.product ? 'del producto' : 'de la ubicación')" matTooltipClass="tooltip">assignment</i>
         </mat-cell>
       </ng-container>
 
