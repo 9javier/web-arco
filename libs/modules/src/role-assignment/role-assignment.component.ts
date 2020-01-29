@@ -10,7 +10,7 @@ import {
 import { MatTableDataSource } from '@angular/material';
 import { Observable } from 'rxjs';
 import { HttpResponse } from '@angular/common/http';
-import { AlertController, ModalController, PopoverController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
 import { FiltersRoleAssignmentComponent } from './filters-role-assignment/filters-role-assignment.component';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
@@ -41,33 +41,118 @@ export class RoleAssignmentComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private usersService: UsersService,
     private rolesService: RolesService,
-    private alertController: AlertController,
     private modalController: ModalController,
     private warehousesService: WarehousesService,
-    private popoverController: PopoverController,
+    private popoverController: PopoverController
   ) {}
 
+  //FUNCTIONS THAT ARE STARTED BY THE USER
+
   async ngOnInit() {
+    await this.intermediaryService.presentLoading('Cargando...');
     await this.getRolesAndUsers();
+    await this.getUsersOriginal(async () => {
+      this.body.warehouses = [3];
+      await this.applyFilter(async () => await this.intermediaryService.dismissLoading());
+    });
+  }
+
+  async openFilterComponent(event, type: string) {
+    let listItems = [];
+    let title = '';
+    if (type === 'user') {
+      title = 'Usuario';
+      listItems = this.listUsers;
+    } else if (type === 'warehouse') {
+      title = 'Almacén';
+      listItems = this.listWarehouses;
+    }
+
+    const popover = await this.popoverController.create({
+      cssClass: 'popover-filter',
+      component: FiltersRoleAssignmentComponent,
+      event: event,
+      componentProps: {
+        title: title,
+        listItems: listItems
+      }
+    });
+
+    popover.onDidDismiss().then(async (data) => {
+      await this.intermediaryService.presentLoading('Cargando...');
+      if (data && data.data && data.data.filters) {
+        const filter = data.data.filters.filter((x) => x.checked === true);
+
+        if (filter.length === data.data.filters.length) {
+          if (type === 'user') {
+            this.body.users = [];
+          } else if (type === 'warehouse') {
+            this.body.warehouses = [];
+          }
+        } else {
+          if (type === 'user') {
+            this.body.users = filter.map((x) => x.id);
+          } else if (type === 'warehouse') {
+            this.body.warehouses = filter.map((x) => x.id);
+          }
+        }
+
+        await this.applyFilter(async () => await this.intermediaryService.dismissLoading());
+      }else{
+        await this.intermediaryService.dismissLoading();
+      }
+    });
+
+    await popover.present();
+  }
+
+  async refreshAll() {
+    await this.intermediaryService.presentLoading('Cargando...');
+    await this.getRoles();
+    await this.getUsers();
+    await this.getWarehouses();
+    await this.getUsersOriginal(async () =>{
+      await this.applyFilter(async () => await this.intermediaryService.dismissLoading());
+    });
+  }
+
+  async saveChanges(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    await this.intermediaryService.presentLoading('Cargando...');
+    const aux = JSON.parse(JSON.stringify(this.listToUpdate));
+    this.listToUpdate = [];
+
+    const body = [];
+    aux.forEach((item) => {
+      body.push(this.fillBodyEndPoint(item.userId));
+    });
+
+    this.sendDataEndPoint(body);
     await this.getUsersOriginal();
   }
 
-  async getRolesAndUsers() {
-    this.body = {
-      users: [],
-      warehouses: []
-    };
-
-    await this.getRoles().then(async () => {
-      await this.getUsers();
+  async addNewRol() {
+    const modal = await this.modalController.create({
+      component: AddRoleAssignmentComponent
     });
 
-    await this.getWarehouses();
+    modal.onDidDismiss().then(async (dataReturn) => {
+      await this.intermediaryService.presentLoading('Cargando...');
+      if (dataReturn.data !== undefined) {
+        await this.saveAddedRole(dataReturn.data);
+      }else{
+        await this.intermediaryService.dismissLoading();
+      }
+    });
+
+    await modal.present();
   }
 
-  async applyFilter() {
+  // FUNCTIONS THAT ACCESS THE BACK
+
+  async applyFilter(success?) {
     this.ELEMENT_DATA = [];
-    this.intermediaryService.presentLoading('Un momento ...');
     this.dataSourceUsers = [];
     await this.usersService.getIndexWithFilter(this.body).then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
@@ -95,17 +180,15 @@ export class RoleAssignmentComponent implements OnInit {
           this.dataSourceUsers = new MatTableDataSource(this.ELEMENT_DATA);
         }
 
-        await this.intermediaryService.dismissLoading();
+        if(success) success();
       }, async (err) => {
         console.log(err);
-        await this.intermediaryService.dismissLoading();
       });
     });
   }
 
-  async getUsers() {
+  async getUsers(success?) {
     this.ELEMENT_DATA = [];
-    this.intermediaryService.presentLoading('Un momento ...');
     this.dataSourceUsers = [];
     await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
@@ -134,17 +217,15 @@ export class RoleAssignmentComponent implements OnInit {
           this.mapFilterListUsers();
         }
 
-        await this.intermediaryService.dismissLoading();
+        if(success) success();
       }, async (err) => {
         console.log(err);
-        await this.intermediaryService.dismissLoading();
       });
     });
   }
 
-  async getUsersOriginal() {
+  async getUsersOriginal(success?) {
     this.ELEMENT_DATA_ORIGINAL = [];
-    this.intermediaryService.presentLoading('Un momento ...');
     await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
         this.users = res.body.data;
@@ -169,17 +250,17 @@ export class RoleAssignmentComponent implements OnInit {
           });
         }
 
-        await this.intermediaryService.dismissLoading();
+
+        if(success) success();
       }, async (err) => {
         console.log(err);
-        await this.intermediaryService.dismissLoading();
       });
     });
   }
 
   async getRoles() {
     this.displayedColumns = ['user', 'warehouse'];
-    this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
+    await this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
         this.dataSourceRoles = res.body.data;
 
@@ -190,55 +271,56 @@ export class RoleAssignmentComponent implements OnInit {
         }
       }, async (err) => {
         console.log(err);
-        await this.intermediaryService.dismissLoading();
       });
     });
   }
 
-  async addNewRol() {
-    this.intermediaryService.presentLoading('Un momento ...');
-
-    const modal = await this.modalController.create({
-      component: AddRoleAssignmentComponent,
-    });
-
-    modal.onDidDismiss().then((dataReturn) => {
-      if (dataReturn.data !== undefined) {
-        this.saveAddedRole(dataReturn.data);
-      }
-    });
-
-    return await modal.present().then(() => {
-      this.intermediaryService.dismissLoading();
-    });
-  }
-
   async getWarehouses() {
-    this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
+    await this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
       obsItem.subscribe(async (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
         this.warehouses = res.body.data;
         this.mapFilterListWarehouses();
       }, async (err) => {
         console.log(err);
-        await this.intermediaryService.dismissLoading();
       });
     });
   }
 
-  async saveChanges(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.intermediaryService.presentLoading('Un momento ...');
-    const aux = JSON.parse(JSON.stringify(this.listToUpdate));
-    this.listToUpdate = [];
-
-    const body = [];
-    aux.forEach((item) => {
-      body.push(this.fillBodyEndPoint(item.userId));
+  sendDataEndPoint(body) {
+    body.forEach((element) => {
+      element.permits = element.permits.filter((x) => x.roles.length > 0);
     });
 
-    this.sendDataEndPoint(body);
-    await this.getUsersOriginal();
+    this.usersService.updateWarehouseInUser(body)
+      .then((data: Observable<HttpResponse<UserModel.ResponseShow>>) => {
+        data.subscribe(async (res: HttpResponse<UserModel.ResponseShow>) => {
+          await this.getRoles();
+          await this.getUsers(async () =>{
+            await this.applyFilter(async () => await this.intermediaryService.dismissLoading());
+          });
+          await this.getWarehouses();
+        }, (err) => {
+          console.log(err);
+        });
+      }, (err) => {
+        console.log(err);
+      });
+  }
+
+  // OTHER FUNCTIONS
+
+  async getRolesAndUsers(success?) {
+    this.body = {
+      users: [],
+      warehouses: []
+    };
+
+    await this.getRoles().then(async () => {
+      if(success) await this.getUsers(success);
+      else await this.getUsers();
+    });
+
+    await this.getWarehouses();
   }
 
   async saveAddedRole(dataForm: any) {
@@ -260,11 +342,6 @@ export class RoleAssignmentComponent implements OnInit {
       });
     }
     this.sendDataEndPoint(body);
-    await this.getUsersOriginal();
-  }
-
-  async refreshAll() {
-    await this.getRolesAndUsers();
     await this.getUsersOriginal();
   }
 
@@ -347,26 +424,6 @@ export class RoleAssignmentComponent implements OnInit {
     return body;
   }
 
-  sendDataEndPoint(body) {
-    body.forEach((element) => {
-      element.permits = element.permits.filter((x) => x.roles.length > 0);
-    });
-
-    this.usersService.updateWarehouseInUser(body)
-      .then((data: Observable<HttpResponse<UserModel.ResponseShow>>) => {
-        data.subscribe(async (res: HttpResponse<UserModel.ResponseShow>) => {
-          this.intermediaryService.dismissLoading();
-          await this.getRolesAndUsers();
-        }, (err) => {
-          console.log(err);
-          this.intermediaryService.dismissLoading();
-        });
-      }, (err) => {
-        console.log(err);
-        this.intermediaryService.dismissLoading();
-      });
-  }
-
   mapFilterListUsers() {
     this.listUsers = this.users.map(user => {
       return {
@@ -391,49 +448,4 @@ export class RoleAssignmentComponent implements OnInit {
     });
   }
 
-  async openFilterComponent(event, type: string) {
-    let listItems = [];
-    let title = '';
-    if (type === 'user') {
-      title = 'Usuario';
-      listItems = this.listUsers;
-    } else if (type === 'warehouse') {
-      title = 'Almacén';
-      listItems = this.listWarehouses;
-    }
-
-    const popover = await this.popoverController.create({
-      cssClass: 'popover-filter',
-      component: FiltersRoleAssignmentComponent,
-      event: event,
-      componentProps: {
-        title: title,
-        listItems: listItems
-      }
-    });
-
-    popover.onDidDismiss().then(async (data) => {
-      if (data && data.data && data.data.filters) {
-        const filter = data.data.filters.filter((x) => x.checked === true);
-
-        if (filter.length === data.data.filters.length) {
-          if (type === 'user') {
-            this.body.users = [];
-          } else if (type === 'warehouse') {
-            this.body.warehouses = [];
-          }
-        } else {
-          if (type === 'user') {
-            this.body.users = filter.map((x) => x.id);
-          } else if (type === 'warehouse') {
-            this.body.warehouses = filter.map((x) => x.id);
-          }
-        }
-
-        await this.applyFilter();
-      }
-    });
-
-    await popover.present();
-  }
 }

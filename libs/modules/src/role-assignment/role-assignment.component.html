@@ -1,5 +1,11 @@
 <ion-content>
-  <h3 class="title-h3-table" padding>{{title}}</h3>
+  <ion-row>
+    <ion-col id="reset">
+      <ion-button (click)="ngOnInit()">
+        <ion-icon name="refresh"></ion-icon>
+      </ion-button>
+    </ion-col>
+  </ion-row>
   <div class="table-container" *ngIf="dataSourceUsers">
     <mat-table [dataSource]="dataSourceUsers">
       <ng-container matColumnDef="user">
@@ -28,16 +34,22 @@
   </div>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-  <ion-fab-button *ngIf="listToUpdate.length > 0" color="dark"  matTooltip="Guardar" matTooltipClass="tooltip" matTooltipPosition="left" (click)="saveChanges($event)">
-    <ion-icon name="save"></ion-icon>
-  </ion-fab-button>
-  <div style="height: 5px"></div>
-  <ion-fab-button color="dark"  matTooltip="Agregar" matTooltipClass="tooltip" matTooltipPosition="left" (click)="addNewRol()">
-    <ion-icon name="add"></ion-icon>
-  </ion-fab-button>
-  <div style="height: 5px"></div>
-  <ion-fab-button color="dark"  matTooltip="Limpiar" matTooltipClass="tooltip" matTooltipPosition="left" (click)="refreshAll()">
-    <ion-icon name="refresh"></ion-icon>
-  </ion-fab-button>
+  <ion-row>
+    <ion-col>
+      <ion-fab-button *ngIf="listToUpdate.length > 0" color="dark"  matTooltip="Guardar" matTooltipClass="tooltip" matTooltipPosition="above" (click)="saveChanges($event)">
+        <ion-icon name="save"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+    <ion-col>
+      <ion-fab-button color="dark"  matTooltip="Agregar" matTooltipClass="tooltip" matTooltipPosition="above" (click)="addNewRol()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+    <ion-col>
+      <ion-fab-button color="dark"  matTooltip="Limpiar" matTooltipClass="tooltip" matTooltipPosition="above" (click)="refreshAll()">
+        <ion-icon name="undo"></ion-icon>
+      </ion-fab-button>
+    </ion-col>
+  </ion-row>
 </ion-fab>
 
