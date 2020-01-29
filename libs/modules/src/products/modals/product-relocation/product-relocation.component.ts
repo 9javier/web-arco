@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, LoadingController, ModalController, NavParams } from '@ionic/angular';
-import { IntermediaryService, InventoryModel, InventoryService, WarehouseService } from '@suite/services';
+import {
+  IntermediaryService,
+  InventoryModel,
+  InventoryService,
+  WarehouseService
+} from '@suite/services';
 import { PermissionsService } from '../../../../../services/src/lib/endpoint/permissions/permissions.service';
 import { PositionsToast } from '../../../../../services/src/models/positionsToast.type';
 import { TimesToastType } from '../../../../../services/src/models/timesToastType';
@@ -25,6 +30,7 @@ export class ProductRelocationComponent implements OnInit {
   referenceContainer: string = '';
   listReferences: any = {};
   permision: boolean;
+  processInitiated: boolean;
   loading = null;
 
   warehouseSelected: number;
@@ -192,7 +198,7 @@ export class ProductRelocationComponent implements OnInit {
           this.loading = null;
         }
         if (res.code === 200 || res.code === 201) {
-          await this.intermediaryService.presentToastSuccess(textToastOk || 'Producto ' + params.productReference + ' ubicado en ' + this.title, TimesToastType.DURATION_SUCCESS_TOAST_3750, PositionsToast.BOTTOM);
+          await this.intermediaryService.presentToastSuccess(textToastOk || ('Producto ' + params.productReference + ' ubicado en ' + this.title), TimesToastType.DURATION_SUCCESS_TOAST_3750);
           this.products[index].container = res.data.destinationContainer;
           this.products[index].warehouse = res.data.destinationWarehouse;
           this.products[index].productShoeUnit = res.data.productShoeUnit;
@@ -200,8 +206,23 @@ export class ProductRelocationComponent implements OnInit {
           this.hallSelected = null;
           this.rowSelected = null;
           this.columnSelected = null;
+          await this.close(true);
         } else if (res.code === 428) {
           await this.showWarningToForce(params, index, textToastOk);
+        } else if (res.code === 401) {
+          if (res.message === 'UserConfirmationRequiredException') {
+            await this.warningToForce(params, index, textToastOk, res.errors, false, 'Continuar');
+          } else {
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions();
+            /** Forzado de empaquetado */
+            if (permission.data) {
+              await this.warningToForce(params, index, textToastOk, res.errors);
+            } else {
+              await this.presentAlert(res.errors);
+              this.processInitiated = false;
+            }
+          }
         } else {
           let errorMessage = res.message;
           if (res.errors) {
@@ -219,7 +240,6 @@ export class ProductRelocationComponent implements OnInit {
           await this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM);
         }
 
-        await this.close(true);
       },
       async error => {
         if (this.loading) {
@@ -235,11 +255,50 @@ export class ProductRelocationComponent implements OnInit {
     );
   }
 
+  private async warningToForce(params, index, textToastOk, subHeader, checkPermissionToForce: boolean = true, btnOkMessage: string = 'Forzar') {
+    const alertWarning = await this.alertController.create({
+      header: 'Atención',
+      subHeader,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Cancelar',
+          handler: () => {
+            this.intermediaryService.presentToastError('El producto no se ha ubicado.', PositionsToast.BOTTOM);
+            this.processInitiated = false;
+          }
+        },
+        {
+          text: btnOkMessage,
+          handler: async () => {
+            if (checkPermissionToForce) {
+              // Consultando si el usuario tiene permisos para forzar
+              const permissions = await this.inventoryService.checkUserPermissions();
+              if (permissions.data) {
+                params.force = true;
+                this.storeProductInContainer(params, textToastOk, index);
+                this.processInitiated = false;
+              } else {
+                this.alertController.dismiss();
+                this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
+                this.processInitiated = false;
+              }
+            } else {
+              params.force = true;
+              this.storeProductInContainer(params, textToastOk, index);
+              this.processInitiated = false;
+            }
+          }
+        }]
+    });
+    return await alertWarning.present();
+  }
+
   async showWarningToForce(inventoryProcess, index, textToastOk) {
     const alert = await this.alertController.create({
       header: 'Atención',
-      subHeader:
-        'No se esperaba la entrada del producto que acaba de escanear. ¿Desea forzar la entrada del producto igualmente?',
+      subHeader: 'No se esperaba la entrada del producto que acaba de escanear. ¿Desea forzar la entrada del producto igualmente?',
+      backdropDismiss: false,
       buttons: [
         {
           text: 'Cancelar',
@@ -253,12 +312,20 @@ export class ProductRelocationComponent implements OnInit {
           text: 'Forzar',
           handler: () => {
             inventoryProcess.force = true;
-            this.storeProductInContainer(inventoryProcess, index, textToastOk);
+            this.storeProductInContainer(inventoryProcess, textToastOk, index);
           }
         }
       ]
     });
+    await alert.present();
+  }
 
+  async presentAlert(subHeader) {
+    const alert = await this.alertController.create({
+      header: 'Atencion',
+      subHeader,
+      buttons: ['OK']
+    });
     await alert.present();
   }
 
