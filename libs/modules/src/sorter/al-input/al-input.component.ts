@@ -50,7 +50,7 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
 this.loadData();
   }
   loadDataFirst(){
-    this.intermediaryService.presentLoading("Refrescando listado");
+    this.intermediaryService.presentLoading("Actualizando...");
     const response = this.loadDataOnInit();
     this.events.subscribe(this.LOAD_DATA_INPUT_SORTER, () => {
       this.sorterOperationCancelled();
