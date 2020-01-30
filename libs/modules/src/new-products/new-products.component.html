@@ -10,7 +10,7 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-            <!-- <ng-container matColumnDef="select" [formGroup]="selectedForm" sticky>
+            <ng-container matColumnDef="select" [formGroup]="selectedForm" sticky>
               <th mat-header-cell *matHeaderCellDef>
                 <ion-checkbox *ngIf="status != 3" formControlName="selector" (ionChange)="selectAll($event)">
                 </ion-checkbox>
@@ -21,17 +21,7 @@
                                 [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
                 </ng-template>
               </td>
-            </ng-container> -->
-
-            <!--            <ng-container matColumnDef="impress">-->
-            <!--              <th mat-header-cell *matHeaderCellDef>-->
-            <!--                Estado de impresión-->
-            <!--              </th>-->
-            <!--              <td mat-cell *matCellDef="let priceObj">-->
-            <!--                <ion-icon name="print" *ngIf="getNameOfStatus(priceObj.status) == 'Impresos'"></ion-icon>-->
-            <!--                {{getNameOfStatus(priceObj.status)}} holaq2-->
-            <!--              </td>-->
-            <!--            </ng-container>-->
+            </ng-container>
 
             <ng-container matColumnDef="model">
               <th mat-header-cell *matHeaderCellDef>
@@ -78,15 +68,6 @@
               </td>
             </ng-container>
 
-            <!--            <ng-container matColumnDef="stock">-->
-            <!--              <th mat-header-cell *matHeaderCellDef>-->
-            <!--                Stock disponible-->
-            <!--              </th>-->
-            <!--              <td mat-cell *matCellDef="let price">-->
-            <!--                0-->
-            <!--              </td>-->
-            <!--            </ng-container>-->
-
             <ng-container matColumnDef="price">
               <th mat-header-cell *matHeaderCellDef>
                 Precio tarifa
@@ -96,23 +77,6 @@
               </td>
             </ng-container>
 
-            <!--            <ng-container matColumnDef="image">-->
-            <!--              <th mat-header-cell *matHeaderCellDef>-->
-            <!--                Ver imagen-->
-            <!--              </th>-->
-            <!--              <td mat-cell *matCellDef="let price" class="column-img-product-desktop">-->
-            <!--                <img class="img-product-desktop" [src]="getPhotoUrlDesktop(price)">-->
-            <!--              </td>-->
-            <!--            </ng-container>-->
-
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef> Imprimir </th>
-              <td mat-cell *matCellDef>
-                <button mat-button>
-                  <ion-icon name="print"></ion-icon>
-                </button>
-              </td>
-            </ng-container>
           </table>
         </div>
       </div>
@@ -121,15 +85,16 @@
         <div class="list-header-filters-mobile">
           <ion-grid *ngIf="mobileVersionTypeList == 'list'">
             <ion-row class="header-mobile">
-              <!-- <ion-col [formGroup]="selectedForm" size="1" class="check-all">
+              <ion-col [formGroup]="selectedForm" size="1" class="check-all">
                 <div class="check-all">
                   <ion-checkbox formControlName="selector" (ionChange)="selectAll($event)" *ngIf="status != 3">
                   </ion-checkbox>
                 </div>
-              </ion-col> -->
+              </ion-col>
               <ion-col size="9" class="information">
                 <div class="information">
-                  <h5>Información</h5>
+                  <ion-toggle (ionChange)="switchPrintAllStock()"></ion-toggle>
+                  <span>Imp. nº stock</span>
                 </div>
               </ion-col>
               <ion-col size="2" class="filters-mobile" (click)="openFiltersMobile()">
@@ -192,21 +157,9 @@
                       multiple="true">
                     </suite-tags-input>
                   </ion-col>
-                  <!--                  <ion-col size="6">-->
-                  <!--                    <ion-label>Estado:</ion-label>-->
-                  <!--                    <ion-item>-->
-                  <!--                      <ion-select formControlName="status" placeholder="Filtrar">-->
-                  <!--                        <ion-select-option *ngFor="let filterType of filterTypes; let i = index" [value]="filterType.id"-->
-                  <!--                                           [attr.selected]="!i">-->
-                  <!--                          {{ filterType.name }}-->
-                  <!--                        </ion-select-option>-->
-                  <!--                      </ion-select>-->
-                  <!--                    </ion-item>-->
-                  <!--                  </ion-col>-->
+
                 </ion-row>
-                <!--                <ion-row>-->
-                <!--                  -->
-                <!--                </ion-row>-->
+
                 <ion-row>
                   <ion-col class="btn-remove" size="6">
                     <ion-button (click)="clearFilters()">
@@ -229,21 +182,19 @@
               <mat-expansion-panel-header class="custom-panel-header">
                 <ion-grid>
                   <ion-row class="custom-panel-header">
-                    <!--                    <ion-col size="1" class="check-print">-->
-                    <!--                      <ion-checkbox-->
-                    <!--                        [formControl]="selectedForm['controls']?.toSelect['controls'][i]"-->
-                    <!--                        (click)="$event.stopPropagation();itemSelected(price.id);">-->
-                    <!--                      </ion-checkbox>-->
-                    <!--                    </ion-col>-->
+                                        <ion-col size="1" class="check-print">
+                                          <ion-checkbox
+                                            [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                                            (click)="$event.stopPropagation();itemSelected(price.id);">
+                                          </ion-checkbox>
+                                        </ion-col>
                     <ion-col size="10" class="content-prices-header">
                       <mat-panel-title>
                         <ion-row class="row-title-prices">
                           <ion-col class="product" size="8">
                             {{price?.model?.reference}} - {{ price?.model?.brand?.name }}
                           </ion-col>
-                          <!--                          <ion-col class="status" size="4">-->
-                          <!--                            ({{getNameOfStatus(price.status)}})-->
-                          <!--                          </ion-col>-->
+
                         </ion-row>
                       </mat-panel-title>
                       <mat-panel-description class="panel-description">
@@ -263,19 +214,11 @@
                               {{getFinalPrice(price)}}€
                             </p>
                           </ion-col>
-                          <!--                          <ion-col class="stock" size="6">-->
-                          <!--                            <p>-->
-                          <!--                              {{ price.stockStore ? price.stockStore.cantidad : 0 }} Uds.-->
-                          <!--                            </p>-->
-                          <!--                          </ion-col>-->
+
                         </ion-row>
                       </mat-panel-description>
                     </ion-col>
-                    <ion-col size="2">
-                      <ion-button color="dark">
-                        <ion-icon name="print"></ion-icon>
-                      </ion-button>
-                    </ion-col>
+
                   </ion-row>
                 </ion-grid>
               </mat-expansion-panel-header>
@@ -336,17 +279,7 @@
                 </ion-select>
               </ion-item>
             </ion-col>
-            <!--            <ion-col size="2" size-xs="6" size-md="3">-->
-            <!--              <ion-label>Estado:</ion-label>-->
-            <!--              <ion-item>-->
-            <!--                <ion-select formControlName="status" placeholder="Filtrar">-->
-            <!--                  <ion-select-option *ngFor="let filterType of filterTypes; let i = index" [value]="filterType.id"-->
-            <!--                                     [attr.selected]="!i">-->
-            <!--                    {{ filterType.name }}-->
-            <!--                  </ion-select-option>-->
-            <!--                </ion-select>-->
-            <!--              </ion-item>-->
-            <!--            </ion-col>-->
+
           </ion-row>
         </ion-grid>
       </form>
@@ -359,26 +292,16 @@
 
         <ng-container matColumnDef="select" [formGroup]="selectedForm">
           <th mat-header-cell *matHeaderCellDef>
-<!--            <ion-checkbox *ngIf="status != 3" formControlName="selector" (ionChange)="selectAll($event)">-->
-<!--            </ion-checkbox>-->
+            <ion-checkbox *ngIf="status != 3" formControlName="selector" (ionChange)="selectAll($event)">
+            </ion-checkbox>
           </th>
           <td mat-cell *matCellDef="let label;let i = index" (click)="prevent($event)">
             <ng-template [ngIf]="selectedForm['controls']?.toSelect">
-              <!--              <ion-checkbox (click)="itemSelected(label.id)"-->
-              <!--                            [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>-->
+                            <ion-checkbox (click)="itemSelected(label.id)"
+                                          [formControl]="selectedForm['controls']?.toSelect['controls'][i]"></ion-checkbox>
             </ng-template>
           </td>
         </ng-container>
-
-        <!--        <ng-container matColumnDef="impress">-->
-        <!--          <th mat-header-cell *matHeaderCellDef>-->
-        <!--            Estado de impresión-->
-        <!--          </th>-->
-        <!--          <td mat-cell *matCellDef="let price">-->
-        <!--            <ion-icon name="print" *ngIf="getNameOfStatus(price.status) == 'Impresos'"></ion-icon>-->
-        <!--            {{getNameOfStatus(price.status)}}-->
-        <!--          </td>-->
-        <!--        </ng-container>-->
 
         <ng-container matColumnDef="model">
           <th mat-header-cell *matHeaderCellDef>
@@ -425,15 +348,6 @@
           </td>
         </ng-container>
 
-        <!--        <ng-container matColumnDef="stock">-->
-        <!--          <th mat-header-cell *matHeaderCellDef>-->
-        <!--            Stock disponible-->
-        <!--          </th>-->
-        <!--          <td mat-cell *matCellDef="let price">-->
-        <!--            {{ price.stockStore ? price.stockStore.cantidad : 0 }}-->
-        <!--          </td>-->
-        <!--        </ng-container>-->
-
         <ng-container matColumnDef="price">
           <th mat-header-cell *matHeaderCellDef>
             Precio tarifa
@@ -443,27 +357,11 @@
           </td>
         </ng-container>
 
-        <!--        <ng-container matColumnDef="image">-->
-        <!--          <th mat-header-cell *matHeaderCellDef>-->
-        <!--            Ver imagen-->
-        <!--          </th>-->
-        <!--          <td mat-cell *matCellDef="let price" class="column-img-product-desktop">-->
-        <!--            <img class="img-product-desktop" [src]="getPhotoUrlDesktop(price)">-->
-        <!--          </td>-->
-        <!--        </ng-container>-->
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef> Imprimir </th>
-          <td mat-cell *matCellDef="let price">
-            <ion-button color="dark" (click)="printPrice(price)">
-              <ion-icon name="print"></ion-icon>
-            </ion-button>
-          </td>
-        </ng-container>
       </table>
     </div>
   </suite-responsive-layout>
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
-  <!--<mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>-->
+
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
   <ion-fab-button (click)="printPrices(prices, null)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">

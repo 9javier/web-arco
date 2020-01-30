@@ -3,7 +3,7 @@
         <suite-breadcrumb></suite-breadcrumb>
     </ion-text>
     <ion-row *ngIf="!processing" style="float: right; padding: 5px;">
-        <ion-button [disabled]="processing" (click)="startSync()">Actualizar Tarifas</ion-button>
+        <ion-button [disabled]="processing"  matTooltip="Forzar actualización de tarifas ahora" matTooltipClass="tooltip"(click)="startSync()">Actualizar Tarifas</ion-button>
     </ion-row>
 
     <div class="processing" *ngIf="processing">

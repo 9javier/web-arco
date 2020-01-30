@@ -65,7 +65,7 @@ this.loadPickings();
     });
   }
 loadPickings(){
-  this.intermediaryService.presentLoading("Refrescando listado");
+  this.intermediaryService.presentLoading("Actualizando...");
   const response = this.pickingService
     .getListByUser(this.userId)
     .subscribe((res: PickingModel.ResponseShow) => {
