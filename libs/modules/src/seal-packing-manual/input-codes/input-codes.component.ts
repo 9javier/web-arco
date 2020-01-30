@@ -67,23 +67,41 @@ export class InputCodesComponent implements OnInit {
       this.inputProduct = null;
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrote) === this.itemReferencesProvider.codeValue.PACKING) {
+        
       
+         
         this.carriersService.getByReferences(dataWrote).subscribe((res)=>{
-          if(res.packingInventorys.length=== 0){
+          if (res.status == 4) {
             this.intermediaryService.dismissLoading();
             this.audioProvider.playDefaultError();
-            let errorMsg = 'El Embalaje no tiene productos';
+            let errorMsg = 'El Embalaje ya esta precintado';
             this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
               setTimeout(() => {
                 document.getElementById('input-ta').focus();
-              },500);
-            });            
-          }else{
-            if(res.carrierWarehousesDestiny.length === 0 ){
-              this.JailReference = res.reference;
-              this.addDestinyModal(res,this.JailReference);
-             }
+              }, 500);
+            });
+          } else {
+            if (res.packingInventorys.length === 0) {
+              this.intermediaryService.dismissLoading();
+              this.audioProvider.playDefaultError();
+              let errorMsg = 'El Embalaje no tiene productos';
+              this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
+                setTimeout(() => {
+                  document.getElementById('input-ta').focus();
+                }, 500);
+              });
+            } else {
+              if (res.carrierWarehousesDestiny.length === 0) {
+                this.JailReference = res.reference;
+                this.addDestinyModal(res, this.JailReference);
+              }else{
+                this.JailReference = res.reference;
+                this.precintar();
+              }
+            }
+
           }
+         
       },(err) =>{
         this.intermediaryService.dismissLoading();
         this.audioProvider.playDefaultError();
