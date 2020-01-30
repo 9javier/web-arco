@@ -4,6 +4,7 @@ import { MarketplacesService } from '../../../../services/src/lib/endpoint/marke
 import { MarketplacesPrestaService } from '../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
 import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import { MatTableDataSource, MatPaginator, MatPaginatorIntl } from '@angular/material';
+import { Observable, forkJoin } from 'rxjs'
 
 import {PaginatorLanguageComponent} from "../../components/paginator-language/paginator-language.component"; 
 
@@ -107,6 +108,7 @@ export class MappingsComponent implements OnInit {
             name: color.name
           });
         });
+        this.getMaps();
       }
     });
 
@@ -174,6 +176,17 @@ export class MappingsComponent implements OnInit {
     //this.getEntities();
     //this.getMaps();
     //this.saveMock();
+    this.updataDataSaved();
+
+    console.log(this.dataSourceMappingColors)
+  }
+
+  updataDataSaved() {
+    this.marketplacesService.getMapDataRules().subscribe(data => {
+      if(data) {
+        this.dataDBsave = data;
+      }
+    });
   }
 
   getEntities() {
@@ -189,17 +202,20 @@ export class MappingsComponent implements OnInit {
 
   getMaps() {
     this.dataSourceMappingBrands = new MatTableDataSource([]);
-    this.dataSourceMappingColors = new MatTableDataSource([]);
+    //this.dataSourceMappingColors = new MatTableDataSource([]);
     this.dataSourceMappingSizes = new MatTableDataSource([]);
     this.dataSourceMappingFeatures = new MatTableDataSource([]);
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
         this.dataDBsave = data;
+        console.log(this.dataDBsave)
         data.forEach(item => {
           switch(item.typeMapped) {
             case 3:
-              const dataColor = this.dataSourceMappingColors.data;
+              console.log(item)
+
+              let dataColor = this.dataSourceMappingColors.data;
 
               let colorMarket = {id: 0, name: ''};
 
@@ -213,15 +229,13 @@ export class MappingsComponent implements OnInit {
                   }
                 })
               }
-              dataColor.push({
-                id: item.id,
-                avelonData: {
-                  id: item.id,
-                  name: item.originDataId
-                },
-                marketData: {
-                  id: colorMarket.id,
-                  name: colorMarket.name
+
+              dataColor.forEach(data => {
+                if(data.avelonData.name == item.originDataId) {
+                  data.marketData = {
+                    id: colorMarket.id,
+                    name: colorMarket.name
+                  }
                 }
               });
               this.dataSourceMappingColors.data = dataColor;
@@ -488,14 +502,7 @@ export class MappingsComponent implements OnInit {
   }
 
   changeColorSelect(e, element) {
-    let originData;
     let marketData;
-    let id = element.id;
-    this.dataSourceMappingColors.filteredData.forEach(item => {
-      if(item.id == element.id) {
-        originData = item;
-      }
-    });
 
     this.colorsList.forEach(item => {
       if(item.id == e.value) {
@@ -511,17 +518,34 @@ export class MappingsComponent implements OnInit {
     }
 
     let dataSend = {
-      id,
-      originDataId: originData.avelonData.name,
+      originDataId: element.avelonData.name,
       marketDataId,
       typeMapped: 3,
       marketId: 1,
       aditionalMapInfo: 'more info'
     };
 
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
-      console.log(data)
-    })
+    let update: boolean = false;
+    let idToUpdate: number = 0;
+    
+    this.dataDBsave.forEach(item => {
+      if(item.originDataId == element.avelonData.name) {
+        update = true;
+        idToUpdate = item.id;
+      }
+    });
+
+    if(update) {
+      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    } else {
+      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    }
   }
 
   changeSizeSelect(e, element) {
