@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {environment} from "../../../environments/environment.dev";
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { map } from 'rxjs/operators';
 
 export class MarketplacesService {
 
-  private apiBase = 'https://localhost:5001/api';
+  private apiBase = environment.apiRule;
   private getMapDataRulesUrl = this.apiBase + "/MapDataRules";
   private postMapDataRulesUrl = this.apiBase + "/MapDataRules";
   private updateMapDataRulesUrl = this.apiBase + "/MapDataRules/{{id}}";

@@ -6,7 +6,8 @@ import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/ma
 import { MatTableDataSource, MatPaginator, MatPaginatorIntl } from '@angular/material';
 import { Observable, forkJoin } from 'rxjs'
 
-import {PaginatorLanguageComponent} from "../../components/paginator-language/paginator-language.component"; 
+import {PaginatorLanguageComponent} from "../../components/paginator-language/paginator-language.component";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'suite-mappings',
@@ -41,12 +42,18 @@ export class MappingsComponent implements OnInit {
   private displayedColumns;
   private enumTypes;
 
+  private showingBrands;
+  private showingColors;
+  private showingFeatures;
+  private showingSizes;
+
   constructor(
       private route: ActivatedRoute,
       private router : Router,
       private marketplacesService: MarketplacesService,
       private marketplacesPrestaService: MarketplacesPrestaService,
-      private marketplacesMgaService: MarketplacesMgaService
+      private marketplacesMgaService: MarketplacesMgaService,
+      private http: HttpClient
     ) {
     console.log(this.route.snapshot.data['name']) 
   }
@@ -66,19 +73,9 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        //this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
-        //setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
-      }
-    });
-
-    this.marketplacesPrestaService.getBrands().subscribe(data => {
-      if(data) {
-        data.data.results.forEach(brand => {
-          this.brandsList.push({
-            id: brand.id_manufacturer,
-            name: brand.name
-          })
-        });
+        this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
+        setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
+        this.showingBrands = this.dataSourceBrands.slice(0, 10);
       }
     });
 
@@ -109,6 +106,7 @@ export class MappingsComponent implements OnInit {
           });
         });
         this.getMaps();
+        this.showingColors = this.dataSourceColors.slice(0, 10);
       }
     });
 
@@ -125,19 +123,9 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        //this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-        //setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
-      }
-    });
-
-    this.marketplacesPrestaService.getSizes().subscribe(data => {
-      if(data) {
-        data.data.results.forEach(size => {
-          this.sizesList.push({
-            id: size.id_attribute,
-            name: size.name
-          });
-        });
+        this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+        setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
+        this.showingSizes = this.dataSourceSizes.slice(0, 10);
       }
     });
 
@@ -154,21 +142,13 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        //this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-        //setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+        this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+        setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+        this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
       }
     });
 
-    this.marketplacesPrestaService.getFeatures().subscribe(data => {
-      if(data) {
-        data.data.results.forEach(feature => {
-          this.featuresList.push({
-            id: feature.id,
-            name: feature.name
-          })
-        });
-      }
-    });
+    this.getDestinyValues();
 
     this.displayedColumns = ['blank', 'avelonData', 'marketData'];
     this.enumTypes = [];
@@ -187,6 +167,75 @@ export class MappingsComponent implements OnInit {
         this.dataDBsave = data;
       }
     });
+  }
+
+  getDestinyValues() {
+    this.http.get('assets/data/mapping-prestashop-data.json').subscribe((data: any) => {
+      this.brandsList = data.brands;
+      this.sizesList = data.sizes;
+      this.featuresList = data.features;
+      this.colorsList = data.colors;
+    });
+  }
+
+  setSelectorValues(e, type) {
+    let page = e.pageIndex;
+    switch (type) {
+      case 'brands':
+        if (page == 0) {
+          this.showingBrands = this.dataSourceBrands.slice(0, 10);
+        } else {
+          this.showingBrands = this.dataSourceBrands.slice(page * 10, page * 10 + 10);
+        }
+        break;
+
+      case 'features':
+        if (page == 0) {
+          this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
+        } else {
+          this.showingFeatures = this.dataSourceFeatures.slice(page * 10, page * 10 + 10);
+        }
+        break;
+
+      case 'colors':
+        if (page == 0) {
+          this.showingColors = this.dataSourceColors.slice(0, 10);
+        } else {
+          this.showingColors = this.dataSourceColors.slice(page * 10, page * 10 + 10);
+        }
+        break;
+
+      case 'sizes':
+        if (page == 0) {
+          this.showingSizes = this.dataSourceSizes.slice(0, 10);
+        } else {
+          this.showingSizes = this.dataSourceSizes.slice(page * 10, page * 10 + 10);
+        }
+        break;
+    }
+  }
+
+  isRowShowing(id, type, group?) {
+    switch (type) {
+      case 'brands':
+        return (this.showingBrands.some(e => e.avelonData.id == id));
+        break;
+
+      case 'features':
+        return (this.showingFeatures.some(e => {
+            return (e.avelonData.id == id && e.avelonData.group == group);
+          }
+        ));
+        break;
+
+      case 'colors':
+        return (this.showingColors.some(e => e.avelonData.id == id));
+        break;
+
+      case 'sizes':
+        return (this.showingSizes.some(e => e.avelonData.id == id));
+        break;
+    }
   }
 
   getEntities() {
@@ -625,19 +674,19 @@ export class MappingsComponent implements OnInit {
   getGroupName(group) {
     switch (group) {
       case 2:
-        return "Familia: ";
+        return "FAMILIA: ";
         break;
       case 5:
-        return "Tacón: ";
+        return "TACÓN: ";
         break;
       case 7:
-        return "Descripción: ";
+        return "DESCRIPCIÓN: ";
         break;
       case 9:
-        return "Mat. exterior: ";
+        return "MAT. EXTERIOR: ";
         break;
       case 10:
-        return "Mat. interior: ";
+        return "MAT. INTERIOR: ";
         break;
       default:
         return "";

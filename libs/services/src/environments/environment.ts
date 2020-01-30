@@ -3,6 +3,7 @@ export const environment = {
   apiBase: 'http://localhost:8081/api',
   apiSorter: 'http://localhost:8081/api',
   urlBase: 'http://localhost:8081',
+  apiRule: "https://localhost:5001/api",
   sga: {
     client_id: "krack-client-sga",
     client_secret: "fGx4=yU-j4^jAAjZtV+YTDsm-@R$HAK3"
