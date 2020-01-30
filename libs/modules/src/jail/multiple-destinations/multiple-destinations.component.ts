@@ -86,7 +86,6 @@ export class MultipleDestinationsComponent implements OnInit {
   }
 
   addDestinyMultiple(){
-    console.log(this.listWithNoDestiny.length+ " checkbox:"+this.listToPrecintar.length);
     if(this.listWithNoDestiny.length > 0 && this.listToPrecintar.length > 0){
       this.addDestiny(this.listToPrecintar);
     }else if(this.listWithDestiny.length > 0){

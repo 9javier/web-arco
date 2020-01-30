@@ -81,7 +81,7 @@ export class InputCodesComponent implements OnInit {
           }else{
             if(res.carrierWarehousesDestiny.length === 0 ){
               this.JailReference = res.reference;
-              this.addDestinyModal(res);
+              this.addDestinyModal(res,this.JailReference);
              }
           }
       },(err) =>{
@@ -162,11 +162,12 @@ export class InputCodesComponent implements OnInit {
     });
   }
   
-  async addDestinyModal(jail) {
+  async addDestinyModal(jail,jailToSeal) {
     let modal = (await this.modalCtrl.create({
       component: AddDestinyComponent,
       componentProps: {
-        jail: jail
+        jail: jail,
+        jailToSeal: jailToSeal
       },
       cssClass: 'modalStyles'
     }))

@@ -36,7 +36,7 @@
    </div>
    <br>
       <div *ngIf="ListNoProducts.length > 0">
-        <label id="lblNotPrecintar">Embalajes que no se precintarán:</label>
+        <label id="lblNotPrecintar">Los Embalajes no se pueden precintar:</label>
         <div class="lblReference" *ngFor="let item4 of ListNoProducts; index as i">
           <label style="margin-right: 3%;">  {{item4.reference}}</label> 
           <label>{{item4.mesage}}</label>

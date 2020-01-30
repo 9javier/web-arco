@@ -3,8 +3,8 @@
 }
 
 .mainheader {
-  margin-left: 28%;
-  padding-right: 28%;
+  margin-left: 20%;
+  padding-right: 20%;
   transition: all var(--timing) 0.1s ease-out;
 
   .toogleArrow {
@@ -37,6 +37,11 @@ ion-router-outlet {
   .sub-item {
     padding-left: 20px;
     font-size: small;
+  }
+}
+.split-pane-md.split-pane-visible {
+  .sidebar.split-pane-side {
+    max-width: 20%;
   }
 }
 .sidebar-right {

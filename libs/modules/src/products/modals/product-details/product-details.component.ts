@@ -12,6 +12,7 @@ import { HttpResponse } from "@angular/common/http";
 import { DateTimeParserService } from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
 import { PermissionsService } from '../../../../../services/src/lib/endpoint/permissions/permissions.service';
 import { TimesToastType } from '../../../../../services/src/models/timesToastType';
+import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
 @Component({
   selector: 'suite-product-details',
   templateUrl: './product-details.component.html',
@@ -24,7 +25,7 @@ export class ProductDetailsComponent implements OnInit {
   title = 'Ubicación ';
 
   permision: boolean;
-
+  processInitiated: boolean;
 
   product: InventoryModel.SearchInContainer;
   productHistorical;
@@ -193,10 +194,10 @@ export class ProductDetailsComponent implements OnInit {
 
   async AlertPermision(){
     let alert = await this.alertController.create({
-        header:'¡Usted no tiene los Permisos para gererar esta operacion!',
-        message:'Pedir permissos',
+        header:'Operación no permitida',
+        message:'No tiene los permisos necesarios para realizar la acción',
         buttons:[{
-          text:'OK',
+          text:'Aceptar',
           handler:()=>{
             this.close();
           }
@@ -325,15 +326,62 @@ export class ProductDetailsComponent implements OnInit {
     await alert.present();
   }
 
+  private async warningToForce(params, textToastOk, subHeader, checkPermissionToForce: boolean = true, btnOkMessage: string = 'Forzar') {
+    const alertWarning = await this.alertController.create({
+      header: 'Atención',
+      subHeader,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'Cancelar',
+          handler: () => {
+            this.intermediaryService.presentToastError('El producto no se ha ubicado.', PositionsToast.BOTTOM);
+            this.processInitiated = false;
+          }
+        },
+        {
+          text: btnOkMessage,
+          handler: async () => {
+            if (checkPermissionToForce) {
+              // Consultando si el usuario tiene permisos para forzar
+              const permissions = await this.inventoryService.checkUserPermissions();
+              if (permissions.data) {
+                params.force = true;
+                params.avoidAvelonMovement = false;
+                this.storeProductInContainer(params, textToastOk);
+                this.processInitiated = false;
+              } else {
+                this.alertController.dismiss();
+                this.presentAlert('Su usuario no tiene los permisos suficientes para realizar este forzado de ubicación.');
+                this.processInitiated = false;
+              }
+            } else {
+              params.force = true;
+              this.storeProductInContainer(params, textToastOk);
+              this.processInitiated = false;
+            }
+          }
+        }]
+    });
+    return await alertWarning.present();
+  }
 
-  private storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
+  async presentAlert(subHeader) {
+    const alert = await this.alertController.create({
+      header: 'Atencion',
+      subHeader,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  private async storeProductInContainer(params, textToastOk, generateAvelonMovement?: boolean) {
     if (typeof generateAvelonMovement !== 'undefined') {
       params.avoidAvelonMovement = generateAvelonMovement;
     }
 
-    this.inventoryService
-      .postStore(params)
-      .then((res: InventoryModel.ResponseStore) => {
+    this.inventoryService.postStore(params).then(
+      async (res: InventoryModel.ResponseStore) => {
         if (this.loading) {
           this.loading.dismiss();
           this.loading = null;
@@ -349,7 +397,21 @@ export class ProductDetailsComponent implements OnInit {
           this.rowSelected = null;
           this.columnSelected = null;
         } else if (res.code === 428) {
-          this.showWarningToForce(params, textToastOk);
+          await this.showWarningToForce(params, textToastOk);
+        } else if (res.code === 401) {
+          if (res.message === 'UserConfirmationRequiredException') {
+            this.warningToForce(params, textToastOk, res.errors, false, 'Continuar');
+          } else {
+            /** Comprobando si tienes permisos para el forzado */
+            const permission = await this.inventoryService.checkUserPermissions();
+            /** Forzado de empaquetado */
+            if (permission.data) {
+              this.warningToForce(params, textToastOk, res.errors);
+            } else {
+              this.presentAlert(res.errors);
+              this.processInitiated = false;
+            }
+          }
         } else {
           let errorMessage = res.message;
           if (res.errors) {

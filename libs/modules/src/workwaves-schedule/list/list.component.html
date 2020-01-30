@@ -1,18 +1,16 @@
 <suite-breadcrumb></suite-breadcrumb>
 <div class="scroll-list">
-
-  <div class="ion-button">
-  <ion-button color="primary" (click)="loadWorkWaves()" matTooltip="Refrescando listado" matTooltipClass="tooltip">
-    <ion-icon name="refresh"></ion-icon>
-  </ion-button>
-  </div>
     <title-list-workwaves-schedule></title-list-workwaves-schedule>
     <workwave-list-workwaves-schedule *ngFor="let workWave of workWaves" [workWave]="workWave"></workwave-list-workwaves-schedule>
 </div>
 
 <ion-footer class="footer-products">
+
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab pull-right-72">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="loadWorkWaves()"><i class="material-icons">refresh</i></ion-fab-button>
+  </ion-fab>
     <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-      <ion-fab-button  matTooltip="Añadir Ola de Trabajo" matTooltipClass="tooltip" (click)="showTooltip=!showTooltip" [matTooltipDisabled]="showTooltip" *ngIf="true"><i class="material-icons">add</i></ion-fab-button>
+      <ion-fab-button  matTooltip="Nueva Ola de Trabajo" matTooltipClass="tooltip" (click)="showTooltip=!showTooltip" [matTooltipDisabled]="showTooltip" *ngIf="true"><i class="material-icons">add</i></ion-fab-button>
       <ion-fab-list side="top" class="list-fabs">
         <div class="custom-fab">
           <ion-button >Peticiones online/tienda</ion-button>

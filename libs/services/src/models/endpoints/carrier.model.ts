@@ -11,6 +11,14 @@ export namespace CarrierModel{
         warehouse:WarehouseModel.Warehouse;
         carrier: CarrierModel.Carrier
     }
+
+    export interface CarrierHistory{
+      id:number;
+      createAt:string;
+      updateAt:string;
+      warehouse:WarehouseModel.Warehouse;
+      carrier: CarrierModel.Carrier
+  }
     export interface Carrier{
         createdAt: string;
         updatedAt: string;
@@ -58,5 +66,32 @@ export namespace CarrierModel{
     }
     export interface ResponseCheckPackingAvailability extends HttpRequestModel.Response {
       data: CheckPackingAvailability
+    }
+    export interface HistoryModal extends HttpRequestModel.Response {
+      createdAt: Date,
+      updatedAt: Date,
+      id: number,
+      typeAction: number,
+            carrier: {
+              createdAt : Date,
+              updatedAt : Date,
+              id: number,
+              reference: String,
+              status: number,
+              packingType : number,
+              assigned_to_incidences: false
+            },
+            warehouse: {
+                id: Number,
+                name: String,
+                description: String,
+                reference: String,
+                is_store: true,
+                is_main: true,
+                has_racks: true,
+                is_outlet: false,
+                prefix_container: String,
+                packingType: Number
+            }
     }
 }

@@ -406,6 +406,12 @@ export class MenuComponent implements OnInit {
           id: 'positioning-manual'
         },
         {
+          title: 'Ubicar online/escanear manualmente',
+          icon: 'locate',
+          url: '/positioning/manual-online',
+          id: 'positioning-manual-online'
+        },
+        {
           title: 'Traspasos',
           id: 'picking-task-store',
           icon: 'qr-scanner',

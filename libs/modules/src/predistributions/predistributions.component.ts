@@ -361,7 +361,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       }
     )
   }
-  applyFilters(filters, filterType) {
+  applyFilters(filtersResult, filterType) {
+    const filters = filtersResult.filters;
     switch (filterType) {
       case 'references':
         let referencesFiltered: string[] = [];
