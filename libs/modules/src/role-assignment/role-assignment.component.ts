@@ -1,19 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  IntermediaryService,
-  RolesService,
-  RolModel,
-  UserModel,
-  UsersService,
-  WarehouseModel, WarehousesService
-} from '@suite/services';
-import { MatTableDataSource } from '@angular/material';
-import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
+import { IntermediaryService, UserModel, UsersService } from '@suite/services';
 import { ModalController, PopoverController } from '@ionic/angular';
 import { AddRoleAssignmentComponent } from './add-role-assignment/add-role-assignment.component';
 import { FiltersRoleAssignmentComponent } from './filters-role-assignment/filters-role-assignment.component';
-import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 
 @Component({
   selector: 'suite-role-assignment',
