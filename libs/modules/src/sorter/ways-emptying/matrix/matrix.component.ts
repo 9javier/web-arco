@@ -108,7 +108,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number) {
-
+    console.log(this.waysSelected);
     let wayS = null;
     let flag = false;
     for(wayS of this.waysSelected){
