@@ -32,7 +32,7 @@ export class RoleAssignmentComponent implements OnInit {
     users: [],
     warehouses: [this.DEFAULT_WAREHOUSE]
   };
-  thereAreChanges: boolean = false;
+  thereAreChanges: boolean;
   filterOptions: UserModel.FilterOption[];
 
   /* CÓDIGO ANTIGUO
@@ -463,6 +463,7 @@ export class RoleAssignmentComponent implements OnInit {
   async ngOnInit() {
     await this.intermediaryService.presentLoading('Cargando...');
     await this.getData();
+    this.thereAreChanges = false;
     await this.intermediaryService.dismissLoading();
   }
 
@@ -471,6 +472,7 @@ export class RoleAssignmentComponent implements OnInit {
     this.filters.users = [];
     this.filters.warehouses = [this.DEFAULT_WAREHOUSE];
     await this.getData();
+    this.thereAreChanges = false;
     await this.intermediaryService.dismissLoading();
   }
 
