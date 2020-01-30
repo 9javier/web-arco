@@ -24,9 +24,10 @@ import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
 import { AddDestinyComponent } from './add-destiny/add-destiny.component';
+import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
 
 @NgModule({
-  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent, AddDestinyComponent],
+  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent, AddDestinyComponent, MultipleDestinationsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -50,7 +51,8 @@ import { AddDestinyComponent } from './add-destiny/add-destiny.component';
     SendPackingComponent,
     ShowDestinationsComponent,
     SendJailComponent,
-    AddDestinyComponent
+    AddDestinyComponent,
+    MultipleDestinationsComponent
   ]
 })
 export class JailModule { }

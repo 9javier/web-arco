@@ -19,12 +19,14 @@ export class CarrierService {
   private warehouseDestination:string = environment.apiBase+"/packing/warehouse/{{id}}";
   private getReference:string = environment.apiBase+"/packing/warehouse/{{reference}}";
   private setWarehouseDestination:string = environment.apiBase+"/packing/warehouse";
+  private setWarehouseDestinationMultiple:string = environment.apiBase+"/packing/destiny/warehouses";
   private packingUrl:string = environment.apiBase+"/types/packing";
   private sendPackingToWarehouse = environment.apiBase+"/packing/destiny/{{id}}/warehouse/{{warehouseId}}";
   private getCarriesEmptyPackingUrl = `${environment.apiBase}/packing/carries-empty-packing`
   private getReceptionsUrl = `${environment.apiBase}/packing/reception`
   private sendPackingUrl = environment.apiBase + "/packing/send";
   private postSealsList = environment.apiBase+"/packing/seal-lista";
+  private postSealAll = environment.apiBase+"/packing/seal/all"
   private getGetPackingDestinyUrl = environment.apiBase + '/packing/destiny/';
   private postCheckProductsDestinyUrl = environment.apiBase + '/packing/products/destiny/check';
   private postCheckPackingAvailabilityUrl = environment.apiBase + '/packing/availability/check';
@@ -73,6 +75,9 @@ export class CarrierService {
     let body={reference};
     return this.http.post(this.postSealsList,body)
   }
+  postSeals(sealList){
+    return this.http.post(this.postSealAll,sealList);
+  }
 
   /**
    * @author Gaetano Sabino
@@ -98,6 +103,9 @@ export class CarrierService {
     return this.http.put(this.setWarehouseDestination,{carrierId: carrierId, destinationWarehouseId: destination});
   }
 
+  setDestinationMultiple(CarrierToDestiny){ 
+    return this.http.post(this.setWarehouseDestinationMultiple,CarrierToDestiny);
+  }
   /**
    * Get a carrier by id
    * @param id - the id of carrier to get

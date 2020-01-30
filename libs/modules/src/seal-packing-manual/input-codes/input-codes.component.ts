@@ -171,8 +171,7 @@ export class InputCodesComponent implements OnInit {
       cssClass: 'modalStyles'
     }))
     modal.onDidDismiss().then(() => {
-     // this.getCarriers();
-     this.precintar();
+    
     })
     modal.present();
 }

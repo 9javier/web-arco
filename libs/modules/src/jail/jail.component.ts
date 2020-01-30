@@ -18,6 +18,7 @@ import { ShowDestinationsComponent } from './show-destionations/show-destination
 import { SendJailComponent } from './send-jail/send-jail.component';
 import { AddDestinyComponent} from './add-destiny/add-destiny.component';
 import { element } from '@angular/core/src/render3';
+import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
 
 @Component({
   selector: 'app-jail',
@@ -193,14 +194,7 @@ export class JailComponent implements OnInit {
     })
   }
 
-  addDestiny(closeAlert?: boolean){
-    //Open new Modal destiny
-
-    //this.setDestination(1,1);
-
-     
-
-
+  addDestiny(closeAlert?: boolean) {
 
     if (closeAlert) {
       this.intermediaryService.dismissLoading();
@@ -212,7 +206,6 @@ export class JailComponent implements OnInit {
     this.carrierService.getIndex().subscribe(carriers => {
 
       this.carriers = carriers;
-      //this.carriers = this.carriers.map(this.isAvailableSend);
       this.toDelete.removeControl("jails");
       this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
         return this.formBuilder.group({
@@ -264,7 +257,6 @@ export class JailComponent implements OnInit {
   }
 
 
-
   async newJail() {
     let lista: number[] = this.toDelete.value.jails.filter(jail => jail.selected).map(x => x.id);
     let newLista = this.toDelete.value.jails.filter(jail => jail.selected);
@@ -277,8 +269,6 @@ export class JailComponent implements OnInit {
         this.carriers = carriers;
       })
     }
-
-
     lista.forEach(async (id) => {
 
       newId = this.carriers.find(x => x.id === id)
@@ -287,7 +277,7 @@ export class JailComponent implements OnInit {
         listaCarrier.push(newId)
       }
     });
-    if (listaCarrier.length > 0) {
+    if (listaCarrier.length > 0) {  
 
       listaSend = listaCarrier.filter(x => {
         if (x.packingInventorys.length > 0 && x.status !== 4 && x.carrierWarehousesDestiny.length === 1) {
@@ -303,43 +293,34 @@ export class JailComponent implements OnInit {
 
     }
 
-
-
-
-
   }
 
   async presentAlert(lista: CarrierModel.Carrier[], listaPresentada: CarrierModel.Carrier[]) {
     let listaRefereceJaulainviata = listaPresentada.map(x => x.reference);
-    let newlista = [];
-    let idCarrier;
-    let idWarehouse=0;
+    let listWithDestiny=[];
+    let listWithNoDestiny=[];
     let newlistaPrint = [];
+    let c=0;
+    listaPresentada.forEach(item => {
+      //Lista llenada toda
+      listWithDestiny.push({id: item.id,
+        idWarehouse: item.warehouse.id,
+        idWarehouseName: item.carrierWarehousesDestiny[0].warehouse.name,
+        reference: item.reference,
+        destiny: item.carrierWarehousesDestiny.length,
+        status: item.status,
+        products: item.packingInventorys.length,});
+    });
     lista.forEach(item => {
-      let er = '';
-      if (item.carrierWarehousesDestiny.length === 0) {
-        er = '- Sin destino';
-      } else
-        if (item.carrierWarehousesDestiny.length > 1) {
-          er = '- Varios destinos';
-        } else
-          if (item.packingInventorys.length === 0) {
-            er = '- Sin productos';
-          } else
-            if (item.status === 4 || item.status === 5) {
-              if (item.status === 5) {
-                er = '- Sin productos';
-              }
-              else
-                if (item.status === 4) {
-                  er = '- Precintada';
-                }
-            }
-             idCarrier = item.reference;
-             idWarehouse = item.warehouse.id;
-      newlistaPrint.push(item.reference + er);
-    })
-   
+      //Lista no llenda toda
+      listWithNoDestiny.push({id: item.id,
+        idWarehouse: item.warehouse.id,
+        reference: item.reference,
+        destiny: item.carrierWarehousesDestiny.length,
+        products: item.packingInventorys.length,
+        status: item.status});
+    });
+
     let lstShow = "";
     newlistaPrint.map(x => {
       lstShow += `${x}</br>`;
@@ -353,99 +334,10 @@ export class JailComponent implements OnInit {
       return `${x}</br>`
     });
 
-
-    let alert;
-    if (listaRefereceJaulainviata.length === 0) {
-
-      alert = await this.alertControler.create({
-        header: 'Aviso',
-        message: `<b>Los siguientes embalajes no se pueden precintar</b></br></br>${lstShow}`,
-        buttons: [
-          {
-            text: 'Agregar Destino',
-            role: 'send',
-            cssClass: 'primary',
-            handler: () => {
-              this.send(event,lista[0]);
-            }
-          },
-          {
-            text: 'Cancelar',
-            role: 'cancel',
-            cssClass: 'danger',
-            handler: () => {
-              this.cleanSelect(false);
-            }
-          }
-        ]
-      });
-
-    } else {
-
-      if (listaRefereceJaulainviata.length > 0 && lista.length === 0) {
-        alert = await this.alertControler.create({
-          header: 'Confirmación',
-          message: `<b>Embalajes que se van a precintar. ¿Está seguro?</b></br></br>${lst}</br>`,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'danger',
-              handler: () => {
-              }
-            },
-            {
-              text: 'Aceptar',
-              role: 'send',
-              cssClass: 'primary',
-              handler: () => {
-                if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
-                }
-              }
-            }
-          ]
-        });
-      } else {
-
-        alert = await this.alertControler.create({
-          header: 'Aviso',
-          message: `<b>Embalajes que se van a precintar</b></br></br>${lst}</br></br><b>Embalajes que NO se van a precintar</b></br></br>${lstShow}`,
-          buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel',
-              cssClass: 'danger',
-              handler: () => {
-              }
-            },
-            {
-              text: 'Aceptar',
-              role: 'send',
-              cssClass: 'primary',
-              handler: () => {
-                if (listaRefereceJaulainviata.length > 0) {
-                  this.intermediaryService.presentLoading('Precintando Embalaje/s')
-                  this.carrierService.postSealList(listaRefereceJaulainviata).subscribe(data => {
-                    this.cleanSelect(true);
-                  });
-                }
-              }
-            }
-          ]
-        });
-      }
-    }
-
-
-
-
-    await alert.present();
+       this.setMultipleDestinations(listWithDestiny,listWithNoDestiny);
+      
   }
-
+  
   private async printReferencesList(listReferences: Array<string>) {
     if ((<any>window).cordova) {
       this.printerService.print({ text: listReferences, type: 0 });
@@ -553,6 +445,26 @@ export class JailComponent implements OnInit {
 
     return await modal.present();
   }
+
+  async setMultipleDestinations(listWithDestiny, listWithNoDestiny) {
+
+    event.stopPropagation();
+    event.preventDefault();
+    let modal = (await this.modalCtrl.create({
+      component: MultipleDestinationsComponent,
+      componentProps: {
+        listWithNoDestiny: listWithNoDestiny,
+        listWithDestiny: listWithDestiny
+      },
+      cssClass: 'modalStyles'
+    }))
+    modal.onDidDismiss().then(() => {
+      this.getCarriers();
+    })
+    modal.present();
+
+  }
+
 }
 
 
