@@ -64,9 +64,28 @@ export class MappingsComponent implements OnInit {
     this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
     this.brandsList = [];
 
-    this.marketplacesMgaService.getBrands().subscribe(data => {
-      if(data) {
-        data.forEach(brand => {
+
+    this.dataSourceColors = [];
+    this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
+    this.colorsList = [];
+
+    this.dataSourceSizes = [];
+    this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+    this.sizesList = [];
+
+    this.dataSourceFeatures = [];
+    this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+    this.featuresList = [];
+
+    forkJoin([
+      this.marketplacesMgaService.getBrands(),
+      this.marketplacesMgaService.getColors(),
+      this.marketplacesMgaService.getSizes(),
+      this.marketplacesMgaService.getFeaturesByMarket(1)
+    ]).subscribe(results => {
+      
+      if(results[0].length) {
+        results[0].forEach(brand => {
           this.dataSourceBrands.push({
             id: null,
             avelonData: {id: brand.id, name: brand.name},
@@ -77,15 +96,9 @@ export class MappingsComponent implements OnInit {
         setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
         this.showingBrands = this.dataSourceBrands.slice(0, 10);
       }
-    });
 
-    this.dataSourceColors = [];
-    this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
-    this.colorsList = [];
-
-    this.marketplacesMgaService.getColors().subscribe(data => {
-      if(data) {
-        data.forEach(color => {
+      if(results[1].length) {
+        results[1].forEach(color => {
           this.dataSourceColors.push({
             id: null,
             avelonData: {id: color.id, name: color.name},
@@ -96,27 +109,9 @@ export class MappingsComponent implements OnInit {
         setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
         this.showingColors = this.dataSourceColors.slice(0, 10);
       }
-    });
 
-    this.marketplacesPrestaService.getColors().subscribe(data => {
-      if(data) {
-        data.data.results.forEach(color => {
-          this.colorsList.push({
-            id: color.id_attribute,
-            name: color.name
-          });
-        });
-        //this.getMaps();
-      }
-    });
-
-    this.dataSourceSizes = [];
-    this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-    this.sizesList = [];
-
-    this.marketplacesMgaService.getSizes().subscribe(data => {
-      if(data) {
-        data.forEach(size => {
+      if(results[2].length) {
+        results[2].forEach(size => {
           this.dataSourceSizes.push({
             id: null,
             avelonData: {id: size.id, name: size.name},
@@ -126,16 +121,10 @@ export class MappingsComponent implements OnInit {
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
         this.showingSizes = this.dataSourceSizes.slice(0, 10);
-      }
-    });
-
-    this.dataSourceFeatures = [];
-    this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-    this.featuresList = [];
-
-    this.marketplacesMgaService.getFeaturesByMarket(1).subscribe(data => {
-      if(data) {
-        data.forEach(feature => {
+      } 
+      
+      if(results[3].length) {
+        results[3].forEach(feature => {
           this.dataSourceFeatures.push({
             id: null,
             avelonData: {id: feature.id, name: feature.name, group: feature.groupNumber},
@@ -146,19 +135,16 @@ export class MappingsComponent implements OnInit {
         setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
         this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
       }
-    });
 
-    this.getDestinyValues();
+      this.getDestinyValues();
+    });
 
     this.displayedColumns = ['blank', 'avelonData', 'marketData'];
     this.enumTypes = [];
 
     //this.getEntities();
-    //this.getMaps();
     //this.saveMock();
     this.updataDataSaved();
-
-    console.log(this.dataSourceMappingColors)
   }
 
   updataDataSaved() {
@@ -175,6 +161,7 @@ export class MappingsComponent implements OnInit {
       this.sizesList = data.sizes;
       this.featuresList = data.features;
       this.colorsList = data.colors;
+      this.getMaps();
     });
   }
 
@@ -250,20 +237,13 @@ export class MappingsComponent implements OnInit {
   }
 
   getMaps() {
-    this.dataSourceMappingBrands = new MatTableDataSource([]);
-    //this.dataSourceMappingColors = new MatTableDataSource([]);
-    this.dataSourceMappingSizes = new MatTableDataSource([]);
-    this.dataSourceMappingFeatures = new MatTableDataSource([]);
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
         this.dataDBsave = data;
-        console.log(this.dataDBsave)
         data.forEach(item => {
           switch(item.typeMapped) {
             case 3:
-              console.log(item)
-
               let dataColor = this.dataSourceMappingColors.data;
 
               let colorMarket = {id: 0, name: ''};
@@ -287,10 +267,11 @@ export class MappingsComponent implements OnInit {
                   }
                 }
               });
+              
               this.dataSourceMappingColors.data = dataColor;
               break;
             case 4:
-              const dataSize = this.dataSourceMappingSizes.data;
+              let dataSize = this.dataSourceMappingSizes.data;
               
               let sizeMarket = {id: 0, name: ''};
 
@@ -305,21 +286,19 @@ export class MappingsComponent implements OnInit {
                 })
               }
 
-              dataSize.push({
-                id: item.id,
-                avelonData: {
-                  id: item.id,
-                  name: item.originDataId
-                },
-                marketData: {
-                  id: sizeMarket.id,
-                  name: sizeMarket.name
+              dataSize.forEach(data => {
+                if(data.avelonData.name == item.originDataId) {
+                  data.marketData = {
+                    id: sizeMarket.id,
+                    name: sizeMarket.name
+                  }
                 }
               });
+
               this.dataSourceMappingSizes.data = dataSize;
               break;
             case 5:
-              const dataBrand = this.dataSourceMappingBrands.data;
+              let dataBrand = this.dataSourceMappingBrands.data;
 
               let brandMarket = {id: 0, name: ''};
 
@@ -333,22 +312,19 @@ export class MappingsComponent implements OnInit {
                   }
                 })
               }
-
-              dataBrand.push({
-                id: item.id,
-                avelonData: {
-                  id: item.id,
-                  name: item.originDataId
-                },
-                marketData: {
-                  id: brandMarket.id,
-                  name: brandMarket.name
+              dataBrand.forEach(data => {
+                if(data.avelonData.name == item.originDataId) {
+                  data.marketData = {
+                    id: brandMarket.id,
+                    name: brandMarket.name
+                  }
                 }
               });
+
               this.dataSourceMappingBrands.data = dataBrand;
               break;
             case 8:
-                const dataFeature = this.dataSourceMappingFeatures.data;
+                let  dataFeature = this.dataSourceMappingFeatures.data;
   
                 let featureMarket = {id: 0, name: ''};
   
@@ -362,18 +338,16 @@ export class MappingsComponent implements OnInit {
                     }
                   })
                 }
-  
-                dataFeature.push({
-                  id: item.id,
-                  avelonData: {
-                    id: item.id,
-                    name: item.originDataId
-                  },
-                  marketData: {
-                    id: featureMarket.id,
-                    name: featureMarket.name
+
+                dataFeature.forEach(data => {
+                  if(data.avelonData.name == item.originDataId) {
+                    data.marketData = {
+                      id: featureMarket.id,
+                      name: featureMarket.name
+                    }
                   }
                 });
+
                 this.dataSourceMappingFeatures.data = dataFeature;
                 break;
           }
@@ -513,15 +487,7 @@ export class MappingsComponent implements OnInit {
   }
 
   changeBrandSelect(e, element) {
-
-    let originData;
     let marketData;
-    let id = element.id;
-    this.dataSourceMappingBrands.filteredData.forEach(item => {
-      if(item.id == element.id) {
-        originData = item;
-      }
-    });
 
     this.brandsList.forEach(item => {
       if(item.id == e.value) {
@@ -537,17 +503,34 @@ export class MappingsComponent implements OnInit {
     }
 
     let dataSend = {
-      id,
-      originDataId: originData.avelonData.name,
+      originDataId: element.avelonData.name,
       marketDataId,
       typeMapped: 5,
       marketId: 1,
       aditionalMapInfo: 'more info'
     };
 
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
-      console.log(data)
-    })
+    let update: boolean = false;
+    let idToUpdate: number = 0;
+    
+    this.dataDBsave.forEach(item => {
+      if(item.originDataId == element.avelonData.name) {
+        update = true;
+        idToUpdate = item.id;
+      }
+    });
+
+    if(update) {
+      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    } else {
+      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    }
   }
 
   changeColorSelect(e, element) {
@@ -598,14 +581,8 @@ export class MappingsComponent implements OnInit {
   }
 
   changeSizeSelect(e, element) {
-    let originData;
+
     let marketData;
-    let id = element.id;
-    this.dataSourceMappingSizes.filteredData.forEach(item => {
-      if(item.id == element.id) {
-        originData = item;
-      }
-    });
 
     this.sizesList.forEach(item => {
       if(item.id == e.value) {
@@ -621,28 +598,38 @@ export class MappingsComponent implements OnInit {
     }
 
     let dataSend = {
-      id,
-      originDataId: originData.avelonData.name,
+      originDataId: element.avelonData.name,
       marketDataId,
       typeMapped: 4,
       marketId: 1,
       aditionalMapInfo: 'more info'
     };
+
+    let update: boolean = false;
+    let idToUpdate: number = 0;
     
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
-      console.log(data)
-    })
+    this.dataDBsave.forEach(item => {
+      if(item.originDataId == element.avelonData.name) {
+        update = true;
+        idToUpdate = item.id;
+      }
+    });
+
+    if(update) {
+      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    } else {
+      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    }
   }
 
   changeFeatureSelect(e, element) {
-    let originData;
     let marketData;
-    let id = element.id;
-    this.dataSourceMappingFeatures.filteredData.forEach(item => {
-      if(item.id == element.id) {
-        originData = item;
-      }
-    });
 
     this.featuresList.forEach(item => {
       if(item.id == e.value) {
@@ -658,17 +645,34 @@ export class MappingsComponent implements OnInit {
     }
 
     let dataSend = {
-      id,
-      originDataId: originData.avelonData.name,
+      originDataId: element.avelonData.name,
       marketDataId,
       typeMapped: 8,
       marketId: 1,
       aditionalMapInfo: 'more info'
     };
+
+    let update: boolean = false;
+    let idToUpdate: number = 0;
     
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
-      console.log(data)
-    })
+    this.dataDBsave.forEach(item => {
+      if(item.originDataId == element.avelonData.name) {
+        update = true;
+        idToUpdate = item.id;
+      }
+    });
+
+    if(update) {
+      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    } else {
+      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+        console.log(data)
+        this.updataDataSaved();
+      })
+    }
   }
 
   getGroupName(group) {
