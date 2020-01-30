@@ -69,10 +69,10 @@ export class NewRuleComponent implements OnInit {
         id: 1,
         name: 'Sección',
         items: [
-          /*{id: 1, group: 1, name: 'Sección 1'},
+          {id: 1, group: 1, name: 'Sección 1'},
           {id: 2, group: 1, name: 'Sección 2'},
           {id: 3, group: 1, name: 'Sección 3'},
-          {id: 4, group: 1, name: 'Sección 4'}*/
+          {id: 4, group: 1, name: 'Sección 4'}
         ]
       },
       {
@@ -104,9 +104,9 @@ export class NewRuleComponent implements OnInit {
         id: 7,
         name: 'Comercial',
         items: [
-          /*{id: 1, group: 7, name: 'Comercial 1'},
+          {id: 1, group: 7, name: 'Comercial 1'},
           {id: 2, group: 7, name: 'Comercial 2'},
-          {id: 3, group: 7, name: 'Comercial 3'}*/
+          {id: 3, group: 7, name: 'Comercial 3'}
         ]
       },
       {

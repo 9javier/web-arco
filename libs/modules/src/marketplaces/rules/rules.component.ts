@@ -138,7 +138,7 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
 
-        let filterType = 0;
+        /*let filterType = 0;
 
         let dataGroupToSend = '';
 
@@ -174,7 +174,7 @@ export class RulesComponent implements OnInit {
           marketsIds: [
             "1"
           ]
-        }
+        }*/
 
         /*this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
@@ -301,14 +301,14 @@ export class RulesComponent implements OnInit {
             break;
         } 
 
-        let dataToSend = {
+        /*let dataToSend = {
           id: editedRule.id,
           name: editedRule.name,
           ruleFilterType: filterType,
           externalId: "1",
           dataGroup: dataGroupToSend,
           status: 0
-        }
+        }*/
 
         /*this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
           console.log(data)
