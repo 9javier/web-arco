@@ -52,7 +52,7 @@ export class RulesComponent implements OnInit {
 
 
 
-    this.marketplacesService.getRulesFilter().subscribe(data => {
+    /*this.marketplacesService.getRulesFilter().subscribe(data => {
       if(data) {
         data.forEach(rule => {
           if(rule.ruleFilterType == 1) {
@@ -122,7 +122,7 @@ export class RulesComponent implements OnInit {
       } else {
         console.log('error get rules filter')
       }
-    })
+    })*/
     
   }
 
