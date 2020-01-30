@@ -4,7 +4,9 @@
       <sorter-matrix-emptying
         [height]="'50vh'"
         [width]="'100%'"
+        (listOfIdsWays)="listOfIdsWays = $event"
         (columnSelected)="columnSelected($event)">
+
       </sorter-matrix-emptying>
 
       <suite-sorter-actions-emptying

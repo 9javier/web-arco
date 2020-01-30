@@ -30,10 +30,13 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   public disableMixed: boolean = true;
   public disableFullSelect :boolean = true;
 
+  public listOfIdsWays:number[];
+
   private firstSorter: SorterModel.FirstSorter;
   private lastWaySelected = null;
   private lastWaysSelected: any[] = [];
   private waysToUpdate: any[] = [];
+
 
   constructor(
     private sorterService: SorterService,
@@ -56,7 +59,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     this.disableAuto = true;
     this.disableManual = true;
     this.disableMixed = true;
-
+    // console.log({data});
     this.lastWaySelected = data;
     let flag = false;
     let wayS = null;
@@ -123,8 +126,27 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
    * @author Gaetano Sabino
    */
   public async allEmptying(){
-    console.log('method all Emptying');
+    if(this.listOfIdsWays.length > 0){
+    //  TODO call of method for delete all ways
+      console.log(this.listOfIdsWays);
+
+    let result  = await this.sorterOutputService.postEmptyAllWays(
+      {waysId:this.listOfIdsWays}
+    );
+    if(result.code === 200){
+      this.listOfIdsWays = [];
+      this.disableManual = true;
+      this.disableMixed = true;
+
+      // console.log(this.listOfIdsWays,result);
+      return;
+    }
+    }else {
+      return;
+    }
   }
+
+
 
   public async autoEmptying() {
     await this.intermediaryService.presentLoading('Cambiando a vaciado automático...');

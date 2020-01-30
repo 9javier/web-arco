@@ -9,7 +9,7 @@
         <div class="column"
              *ngFor="let sorterColumn of sorterHeight.columns; let iCol = index"
              [ngStyle]="{'background-color': getBackground(sorterColumn)}"
-             (click)="selectWay(sorterColumn, iHeight, iCol);test(sorterHeight)" >
+             (click)="selectWay(sorterColumn, iHeight, iCol)" >
           <div class="emptying-type">
             {{ getEmptyingType(sorterColumn) }}
           </div>
@@ -24,13 +24,13 @@
     </div>
     <div class="legend">
       <div (click)="check(zoneColor)" class="zone" *ngFor="let zoneColor of listZonesWithColors; let i = index">
-        <div class="color-zone" [ngStyle]="{'background-color': zoneColor.id == 0 ? 'var(--ion-color-background-zone-selected)' : zoneColor.color, 'filter': zoneColor.id == 0 ? 'grayscale(0.5)' : 'grayscale(0)'}">
-        </div>
-        <span class="name-zone">{{zoneColor.name}}</span>
-        <div>
-          <span>Select All</span>
-          <ion-checkbox [(ngModel)]="zoneColor.checks">Select All</ion-checkbox>
-        </div>
+
+        <ion-item lines="none">
+          <div class="color-zone" [ngStyle]="{'background-color': zoneColor.id == 0 ? 'var(--ion-color-background-zone-selected)' : zoneColor.color, 'filter': zoneColor.id == 0 ? 'grayscale(0.5)' : 'grayscale(0)'}">
+          </div>
+          <span class="name-zone">{{zoneColor.name}}</span>
+          <ion-checkbox slot="end" [(ngModel)]="listZonesWithColors[i].checks"></ion-checkbox>
+        </ion-item>
       </div>
     </div>
   </div>
