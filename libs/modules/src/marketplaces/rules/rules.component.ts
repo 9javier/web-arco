@@ -176,9 +176,9 @@ export class RulesComponent implements OnInit {
           ]
         }
 
-        this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
+        /*this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
-        })
+        })*/
 
         this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
@@ -310,9 +310,9 @@ export class RulesComponent implements OnInit {
           status: 0
         }
 
-        this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
+        /*this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
           console.log(data)
-        });
+        });*/
 
         if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
