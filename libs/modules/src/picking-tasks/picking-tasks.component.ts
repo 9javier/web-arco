@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {PickingProvider} from "../../../services/src/providers/picking/picking.provider";
 import {AuthenticationService} from "@suite/services";
+import {Router  } from '@angular/router';
+import { ToolbarProvider } from "../../../services/src/providers/toolbar/toolbar.provider";
+
 
 @Component({
   selector: 'suite-picking-tasks',
@@ -16,7 +19,9 @@ export class PickingTasksComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
-    private pickingProvider: PickingProvider
+    private pickingProvider: PickingProvider,
+    private router: Router,
+    private toolbarProvider: ToolbarProvider
   ) {}
 
   async ngOnInit() {
@@ -33,4 +38,12 @@ export class PickingTasksComponent implements OnInit {
     this.isStoreChecked = true;
   }
 
+  isHomeRoute() {
+    return this.router.url === '/picking-tasks/manual';
+  }
+
+  returnMenuPikingTask(){
+    this.router.navigate(['/picking-tasks']);
+    this.toolbarProvider.currentPage.next("Tareas de Picking");
+  }
 }
