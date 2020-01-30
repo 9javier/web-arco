@@ -39,6 +39,43 @@ export namespace UserModel {
     status: boolean
   }
 
+  export interface Filters {
+    users?: number[],
+    warehouses?: number[]
+  }
+
+  export interface FilterOptionsRequest {
+    type: {
+      users: boolean,
+      warehouses: boolean
+    },
+    currentFilter?: {
+      id: number,
+      value?: string
+    }[]
+  }
+
+  export interface FilterOptions {
+    users?: FilterOption[],
+    warehouses?: FilterOption[]
+  }
+
+  export interface FilterOption {
+    id: number,
+    value: string,
+    checked?: boolean
+  }
+
+  export interface ModalResponse {
+    userId: number,
+    warehouseId: number,
+    roles: {
+      id: number,
+      name: string,
+      isChecked: boolean
+    }[]
+  }
+
   export interface User {
     id?: number;
     email?: string;

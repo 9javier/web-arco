@@ -36,7 +36,10 @@ export class UsersService {
   private delDestroyUrl:string = environment.apiBase+"/gestion-permissions/users/{{id}}";
   private addWarehouseInUserUrl:string = environment.apiBase+"/gestion-permissions/users/newUpRoles";
   private hasDeleteProductPermissionUrl:string = environment.apiBase+"/gestion-permissions/users/has-delete-product-permission";
-  private postList:string = environment.apiBase+"/gestion-permissions/users/list";
+  private postListUrl:string = environment.apiBase+"/gestion-permissions/users/list";
+  private postFiltersUrl:string = environment.apiBase+"/gestion-permissions/permissions/filters";
+  private postUpdateUrl:string = environment.apiBase+"/gestion-permissions/permissions/update";
+  private postNewUrl:string = environment.apiBase+"/gestion-permissions/permissions/create";
 
 
   constructor(
@@ -147,8 +150,20 @@ export class UsersService {
     });
   }
 
-  getList(parameters?): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.postList, parameters);
+  getList(parameters?: UserModel.Filters): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postListUrl, parameters);
+  }
+
+  getFilters(parameters?: UserModel.FilterOptionsRequest): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postFiltersUrl, parameters);
+  }
+
+  postUpdate(parameters?: UserModel.Permission[]): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postUpdateUrl, parameters);
+  }
+
+  postNew(parameters?: UserModel.ModalResponse): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postNewUrl, parameters);
   }
 
 }

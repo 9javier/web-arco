@@ -11,21 +11,23 @@
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Usuario</span>
-          <mat-icon (click)="openFilter('user')">{{isFiltering('user')}}</mat-icon>
+          <mat-icon (click)="openFilter('Usuarios')">{{isFiltering('user')}}</mat-icon>
         </mat-header-cell>
         <mat-cell *matCellDef="let permission">{{permission.user.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="warehouse">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Almacén</span>
-          <mat-icon (click)="openFilter('warehouse')">{{isFiltering('warehouse')}}</mat-icon>
+          <mat-icon (click)="openFilter('Almacenes')">{{isFiltering('warehouse')}}</mat-icon>
         </mat-header-cell>
         <mat-cell *matCellDef="let permission">{{permission.warehouse.name}}</mat-cell>
       </ng-container>
       <ng-container *ngFor="let role of tableRoles; let i = index" matColumnDef="{{role.id}}">
-        <mat-header-cell *matHeaderCellDef class="centre-header">{{ role.name }}</mat-header-cell>
-        <mat-cell *matCellDef="let permission; let id = index" class="centre-cell">
-          <mat-checkbox [ngModel]=permission.roles[i].status (change)="changeCheckRol($event, permission, i)"></mat-checkbox>
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">{{role.name}}</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let permission" class="center">
+          <mat-checkbox [checked]="isChecked(role, permission.roles)" (change)="changeRole(role, permission.id)"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></mat-header-row>
@@ -36,7 +38,7 @@
 <ion-fab vertical="bottom" horizontal="end">
   <ion-row>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Guardar cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="saveChanges()" *ngIf="thereAreChanges()">
+      <ion-fab-button color="dark"  matTooltip="Guardar cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="saveChanges()" *ngIf="thereAreChanges">
         <ion-icon name="save"></ion-icon>
       </ion-fab-button>
     </ion-col>
@@ -46,7 +48,7 @@
       </ion-fab-button>
     </ion-col>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Deshacer cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="undoChanges()">
+      <ion-fab-button color="dark"  matTooltip="Deshacer cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()">
         <ion-icon name="undo"></ion-icon>
       </ion-fab-button>
     </ion-col>
