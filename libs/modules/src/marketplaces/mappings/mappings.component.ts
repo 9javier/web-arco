@@ -520,9 +520,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
 
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })
+    })*/
   }
 
   changeColorSelect(e, element) {
@@ -557,9 +557,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
 
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })
+    })*/
   }
 
   changeSizeSelect(e, element) {
@@ -594,9 +594,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
     
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })
+    })*/
   }
 
   changeFeatureSelect(e, element) {
@@ -631,9 +631,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
     
-    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })
+    })*/
   }
 
   getGroupName(group) {
