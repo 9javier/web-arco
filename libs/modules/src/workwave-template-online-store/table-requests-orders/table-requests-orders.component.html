@@ -5,7 +5,7 @@
     </h2>
 
     <div class="buttons-action">
-      <ion-icon matTooltip="Actualizar" matTooltipClass="tooltip" name="refresh" (click)="orderAssignment()" [ngClass]="requestsOrdersAreLoading() ? 'disabled' : ''"></ion-icon>
+      <ion-icon matTooltip="Actualizar operaciones de envío" matTooltipClass="tooltip" name="refresh" (click)="orderAssignment()" [ngClass]="requestsOrdersAreLoading() ? 'disabled' : ''"></ion-icon>
       <ion-icon matTooltip="{{enlarged ? 'Contraer' : 'Expandir'}}" matTooltipClass="tooltip" [name]="enlarged ? 'contract' : 'expand'" (click)="enlarge()"></ion-icon>
     </div>
   </div>

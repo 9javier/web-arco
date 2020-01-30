@@ -23,6 +23,7 @@ export class InventoryService {
 
   /**Urls for the inventory service */
   private postStoreUrl: string = environment.apiBase + "/processes/positioner-main";
+  private postStoreOnlineUrl: string = environment.apiBase + "/processes/positioner-main/online";
   private getProductsByContainerUrl: string = environment.apiBase + "/inventory/container/{{id}}";
   private getProductsHistoryByContainerUrl: string = environment.apiBase + "/inventory/processes/container/{{id}}";
 
@@ -108,6 +109,10 @@ export class InventoryService {
 
   postStore(params: InventoryModel.Inventory): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postStoreUrl, params);
+  }
+
+  postStoreOnline(params: InventoryModel.Inventory): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postStoreOnlineUrl, params);
   }
 
   checkUserPermissions(): Promise<HttpRequestModel.Response> {

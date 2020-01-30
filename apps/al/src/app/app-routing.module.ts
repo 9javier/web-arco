@@ -142,6 +142,11 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/positioning-manual/positioning-manual.module#PositioningManualModule'
   },
   {
+    path: 'positioning/manual-online',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/positioning-manual-online/positioning-manual-online.module#PositioningManualOnlineModule'
+  },
+  {
     path: 'picking/manual',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/picking-manual/picking-manual.module#PickingManualModule'

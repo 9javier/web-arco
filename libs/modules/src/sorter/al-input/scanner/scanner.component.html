@@ -97,22 +97,22 @@
     </ion-button>
   </div>
   <div>
-    <ion-button expand="full" color="dark" *ngIf="destiniesWithPacking['incidence']" (click)="assignToPacking(destiniesWithPacking['incidence'])">
-      <p>EMBALAJE DE INCIDENCIAS {{getPackingScanned('incidence')}}</p>
+    <ion-button expand="full" color="dark" (click)="assignToPacking(destiniesWithPacking['000'])"  *ngIf="destiniesWithPacking['000']">
+      <p>EMBALAJE A 000 {{getPackingScanned('000')}}</p>
     </ion-button>
-    <ion-button expand="full" color="dark" class="other-btn" (click)="scanPacking('incidence')">
-      <p>{{destiniesWithPacking['incidence'] ? 'OTRO' : 'NUEVO EMBALAJE DE INCIDENCIAS'}}</p>
+    <ion-button expand="full" color="dark" (click)="scanPacking('zero')" class="other-btn">
+      <p>{{destiniesWithPacking['000'] ? 'OTRO' : 'NUEVO EMBALAJE A 000'}}</p>
     </ion-button>
   </div>
 </ion-footer>
 
 <!-- Actions to show when the product scanned does not have a origin scan -->
 <ion-footer *ngIf="processStarted && !productScanned && productScanWithException && !needScanNewPacking">
-  <ion-button expand="full" color="dark" [disabled]="!destiniesWithPacking['incidence']" (click)="assignToPacking(destiniesWithPacking['incidence'])">
-    <p>EMBALAJE DE INCIDENCIAS {{getPackingScanned('incidence')}}</p>
+  <ion-button expand="full" color="dark" [disabled]="!destiniesWithPacking['000']" (click)="assignToPacking(destiniesWithPacking['000'])">
+    <p>EMBALAJE A 000 {{getPackingScanned('000')}}</p>
   </ion-button>
-  <ion-button expand="full" color="dark" (click)="scanPacking('incidence')">
-    <p>NUEVO EMBALAJE DE INCIDENCIAS</p>
+  <ion-button expand="full" color="dark" (click)="scanPacking('000')">
+    <p>NUEVO EMBALAJE A 000</p>
   </ion-button>
 </ion-footer>
 

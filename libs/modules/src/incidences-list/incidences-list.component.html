@@ -1,58 +1,348 @@
-<div class="table-container mat-elevation-z8">
-    <filters-incidences [listIncidencesTypes]="incidencesService.listIncidencesTypes" [typeSelected]="typeSelected" [listAttendedOptions]="listAttendedOptions" [attendedSelected]="attendedSelected" [textToSearch]="textToSearch" (changeFilters)="changeFilters($event)">
-    </filters-incidences>
-    <table mat-table multiTemplateDataRows [dataSource]="incidencesService.incidencesList" class="table-incidences">
-        <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef> ID </th>
-            <td mat-cell *matCellDef="let element"> {{element.id}} </td>
-        </ng-container>
+<ion-content>
+  <div class="incidences-container">
+    <mat-table [dataSource]="incidences" matSort class="table-incidences">
+      <!-- Fixed columns with info about the incidence -->
+      <ng-container matColumnDef="id">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Nº incidencia</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> #{{element.info.id}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="type">
+        <mat-header-cell class="my-sticky-col info type" *matHeaderCellDef>
+          <suite-filter-button
+            #btnFilterTypes
+            [title]="'Tipo'"
+            [isFiltering]="filterAppliedForType(typeFilters.TYPE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.TYPE) ? 'Filtrar por tipo' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.TYPE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.TYPE)">
+          </suite-filter-button>
+          Tipo de incidencia
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type"> {{element.info.type.name}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="process">
+        <mat-header-cell class="my-sticky-col info process" *matHeaderCellDef>
+          <suite-filter-button
+            #btnFilterProcesses
+            [title]="'Operación'"
+            [isFiltering]="filterAppliedForType(typeFilters.PROCESS)"
+            [matTooltip]="!filterAppliedForType(typeFilters.PROCESS) ? 'Filtrar por operación' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.PROCESS)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.PROCESS)">
+          </suite-filter-button>
+          Operación
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info process"> {{element.info.process.name}} </mat-cell>
+      </ng-container>
 
-        <ng-container matColumnDef="title">
-            <th mat-header-cell *matHeaderCellDef> Título </th>
-            <td mat-cell *matCellDef="let element"> {{element.title}} </td>
-        </ng-container>
+      <!-- Columns with info about product assigned to the incidence -->
+      <ng-container matColumnDef="date">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterDatesReport
+            [title]="'Fecha de reporte'"
+            [isFiltering]="filterAppliedForType(typeFilters.DATE_REPORT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.DATE_REPORT) ? 'Filtrar por fecha' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.DATE_REPORT)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.DATE_REPORT)">
+          </suite-filter-button>
+          Fecha
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.date}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="time">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterTimesReport
+            [title]="'Hora de reporte'"
+            [isFiltering]="filterAppliedForType(typeFilters.TIME_REPORT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.TIME_REPORT) ? 'Filtrar por hora' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.TIME_REPORT)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.TIME_REPORT)">
+          </suite-filter-button>
+          Hora
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.time}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="user">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterUsersReport
+            [title]="'Usuario'"
+            [isFiltering]="filterAppliedForType(typeFilters.USER_REPORT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.USER_REPORT) ? 'Filtrar por usuario' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.USER_REPORT)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.USER_REPORT)">
+          </suite-filter-button>
+          Usuario
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.user}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="code">
+        <mat-header-cell *matHeaderCellDef class="info-product reference" mat-sort-header>
+          <suite-filter-button
+            #btnFilterProducts
+            [title]="'Código único'"
+            [isFiltering]="filterAppliedForType(typeFilters.PRODUCT)"
+            [matTooltip]="!filterAppliedForType(typeFilters.PRODUCT) ? 'Filtrar por código único' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.PRODUCT)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.PRODUCT)">
+          </suite-filter-button>
+          Código único
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product reference"> <p>{{element.product.product.reference}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="model">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterModelReferences
+            [title]="'Artículo'"
+            [isFiltering]="filterAppliedForType(typeFilters.MODEL_REFERENCE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.MODEL_REFERENCE) ? 'Filtrar por artículo' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.MODEL_REFERENCE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.MODEL_REFERENCE)">
+          </suite-filter-button>
+          Artículo
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.model.reference}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterSizes
+            [title]="'Talla'"
+            [isFiltering]="filterAppliedForType(typeFilters.SIZE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.SIZE) ? 'Filtrar por talla' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.SIZE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.SIZE)">
+          </suite-filter-button>
+          Talla
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.size}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="brand">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterBrands
+            [title]="'Marca'"
+            [isFiltering]="filterAppliedForType(typeFilters.BRAND)"
+            [matTooltip]="!filterAppliedForType(typeFilters.BRAND) ? 'Filtrar por marca' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.BRAND)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.BRAND)">
+          </suite-filter-button>
+          Marca
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product brand"> <p>{{element.product.product.model.brand}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="model-name">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterModelNames
+            [title]="'Modelo'"
+            [isFiltering]="filterAppliedForType(typeFilters.MODEL_NAME)"
+            [matTooltip]="!filterAppliedForType(typeFilters.MODEL_NAME) ? 'Filtrar por modelo' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.MODEL_NAME)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.MODEL_NAME)">
+          </suite-filter-button>
+          Modelo
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.model.name}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="color">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterColors
+            [title]="'Color'"
+            [isFiltering]="filterAppliedForType(typeFilters.COLOR)"
+            [matTooltip]="!filterAppliedForType(typeFilters.COLOR) ? 'Filtrar por color' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.COLOR)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.COLOR)">
+          </suite-filter-button>
+          Color
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.model.color}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="lifestyle">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterLifestyles
+            [title]="'Lifestyle'"
+            [isFiltering]="filterAppliedForType(typeFilters.LIFESTYLE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LIFESTYLE) ? 'Filtrar por lifestyle' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.LIFESTYLE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LIFESTYLE)">
+          </suite-filter-button>
+          Lifestyle
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.model.lifestyle}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="season">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterSeasons
+            [title]="'Temporada'"
+            [isFiltering]="filterAppliedForType(typeFilters.SEASON)"
+            [matTooltip]="!filterAppliedForType(typeFilters.SEASON) ? 'Filtrar por temporada' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.SEASON)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.SEASON)">
+          </suite-filter-button>
+          Temporada
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.model.season}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="warehouse">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterLocationWarehouses
+            [title]="'Almacén'"
+            [isFiltering]="filterAppliedForType(typeFilters.LOCATION_WAREHOUSE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LOCATION_WAREHOUSE) ? 'Filtrar por almacén' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.LOCATION_WAREHOUSE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LOCATION_WAREHOUSE)">
+          </suite-filter-button>
+          Almacén
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.location.warehouse}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="location">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterLocations
+            [title]="'Ubicación/Jaula'"
+            [isFiltering]="filterAppliedForType(typeFilters.LOCATION)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LOCATION) ? 'Filtrar por ubicación/jaula' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.LOCATION)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LOCATION)">
+          </suite-filter-button>
+          Ubicación/ Jaula
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.location.location}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="destiny">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterDestinyWarehouses
+            [title]="'Destino'"
+            [isFiltering]="filterAppliedForType(typeFilters.DESTINY_WAREHOUSE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.DESTINY_WAREHOUSE) ? 'Filtrar por destino' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.DESTINY_WAREHOUSE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.DESTINY_WAREHOUSE)">
+          </suite-filter-button>
+          Destino
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.destiny}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="sorter-way">
+        <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
+          <suite-filter-button
+            #btnFilterLocationSorterWays
+            [title]="'Calle sorter'"
+            [isFiltering]="filterAppliedForType(typeFilters.LOCATION_SORTER_WAY)"
+            [matTooltip]="!filterAppliedForType(typeFilters.LOCATION_SORTER_WAY) ? 'Filtrar por calle de sorter' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.LOCATION_SORTER_WAY)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.LOCATION_SORTER_WAY)">
+          </suite-filter-button>
+          Calle sorter
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> <p>{{element.product.product.location.sorterWay}}</p> </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="history">
+        <mat-header-cell *matHeaderCellDef class="info-product">Historial</mat-header-cell>
+        <mat-cell *matCellDef="let element" class="info-product history">
+          <i class="material-icons" [matTooltip]="'Ver historial ' + (element.product.product ? 'del producto' : 'de la ubicación')" matTooltipClass="tooltip">assignment</i>
+        </mat-cell>
+      </ng-container>
 
-        <ng-container matColumnDef="typeIncidence">
-            <th mat-header-cell *matHeaderCellDef> Tipo </th>
-            <td mat-cell *matCellDef="let element"> {{incidencesService.getIncidenceTypeText(element.typeIncidence)}} </td>
-        </ng-container>
+      <!-- Fixed columns with info about the status of incidence -->
+      <ng-container matColumnDef="status">
+        <mat-header-cell class="my-sticky-col info-status status" *matHeaderCellDef>
+          <suite-filter-button
+            #btnFilterStatus
+            [title]="'Estado'"
+            [isFiltering]="filterAppliedForType(typeFilters.STATUS)"
+            [matTooltip]="!filterAppliedForType(typeFilters.STATUS) ? 'Filtrar por estado' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.STATUS)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.STATUS)">
+          </suite-filter-button>
+          Estado
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info-status status">
+          <mat-select (ngModelChange)="changeIncidenceStatus(element)" [(ngModel)]="element.status.status.id" matTooltip="Cambiar estado" matTooltipClass="tooltip">
+            <mat-option *ngFor="let status of element.status.available_status" [value]="status.id">
+              {{status.name}}
+            </mat-option>
+          </mat-select>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="user-status">
+        <mat-header-cell class="my-sticky-col info-status user-status" *matHeaderCellDef mat-sort-header>
+          <suite-filter-button
+            #btnFilterUsersManage
+            [title]="'Usuario'"
+            [isFiltering]="filterAppliedForType(typeFilters.USER_MANAGE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.USER_MANAGE) ? 'Filtrar por usuario' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.USER_MANAGE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.USER_MANAGE)">
+          </suite-filter-button>
+          Usuario
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info-status user-status"> {{element.status.user}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="date-status">
+        <mat-header-cell class="my-sticky-col info-status date-status" *matHeaderCellDef mat-sort-header>
+          <suite-filter-button
+            #btnFilterDatesManage
+            [title]="'Fecha'"
+            [isFiltering]="filterAppliedForType(typeFilters.DATE_MANAGE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.DATE_MANAGE) ? 'Filtrar por fecha' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.DATE_MANAGE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.DATE_MANAGE)">
+          </suite-filter-button>
+          Fecha
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info-status date-status"> {{element.status.date}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="time-status">
+        <mat-header-cell class="my-sticky-col info-status time-status" *matHeaderCellDef mat-sort-header>
+          <suite-filter-button
+            #btnFilterTimesManage
+            [title]="'Hora'"
+            [isFiltering]="filterAppliedForType(typeFilters.TIME_MANAGE)"
+            [matTooltip]="!filterAppliedForType(typeFilters.TIME_MANAGE) ? 'Filtrar por hora' : ''" matTooltipClass="tooltip"
+            [customFiltersLoad]="true"
+            (applyFilters)="applyFilters($event, typeFilters.TIME_MANAGE)"
+            (clickedToOpenPopover)="openFilterPopover($event, typeFilters.TIME_MANAGE)">
+          </suite-filter-button>
+          Hora
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info-status time-status"> {{element.status.time}} </mat-cell>
+      </ng-container>
 
-        <ng-container matColumnDef="btnAttend">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element" class="btn-attend">
-                <ion-button matTooltip="Marcar como atendida" matTooltipClass="tooltip" (click)="attendIncidence($event, element)">
-                    <ion-icon name="checkbox-outline"></ion-icon>
-                </ion-button>
-            </td>
-        </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
+      </mat-row>
+    </mat-table>
+  </div>
 
-        <ng-container matColumnDef="expandedDetail">
-            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length" class="incidence-column">
-                <div class="incidence-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                    <div class="example-element-description">
-                        <p>{{element.description}}</p>
-                        <ul *ngIf="element.typeIncidence == 8">
-                            <li *ngIf="element.model">
-                                Referencia: <b>{{element.model.reference}}</b>
-                            </li>
-                            <li *ngIf="element.color">
-                                Color: <b>{{element.color.name}}</b>
-                            </li>
-                            <li *ngIf="element.size">
-                                Talla: <b>{{element.size.name}}</b>
-                            </li>
-                        </ul>
-                        <p class="time-text">{{showDateTime(element.createdAt)}}</p>
-                    </div>
-                </div>
-            </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row" [class.incidence-expanded-row]="expandedElement === row" (click)="expandedElement = expandedElement === row ? null : row">
-        </tr>
-        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
-    </table>
-    <suite-paginator [pagerValues]="[10, 20, 50]"></suite-paginator>
-    <!-- <mat-paginator  [length]="incidencesService.incidencesQuantityList" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons></mat-paginator> -->
-</div>
+  <suite-paginator [pagerValues]="paginatorPagerValues"></suite-paginator>
+</ion-content>

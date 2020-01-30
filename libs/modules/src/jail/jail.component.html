@@ -20,13 +20,6 @@
                 <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="warehouse">
-                <th mat-header-cell *matHeaderCellDef>Origen</th>
-                <td mat-cell *matCellDef="let element">
-                    {{element?.warehouse ? (element.warehouse.reference + ' ' + element.warehouse.name) : '' }}
-                    <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
-                </td>
-            </ng-container>
             <ng-container matColumnDef="destiny">
                 <th mat-header-cell *matHeaderCellDef>Destino</th>
                 <td mat-cell *matCellDef="let element">
@@ -37,6 +30,13 @@
                     <div *ngIf="element.carrierWarehousesDestiny?.length > 1"
                         (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios
                             destinos</span></div>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="warehouse">
+                <th mat-header-cell *matHeaderCellDef>Origen</th>
+                <td mat-cell *matCellDef="let element">
+                    {{element?.warehouse ? (element.warehouse.reference + ' ' + element.warehouse.name) : '' }}
+                    <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
                 </td>
             </ng-container>
 
@@ -54,6 +54,11 @@
                         class="material-icons action-icon">send</i>
                 </td>
             </ng-container>
+            <ng-container matColumnDef="sendPacking">
+              <th mat-header-cell *matHeaderCellDef> Enviar</th>
+              <td mat-cell *matCellDef="let element"><i (click)="send($event,element)" class="material-icons">send</i>
+              </td>
+            </ng-container>
             <ng-container matColumnDef="update">
                 <th mat-header-cell *matHeaderCellDef class="center-content">
                     <i class="material-icons settings-header">settings</i>
@@ -64,26 +69,16 @@
                         class="material-icons action-icon">edit</i>
                 </td>
             </ng-container>
-
-            <ng-container matColumnDef="assigned_incidences">
+            <ng-container matColumnDef="open-modal">
                 <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element">
-                    <i class="material-icons warning-icon" *ngIf="element.assigned_to_incidences"
-                        matTooltip="Asignada a incidencias">warning</i>
-                </td>
+                <td matTooltip="Histórico de movimientos" matTooltipClass="tooltip"
+                    mat-cell *matCellDef="let element"><i class="material-icons action-icon" (click)="viewCarrier(element)">assignment</i> </td>
             </ng-container>
-
             <ng-container matColumnDef="buttons-print">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
-                    mat-cell *matCellDef="let element"><i (click)="print($event,element)"
-                        class="material-icons action-icon">print</i> </td>
-            </ng-container>
-
-            <ng-container matColumnDef="sendPacking">
-                <th mat-header-cell *matHeaderCellDef> Enviar</th>
-                <td mat-cell *matCellDef="let element"><i (click)="send($event,element)" class="material-icons">send</i>
-                </td>
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
+                  mat-cell *matCellDef="let element"><i (click)="print($event,element)"
+                                                        class="material-icons action-icon">print</i> </td>
             </ng-container>
 
             <ng-container matColumnDef="expandedDetail">
@@ -92,6 +87,13 @@
 
                 </td>
             </ng-container>
+
+          <ng-container matColumnDef="sealed">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let element">
+              <i class="material-icons warning-icon" *ngIf="element && element.status && element.status == 4" matTooltip="Precintada">launch</i>
+            </td>
+          </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row"

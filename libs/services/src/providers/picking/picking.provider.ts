@@ -52,6 +52,7 @@ export class PickingProvider {
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
       wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
       scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
+      press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     'jail': {
       not_registered: 'La Jaula escaneada no está registrada en el sistema.',
@@ -66,6 +67,7 @@ export class PickingProvider {
       wrong_packing: 'La herramienta de distribución escaneada no es la que se le solicitó. Escanea una Jaula para comenzar el proceso de picking.',
       wrong_process_finished: 'La Jaula escaneada es diferente a la Jaula con la que inició el proceso.',
       scan_packings_to_end: 'Escanee las Jaulas utilizadas para finalizar el picking',
+      press_scan_packings_to_continue: 'Pulse escanear embalajes para continuar con el traspaso'
     },
     2: {
       not_registered: 'El Pallet escaneado no está registrado en el sistema.',
