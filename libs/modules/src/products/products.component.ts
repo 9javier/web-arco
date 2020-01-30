@@ -769,6 +769,7 @@ export class ProductsComponent implements OnInit {
       this.getFilters();
     }, async error => {
       await this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('Ha ocurrido un error el cargar los datos del sevidor')
     });
   }
 
