@@ -94,6 +94,7 @@ export class MappingsComponent implements OnInit {
         });
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
         setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
+        this.showingColors = this.dataSourceColors.slice(0, 10);
       }
     });
 
@@ -105,8 +106,7 @@ export class MappingsComponent implements OnInit {
             name: color.name
           });
         });
-        this.getMaps();
-        this.showingColors = this.dataSourceColors.slice(0, 10);
+        //this.getMaps();
       }
     });
 
