@@ -3,12 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import { MarketplacesPrestaService } from '../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
 import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatPaginatorIntl } from '@angular/material';
+
+import {PaginatorLanguageComponent} from "../../components/paginator-language/paginator-language.component"; 
 
 @Component({
   selector: 'suite-mappings',
   templateUrl: './mappings.component.html',
-  styleUrls: ['./mappings.component.scss']
+  styleUrls: ['./mappings.component.scss'],
+  providers: [
+    { provide: MatPaginatorIntl, useValue: PaginatorLanguageComponent() }
+  ]
 })
 
 export class MappingsComponent implements OnInit {
@@ -29,6 +34,8 @@ export class MappingsComponent implements OnInit {
   private dataSourceFeatures;
   private dataSourceMappingFeatures;
   private featuresList;
+
+  private dataDBsave = [];
 
   private displayedColumns;
   private enumTypes;
@@ -58,8 +65,8 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
-        setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
+        //this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
+        //setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
       }
     });
 
@@ -116,8 +123,8 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-        setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
+        //this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
+        //setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
       }
     });
 
@@ -145,8 +152,8 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-        setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+        //this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
+        //setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
       }
     });
 
@@ -188,6 +195,7 @@ export class MappingsComponent implements OnInit {
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
       if(data) {
+        this.dataDBsave = data;
         data.forEach(item => {
           switch(item.typeMapped) {
             case 3:
