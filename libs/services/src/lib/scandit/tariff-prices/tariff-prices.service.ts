@@ -22,6 +22,7 @@ export class TariffPricesScanditService {
   tariffId: number;
   tariffName;
   lastBarcode: string = null;
+  auxLastCode: string = null;
   priceToPrint: PriceModel.PriceByModelTariff;
   priceOptions: PriceModel.PriceByModelTariff[];
   reprint: boolean;
@@ -99,6 +100,7 @@ export class TariffPricesScanditService {
   checkAndPrint(barcode: string) {
     if (barcode != this.lastBarcode) {
       this.lastBarcode = barcode;
+      this.auxLastCode = barcode;
       ScanditMatrixSimple.setTimeout("lastCodeScannedStart", this.timeMillisToResetScannedCode, "");
       if(!this.reScan) return;
       if (this.itemReferencesProvider.checkCodeValue(barcode) == this.itemReferencesProvider.codeValue.PRODUCT) {
@@ -216,7 +218,8 @@ export class TariffPricesScanditService {
         }
       }
     }else{
-      this.priceData[0] = 'Error: no hay precios asociados al modelo con referencia '+this.lastBarcode+'.';
+      const code: string = this.lastBarcode == 'start' ? this.auxLastCode : this.lastBarcode;
+      this.priceData[0] = 'Error: no hay precios asociados al modelo con referencia '+code+'.';
       ScanditMatrixSimple.loadPriceInfo(null, this.priceData);
     }
   }
