@@ -16,6 +16,7 @@ export namespace ZoneSorterModel {
     id: number,
     name: string,
     active: boolean,
-    color: string
+    color: string,
+    checks: boolean
   }
 }

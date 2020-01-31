@@ -11,6 +11,7 @@ import {MatrixSorterModel} from "../../../../services/src/models/endpoints/Matri
 import {SorterInfoWayEmptyingComponent} from "./info-way/info-way.component";
 import {SorterOutputService} from "../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
 import {SorterOutputModel} from "../../../../services/src/models/endpoints/SorterOutput";
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'suite-sorter-ways-emptying',
@@ -28,21 +29,27 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   public disableAuto: boolean = true;
   public disableManual: boolean = true;
   public disableMixed: boolean = true;
+  public disableFullSelect :boolean = true;
+
+  public listOfIdsWays:number[];
 
   private firstSorter: SorterModel.FirstSorter;
   private lastWaySelected = null;
   private lastWaysSelected: any[] = [];
   private waysToUpdate: any[] = [];
 
+
   constructor(
     private sorterService: SorterService,
     private sorterTemplateService: SorterTemplateService,
     private templateZonesService: TemplateZonesService,
     private sorterOutputService: SorterOutputService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
+    console.log('passa per ways');
     this.loadActiveSorter();
   }
 
@@ -51,20 +58,21 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   }
 
   public columnSelected(data: {column: MatrixSorterModel.Column, iHeight: number, iCol: number}) {
+
     this.disableAuto = true;
     this.disableManual = true;
     this.disableMixed = true;
-
+    // console.log({data});
     this.lastWaySelected = data;
     let flag = false;
     let wayS = null;
     for(wayS of this.lastWaysSelected){
-      if(wayS.column.way.id == this.lastWaySelected.column.way.id){
+      if(wayS.column.way.id === this.lastWaySelected.column.way.id){
         flag = true;
         this.removeItemFromArr( this.lastWaysSelected, wayS );
       }
     }
-    if(flag == false) {
+    if(flag === false) {
       this.lastWaysSelected.push(this.lastWaySelected);
     }
     this.emptyingVerification();
@@ -83,26 +91,26 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     let way = null;
     let haveManual = false;
     let haveAuto = false;
-    if(this.lastWaysSelected.length == 0){
+    if(this.lastWaysSelected.length === 0){
       this.disableAuto = true;
       this.disableManual = true;
       this.disableMixed = true;
     }else{
       for(way of this.lastWaysSelected){
-        if( way.column.way.manual == 1){
+        if( way.column.way.manual === 1){
           haveManual = true;
         }else{
-          if(way.column.way.manual == 0){
+          if(way.column.way.manual === 0){
             haveAuto = true;
           }
         }
       }
-      if(haveManual == true && haveAuto == true){
+      if(haveManual === true && haveAuto === true){
         this.disableAuto = true;
         this.disableManual = true;
         this.disableMixed = false;
       }else{
-        if(haveManual == true){
+        if(haveManual === true){
           this.disableAuto = false;
           this.disableManual = true;
           this.disableMixed = true;
@@ -110,8 +118,65 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
           this.disableAuto = true;
           this.disableManual = false;
           this.disableMixed = true;
+          this.disableFullSelect = false;
         }
       }
+    }
+  }
+
+   public async creatAler(){
+    let a = await this.alertController.create({
+      header:'¡Están seguros de vaciar las calles!',
+      message: 'Vaciaremos las calles selecionadas',
+      buttons:[
+        {
+          text:'Ok',
+          handler: async ()=>{
+            console.log('passa por ok');
+            await this.allEmptying();
+          }
+        },
+        {
+          text:'NO',
+          handler:()=>{
+            console.log('passa por no');
+            // a.dismiss();
+          }
+        }
+      ]
+    });
+
+    await a.present();
+  }
+
+  /**
+   * @description new Methos for all list
+   * @author Gaetano Sabino
+   */
+  private async allEmptying(){
+
+    if(this.listOfIdsWays.length > 0){
+    //  TODO call of method for delete all ways
+    await this.intermediaryService.presentLoading('Vacciando Calles...');
+    let result  = await this.sorterOutputService.postEmptyAllWays(
+      {waysId:this.listOfIdsWays}
+    );
+    if(result.code === 200){
+      this.listOfIdsWays = [];
+      this.disableManual = true;
+      this.disableMixed = true;
+
+      await this.manualEmptying();
+      return;
+    }else {
+
+      await this.intermediaryService.presentToastError('Error en vaciar las Calle/s');
+
+    }
+    }else {
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.presentToastError('Error en vaciar las Calle/s');
+      return;
     }
   }
 
@@ -122,7 +187,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       this.matrix.changeEmptyingForWay(0, selectedWay.iHeight, selectedWay.iCol);
       this.disableAuto = true;
       this.disableManual = true;
-      let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+      let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id === selectedWay.column.way.id);
       if (someWay >= 0) {
         this.waysToUpdate[someWay] = selectedWay.column.way;
         this.waysToUpdate[someWay].new_emptying = 0;
@@ -143,7 +208,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       this.matrix.changeEmptyingForWay(1, selectedWay.iHeight, selectedWay.iCol);
       this.disableAuto = true;
       this.disableManual = true;
-      let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+      let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id === selectedWay.column.way.id);
       if (someWay >= 0) {
         this.waysToUpdate[someWay] = selectedWay.column.way;
         this.waysToUpdate[someWay].new_emptying = 1;
@@ -161,12 +226,12 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     await this.intermediaryService.presentLoading('Invirtiendo tipo de vaciado...');
     let selectedWay = null;
     for(selectedWay of this.lastWaysSelected) {
-      if(selectedWay.column.way.manual == 1){
+      if(selectedWay.column.way.manual === 1){
         this.matrix.changeEmptyingForWay(0, selectedWay.iHeight, selectedWay.iCol);
         this.disableAuto = true;
         this.disableManual = true;
         this.disableMixed = true;
-        let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+        let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id === selectedWay.column.way.id);
         if (someWay >= 0) {
           this.waysToUpdate[someWay] = selectedWay.column.way;
           this.waysToUpdate[someWay].new_emptying = 0;
@@ -180,7 +245,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
         this.disableAuto = true;
         this.disableManual = true;
         this.disableMixed = true;
-        let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id == selectedWay.column.way.id);
+        let someWay = this.waysToUpdate.findIndex(wayToUpdate => wayToUpdate.id === selectedWay.column.way.id);
         if (someWay >= 0) {
           this.waysToUpdate[someWay] = selectedWay.column.way;
           this.waysToUpdate[someWay].new_emptying = 1;
@@ -196,7 +261,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   }
 
   private async changeWayManual() {
-    let waysToUpdate = this.waysToUpdate.filter(wayToUpdate => wayToUpdate.manual != wayToUpdate.new_emptying);
+    let waysToUpdate = this.waysToUpdate.filter(wayToUpdate => wayToUpdate.manual !== wayToUpdate.new_emptying);
 
     let paramsChangeWayManual = waysToUpdate.map(wayToUpdate => {
       return {
@@ -207,9 +272,9 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     this.sorterOutputService
       .postChangeWayManual({ ways: paramsChangeWayManual })
       .then(async (res: SorterOutputModel.ResponseChangeWayManual) => {
-        if (res.code == 200) {
+        if (res.code === 200) {
           for (let way of paramsChangeWayManual) {
-            let wayToUpdateFound = this.waysToUpdate.find(wayToUpdate => wayToUpdate.id == way.wayId);
+            let wayToUpdateFound = this.waysToUpdate.find(wayToUpdate => wayToUpdate.id === way.wayId);
             if (wayToUpdateFound) {
               wayToUpdateFound.manual = (way.manual ? 1 : 0);
             }

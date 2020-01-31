@@ -4,18 +4,23 @@
       <sorter-matrix-emptying
         [height]="'50vh'"
         [width]="'100%'"
+
+        (listOfIdsWays)="listOfIdsWays = $event"
         (columnSelected)="columnSelected($event)">
+
       </sorter-matrix-emptying>
 
       <suite-sorter-actions-emptying
         [height]="'40vh'"
         [width]="'100%'"
+        [disableAllSelect]="disableFullSelect"
         [disableAuto]="disableAuto"
         [disableManual]="disableManual"
         [disableMixed]="disableMixed"
         (autoEmptying)="autoEmptying()"
         (manualEmptying)="manualEmptying()"
-        (mixedEmptying)="mixedEmptying()">
+        (mixedEmptying)="mixedEmptying()"
+        (allEmptying)="creatAler()">
       </suite-sorter-actions-emptying>
     </div>
 
