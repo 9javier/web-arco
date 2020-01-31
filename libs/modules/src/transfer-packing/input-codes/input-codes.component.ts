@@ -9,6 +9,8 @@ import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
 import { IntermediaryService } from '@suite/services';
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
+import {KeyboardService} from "../../../../services/src/lib/keyboard/keyboard.service";
+import {ToolbarProvider} from "../../../../services/src/providers/toolbar/toolbar.provider";
 
 @Component({
   selector: 'suite-input-codes',
@@ -37,6 +39,8 @@ export class InputCodesComponent implements OnInit {
     private settingsService: SettingsService,
     private carriersService: CarriersService,
     private itemReferencesProvider: ItemReferencesProvider,
+    private keyboardService: KeyboardService,
+    private toolbarProvider: ToolbarProvider,
     private audioProvider: AudioProvider
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
@@ -178,6 +182,12 @@ export class InputCodesComponent implements OnInit {
     if (this.loading) {
       this.loading.dismiss();
       this.loading = null;
+    }
+  }
+
+  public onFocus(event){
+    if(event && event.target && event.target.id){
+      this.keyboardService.setInputFocused(event.target.id);
     }
   }
 
