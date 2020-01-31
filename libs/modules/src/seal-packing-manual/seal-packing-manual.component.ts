@@ -25,5 +25,4 @@ export class SealPackingManualComponent implements OnInit {
     this.toolbarProvider.currentPage.next("Precintar embalaje");
   }
 
-
 }
