@@ -1,55 +1,56 @@
 <ion-content>
   <ion-row>
     <ion-col id="reset">
-      <ion-button (click)="ngOnInit()">
+      <ion-button (click)="resetFilters()">
         <ion-icon name="refresh"></ion-icon>
       </ion-button>
     </ion-col>
   </ion-row>
-  <div class="table-container" *ngIf="dataSourceUsers">
-    <mat-table [dataSource]="dataSourceUsers">
+  <div class="table-container">
+    <mat-table [dataSource]="tablePermissions">
       <ng-container matColumnDef="user">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Usuario</span>
-          <mat-icon matTooltipPosition="above" (click)="openFilterComponent($event, 'user')">{{body.users.length > 0 ? 'playlist_add_check' : 'reorder'}}</mat-icon>
+          <mat-icon (click)="openFilter('Usuarios')">{{isFiltering('user')}}</mat-icon>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.userName}} </mat-cell>
+        <mat-cell *matCellDef="let permission">{{permission.user.name}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="warehouse">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Almacén</span>
-          <mat-icon matTooltipPosition="above" (click)="openFilterComponent($event, 'warehouse')">{{body.warehouses.length > 0 ? 'playlist_add_check' : 'reorder'}}</mat-icon>
+          <mat-icon (click)="openFilter('Almacenes')">{{isFiltering('warehouse')}}</mat-icon>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.warehouseName}} </mat-cell>
+        <mat-cell *matCellDef="let permission">{{permission.warehouse.name}}</mat-cell>
       </ng-container>
-      <ng-container *ngFor="let role of dataSourceRoles;let i = index" matColumnDef="{{ role.id }}">
-        <mat-header-cell *matHeaderCellDef class="centre-header">{{ role.name }}</mat-header-cell>
-        <mat-cell *matCellDef="let element; let id = index" class="centre-cell">
-          <mat-checkbox [ngModel] = element.roles[i].checked (change)="changeCheckRol($event, element, i)"></mat-checkbox>
+      <ng-container *ngFor="let role of tableRoles; let i = index" matColumnDef="{{role.id}}">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">{{role.name}}</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let permission" class="center">
+          <mat-checkbox [checked]="isChecked(role, permission.roles)" (change)="changeRole(role, permission.id)"></mat-checkbox>
         </mat-cell>
       </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+      <mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let permission; columns: tableColumns;"></mat-row>
     </mat-table>
   </div>
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
   <ion-row>
     <ion-col>
-      <ion-fab-button *ngIf="listToUpdate.length > 0" color="dark"  matTooltip="Guardar" matTooltipClass="tooltip" matTooltipPosition="above" (click)="saveChanges($event)">
+      <ion-fab-button color="dark"  matTooltip="Guardar cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="saveChanges()" *ngIf="thereAreChanges">
         <ion-icon name="save"></ion-icon>
       </ion-fab-button>
     </ion-col>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Agregar" matTooltipClass="tooltip" matTooltipPosition="above" (click)="addNewRol()">
+      <ion-fab-button color="dark"  matTooltip="Nuevo rol" matTooltipClass="tooltip" matTooltipPosition="above" (click)="newRole()">
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-col>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Limpiar" matTooltipClass="tooltip" matTooltipPosition="above" (click)="refreshAll()">
+      <ion-fab-button color="dark"  matTooltip="Deshacer cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()">
         <ion-icon name="undo"></ion-icon>
       </ion-fab-button>
     </ion-col>
   </ion-row>
 </ion-fab>
-

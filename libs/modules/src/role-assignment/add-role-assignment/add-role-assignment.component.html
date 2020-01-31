@@ -41,7 +41,7 @@
         <ion-list>
           <ion-item *ngFor="let rol of form.roles">
             <ion-label>{{rol.name}}</ion-label>
-            <ion-checkbox [value]="rol.value" [ngModel]="rol.isChecked" (ionChange)="changeCheckbox(rol.value, rol.isChecked)" color="dark" slot="start"></ion-checkbox>
+            <ion-checkbox [value]="rol.id" [ngModel]="rol.isChecked" (ionChange)="changeCheckbox(rol.id, rol.isChecked)" color="dark" slot="start"></ion-checkbox>
           </ion-item>
         </ion-list>
       </mat-form-field>
