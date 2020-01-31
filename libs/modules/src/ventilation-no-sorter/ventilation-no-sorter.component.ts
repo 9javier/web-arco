@@ -4,8 +4,7 @@ import {AudioProvider} from "../../../services/src/providers/audio-provider/audi
 import {
   CarrierService,
   IntermediaryService,
-  InventoryService,
-  SizeModel, UsersService,
+  SizeModel,
   WarehouseModel,
   WarehousesService
 } from "@suite/services";
@@ -49,7 +48,6 @@ export class VentilationNoSorterComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private pickingStoreService: PickingStoreService,
     private warehousesService: WarehousesService,
-    private inventoryService: InventoryService,
     private carrierService: CarrierService
   ) {}
 
@@ -172,7 +170,12 @@ export class VentilationNoSorterComponent implements OnInit {
         force: true,
         avoidAvelonMovement: true
       };
-      await this.inventoryService.postStore(inventoryProcess);
+      await this.pickingStoreService
+        .postVentilate({
+          paramsCreateInventory: inventoryProcess,
+          needNotifyAvelon: !this.destinyWarehouse || (this.destinyWarehouse && this.destinyWarehouse.reference == '000'),
+          withSorter: false
+        });
       this.resetScanner();
       this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
       this.waitingForPacking = false;

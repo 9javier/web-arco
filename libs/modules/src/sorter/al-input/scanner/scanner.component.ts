@@ -16,6 +16,7 @@ import { ScannerRackComponent } from '../scanner-rack/scanner-rack.component';
 import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {KeyboardService} from "../../../../../services/src/lib/keyboard/keyboard.service";
 import {CarrierModel} from "../../../../../services/src/models/endpoints/carrier.model";
+import {PickingStoreService} from "../../../../../services/src/lib/endpoint/picking-store/picking-store.service";
 
 @Component({
   selector: 'sorter-input-scanner',
@@ -66,7 +67,8 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
     private audioProvider: AudioProvider,
     private keyboardService: KeyboardService,
     private inventoryService: InventoryService,
-    private carrierService: CarrierService
+    private carrierService: CarrierService,
+    private pickingStoreService: PickingStoreService
   ) {
     this.timeMillisToResetScannedCode = al_environment.time_millis_reset_scanned_code;
     this.timeMillisToQuickUserFromSorterProcess = al_environment.time_millis_quick_user_sorter_process;
@@ -567,20 +569,25 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       await this.intermediaryService.presentLoading('Asignando artículo al embalaje...');
     }
 
-    const params = {
+    const paramsCreateInventory = {
       productReference: this.productToSetInSorter,
       avoidAvelonMovement: true,
       packingReference: packingReferenceToSet,
     };
-    this.inventoryService
-      .postStore(params)
-      .then(async (res: InventoryModel.ResponseStore) => {
-        await this.intermediaryService.dismissLoading();
+
+    await this.pickingStoreService
+      .postVentilate({
+        paramsCreateInventory: paramsCreateInventory,
+        needNotifyAvelon: this.productScanned && (!this.productScanned.destinyWarehouse || (this.productScanned.destinyWarehouse && this.productScanned.destinyWarehouse.reference == '000')),
+        withSorter: true
+      })
+      .then(async (res) => {
         if (res.code == 201) {
           this.destiniesWithPacking[this.destinyCodeToGetPacking] = packingReferenceToSet;
           await this.intermediaryService.presentToastSuccess(`El artículo se ha asignado al embalaje ${packingReferenceToSet}`, 4 * 1000, 'bottom');
           this.resetLastScanProcess();
           this.audioProvider.playDefaultOk();
+          await this.intermediaryService.dismissLoading();
         } else {
           this.audioProvider.playDefaultError();
           let errorMessage = `Ha ocurrido un error al intentar asignar el artículo al embalaje ${packingReferenceToSet}.`;
@@ -588,6 +595,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
             errorMessage = res.errors;
           }
           await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+          await this.intermediaryService.dismissLoading();
         }
       })
       .catch(async (error) => {
@@ -598,6 +606,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           errorMessage = error.error.errors;
         }
         await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+        await this.intermediaryService.dismissLoading();
       });
   }
 
