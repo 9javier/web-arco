@@ -106,7 +106,7 @@ export class AddRoleAssignmentComponent implements OnInit {
       obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
         const roles = res.body.data;
         this.form.roles = roles.map(rol => ({
-          value: rol.id,
+          id: rol.id,
           name: rol.name,
           isChecked: false
         }));
@@ -131,7 +131,7 @@ export class AddRoleAssignmentComponent implements OnInit {
 
   changeCheckbox(id: number, isChecked: boolean) {
     this.form.roles.forEach((rol) => {
-      if (rol.value === id) {
+      if (rol.id === id) {
         rol.isChecked = !isChecked;
       }
     });
