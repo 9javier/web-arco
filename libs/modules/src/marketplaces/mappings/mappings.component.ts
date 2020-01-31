@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
-import { MarketplacesPrestaService } from '../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
-import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
-import { MatTableDataSource, MatPaginator, MatPaginatorIntl } from '@angular/material';
-import { Observable, forkJoin } from 'rxjs'
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
+import {MarketplacesPrestaService} from '../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
+import {MarketplacesMgaService} from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import {MatTableDataSource, MatPaginator, MatPaginatorIntl} from '@angular/material';
+import {Observable, forkJoin} from 'rxjs'
 
 import {PaginatorLanguageComponent} from "../../components/paginator-language/paginator-language.component";
 import {HttpClient} from "@angular/common/http";
@@ -14,7 +14,7 @@ import {HttpClient} from "@angular/common/http";
   templateUrl: './mappings.component.html',
   styleUrls: ['./mappings.component.scss'],
   providers: [
-    { provide: MatPaginatorIntl, useValue: PaginatorLanguageComponent() }
+    {provide: MatPaginatorIntl, useValue: PaginatorLanguageComponent()}
   ]
 })
 
@@ -48,14 +48,14 @@ export class MappingsComponent implements OnInit {
   private showingSizes;
 
   constructor(
-      private route: ActivatedRoute,
-      private router : Router,
-      private marketplacesService: MarketplacesService,
-      private marketplacesPrestaService: MarketplacesPrestaService,
-      private marketplacesMgaService: MarketplacesMgaService,
-      private http: HttpClient
-    ) {
-    console.log(this.route.snapshot.data['name']) 
+    private route: ActivatedRoute,
+    private router: Router,
+    private marketplacesService: MarketplacesService,
+    private marketplacesPrestaService: MarketplacesPrestaService,
+    private marketplacesMgaService: MarketplacesMgaService,
+    private http: HttpClient
+  ) {
+    console.log(this.route.snapshot.data['name'])
   }
 
   ngOnInit() {
@@ -84,11 +84,11 @@ export class MappingsComponent implements OnInit {
       this.marketplacesMgaService.getFeaturesByMarket(1)
     ]).subscribe(results => {
 
-      if(results[0].length) {
+      if (results[0].length) {
         results[0].forEach(brand => {
           this.dataSourceBrands.push({
             id: null,
-            avelonData: {id: brand.id, name: brand.name},
+            avelonData: {id: brand.id, name: brand.name.trim()},
             marketData: {id: -1, name: null}
           });
         });
@@ -102,13 +102,13 @@ export class MappingsComponent implements OnInit {
         results[1].forEach(color => {
           this.dataSourceColors.push({
             id: null,
-            avelonData: {id: color.id, name: color.name},
+            avelonData: {id: color.id, name: color.name.trim()},
             marketData: {id: -1, name: null}
           });
         });
         this.dataSourceColors.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
-        setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
+        //setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
         this.showingColors = this.dataSourceColors.slice(0, 10);
       }
 
@@ -116,13 +116,13 @@ export class MappingsComponent implements OnInit {
         results[2].forEach(size => {
           this.dataSourceSizes.push({
             id: null,
-            avelonData: {id: size.id, name: size.name},
+            avelonData: {id: size.id, name: size.name.trim()},
             marketData: {id: -1, name: null}
           });
         });
         this.dataSourceSizes.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-        setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
+        //setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
         this.showingSizes = this.dataSourceSizes.slice(0, 10);
       }
 
@@ -130,13 +130,13 @@ export class MappingsComponent implements OnInit {
         results[3].forEach(feature => {
           this.dataSourceFeatures.push({
             id: null,
-            avelonData: {id: feature.id, name: feature.name, group: feature.groupNumber},
+            avelonData: {id: feature.id, name: feature.name.trim(), group: feature.groupNumber},
             marketData: {id: -1, name: null}
           });
         });
         this.dataSourceFeatures.sort((a, b) => (a.avelonData.group > b.avelonData.group) ? 1 : ((b.avelonData.group > a.avelonData.group) ? -1 : ((a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0))));
         this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-        setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+        //setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
         this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
       }
 
@@ -153,7 +153,7 @@ export class MappingsComponent implements OnInit {
 
   updataDataSaved() {
     this.marketplacesService.getMapDataRules().subscribe(data => {
-      if(data) {
+      if (data) {
         this.dataDBsave = data;
       }
     });
@@ -162,13 +162,13 @@ export class MappingsComponent implements OnInit {
   getDestinyValues() {
     this.http.get('assets/data/mapping-prestashop-data.json').subscribe((data: any) => {
       this.brandsList = data.brands;
-      this.brandsList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+      this.brandsList.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.sizesList = data.sizes;
-      this.sizesList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+      this.sizesList.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.featuresList = data.features;
-      this.featuresList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+      this.featuresList.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.colorsList = data.colors;
-      this.colorsList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+      this.colorsList.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.getMaps();
     });
   }
@@ -235,7 +235,7 @@ export class MappingsComponent implements OnInit {
 
   getEntities() {
     this.marketplacesService.getMapEntities().subscribe(data => {
-      if(data && data.enumItem) {
+      if (data && data.enumItem) {
         this.enumTypes = data.enumItem;
         console.log(this.enumTypes)
       } else {
@@ -247,28 +247,28 @@ export class MappingsComponent implements OnInit {
   getMaps() {
 
     this.marketplacesService.getMapDataRules().subscribe(data => {
-      if(data) {
+      if (data) {
         this.dataDBsave = data;
         data.forEach(item => {
-          switch(item.typeMapped) {
+          switch (item.typeMapped) {
             case 3:
               let dataColor = this.dataSourceMappingColors.data;
 
               let colorMarket = {id: 0, name: ''};
 
-              if(item.marketDataId == null) {
+              if (item.marketDataId == null) {
                 colorMarket.name = item.marketDataId;
                 colorMarket.id = -1;
               } else {
                 this.colorsList.forEach(color => {
-                  if(color.name == item.marketDataId){
+                  if (color.name == item.marketDataId) {
                     colorMarket = color;
                   }
                 })
               }
 
               dataColor.forEach(data => {
-                if(data.avelonData.name == item.originDataId) {
+                if (data.avelonData.name == item.originDataId) {
                   data.marketData = {
                     id: colorMarket.id,
                     name: colorMarket.name
@@ -280,22 +280,22 @@ export class MappingsComponent implements OnInit {
               break;
             case 4:
               let dataSize = this.dataSourceMappingSizes.data;
-              
+
               let sizeMarket = {id: 0, name: ''};
 
-              if(item.marketDataId == null) {
+              if (item.marketDataId == null) {
                 sizeMarket.name = item.marketDataId;
                 sizeMarket.id = -1;
               } else {
                 this.sizesList.forEach(size => {
-                  if(size.name == item.marketDataId){
+                  if (size.name == item.marketDataId) {
                     sizeMarket = size;
                   }
                 })
               }
 
               dataSize.forEach(data => {
-                if(data.avelonData.name == item.originDataId) {
+                if (data.avelonData.name == item.originDataId) {
                   data.marketData = {
                     id: sizeMarket.id,
                     name: sizeMarket.name
@@ -310,18 +310,18 @@ export class MappingsComponent implements OnInit {
 
               let brandMarket = {id: 0, name: ''};
 
-              if(item.marketDataId == null) {
+              if (item.marketDataId == null) {
                 brandMarket.name = item.marketDataId;
                 brandMarket.id = -1;
               } else {
                 this.brandsList.forEach(brand => {
-                  if(brand.name == item.marketDataId){
+                  if (brand.name == item.marketDataId) {
                     brandMarket = brand;
                   }
                 })
               }
               dataBrand.forEach(data => {
-                if(data.avelonData.name == item.originDataId) {
+                if (data.avelonData.name == item.originDataId) {
                   data.marketData = {
                     id: brandMarket.id,
                     name: brandMarket.name
@@ -332,37 +332,37 @@ export class MappingsComponent implements OnInit {
               this.dataSourceMappingBrands.data = dataBrand;
               break;
             case 8:
-                let  dataFeature = this.dataSourceMappingFeatures.data;
-  
-                let featureMarket = {id: 0, name: ''};
-  
-                if(item.marketDataId == null) {
-                  featureMarket.name = item.marketDataId;
-                  featureMarket.id = -1;
-                } else {
-                  this.featuresList.forEach(feature => {
-                    if(feature.name == item.marketDataId){
-                      featureMarket = feature;
-                    }
-                  })
-                }
+              let dataFeature = this.dataSourceMappingFeatures.data;
 
-                dataFeature.forEach(data => {
-                  if(data.avelonData.name == item.originDataId) {
-                    data.marketData = {
-                      id: featureMarket.id,
-                      name: featureMarket.name
-                    }
+              let featureMarket = {id: 0, name: ''};
+
+              if (item.marketDataId == null) {
+                featureMarket.name = item.marketDataId;
+                featureMarket.id = -1;
+              } else {
+                this.featuresList.forEach(feature => {
+                  if (feature.name == item.marketDataId) {
+                    featureMarket = feature;
                   }
-                });
+                })
+              }
 
-                this.dataSourceMappingFeatures.data = dataFeature;
-                break;
+              dataFeature.forEach(data => {
+                if (data.avelonData.name == item.originDataId) {
+                  data.marketData = {
+                    id: featureMarket.id,
+                    name: featureMarket.name
+                  }
+                }
+              });
+
+              this.dataSourceMappingFeatures.data = dataFeature;
+              break;
           }
         });
       } else {
         console.log('error get map data rules')
-        
+
       }
     })
   }
@@ -370,9 +370,9 @@ export class MappingsComponent implements OnInit {
   saveMock() {
     this.dataSourceMappingBrands.filteredData.forEach(item => {
       this.brandsList.forEach(brand => {
-        if(item.id == brand.id) {
+        if (item.id == brand.id) {
           let brandMockToSave = {};
-          if(item.marketData.name != null) {
+          if (item.marketData.name != null) {
             brandMockToSave = {
               id: item.id,
               originDataId: item.avelonData.name,
@@ -401,9 +401,9 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceMappingColors.filteredData.forEach(item => {
       this.colorsList.forEach(color => {
-        if(item.id == color.id) {
+        if (item.id == color.id) {
           let colorsMockToSave = {};
-          if(item.marketData.name != null) {
+          if (item.marketData.name != null) {
             colorsMockToSave = {
               id: item.id,
               originDataId: item.avelonData.name,
@@ -432,9 +432,9 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceMappingSizes.filteredData.forEach(item => {
       this.sizesList.forEach(size => {
-        if(item.id == size.id) {
+        if (item.id == size.id) {
           let sizesMockToSave = {};
-          if(item.marketData.name != null) {
+          if (item.marketData.name != null) {
             sizesMockToSave = {
               id: item.id,
               originDataId: item.avelonData.name,
@@ -464,9 +464,9 @@ export class MappingsComponent implements OnInit {
 
     this.dataSourceMappingFeatures.filteredData.forEach(item => {
       this.featuresList.forEach(feature => {
-        if(item.id == feature.id) {
+        if (item.id == feature.id) {
           let featuresMockToSave = {};
-          if(item.marketData.name != null) {
+          if (item.marketData.name != null) {
             featuresMockToSave = {
               id: item.id,
               originDataId: item.avelonData.name,
@@ -498,13 +498,13 @@ export class MappingsComponent implements OnInit {
     let marketData;
 
     this.brandsList.forEach(item => {
-      if(item.id == e.value) {
+      if (item.id == e.value) {
         marketData = item;
       }
     });
 
     let marketDataId = '';
-    if(marketData) {
+    if (marketData) {
       marketDataId = marketData.name;
     } else {
       marketDataId = null;
@@ -522,13 +522,13 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if(item.originDataId == element.avelonData.name) {
+      if (item.originDataId == element.avelonData.name) {
         update = true;
         idToUpdate = item.id;
       }
     });
 
-    if(update) {
+    if (update) {
       this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
         console.log(data)
         this.updataDataSaved();
@@ -545,13 +545,13 @@ export class MappingsComponent implements OnInit {
     let marketData;
 
     this.colorsList.forEach(item => {
-      if(item.id == e.value) {
+      if (item.id == e.value) {
         marketData = item;
       }
     });
 
     let marketDataId = '';
-    if(marketData) {
+    if (marketData) {
       marketDataId = marketData.name;
     } else {
       marketDataId = null;
@@ -569,13 +569,13 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if(item.originDataId == element.avelonData.name) {
+      if (item.originDataId == element.avelonData.name) {
         update = true;
         idToUpdate = item.id;
       }
     });
 
-    if(update) {
+    if (update) {
       this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
         console.log(data)
         this.updataDataSaved();
@@ -593,13 +593,13 @@ export class MappingsComponent implements OnInit {
     let marketData;
 
     this.sizesList.forEach(item => {
-      if(item.id == e.value) {
+      if (item.id == e.value) {
         marketData = item;
       }
     });
 
     let marketDataId = '';
-    if(marketData) {
+    if (marketData) {
       marketDataId = marketData.name;
     } else {
       marketDataId = null;
@@ -617,13 +617,13 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if(item.originDataId == element.avelonData.name) {
+      if (item.originDataId == element.avelonData.name) {
         update = true;
         idToUpdate = item.id;
       }
     });
 
-    if(update) {
+    if (update) {
       this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
         console.log(data)
         this.updataDataSaved();
@@ -640,13 +640,13 @@ export class MappingsComponent implements OnInit {
     let marketData;
 
     this.featuresList.forEach(item => {
-      if(item.id == e.value) {
+      if (item.id == e.value) {
         marketData = item;
       }
     });
 
     let marketDataId = '';
-    if(marketData) {
+    if (marketData) {
       marketDataId = marketData.name;
     } else {
       marketDataId = null;
@@ -664,13 +664,13 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if(item.originDataId == element.avelonData.name) {
+      if (item.originDataId == element.avelonData.name) {
         update = true;
         idToUpdate = item.id;
       }
     });
 
-    if(update) {
+    if (update) {
       this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
         console.log(data)
         this.updataDataSaved();
