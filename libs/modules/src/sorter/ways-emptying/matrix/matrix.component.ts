@@ -106,11 +106,16 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number,check=false) {
-    console.log(this.listZonesWithColors,column);
+    // console.log(this.listZonesWithColors,column);
     // this.listZonesWithColors.filter(x => x.id === column.way.templateZone.zones.id).map( y => y.checks = false);
     let wayS = null;
     this.flag = false;
     for(wayS of this.waysSelected){
+      if(wayS === column.way && check){
+        console.log('passa di qui');
+        this.flag = false;
+        return;
+      }
       if(wayS === column.way){
         console.log('passa di qui',wayS);
         this.flag = true;
@@ -123,9 +128,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       this.waysSelected.push(column.way);
       this.listaWay(this.waysSelected);
     }
-    if(check){
-      console.log('passiamo per qui check');
-    }
+
     this.columnSelected.next({column, iHeight, iCol});
     this.listOfIdsWays.next(this.waysSelected.map(x => x.id));
   }
