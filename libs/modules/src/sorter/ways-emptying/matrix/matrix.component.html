@@ -29,7 +29,7 @@
           <div class="color-zone" [ngStyle]="{'background-color': zoneColor.id == 0 ? 'var(--ion-color-background-zone-selected)' : zoneColor.color, 'filter': zoneColor.id == 0 ? 'grayscale(0.5)' : 'grayscale(0)'}">
           </div>
           <span class="name-zone">{{zoneColor.name}}</span>
-          <ion-checkbox slot="end" [(ngModel)]="listZonesWithColors[i].checks"></ion-checkbox>
+          <ion-checkbox slot="end" [(ngModel)]="listZonesWithColors[i].checks "></ion-checkbox>
         </ion-item>
       </div>
     </div>

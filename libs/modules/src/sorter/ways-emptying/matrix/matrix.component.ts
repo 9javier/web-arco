@@ -23,14 +23,13 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   private listZonesWithColors: ZoneSorterModel.ZoneColor[] = [];
   private isTemplateWithEqualZones: boolean = false;
-
+  flag:boolean;
   public waySelected: number | null = null;
   public waysSelected: any[] = [];
+  private listOfIdsYWays = [];
 
   private ids = [];
   private listas = [];
-
-
 
   constructor(
     private events: Events,
@@ -42,7 +41,6 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.waysSelected = [];
-    // console.log(this.sorterTemplateMatrix);
   }
 
   ngOnDestroy() {
@@ -107,21 +105,63 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number) {
-    console.log(this.waysSelected);
+  selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number,check=false) {
+    console.log(this.listZonesWithColors,column);
+    // this.listZonesWithColors.filter(x => x.id === column.way.templateZone.zones.id).map( y => y.checks = false);
     let wayS = null;
-    let flag = false;
+    this.flag = false;
     for(wayS of this.waysSelected){
       if(wayS === column.way){
-        flag = true;
+        console.log('passa di qui',wayS);
+        this.flag = true;
         this.removeItemFromArr( this.waysSelected, wayS );
+        this.listaWay(this.waysSelected)
       }
     }
-    if(flag === false){
+    if(this.flag === false){
+      console.log('passa di qui');
       this.waysSelected.push(column.way);
+      this.listaWay(this.waysSelected);
+    }
+    if(check){
+      console.log('passiamo per qui check');
     }
     this.columnSelected.next({column, iHeight, iCol});
     this.listOfIdsWays.next(this.waysSelected.map(x => x.id));
+  }
+
+  listaWay(lista:Array<any>){
+    if(lista.length === 0){
+      this.listZonesWithColors.map(x => x.checks = false);
+    }
+    let xs = lista.map(x => ({id:x.templateZone.zones.id,way:x.id}));
+    // console.log({x:lista,y:this.listOfIdsYWays},{xs});
+    this.callLsit(lista);
+  }
+
+  private callLsit(lista){
+    let numero;
+    this.listOfIdsYWays.forEach(x => {
+      let id;
+      numero = 0;
+      lista.forEach(y => {
+        if(x.id === y.templateZone.zones.id){
+          numero ++
+          id = x.id;
+          // tslint:disable-next-line:no-unused-expression
+          {id: y.templateZone.zones.id;num:numero};
+        }
+        x['numero']=numero;
+        if(x['numero'] === x.tot){
+          this.listZonesWithColors.filter(way => way.id === x.id ).map(ws => ws.checks = true);
+        }else{
+          this.listZonesWithColors.filter(way => way.id === x.id ).map(ws => ws.checks = false);
+        }
+      });
+
+      // console.log({id,numero});
+      // console.log(this.listOfIdsYWays);
+    })
   }
 
   removeItemFromArr( arr, item ) {
@@ -137,30 +177,42 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   check(lista:ZoneSorterModel.ZoneColor){
+    // lista.checks = !lista.checks;
+    console.log(lista.checks);
     let list = [];
+    let wayS = null;
+    if(lista.checks){
+
+    }else{
+      // this.refresh();
+    }
+
     let newList = this.sorterTemplateMatrix.map((x,i) => x.columns.map((y,is) => ({way:y.way.templateZone.zones.id,index:is,indexx:i,column:y})));
     newList.forEach(ele => {
       ele = ele.filter(x => x.column.way.templateZone.zones.color.hex === lista.color);
       if(ele.length !== 0){
         ele.forEach(w => {
-          this.selectWay(w.column,w.indexx,w.index)
-          list.push(w);
+          this.selectWay(w.column,w.indexx,w.index,lista.checks)
+          // list.push(w);
         });
       }
     });
-   if(lista.checks === true){
-     list = list.map(x => x.column.way.id);
-     this.checkList(list,lista.id);
-   }else{
-     this.ids = this.ids.filter(x => x !== lista.id);
-     list.forEach(x => {
-       // console.log(x.column.way.id);
-       this.listas = this.listas.filter( y => y !== x.column.way.id);
-     });
-     // console.log(this.listas);
-     this.listOfIdsWays.next(this.listas)
-   }
+   //  if(lista.checks === true){
+   //   list = list.map(x => x.column.way.id);
+   //   this.checkList(list,lista.id);
+   // }else{
+   //   console.log('passiamo per di qui');
+   //   this.ids = this.ids.filter(x => x !== lista.id);
+   //   list.forEach(x => {
+   //     // console.log(x.column.way.id);
+   //     this.listas = this.listas.filter( y => y !== x.column.way.id);
+   //     console.log(this.listas);
+   //   });
+   //   // console.log(this.listas);
+   //   this.listOfIdsWays.next(this.listas)
+   //  }
   }
+
 
   checkList(lista$:number[],id:number){
    if(this.ids.length === 0){
@@ -183,19 +235,39 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     // console.log(this.listZonesWithColors);
     let list :MatrixSorterModel.MatrixTemplateSorter;
     let col ;
+    let idslenght = {};
+    let listaIds = [];
+    let pset = new Set();
     for(list of lista){
       // tslint:disable-next-line:forin
       for (col of list.columns){
-
-        console.log(col);
+        idslenght = {
+          idZona:col.way.templateZone.zones.id,
+          listas:[col.way.id]
+        }
+        pset.add(col.way.templateZone.zones.id);
+        // console.log(col);
+        listaIds.push(idslenght);
       }
-
     }
+    let newList= Array.from(pset);
+    let newOb ={};
+    let listanew = [];
+    let listanew2 = [];
+    newList.forEach(x =>{
+
+      listanew = listaIds.filter(xs => xs.idZona === x);
+      listanew2.push({x,listanew,num:listanew.length})
+
+    });
+    listanew2 = listanew2.map(x => ({id:x.x,ways:x.listanew,tot:x.num}))
+    this.listOfIdsYWays = listanew2;
+    // console.log({listaIds,newList,listanew2});
   }
 
   public loadNewMatrix(newMatrix: MatrixSorterModel.MatrixTemplateSorter[] ) {
     this.sorterTemplateMatrix = newMatrix;
-    // this.checkListas(newMatrix);
+    this.checkListas(newMatrix);
     let savedIds: any = {};
     this.listZonesWithColors = [];
 
@@ -234,7 +306,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
         })
       }
     }
-    console.log(this.listZonesWithColors);
+    // console.log(this.listZonesWithColors);
   }
 
   public changeEmptyingForWay(newEmptying: number, iHeight: number, iCol: number) {
