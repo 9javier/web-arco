@@ -1,0 +1,1556 @@
+{
+	"features": [
+    {
+      "group": "9",
+      "id": "116",
+      "name": "Tacón alto (más de 6 cm)"
+    },
+    {
+      "group": "9",
+      "id": "117",
+      "name": "-"
+    },
+    {
+      "group": "9",
+      "id": "119",
+      "name": "-"
+    },
+    {
+      "group": "9",
+      "id": "120",
+      "name": "Plano"
+    },
+    {
+      "group": "7",
+      "id": "126",
+      "name": "- "
+    },
+    {
+      "group": "7",
+      "id": "127",
+      "name": "Piel"
+    },
+    {
+      "group": "7",
+      "id": "128",
+      "name": "Piel y sintético"
+    },
+    {
+      "group": "7",
+      "id": "129",
+      "name": "Piel y textil"
+    },
+    {
+      "group": "7",
+      "id": "130",
+      "name": "Sintético"
+    },
+    {
+      "group": "7",
+      "id": "131",
+      "name": "Textil"
+    },
+    {
+      "group": "7",
+      "id": "132",
+      "name": "Textil y sintético"
+    },
+    {
+      "group": "6",
+      "id": "134",
+      "name": "-"
+    },
+    {
+      "group": "6",
+      "id": "135",
+      "name": "Piel"
+    },
+    {
+      "group": "6",
+      "id": "136",
+      "name": "Piel y sintético"
+    },
+    {
+      "group": "6",
+      "id": "137",
+      "name": "Piel y textil"
+    },
+    {
+      "group": "6",
+      "id": "139",
+      "name": "Sintético"
+    },
+    {
+      "group": "6",
+      "id": "140",
+      "name": "Textil"
+    },
+    {
+      "group": "6",
+      "id": "141",
+      "name": "TEXTIL-PIEL"
+    },
+    {
+      "group": "6",
+      "id": "142",
+      "name": "Textil y sintético"
+    },
+    {
+      "group": "9",
+      "id": "144",
+      "name": "Tacón de más de 12 cm "
+    },
+    {
+      "group": "9",
+      "id": "145",
+      "name": "Tacón 10 cm "
+    },
+    {
+      "group": "9",
+      "id": "146",
+      "name": "Tacón 11 cm "
+    },
+    {
+      "group": "9",
+      "id": "147",
+      "name": "Tacón 12 cm "
+    },
+    {
+      "group": "9",
+      "id": "148",
+      "name": "Tacón 7 cm "
+    },
+    {
+      "group": "9",
+      "id": "149",
+      "name": "Tacón 8 cm "
+    },
+    {
+      "group": "9",
+      "id": "150",
+      "name": "Tacón 9 cm "
+    },
+    {
+      "group": "9",
+      "id": "151",
+      "name": "Tacón 4 cm "
+    },
+    {
+      "group": "9",
+      "id": "152",
+      "name": "Tacón 5 cm"
+    },
+    {
+      "group": "9",
+      "id": "153",
+      "name": "Tacón 6 cm "
+    },
+    {
+      "group": "6",
+      "id": "222",
+      "name": "TÉXTIL-SINTÉTICO-PIEL"
+    },
+    {
+      "group": "7",
+      "id": "347",
+      "name": "Textil, sintético y piel"
+    },
+    {
+      "group": "14",
+      "id": "566",
+      "name": "Mujer"
+    },
+    {
+      "group": "16",
+      "id": "685",
+      "name": "NAUTICO"
+    },
+    {
+      "group": "16",
+      "id": "686",
+      "name": "CHANCLA"
+    },
+    {
+      "group": "16",
+      "id": "687",
+      "name": "BOTA DE AGUA"
+    },
+    {
+      "group": "16",
+      "id": "688",
+      "name": "BAILARINA"
+    },
+    {
+      "group": "16",
+      "id": "689",
+      "name": "BOTA ALTA"
+    },
+    {
+      "group": "16",
+      "id": "690",
+      "name": "BOTA CABALLERO"
+    },
+    {
+      "group": "16",
+      "id": "691",
+      "name": "BOTA MEDIA CAÑA"
+    },
+    {
+      "group": "16",
+      "id": "692",
+      "name": "BOTÍN TACÓN"
+    },
+    {
+      "group": "16",
+      "id": "693",
+      "name": "BOTIN CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "694",
+      "name": "BOTÍN PLANO"
+    },
+    {
+      "group": "16",
+      "id": "695",
+      "name": "COLEGIAL"
+    },
+    {
+      "group": "16",
+      "id": "696",
+      "name": "COMPLEMENTOS"
+    },
+    {
+      "group": "16",
+      "id": "697",
+      "name": "ZAPATO CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "698",
+      "name": "DEPORTIVAS"
+    },
+    {
+      "group": "16",
+      "id": "699",
+      "name": "ESPARTO PLANO"
+    },
+    {
+      "group": "16",
+      "id": "700",
+      "name": "ESPARTO CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "701",
+      "name": "BOTAS ESQUIMALES"
+    },
+    {
+      "group": "16",
+      "id": "702",
+      "name": "MOCASIN"
+    },
+    {
+      "group": "16",
+      "id": "703",
+      "name": "NOT ASSIGNED"
+    },
+    {
+      "group": "16",
+      "id": "704",
+      "name": "BOTA DE MONTAÑA"
+    },
+    {
+      "group": "16",
+      "id": "706",
+      "name": "SALÓN"
+    },
+    {
+      "group": "16",
+      "id": "707",
+      "name": "SANDALIA PLANAFORMA"
+    },
+    {
+      "group": "16",
+      "id": "708",
+      "name": "SANDALIA PLANA"
+    },
+    {
+      "group": "16",
+      "id": "709",
+      "name": "SANDALIA CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "710",
+      "name": "SANDALIA TACÓN"
+    },
+    {
+      "group": "16",
+      "id": "711",
+      "name": "ZAPATO TACÓN"
+    },
+    {
+      "group": "16",
+      "id": "712",
+      "name": "ZAPATILLA"
+    },
+    {
+      "group": "16",
+      "id": "713",
+      "name": "ZAPATO PLANO"
+    },
+    {
+      "group": "16",
+      "id": "714",
+      "name": "ZUECO"
+    },
+    {
+      "group": "14",
+      "id": "715",
+      "name": "HOMBRE"
+    },
+    {
+      "group": "14",
+      "id": "717",
+      "name": "Productos limpieza"
+    },
+    {
+      "group": "14",
+      "id": "719",
+      "name": "NIÑA"
+    },
+    {
+      "group": "14",
+      "id": "720",
+      "name": "NIÑO"
+    },
+    {
+      "group": "14",
+      "id": "721",
+      "name": "MUJER"
+    },
+    {
+      "group": "14",
+      "id": "722",
+      "name": "UNISEX"
+    },
+    {
+      "group": "14",
+      "id": "723",
+      "name": "UNISEX (NIÑOS)"
+    },
+    {
+      "group": "7",
+      "id": "724",
+      "name": "Goretex"
+    },
+    {
+      "group": "7",
+      "id": "725",
+      "name": "Waterproof"
+    },
+    {
+      "group": "7",
+      "id": "729",
+      "name": "Amphibiox"
+    }
+  ],
+
+	"colors": [
+    {
+      "id": "189",
+      "name": "Acero"
+    },
+    {
+      "id": "21",
+      "name": "Amarillo"
+    },
+    {
+      "id": "190",
+      "name": "Arena"
+    },
+    {
+      "id": "246",
+      "name": "Azabache"
+    },
+    {
+      "id": "22",
+      "name": "Azul"
+    },
+    {
+      "id": "184",
+      "name": "Azul marino"
+    },
+    {
+      "id": "23",
+      "name": "Beige"
+    },
+    {
+      "id": "191",
+      "name": "Berenjena"
+    },
+    {
+      "id": "24",
+      "name": "Blanco"
+    },
+    {
+      "id": "192",
+      "name": "Bronce"
+    },
+    {
+      "id": "193",
+      "name": "Burdeos"
+    },
+    {
+      "id": "25",
+      "name": "Camel"
+    },
+    {
+      "id": "299",
+      "name": "Canela"
+    },
+    {
+      "id": "194",
+      "name": "Cebra"
+    },
+    {
+      "id": "195",
+      "name": "Celeste"
+    },
+    {
+      "id": "214",
+      "name": "Cobre"
+    },
+    {
+      "id": "215",
+      "name": "Combinados"
+    },
+    {
+      "id": "216",
+      "name": "Coral"
+    },
+    {
+      "id": "26",
+      "name": "Crudo"
+    },
+    {
+      "id": "27",
+      "name": "Cuero"
+    },
+    {
+      "id": "185",
+      "name": "Estampado"
+    },
+    {
+      "id": "196",
+      "name": "Francia"
+    },
+    {
+      "id": "28",
+      "name": "Fuxia"
+    },
+    {
+      "id": "197",
+      "name": "Granate"
+    },
+    {
+      "id": "29",
+      "name": "Gris"
+    },
+    {
+      "id": "198",
+      "name": "Hielo"
+    },
+    {
+      "id": "199",
+      "name": "Jeans"
+    },
+    {
+      "id": "200",
+      "name": "Kaki"
+    },
+    {
+      "id": "201",
+      "name": "Leopardo"
+    },
+    {
+      "id": "202",
+      "name": "Lila"
+    },
+    {
+      "id": "203",
+      "name": "Malva"
+    },
+    {
+      "id": "204",
+      "name": "Marino"
+    },
+    {
+      "id": "101",
+      "name": "Marrón"
+    },
+    {
+      "id": "302",
+      "name": "Menta"
+    },
+    {
+      "id": "249",
+      "name": "Militar"
+    },
+    {
+      "id": "37",
+      "name": "Morado"
+    },
+    {
+      "id": "205",
+      "name": "Morado"
+    },
+    {
+      "id": "206",
+      "name": "Mostaza"
+    },
+    {
+      "id": "186",
+      "name": "Naranja"
+    },
+    {
+      "id": "30",
+      "name": "Negro"
+    },
+    {
+      "id": "250",
+      "name": "Negruzco"
+    },
+    {
+      "id": "303",
+      "name": "Neutro"
+    },
+    {
+      "id": "300",
+      "name": "Nude"
+    },
+    {
+      "id": "207",
+      "name": "Ocre"
+    },
+    {
+      "id": "208",
+      "name": "Oliva"
+    },
+    {
+      "id": "31",
+      "name": "Oro"
+    },
+    {
+      "id": "32",
+      "name": "Plata"
+    },
+    {
+      "id": "209",
+      "name": "Platino"
+    },
+    {
+      "id": "210",
+      "name": "Plomo"
+    },
+    {
+      "id": "33",
+      "name": "Rojo"
+    },
+    {
+      "id": "34",
+      "name": "Rosa"
+    },
+    {
+      "id": "211",
+      "name": "Salmon"
+    },
+    {
+      "id": "35",
+      "name": "Taupe"
+    },
+    {
+      "id": "212",
+      "name": "Turquesa"
+    },
+    {
+      "id": "36",
+      "name": "Verde"
+    },
+    {
+      "id": "217",
+      "name": "Violeta"
+    },
+    {
+      "id": "213",
+      "name": "Visón"
+    }
+  ],
+
+	"brands": [
+    {
+      "id": "345",
+      "name": "ADIDAS"
+    },
+    {
+      "id": "626",
+      "name": "ADIDAS - LIMP"
+    },
+    {
+      "id": "399",
+      "name": "ALMA EN PENA"
+    },
+    {
+      "id": "122",
+      "name": "ALPE"
+    },
+    {
+      "id": "395",
+      "name": "AMANDA"
+    },
+    {
+      "id": "666",
+      "name": "AMARPIES"
+    },
+    {
+      "id": "407",
+      "name": "ANDARES"
+    },
+    {
+      "id": "123",
+      "name": "ANGEL INFANTES"
+    },
+    {
+      "id": "639",
+      "name": "ARMANI EXCHANGE"
+    },
+    {
+      "id": "127",
+      "name": "BAMBA"
+    },
+    {
+      "id": "495",
+      "name": "BASS3D"
+    },
+    {
+      "id": "505",
+      "name": "BIOMECANICS"
+    },
+    {
+      "id": "488",
+      "name": "BIRKENSTOCK"
+    },
+    {
+      "id": "452",
+      "name": "Bom Bon Chic"
+    },
+    {
+      "id": "257",
+      "name": "BRONX"
+    },
+    {
+      "id": "296",
+      "name": "BRYAN"
+    },
+    {
+      "id": "625",
+      "name": "BUFFALO LONDON"
+    },
+    {
+      "id": "128",
+      "name": "BULLBOXER"
+    },
+    {
+      "id": "569",
+      "name": "BUONAROTTI"
+    },
+    {
+      "id": "129",
+      "name": "CALLAGHAN"
+    },
+    {
+      "id": "207",
+      "name": "CAMPER"
+    },
+    {
+      "id": "547",
+      "name": "CARMELA"
+    },
+    {
+      "id": "612",
+      "name": "CARTAGO"
+    },
+    {
+      "id": "669",
+      "name": "CERDA"
+    },
+    {
+      "id": "234",
+      "name": "CETTI"
+    },
+    {
+      "id": "460",
+      "name": "CHEIW"
+    },
+    {
+      "id": "131",
+      "name": "CHIKA10"
+    },
+    {
+      "id": "132",
+      "name": "CLARKS"
+    },
+    {
+      "id": "550",
+      "name": "CLARKS-LIMP"
+    },
+    {
+      "id": "332",
+      "name": "CONGUITOS"
+    },
+    {
+      "id": "134",
+      "name": "CONVERSE"
+    },
+    {
+      "id": "135",
+      "name": "COOLWAY"
+    },
+    {
+      "id": "621",
+      "name": "CORONEL TAPIOCA"
+    },
+    {
+      "id": "561",
+      "name": "COSSIMO"
+    },
+    {
+      "id": "306",
+      "name": "COSSIMO SHOES"
+    },
+    {
+      "id": "568",
+      "name": "D. FRANKLIN"
+    },
+    {
+      "id": "439",
+      "name": "DAKOTA BOOTS"
+    },
+    {
+      "id": "202",
+      "name": "DESIGUAL"
+    },
+    {
+      "id": "627",
+      "name": "DORKING"
+    },
+    {
+      "id": "157",
+      "name": "DR MARTENS"
+    },
+    {
+      "id": "622",
+      "name": "D´ANGELA"
+    },
+    {
+      "id": "241",
+      "name": "E Ferri"
+    },
+    {
+      "id": "631",
+      "name": "EA7"
+    },
+    {
+      "id": "601",
+      "name": "EDWARDS JOSEPH"
+    },
+    {
+      "id": "593",
+      "name": "EL NATURALISTA"
+    },
+    {
+      "id": "676",
+      "name": "ERASE"
+    },
+    {
+      "id": "138",
+      "name": "FAT"
+    },
+    {
+      "id": "638",
+      "name": "FILA"
+    },
+    {
+      "id": "328",
+      "name": "FLEXX"
+    },
+    {
+      "id": "139",
+      "name": "FLUCHOS"
+    },
+    {
+      "id": "595",
+      "name": "FORNARINA"
+    },
+    {
+      "id": "181",
+      "name": "FRED PERRY"
+    },
+    {
+      "id": "333",
+      "name": "FRESAS con  NATA"
+    },
+    {
+      "id": "583",
+      "name": "FUNHOUSE"
+    },
+    {
+      "id": "140",
+      "name": "G&G"
+    },
+    {
+      "id": "262",
+      "name": "GAIMO"
+    },
+    {
+      "id": "582",
+      "name": "GANT LIFESTYLE ESPAÑA S.L.U"
+    },
+    {
+      "id": "617",
+      "name": "GARVALÍN"
+    },
+    {
+      "id": "548",
+      "name": "GENUINS"
+    },
+    {
+      "id": "243",
+      "name": "GEOX SPA"
+    },
+    {
+      "id": "191",
+      "name": "GIOSEPPO"
+    },
+    {
+      "id": "571",
+      "name": "GO SEXY"
+    },
+    {
+      "id": "360",
+      "name": "GORILA"
+    },
+    {
+      "id": "313",
+      "name": "GRENDHA"
+    },
+    {
+      "id": "183",
+      "name": "HAVAIANAS"
+    },
+    {
+      "id": "379",
+      "name": "HEELYS"
+    },
+    {
+      "id": "235",
+      "name": "HISPANITAS"
+    },
+    {
+      "id": "215",
+      "name": "HUNTER"
+    },
+    {
+      "id": "239",
+      "name": "IGI&CO"
+    },
+    {
+      "id": "352",
+      "name": "IGOR"
+    },
+    {
+      "id": "233",
+      "name": "IMAC"
+    },
+    {
+      "id": "314",
+      "name": "IPANEMA"
+    },
+    {
+      "id": "396",
+      "name": "ISTERIA"
+    },
+    {
+      "id": "404",
+      "name": "IT COLLECTION"
+    },
+    {
+      "id": "480",
+      "name": "JAVER"
+    },
+    {
+      "id": "630",
+      "name": "JENKER "
+    },
+    {
+      "id": "670",
+      "name": "JIMMY LION "
+    },
+    {
+      "id": "322",
+      "name": "JOMA"
+    },
+    {
+      "id": "551",
+      "name": "JOY COLORS"
+    },
+    {
+      "id": "258",
+      "name": "KANGAROOS"
+    },
+    {
+      "id": "302",
+      "name": "KRACK"
+    },
+    {
+      "id": "598",
+      "name": "KRACK by IED"
+    },
+    {
+      "id": "385",
+      "name": "KRACK CORE"
+    },
+    {
+      "id": "539",
+      "name": "KRACK CORE BY REBECA STONES"
+    },
+    {
+      "id": "544",
+      "name": "KRACK CORE by SARA BACEIREDO"
+    },
+    {
+      "id": "587",
+      "name": "KRACK CORE by sarabace2"
+    },
+    {
+      "id": "524",
+      "name": "KRACK EXPERIENCE"
+    },
+    {
+      "id": "435",
+      "name": "KRACK HARMONY"
+    },
+    {
+      "id": "564",
+      "name": "KRACK HARMONY by Grace"
+    },
+    {
+      "id": "431",
+      "name": "KRACK HERITAGE"
+    },
+    {
+      "id": "390",
+      "name": "KRACK KIDS"
+    },
+    {
+      "id": "151",
+      "name": "LA STRADA"
+    },
+    {
+      "id": "228",
+      "name": "LACOSTE"
+    },
+    {
+      "id": "541",
+      "name": "LE CHIC"
+    },
+    {
+      "id": "209",
+      "name": "LE COQ SPORTIF"
+    },
+    {
+      "id": "152",
+      "name": "LEVIS"
+    },
+    {
+      "id": "616",
+      "name": "LEVIS KIDS FOOTWEAR"
+    },
+    {
+      "id": "640",
+      "name": "LIUJO"
+    },
+    {
+      "id": "393",
+      "name": "LODI"
+    },
+    {
+      "id": "284",
+      "name": "LOIS"
+    },
+    {
+      "id": "615",
+      "name": "LOL"
+    },
+    {
+      "id": "153",
+      "name": "LOLABLUE"
+    },
+    {
+      "id": "156",
+      "name": "LUISETTI"
+    },
+    {
+      "id": "252",
+      "name": "MARIA MARE"
+    },
+    {
+      "id": "645",
+      "name": "MARTA RIUMBAU"
+    },
+    {
+      "id": "158",
+      "name": "MARTINELLI"
+    },
+    {
+      "id": "397",
+      "name": "MAYORAL"
+    },
+    {
+      "id": "421",
+      "name": "MIBO"
+    },
+    {
+      "id": "649",
+      "name": "MIGUEL BELLIDO"
+    },
+    {
+      "id": "668",
+      "name": "MILATREND"
+    },
+    {
+      "id": "623",
+      "name": "MISS ELASTIC"
+    },
+    {
+      "id": "204",
+      "name": "MJUS"
+    },
+    {
+      "id": "238",
+      "name": "MODABELLA"
+    },
+    {
+      "id": "416",
+      "name": "MUNICH"
+    },
+    {
+      "id": "513",
+      "name": "MUSSE & CLOUD"
+    },
+    {
+      "id": "159",
+      "name": "MUSTANG"
+    },
+    {
+      "id": "248",
+      "name": "NATALIA BLANCO"
+    },
+    {
+      "id": "591",
+      "name": "NATURAL WORLD"
+    },
+    {
+      "id": "213",
+      "name": "NEW BALANCE"
+    },
+    {
+      "id": "577",
+      "name": "NICE"
+    },
+    {
+      "id": "160",
+      "name": "NIKE"
+    },
+    {
+      "id": "161",
+      "name": "NOTTON"
+    },
+    {
+      "id": "323",
+      "name": "OSITO"
+    },
+    {
+      "id": "324",
+      "name": "PABLOSKY"
+    },
+    {
+      "id": "221",
+      "name": "PANAMA JACK"
+    },
+    {
+      "id": "260",
+      "name": "PATRICIA MILLER"
+    },
+    {
+      "id": "162",
+      "name": "PEPE JEANS"
+    },
+    {
+      "id": "357",
+      "name": "PEPE MOLL"
+    },
+    {
+      "id": "210",
+      "name": "PIKOLINOS"
+    },
+    {
+      "id": "353",
+      "name": "PRIMIGI"
+    },
+    {
+      "id": "216",
+      "name": "PUMA"
+    },
+    {
+      "id": "350",
+      "name": "REEBOK"
+    },
+    {
+      "id": "205",
+      "name": "REFRESH"
+    },
+    {
+      "id": "318",
+      "name": "RIDER"
+    },
+    {
+      "id": "307",
+      "name": "ROBERT PIETRI"
+    },
+    {
+      "id": "636",
+      "name": "ROBERTO TORRETTA"
+    },
+    {
+      "id": "576",
+      "name": "ROITS"
+    },
+    {
+      "id": "647",
+      "name": "RT by Roberto Torretta"
+    },
+    {
+      "id": "164",
+      "name": "Sandra Fontán"
+    },
+    {
+      "id": "553",
+      "name": "SANTA"
+    },
+    {
+      "id": "543",
+      "name": "SENSES & SHOES"
+    },
+    {
+      "id": "255",
+      "name": "SIXTY SEVEN"
+    },
+    {
+      "id": "231",
+      "name": "SKECHERS"
+    },
+    {
+      "id": "423",
+      "name": "STAFF COLLECTION"
+    },
+    {
+      "id": "165",
+      "name": "STEVE MADDEN"
+    },
+    {
+      "id": "559",
+      "name": "STONEFLY"
+    },
+    {
+      "id": "166",
+      "name": "SUPERGA"
+    },
+    {
+      "id": "236",
+      "name": "T2IN"
+    },
+    {
+      "id": "273",
+      "name": "TAMBI"
+    },
+    {
+      "id": "422",
+      "name": "TEVA"
+    },
+    {
+      "id": "603",
+      "name": "THE WHITE BRAND"
+    },
+    {
+      "id": "172",
+      "name": "TIMBERLAND"
+    },
+    {
+      "id": "614",
+      "name": "TITANITOS"
+    },
+    {
+      "id": "173",
+      "name": "TOMMY HILFIGER"
+    },
+    {
+      "id": "174",
+      "name": "TOP3"
+    },
+    {
+      "id": "348",
+      "name": "TRAVERIS"
+    },
+    {
+      "id": "427",
+      "name": "U.S. POLO"
+    },
+    {
+      "id": "354",
+      "name": "UGG"
+    },
+    {
+      "id": "406",
+      "name": "UNISA"
+    },
+    {
+      "id": "176",
+      "name": "VANS"
+    },
+    {
+      "id": "641",
+      "name": "VESPA"
+    },
+    {
+      "id": "177",
+      "name": "VEXED"
+    },
+    {
+      "id": "671",
+      "name": "VICTORIA"
+    },
+    {
+      "id": "469",
+      "name": "VICTORIA By KRACK"
+    },
+    {
+      "id": "285",
+      "name": "VIDORRETA, S.L."
+    },
+    {
+      "id": "392",
+      "name": "VIGUERA"
+    },
+    {
+      "id": "212",
+      "name": "VULLADI"
+    },
+    {
+      "id": "462",
+      "name": "W.A.U"
+    },
+    {
+      "id": "253",
+      "name": "WALK & FLY"
+    },
+    {
+      "id": "259",
+      "name": "WONDERS"
+    },
+    {
+      "id": "336",
+      "name": "X.T.I KIDS"
+    },
+    {
+      "id": "178",
+      "name": "X.T.I."
+    },
+    {
+      "id": "341",
+      "name": "YOKONO"
+    },
+    {
+      "id": "508",
+      "name": "YOWAS"
+    }
+  ],
+
+	"sizes": [
+    {
+      "id": "329",
+      "name": "100"
+    },
+    {
+      "id": "272",
+      "name": "18"
+    },
+    {
+      "id": "273",
+      "name": "19"
+    },
+    {
+      "id": "284",
+      "name": "19.5"
+    },
+    {
+      "id": "256",
+      "name": "20"
+    },
+    {
+      "id": "257",
+      "name": "21"
+    },
+    {
+      "id": "285",
+      "name": "21.5"
+    },
+    {
+      "id": "331",
+      "name": "21/25"
+    },
+    {
+      "id": "258",
+      "name": "22"
+    },
+    {
+      "id": "277",
+      "name": "22.5"
+    },
+    {
+      "id": "259",
+      "name": "23"
+    },
+    {
+      "id": "286",
+      "name": "23.5"
+    },
+    {
+      "id": "260",
+      "name": "24"
+    },
+    {
+      "id": "287",
+      "name": "24.5"
+    },
+    {
+      "id": "261",
+      "name": "25"
+    },
+    {
+      "id": "278",
+      "name": "25.5"
+    },
+    {
+      "id": "262",
+      "name": "26"
+    },
+    {
+      "id": "317",
+      "name": "26.5"
+    },
+    {
+      "id": "332",
+      "name": "26/30"
+    },
+    {
+      "id": "263",
+      "name": "27"
+    },
+    {
+      "id": "279",
+      "name": "27.5"
+    },
+    {
+      "id": "264",
+      "name": "28"
+    },
+    {
+      "id": "280",
+      "name": "28.5"
+    },
+    {
+      "id": "265",
+      "name": "29"
+    },
+    {
+      "id": "266",
+      "name": "30"
+    },
+    {
+      "id": "315",
+      "name": "30.5"
+    },
+    {
+      "id": "267",
+      "name": "31"
+    },
+    {
+      "id": "301",
+      "name": "31.5"
+    },
+    {
+      "id": "333",
+      "name": "31/35"
+    },
+    {
+      "id": "268",
+      "name": "32"
+    },
+    {
+      "id": "269",
+      "name": "33"
+    },
+    {
+      "id": "270",
+      "name": "34"
+    },
+    {
+      "id": "316",
+      "name": "34.5"
+    },
+    {
+      "id": "223",
+      "name": "35"
+    },
+    {
+      "id": "236",
+      "name": "35.5"
+    },
+    {
+      "id": "224",
+      "name": "36"
+    },
+    {
+      "id": "310",
+      "name": "36-40"
+    },
+    {
+      "id": "239",
+      "name": "36.5"
+    },
+    {
+      "id": "314",
+      "name": "36/40"
+    },
+    {
+      "id": "225",
+      "name": "37"
+    },
+    {
+      "id": "237",
+      "name": "37.5"
+    },
+    {
+      "id": "226",
+      "name": "38"
+    },
+    {
+      "id": "243",
+      "name": "38.5"
+    },
+    {
+      "id": "227",
+      "name": "39"
+    },
+    {
+      "id": "238",
+      "name": "39.5"
+    },
+    {
+      "id": "228",
+      "name": "40"
+    },
+    {
+      "id": "244",
+      "name": "40.5"
+    },
+    {
+      "id": "229",
+      "name": "41"
+    },
+    {
+      "id": "311",
+      "name": "41-46"
+    },
+    {
+      "id": "240",
+      "name": "41.5"
+    },
+    {
+      "id": "334",
+      "name": "41/46"
+    },
+    {
+      "id": "231",
+      "name": "42"
+    },
+    {
+      "id": "241",
+      "name": "42.5"
+    },
+    {
+      "id": "232",
+      "name": "43"
+    },
+    {
+      "id": "233",
+      "name": "44"
+    },
+    {
+      "id": "242",
+      "name": "44.5"
+    },
+    {
+      "id": "234",
+      "name": "45"
+    },
+    {
+      "id": "235",
+      "name": "46"
+    },
+    {
+      "id": "251",
+      "name": "47"
+    },
+    {
+      "id": "327",
+      "name": "90"
+    },
+    {
+      "id": "328",
+      "name": "95"
+    },
+    {
+      "id": "322",
+      "name": "L"
+    },
+    {
+      "id": "305",
+      "name": "M"
+    },
+    {
+      "id": "320",
+      "name": "S"
+    },
+    {
+      "id": "230",
+      "name": "U"
+    },
+    {
+      "id": "313",
+      "name": "U"
+    }
+  ]
+}
