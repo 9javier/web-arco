@@ -4,6 +4,7 @@
       <sorter-matrix-emptying
         [height]="'50vh'"
         [width]="'100%'"
+
         (listOfIdsWays)="listOfIdsWays = $event"
         (columnSelected)="columnSelected($event)">
 
@@ -19,7 +20,7 @@
         (autoEmptying)="autoEmptying()"
         (manualEmptying)="manualEmptying()"
         (mixedEmptying)="mixedEmptying()"
-        (allEmptying)="allEmptying()">
+        (allEmptying)="creatAler()">
       </suite-sorter-actions-emptying>
     </div>
 

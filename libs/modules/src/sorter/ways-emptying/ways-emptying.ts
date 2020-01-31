@@ -11,6 +11,7 @@ import {MatrixSorterModel} from "../../../../services/src/models/endpoints/Matri
 import {SorterInfoWayEmptyingComponent} from "./info-way/info-way.component";
 import {SorterOutputService} from "../../../../services/src/lib/endpoint/sorter-output/sorter-output.service";
 import {SorterOutputModel} from "../../../../services/src/models/endpoints/SorterOutput";
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'suite-sorter-ways-emptying',
@@ -43,7 +44,8 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     private sorterTemplateService: SorterTemplateService,
     private templateZonesService: TemplateZonesService,
     private sorterOutputService: SorterOutputService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private alertController: AlertController
   ) { }
 
   ngOnInit() {
@@ -56,6 +58,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   }
 
   public columnSelected(data: {column: MatrixSorterModel.Column, iHeight: number, iCol: number}) {
+
     this.disableAuto = true;
     this.disableManual = true;
     this.disableMixed = true;
@@ -121,15 +124,40 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
     }
   }
 
+   public async creatAler(){
+    let a = await this.alertController.create({
+      header:'¡Están seguros de vaciar las calles!',
+      message: 'Vaciaremos las calles selecionadas',
+      buttons:[
+        {
+          text:'Ok',
+          handler: async ()=>{
+            console.log('passa por ok');
+            await this.allEmptying();
+          }
+        },
+        {
+          text:'NO',
+          handler:()=>{
+            console.log('passa por no');
+            // a.dismiss();
+          }
+        }
+      ]
+    });
+
+    await a.present();
+  }
+
   /**
    * @description new Methos for all list
    * @author Gaetano Sabino
    */
-  public async allEmptying(){
+  private async allEmptying(){
+
     if(this.listOfIdsWays.length > 0){
     //  TODO call of method for delete all ways
-      console.log(this.listOfIdsWays);
-
+    await this.intermediaryService.presentLoading('Vacciando Calles...');
     let result  = await this.sorterOutputService.postEmptyAllWays(
       {waysId:this.listOfIdsWays}
     );
@@ -138,15 +166,19 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       this.disableManual = true;
       this.disableMixed = true;
 
-      // console.log(this.listOfIdsWays,result);
+      await this.manualEmptying();
       return;
+    }else {
+
+      await this.intermediaryService.presentToastError('Error en vaciar las Calle/s');
+
     }
     }else {
+      await this.intermediaryService.dismissLoading();
+      await this.intermediaryService.presentToastError('Error en vaciar las Calle/s');
       return;
     }
   }
-
-
 
   public async autoEmptying() {
     await this.intermediaryService.presentLoading('Cambiando a vaciado automático...');
