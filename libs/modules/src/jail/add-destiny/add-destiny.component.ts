@@ -8,13 +8,13 @@ import { MatSelectChange } from '@angular/material';
 import { CarrierService, IntermediaryService } from '@suite/services';
 
 @Component({
-  selector: 'suite-send',
-  templateUrl: './send.component.html',
-  styleUrls: ['./send.component.scss']
+  selector: 'suite-add-destiny',
+  templateUrl: './add-destiny.component.html',
+  styleUrls: ['./add-destiny.component.scss']
 })
-export class SendComponent implements OnInit {
+export class AddDestinyComponent implements OnInit {
 
-  title = 'Enviar Jaula';
+  title = 'Agregar Destino';
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers')
     .name;
 
@@ -29,17 +29,15 @@ export class SendComponent implements OnInit {
     private warehousesService:WarehousesService,
     private carrierService:CarrierService,
     private intermediaryService:IntermediaryService
-  ) { 
-    this.jail = this.navParams.get("jail");
-  }
-
+  ) {    this.jail = this.navParams.get("jail");
   
-  @ViewChild(DataComponent) data:DataComponent;
+}
+@ViewChild(DataComponent) data:DataComponent;
 
   ngOnInit() {
     this.warehousesService.getIndex().then(observable => {
       observable.subscribe(warehouses => {
-        this.warehouses = warehouses.body.data.filter((warehouse)=>warehouse.id == this.jail.id);
+          this.warehouses = warehouses.body.data;
       });
     })
   }
@@ -53,15 +51,20 @@ export class SendComponent implements OnInit {
   }
 
   submit(jail) {
-    this.intermediaryService.presentLoading();
-    this.carrierService.sendPackingToWareouse(jail.id, this.warehouse.id).subscribe(() => {
-        this.intermediaryService.presentToastSuccess("Jaula enviado con exito");  
-    }, (err)=> {
-      this.intermediaryService.presentToastSuccess("Error al enviar la jaula");  
-    }, () => {
+    
+    //this.intermediaryService.presentLoading();
+    this.carrierService.setDestination(jail.id,this.warehouse.id).subscribe(()=>{
+      this.intermediaryService.presentToastSuccess("Destino agregado con exito"); 
+    }, (err)=>{
+      this.intermediaryService.presentToastSuccess("Error al agregar destino");  
+    }, ()=>{
       this.intermediaryService.dismissLoading();
     })
     this.close();
   }
 
 }
+
+
+
+

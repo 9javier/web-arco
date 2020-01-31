@@ -23,7 +23,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { AddDestinyComponent } from './add-destiny/add-destiny.component';
+import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
+
 
 @NgModule({
   declarations: [
@@ -34,7 +37,10 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     SendPackingComponent,
     ShowDestinationsComponent,
     SendJailComponent,
-    HistoryModalComponent
+    HistoryModalComponent,
+    AddDestinyComponent, 
+    MultipleDestinationsComponent,
+    AddDestinyComponent
   ],
 
   imports: [
@@ -61,7 +67,10 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     SendPackingComponent,
     ShowDestinationsComponent,
     SendJailComponent,
-    HistoryModalComponent
+    AddDestinyComponent,
+    MultipleDestinationsComponent,
+    HistoryModalComponent,
+    
   ]
 })
 export class JailModule {}

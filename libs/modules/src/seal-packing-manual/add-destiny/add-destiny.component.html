@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+          <ion-button (click)="close()">
+              <ion-icon name="close" class="toogleArrow"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title>Agregar Destino</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+  <label>Referencia</label>
+  <ion-item>
+    {{jail.reference}}
+  </ion-item>
+  <mat-form-field style="margin-top: 3%; width: 100%">
+      <mat-label>Send to</mat-label>
+      <mat-select (selectionChange)="selectDestiny($event)">
+        <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse">
+          <div *ngIf="(warehouse.id != jail.warehouse.id)">
+            {{warehouse.name}}
+          </div> 
+        </mat-option>
+      </mat-select>
+  </mat-form-field>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
+    <ion-button *ngIf="jail.carrierWarehousesDestiny.length == 0" slot="end" color="primary" (click)="submit()">Agregar</ion-button>
+    <ion-button *ngIf="jail.carrierWarehousesDestiny.length > 0" slot="end" [disabled]="true">Agregar</ion-button>
+</ion-toolbar>
+</ion-footer>
