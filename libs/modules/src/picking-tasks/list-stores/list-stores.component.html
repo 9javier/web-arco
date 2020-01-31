@@ -23,6 +23,8 @@
 
 <ion-footer class="footer-products">
   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="ngOnInit()"><i
+      class="material-icons">refresh</i></ion-fab-button>
     <ion-fab-button (click)="initPicking()" *ngIf="checkLineRequestSelected()">
       <i class="material-icons">play_arrow</i>
     </ion-fab-button>

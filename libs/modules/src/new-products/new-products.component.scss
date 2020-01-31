@@ -184,6 +184,24 @@ td.column-img-product-desktop {
   }
 }
 
+.footer-products {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.footer-products:before {
+  background: none;
+}
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-bottom: 64px;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
+
 mat-paginator {
   height: 64px;
 }

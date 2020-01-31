@@ -30,9 +30,12 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
-  
-  ngOnInit() {
 
+  ngOnInit() {
+    this.way = null;
+    this.destinyWarehouse = null;
+    this.listProducts = [];
+    this.isLoadingData = false;
   }
 
   public newWaySelected(way: WaySorterModel.WaySorter) {
