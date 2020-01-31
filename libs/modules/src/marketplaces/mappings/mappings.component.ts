@@ -72,6 +72,7 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceBrands.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
         setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
         this.showingBrands = this.dataSourceBrands.slice(0, 10);
@@ -91,6 +92,7 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceColors.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
         setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
         this.showingColors = this.dataSourceColors.slice(0, 10);
@@ -110,6 +112,7 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceSizes.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
         this.showingSizes = this.dataSourceSizes.slice(0, 10);
@@ -129,6 +132,7 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
+        this.dataSourceFeatures.sort((a, b) => (a.avelonData.group > b.avelonData.group) ? 1 : ((b.avelonData.group > a.avelonData.group) ? -1 : ((a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0))));
         this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
         setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
         this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
@@ -148,9 +152,13 @@ export class MappingsComponent implements OnInit {
   getDestinyValues() {
     this.http.get('assets/data/mapping-prestashop-data.json').subscribe((data: any) => {
       this.brandsList = data.brands;
+      this.brandsList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.sizesList = data.sizes;
+      this.sizesList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.featuresList = data.features;
+      this.featuresList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       this.colorsList = data.colors;
+      this.colorsList.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
     });
   }
 
@@ -520,9 +528,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
 
-    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })*/
+    })
   }
 
   changeColorSelect(e, element) {
@@ -557,9 +565,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
 
-    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })*/
+    })
   }
 
   changeSizeSelect(e, element) {
@@ -594,9 +602,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
     
-    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })*/
+    })
   }
 
   changeFeatureSelect(e, element) {
@@ -631,9 +639,9 @@ export class MappingsComponent implements OnInit {
       aditionalMapInfo: 'more info'
     };
     
-    /*this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
+    this.marketplacesService.updateMapDataRules(id, dataSend).subscribe(data => {
       console.log(data)
-    })*/
+    })
   }
 
   getGroupName(group) {

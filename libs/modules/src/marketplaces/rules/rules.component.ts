@@ -52,7 +52,7 @@ export class RulesComponent implements OnInit {
 
 
 
-    /*this.marketplacesService.getRulesFilter().subscribe(data => {
+    this.marketplacesService.getRulesFilter().subscribe(data => {
       if(data) {
         data.forEach(rule => {
           if(rule.ruleFilterType == 1) {
@@ -122,7 +122,7 @@ export class RulesComponent implements OnInit {
       } else {
         console.log('error get rules filter')
       }
-    })*/
+    })
     
   }
 
@@ -138,7 +138,7 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
 
-        /*let filterType = 0;
+        let filterType = 0;
 
         let dataGroupToSend = '';
 
@@ -174,11 +174,11 @@ export class RulesComponent implements OnInit {
           marketsIds: [
             "1"
           ]
-        }*/
+        }
 
-        /*this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
+        this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
-        })*/
+        })
 
         this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
@@ -301,18 +301,18 @@ export class RulesComponent implements OnInit {
             break;
         } 
 
-        /*let dataToSend = {
+        let dataToSend = {
           id: editedRule.id,
           name: editedRule.name,
           ruleFilterType: filterType,
           externalId: "1",
           dataGroup: dataGroupToSend,
           status: 0
-        }*/
+        }
 
-        /*this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
+        this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
           console.log(data)
-        });*/
+        });
 
         if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
