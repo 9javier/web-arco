@@ -1,0 +1,96 @@
+<ion-content padding="true">
+
+  <suite-breadcrumb></suite-breadcrumb>
+
+    <div class="form-fields">
+      <ion-row>
+
+        <ion-col size="4">
+          <div class="content-select">
+            <ion-label class="title-select">Almacén</ion-label>
+            <ion-item class="content-icon-select">
+              <ion-icon slot="start" name="home"></ion-icon>
+              <ion-item>
+                <!-- (ngModelChange)="" -->
+                <ion-select placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected"  formControlName='warehouse'>
+                  <ion-select-option value="01">Test 01</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-item>
+          </div>
+        </ion-col>
+
+
+        <ion-col size="3">
+          <div class="content-select">
+            <ion-label class="title-select">Fecha de inicio</ion-label>
+            <ion-item class="content-icon-select">
+              <ion-icon slot="start" name="trending-up"></ion-icon>
+              <mat-form-field>
+                <input #dateStart matInput [ngModel]="dt | date:'dd-MM-yyyy'" (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate' (change)="setDateStart(dateStart.value)" >
+                <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                <mat-datepicker #pickerStart ></mat-datepicker>
+              </mat-form-field>
+            </ion-item>
+          </div>
+        </ion-col>
+
+        <ion-col size="3">
+          <div class="content-select">
+            <ion-label class="title-select">Fecha final</ion-label>
+            <ion-item class="content-icon-select">
+              <ion-icon slot="start" name="trending-down"></ion-icon>
+              <mat-form-field>
+                  <input matInput [ngModel] ="dt | date:'dd-MM-yyyy'" (focus)="pickerEnd.open()" [matDatepicker]="pickerEnd"  formControlName='endDate' >
+                <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                <mat-datepicker  #pickerEnd ></mat-datepicker>
+              </mat-form-field>
+            </ion-item>
+          </div>
+        </ion-col>
+
+      </ion-row>
+
+    </div>
+
+
+  <!-- <div class="example-container">
+      <table mat-table [dataSource]="dataSource"  class="table-incidences">
+
+         <ng-container matColumnDef="position">
+           <th mat-header-cell *matHeaderCellDef> Tipo </th>
+           <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+         </ng-container>
+
+         <ng-container matColumnDef="name">
+           <th mat-header-cell *matHeaderCellDef> Fecha y hora de envío </th>
+           <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+         </ng-container>
+
+         <ng-container matColumnDef="weight">
+           <th mat-header-cell *matHeaderCellDef> Fecha y hora de recepción </th>
+           <td mat-cell *matCellDef="let element"> {{element.weight}}  </td>
+         </ng-container>
+
+         <ng-container matColumnDef="symbol">
+           <th mat-header-cell *matHeaderCellDef> Nombre de bulto </th>
+           <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+         </ng-container>
+
+         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+      </table>
+  </div> -->
+
+
+  <h1>Hola</h1>
+
+
+
+</ion-content>
+
+<ion-footer class="footer-products">
+    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button matTooltip="Hola" matTooltipClass="tooltip" color="danger"><i class="material-icons">delete</i></ion-fab-button>
+    </ion-fab>
+</ion-footer>

@@ -1,0 +1,66 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-button (click)="close()">
+                <ion-icon name="close" class="toogleArrow"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+        <ion-title>Ver histórico</ion-title>
+    </ion-toolbar>
+</ion-header>
+<ion-content padding="true">
+
+<form [formGroup]="formVar" (ngSubmit)="submit()">
+  <div class="form-fields">
+      <div class="content-select">
+        <ion-label class="title-select">Almacén</ion-label>
+        <ion-item class="content-icon-select">
+          <ion-icon slot="start" name="home"></ion-icon>
+          <ion-item>
+            <!-- (ngModelChange)="" -->
+            <ion-select placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected"  formControlName='warehouse'>
+              <ion-select-option value="01">Test 01</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-item>
+      </div>
+
+      <ion-row>
+        <ion-col>
+          <div class="content-select">
+            <ion-label class="title-select">Fecha de inicio</ion-label>
+            <ion-item class="content-icon-select">
+              <ion-icon slot="start" name="trending-up"></ion-icon>
+              <mat-form-field>
+                <input #dateStart matInput [ngModel]="dt | date:'dd-MM-yyyy'" (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate' (change)="setDateStart(dateStart.value)" >
+                <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+                <mat-datepicker #pickerStart ></mat-datepicker>
+              </mat-form-field>
+            </ion-item>
+          </div>
+        </ion-col>
+        <ion-col>
+          <div class="content-select">
+            <ion-label class="title-select">Fecha final</ion-label>
+            <ion-item class="content-icon-select">
+              <ion-icon slot="start" name="trending-down"></ion-icon>
+              <mat-form-field>
+                  <input matInput [ngModel] ="dt | date:'dd-MM-yyyy'" (focus)="pickerEnd.open()" [matDatepicker]="pickerEnd"  formControlName='endDate' >
+                <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                <mat-datepicker  #pickerEnd ></mat-datepicker>
+              </mat-form-field>
+            </ion-item>
+          </div>
+        </ion-col>
+      </ion-row>
+  </div>
+</form>
+
+</ion-content>
+
+<ion-footer>
+    <ion-toolbar>
+        <ion-button slot="end" color="light" (click)="close()">Cancelar búsqueda de historico</ion-button>
+        <ion-button slot="end" color="primary" (click)="submit()">Buscar historico</ion-button>
+    </ion-toolbar>
+</ion-footer>

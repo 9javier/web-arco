@@ -7,7 +7,7 @@ import {
   MatCheckboxModule,
   MatPaginatorModule,
   MatListModule,
-  MatTooltipModule
+  MatDatepickerModule, MatInputModule, MatTooltipModule, MatIconModule
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { JailRoutingModule } from './jail-routing.module';
@@ -24,6 +24,8 @@ import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
+import { HistoryWarehouseModalComponent } from './history-warehouse/history-warehouse-modal/history_whs_modal.component';
+import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     SendPackingComponent,
     ShowDestinationsComponent,
     SendJailComponent,
-    HistoryModalComponent
+    HistoryModalComponent,
+    HistoryWarehouseComponent,
+    HistoryWarehouseModalComponent
   ],
 
   imports: [
@@ -53,7 +57,11 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     BreadcrumbModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatTooltipModule,
+     MatIconModule
   ],
   entryComponents: [
     StoreComponent,
@@ -61,7 +69,8 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     SendPackingComponent,
     ShowDestinationsComponent,
     SendJailComponent,
-    HistoryModalComponent
+    HistoryModalComponent,
+    HistoryWarehouseModalComponent
   ]
 })
 export class JailModule {}

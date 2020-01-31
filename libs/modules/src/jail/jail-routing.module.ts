@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { JailComponent } from './jail.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
+import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
 
 const routes: Routes = [
   {
@@ -22,9 +23,14 @@ const routes: Routes = [
     component: JailComponent
   },
   {
+    path: 'history',
+    component: HistoryWarehouseComponent
+  },
+  {
     path: 'menu',
     component: JailComponent
   }
+
 ];
 
 @NgModule({
@@ -32,4 +38,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class JailRoutingModule {}
-

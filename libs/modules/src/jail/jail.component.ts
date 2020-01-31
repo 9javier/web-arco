@@ -7,16 +7,17 @@ import { MatTableDataSource } from '@angular/material';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { WarehouseService } from 'libs/services/src/lib/endpoint/warehouse/warehouse.service';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './update/update.component';
 import { StoreComponent } from './store/store.component';
+import { HistoryWarehouseModalComponent } from './history-warehouse/history-warehouse-modal/history_whs_modal.component';
 import { SendComponent } from './send/send.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-jail',
   templateUrl: './jail.component.html',
@@ -58,7 +59,8 @@ export class JailComponent implements OnInit {
     private alertControler: AlertController,
     private printerService: PrinterService,
     private loadController: LoadingController,
-    private historyModalComponent: HistoryModalComponent
+    private historyModalComponent: HistoryModalComponent,
+    private historyWharehouseModalComponent: HistoryWarehouseModalComponent,
   ) {
   }
 
@@ -139,6 +141,8 @@ export class JailComponent implements OnInit {
     })
     modal.present();
   }
+
+
 
   getTypePacking() {
     this.intermediaryService.presentLoading();
@@ -469,6 +473,15 @@ export class JailComponent implements OnInit {
     }))
     modal.present()
   }
+
+  async test01() {
+    let modal = (await this.modalCtrl.create({
+      component: HistoryWarehouseModalComponent,
+    }));
+    modal.present();
+  }
+
+
   /**
    * Change one destination
    * @param prev the previous warehouse
@@ -536,7 +549,3 @@ export class JailComponent implements OnInit {
     return await modal.present();
   }
 }
-
-
-
-

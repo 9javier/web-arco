@@ -27,17 +27,17 @@ export class HistoryModalComponent implements OnInit {
 
   ngOnInit() {
     this.getReference(this.packingReference)
-    this.getPackingMovementsTypes()
+    this.getPackingMovementsTypes();
   }
   getReference(ref) {
-    
+
     this.carrierService.carrierHistory(ref).subscribe((response) => {
       this.reference = response
       for (let i = 0; i < this.reference.length; i++) {
         this.dates[i] = moment(ref[i].updatedAt).format('DD/MM/YYYY');
         this.hours[i] = moment(ref[i].updatedAt).format('HH:mm:ss');
       }
-            
+
     });
   }
   close() {
