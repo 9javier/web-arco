@@ -1,7 +1,7 @@
 <ion-content>
   <ion-row>
     <ion-col id="reset">
-      <ion-button (click)="resetFilters()">
+      <ion-button (click)="resetFilters()" matTooltip="Reiniciar filtros" matTooltipClass="tooltip">
         <ion-icon name="refresh"></ion-icon>
       </ion-button>
     </ion-col>
@@ -20,7 +20,7 @@
           <span class="title">Almacén</span>
           <mat-icon (click)="openFilter('Almacenes')">{{isFiltering('warehouse')}}</mat-icon>
         </mat-header-cell>
-        <mat-cell *matCellDef="let permission">{{permission.warehouse.name}}</mat-cell>
+        <mat-cell *matCellDef="let permission">{{permission.warehouse.reference}}</mat-cell>
       </ng-container>
       <ng-container *ngFor="let role of tableRoles; let i = index" matColumnDef="{{role.id}}">
         <mat-header-cell *matHeaderCellDef class="center">
@@ -43,12 +43,12 @@
       </ion-fab-button>
     </ion-col>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Nuevo rol" matTooltipClass="tooltip" matTooltipPosition="above" (click)="newRole()">
+      <ion-fab-button color="dark"  matTooltip="Añadir nuevo rol a usuario" matTooltipClass="tooltip" matTooltipPosition="above" (click)="newRole()">
         <ion-icon name="add"></ion-icon>
       </ion-fab-button>
     </ion-col>
     <ion-col>
-      <ion-fab-button color="dark"  matTooltip="Deshacer cambios" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()">
+      <ion-fab-button color="dark"  matTooltip="Deshacer cambios no guardados" matTooltipClass="tooltip" matTooltipPosition="above" (click)="ngOnInit()">
         <ion-icon name="undo"></ion-icon>
       </ion-fab-button>
     </ion-col>
