@@ -5,6 +5,8 @@ import {ZoneSorterModel} from "../../../../../services/src/models/endpoints/Zone
 import {SorterProvider} from "../../../../../services/src/providers/sorter/sorter.provider";
 import { FormBuilder } from '@angular/forms';
 import { element } from 'protractor';
+import { ModelModel } from '@suite/services';
+import { el } from '@angular/platform-browser/testing/src/browser_util';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -20,6 +22,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   @Input() width: string = null;
   @Output() columnSelected = new EventEmitter();
   @Output() listOfIdsWays:EventEmitter<number[]> = new EventEmitter();
+  @Input() borrarList :boolean;
 
   private listZonesWithColors: ZoneSorterModel.ZoneColor[] = [];
   private isTemplateWithEqualZones: boolean = false;
@@ -109,16 +112,13 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   }
 
   selectWay(column: MatrixSorterModel.Column, iHeight: number, iCol: number,check=false) {
+    this.longList(column);
     let wayS = null;
     this.flag = false;
     for(wayS of this.waysSelected){
-      if(wayS === column.way && check){
-        console.log('passa di qui');
-        this.flag = false;
-        return;
-      }
+
       if(wayS === column.way){
-        console.log('passa di qui',wayS);
+        console.log('passa di qui');
         this.flag = true;
         this.removeItemFromArr( this.waysSelected, wayS );
         this.listaWay(this.waysSelected)
@@ -128,6 +128,23 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       console.log('passa di qui');
       this.waysSelected.push(column.way);
       this.listaWay(this.waysSelected);
+    }
+    if(check){
+      // console.log(list);
+      // console.log(this.waysSelected);
+      // let xy = this.listOfIdsYWays.filter(x => x.id === column.way.templateZone.zones.id);
+      // xy = xy.map(x => x.ways)[0].map(w => w.col).map(r => r.way);
+      // console.log(xy);
+      // let rew = [];
+      // xy.forEach(ele => {
+      //   console.log(ele.id);
+      //   rew = this.waysSelected.filter( v => {
+      //     console.log(v.id);
+      //     return v.id !== ele.id
+      //   });
+      // })
+      // console.log(rew);
+
     }
 
     this.columnSelected.next({column, iHeight, iCol});
@@ -143,6 +160,19 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     this.callLsit(lista);
   }
 
+  private longList(list:MatrixSorterModel.Column){
+
+    let xy = this.listOfIdsYWays.filter(x => x.id === list.way.templateZone.zones.id);
+
+    xy = xy.map( f => f.ways.map(c => c.listas));
+    let n = xy.length;
+    this.listOfIdsYWays.forEach(xc => {
+
+
+    });
+    console.log({listas:this.listOfIdsYWays,list:xy});
+  }
+
   private callLsit(lista){
     let numero;
     this.listOfIdsYWays.forEach(x => {
@@ -150,7 +180,11 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       numero = 0;
       lista.forEach(y => {
         if(x.id === y.templateZone.zones.id){
-          numero ++
+          if(numero >= x.tot){
+            return;
+          }else{
+            numero ++
+          }
           id = x.id;
           // tslint:disable-next-line:no-unused-expression
           {id: y.templateZone.zones.id;num:numero};
@@ -177,38 +211,68 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
   refresh(){
     this.waysSelected = [];
   }
+  send(lista:number[]){
+    let n = Array.from(new Set(lista));
+    console.log(n);
+    this.listOfIdsWays.next(n);
+  }
+
+  crearUniq(){
+    if(this.waysSelected.length > 0){
+      let n = Array.from(new Set(this.waysSelected.map(c => c.id)));
+      console.log(n);
+      // this.waysSelected = n;
+
+    }
+  }
 
   check(lista:ZoneSorterModel.ZoneColor){
     console.log(lista.checks);
+    // console.log(this.waysSelected);
+    let xy = this.listOfIdsYWays.filter(x => x.id === lista.id);
+    xy = xy.map(x => x.ways)[0].map(w => w.col).map(r => r.way);
+    console.log(xy,`lista per ${lista.id}`); // lista per id columna
+
+    if(this.waysSelected.length > 0){
+      let ut = this.waysSelected.map(x => x.id);
+      let w = [...xy];
+      if (!lista.checks){
+        // console.log({ut,check:lista.checks,dif:w});
+        w.forEach( t => {
+          this.waysSelected = this.waysSelected.filter( tr => tr.id !== t.id);
+        });
+        // console.log(this.waysSelected);
+        this.send(this.waysSelected.map(x => x.id));
+
+      }else {
+        this.waysSelected.forEach(f => {
+          w = w.filter(t => t.id !== f.id);
+        });
+        // console.log(this.waysSelected);
+        this.waysSelected.push(...w)
+        // console.log(this.waysSelected);
+        // console.log({ut,check:lista.checks,dif:w});
+        this.send(this.waysSelected.map(x => x.id));
+      }
+
+    }else{
+      this.waysSelected = [...xy];
+      console.log(this.waysSelected);
+      this.send(this.waysSelected.map(x => x.id));
+    }
 
     let newList = this.sorterTemplateMatrix.map((x,i) => x.columns.map((y,is) => ({way:y.way.templateZone.zones.id,index:is,indexx:i,column:y})));
     newList.forEach(ele => {
       ele = ele.filter(x => x.column.way.templateZone.zones.color.hex === lista.color);
       if(ele.length !== 0){
         ele.forEach(w => {
-          this.selectWay(w.column,w.indexx,w.index,lista.checks)
+          this.columnSelected.next({column:w.column,iHeight:w.indexx,iCol:w.index})
         });
       }
     });
 
   }
 
-
-  // checkList(lista$:number[],id:number){
-  //  if(this.ids.length === 0){
-  //    this.ids.push(id);
-  //    this.listas = [...lista$];
-  //  }else {
-  //    let x = this.ids.find( xs => xs === id);
-  //    if(!x){
-  //      this.ids.push(id);
-  //      this.listas = [...this.listas,...lista$]
-  //    }
-  //  }
-  //  console.log({ids:this.ids, lista:this.listas});
-  //  this.listOfIdsWays.next(this.listas);
-  //
-  // }
 
   private checkListas(lista: MatrixSorterModel.MatrixTemplateSorter[] ){
     // console.log(lista);
@@ -223,8 +287,10 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       for (col of list.columns){
         idslenght = {
           idZona:col.way.templateZone.zones.id,
-          listas:[col.way.id]
+          listas:[col.way.id],
+          col
         }
+
         pset.add(col.way.templateZone.zones.id);
         // console.log(col);
         listaIds.push(idslenght);
@@ -287,6 +353,11 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       }
     }
     // console.log(this.listZonesWithColors);
+  }
+
+  public borrarWays(){
+    this.refresh();
+    this.listZonesWithColors.map(c => c.checks = false);
   }
 
   public changeEmptyingForWay(newEmptying: number, iHeight: number, iCol: number) {
