@@ -11,7 +11,7 @@ import { ProductDetailsAlModule } from './modals-al/product-details-al/product-d
 import { BreadcrumbModule } from '../components/breadcrumb/breadcrumb.module';
 import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
-
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -33,6 +33,7 @@ const routes: Routes = [
     ProductDetailsAlModule,
     TagsInputModule,
     PaginatorComponentModule,
+    MatTooltipModule,
   ],
   declarations: [ProductsAlComponent]
 })

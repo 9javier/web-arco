@@ -16,9 +16,11 @@ import { SendComponent } from './send/send.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
 import { AddDestinyComponent} from './add-destiny/add-destiny.component';
 import { element } from '@angular/core/src/render3';
 import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
+
 
 import { HistoryModalComponent } from './history-modal/history-modal.component';
 @Component({
@@ -62,7 +64,10 @@ export class JailComponent implements OnInit {
     private alertControler: AlertController,
     private printerService: PrinterService,
     private loadController: LoadingController,
+    private holderTooltipText: HolderTooltipText,
+
     private historyModalComponent: HistoryModalComponent
+
   ) {
   }
 
@@ -70,6 +75,10 @@ export class JailComponent implements OnInit {
     this.getTypePacking();
     this.getCarriers();
     this.getWarehouses();
+  }
+
+  btnOnClick(idElement:string, txtElement?:string){
+    this.holderTooltipText.setTootlTip(idElement,false);
   }
 
   /**
@@ -279,7 +288,7 @@ export class JailComponent implements OnInit {
         listaCarrier.push(newId)
       }
     });
-    if (listaCarrier.length > 0) {  
+    if (listaCarrier.length > 0) {
 
       listaSend = listaCarrier.filter(x => {
         if (x.packingInventorys.length > 0 && x.status !== 4 && x.carrierWarehousesDestiny.length === 1) {
@@ -337,9 +346,9 @@ export class JailComponent implements OnInit {
     });
 
        this.setMultipleDestinations(listWithDestiny,listWithNoDestiny);
-      
+
   }
-  
+
   private async printReferencesList(listReferences: Array<string>) {
     if ((<any>window).cordova) {
       this.printerService.print({ text: listReferences, type: 0 });
@@ -477,7 +486,3 @@ export class JailComponent implements OnInit {
   }
 
 }
-
-
-
-

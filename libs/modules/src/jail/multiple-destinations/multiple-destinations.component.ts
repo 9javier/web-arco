@@ -10,6 +10,7 @@ import { resolve } from 'url';
 import { stat } from 'fs';
 import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
 import { ThrowStmt } from '@angular/compiler';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'suite-multiple-destinations',
@@ -31,8 +32,10 @@ export class MultipleDestinationsComponent implements OnInit {
   ListToSeal=[];
   ListNoProducts=[];
   ListToAddDestiny=[];
+  listPrecintarUpdate=[];
   
-  
+  private sortValues = { carrierId: null, warehouseId: null };
+
  
   constructor(
     private carriersService: CarriersService,
@@ -59,25 +62,20 @@ export class MultipleDestinationsComponent implements OnInit {
     this.modalController.dismiss();
   }
   selectDestiny(event: MatSelectChange,idCarrier) {
-      if(this.listToPrecintar.length <=0){
+     let exist = _.find(this.listToPrecintar, {'carrierId': idCarrier});
+      if(exist) {
+        _.remove(this.listToPrecintar, function(n) {
+          return n.carrierId == idCarrier;
+        });
+        let object = {
+          destinationWarehouseId: event.value.id,
+          carrierId: idCarrier
+        }
+        this.listToPrecintar.push(object);
+      }else{
         this.listToPrecintar.push({
           destinationWarehouseId: event.value.id,
           carrierId: idCarrier});
-      
-      }else{
-        for(let i=0; i < this.listToPrecintar.length;i++){
-          if(this.listToPrecintar[i].carrierId == idCarrier){
-             this.listToPrecintar.splice(i,1);
-             this.listToPrecintar.push({
-              destinationWarehouseId: event.value.id,
-              carrierId: idCarrier});
-          }else{
-            this.listToPrecintar.push({
-              destinationWarehouseId: event.value.id,
-              carrierId: idCarrier});
-          }
-         
-        }
       }
     this.warehouse = event.value;
   }
@@ -85,7 +83,10 @@ export class MultipleDestinationsComponent implements OnInit {
        this.addDestinyMultiple();
   }
 
+ 
+
   addDestinyMultiple(){
+    //console.log("precintar"+JSON.stringify(this.listToPrecintar));    
     if(this.listWithNoDestiny.length > 0 && this.listToPrecintar.length > 0){
       this.addDestiny(this.listToPrecintar);
     }else if(this.listWithDestiny.length > 0){
@@ -125,7 +126,10 @@ export class MultipleDestinationsComponent implements OnInit {
       let error1 = '';
       if (this.listWithNoDestiny[i].products == 0) {
         error1 = '- Sin productos';
-      } else
+      } else if(this.listWithNoDestiny[i].destiny > 1){
+        error1 = '- Varios destinos';
+      }
+      else
         if (this.listWithNoDestiny[i].status == 4) {
           error1 = '- Precintada';
         }

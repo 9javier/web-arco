@@ -11,6 +11,7 @@ import { TagsInputModule } from '../components/tags-input/tags-input.module';
 import { PaginatorComponentModule } from '../components/paginator/paginator.component.module';
 import { PricesRangePopoverModule } from "./prices-range-popover/prices-range-popover.module";
 import { SliderComponent } from './components/slider/slider.component';
+import { MatTooltipModule } from "@angular/material";
 
 const routes: Routes = [
   {
@@ -37,7 +38,8 @@ const routes: Routes = [
     MatSlideToggleModule,
     TagsInputModule,
     PaginatorComponentModule,
-    PricesRangePopoverModule
+    PricesRangePopoverModule,
+    MatTooltipModule,
   ]
 })
 export class PricesModule { }
