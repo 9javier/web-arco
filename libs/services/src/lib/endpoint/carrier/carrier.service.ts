@@ -31,6 +31,7 @@ export class CarrierService {
   private getCarrierHistoryURL = environment.apiBase+'/packing/history';
   private getAllWhsonCarries = environment.apiBase+'/packing/getWhs/getWhsOnCarrier';
   private movementHistory = environment.apiBase+'/packing/warehouse/movementHistory';
+  private typeMovement = environment.apiBase+'/types/movement-history';
 
   constructor(
     private http:HttpClient,
@@ -56,6 +57,12 @@ export class CarrierService {
 
   postMovementsHistory(body:{}):Observable<Array<CarrierModel.Carrier>>{
     return this.http.post<CarrierModel.CarrierResponse>(this.movementHistory, body).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  getMovementType():Observable<Array<CarrierModel.Carrier>>{
+    return this.http.get<CarrierModel.CarrierResponse>(this.typeMovement).pipe(map(response=>{
       return response.data;
     }));
   }

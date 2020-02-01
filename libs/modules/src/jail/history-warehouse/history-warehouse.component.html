@@ -22,7 +22,7 @@
         </ion-col>
 
 
-        <ion-col size="3">
+        <!-- <ion-col size="3">
           <div class="content-select">
             <ion-label class="title-select">Fecha de inicio</ion-label>
             <ion-item class="content-icon-select">
@@ -48,9 +48,9 @@
               </mat-form-field>
             </ion-item>
           </div>
-        </ion-col>
+        </ion-col> -->
 
-        <ion-col size="2" class="ion-align-self-center bt-right">
+        <ion-col size="2" class="ion-align-self-end bt-right">
           <ion-button (click)='getAllInfo()' matTooltip="Aplicar cambios" matTooltipClass="tooltip" color="primary" >
             <ion-icon name="search" [matTooltip]="'Aplicar cambios'"></ion-icon>
           </ion-button>
@@ -58,14 +58,37 @@
 
       </ion-row>
 
-
       <hr>
 
       <ion-row>
-        <ion-col size="6" class="ion-align-self-center bt-right">
-          <ion-label class="title-select" color="dark">N° y nombre de la tienda: <ion-label color="primary"> {{ results['warehouse']['reference']  }} - {{ results['warehouse']['name'] }} </ion-label> </ion-label>
+        <!-- class="ion-align-self-center" -->
+        <ion-col size="6" >
+          <ion-item class="item-text-wrap">
+            <ion-title size="small"  color="dark">N° y nombre de la tienda:</ion-title>
+            <ion-label color="primary"> {{ nStore  }} </ion-label>
+          </ion-item>
         </ion-col>
 
+        <ion-col size="6">
+          <ion-item class="item-text-wrap">
+            <ion-title size="small"  color="dark">Jaulas en tiendas:</ion-title>
+            <ion-label color="primary"> {{ jOnStore  }} </ion-label>
+          </ion-item>
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-item class="item-text-wrap">
+            <ion-title size="small"  color="dark">Jaulas en tránsito Ida:</ion-title>
+            <ion-label color="primary"> {{ jOnTI  }} </ion-label>
+          </ion-item>
+        </ion-col>
+
+        <ion-col size="6">
+          <ion-item class="item-text-wrap">
+            <ion-title size="small"  color="dark">Jaulas en tránsito Ida:</ion-title>
+            <ion-label color="primary"> {{ jOnTV  }} </ion-label>
+          </ion-item>
+        </ion-col>
 
       </ion-row>
 
@@ -85,9 +108,7 @@
                 Tipo
             </th>
             <td mat-cell *matCellDef="let type">
-                <ion-icon slot="end" *ngIf="type.type == 1" name="arrow-round-up" class="color-notification ion-align-self-center"></ion-icon>
-                <ion-icon slot="end" *ngIf="type.type == 2" name="arrow-round-down" class="color-notification ion-align-self-center"></ion-icon>
-                {{ type.type }}
+                {{ setMovementType(type.type) }}
             </td>
         </ng-container>
 
@@ -114,7 +135,7 @@
                 Nombre del bulto
             </th>
             <td mat-cell *matCellDef="let reference">
-              {{ 2+1 }}
+              {{ reference['carrier']['reference'] }}
             </td>
         </ng-container>
     </table>
