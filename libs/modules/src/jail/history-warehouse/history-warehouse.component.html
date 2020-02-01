@@ -2,6 +2,7 @@
 
   <suite-breadcrumb></suite-breadcrumb>
 
+<form [formGroup]="formVar" (ngSubmit)="submit()">
     <div class="form-fields">
       <ion-row>
 
@@ -13,7 +14,7 @@
               <ion-item>
                 <!-- (ngModelChange)="" -->
                 <ion-select placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected"  formControlName='warehouse'>
-                  <ion-select-option value="01">Test 01</ion-select-option>
+                  <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id">{{ warehouse.name }}</ion-select-option>
                 </ion-select>
               </ion-item>
             </ion-item>
@@ -49,12 +50,18 @@
           </div>
         </ion-col>
 
+        <ion-col size="2" class="ion-align-self-center bt-right">
+          <ion-button matTooltip="Aplicar cambios" matTooltipClass="tooltip" color="primary" >
+            <ion-icon name="search" [matTooltip]="'Aplicar cambios'"></ion-icon>
+          </ion-button>
+        </ion-col>
+
       </ion-row>
 
     </div>
+</form>
 
-
-  <!-- <div class="example-container">
+  <div class="example-container">
       <table mat-table [dataSource]="dataSource"  class="table-incidences">
 
          <ng-container matColumnDef="position">
@@ -80,7 +87,7 @@
          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
       </table>
-  </div> -->
+  </div>
 
 
   <h1>Hola</h1>

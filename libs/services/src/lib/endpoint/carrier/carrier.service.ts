@@ -29,6 +29,7 @@ export class CarrierService {
   private postCheckPackingAvailabilityUrl = environment.apiBase + '/packing/availability/check';
   private postVaciarCalle = environment.apiBase+'/packing/empty';
   private getCarrierHistoryURL = environment.apiBase+'/packing/history';
+  private getAllWhsonCarries = environment.apiBase+'/packing/getWhs/getWhsOnCarrier';
 
   constructor(
     private http:HttpClient,
@@ -41,6 +42,12 @@ export class CarrierService {
    */
   getIndex():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  getAllWhs():Observable<Array<CarrierModel.Carrier>>{
+    return this.http.get<CarrierModel.CarrierResponse>(this.getAllWhsonCarries).pipe(map(response=>{
       return response.data;
     }));
   }

@@ -2,6 +2,9 @@ import { Component, OnInit, Input} from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import {Router, ActivatedRoute} from '@angular/router';
 import {HistoryWarehouseModalComponent} from './history-warehouse-modal/history_whs_modal.component';
+import { CarrierService, WarehouseModel, IntermediaryService } from '@suite/services';
+import { Validators, FormBuilder, FormGroup, FormArray,  FormControl, } from '@angular/forms';
+
 
 export interface PeriodicElement {
   name: string;
@@ -41,22 +44,45 @@ export class HistoryWarehouseComponent implements OnInit {
   private datemin;
   private datemax;
   private whsCode;
+  private whs: any;
+
+  formVar: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private modal: HistoryWarehouseModalComponent,
+    private carrierService: CarrierService,
+    private intermediaryService: IntermediaryService,
+    private fb: FormBuilder,
   ) {
+
   }
 
+
+  getCarriers(): void {
+    this.intermediaryService.presentLoading();
+    this.carrierService.getAllWhs().subscribe(carriers => {
+      this.whs = carriers;
+      this.intermediaryService.dismissLoading();
+    })
+  }
 
 
   ngOnInit() {
-    this.getInfoParms();
+    this.getCarriers();
+    this.formVar = this.fb.group({
+      warehouse: '',
+      beginDate: '',
+      endDate: ''
+    });
   }
 
-  getInfoParms(){
+
+  getWarehouse(){
+
   }
+
 
 
 }

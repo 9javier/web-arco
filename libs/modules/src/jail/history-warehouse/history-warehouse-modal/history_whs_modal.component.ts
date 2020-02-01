@@ -16,11 +16,11 @@ import { Router } from '@angular/router';
 })
 export class HistoryWarehouseModalComponent implements OnInit {
 
-  public dateMin;
-  public dateMax;
+  public dateMin = new Date(Date.now());
+  public dateMax = new Date(Date.now());
   public whsCode;
   formVar: FormGroup;
-
+  private whs: any;
 
 
   constructor(
@@ -37,6 +37,12 @@ export class HistoryWarehouseModalComponent implements OnInit {
       beginDate: '',
       endDate: ''
     });
+
+    this.intermediaryService.presentLoading();
+    this.carrierService.getAllWhs().subscribe(carriers => {
+      this.whs = carriers;
+      this.intermediaryService.dismissLoading();
+    })
   }
 
   setDateStart(date:any){
@@ -48,12 +54,12 @@ export class HistoryWarehouseModalComponent implements OnInit {
     this.dateMax = new Date(this.formVar.value['endDate']);
     this.whsCode = this.formVar.value['warehouse'];
 
-    console.log(this.dateMin + " -");
-    console.log(this.dateMax + " -");
-    console.log(this.whsCode + " -");
+    console.log(this.dateMin);
+    console.log(this.dateMax);
+    console.log(this.whsCode);
 
-    if(this.validateSubmit(this.dateMin, this.dateMax)){
-      this.router.navigate(['jails/history']);
+    if(this.validateSubmit(this.dateMin, this.dateMax, this.whsCode)){
+      // this.router.navigate(['jails/history']);
       this.closeModal();
     }
 
@@ -61,18 +67,41 @@ export class HistoryWarehouseModalComponent implements OnInit {
 
   }
 
+
+
+
+
+
+
   closeModal(){
     this.modalController.dismiss()
   }
 
-  validateSubmit(dateM:any,dateMx:any ):boolean{
+ validateSubmit(dateM:any,dateMx:any, whsCode:string ):boolean{
 
-    if(dateM>dateMx)
+    if (whsCode=='' || whsCode==null){
+      this.intermediaryService.presentToastError("Favor de seleccionar el almacén");
       return false;
+    }
 
-    if(dateMx<dateM)
+
+    if(dateM == null || dateM == '' || dateM.lenght == 0){
+      this.intermediaryService.presentToastError("Favor de seleccionar una fecha inicial");
+      return false
+    }
+
+    if(dateMx == null || dateMx == '' || dateMx.lenght == 0){
+      this.intermediaryService.presentToastError("Favor de seleccionar una fecha final");
+      return false
+    }
+    if(dateM>dateMx){
+      this.intermediaryService.presentToastError("Favor de seleccionar una fecha inicial menor a la fecha final");
       return false;
-
+    }
+    if(dateMx<dateM){
+      this.intermediaryService.presentToastError("Favor de seleccionar una fecha inicial mayor a la fecha final");
+      return false;
+    }
     return true;
   }
 
