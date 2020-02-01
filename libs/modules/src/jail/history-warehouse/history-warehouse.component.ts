@@ -4,6 +4,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {HistoryWarehouseModalComponent} from './history-warehouse-modal/history_whs_modal.component';
 import { CarrierService, WarehouseModel, IntermediaryService } from '@suite/services';
 import { Validators, FormBuilder, FormGroup, FormArray,  FormControl, } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material/table';
 
 
 export interface PeriodicElement {
@@ -11,6 +12,12 @@ export interface PeriodicElement {
   position: number;
   weight: number;
   symbol: string;
+}
+
+export interface callToService{
+  warehouse:number,
+  startDate:string,
+  endDate:string,
 }
 
 const ELEMENT_DATA: PeriodicElement[] = [
@@ -39,12 +46,15 @@ export class HistoryWarehouseComponent implements OnInit {
   destinations;
   jail;
 
-  dataSource = ELEMENT_DATA;
+
+  displayedColumns: string[] = ['type', 'dateSend', 'dateReceive', 'reference'];
+  pagerValues = [50, 100, 500];
 
   private datemin = "2020-01-01";
   private datemax = "2020-02-27";
   private whsCode = 6;
-  private whs: any;
+  public whs: any;
+  public results:any;
 
   formVar: FormGroup;
 
@@ -69,22 +79,19 @@ export class HistoryWarehouseComponent implements OnInit {
     })
   }
 
+  dataSource = new MatTableDataSource<any>();
+
+
   getAllInfo(){
-    let body={
+    let body:callToService={
       warehouse:this.whsCode,
       startDate:this.datemin.toString(),
       endDate:this.datemax.toString(),
     };
+
     this.carrierService.postMovementsHistory(body).subscribe(sql_result => {
-      let results = sql_result;
-
-
-
-      let history_results = results['historyList'];
-
-      console.log(results);
-      console.log(history_results);
-
+      this.results = sql_result;
+      this.dataSource = this.results['historyList'];
     });
   }
 
@@ -98,11 +105,7 @@ export class HistoryWarehouseComponent implements OnInit {
       beginDate: '',
       endDate: ''
     });
-  }
-
-
-  getWarehouse(){
-
+    this.getAllInfo();
   }
 
 
