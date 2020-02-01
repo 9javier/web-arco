@@ -80,6 +80,15 @@ export namespace SorterOutputModel {
   export interface ParamsEmptyWay {
     wayId: string
   }
+
+  /**
+   * @author Gaetano Sabino
+   *
+   */
+  export interface ParamsEmptyAllWays {
+    waysId: number[] | string[];
+    userId? : number | string;
+  }
   export interface EmptyWay {
 
   }
