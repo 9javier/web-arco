@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import {SorterService} from "../../../../services/src/lib/endpoint/sorter/sorter.service";
 import {TemplateZonesService} from "../../../../services/src/lib/endpoint/template-zones/template-zones.service";
 import {SorterModel} from "../../../../services/src/models/endpoints/Sorter";
@@ -37,6 +37,8 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   private lastWaySelected = null;
   private lastWaysSelected: any[] = [];
   private waysToUpdate: any[] = [];
+
+
 
 
   constructor(
@@ -156,6 +158,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   private async allEmptying(){
 
     if(this.listOfIdsWays.length > 0){
+    console.log(this.listOfIdsWays);
     //  TODO call of method for delete all ways
     await this.intermediaryService.presentLoading('Vacciando Calles...');
     let result  = await this.sorterOutputService.postEmptyAllWays(
@@ -165,11 +168,13 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       this.listOfIdsWays = [];
       this.disableManual = true;
       this.disableMixed = true;
+      await this.intermediaryService.dismissLoading();
+      this.matrix.borrarWays();
+      // await this.manualEmptying();
 
-      await this.manualEmptying();
       return;
     }else {
-
+      await this.intermediaryService.dismissLoading();
       await this.intermediaryService.presentToastError('Error en vaciar las Calle/s');
 
     }
