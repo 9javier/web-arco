@@ -30,6 +30,7 @@ export class CarrierService {
   private postVaciarCalle = environment.apiBase+'/packing/empty';
   private getCarrierHistoryURL = environment.apiBase+'/packing/history';
   private getAllWhsonCarries = environment.apiBase+'/packing/getWhs/getWhsOnCarrier';
+  private movementHistory = environment.apiBase+'/packing/warehouse/movementHistory';
 
   constructor(
     private http:HttpClient,
@@ -46,11 +47,20 @@ export class CarrierService {
     }));
   }
 
+  /*------------------*/
   getAllWhs():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.getAllWhsonCarries).pipe(map(response=>{
       return response.data;
     }));
   }
+
+  postMovementsHistory(body:{}):Observable<Array<CarrierModel.Carrier>>{
+    return this.http.post<CarrierModel.CarrierResponse>(this.movementHistory, body).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  /*------------------*/
 
   getCarrierMeWarehouse():Observable<Array<CarrierModel.Carrier>>{
     return this.http.get<CarrierModel.CarrierResponse>(this.carrierMeWarehouseUrl).pipe(map(response=>{

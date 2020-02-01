@@ -41,9 +41,9 @@ export class HistoryWarehouseComponent implements OnInit {
 
   dataSource = ELEMENT_DATA;
 
-  private datemin;
-  private datemax;
-  private whsCode;
+  private datemin = "2020-01-01";
+  private datemax = "2020-02-27";
+  private whsCode = 6;
   private whs: any;
 
   formVar: FormGroup;
@@ -59,6 +59,7 @@ export class HistoryWarehouseComponent implements OnInit {
 
   }
 
+  // -----------
 
   getCarriers(): void {
     this.intermediaryService.presentLoading();
@@ -68,6 +69,27 @@ export class HistoryWarehouseComponent implements OnInit {
     })
   }
 
+  getAllInfo(){
+    let body={
+      warehouse:this.whsCode,
+      startDate:this.datemin.toString(),
+      endDate:this.datemax.toString(),
+    };
+    this.carrierService.postMovementsHistory(body).subscribe(sql_result => {
+      let results = sql_result;
+
+
+
+      let history_results = results['historyList'];
+
+      console.log(results);
+      console.log(history_results);
+
+    });
+  }
+
+
+  // ----------------
 
   ngOnInit() {
     this.getCarriers();

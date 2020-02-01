@@ -43,9 +43,12 @@ export class HistoryWarehouseModalComponent implements OnInit {
       this.whs = carriers;
       this.intermediaryService.dismissLoading();
     })
+
+
   }
 
-  setDateStart(date:any){
+  setDateStart(){
+    console.log("Hola mundo");
   }
 
   submit(value){
@@ -59,7 +62,7 @@ export class HistoryWarehouseModalComponent implements OnInit {
     console.log(this.whsCode);
 
     if(this.validateSubmit(this.dateMin, this.dateMax, this.whsCode)){
-      // this.router.navigate(['jails/history']);
+      this.router.navigate(['jails/history']);
       this.closeModal();
     }
 
