@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {FilterPopoverProvider} from "../../../../services/src/providers/filter-popover/filter-popover.provider";
-import {PopoverController} from "@ionic/angular";
+import {NavParams, PopoverController} from "@ionic/angular";
 
 @Component({
   selector: 'suite-filter-popover',
@@ -19,6 +19,7 @@ export class FilterPopoverComponent implements OnInit {
   public itemsToRender: Array<any> = new Array<any>();
 
   constructor(
+    private navParams: NavParams,
     private popoverCtrl: PopoverController,
     private filterPopoverProvider: FilterPopoverProvider
   ) { }
@@ -108,6 +109,13 @@ export class FilterPopoverComponent implements OnInit {
     this.checkAllSelected();
     this.listItemsFinal = this.filterPopoverProvider.listItems;
     this.itemsToRender = this.listItems.sort(function(a, b){return a.value - b.value}).filter(this.notHidden).slice(0,50);
+
+    if (this.navParams.get('typedValue')) {
+      setTimeout(() => {
+        this.typedFilter = this.navParams.get('typedValue');
+        this.searchInFilterList(this.typedFilter);
+      }, 500);
+    }
   }
 
   searchInFilterList(textSearched: string) {
@@ -172,6 +180,9 @@ export class FilterPopoverComponent implements OnInit {
   }
 
   resetFilters() {
+    this.typedFilter = null;
+    this.searchInFilterList(this.typedFilter);
+
     for (let iFilter in this.listItems) {
       this.listItems[iFilter].checked = true;
     }
@@ -180,7 +191,7 @@ export class FilterPopoverComponent implements OnInit {
 
   applyFilters() {
     if (this.listItemsFinal && this.listItemsFinal.length > 0) {
-      this.popoverCtrl.dismiss({ filters: this.listItemsFinal });
+      this.popoverCtrl.dismiss({ filters: this.listItemsFinal, typedFilter: this.typedFilter });
     } else {
       this.popoverCtrl.dismiss();
     }

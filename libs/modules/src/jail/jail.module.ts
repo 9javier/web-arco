@@ -14,7 +14,7 @@ import { JailRoutingModule } from './jail-routing.module';
 import { JailComponent } from './jail.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
-import {CommonUiCrudModule} from '@suite/common/ui/crud';
+import { CommonUiCrudModule } from '@suite/common/ui/crud';
 import { DataModule } from './data/data.module';
 import { BreadcrumbModule } from '../../../modules/src/components/breadcrumb/breadcrumb.module';
 import { SendComponent } from './send/send.component';
@@ -23,9 +23,26 @@ import { MatSelectModule } from '@angular/material/select';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { AddDestinyComponent } from './add-destiny/add-destiny.component';
+import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
+import { HistoryModalComponent } from './history-modal/history-modal.component';
+
 
 @NgModule({
-  declarations: [JailComponent, StoreComponent, UpdateComponent, SendComponent, SendPackingComponent, ShowDestinationsComponent, SendJailComponent],
+  declarations: [
+    JailComponent,
+    StoreComponent,
+    UpdateComponent,
+    SendComponent,
+    SendPackingComponent,
+    ShowDestinationsComponent,
+    SendJailComponent,
+    HistoryModalComponent,
+    AddDestinyComponent, 
+    MultipleDestinationsComponent,
+    AddDestinyComponent
+  ],
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -43,12 +60,17 @@ import { SendJailComponent } from './send-jail/send-jail.component';
     MatFormFieldModule,
     MatSelectModule,
     MatTooltipModule
-  ], entryComponents: [
+  ],
+  entryComponents: [
     StoreComponent,
     SendComponent,
     SendPackingComponent,
     ShowDestinationsComponent,
-    SendJailComponent
+    SendJailComponent,
+    AddDestinyComponent,
+    MultipleDestinationsComponent,
+    HistoryModalComponent,
+    
   ]
 })
-export class JailModule { }
+export class JailModule {}

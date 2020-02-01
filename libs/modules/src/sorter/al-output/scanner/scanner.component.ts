@@ -128,7 +128,8 @@ export class ScannerOutputSorterComponent implements OnInit, OnDestroy {
 
       component: ListProductsCarrierComponent,
       componentProps: {
-        carrierReference:jaula
+        carrierReference:jaula,
+        process: 'sorter-emptying'
       }
 
     });

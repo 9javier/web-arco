@@ -64,4 +64,8 @@ export namespace CarrierModel {
   export interface ResponseGetPackingDestiny extends HttpRequestModel.Response {
     data: carrierModel.CarrierWarehouseDestiny
   }
+
+  export interface ResponseGetByReference extends HttpRequestModel.Response {
+    data: carrierModel.Carrier
+  }
 }

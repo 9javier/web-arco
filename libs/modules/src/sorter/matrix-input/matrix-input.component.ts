@@ -5,6 +5,7 @@ import {Events} from "@ionic/angular";
 import {SorterProvider} from "../../../../services/src/providers/sorter/sorter.provider";
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'sorter-matrix-input',
   templateUrl: './matrix-input.component.html',
   styleUrls: ['./matrix-input.component.scss']
@@ -26,7 +27,7 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
-  
+
   ngOnInit() {
     this.events.subscribe(this.DRAW_TEMPLATE_MATRIX, (sorterTemplateMatrix: MatrixSorterModel.MatrixTemplateSorter[]) => {
       this.sorterTemplateMatrix = sorterTemplateMatrix;
@@ -48,7 +49,8 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
                 id: zone.zones.id,
                 name: zone.zones.name,
                 active: zone.zones.active,
-                color: zone.zones.color.hex
+                color: zone.zones.color.hex,
+                checks:false
               });
             }
           }
@@ -60,7 +62,8 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
             id: 0,
             name: 'Zona seleccionada',
             active: true,
-            color: '#87CEFA'
+            color: '#87CEFA',
+            checks:false
           })
         }
       }
@@ -81,8 +84,8 @@ export class MatrixInputSorterComponent implements OnInit, OnDestroy {
 
   isFromSelectedZone(column: MatrixSorterModel.Column) : boolean {
     if (this.sorterProvider.idZoneSelected) {
-      if (column.way && column.way.templateZone && column.way.templateZone.zones && this.sorterProvider.idZoneSelected == column.way.templateZone.zones.id) {
-        if (this.sorterProvider.idZoneSelected == column.way.templateZone.zones.id) {
+      if (column.way && column.way.templateZone && column.way.templateZone.zones && this.sorterProvider.idZoneSelected === column.way.templateZone.zones.id) {
+        if (this.sorterProvider.idZoneSelected === column.way.templateZone.zones.id) {
           return true;
         } else {
           return false;

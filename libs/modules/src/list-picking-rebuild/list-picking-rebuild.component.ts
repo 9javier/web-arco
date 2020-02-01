@@ -58,7 +58,7 @@ export class ListPickingRebuildComponent implements OnInit {
     this.loadEmployees();
   }
 
-  private loadPickingsList() {
+  public loadPickingsList() {
     this.isLoadingPickings = true;
 
     let subscribeResponseListPickings = (res: Array<PickingModel.PendingPickings>) => {

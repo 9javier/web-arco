@@ -64,7 +64,7 @@ export class ListasProductosComponent implements OnInit {
     // TODO llamar el metodo vaciarCalle
     await this.intermediaryService.presentLoading();
 
-    await this.carrierService.postPackingEmpty(this.jaula).then(res => {
+    await this.carrierService.postPackingEmpty(this.jaula, null).then(res => {
       if(res.code === 200){
         this.audioProvider.playDefaultOk();
         this.intermediaryService.presentToastSuccess(`La Jaula ${this.jaula} se ha vaciado corectamente`);

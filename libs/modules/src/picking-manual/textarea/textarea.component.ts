@@ -116,7 +116,8 @@ export class TextareaComponent implements OnInit {
       
       component: ListProductsCarrierComponent,
       componentProps: {
-        carrierReference:jaula
+        carrierReference:jaula,
+        process: 'picking'
       }
       
     })
@@ -142,7 +143,7 @@ export class TextareaComponent implements OnInit {
     modal.present();
   }
 
-  keyUpInput(event?,prova:boolean=false) {
+  async keyUpInput(event?,prova:boolean=false) {
     // console.log(event);
     let dataWrited = (this.inputPicking || "").trim();
     // console.log(dataWrited);
@@ -161,140 +162,148 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputPicking = null;
-      // TODO creamos metodos para saber si la jaula esta llena
-      
+
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
-        this.carrierService.getSingle(this.lastCodeScanned)
-        .pipe(
-          // map(x => x.packingInventorys),
-        )
-        .subscribe(data => {
-          if(data.packingInventorys.length > 0 && !prova){
-            // console.log('abre modal');
-            // console.log(data);
-            this.modalList(this.lastCodeScanned);
-          }else{
-            console.log('no tiene lista');
-            if (this.listProducts.length !== 0) {
-              let typePackingScanned = 0;
-              if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
-                typePackingScanned = 1;
-              } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
-                typePackingScanned = 2;
-              } else {
-                typePackingScanned = 3;
-              }
-              if ((this.packingReference && this.packingReference === dataWrited) || !this.packingReference) {
-                this.timeLastCodeScanned = new Date().getTime();
-                this.lastCarrierScanned = dataWrited;
-                if ((this.typePacking && typePackingScanned === this.typePacking) || !this.typePacking) {
-                  this.intermediaryService.presentLoading();
-                  this.postVerifyPacking({
-                    status: 2,
-                    pickingId: this.pickingId,
-                    packingReference: dataWrited
-                  })
-                    .subscribe((res) => {
-                      this.intermediaryService.dismissLoading();
-                      if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
-                        this.typePacking = 1;
-                      } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
-                        this.typePacking = 2;
-                      } else {
-                        this.typePacking = 3;
-                      }
-                      if (res) {
-                        if (res.code === 200 || res.code === 201) {
-                          // console.log('passa di qui',res);
-                          
-                          if (res.data.packingStatus === 2) {
-                            this.processInitiated = true;
-                            this.audioProvider.playDefaultOk();
-                            this.inputPicking = null;
-                            this.focusToInput();
-                            this.jailReference = dataWrited;
-                            this.dataToWrite = 'PRODUCTO';
-                            if (!this.packingReference) {
-                              this.packingReference = this.jailReference;
-                            }
-                            this.setNexProductToScan(this.listProducts[0]);
-                            this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`,
-                              TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
-    
-                            this.showTextStartScanPacking(false, this.typePacking, '');
-                          } else if (res.data.packingStatus === 3) {
-                            if (this.typePicking === 1) {
-                              this.alertSealPackingIntermediate(this.jailReference);
+        if(this.processInitiated && this.lastCarrierScanned == dataWrited){
+          if (this.typePicking === 1) {
+            this.alertSealPackingFinal(dataWrited);
+          } else {
+            this.endProcessPacking(dataWrited);
+          }
+        } else {
+          this.carrierService.getSingle(this.lastCodeScanned)
+            .pipe(
+              // map(x => x.packingInventorys),
+            )
+            .subscribe(data => {
+              if(data.packingInventorys.length > 0 && !prova){
+                // console.log('abre modal');
+                // console.log(data);
+                this.modalList(data.reference);
+              }else{
+                console.log('no tiene lista');
+                if (this.listProducts.length !== 0) {
+                  let typePackingScanned = 0;
+                  if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
+                    typePackingScanned = 1;
+                  } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
+                    typePackingScanned = 2;
+                  } else {
+                    typePackingScanned = 3;
+                  }
+                  if ((this.packingReference && this.packingReference === dataWrited) || !this.packingReference) {
+                    this.timeLastCodeScanned = new Date().getTime();
+                    this.lastCarrierScanned = dataWrited;
+                    if ((this.typePacking && typePackingScanned === this.typePacking) || !this.typePacking) {
+                      this.intermediaryService.presentLoading();
+                      this.postVerifyPacking({
+                        status: 2,
+                        pickingId: this.pickingId,
+                        packingReference: dataWrited
+                      })
+                        .subscribe((res) => {
+                          this.intermediaryService.dismissLoading();
+                          if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.JAIL)) {
+                            this.typePacking = 1;
+                          } else if (this.itemReferencesProvider.checkSpecificCodeValue(dataWrited, this.itemReferencesProvider.codeValue.PALLET)) {
+                            this.typePacking = 2;
+                          } else {
+                            this.typePacking = 3;
+                          }
+                          if (res) {
+                            if (res.code === 200 || res.code === 201) {
+                              // console.log('passa di qui',res);
+
+                              if (res.data.packingStatus === 2) {
+                                this.processInitiated = true;
+                                this.audioProvider.playDefaultOk();
+                                this.inputPicking = null;
+                                this.focusToInput();
+                                this.jailReference = dataWrited;
+                                this.dataToWrite = 'PRODUCTO';
+                                if (!this.packingReference) {
+                                  this.packingReference = this.jailReference;
+                                }
+                                this.setNexProductToScan(this.listProducts[0]);
+                                this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_started}${this.jailReference}.`,
+                                  TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
+
+                                this.showTextStartScanPacking(false, this.typePacking, '');
+                              } else if (res.data.packingStatus === 3) {
+                                if (this.typePicking === 1) {
+                                  this.alertSealPackingIntermediate(this.jailReference);
+                                } else {
+                                  this.endProcessIntermediate(this.jailReference);
+                                }
+                              } else {
+                                this.processInitiated = false;
+                                this.audioProvider.playDefaultError();
+                                this.inputPicking = null;
+                                this.focusToInput();
+                                this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+                              }
                             } else {
-                              this.endProcessIntermediate(this.jailReference);
+                              this.processInitiated = false;
+                              this.audioProvider.playDefaultError();
+                              this.inputPicking = null;
+                              this.focusToInput();
+                              this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
                             }
                           } else {
+                            this.audioProvider.playDefaultOk();
                             this.processInitiated = false;
-                            this.audioProvider.playDefaultError();
                             this.inputPicking = null;
                             this.focusToInput();
-                            this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+                            this.jailReference = null;
+                            this.dataToWrite = 'CONTENEDOR';
+                            this.packingReference = this.jailReference;
+                            this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_packing_empty}${dataWrited}.`,
+                              TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
+                            this.showNexProductToScan(false);
+                            this.showTextStartScanPacking(true, this.typePacking, '');
                           }
-                        } else {
-                          this.processInitiated = false;
-                          this.audioProvider.playDefaultError();
+                        }, (error) => {
                           this.inputPicking = null;
+                          this.intermediaryService.dismissLoading();
+                          this.audioProvider.playDefaultError();
+                          if (error.error.code === 404) {
+                            this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
+                          } else {
+                            this.intermediaryService.presentToastError(error.error.errors, PositionsToast.BOTTOM);
+                          }
                           this.focusToInput();
-                          this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
-                        }
-                      } else {
-                        this.audioProvider.playDefaultOk();
-                        this.processInitiated = false;
-                        this.inputPicking = null;
-                        this.focusToInput();
-                        this.jailReference = null;
-                        this.dataToWrite = 'CONTENEDOR';
-                        this.packingReference = this.jailReference;
-                        this.intermediaryService.presentToastPrimary(`${this.literalsJailPallet[this.typePacking].process_packing_empty}${dataWrited}.`,
-                          TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
-                        this.showNexProductToScan(false);
-                        this.showTextStartScanPacking(true, this.typePacking, '');
-                      }
-                    }, (error) => {
+                        }, () => {
+                          this.intermediaryService.dismissLoading();
+                        });
+                    } else {
                       this.inputPicking = null;
-                      this.intermediaryService.dismissLoading();
                       this.audioProvider.playDefaultError();
-                      if (error.error.code === 404) {
-                        this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].not_registered, PositionsToast.BOTTOM);
-                      } else {
-                        this.intermediaryService.presentToastError(error.error.errors, PositionsToast.BOTTOM);
-                      }
                       this.focusToInput();
-                    }, () => {
-                      this.intermediaryService.dismissLoading();
-                    });
-                } else {
+                      this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_packing, PositionsToast.BOTTOM);
+                    }
+                  } else {
+                    this.inputPicking = null;
+                    this.audioProvider.playDefaultError();
+                    this.focusToInput();
+                    this.intermediaryService.presentToastError(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, PositionsToast.BOTTOM);
+                  }
+                } else if (this.jailReference && this.jailReference !== dataWrited) {
                   this.inputPicking = null;
                   this.audioProvider.playDefaultError();
                   this.focusToInput();
-                  this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_packing, PositionsToast.BOTTOM);
+                  this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_process_finished, PositionsToast.BOTTOM);
+                } else {
+                  if (this.typePicking === 1) {
+                    this.alertSealPackingFinal(dataWrited);
+                  } else {
+                    this.endProcessPacking(dataWrited);
+                  }
                 }
-              } else {
-                this.inputPicking = null;
-                this.audioProvider.playDefaultError();
-                this.focusToInput();
-                this.intermediaryService.presentToastError(`${this.literalsJailPallet[this.typePacking].process_resumed}${this.packingReference}.`, PositionsToast.BOTTOM);
               }
-            } else if (this.jailReference && this.jailReference !== dataWrited) {
-              this.inputPicking = null;
-              this.audioProvider.playDefaultError();
-              this.focusToInput();
-              this.intermediaryService.presentToastError(this.literalsJailPallet[this.typePacking].wrong_process_finished, PositionsToast.BOTTOM);
-            } else {
-              if (this.typePicking === 1) {
-                this.alertSealPackingFinal(this.jailReference);
-              } else {
-                this.endProcessPacking(this.jailReference);
-              }
-            }
-          }
-          
-        })
+
+            })
+        }
+
         
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (!this.processInitiated) {
@@ -310,9 +319,9 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.intermediaryService.presentLoading();
-            let subscribeResponse = (res: InventoryModel.ResponsePicking) => {
-              this.intermediaryService.dismissLoading();
+            await this.intermediaryService.presentLoading();
+            let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
+              await this.intermediaryService.dismissLoading();
               if (res.code === 200 || res.code === 201) {
                 this.audioProvider.playDefaultOk();
                 this.listProducts = res.data.shoePickingPending;
@@ -355,7 +364,7 @@ export class TextareaComponent implements OnInit {
                     }
                   });
               }
-            };
+            });
             let subscribeError = (error) => {
               this.audioProvider.playDefaultError();
               this.intermediaryService.dismissLoading();
