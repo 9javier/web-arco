@@ -104,17 +104,16 @@ export class HistoryWarehouseComponent implements OnInit {
     });
   }
 
-  public setMovementType(type:any){
+  public setMovementType(type:any):string{
+    let name;
     let typesMov = (this.typeMovement);
 
     typesMov.forEach(function(v){
-
-      console.log("----");
       if(type==v['id'])
-        return v['name'];
-
-      return "Aun no";
+        name = v['name'];
     });
+
+    return name;
   }
 
   // ----------------
