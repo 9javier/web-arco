@@ -23,7 +23,7 @@ const routes: Routes = [
     component: JailComponent
   },
   {
-    path: 'history',
+    path: 'history/:datemin/:datemax/:whsCode',
     component: HistoryWarehouseComponent
   },
   {

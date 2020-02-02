@@ -9,7 +9,7 @@ import {HistoryWarehouseModalComponent} from './history-warehouse-modal/history_
 import { CarrierService, WarehouseModel, IntermediaryService } from '@suite/services';
 import { Validators, FormBuilder, FormGroup, FormArray,  FormControl, } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
-
+import { DatePipe } from '@angular/common';
 
 export interface PeriodicElement {
   name: string;
@@ -40,10 +40,11 @@ export class HistoryWarehouseComponent implements OnInit {
   displayedColumns: string[] = ['type', 'dateSend', 'dateReceive', 'reference'];
   pagerValues = [50, 100, 500];
 
-  private datemin = "2020-01-01";
-  private datemax = "2020-02-27";
-  private whsCode = 6;
+  private datemin = "";
+  private datemax = "";
+  private whsCode = 0;
   public whs: any;
+  public warehs;
   public results:any;
   public typeMovement:any = [];
 
@@ -63,6 +64,7 @@ export class HistoryWarehouseComponent implements OnInit {
     private carrierService: CarrierService,
     private intermediaryService: IntermediaryService,
     private fb: FormBuilder,
+    private datePipe: DatePipe,
   ) {
 
   }
@@ -119,14 +121,29 @@ export class HistoryWarehouseComponent implements OnInit {
   // ----------------
 
   ngOnInit() {
+    let fech1 = this.route.snapshot.paramMap.get('datemin');
+    let fecha2 = this.route.snapshot.paramMap.get('datemax');
+    this.whsCode = parseInt(this.route.snapshot.paramMap.get('whsCode'));
+
+    let beginDate = this.datePipe.transform(fech1,"yyyy-MM-dd");
+    let endDate = this.datePipe.transform(fecha2,"yyyy-MM-dd");
+
+    this.datemin = beginDate;
+    this.datemax = endDate;
+
+     console.log(this.datemin+"\n"+
+      this.datemax+"\n"+
+      this.whsCode+"\n");
+     
     this.getCarriers();
     this.formVar = this.fb.group({
-      warehouse: '',
-      beginDate: '',
-      endDate: ''
+      warehouse: this.whsCode,
+      beginDate: this.datemin,
+      endDate: this.datemax
     });
     this.getAllInfo();
     this.getMovementTypeFromService();
+  
   }
 
 
