@@ -13,6 +13,7 @@ import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-st
 import Warehouse = WarehouseModel.Warehouse;
 import Size = SizeModel.Size;
 import {CarrierModel} from "../../../services/src/models/endpoints/carrier.model";
+import {TimesToastType} from "../../../services/src/models/timesToastType";
 
 @Component({
   selector: 'app-ventilation-no-sorter',
@@ -170,28 +171,66 @@ export class VentilationNoSorterComponent implements OnInit {
         force: true,
         avoidAvelonMovement: true
       };
-      await this.pickingStoreService
+      this.pickingStoreService
         .postVentilate({
           paramsCreateInventory: inventoryProcess,
           needNotifyAvelon: !this.destinyWarehouse || (this.destinyWarehouse && this.destinyWarehouse.reference == '000'),
           withSorter: false
+        })
+        .then(async (res) => {
+          if (res.code == 201) {
+            this.resetScanner();
+            this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
+            this.waitingForPacking = false;
+            this.withoutOutputScan = false;
+            this.showScanner = true;
+            this.packingPhase = false;
+            if (this.loading){
+              await this.intermediaryService.dismissLoading();
+              this.loading = false;
+            }
+            await this.intermediaryService.presentToastSuccess('Producto asignado al embalaje.', TimesToastType.DURATION_SUCCESS_TOAST_2000, 'bottom');
+            this.scannerManual.focusToInput();
+            this.audioProvider.playDefaultOk();
+          } else {
+            if (this.loading){
+              await this.intermediaryService.dismissLoading();
+              this.loading = false;
+            }
+            let errorMessage = 'Ha ocurrido un error al intentar asignar el producto al embalaje.';
+            if (res.errors) {
+              errorMessage = res.errors;
+            }
+            await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+            this.scannerManual.focusToInput();
+            this.audioProvider.playDefaultError();
+          }
+        })
+        .catch(async (error) => {
+          if (this.loading){
+            await this.intermediaryService.dismissLoading();
+            this.loading = false;
+          }
+          let errorMessage = 'Ha ocurrido un error al intentar asignar el producto al embalaje.';
+          if (error.error && error.error.errors) {
+            errorMessage = error.error.errors;
+          }
+          await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+          this.scannerManual.focusToInput();
+          this.audioProvider.playDefaultError();
         });
-      this.resetScanner();
-      this.scanMessage = '¡Hola! Escanea un artículo para comenzar';
-      this.waitingForPacking = false;
-      this.withoutOutputScan = false;
-      this.showScanner = true;
-      this.packingPhase = false;
-      this.scannerManual.focusToInput();
-      if (this.loading){
-        await this.intermediaryService.dismissLoading();
-        this.loading = false;
-      }
     } catch (exception) {
       if (this.loading){
         await this.intermediaryService.dismissLoading();
         this.loading = false;
       }
+      let errorMessage = 'Ha ocurrido un error al intentar asignar el producto al embalaje.';
+      if (exception.error && exception.error.errors) {
+        errorMessage = exception.error.errors;
+      }
+      await this.intermediaryService.presentToastError(errorMessage, 'bottom');
+      this.scannerManual.focusToInput();
+      this.audioProvider.playDefaultError();
     }
   }
 
