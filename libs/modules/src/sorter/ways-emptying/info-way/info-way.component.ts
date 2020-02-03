@@ -8,7 +8,6 @@ import {ProductSorterModel} from "../../../../../services/src/models/endpoints/P
 import {IntermediaryService} from "@suite/services";
 
 @Component({
-  // tslint:disable-next-line:component-selector
   selector: 'sorter-info-way-emptying',
   templateUrl: './info-way.component.html',
   styleUrls: ['./info-way.component.scss']
@@ -31,9 +30,12 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
-
+  
   ngOnInit() {
-
+    this.way = null;
+    this.destinyWarehouse = null;
+    this.listProducts = [];
+    this.isLoadingData = false;
   }
 
   public newWaySelected(way: WaySorterModel.WaySorter) {
@@ -42,7 +44,7 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
     this.sorterOutputService
       .postGetProductsByWay({ wayId: way.id })
       .then(async (res: SorterOutputModel.ResponseGetProductsByWay) => {
-        if (res.code === 200) {
+        if (res.code == 200) {
           let resData = res.data;
           this.destinyWarehouse = resData.warehouse ? `${resData.warehouse.reference} ${resData.warehouse.name}` : 'NO ASIGNADO';
           this.listProducts = resData.products || [];

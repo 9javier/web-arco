@@ -23,6 +23,8 @@ import { MultipleDestinationsComponent } from './multiple-destinations/multiple-
 
 
 import { HistoryModalComponent } from './history-modal/history-modal.component';
+import {WorkwaveModel} from "../../../services/src/models/endpoints/Workwaves";
+
 @Component({
   selector: 'app-jail',
   templateUrl: './jail.component.html',
@@ -42,6 +44,7 @@ export class JailComponent implements OnInit {
   public columns: any[] = [{ name: 'ID', value: 'id' }, { name: 'Referencia', value: 'reference' }];
   public apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
   public routePath = '/jails';
+  public jails: any[];
 
   types = [];
   displayedColumns = ['select', 'reference', 'packing','warehouse', 'destiny', 'products-status', 'sealed', 'isSend', "update", 'open-modal', 'buttons-print',];
@@ -160,6 +163,26 @@ export class JailComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     })
   }
+
+  loadCarriers(): void {
+    this.intermediaryService.presentLoading("Actualizando...");
+    this.carrierService.getIndex().subscribe(carriers => {
+
+      this.carriers = carriers;
+      //this.carriers = this.carriers.map(this.isAvailableSend);
+      this.toDelete.removeControl("jails");
+      this.toDelete.addControl("jails", this.formBuilder.array(carriers.map(carrier => {
+        return this.formBuilder.group({
+          id: carrier.id,
+          reference: carrier.reference,
+          selected: false
+        });
+      })));
+      this.dataSource = new MatTableDataSource(carriers);
+      this.intermediaryService.dismissLoading();
+    });
+  }
+
   delete() {
     let observable = new Observable(observer => observer.next());
     this.toDelete.value.jails.forEach(jail => {
@@ -231,7 +254,7 @@ export class JailComponent implements OnInit {
   }
 
   isAvailableSend(carrier) {
-    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[carrier.packingSends.length - 1].isReception : true;
+    let isAvailable = carrier.packingSends.length > 0 ? carrier.packingSends[carrier.packingSends.length - 1].isfReception : true;
     if (isAvailable) {
       return carrier.carrierWarehousesDestiny.length == 0 || carrier.carrierWarehousesDestiny.length == 1;
     }

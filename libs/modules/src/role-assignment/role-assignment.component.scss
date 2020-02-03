@@ -1,28 +1,3 @@
-.centre-header.mat-header-cell {
-  text-align: center;
-  display: inline-grid;
-}
-
-.centre-cell.mat-cell {
-  text-align: center;
-  display: inline-grid;
-}
-
-.centre-cell.mat-cell.buttons {
-  .content-button-cell {
-    button {
-      text-align: center;
-      width: 60px;
-      background: #000000;
-      border-radius: 6px;
-
-      mat-icon {
-        color: #eeeeee;
-      }
-    }
-  }
-}
-
 .table-container {
   ::ng-deep {
 
@@ -78,4 +53,9 @@ mat-icon {
 
 #reset{
   text-align: right;
+}
+
+.center.mat-cell, .center.mat-header-cell{
+  display: inline-grid;
+  text-align: center;
 }

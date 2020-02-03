@@ -116,6 +116,22 @@ export class NewProductsComponent implements OnInit, AfterViewInit {
     this.clearFilters();
   }
 
+  async refresh() {
+    this.isStoreUser = await this.authenticationService.isStoreUser();
+    if (this.isStoreUser) {
+      this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
+    }
+
+    this.getWarehouses();
+
+    this.getFilters();
+    this.selectedForm = this.formBuilder.group({
+      selector: false
+    }, {
+      validators: validators.haveItems("toSelect")
+    });
+  }
+
   switchPrintAllStock() {
     this.printAllStock = !this.printAllStock;
   }

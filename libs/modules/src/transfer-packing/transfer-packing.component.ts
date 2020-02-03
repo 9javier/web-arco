@@ -3,6 +3,7 @@ import {SettingsService} from "../../../services/src/lib/storage/settings/settin
 import {TransferPackingScanditService} from "../../../services/src/lib/scandit/transfer-packing/transfer-packing.service";
 import {AlertController, Events} from "@ionic/angular";
 import {Location} from "@angular/common";
+import {KeyboardService} from "../../../services/src/lib/keyboard/keyboard.service";
 
 @Component({
   selector: 'app-transfer-packing',
@@ -23,6 +24,7 @@ export class TransferPackingComponent implements OnInit {
     private location: Location,
     private alertController: AlertController,
     private settingsService: SettingsService,
+    private keyboardService: KeyboardService,
     private transferPackingScanditService: TransferPackingScanditService
   ) {}
 

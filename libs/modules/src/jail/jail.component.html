@@ -108,6 +108,8 @@
 
 <ion-footer class="footer-products">
     <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+        <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="loadCarriers()"><i
+          class="material-icons">refresh</i></ion-fab-button>
         <ion-fab-button matTooltip="Eliminar seleccionado" matTooltipClass="tooltip" (click)="delete()"
             *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
         <ion-fab-button matTooltip="Imprimir seleccionado" matTooltipClass="tooltip" (click)="print($event)"

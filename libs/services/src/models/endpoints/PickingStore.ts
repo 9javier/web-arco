@@ -178,6 +178,23 @@ export namespace PickingStoreModel {
     errors: any;
   }
 
+  export interface ParamsVentilate {
+    withSorter: boolean,
+    needNotifyAvelon: boolean,
+    paramsCreateInventory: {
+      productReference?: string,
+      containerReference?: string,
+      packingReference?: string,
+      warehouseId?: number,
+      force?: boolean,
+      avoidAvelonMovement?: boolean,
+      locateOutRack?: boolean
+    }
+  }
+  export interface ResponseVentilate extends HttpRequestModel.Response {
+    data: any
+  }
+
   export interface ErrorResponse {
     errors: string;
     message: string;

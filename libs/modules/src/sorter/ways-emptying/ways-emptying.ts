@@ -315,7 +315,18 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadActiveSorter() {
+  public loadActiveSorter() {
+    this.waysMatrix = [];
+    this.isTemplateWithEqualZones = false;
+    this.loadingSorterTemplateMatrix = true;
+    this.disableAuto = true;
+    this.disableManual = true;
+    this.disableMixed = true;
+
+    this.firstSorter = null;
+    this.lastWaySelected = null;
+    this.lastWaysSelected = [];
+    this.waysToUpdate = [];
     this.sorterService
       .getFirstSorter()
       .subscribe(data => {
@@ -353,6 +364,8 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         this.waysMatrix = data.data;
         this.matrix.loadNewMatrix(this.waysMatrix);
+        this.matrix.refresh();
+        this.infoWayEmptying.ngOnInit();
       }, async (error) => {
         let errorMessage = 'Ha ocurrido un error al intentar cargar la plantilla actual del sorter.';
         if (error.error && error.error.errors) {
