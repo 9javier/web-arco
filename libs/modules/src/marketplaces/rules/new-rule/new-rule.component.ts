@@ -2,7 +2,6 @@ import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import { MarketplacesService } from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import { MarketplacesMgaService } from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
-import { MarketplacesPrestaService } from '../../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
 
 @Component({
   selector: 'suite-new-rule',
@@ -42,14 +41,13 @@ export class NewRuleComponent implements OnInit {
     private navParams: NavParams,
     private renderer: Renderer2,
     private marketplacesService: MarketplacesService,
-    private marketplacesMgaService: MarketplacesMgaService,
-    private marketplacesPrestaService: MarketplacesPrestaService
+    private marketplacesMgaService: MarketplacesMgaService
   ) {
   }
 
   ngOnInit() {
     this.mode = this.navParams.get('mode');
-    this.numberOfProducts = 10;
+    this.numberOfProducts = 0;
     this.action = 'activation';
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];
@@ -62,18 +60,15 @@ export class NewRuleComponent implements OnInit {
     this.ruleName = '';
     this.idToEdit = this.navParams.get('id');
 
-    // DATOS ESTÁTICOS. CAMBIAR CUANDO APIS LISTAS
-
     this.categoryList = [
       {
         id: 1,
         name: 'Sección',
-        items: [
+        items: [/*
           {id: 1, group: 1, name: 'Sección 1'},
           {id: 2, group: 1, name: 'Sección 2'},
           {id: 3, group: 1, name: 'Sección 3'},
-          {id: 4, group: 1, name: 'Sección 4'}
-        ]
+          {id: 4, group: 1, name: 'Sección 4'}*/]
       },
       {
         id: 2,
@@ -81,190 +76,159 @@ export class NewRuleComponent implements OnInit {
         items: []
       },
       {
-        id: 3,
+        id: 5,
         name: 'Tacón',
         items: []
       },
       {
-        id: 4,
+        id: 7,
         name: 'Descripción',
         items: []
       },
       {
-        id: 5,
+        id: 9,
         name: 'Material exterior',
         items: []
       },
       {
-        id: 6,
+        id: 10,
         name: 'Material interior',
         items: []
       },
       {
-        id: 7,
+        id: 12,
         name: 'Comercial',
         items: [
-          {id: 1, group: 7, name: 'Comercial 1'},
+          /*{id: 1, group: 7, name: 'Comercial 1'},
           {id: 2, group: 7, name: 'Comercial 2'},
-          {id: 3, group: 7, name: 'Comercial 3'}
+          {id: 3, group: 7, name: 'Comercial 3'}*/
         ]
       },
       {
-        id: 8,
+        id: 15,
         name: 'Marca',
         items: []
       },
       {
-        id: 9,
-        name: 'Colores',
+        id: 16,
+        name: 'Color',
         items: []
       },
       {
-        id: 10,
-        name: 'Tallas',
+        id: 17,
+        name: 'Talla',
         items: []
       }
-    ]; 
+    ];
+    this.selectedCategoryGroupFilterObject = this.categoryList[0];
+    this.destinationCategories = [];
 
-    this.marketplacesMgaService.getFeaturesByMarket(1).subscribe(data => {
+    this.marketplacesMgaService.getFeaturesRuleMarket(1).subscribe(data => {
       if(data) {
         data.forEach(item => {
-          if(item.groupNumber == 2) {
-            this.categoryList[1].items.push({
-              id: item.id,
-              group: 2,
-              name: item.name
-            })
-          } else if(item.groupNumber == 5) {
-            this.categoryList[2].items.push({
-              id: item.id,
-              group: 3,
-              name: item.name
-            })
-          } else if(item.groupNumber == 7) {
-            this.categoryList[3].items.push({
-              id: item.id,
-              group: 4,
-              name: item.name
-            })
-          } else if(item.groupNumber == 9) {
-            this.categoryList[4].items.push({
-              id: item.id,
-              group: 5,
-              name: item.name
-            })
-          } else if(item.groupNumber == 10) {
-            this.categoryList[5].items.push({
-              id: item.id,
-              group: 6,
-              name: item.name
-            })
-          } else if(item.groupNumber == 12) {
-            this.categoryList[6].items.push({
-              id: item.id,
-              group: 7,
-              name: item.name
-            })
-          } else if(item.groupNumber == 1) {
-            this.categoryList[0].items.push({
-              id: item.id,
-              group: 1,
-              name: item.name
-            })
+          let listItem = {
+            id: item.id,
+            group: item.groupNumber,
+            name: item.name.trim()
+          };
+          let listIndex = -1;
+          switch (item.groupNumber) {
+            case 1:
+              listIndex = 0;
+              break;
+
+            case 2:
+              listIndex = 1;
+              break;
+
+            case 5:
+              listIndex = 2;
+              break;
+
+            case 7:
+              listIndex = 3;
+              break;
+
+            case 9:
+              listIndex = 4;
+              break;
+
+            case 10:
+              listIndex = 5;
+              break;
+
+            case 12:
+              listIndex = 6;
+              break;
+
+            case 15:
+              listIndex = 7;
+              break;
+
+            case 16:
+              listIndex = 8;
+              break;
+
+            case 17:
+              listIndex = 9;
+              break;
           }
-        })
+          this.categoryList[listIndex].items.push(listItem);
+          this.destinationCategories.push(listItem);
+        });
+        for (let category of this.categoryList) {
+          category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+        }
       }
-    });
+      this.selectedCategoryGroupFilter = this.categoryList[0].id;
+      this.selectedCategoryGroupFilterObject = this.categoryList[0];
+      this.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+      this.destinationCategoriesCopy = this.destinationCategories.slice();
 
-    this.marketplacesMgaService.getBrands().subscribe(data => {
-      if(data) {
-        data.forEach(brand => { 
-          this.categoryList[7].items.push({
-            id: brand.id,
-            group: 8,
-            name: brand.name
-          })
-        })
-      }
-    });
+      if (this.mode == 'edit') {
+        this.rule = this.navParams.get('rule');
+        this.action = this.navParams.get('action');
+        this.ruleName = this.navParams.get('ruleName');
+        this.originalRuleName = this.ruleName;
+        this.selectedCategories = this.navParams.get('selectedCategories');
+        this.minPriceFilter = this.navParams.get('minPriceFilter') == 0 ? '' : this.navParams.get('minPriceFilter');
+        this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
+        this.numberOfProducts = this.navParams.get('numberOfProducts');
+        this.selectedDestinationCategories = this.navParams.get('selectedDestinationCategories');
+        this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
+        this.reorganizeDestinationCategories();
 
+        if (this.action == 'stock') {
+          this.addReduceStockFilter();
+        }
 
-    this.marketplacesMgaService.getColors().subscribe(data => {
-      if(data) {
-        data.forEach(color => { 
-          this.categoryList[8].items.push({
-            id: color.id,
-            group: 9,
-            name: color.name
-          })
-        })
-      }
-    });
-    
-    this.marketplacesMgaService.getSizes().subscribe(data => {
-      if(data) {
-        data.forEach(size => { 
-          this.categoryList[9].items.push({
-            id: size.id,
-            group: 10,
-            name: size.name
-          })
-        })
-      }
-    });
-    
-    
-    
-    // LISTA DE CATEGORÍAS AGRUPADAS POR GRUPO. VIENE DE ENDPOINT
-    this.selectedCategoryGroupFilter = this.categoryList[0].id;
-    this.selectedCategoryGroupFilterObject = this.categoryList[0];
-    this.destinationCategories = [ //LISTA DE CATEGORÍAS SIN AGRUPAR. SE PUEDE SACAR DE CATEGORYLIST O HACER UN ENDPOINT A PARTE
-      {id: 31, group: 2, name: 'Mujer'},
-      {id: 38, group: 2, name: 'Mujer rebajas'},
-      {id: 99, group: 2, name: 'Mujer todo'},
-      {id: 83, group: 2, name: 'Hombre'},
-      {id: 49, group: 2, name: 'Hombre rebajas'},
-    ];
-    this.destinationCategoriesCopy = this.destinationCategories.slice();
-
-    if (this.mode == 'edit') {
-      this.rule = this.navParams.get('rule');
-      this.action = this.navParams.get('action');
-      this.ruleName = this.navParams.get('ruleName');
-      this.originalRuleName = this.ruleName;
-      this.selectedCategories = this.navParams.get('selectedCategories');
-      this.minPriceFilter = this.navParams.get('minPriceFilter') == 0 ? '' : this.navParams.get('minPriceFilter');
-      this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
-      this.numberOfProducts = this.navParams.get('numberOfProducts');
-      this.selectedDestinationCategories = this.navParams.get('selectedDestinationCategories');
-      this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
-      this.reorganizeDestinationCategories();
-
-      if (this.action == 'stock') {
-        this.addReduceStockFilter();
-      }
-
-      switch (this.ruleFilterType) {
-        case 'category':
-          this.filterDescription = '';
-          for (let category of this.selectedCategories) {
-            let group = this.categoryList.find(x => x.id === category.group);
-            this.filterDescription += group.name + ': ' + category.name;
-            if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
-              this.filterDescription += ', ';
+        switch (this.ruleFilterType) {
+          case 'category':
+            this.filterDescription = '';
+            for (let category of this.selectedCategories) {
+              let group = this.categoryList.find(x => x.id === category.group);
+              this.filterDescription += group.name + ': ' + category.name;
+              if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+                this.filterDescription += ', ';
+              }
             }
-          }
-          break;
+            break;
 
-        case 'price':
-          this.addPriceFilter();
-          break;
+          case 'price':
+            this.addPriceFilter();
+            break;
 
-        case 'stock':
-          this.addStockFilter();
-          break;
+          case 'stock':
+            this.addStockFilter();
+            break;
+        }
+      } else {
+        this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
+          this.numberOfProducts = count;
+        });
       }
-    }
+
+    });
   }
 
   close(data) {

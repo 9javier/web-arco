@@ -14,8 +14,9 @@ export class MarketplacesMgaService {
   private getColorsUrl = this.apiBase + '/products/models/color';
   private geBrandsUrl = this.apiBase + '/products/models/brand';
   private getSizesUrl = this.apiBase + '/products/models/domainsizes/sizes';
-  private getFeaturesUrl = this.apiBase + '/products/models/internalgroups';
+  private getFeaturesRuleMarketUrl = this.apiBase + '/products/models/internalgroups/rulemarket/{{idMarketplace}}';
   private getFeaturesByMarketUrl = this.apiBase + '/products/models/internalgroups/{{idMarketplace}}';
+  private getTotalProductsUrl = this.apiBase + '/products/models/numberOfModels';
 
   constructor(
     private http: HttpClient,
@@ -50,10 +51,10 @@ export class MarketplacesMgaService {
     }));
   }
 
-  getFeatures():Observable<any>{
+  getFeaturesRuleMarket(id:number):Observable<any>{
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
-      return this.http.get<any>(this.getFeaturesUrl, {headers}).pipe(map(response=>{
+      return this.http.get<any>(this.getFeaturesRuleMarketUrl.replace("{{idMarketplace}}",String(id)), {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));
@@ -63,6 +64,15 @@ export class MarketplacesMgaService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get<any>(this.getFeaturesByMarketUrl.replace("{{idMarketplace}}",String(id)), {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  getTotalNumberOfProducts():Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.get<any>(this.getTotalProductsUrl, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));
