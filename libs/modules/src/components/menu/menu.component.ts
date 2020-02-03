@@ -321,7 +321,7 @@ export class MenuComponent implements OnInit {
           title: 'KrackOnline',
           open: true,
           type: 'wrapper',
-          id: 'catalogs-marketplaces',
+          id: 'krackonline',
           icon: 'apps',
           children: [ 
             {
