@@ -26,6 +26,7 @@ import { SendJailComponent } from './send-jail/send-jail.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
 import { HistoryWarehouseModalComponent } from './history-warehouse/history-warehouse-modal/history_whs_modal.component';
 import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse
     SendJailComponent,
     HistoryModalComponent,
     HistoryWarehouseComponent,
-    HistoryWarehouseModalComponent
+    HistoryWarehouseModalComponent,
   ],
 
   imports: [
@@ -71,6 +72,9 @@ import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse
     SendJailComponent,
     HistoryModalComponent,
     HistoryWarehouseModalComponent
+  ],
+  providers:[
+    DatePipe
   ]
 })
 export class JailModule {}

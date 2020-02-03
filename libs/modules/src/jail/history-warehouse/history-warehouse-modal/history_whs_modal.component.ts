@@ -4,7 +4,7 @@ import { COLLECTIONS } from 'config/base';
 import { ModalController } from '@ionic/angular';
 import { CarrierService, IntermediaryService } from '@suite/services';
 import { Router } from '@angular/router';
-
+import { formatDate } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +22,15 @@ export class HistoryWarehouseModalComponent implements OnInit {
   formVar: FormGroup;
   private whs: any;
 
-
+  warehouseSelected;
   constructor(
     private modalController:ModalController,
     private carrierService:CarrierService,
     private intermediaryService:IntermediaryService,
     private fb: FormBuilder,
+    
     private router: Router,
+    
   ) {}
 
   ngOnInit() {
@@ -48,21 +50,22 @@ export class HistoryWarehouseModalComponent implements OnInit {
   }
 
   setDateStart(){
-    console.log("Hola mundo");
   }
 
   submit(value){
+  
 
     this.dateMin = new Date(this.formVar.value['beginDate']);
     this.dateMax = new Date(this.formVar.value['endDate']);
-    this.whsCode = this.formVar.value['warehouse'];
-
-    console.log(this.dateMin);
-    console.log(this.dateMax);
-    console.log(this.whsCode);
+    this.whsCode = this.formVar.value['warehouse']; 
 
     if(this.validateSubmit(this.dateMin, this.dateMax, this.whsCode)){
-      this.router.navigate(['jails/history']);
+     
+ 
+      this.router.navigate(['jails/history/'+
+      this.dateMin+"/"+
+      this.dateMax+"/"+
+      this.whsCode]);
       this.closeModal();
     }
 
@@ -87,6 +90,10 @@ export class HistoryWarehouseModalComponent implements OnInit {
       return false;
     }
 
+    if(dateM.lenght <=0 ){
+      this.intermediaryService.presentToastError("Favor de seleccionar una fecha inicial");
+      return false;
+    }
 
     if(dateM == null || dateM == '' || dateM.lenght == 0){
       this.intermediaryService.presentToastError("Favor de seleccionar una fecha inicial");

@@ -18,6 +18,7 @@ import { ShowDestinationsComponent } from './show-destionations/show-destination
 import { SendJailComponent } from './send-jail/send-jail.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+
 @Component({
   selector: 'app-jail',
   templateUrl: './jail.component.html',
