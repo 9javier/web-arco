@@ -184,9 +184,7 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceColors = dataColor;
-            this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
-            // setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
+            this.dataSourceMappingColors.data = dataColor
             break;
           case 4:
             let dataSize = this.dataSourceSizes;
@@ -209,9 +207,7 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceSizes = dataSize;
-            this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-            // setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
+            this.dataSourceMappingSizes.data = dataSize;
             break;
           case 5:
             let dataBrand = this.dataSourceBrands;
@@ -257,9 +253,7 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceFeatures = dataFeature;
-            this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-            // setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+            this.dataSourceMappingFeatures.data = dataFeature;
             break;
         }
       });
