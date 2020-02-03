@@ -18,6 +18,7 @@ import { ShowDestinationsComponent } from './show-destionations/show-destination
 import { SendJailComponent } from './send-jail/send-jail.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-jail',
@@ -62,6 +63,7 @@ export class JailComponent implements OnInit {
     private loadController: LoadingController,
     private historyModalComponent: HistoryModalComponent,
     private historyWharehouseModalComponent: HistoryWarehouseModalComponent,
+    private router: Router,
   ) {
   }
 
@@ -476,10 +478,13 @@ export class JailComponent implements OnInit {
   }
 
   async callToHistory() {
-    let modal = (await this.modalCtrl.create({
-      component: HistoryWarehouseModalComponent,
-    }));
-    modal.present();
+    // let modal = (await this.modalCtrl.create({
+    //   component: HistoryWarehouseModalComponent,
+    // }));
+    // modal.present();
+
+    /*Alternative*/
+    this.router.navigate(['jails/history/']);
   }
 
 
