@@ -24,16 +24,35 @@
     <ion-icon slot="end" name="ios-arrow-down" *ngIf="!p.open"></ion-icon>
     <ion-icon slot="end" name="ios-arrow-up" *ngIf="p.open"></ion-icon>
   </ion-item>
+
   <!-- Children List for clicked Item -->
   <ion-list *ngIf="p.open" lines="none">
     <ng-container *ngFor="let sub of p.children">
-      <ion-item *ngIf="!sub.header"   class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)">
+      <ion-item *ngIf="!sub.header && sub.type != 'wrapper'"   class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)">
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
           {{ sub.title }}
         </ion-label>
         <ion-icon slot="end" name="information-circle" *ngIf="sub.notification" class="color-notification"></ion-icon>
       </ion-item>
+      <ion-item button *ngIf="sub.children?.length > 0" class="sub-item" (click)="openSubMenuItem(sub)" [class.parent-active]="sub.open" detail="false" lines="none">
+        <ion-icon slot="start" [name]="sub.icon"></ion-icon>
+        <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ sub.title }}</ion-label>
+        <ion-icon slot="end" name="information-circle" *ngIf="checkIfChildrenHasNewTariffs(sub)" class="color-notification"></ion-icon>
+        <ion-icon slot="end" name="ios-arrow-down" *ngIf="!sub.open"></ion-icon>
+        <ion-icon slot="end" name="ios-arrow-up" *ngIf="sub.open"></ion-icon>
+      </ion-item>
+      <ion-list *ngIf="sub.open" lines="none">
+        <ng-container *ngFor="let subSub of sub.children">
+          <ion-item *ngIf="!subSub.header"   class="sub-sub-item" [routerLink]="subSub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(subSub)">
+            <ion-icon [slot]="iconsDirection" [name]="subSub.icon"></ion-icon>
+            <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
+              {{ subSub.title }}
+            </ion-label>
+            <ion-icon slot="end" name="information-circle" *ngIf="subSub.notification" class="color-notification"></ion-icon>
+          </ion-item>
+        </ng-container>
+      </ion-list>
       <!-- item header -->
       <ion-item *ngIf="sub.header" class="sub-item">
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>

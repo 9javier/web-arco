@@ -18,7 +18,7 @@ interface MenuSectionGroupItem {
   title: string,
   open: boolean,
   type: 'wrapper',
-  children: MenuSectionItem[]
+  children: (MenuSectionGroupItem | MenuSectionItem)[]
 }
 
 interface MenuSectionItem {
@@ -27,7 +27,7 @@ interface MenuSectionItem {
   url: string,
   icon: string,
   notification?: boolean
-  children?: MenuSectionItem[];
+  children?: (MenuSectionGroupItem | MenuSectionItem)[];
   header?: boolean
 }
 
@@ -300,77 +300,81 @@ export class MenuComponent implements OnInit {
       icon: 'archive'
     },
     {
-      title: 'Catálogos Marketplaces',
-      id: 'catalogs-marketplaces',
-      url: '/marketplaces/catalogs-marketplaces',
-      icon: 'document'
-    },
-    {
-      title: 'KrackOnline',
+      title: 'Marketplaces',
       open: true,
       type: 'wrapper',
       icon: 'apps',
       children: [ 
         {
-          title: 'Catálogo',
-          id: 'ko-catalog',
-          url: '/marketplaces/krackonline/catalog',
+          title: 'Catálogos Marketplaces',
+          id: 'catalogs-marketplaces',
+          url: '/marketplaces/catalogs-marketplaces',
           icon: 'document'
         },
         {
-          title: 'Mapeos',
-          id: 'ko-mapping',
-          url: '/marketplaces/krackonline/mapping',
-          icon: 'document'
-        },{
-          title: 'Reglas',
-          id: 'ko-rules',
-          url: '/marketplaces/krackonline/rules',
-          icon: 'document'
-        },{
-          title: 'Stocks seguridad',
-          id: 'ko-security-stocks',
-          url: '/marketplaces/krackonline/security-stocks',
+          title: 'Prioridad de Tienda',
+          id: 'store-priority',
+          url: '/marketplaces/store-priority',
           icon: 'document'
         },
+        {
+          title: 'KrackOnline',
+          open: true,
+          type: 'wrapper',
+          id: 'catalogs-marketplaces',
+          icon: 'apps',
+          children: [ 
+            {
+              title: 'Catálogo',
+              id: 'ko-catalog',
+              url: '/marketplaces/krackonline/catalog',
+              icon: 'document'
+            },
+            {
+              title: 'Mapeos',
+              id: 'ko-mapping',
+              url: '/marketplaces/krackonline/mapping',
+              icon: 'document'
+            },{
+              title: 'Reglas',
+              id: 'ko-rules',
+              url: '/marketplaces/krackonline/rules',
+              icon: 'document'
+            }
+          ]
+        },
+        {
+          title: 'Miniprecios',
+          open: true,
+          type: 'wrapper',
+          icon: 'apps',
+          children: [ 
+            {
+              title: 'Catálogo',
+              id: 'mp-catalog',
+              url: '/marketplaces/miniprecios/catalog',
+              icon: 'document'
+            },
+            {
+              title: 'Mapeos',
+              id: 'mp-mapping',
+              url: '/marketplaces/miniprecios/mapping',
+              icon: 'document'
+            },{
+              title: 'Reglas',
+              id: 'mp-rules',
+              url: '/marketplaces/miniprecios/rules',
+              icon: 'document'
+            },{
+              title: 'Stocks seguridad',
+              id: 'mp-security-stocks',
+              url: '/marketplaces/miniprecios/security-stocks',
+              icon: 'document'
+            },
+          ]
+        }
       ]
     },
-    {
-      title: 'Miniprecios',
-      open: true,
-      type: 'wrapper',
-      icon: 'apps',
-      children: [ 
-        {
-          title: 'Catálogo',
-          id: 'mp-catalog',
-          url: '/marketplaces/miniprecios/catalog',
-          icon: 'document'
-        },
-        {
-          title: 'Mapeos',
-          id: 'mp-mapping',
-          url: '/marketplaces/miniprecios/mapping',
-          icon: 'document'
-        },{
-          title: 'Reglas',
-          id: 'mp-rules',
-          url: '/marketplaces/miniprecios/rules',
-          icon: 'document'
-        },{
-          title: 'Stocks seguridad',
-          id: 'mp-security-stocks',
-          url: '/marketplaces/miniprecios/security-stocks',
-          icon: 'document'
-        },
-      ]
-    },
-    {
-      title: 'Prioridad de Tienda',
-      id: 'store-priority',
-      url: '/marketplaces/store-priority',
-      icon: 'document'
-    }
   ];
 
   alPages: MenuItemList = [
