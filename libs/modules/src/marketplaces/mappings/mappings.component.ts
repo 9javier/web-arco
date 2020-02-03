@@ -20,7 +20,12 @@ import {HttpClient} from "@angular/common/http";
 
 export class MappingsComponent implements OnInit {
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('paginatorBrands') paginatorBrands: MatPaginator;
+  @ViewChild('paginatorFeatures') paginatorFeatures: MatPaginator;
+  @ViewChild('paginatorColors') paginatorColors: MatPaginator;
+  @ViewChild('paginatorSizes') paginatorSizes: MatPaginator;
+
+
   private dataSourceBrands;
   private dataSourceMappingBrands;
   private brandsList;
@@ -97,7 +102,7 @@ export class MappingsComponent implements OnInit {
         });
         this.dataSourceBrands.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
-        setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
+        setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginatorBrands);
         this.showingBrands = this.dataSourceBrands.slice(0, 10);
       }
 
@@ -111,7 +116,7 @@ export class MappingsComponent implements OnInit {
         });
         this.dataSourceColors.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
-        //setTimeout(() => this.dataSourceMappingColors.paginator = this.paginator);
+        setTimeout(() => this.dataSourceMappingColors.paginator = this.paginatorColors);
         this.showingColors = this.dataSourceColors.slice(0, 10);
       }
 
@@ -125,7 +130,7 @@ export class MappingsComponent implements OnInit {
         });
         this.dataSourceSizes.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-        //setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginator);
+        setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginatorSizes);
         this.showingSizes = this.dataSourceSizes.slice(0, 10);
       }
 
@@ -139,7 +144,7 @@ export class MappingsComponent implements OnInit {
         });
         this.dataSourceFeatures.sort((a, b) => (a.avelonData.group > b.avelonData.group) ? 1 : ((b.avelonData.group > a.avelonData.group) ? -1 : ((a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0))));
         this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
-        //setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginator);
+        setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginatorFeatures);
         this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
       }
 
@@ -235,9 +240,7 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceMappingBrands = dataBrand;
-            this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
-            setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginator);
+            this.dataSourceMappingBrands.data = dataBrand;
             break;
           case 8:
             let dataFeature = this.dataSourceMappingFeatures.data;
