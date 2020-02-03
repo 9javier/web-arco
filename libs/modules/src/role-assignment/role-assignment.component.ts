@@ -14,6 +14,7 @@ export class RoleAssignmentComponent implements OnInit {
 
   DEFAULT_WAREHOUSE: number = 3;
   originalPermissions: string;
+  modalPermissions: UserModel.Permission[];
   tablePermissions: UserModel.Permission[];
   tableRoles: UserModel.Role[];
   tableColumns: string[];
@@ -117,8 +118,13 @@ export class RoleAssignmentComponent implements OnInit {
   }
 
   async newRole() {
+    await this.getModalPermissions();
     const modal = await this.modalController.create({
-      component: AddRoleAssignmentComponent
+        component: AddRoleAssignmentComponent,
+        componentProps: {
+          tPermissions: this.modalPermissions,
+          tRoles: this.tableRoles
+        }
     });
 
     modal.onDidDismiss().then(async response=>{
@@ -148,6 +154,13 @@ export class RoleAssignmentComponent implements OnInit {
           this.tableColumns.push(role.id.toString());
         }
       }
+    });
+  }
+
+  async getModalPermissions(){
+    await this.usersService.getList({users: [], warehouses: []}).then(response => {
+      const list: UserModel.List = response.data;
+      this.modalPermissions = list.permissions;
     });
   }
 

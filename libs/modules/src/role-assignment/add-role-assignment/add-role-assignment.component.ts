@@ -1,16 +1,6 @@
-import { AfterContentInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import {
-  IntermediaryService,
-  RolesService,
-  RolModel,
-  UserModel, UsersService,
-  WarehouseModel,
-  WarehousesService
-} from '@suite/services';
-import { Observable } from 'rxjs';
-import { HttpResponse } from '@angular/common/http';
-import { MatTableDataSource } from '@angular/material';
+import { UserModel } from '@suite/services';
 
 @Component({
   selector: 'suite-add-role-assignment',
@@ -18,147 +8,177 @@ import { MatTableDataSource } from '@angular/material';
   styleUrls: ['./add-role-assignment.component.scss'],
 })
 export class AddRoleAssignmentComponent implements OnInit {
-  warehousesOriginal: WarehouseModel.Warehouse[];
-  warehouses: WarehouseModel.Warehouse[];
-  users: UserModel.User[];
-  selectUser;
-  selectWarehouse;
+
+  tPermissions: UserModel.Permission[];
+  tRoles: UserModel.Role[];
+
+  users: {
+    id: number,
+    name: string,
+    warehouses: {
+      id: number,
+      name: string
+    }[]
+  }[] = [];
+
+  warehouses: {
+    id: number,
+    name: string
+  }[] = [];
+
+  roles: {
+    id: number,
+    name: string,
+    isChecked: boolean
+  }[] = [];
+
   form: {
-    userId,
-    warehouseId,
-    roles: any[],
-    invalid: boolean
+    userId: number,
+    warehouseId: number,
+    roles: {
+      id: number,
+      name: string,
+      isChecked: boolean
+    }[]
+  } = {
+    userId: 0,
+    warehouseId: 0,
+    roles: []
   };
+
+  selectedUserId: number;
+  selectedWarehouseId: number;
+
   constructor(
-    private modalController:ModalController,
-    private intermediaryService: IntermediaryService,
-    private rolesService: RolesService,
-    private warehousesService: WarehousesService,
-    private usersService: UsersService,
-  ) {
-    this.form = {
-      userId: 0,
-      warehouseId: 0,
-      roles: [],
-      invalid: true
-    };
-  }
+    private modalController: ModalController
+  ) {}
 
   async ngOnInit() {
-    this.intermediaryService.presentLoading('Un momento ...');
-    await this.getWarehouses().then(async () => {
-      await this.getUsers();
-    });
-
-    this.getRoles().then(async () => {
-      await this.intermediaryService.dismissLoading();
-    }).catch(async () => {
-      await this.intermediaryService.dismissLoading();
-    });
-  }
-
-  async getUsers() {
-    await this.usersService.getIndex().then(async (obsItem: Observable<HttpResponse<UserModel.ResponseIndex>>) => {
-      obsItem.subscribe(async (res: HttpResponse<UserModel.ResponseIndex>) => {
-        const dataUsers = <any>res.body.data;
-        this.users = dataUsers.filter((x) => x.permits.length < this.warehousesOriginal.length);
-        this.selectUser = this.users[0].id;
-        this.form.userId = this.selectUser;
-        this.changeSelectUser();
-        await this.intermediaryService.dismissLoading();
-      }, async (err) => {
-        console.log(err);
-        await this.intermediaryService.dismissLoading();
-      });
-    });
-  }
-
-  changeSelectUser() {
-    const user = <any>this.users.find((x) => x.id === this.selectUser);
-    if (user && user.permits) {
-      if (user.permits.length > 0) {
-        this.warehouses = this.warehousesOriginal.filter((warehouse) => {
-          const index = user.permits.findIndex((x) => x.warehouse.id === warehouse.id);
-          return index === -1;
-        });
-      } else {
-        this.warehouses = this.warehousesOriginal;
+    for(let permission of this.tPermissions){
+      let included: boolean = false;
+      for(let user of this.users){
+        if(user.id == permission.user.id){
+          included = true;
+          break;
+        }
       }
-
-      this.selectWarehouse = this.warehouses[0].id;
-      this.form.warehouseId = this.selectWarehouse;
+      if(!included){
+        this.users.push({
+          id: permission.user.id,
+          name: permission.user.name,
+          warehouses: []
+        })
+      }
+      included = false;
+      for(let warehouse of this.warehouses){
+        if(warehouse.id == permission.warehouse.id){
+          included = true;
+          break;
+        }
+      }
+      if(!included){
+        this.warehouses.push({
+          id: permission.warehouse.id,
+          name: permission.warehouse.name
+        })
+      }
+    }
+    for (let user of this.users) {
+      user.warehouses = JSON.parse(JSON.stringify(this.warehouses));
+    }
+    for(let user of this.users){
+      for(let i = 0; i < user.warehouses.length; i++){
+        for(let permission of this.tPermissions){
+          if(permission.user.id == user.id && permission.warehouse.id == user.warehouses[i].id){
+             delete user.warehouses[i];
+            break;
+          }
+        }
+      }
+      user.warehouses = user.warehouses.filter(function( warehouse ) {
+        return warehouse !== undefined;
+      });
+    }
+    for(let i = 0; i < this.users.length; i++){
+      if(this.users[i].warehouses.length == 0){
+        delete this.users[i];
+      }
+    }
+    this.users = this.users.filter(function( user ) {
+      return user !== undefined;
+    });
+    if(this.users.length == 0){
+      setTimeout(async () => await this.close(), 100);
+    }else{
+      for(let role of this.tRoles){
+        this.roles.push({
+          id: role.id,
+          name: role.name,
+          isChecked: false
+        })
+      }
+      this.selectedUserId = this.users[0].id;
+      this.selectedWarehouseId = this.users[0].warehouses[0].id;
+      this.form = {
+        userId: this.users[0].id,
+        warehouseId: this.users[0].warehouses[0].id,
+        roles: this.roles
+      };
     }
   }
 
-  async getWarehouses() {
-    this.warehousesService.getIndex().then(async (obsItem: Observable<HttpResponse<WarehouseModel.ResponseIndex>>) => {
-      obsItem.subscribe(async (res: HttpResponse<WarehouseModel.ResponseIndex>) => {
-        this.warehousesOriginal = res.body.data;
-      }, async (err) => {
-        console.log(err);
-        await this.intermediaryService.dismissLoading();
-      });
-    });
+  uncheckRoles(){
+    for(let role of this.form.roles) {
+      role.isChecked = false;
+    }
   }
 
-  async getRoles() {
-    this.rolesService.getIndex().then(async (obsItem: Observable<HttpResponse<RolModel.ResponseIndex>>) => {
-      obsItem.subscribe(async (res: HttpResponse<RolModel.ResponseIndex>) => {
-        const roles = res.body.data;
-        this.form.roles = roles.map(rol => ({
-          id: rol.id,
-          name: rol.name,
-          isChecked: false
-        }));
-      }, async (err) => {
-        console.log(err);
-        await this.intermediaryService.dismissLoading();
-      });
-    });
+  changeUser(userId: number) {
+    this.selectedUserId = userId;
+    this.form.userId = this.selectedUserId;
+    this.selectedWarehouseId = this.getSelectedUserWarehouses()[0].id;
+    this.form.warehouseId = this.selectedWarehouseId;
+    this.uncheckRoles();
+  }
+
+  changeWarehouse(warehouseId: number) {
+    this.selectedWarehouseId = warehouseId;
+    this.form.warehouseId = warehouseId;
+    this.uncheckRoles();
+  }
+
+  changeRole(roleId: number){
+    for(let role of this.form.roles){
+      if(role.id == roleId){
+        role.isChecked = !role.isChecked;
+      }
+    }
+  }
+
+  getSelectedUserWarehouses(){
+    for(let user of this.users){
+      if(user.id == this.selectedUserId){
+        return user.warehouses;
+      }
+    }
+    return [];
+  }
+
+  noRolesChecked(): boolean {
+    for(let role of this.form.roles){
+      if(role.isChecked){
+        return false;
+      }
+    }
+    return true;
   }
 
   async close() {
     await this.modalController.dismiss();
   }
 
-  async onSubmit() {
-    if (this.form.invalid) {
-      await this.modalController.dismiss();
-    } else {
-      await this.modalController.dismiss(this.form);
-    }
+  async submit() {
+    await this.modalController.dismiss(this.form);
   }
 
-  changeCheckbox(id: number, isChecked: boolean) {
-    this.form.roles.forEach((rol) => {
-      if (rol.id === id) {
-        rol.isChecked = !isChecked;
-      }
-    });
-
-    this.form.invalid = !(this.isSelectCheckbox() && this.form.warehouseId !== 0);
-  }
-
-  changeUser(value: number) {
-    this.form.userId = value;
-    this.form.invalid = !(this.isSelectCheckbox() && this.form.userId !== 0 && this.form.warehouseId !== 0);
-    this.changeSelectUser();
-  }
-
-  changeWarehouse(value: number) {
-    this.form.warehouseId = value;
-    this.form.invalid = !(this.isSelectCheckbox() && this.form.userId !== 0 && this.form.warehouseId !== 0);
-  }
-
-  isSelectCheckbox() {
-    let result = false;
-
-    this.form.roles.forEach((rol) => {
-      if (rol.isChecked) {
-        result = true;
-      }
-    });
-
-    return result;
-  }
 }
