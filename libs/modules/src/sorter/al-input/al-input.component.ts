@@ -47,17 +47,11 @@ export class AlInputSorterComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-this.loadData();
-  }
-  loadDataFirst(){
-    this.intermediaryService.presentLoading("Actualizando...");
-    const response = this.loadDataOnInit();
     this.events.subscribe(this.LOAD_DATA_INPUT_SORTER, () => {
       this.sorterOperationCancelled();
       this.loadDataOnInit();
     });
-    this.intermediaryService.dismissLoading();
-    return response;
+    this.loadDataOnInit();
   }
 
   ngOnDestroy() {
@@ -66,6 +60,13 @@ this.loadData();
       this.stopExecutionColor(false);
     }
     this.events.unsubscribe(this.LOAD_DATA_INPUT_SORTER);
+  }
+
+  loadDataFirst(){
+    this.intermediaryService.presentLoading("Actualizando...");
+    const response = this.loadDataOnInit();
+    this.intermediaryService.dismissLoading();
+    return response;
   }
 
   private loadDataOnInit() {

@@ -16,6 +16,7 @@ export class SorterOutputService {
   private postPackingFullUrl: string = environment.apiSorter + "/sorters/full-packing";
   private postBlockSorterWayUrl: string = environment.apiSorter + "/sorters/block-way";
   private postEmptyWayUrl: string = environment.apiSorter + "/sorters/empty-way-out";
+  private postEmptyAllWaysUrl = environment.apiSorter + "/sorters/empty-ways-out";
   private postGetIncidenceWayUrl: string = environment.apiSorter + "/sorter/execution/incidence/way";
   private getGetCurrentProcessWayUrl: string = environment.apiSorter + "/sorter/process/product/packing/get-way";
 
@@ -46,7 +47,7 @@ export class SorterOutputService {
 
   /**
    * @author "Gaetano Sabino"
-   * @param idWalOldSelected 
+   * @param idWalOldSelected
    * @description Get warehouse with selectId old
    */
   getNewProcessWayID(idWalOldSelected: number): Promise<HttpRequestModel.Response> {
@@ -67,6 +68,14 @@ export class SorterOutputService {
 
   postBlockSorterWay(params: SorterOutputModel.ParamsBlockSorterWay): Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postBlockSorterWayUrl, params);
+  }
+
+  /**
+   * @author Gaetano Sabino
+   * @param params
+   */
+  postEmptyAllWays(params: SorterOutputModel.ParamsEmptyAllWays):Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postEmptyAllWaysUrl,params);
   }
 
   postEmptyWay(params: SorterOutputModel.ParamsEmptyWay): Promise<HttpRequestModel.Response> {

@@ -26,7 +26,7 @@ export class MatrixOutputSorterComponent implements OnInit, OnDestroy {
   ) {
     this.sorterProvider.idZoneSelected = null;
   }
-  
+
   ngOnInit() {
 
   }
@@ -55,7 +55,8 @@ export class MatrixOutputSorterComponent implements OnInit, OnDestroy {
               id: zone.zones.id,
               name: zone.zones.name,
               active: zone.zones.active,
-              color: zone.zones.color.hex
+              color: zone.zones.color.hex,
+              checks: false
             });
           }
         }

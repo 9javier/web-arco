@@ -29,6 +29,6 @@ import { ListProductsCarrierComponent } from '../components/list-products-carrie
     ListaModule,
     ListProductsCarrierModule
   ],
-  entryComponents: [PositioningManualComponent, TextareaComponent, ListasProductosComponent, ListProductsCarrierComponent]
+  entryComponents: [PositioningManualComponent, TextareaComponent, ListProductsCarrierComponent]
 })
 export class PositioningManualModule { }

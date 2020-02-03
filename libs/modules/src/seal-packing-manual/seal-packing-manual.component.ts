@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {Router } from '@angular/router';
+import * as toolbarProvider from "../../../services/src/providers/toolbar/toolbar.provider";
+
 
 @Component({
   selector: 'app-seal-packing-manual',
@@ -8,10 +11,18 @@ import {Component, OnInit} from '@angular/core';
 
 export class SealPackingManualComponent implements OnInit {
 
-  constructor() {}
+  constructor(
+    private toolbarProvider: toolbarProvider.ToolbarProvider,
+    private router: Router
+  ) {}
 
   ngOnInit() {
 
+  }
+  /*return to picking task */
+  returnSealPacking(){
+    this.router.navigate(['/packing/seal/manual']);
+    this.toolbarProvider.currentPage.next("Precintar embalaje");
   }
 
 }

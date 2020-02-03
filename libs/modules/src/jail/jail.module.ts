@@ -23,11 +23,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { SendJailComponent } from './send-jail/send-jail.component';
+import { AddDestinyComponent } from './add-destiny/add-destiny.component';
+import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
 import { HistoryWarehouseModalComponent } from './history-warehouse/history-warehouse-modal/history_whs_modal.component';
 import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
 import { HistoryWarehouseNMComponent } from './history-warehouse-no-modal/history-warehouse-no-modal.component';
 import { DatePipe } from '@angular/common';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +45,9 @@ import { DatePipe } from '@angular/common';
     HistoryWarehouseComponent,
     HistoryWarehouseModalComponent,
     HistoryWarehouseNMComponent
+    AddDestinyComponent,
+    MultipleDestinationsComponent,
+    AddDestinyComponent
   ],
 
   imports: [
@@ -64,7 +70,7 @@ import { DatePipe } from '@angular/common';
     MatDatepickerModule,
     MatInputModule,
     MatTooltipModule,
-     MatIconModule
+    MatIconModule
   ],
   entryComponents: [
     StoreComponent,
@@ -75,8 +81,12 @@ import { DatePipe } from '@angular/common';
     HistoryModalComponent,
     HistoryWarehouseModalComponent
   ],
-  providers:[
-    DatePipe
+  providers: [
+    DatePipe,
+    AddDestinyComponent,
+    MultipleDestinationsComponent,
+    HistoryModalComponent,
+
   ]
 })
-export class JailModule {}
+export class JailModule { }

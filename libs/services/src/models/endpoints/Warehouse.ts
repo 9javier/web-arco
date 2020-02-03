@@ -1,5 +1,4 @@
 import { GroupModel } from './Group';
-import {WarehouseModel} from "@suite/services";
 import { Request } from './request';
 import { AgencyModel } from './agency.model';
 import {HttpRequestModel} from "./HttpRequest";
