@@ -14,6 +14,8 @@ import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-st
 import Warehouse = WarehouseModel.Warehouse;
 import Size = SizeModel.Size;
 import {CarrierModel} from "../../../services/src/models/endpoints/carrier.model";
+import { TimesToastType } from '../../../services/src/models/timesToastType';
+import { PositionsToast } from '../../../services/src/models/positionsToast.type';
 
 @Component({
   selector: 'app-ventilation-no-sorter',
@@ -179,6 +181,8 @@ export class VentilationNoSorterComponent implements OnInit {
       this.withoutOutputScan = false;
       this.showScanner = true;
       this.packingPhase = false;
+      this.audioProvider.playDefaultOk();
+      this.intermediaryService.presentToastSuccess('Artículo asignado a embalaje correctamente.', TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM);
       this.scannerManual.focusToInput();
       if (this.loading){
         await this.intermediaryService.dismissLoading();
