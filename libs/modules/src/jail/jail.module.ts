@@ -44,8 +44,7 @@ import { DatePipe } from '@angular/common';
     HistoryModalComponent,
     HistoryWarehouseComponent,
     HistoryWarehouseModalComponent,
-    HistoryWarehouseNMComponent
-    AddDestinyComponent,
+    HistoryWarehouseNMComponent,
     MultipleDestinationsComponent,
     AddDestinyComponent
   ],
