@@ -465,7 +465,7 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       checkWayWillFreeLocal(wayId);
     }
   }
-  
+
   private async sorterNotifyAboutProductScanned() {
     await this.intermediaryService.presentToastSuccess(`Continúe escaneando productos.`);
     this.resetLastScanProcess();
@@ -492,6 +492,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
       .subscribe(async (res: ExecutionSorterModel.StopExecuteColor) => {
         await this.intermediaryService.dismissLoading();
         this.sorterProvider.colorActiveForUser = null;
+        this.sorterProvider.colorSelected = null;
+        this.sorterProvider.idZoneSelected = null;
+        this.sorterProvider.processActiveForUser = null;
         this.location.back();
         this.events.publish(this.LOAD_DATA_INPUT_SORTER);
       }, async (error: HttpRequestModel.Error) => {
