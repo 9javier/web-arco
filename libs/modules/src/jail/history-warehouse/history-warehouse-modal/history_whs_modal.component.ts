@@ -18,6 +18,8 @@ export class HistoryWarehouseModalComponent implements OnInit {
 
   public dateMin = new Date(Date.now());
   public dateMax = new Date(Date.now());
+
+
   public whsCode;
   formVar: FormGroup;
   private whs: any;
@@ -28,10 +30,12 @@ export class HistoryWarehouseModalComponent implements OnInit {
     private carrierService:CarrierService,
     private intermediaryService:IntermediaryService,
     private fb: FormBuilder,
-    
+
     private router: Router,
-    
-  ) {}
+
+  ) {
+    this.dateMin.setDate(this.dateMin.getDate() - 60);
+  }
 
   ngOnInit() {
     this.formVar = this.fb.group({
@@ -45,33 +49,21 @@ export class HistoryWarehouseModalComponent implements OnInit {
       this.whs = carriers;
       this.intermediaryService.dismissLoading();
     })
-
-
-  }
-
-  setDateStart(){
   }
 
   submit(value){
-  
-
     this.dateMin = new Date(this.formVar.value['beginDate']);
     this.dateMax = new Date(this.formVar.value['endDate']);
-    this.whsCode = this.formVar.value['warehouse']; 
+    this.whsCode = this.formVar.value['warehouse'];
 
     if(this.validateSubmit(this.dateMin, this.dateMax, this.whsCode)){
-     
- 
       this.router.navigate(['jails/history/'+
       this.dateMin+"/"+
       this.dateMax+"/"+
       this.whsCode]);
       this.closeModal();
-    }
-
-
-
   }
+}
 
 
 

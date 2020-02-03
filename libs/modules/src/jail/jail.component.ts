@@ -475,7 +475,7 @@ export class JailComponent implements OnInit {
     modal.present()
   }
 
-  async test01() {
+  async callToHistory() {
     let modal = (await this.modalCtrl.create({
       component: HistoryWarehouseModalComponent,
     }));

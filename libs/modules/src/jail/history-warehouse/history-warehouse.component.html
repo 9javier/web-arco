@@ -12,9 +12,8 @@
             <ion-item class="content-icon-select">
               <ion-icon slot="start" name="home"></ion-icon>
               <ion-item>
-                <!-- (ngModelChange)="" -->
-                <ion-select placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected"  formControlName='warehouse'>
-                  <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id">{{ warehouse.name }}</ion-select-option>
+                <ion-select placeholder="Almacén" interface="popover" [(ngModel)]="warehouseSelected" formControlName='warehouse' >
+                  <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.name }}</ion-select-option>
                 </ion-select>
               </ion-item>
             </ion-item>
@@ -28,7 +27,7 @@
             <ion-item class="content-icon-select">
               <ion-icon slot="start" name="trending-up"></ion-icon>
               <mat-form-field>
-                <input #dateStart matInput [ngModel]="dt | date:'dd-MM-yyyy'" (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate' (change)="setDateStart(dateStart.value)" >
+                <input #dateStart matInput [ngModel]="datemin" (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate' >
                 <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
                 <mat-datepicker #pickerStart ></mat-datepicker>
               </mat-form-field>
@@ -42,7 +41,7 @@
             <ion-item class="content-icon-select">
               <ion-icon slot="start" name="trending-down"></ion-icon>
               <mat-form-field>
-                  <input matInput  (focus)="pickerEnd.open()"   formControlName='endDate' >
+                <input matInput (focus)="pickerEnd.open()" formControlName='endDate' [matDatepicker]="pickerEnd">
                 <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
                 <mat-datepicker  #pickerEnd ></mat-datepicker>
               </mat-form-field>
@@ -64,7 +63,7 @@
         <!-- class="ion-align-self-center" -->
         <ion-col size="6" >
           <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">N° y nombre de la tienda:</ion-title>
+            <ion-title size="small"  color="dark">N° y nombre de Tienda:</ion-title>
             <ion-label color="primary"> {{ nStore  }} </ion-label>
           </ion-item>
         </ion-col>
@@ -85,7 +84,7 @@
 
         <ion-col size="6">
           <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Jaulas en tránsito Ida:</ion-title>
+            <ion-title size="small"  color="dark">Jaulas en tránsito Vuelta:</ion-title>
             <ion-label color="primary"> {{ jOnTV  }} </ion-label>
           </ion-item>
         </ion-col>

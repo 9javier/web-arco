@@ -33,7 +33,7 @@
             <ion-item class="content-icon-select">
               <ion-icon slot="start" name="trending-up"></ion-icon>
               <mat-form-field>
-                <input #dateStart matInput  (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate' [value]="date"  [ngModel]="dateMin" >
+                <input #dateStart matInput  (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate'  [ngModel]="dateMin" >
                 <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
                 <mat-datepicker #pickerStart ></mat-datepicker>
               </mat-form-field>
@@ -46,7 +46,7 @@
             <ion-item class="content-icon-select">
               <ion-icon slot="start" name="trending-down"></ion-icon>
               <mat-form-field>
-                <input matInput  (focus)="pickerEnd.open()" [matDatepicker]="pickerEnd"  formControlName='endDate'  [ngModel]="dateMin">
+                <input matInput  (focus)="pickerEnd.open()" [matDatepicker]="pickerEnd"  formControlName='endDate'  [ngModel]="dateMax">
                 <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
                 <mat-datepicker  #pickerEnd ></mat-datepicker>
               </mat-form-field>
