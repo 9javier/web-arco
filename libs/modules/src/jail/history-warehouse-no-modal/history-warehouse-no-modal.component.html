@@ -10,7 +10,7 @@
             <ion-item class="content-icon-select">
               <ion-icon slot="start" name="home"></ion-icon>
               <ion-item>
-                <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' >
+                <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' [(ngModel)]="valueWarehouse" (ionChange)="validateRangeDate()">
                   <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.name }}</ion-select-option>
                 </ion-select>
               </ion-item>

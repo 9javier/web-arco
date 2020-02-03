@@ -32,6 +32,7 @@ export class HistoryWarehouseNMComponent implements OnInit {
   public typeMovement:any = [];
   validateDates = false;
 
+  valueWarehouse;
   valueStarDate;
   valueEndDate;
 
@@ -116,18 +117,17 @@ export class HistoryWarehouseNMComponent implements OnInit {
   }
 
   onDate(type, event) {
-    this.validateDates = this.validateRangeDate();
+    this.validateRangeDate();
     if (type === 'start') {
       this.endMinDate = new Date(event.value);
     }
   }
 
   validateRangeDate() {
-    if (this.valueStarDate && this.valueEndDate) {
-      console.log(!this.valueStarDate.getTime() <= this.valueEndDate.getTime());
-      return this.valueStarDate.getTime() <= this.valueEndDate.getTime();
+    if (this.valueStarDate && this.valueEndDate && this.valueWarehouse) {
+      return this.validateDates = this.valueStarDate.getTime() <= this.valueEndDate.getTime();
     }
 
-    return false;
+    return this.validateDates = false;
   }
 }
