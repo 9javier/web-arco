@@ -245,7 +245,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       });
   }
 
-  private loadActiveSorter() {
+  public loadActiveSorter() {
     this.waysMatrix = [];
     this.isTemplateWithEqualZones = false;
     this.loadingSorterTemplateMatrix = true;
