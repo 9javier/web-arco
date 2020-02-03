@@ -1,6 +1,6 @@
 import { Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import { CarrierService, IntermediaryService } from '@suite/services';
+import { CarrierService, IntermediaryService, WarehouseService } from '@suite/services';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { DatePipe } from '@angular/common';
@@ -42,6 +42,7 @@ export class HistoryWarehouseComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private carrierService: CarrierService,
+    private warehouseService:WarehouseService,
     private intermediaryService: IntermediaryService,
     private fb: FormBuilder,
     private datePipe: DatePipe,
@@ -53,9 +54,11 @@ export class HistoryWarehouseComponent implements OnInit {
 
   getCarriers(): void {
     this.intermediaryService.presentLoading();
-    this.carrierService.getAllWhs().subscribe(carriers => {
-      this.whs = carriers;
-      this.intermediaryService.dismissLoading();
+    this.warehouseService.getIndex().then(observable=>{
+          observable.subscribe(carriers => {
+        this.whs = (<any>carriers.body).data;
+        this.intermediaryService.dismissLoading();
+      })
     })
   }
 

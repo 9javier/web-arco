@@ -7,7 +7,7 @@ import {
   MatCheckboxModule,
   MatPaginatorModule,
   MatListModule,
-  MatDatepickerModule, MatInputModule, MatTooltipModule, MatIconModule
+  MatDatepickerModule, MatInputModule, MatTooltipModule, MatIconModule, MatSortModule
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { JailRoutingModule } from './jail-routing.module';
@@ -69,7 +69,8 @@ import { DatePipe } from '@angular/common';
     MatDatepickerModule,
     MatInputModule,
     MatTooltipModule,
-    MatIconModule
+    MatIconModule,
+    MatSortModule
   ],
   entryComponents: [
     StoreComponent,

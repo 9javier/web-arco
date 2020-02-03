@@ -1,11 +1,11 @@
 import { Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import { CarrierService, IntermediaryService } from '@suite/services';
+import { ActivatedRoute } from '@angular/router';
+import { CarrierService, IntermediaryService, WarehouseService } from '@suite/services';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { DatePipe } from '@angular/common';
 
-export interface callToService{
+export interface CallToService{
   warehouse:number,
   startDate:string,
   endDate:string,
@@ -30,38 +30,47 @@ export class HistoryWarehouseNMComponent implements OnInit {
   public whs: any;
   public results:any;
   public typeMovement:any = [];
+  validateDates = false;
+
+  valueStarDate;
+  valueEndDate;
 
   dataSource = new MatTableDataSource<any>();
   nStore:string;
   jOnStore:string;
   jOnTI:string;
   jOnTV:string;
-  nBulto:string;
   formVar: FormGroup;
+  endMinDate;
 
   constructor(
     private route: ActivatedRoute,
     private carrierService: CarrierService,
+    private warehouseService:WarehouseService,
     private intermediaryService: IntermediaryService,
     private fb: FormBuilder,
     private datePipe: DatePipe,
-  ) {
-    // this.getParms();
-  }
+  ) {}
 
-  // -----------
+  ngOnInit() {
+    this.getCarriers();
+    this.setForms();
+    this.getMovementTypeFromService();
+  }
 
   getCarriers(): void {
     this.intermediaryService.presentLoading();
-    this.carrierService.getAllWhs().subscribe(carriers => {
-      this.whs = carriers;
-      this.intermediaryService.dismissLoading();
+    this.warehouseService.getIndex().then(observable=>{
+      observable.subscribe(carriers => {
+        this.whs = (<any>carriers.body).data;
+        this.intermediaryService.dismissLoading();
+      })
     })
   }
 
   getAllInfo():void{
-    this.getParmsFromForm();
-    let body:callToService={
+    this.getParamsFromForm();
+    let body: CallToService={
       warehouse:this.whsCode,
       startDate:this.datemin.toString(),
       endDate:this.datemax.toString(),
@@ -76,32 +85,23 @@ export class HistoryWarehouseNMComponent implements OnInit {
     });
   }
 
-
   getMovementTypeFromService():void{
     this.carrierService.getMovementType().subscribe(result => {
       this.typeMovement = result;
     });
   }
 
-
-
   public setMovementType(type:any):string{
-    let name;
+    let name = '';
     let typesMov = (this.typeMovement);
     typesMov.forEach(function(v){
-      if(type==v['id'])
+      if(type === v['id'])
         name = v['name'];
     });
     return name;
   }
 
-  // getParms():void{
-  //   this.datemin = this.datePipe.transform(this.route.snapshot.paramMap.get('datemin'),"yyyy-MM-dd");
-  //   this.datemax = this.datePipe.transform(this.route.snapshot.paramMap.get('datemax'),"yyyy-MM-dd");
-  //   this.whsCode = parseInt(this.route.snapshot.paramMap.get('whsCode'));
-  // }
-
-  getParmsFromForm(){
+  getParamsFromForm(){
     this.whsCode = this.formVar.value['warehouse'];
     this.datemin = this.datePipe.transform(this.formVar.value['beginDate'],"yyyy-MM-dd");
     this.datemax = this.datePipe.transform(this.formVar.value['endDate'],"yyyy-MM-dd");
@@ -115,15 +115,19 @@ export class HistoryWarehouseNMComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    this.getCarriers();
-    this.setForms();
-    // this.getAllInfo();
-    // this.getMovementTypeFromService();
+  onDate(type, event) {
+    this.validateDates = this.validateRangeDate();
+    if (type === 'start') {
+      this.endMinDate = new Date(event.value);
+    }
   }
 
+  validateRangeDate() {
+    if (this.valueStarDate && this.valueEndDate) {
+      console.log(!this.valueStarDate.getTime() <= this.valueEndDate.getTime());
+      return this.valueStarDate.getTime() <= this.valueEndDate.getTime();
+    }
 
-
-
-
+    return false;
+  }
 }

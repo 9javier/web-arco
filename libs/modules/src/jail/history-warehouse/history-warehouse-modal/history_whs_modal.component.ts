@@ -2,7 +2,7 @@ import { Component, OnInit, Injectable, Output } from '@angular/core';
 import { Validators, FormBuilder, FormGroup, FormArray,  FormControl, } from '@angular/forms';
 import { COLLECTIONS } from 'config/base';
 import { ModalController } from '@ionic/angular';
-import { CarrierService, IntermediaryService } from '@suite/services';
+import { CarrierService, IntermediaryService, WarehouseService } from '@suite/services';
 import { Router } from '@angular/router';
 import { formatDate } from '@angular/common';
 
@@ -28,6 +28,7 @@ export class HistoryWarehouseModalComponent implements OnInit {
   constructor(
     private modalController:ModalController,
     private carrierService:CarrierService,
+    private warehouseService:WarehouseService,
     private intermediaryService:IntermediaryService,
     private fb: FormBuilder,
 
@@ -45,9 +46,11 @@ export class HistoryWarehouseModalComponent implements OnInit {
     });
 
     this.intermediaryService.presentLoading();
-    this.carrierService.getAllWhs().subscribe(carriers => {
-      this.whs = carriers;
-      this.intermediaryService.dismissLoading();
+      this.warehouseService.getIndex().then(observable=>{
+        observable.subscribe(carriers => {
+        this.whs = (<any>carriers.body).data;
+        this.intermediaryService.dismissLoading();
+      })
     })
   }
 
