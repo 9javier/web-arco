@@ -184,7 +184,8 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceMappingColors.data = dataColor
+            this.dataSourceColors = dataColor;
+            this.dataSourceMappingColors.data = this.dataSourceColors;
             break;
           case 4:
             let dataSize = this.dataSourceSizes;
@@ -207,7 +208,8 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceMappingSizes.data = dataSize;
+            this.dataSourceSizes = dataSize;
+            this.dataSourceMappingSizes.data = this.dataSourceSizes;
             break;
           case 5:
             let dataBrand = this.dataSourceBrands;
@@ -230,7 +232,8 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceMappingBrands.data = dataBrand;
+            this.dataSourceBrands = dataBrand;
+            this.dataSourceMappingBrands.data = this.dataSourceBrands;
             break;
           case 8:
             let dataFeature = this.dataSourceFeatures;
@@ -253,7 +256,8 @@ export class MappingsComponent implements OnInit {
               }
             });
 
-            this.dataSourceMappingFeatures.data = dataFeature;
+            this.dataSourceFeatures = dataFeature;
+            this.dataSourceMappingFeatures.data = this.dataSourceFeatures;
             break;
         }
       });

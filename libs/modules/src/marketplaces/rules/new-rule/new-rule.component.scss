@@ -231,6 +231,14 @@ ion-content {
                     max-width: 33px;
                     font-size: 14px;
                     padding: 0 5px;
+                    white-space: nowrap;
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
+
+                    &.destination-category-id {
+                      min-width: 66px;
+                      max-width: 66px;
+                    }
 
                     &:first-of-type {
                       display: flex;
@@ -260,6 +268,14 @@ ion-content {
                       max-width: 33px;
                       font-size: 14px;
                       padding: 0 5px;
+                      white-space: nowrap;
+                      overflow-x: hidden;
+                      text-overflow: ellipsis;
+
+                      &.destination-category-id {
+                        min-width: 66px;
+                        max-width: 66px;
+                      }
 
                       &:first-of-type {
                         display: flex;
