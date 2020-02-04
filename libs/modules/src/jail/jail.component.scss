@@ -11,6 +11,7 @@ table {
 }
 
 div.table-container {
+    overflow-x: auto;
     table.table-incidences {
         width: 100%;
         tr.incidence-row:not(.incidence-expanded-row):hover {
