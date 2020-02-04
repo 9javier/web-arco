@@ -9,6 +9,10 @@ div.container {
       font-weight: bold;
     }
   }
+  span.with-incidence {
+    color: var(--ion-color-danger-tint);
+    font-style: italic;
+  }
   div.spinner-loading {
     height: 5vh;
     width: auto;
