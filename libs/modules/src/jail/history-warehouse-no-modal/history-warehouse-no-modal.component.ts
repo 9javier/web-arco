@@ -4,6 +4,7 @@ import { CarrierService, IntermediaryService, WarehouseService } from '@suite/se
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatTableDataSource } from '@angular/material/table';
 import { DatePipe } from '@angular/common';
+import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 export interface CallToService{
   warehouse:number,
@@ -51,9 +52,12 @@ export class HistoryWarehouseNMComponent implements OnInit {
     private intermediaryService: IntermediaryService,
     private fb: FormBuilder,
     private datePipe: DatePipe,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   ngOnInit() {
+    this.valueStarDate = new Date(this.dateTimeParserService.firstDayOfMonth());
+    this.valueEndDate = new Date(this.dateTimeParserService.lastDayOfMonth());
     this.getCarriers();
     this.setForms();
     this.getMovementTypeFromService();

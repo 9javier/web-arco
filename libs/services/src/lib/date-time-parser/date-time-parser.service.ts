@@ -52,4 +52,14 @@ export class DateTimeParserService {
     return moment(timeToFormat).format('LT');
   }
 
+  public firstDayOfMonth() : string {
+    this.setLocale(null);
+    return moment().startOf('month').format('YYYY-MM-DD hh:mm');
+  }
+
+  public lastDayOfMonth() : string {
+    this.setLocale(null);
+    return moment().endOf('month').format('YYYY-MM-DD hh:mm');
+  }
+
 }
