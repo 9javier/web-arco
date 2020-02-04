@@ -451,7 +451,7 @@ export class MenuComponent implements OnInit {
           title: 'Verificación de artículos',
           icon: 'checkmark-circle-outline',
           url: '/picking/online-store/verify',
-          id: 'picking-tasks-manual',
+          id: 'verification-products-online',
           tooltip: 'Sección para verificar los artículos aptos online'
         },
         {
