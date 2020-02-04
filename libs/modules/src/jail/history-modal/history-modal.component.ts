@@ -3,6 +3,7 @@ import { Component, OnInit, Injectable, Input, Inject } from '@angular/core';
 import { CarrierService, TypesService } from '@suite/services';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
 import * as moment from 'moment';
+import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 @Injectable({
   providedIn: 'root'
 })
@@ -15,12 +16,11 @@ export class HistoryModalComponent implements OnInit {
   reference
   packingReference
   movementTypes = {};
-  dates: any[] = [];
-  hours: any[] = [];
   constructor(
     private carrierService: CarrierService,
     private modalController: ModalController,
     private typeService: TypesService,
+    private dateTimeParserService: DateTimeParserService
   ) {}
 
   carrierHistory: [];
@@ -33,11 +33,6 @@ export class HistoryModalComponent implements OnInit {
 
     this.carrierService.carrierHistory(ref).subscribe((response) => {
       this.reference = response
-      for (let i = 0; i < this.reference.length; i++) {
-        this.dates[i] = moment(ref[i].updatedAt).format('DD/MM/YYYY');
-        this.hours[i] = moment(ref[i].updatedAt).format('HH:mm:ss');
-      }
-
     });
   }
   close() {
@@ -50,5 +45,14 @@ export class HistoryModalComponent implements OnInit {
         this.movementTypes[movementType.id] = movementType.name
       })
     })
+  }
+
+  getFormatDate(date){
+    if(date){
+      return this.dateTimeParserService.dateTime(date)
+    } else {
+      return "-";
+    }
+
   }
 }
