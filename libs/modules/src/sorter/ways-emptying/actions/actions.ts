@@ -13,6 +13,7 @@ export class SorterActionsEmptyingComponent implements OnInit, OnDestroy {
   @Input() disableManual: boolean = false;
   @Input() disableMixed: boolean = false;
   @Input() disableAllSelect  = false;
+  @Input() disableEmptying  = false;
   @Output() autoEmptying = new EventEmitter();
   @Output() manualEmptying = new EventEmitter();
   @Output() mixedEmptying = new EventEmitter();
