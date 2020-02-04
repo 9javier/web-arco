@@ -14,24 +14,24 @@
       <mat-form-field appearance="outline">
         <mat-label>Usuario*</mat-label>
         <mat-icon matPrefix>format_line_spacing</mat-icon>
-        <mat-select (selectionChange)="changeUser($event.value)" [(value)]="selectUser">
+        <mat-select (selectionChange)="changeUser($event.value)" [(value)]="selectedUserId">
           <mat-option *ngFor="let user of users" [value]="user.id">
             {{user.name}}
           </mat-option>
         </mat-select>
-        <mat-error>Este campo es requerido.</mat-error>
+        <mat-error>Este campo es obligatorio.</mat-error>
       </mat-form-field>
     </p>
     <p>
       <mat-form-field appearance="outline">
-        <mat-label>Almacen*</mat-label>
+        <mat-label>Almacén*</mat-label>
         <mat-icon matPrefix>format_line_spacing</mat-icon>
-        <mat-select (selectionChange)="changeWarehouse($event.value)" [(value)]="selectWarehouse">
-          <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse.id">
-            {{warehouse.reference}} - {{warehouse.name}}
+        <mat-select (selectionChange)="changeWarehouse($event.value)" [(value)]="selectedWarehouseId">
+          <mat-option *ngFor="let warehouse of getSelectedUserWarehouses()" [value]="warehouse.id">
+            {{warehouse.name}}
           </mat-option>
         </mat-select>
-        <mat-error>Este campo es requerido.</mat-error>
+        <mat-error>Este campo es obligatorio.</mat-error>
       </mat-form-field>
     </p>
     <p>
@@ -39,9 +39,9 @@
       <mat-form-field appearance="outline" class="content-checkbox">
         <input matInput [hidden] = true>
         <ion-list>
-          <ion-item *ngFor="let rol of form.roles">
-            <ion-label>{{rol.name}}</ion-label>
-            <ion-checkbox [value]="rol.id" [ngModel]="rol.isChecked" (ionChange)="changeCheckbox(rol.id, rol.isChecked)" color="dark" slot="start"></ion-checkbox>
+          <ion-item *ngFor="let role of form.roles">
+            <ion-label>{{role.name}}</ion-label>
+            <ion-checkbox [checked]="role.isChecked" (ionChange)="changeRole(role.id)" color="dark" slot="start"></ion-checkbox>
           </ion-item>
         </ion-list>
       </mat-form-field>
@@ -51,6 +51,6 @@
 <ion-footer>
   <ion-toolbar>
     <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-    <ion-button slot="end" color="primary" type="submit" [disabled]="form.invalid" (click)="onSubmit()">Guardar</ion-button>
+    <ion-button slot="end" color="primary" type="submit" [disabled]="noRolesChecked()" (click)="submit()">Guardar</ion-button>
   </ion-toolbar>
 </ion-footer>
