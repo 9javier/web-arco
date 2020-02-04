@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import {switchMap} from "rxjs/operators";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import {ExcellModell} from "../../../models/endpoints/Excell";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class IncidencesService {
   private postSearchUrl: string = environment.apiBase+"/incidences";
   private postGetFiltersUrl: string = environment.apiBase+"/incidences/filters";
   private postChangeStatusUrl: string = environment.apiBase+"/incidences/change/status/";
+  private sendexcell = environment.apiBase + "/incidences/export-to-excel";
 
   private _incidencesList: IncidenceModel.Incidence[];
   private _incidencesPreviewList: IncidenceModel.Incidence[];
@@ -110,6 +112,15 @@ export class IncidencesService {
       }, (error) => {
         console.error('Error to try search Incidences with Filters', error);
       });
+  }
+
+  getFileExcell(parameters: ExcellModell.fileExcell) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
+    }));
   }
 
   // IncidencesList: Getter and Setter
