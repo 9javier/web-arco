@@ -13,7 +13,7 @@ import {PickingStoreService} from "../../../services/src/lib/endpoint/picking-st
 import Warehouse = WarehouseModel.Warehouse;
 import Size = SizeModel.Size;
 import {CarrierModel} from "../../../services/src/models/endpoints/carrier.model";
-import {TimesToastType} from "../../../services/src/models/timesToastType";
+import { TimesToastType } from '../../../services/src/models/timesToastType';
 
 @Component({
   selector: 'app-ventilation-no-sorter',
