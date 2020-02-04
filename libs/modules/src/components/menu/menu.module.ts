@@ -4,6 +4,7 @@ import { MenuComponent } from './menu.component';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { MatBadgeModule } from '@angular/material';
+import { MatTooltipModule } from "@angular/material";
 @NgModule({
   entryComponents:[MenuComponent],
   declarations: [MenuComponent],
@@ -11,7 +12,8 @@ import { MatBadgeModule } from '@angular/material';
     CommonModule,
     IonicModule,
     MatBadgeModule,
-    RouterModule
+    RouterModule,
+    MatTooltipModule
   ],
   exports:[MenuComponent]
 })
