@@ -406,7 +406,7 @@ export class MenuComponent implements OnInit {
           id: 'positioning-manual'
         },
         {
-          title: 'Ubicar online/escanear manualmente',
+          title: 'Ubicar no aptos online',
           icon: 'locate',
           url: '/positioning/manual-online',
           id: 'positioning-manual-online'
