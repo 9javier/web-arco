@@ -60,7 +60,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   }
 
   public columnSelected(data: {column: MatrixSorterModel.Column, iHeight: number, iCol: number}) {
-
+    console.log('AAAAAAAA');
     this.disableAuto = true;
     this.disableManual = true;
     this.disableMixed = true;
@@ -128,11 +128,11 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
 
    public async creatAler(){
     let a = await this.alertController.create({
-      header:'¡Están seguros de vaciar las calles!',
-      message: 'Vaciaremos las calles selecionadas',
+      header:'¡Confirmación!',
+      message: '¿Está seguro de vaciar las calles?',
       buttons:[
         {
-          text:'Ok',
+          text:'Si',
           handler: async ()=>{
             console.log('passa por ok');
             await this.allEmptying();
