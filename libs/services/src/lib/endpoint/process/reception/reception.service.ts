@@ -19,6 +19,7 @@ export class ReceptionService {
   private getCheckProductsPackingUrl = environment.apiBase + '/processes/receive-store/check/{{reference}}/products';
   private postReceiveProductUrl = environment.apiBase + '/processes/receive-store/products';
   private getNotReceivedProductsUrl = environment.apiBase + '/processes/receive-store/notreceived/';
+  private postUpdateStockUrl = environment.apiBase + '/stock-stores/update';
 
   constructor(
     private http: HttpClient,
@@ -52,4 +53,9 @@ export class ReceptionService {
   getNotReceivedProducts(packingReference: string) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.get(this.getNotReceivedProductsUrl + packingReference);
   }
+
+  postUpdateStock(productReference: {productReference: string}) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postUpdateStockUrl, productReference);
+  }
+
 }
