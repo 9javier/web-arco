@@ -4,9 +4,13 @@ import {DateTimeParserService} from "../../../services/src/lib/date-time-parser/
 import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
 import {MatSort, PageEvent, Sort} from "@angular/material";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import { IntermediaryService } from '@suite/services';
+import {IntermediaryService, InventoryService} from '@suite/services';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import {FilterButtonComponent} from "../components/filter-button/filter-button.component";
+import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
+import * as Filesave from 'file-saver';
+import { map, catchError } from 'rxjs/operators';
+import { BehaviorSubject, of, Observable } from 'rxjs';
 
 @Component({
   selector: 'incidences-list',
@@ -29,6 +33,17 @@ export class IncidencesListComponent implements OnInit {
 
   public paginatorPagerValues = [20, 50, 100];
   private currentPageFilter: IncidenceModel.SearchParameters;
+  form: FormGroup = this.formBuilder.group({
+    filters: {},
+    pagination: this.formBuilder.group({
+      page: 1,
+      limit: this.paginatorPagerValues[0]
+    }),
+    orderby: this.formBuilder.group({
+      type: '',
+      order: 'DESC'
+    })
+  });
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
@@ -60,7 +75,9 @@ export class IncidencesListComponent implements OnInit {
   constructor(
     public incidencesService: IncidencesService,
     private dateTimeParserService: DateTimeParserService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private inventoryService: InventoryService,
+    private formBuilder: FormBuilder,
   ) {}
 
   ngOnInit() {
@@ -73,7 +90,32 @@ export class IncidencesListComponent implements OnInit {
       page: 0,
       size: this.paginatorPagerValues[0]
     };
+    this.form = this.formBuilder.group({
+      filters: {},
+      pagination: this.formBuilder.group({
+        page: 1,
+        limit: this.paginatorPagerValues[0]
+      }),
+      orderby: this.formBuilder.group({
+        type: 'id',
+        order: 'DESC'
+      })
+    });
     this.listenPaginatorChanges();
+  }
+
+  copyValuesToForm(){
+    this.form = this.formBuilder.group({
+      filters: this.currentPageFilter.filters,
+      pagination: this.formBuilder.group({
+        page: this.currentPageFilter.page,
+        limit: this.currentPageFilter.size
+      }),
+      orderby: this.formBuilder.group({
+        type: this.currentPageFilter.order.field,
+        order: this.currentPageFilter.order.direction
+      })
+    });
   }
 
   listenPaginatorChanges() {
@@ -82,6 +124,7 @@ export class IncidencesListComponent implements OnInit {
         this.currentPageFilter.page = page.pageIndex;
         this.currentPageFilter.size = page.pageSize;
 
+        this.copyValuesToForm();
         this.searchIncidences(this.currentPageFilter);
       });
     });
@@ -98,12 +141,69 @@ export class IncidencesListComponent implements OnInit {
           direction: sort.direction.toUpperCase()
         };
       }
-      this.searchIncidences(this.currentPageFilter);
+        this.copyValuesToForm();
+        this.searchIncidences(this.currentPageFilter);
       });
     });
     this.intermediaryService.presentLoading('Cargando incidencias...').then(() => {
       this.searchIncidences(this.currentPageFilter);
     });
+  }
+
+  // TODO METODO LLAMAR ARCHIVO EXCELL
+  /**
+   * @description Eviar parametros y recibe un archivo excell
+   */
+  async fileExcell() {
+    this.intermediaryService.presentLoading('Descargando Archivo Excel').then(()=>{
+      const formToExcel = this.getFormValueCopy();
+      this.incidencesService.getFileExcell(this.sanitize(formToExcel)).pipe(
+        catchError(error => of(error)),
+        // map(file => file.error.text)
+      ).subscribe((data) => {
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastSuccess('Archivo descargado')
+      }, error => console.log(error));
+    });
+  }
+
+  private getFormValueCopy() {
+    return JSON.parse(JSON.stringify(this.form.value || {}));
+  }
+
+  /**
+   * clear empty values of objecto to sanitize it
+   * @param object Object to sanitize
+   * @return the sanitized object
+   */
+  sanitize(object) {
+    /**mejorable */
+    object = JSON.parse(JSON.stringify(object));
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = object.orderby.type;
+    }
+    if (!object.orderby.order) delete object.orderby.order;
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
+      }
+      if (object[key] === null || object[key] === "") {
+        delete object[key];
+      }
+    });
+    return object;
   }
 
   private searchIncidences(parameters: IncidenceModel.SearchParameters) {
@@ -149,6 +249,7 @@ export class IncidencesListComponent implements OnInit {
         delete this.currentPageFilter.filters[type];
       }
       this.textsTypedInFilters[type] = event.typedFilter;
+      this.copyValuesToForm();
       this.searchIncidences(this.currentPageFilter);
     });
   }

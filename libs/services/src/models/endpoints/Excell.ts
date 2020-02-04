@@ -1,7 +1,8 @@
 export namespace ExcellModell {
 
-    
+
   export interface fileExcell {
+    filters: any[];
     warehouses: any[];
     containers: any[];
     models: any[];
@@ -12,7 +13,7 @@ export namespace ExcellModell {
   }
 
   interface Orderby {
-    type: number;
+    type: number|string;
     order: string;
   }
 

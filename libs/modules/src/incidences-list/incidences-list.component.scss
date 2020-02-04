@@ -1,3 +1,61 @@
+ion-text {
+
+  ion-icon {
+    cursor: pointer;
+  }
+}
+
+ion-item {
+  ion-label+ion-input {
+    text-align: right;
+  }
+}
+
+.mat-table-wrapper-overflow-x {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-cell, .mat-header-cell {
+  padding: 10px 10px 10px 0;
+}
+
+.bt-right{
+  text-align: end;
+}
+
+span {
+  width: 100%;
+  text-align: left;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+suite-filter-button{
+  text-align: end;
+  padding-right: 8px;
+  display: table-cell;
+}
+
+.title{
+  cursor: pointer;
+  font-size: 26px;
+}
+
+.horizontal-fab {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-bottom: 80px;
+  margin-right: 16px;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
+
 .incidences-container {
   height: calc(100% - 64px); // 64px from paginator located at bottom of page
   width: 100%;
