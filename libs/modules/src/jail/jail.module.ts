@@ -79,7 +79,8 @@ import { DatePipe } from '@angular/common';
     ShowDestinationsComponent,
     SendJailComponent,
     HistoryModalComponent,
-    HistoryWarehouseModalComponent
+    HistoryWarehouseModalComponent,
+    MultipleDestinationsComponent
   ],
   providers: [
     DatePipe,

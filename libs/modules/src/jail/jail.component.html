@@ -1,125 +1,131 @@
 <ion-content>
-    
-    <div class="table-container">
-        <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
-            <ng-container matColumnDef="select">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let element;let i = dataIndex" [formGroup]="toDelete"
-                    (click)="prevent($event)">
-                    <ion-checkbox [formControl]="toDelete['controls']?.jails['controls'][i]['controls']?.selected">
-                    </ion-checkbox>
-                </td>
-            </ng-container>
+  <div class="table-container">
+    <table mat-table multiTemplateDataRows [dataSource]="dataSource" class="table-incidences">
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element;let i = dataIndex" [formGroup]="toDelete"
+            (click)="prevent($event)">
+          <ion-checkbox [formControl]="toDelete['controls']?.jails['controls'][i]['controls']?.selected">
+          </ion-checkbox>
+        </td>
+      </ng-container>
 
-            <ng-container matColumnDef="reference">
-                <th mat-header-cell *matHeaderCellDef>Referencia</th>
-                <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
-            </ng-container>
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef>Referencia</th>
+        <td mat-cell *matCellDef="let element"> {{element.reference}} </td>
+      </ng-container>
 
-            <ng-container matColumnDef="packing">
-                <th mat-header-cell *matHeaderCellDef>Tipo</th>
-                <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
-            </ng-container>
+      <ng-container matColumnDef="packing">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let element"> {{typeById(element.packingType)?.name}} </td>
+      </ng-container>
 
-            <ng-container matColumnDef="destiny">
-                <th mat-header-cell *matHeaderCellDef>Destino</th>
-                <td mat-cell *matCellDef="let element">
-                    <div *ngIf="element.carrierWarehousesDestiny?.length == 0" class="no-warehouse">Sin destinos</div>
-                    <div *ngIf="element.carrierWarehousesDestiny?.length == 1">
-                        {{element.carrierWarehousesDestiny[0].warehouse?.reference }}
-                        {{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
-                    <div *ngIf="element.carrierWarehousesDestiny?.length > 1"
-                        (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios
-                            destinos</span></div>
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="warehouse">
-                <th mat-header-cell *matHeaderCellDef>Origen</th>
-                <td mat-cell *matCellDef="let element">
-                    {{element?.warehouse ? (element.warehouse.reference + ' ' + element.warehouse.name) : '' }}
-                    <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
-                </td>
-            </ng-container>
+      <ng-container matColumnDef="destiny">
+        <th mat-header-cell *matHeaderCellDef>Destino</th>
+        <td mat-cell *matCellDef="let element">
+          <div *ngIf="element.carrierWarehousesDestiny?.length == 0" class="no-warehouse">Sin destinos</div>
+          <div *ngIf="element.carrierWarehousesDestiny?.length == 1">
+            {{element.carrierWarehousesDestiny[0].warehouse?.reference }}
+            {{element.carrierWarehousesDestiny[0].warehouse?.name }}</div>
+          <div *ngIf="element.carrierWarehousesDestiny?.length > 1"
+               (click)="showDestinations($event, element)"><span class="show-various-destinations">Varios destinos</span></div>
+        </td>
+      </ng-container>
 
-            <ng-container matColumnDef="products-status">
-                <th mat-header-cell *matHeaderCellDef class="right-content right-space">Productos</th>
-                <td mat-cell *matCellDef="let element" class="right-content right-space">
-                    {{ element.packingInventorys && element.packingInventorys.length > 0 ? element.packingInventorys.length : 'vacía' }}
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="isSend">
-                <th mat-header-cell *matHeaderCellDef class="right-content left-border"></th>
-                <td mat-cell *matCellDef="let element" class="right-content left-border">
-                    <i matTooltip="Enviar {{typeById(element.packingType)?.name | lowercase}} {{ element.packingInventorys && element.packingInventorys.length > 0 ? '' : 'vacía' }}"
-                        matTooltipClass="tooltip" *ngIf="isAvailableSend(element)" (click)="toSend($event,element)"
-                        class="material-icons action-icon">send</i>
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="sendPacking">
-              <th mat-header-cell *matHeaderCellDef> Enviar</th>
-              <td mat-cell *matCellDef="let element"><i (click)="send($event,element)" class="material-icons">send</i>
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="update">
-                <th mat-header-cell *matHeaderCellDef class="center-content">
-                    <i class="material-icons settings-header">settings</i>
-                </th>
-                <td mat-cell *matCellDef="let element" class="center-content">
-                    <i matTooltip="Actualizar {{typeById(element.packingType)?.name | lowercase}}"
-                        matTooltipClass="tooltip" (click)="toUpdate($event,element)"
-                        class="material-icons action-icon">edit</i>
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="open-modal">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td matTooltip="Histórico de movimientos" matTooltipClass="tooltip"
-                    mat-cell *matCellDef="let element"><i class="material-icons action-icon" (click)="viewCarrier(element)">assignment</i> </td>
-            </ng-container>
-            <ng-container matColumnDef="buttons-print">
-              <th mat-header-cell *matHeaderCellDef></th>
-              <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
-                  mat-cell *matCellDef="let element"><i (click)="print($event,element)"
-                                                        class="material-icons action-icon">print</i> </td>
-            </ng-container>
+      <ng-container matColumnDef="warehouse">
+        <th mat-header-cell *matHeaderCellDef>Origen</th>
+        <td mat-cell *matCellDef="let element">
+          {{element?.warehouse ? (element.warehouse.reference + ' ' + element.warehouse.name) : '' }}
+          <div class="no-warehouse" *ngIf="!element.warehouse"> sin warehouse asociado</div>
+        </td>
+      </ng-container>
 
-            <ng-container matColumnDef="expandedDetail">
-                <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length"
-                    class="incidence-column">
+      <ng-container matColumnDef="products-status">
+        <th mat-header-cell *matHeaderCellDef class="right-content right-space">Productos</th>
+        <td mat-cell *matCellDef="let element" class="right-content right-space">
+          {{ element.packingInventorys && element.packingInventorys.length > 0 ? element.packingInventorys.length : 'vacía' }}
+        </td>
+      </ng-container>
 
-                </td>
-            </ng-container>
+      <ng-container matColumnDef="isSend">
+        <th mat-header-cell *matHeaderCellDef class="right-content left-border"></th>
+        <td mat-cell *matCellDef="let element" class="right-content left-border">
+          <i
+            matTooltip="Enviar {{typeById(element.packingType)?.name | lowercase}} {{ element.packingInventorys && element.packingInventorys.length > 0 ? '' : 'vacía' }}"
+            matTooltipClass="tooltip" *ngIf="isAvailableSend(element)" (click)="toSend($event,element)"
+            class="material-icons action-icon">send</i>
+        </td>
+      </ng-container>
 
-          <ng-container matColumnDef="sealed">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element">
-              <i class="material-icons warning-icon" *ngIf="element && element.status && element.status == 4" matTooltip="Precintada">launch</i>
-            </td>
-          </ng-container>
+      <ng-container matColumnDef="sendPacking">
+        <th mat-header-cell *matHeaderCellDef> Enviar</th>
+        <td mat-cell *matCellDef="let element"><i (click)="send($event,element)" class="material-icons">send</i>
+        </td>
+      </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row"
-                [class.incidence-expanded-row]="expandedElement === row"
-                (click)="expandedElement = expandedElement === row ? null : row">
-            </tr>
-            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
-        </table>
-    </div>
+      <ng-container matColumnDef="update">
+        <th mat-header-cell *matHeaderCellDef class="center-content">
+          <i class="material-icons settings-header">settings</i>
+        </th>
+        <td mat-cell *matCellDef="let element" class="center-content">
+          <i matTooltip="Actualizar {{typeById(element.packingType)?.name | lowercase}}"
+             matTooltipClass="tooltip" (click)="toUpdate($event,element)"
+             class="material-icons action-icon">edit</i>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="open-modal">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td matTooltip="Histórico de movimientos" matTooltipClass="tooltip"
+            mat-cell *matCellDef="let element"><i class="material-icons action-icon" (click)="viewCarrier(element)">assignment</i>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="buttons-print">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td matTooltip="Imprimir {{typeById(element.packingType)?.name | lowercase}}" matTooltipClass="tooltip"
+            mat-cell *matCellDef="let element">
+          <i (click)="print($event,element)" class="material-icons action-icon">print</i>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length"
+            class="incidence-column">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sealed">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <i class="material-icons warning-icon" *ngIf="element && element.status && element.status == 4"
+             matTooltip="Precintada">launch</i>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row"
+          [class.incidence-expanded-row]="expandedElement === row"
+          (click)="expandedElement = expandedElement === row ? null : row">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="incidence-detail-row"></tr>
+    </table>
+  </div>
 </ion-content>
 
 <ion-footer class="footer-products">
-    <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
-        <ion-fab-button matTooltip="Actualizar" matTooltipClass="tooltip" (click)="loadCarriers()"><i
-          class="material-icons">refresh</i></ion-fab-button>
-        <ion-fab-button matTooltip="Eliminar seleccionado" matTooltipClass="tooltip" (click)="delete()"
-            *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
-        <ion-fab-button matTooltip="Imprimir seleccionado" matTooltipClass="tooltip" (click)="print($event)"
-            *ngIf="hasToDelete()"><i class="material-icons">print</i></ion-fab-button>
-        <ion-fab-button matTooltip="Precintar embalaje" matTooltipClass="tooltip" (click)="newJail()"
-            *ngIf="hasToDelete()" color="warning"><i class="material-icons">launch</i></ion-fab-button>
-
-        <ion-fab-button matTooltip="Movimientos de históricos por almacén" matTooltipClass="tooltip" (click)="callToHistory()"><i class="material-icons">history</i></ion-fab-button>
-
-        <ion-fab-button matTooltip="Añadir a embalaje" matTooltipClass="tooltip" (click)="toStore()"><i class="material-icons">add</i></ion-fab-button>
-
-    </ion-fab>
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Refrescar datos" matTooltipClass="tooltip" (click)="loadCarriers()"><i
+      class="material-icons">refresh</i></ion-fab-button>
+    <ion-fab-button matTooltip="Eliminar seleccionados" matTooltipClass="tooltip" (click)="delete()"
+                    *ngIf="hasToDelete()" color="danger"><i class="material-icons">delete</i></ion-fab-button>
+    <ion-fab-button matTooltip="Imprimir seleccionados" matTooltipClass="tooltip" (click)="print($event)"
+                    *ngIf="hasToDelete()"><i class="material-icons">print</i></ion-fab-button>
+    <ion-fab-button matTooltip="Precintar seleccionados" matTooltipClass="tooltip" (click)="newJail()"
+                    *ngIf="hasToDelete()" color="warning"><i class="material-icons">launch</i></ion-fab-button>
+    <ion-fab-button matTooltip="Movimientos de históricos por almacén" matTooltipClass="tooltip"
+                    (click)="callToHistory()"><i class="material-icons">history</i></ion-fab-button>
+    <ion-fab-button matTooltip="Crear embalaje" matTooltipClass="tooltip" (click)="toStore()"><i
+      class="material-icons">add</i></ion-fab-button>
+  </ion-fab>
 </ion-footer>
