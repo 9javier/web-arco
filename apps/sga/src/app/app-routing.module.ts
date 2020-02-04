@@ -349,6 +349,14 @@ const routes: Routes = [
     data: {
       name: 'Predistribuciones'
     }
+  },
+  { 
+    path:'receptions',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
+    data: {
+      name: 'Recepciones2'
+    }
   }
 ];
 

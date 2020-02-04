@@ -298,3 +298,7 @@ export  * from './reception-empty-packing/reception-empty-packing.module';
 
 export  * from './send-empty-packing/send-empty-packing.component'
 export  * from './send-empty-packing/send-empty-packing.module';
+
+// // /**Receptionss avelon */
+export  * from './receptionss-avelon/receptionss-avelon.component'
+export  * from './receptionss-avelon/receptionss-avelon.module';
