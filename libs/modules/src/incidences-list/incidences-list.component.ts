@@ -67,7 +67,7 @@ export class IncidencesListComponent implements OnInit {
     this.currentPageFilter = {
       order: {
         field: 'id',
-        direction: 'ASC'
+        direction: 'DESC'
       },
       filters: {},
       page: 0,
