@@ -226,7 +226,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     }
   }
 
-  check(lista:ZoneSorterModel.ZoneColor){
+  check(lista:ZoneSorterModel.ZoneColor, isCheckBox = false){
     console.log(lista.checks);
     // console.log(this.waysSelected);
     let xy = this.listOfIdsYWays.filter(x => x.id === lista.id);
@@ -266,7 +266,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
       ele = ele.filter(x => x.column.way.templateZone.zones.color.hex === lista.color);
       if(ele.length !== 0){
         ele.forEach(w => {
-          this.columnSelected.next({column:w.column,iHeight:w.indexx,iCol:w.index})
+          this.columnSelected.next({column:w.column,iHeight:w.indexx,iCol:w.index, isCheckBox})
         });
       }
     });

@@ -38,7 +38,7 @@
   <div class="content-legend">
     <div class="zone">
       <ion-grid>
-        <ion-row (click)="check(zoneColor)" *ngFor="let zoneColor of listZonesWithColors; let i = index">
+        <ion-row (click)="check(zoneColor, true)" *ngFor="let zoneColor of listZonesWithColors; let i = index">
           <ion-col class="column-color" size="3">
             <div class="color-zone" [ngStyle]="{'background-color': zoneColor.id == 0 ? 'var(--ion-color-background-zone-selected)' : zoneColor.color, 'filter': zoneColor.id == 0 ? 'grayscale(0.5)' : 'grayscale(0)'}">
             </div>

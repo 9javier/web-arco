@@ -39,7 +39,6 @@ export class SorterInfoWayEmptyingComponent implements OnInit {
   }
 
   public newWaySelected(way: WaySorterModel.WaySorter) {
-    console.log('BBBBBBB');
     this.isLoadingData = true;
     this.way = way;
     this.sorterOutputService

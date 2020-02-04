@@ -59,8 +59,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
 
   }
 
-  public columnSelected(data: {column: MatrixSorterModel.Column, iHeight: number, iCol: number}) {
-    console.log('AAAAAAAA');
+  public columnSelected(data: {column: MatrixSorterModel.Column, iHeight: number, iCol: number, isCheckBox: boolean}) {
     this.disableAuto = true;
     this.disableManual = true;
     this.disableMixed = true;
@@ -78,7 +77,10 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
       this.lastWaysSelected.push(this.lastWaySelected);
     }
     this.emptyingVerification();
-    this.infoWayEmptying.newWaySelected(data.column.way);
+
+    if(!data.isCheckBox) {
+      this.infoWayEmptying.newWaySelected(data.column.way);
+    }
   }
 
   removeItemFromArr( arr, item ) {
