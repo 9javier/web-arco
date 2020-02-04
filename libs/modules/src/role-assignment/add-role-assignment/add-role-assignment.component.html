@@ -5,7 +5,7 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Agregar Roles</ion-title>
+    <ion-title>Añadir Roles</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
@@ -28,7 +28,7 @@
         <mat-icon matPrefix>format_line_spacing</mat-icon>
         <mat-select (selectionChange)="changeWarehouse($event.value)" [(value)]="selectedWarehouseId">
           <mat-option *ngFor="let warehouse of getSelectedUserWarehouses()" [value]="warehouse.id">
-            {{warehouse.name}}
+            {{warehouse.reference}} - {{warehouse.name}}
           </mat-option>
         </mat-select>
         <mat-error>Este campo es obligatorio.</mat-error>

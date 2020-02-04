@@ -17,13 +17,15 @@ export class AddRoleAssignmentComponent implements OnInit {
     name: string,
     warehouses: {
       id: number,
-      name: string
+      name: string,
+      reference?:string
     }[]
   }[] = [];
 
   warehouses: {
     id: number,
-    name: string
+    name: string,
+    reference?: string
   }[] = [];
 
   roles: {
@@ -79,7 +81,8 @@ export class AddRoleAssignmentComponent implements OnInit {
       if(!included){
         this.warehouses.push({
           id: permission.warehouse.id,
-          name: permission.warehouse.name
+          name: permission.warehouse.name,
+          reference: permission.warehouse.reference
         })
       }
     }
@@ -158,7 +161,7 @@ export class AddRoleAssignmentComponent implements OnInit {
   getSelectedUserWarehouses(){
     for(let user of this.users){
       if(user.id == this.selectedUserId){
-        return user.warehouses;
+        return user.warehouses ? user.warehouses.sort((a, b) => a.reference < b.reference ? -1 : a.reference > b.reference ? 1 : 0) : [];
       }
     }
     return [];
