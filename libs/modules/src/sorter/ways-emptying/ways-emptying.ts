@@ -51,7 +51,7 @@ export class WaysEmptyingComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    console.log('passa per ways');
+    // console.log('passa per ways');
     this.loadActiveSorter();
   }
 

@@ -19,7 +19,7 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'article', 'store', 'date_service', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['select', 'article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
   dataSource
   selection = new SelectionModel<Predistribution>(true, []);
@@ -51,7 +51,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   providers: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
-  entities 
+  entities
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
   // pagerValues = [50, 100, 1000];
@@ -79,10 +79,10 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
-    private intermediaryService:IntermediaryService 
-    
+    private intermediaryService:IntermediaryService
+
   ) {
-    
+
     // this.predistributionsService.getIndex().then((ELEMENT_DATA) => {
     //   console.log(ELEMENT_DATA);
     //   this.dataSource = new MatTableDataSource<Predistribution>(ELEMENT_DATA);
@@ -90,12 +90,12 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    
+
     this.initEntity()
     this.initForm()
     this.getFilters()
     this.getList(this.form)
-    this.listenChanges() 
+    this.listenChanges()
     // this.paginator._intl.itemsPerPageLabel = 'Ver';
     // this.paginator._intl.getRangeLabel = this.getRangeLabel;
     // this.dataSource.results.forEach(row => {
@@ -114,7 +114,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
       console.log(page);
-      let flag = previousPageSize == page.pageSize;
+      let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
         limit: page.pageSize,
@@ -153,7 +153,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         this.dataSource.paginator = This.paginator;
     }, 2000)
   }
-  
+
   getRangeLabel = (page: number, pageSize: number, length: number) =>  {
     if (length === 0 || pageSize === 0) {
       return `0 / ${length}`;
@@ -293,29 +293,31 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         modelId: dataRow.model.id,
         sizeId: dataRow.size.id,
         warehouseId: dataRow.warehouse.id
-      })      
+      })
     });
     // call to services ..
     this.intermediaryService.presentLoading();
     let This = this;
     await this.predistributionsService.updateBlockReserved(list).subscribe(function(data){
-      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");  
+      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
       console.log('debug', data);
-      // reload page   
+      // reload page
       This.initEntity()
       This.initForm()
       This.getFilters()
       This.getList(This.form)
-      This.listenChanges()  
+      This.listenChanges()
     }, (error) => {
-      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");  
+      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
       This.intermediaryService.dismissLoading();
     }, () => {
       This.intermediaryService.dismissLoading();
-    });  
+    });
   }
+
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
+      console.log(entities)
       this.updateFilterSourceBrands(entities.brands)
       this.updateFilterSourceModels(entities.models)
       this.updateFilterSourceSizes(entities.sizes)
@@ -330,7 +332,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
       }, 0);
     })
-    
+
   }
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading()
@@ -340,7 +342,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
         const paginator = resp.pagination;
         console.log(paginator);
-        
+
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
@@ -355,7 +357,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       },
       async err => {
         await this.intermediaryService.dismissLoading()
-      }, 
+      },
       async () => {
         await this.intermediaryService.dismissLoading()
       }
@@ -386,15 +388,15 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         let modelsFiltered: string[] = [];
         for (let model of filters) {
           console.log(model);
-          
+
           if (model.checked) modelsFiltered.push(model.id);
         }
         console.log(modelsFiltered);
           console.log(modelsFiltered.length, '>=' ,this.models.length);
-          
+
         if (modelsFiltered.length >= this.models.length) {
           console.log('entre en model');
-          
+
           this.form.value.models = [];
           this.isFilteringModels = this.models.length;
         } else {
@@ -407,7 +409,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
           }
         }
         console.log(this.form.value);
-        
+
         break;
       case 'colors':
         let colorsFiltered: number[] = [];
@@ -451,7 +453,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
           if (warehouse.checked) warehousesFiltered.push(warehouse.id);
         }
         console.log(warehousesFiltered.length, '>=' ,this.warehouses.length);
-        
+
         if (warehousesFiltered.length >= this.warehouses.length) {
           this.form.value.warehouses = [];
           this.isFilteringWarehouses = this.warehouses.length;
@@ -463,7 +465,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
             this.form.value.warehouses = [99999];
             this.isFilteringWarehouses = this.warehouses.length;
           }
-        }        
+        }
         break;
       case 'providers':
         let providersFiltered: number[] = [];
@@ -512,42 +514,42 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     //   }
     //   this.filterButtonReferences.listItems = this.references;
     // }
-    if (this.lastUsedFilter != 'models') {
+    if (this.lastUsedFilter !== 'models') {
       let filteredModels = entities['models'] as unknown as string[];
       for (let index in this.models) {
         this.models[index].hide = filteredModels.includes(this.models[index].value);
-      }      
+      }
       this.filterButtonModels.listItems = this.models;
     }
-    if (this.lastUsedFilter != 'colors') {
+    if (this.lastUsedFilter !== 'colors') {
       let filteredColors = entities['colors'] as unknown as string[];
       for (let index in this.colors) {
         this.colors[index].hide = filteredColors.includes(this.colors[index].value);
       }
       this.filterButtonColors.listItems = this.colors;
     }
-    if (this.lastUsedFilter != 'sizes') {
+    if (this.lastUsedFilter !== 'sizes') {
       let filteredSizes = entities['sizes'] as unknown as string[];
       for (let index in this.sizes) {
         this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
       }
       this.filterButtonSizes.listItems = this.sizes;
     }
-    if (this.lastUsedFilter != 'warehouses') {
+    if (this.lastUsedFilter !== 'warehouses') {
       let filteredWarehouses = entities['destinyShop'] as unknown as (string | number)[];
       for (let index in this.warehouses) {
         this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
       }
       this.filterButtonWarehouses.listItems = this.warehouses;
     }
-    if (this.lastUsedFilter != 'brands') {
+    if (this.lastUsedFilter !== 'brands') {
       let filteredBrands = entities['brands'] as unknown as string[];
       for (let index in this.brands) {
         this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
       }
       this.filterButtonBrands.listItems = this.brands;
     }
-    if (this.lastUsedFilter != 'providers') {
+    if (this.lastUsedFilter !== 'providers') {
       let filteredProviders = entities['provider'] as unknown as string[];
       for (let index in this.providers) {
         this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
@@ -565,7 +567,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       return brand;
     });
     console.log(this.brands);
-    
+
     if (value && value.length) {
       this.form.get("brands").patchValue(value, { emitEvent: false });
     }
@@ -575,7 +577,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.pauseListenFormChange = true;
     let value = this.form.get("sizes").value;
     this.sizes = sizes
-      .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
+      .filter((value, index, array) => array.findIndex(x => x.name === value.name) === index)
       .map(size => {
         size.id = <number>(<unknown>size.id);
         size.value = size.name;
@@ -616,7 +618,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       return model;
     });
     console.log(this.models);
-    
+
     if (value && value.length) {
       this.form.get("models").patchValue(value, { emitEvent: false });
     }
@@ -671,9 +673,9 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   // new
   public changeStatusBlocked( event:MatCheckboxChange, row) {
     this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId == row.expeditionLineId) {
+      if(value.expeditionLineId === row.expeditionLineId) {
         value.distribution = event.checked;
-      }  
+      }
     });
   }
   public  isCheckedStatusBlocked( element) {
@@ -681,38 +683,38 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   public changeStatusBlockedAll( event:MatCheckboxChange) {
     this.dataSource.data.forEach(function(value){
-      value.distribution = event.checked;  
+      value.distribution = event.checked;
     });
   }
   public  isCheckedStatusBlockedAll() {
     let result = true;
     this.dataSource.data.forEach(function(value){
-      result = result && value.distribution;   
+      result = result && value.distribution;
     });
     return result;
   }
   // reserved
   public changeStatusReserved(event:MatCheckboxChange, row) {
     this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId == row.expeditionLineId) {
+      if(value.expeditionLineId === row.expeditionLineId) {
         value.distribution = !event.checked;
-      }  
+      }
     });
   }
 
-  public isCheckedStatusReserved( element) { 
+  public isCheckedStatusReserved( element) {
     return !element.distribution;
   }
 
   public changeStatusReservedAll( event:MatCheckboxChange) {
     this.dataSource.data.forEach(function(value){
-      value.distribution = !event.checked;  
+      value.distribution = !event.checked;
     });
   }
   public  isCheckedStatusReservedAll() {
     let result = true;
     this.dataSource.data.forEach(function(value){
-      result = result && !value.distribution;   
+      result = result && !value.distribution;
     });
     return result;
   }

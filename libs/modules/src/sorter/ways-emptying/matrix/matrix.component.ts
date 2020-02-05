@@ -118,34 +118,18 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     for(wayS of this.waysSelected){
 
       if(wayS === column.way){
-        console.log('passa di qui');
+        // console.log('passa di qui');
         this.flag = true;
         this.removeItemFromArr( this.waysSelected, wayS );
         this.listaWay(this.waysSelected)
       }
     }
     if(this.flag === false){
-      console.log('passa di qui');
+      // console.log('passa di qui');
       this.waysSelected.push(column.way);
       this.listaWay(this.waysSelected);
     }
-    if(check){
-      // console.log(list);
-      // console.log(this.waysSelected);
-      // let xy = this.listOfIdsYWays.filter(x => x.id === column.way.templateZone.zones.id);
-      // xy = xy.map(x => x.ways)[0].map(w => w.col).map(r => r.way);
-      // console.log(xy);
-      // let rew = [];
-      // xy.forEach(ele => {
-      //   console.log(ele.id);
-      //   rew = this.waysSelected.filter( v => {
-      //     console.log(v.id);
-      //     return v.id !== ele.id
-      //   });
-      // })
-      // console.log(rew);
 
-    }
 
     this.columnSelected.next({column, iHeight, iCol});
     this.listOfIdsWays.next(this.waysSelected.map(x => x.id));
@@ -170,7 +154,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
 
 
     });
-    console.log({listas:this.listOfIdsYWays,list:xy});
+    console.log({ listas:this.listOfIdsYWays,list:xy});
   }
 
   private callLsit(lista){
@@ -283,7 +267,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     let listaIds = [];
     let pset = new Set();
     for(list of lista){
-      // tslint:disable-next-line:forin
+
       for (col of list.columns){
         idslenght = {
           idZona:col.way.templateZone.zones.id,
@@ -292,7 +276,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
         }
 
         pset.add(col.way.templateZone.zones.id);
-        // console.log(col);
+
         listaIds.push(idslenght);
       }
     }
@@ -308,7 +292,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
     });
     listanew2 = listanew2.map(x => ({id:x.x,ways:x.listanew,tot:x.num}))
     this.listOfIdsYWays = listanew2;
-    // console.log({listaIds,newList,listanew2});
+
   }
 
   public loadNewMatrix(newMatrix: MatrixSorterModel.MatrixTemplateSorter[] ) {
@@ -352,7 +336,7 @@ export class MatrixEmptyingSorterComponent implements OnInit, OnDestroy {
         })
       }
     }
-    // console.log(this.listZonesWithColors);
+
   }
 
   public borrarWays(){
