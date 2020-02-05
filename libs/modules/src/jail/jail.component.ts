@@ -11,7 +11,6 @@ import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './update/update.component';
 import { StoreComponent } from './store/store.component';
-import { HistoryWarehouseModalComponent } from './history-warehouse/history-warehouse-modal/history_whs_modal.component';
 import { SendPackingComponent } from './send-packing/send-packing.component';
 import { ShowDestinationsComponent } from './show-destionations/show-destinations.component';
 import { AddDestinyComponent } from './add-destiny/add-destiny.component';
@@ -62,9 +61,9 @@ export class JailComponent implements OnInit {
     private printerService: PrinterService,
     private loadController: LoadingController,
     private historyModalComponent: HistoryModalComponent,
-    private historyWharehouseModalComponent: HistoryWarehouseModalComponent,
+
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.getTypePacking();

@@ -1,13 +1,13 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { COLLECTIONS } from 'config/base';
 import { NavParams, ModalController } from '@ionic/angular';
 import { DataComponent } from '../../group-warehouse-picking/modals/data/data.component';
 import { WarehousesService, WarehouseModel } from '@suite/services';
 import { MatSelectChange } from '@angular/material';
 import { CarrierService, IntermediaryService } from '@suite/services'
-import {CarrierModel} from "../../../../services/src/models/endpoints/Carrier";
-import {CarriersService} from "../../../../services/src/lib/endpoint/carriers/carriers.service";
-import {AudioProvider} from "../../../../services/src/providers/audio-provider/audio-provider.provider";
+import { CarrierModel } from "../../../../services/src/models/endpoints/Carrier";
+import { CarriersService } from "../../../../services/src/lib/endpoint/carriers/carriers.service";
+import { AudioProvider } from "../../../../services/src/providers/audio-provider/audio-provider.provider";
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 
@@ -22,13 +22,13 @@ export class AddDestinyComponent implements OnInit {
   apiEndpoint = COLLECTIONS.find(collection => collection.name === 'Carriers').name;
 
   redirectTo = '/jails/list';
-  private jail: CarrierModel.Carrier;
-  warehouses:Array<WarehouseModel.Warehouse> = [];
+  public jail: CarrierModel.Carrier;
+  warehouses: Array<WarehouseModel.Warehouse> = [];
   warehouse: WarehouseModel.Warehouse;
   private jailToSeal: string;
-  listWarehouse=[];
+  listWarehouse = [];
 
-  @ViewChild(DataComponent) data:DataComponent;
+  @ViewChild(DataComponent) data: DataComponent;
 
   constructor(
     private carriersService: CarriersService,
@@ -49,7 +49,7 @@ export class AddDestinyComponent implements OnInit {
     })
   }
 
-  close(){
+  close() {
     this.modalController.dismiss();
   }
 
@@ -71,7 +71,7 @@ export class AddDestinyComponent implements OnInit {
   }
 
   async precintar() {
-    this.intermediaryService.presentLoading("Precintando embalaje...", ()=>{
+    this.intermediaryService.presentLoading("Precintando embalaje...", () => {
       this.carriersService
         .postSeal({
           reference: this.jailToSeal
@@ -85,7 +85,7 @@ export class AddDestinyComponent implements OnInit {
                 document.getElementById('input-ta').focus();
                 this.intermediaryService.dismissLoading();
                 this.close();
-              },500);
+              }, 500);
             });
           } else {
             if (res.code === 404) {
@@ -94,7 +94,7 @@ export class AddDestinyComponent implements OnInit {
               this.intermediaryService.presentToastError(errorMsg, PositionsToast.BOTTOM).then(() => {
                 setTimeout(() => {
                   document.getElementById('input-ta').focus();
-                },500);
+                }, 500);
               });
             } else {
               this.audioProvider.playDefaultError();
@@ -104,7 +104,7 @@ export class AddDestinyComponent implements OnInit {
                   document.getElementById('input-ta').focus();
                   this.intermediaryService.dismissLoading();
                   this.close();
-                },500);
+                }, 500);
               });
             }
           }
@@ -117,7 +117,7 @@ export class AddDestinyComponent implements OnInit {
               document.getElementById('input-ta').focus();
               this.intermediaryService.dismissLoading();
               this.close();
-            },500);
+            }, 500);
           });
         })
         .catch((error) => {
@@ -129,7 +129,7 @@ export class AddDestinyComponent implements OnInit {
               document.getElementById('input-ta').focus();
               this.intermediaryService.dismissLoading();
               this.close();
-            },500);
+            }, 500);
           });
         });
     });

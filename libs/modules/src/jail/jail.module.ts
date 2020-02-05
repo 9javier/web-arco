@@ -26,7 +26,6 @@ import { SendJailComponent } from './send-jail/send-jail.component';
 import { AddDestinyComponent } from './add-destiny/add-destiny.component';
 import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
-import { HistoryWarehouseModalComponent } from './history-warehouse/history-warehouse-modal/history_whs_modal.component';
 import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
 import { HistoryWarehouseNMComponent } from './history-warehouse-no-modal/history-warehouse-no-modal.component';
 import { DatePipe } from '@angular/common';
@@ -43,7 +42,6 @@ import { DatePipe } from '@angular/common';
     SendJailComponent,
     HistoryModalComponent,
     HistoryWarehouseComponent,
-    HistoryWarehouseModalComponent,
     HistoryWarehouseNMComponent,
     MultipleDestinationsComponent,
     AddDestinyComponent
@@ -79,7 +77,6 @@ import { DatePipe } from '@angular/common';
     ShowDestinationsComponent,
     SendJailComponent,
     HistoryModalComponent,
-    HistoryWarehouseModalComponent,
     MultipleDestinationsComponent
   ],
   providers: [

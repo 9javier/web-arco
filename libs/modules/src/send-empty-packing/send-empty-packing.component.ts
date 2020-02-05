@@ -64,6 +64,7 @@ export class SendEmptyPackingComponent implements OnInit {
     this.getCarriers();
     this.getWarehouses();
   }
+  showTooltip() { }
 
   /**
    * Return a type
@@ -103,8 +104,8 @@ export class SendEmptyPackingComponent implements OnInit {
     modal.present();
   }
 
-  btnOnClick(idElement:string){
-    this.holderTooltipText.setTootlTip(idElement,false);
+  btnOnClick(idElement: string) {
+    this.holderTooltipText.setTootlTip(idElement, false);
   }
 
 
@@ -260,7 +261,7 @@ export class SendEmptyPackingComponent implements OnInit {
     modal.present();
   }
 
-  async sendAll(event){
+  async sendAll(event) {
     event.stopPropagation();
     event.preventDefault();
     let jails = this.toDelete.value.jails.filter(jail => jail.selected);
