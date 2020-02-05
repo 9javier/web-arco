@@ -8,10 +8,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { NewRuleComponent } from './new-rule/new-rule.component';
 import {FormsModule} from "@angular/forms";
+import { ManageFilteredProductsComponent } from './manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
 
 
 @NgModule({
-  declarations: [NewRuleComponent],
+  declarations: [NewRuleComponent, ManageFilteredProductsComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -22,6 +23,6 @@ import {FormsModule} from "@angular/forms";
     MatRadioModule,
     FormsModule
   ], 
-  entryComponents: [NewRuleComponent]
+  entryComponents: [NewRuleComponent, ManageFilteredProductsComponent]
 })
 export class RulesModule { }
