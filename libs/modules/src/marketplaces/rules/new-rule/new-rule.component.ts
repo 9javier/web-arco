@@ -24,9 +24,10 @@ export class NewRuleComponent implements OnInit {
   private categoryList;
   private selectedCategoryGroupFilter;
   private selectedCategoryGroupFilterObject;
+  private selectedDestinationCategoryGroupFilter;
+  private selectedDestinationCategoryGroupFilterObject;
   private selectedCategories;
   private destinationCategories;
-  private destinationCategoriesCopy;
   private selectedDestinationCategories;
   private minPriceFilter;
   private maxPriceFilter;
@@ -127,8 +128,65 @@ export class NewRuleComponent implements OnInit {
         items: []
       }
     ];
-    this.selectedCategoryGroupFilterObject = this.categoryList[0];
     this.destinationCategories = [];
+    if (this.ruleFilterType == 'categories') {
+      this.destinationCategories = [
+        {
+          id: 1,
+          name: 'Sección',
+          items: []
+        },
+        {
+          id: 2,
+          name: 'Familia',
+          items: []
+        },
+        {
+          id: 5,
+          name: 'Tacón',
+          items: []
+        },
+        {
+          id: 7,
+          name: 'Descripción',
+          items: []
+        },
+        {
+          id: 9,
+          name: 'Material exterior',
+          items: []
+        },
+        {
+          id: 10,
+          name: 'Material interior',
+          items: []
+        },
+        {
+          id: 12,
+          name: 'Comercial',
+          items: [
+            /*{id: 1, group: 7, name: 'Comercial 1'},
+            {id: 2, group: 7, name: 'Comercial 2'},
+            {id: 3, group: 7, name: 'Comercial 3'}*/
+          ]
+        },
+        {
+          id: 15,
+          name: 'Marca',
+          items: []
+        },
+        {
+          id: 16,
+          name: 'Color',
+          items: []
+        },
+        {
+          id: 17,
+          name: 'Talla',
+          items: []
+        }
+      ];
+    }
 
     this.marketplacesMgaService.getFeaturesRuleMarket(1).subscribe(data => {
       if (data) {
@@ -181,7 +239,9 @@ export class NewRuleComponent implements OnInit {
               break;
           }
           this.categoryList[listIndex].items.push(listItem);
-          this.destinationCategories.push(listItem);
+          if (this.ruleFilterType == 'categories') {
+            this.destinationCategories[listIndex].items.push(listItem);
+          }
         });
         this.categoryList[10].items.push({
           id: 18,
@@ -191,11 +251,19 @@ export class NewRuleComponent implements OnInit {
         for (let category of this.categoryList) {
           category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         }
+
+        if (this.ruleFilterType == 'categories') {
+          for (let category of this.destinationCategories) {
+            category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+          }
+        }
       }
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = this.categoryList[0];
-      this.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-      this.destinationCategoriesCopy = this.destinationCategories.slice();
+      if (this.ruleFilterType == 'categories') {
+        this.selectedDestinationCategoryGroupFilter = this.destinationCategories[0].id;
+        this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories[0];
+      }
 
       /*if (this.mode == 'edit') {
         this.rule = this.navParams.get('rule');
@@ -247,12 +315,21 @@ export class NewRuleComponent implements OnInit {
     this.modalController.dismiss(data);
   }
 
-  changeSelectedCategoryGroupFilter($event) {
-    this.selectedCategoryGroupFilter = $event.value;
-    this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === $event.value);
+  changeSelectedCategoryGroupFilter(e) {
+    this.selectedCategoryGroupFilter = e.value;
+    this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === e.value);
+  }
+
+  changeSelectedDestinationCategories(e) {
+    this.selectedDestinationCategoryGroupFilter = e.value;
+    this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories.find(x => x.id === e.value);
   }
 
   addCategoryToCategoriesFilter(category) {
+    let destination = false;
+    if (this.ruleFilterType == 'categories') {
+      destination = this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
+    }
     if (this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
       for (let i = 0; i < this.selectedCategories.length; i++) {
         if (this.selectedCategories[i].id == category.id && this.selectedCategories[i].group == category.group) {
@@ -260,20 +337,46 @@ export class NewRuleComponent implements OnInit {
           break;
         }
       }
+
+      if (this.ruleFilterType == 'categories') {
+        if (destination) {
+          for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
+            if (this.selectedDestinationCategories[i].id == category.id && this.selectedDestinationCategories[i].group == category.group) {
+              this.selectedDestinationCategories.splice(i, 1);
+              break;
+            }
+          }
+          if (this.selectedCategoryGroupFilter == this.selectedDestinationCategoryGroupFilter) {
+            let items = this.selectedDestinationCategoryGroupFilterObject.items;
+            this.selectedDestinationCategoryGroupFilterObject.items = [];
+            setTimeout(() => {
+              for (let item of items) {
+                this.selectedDestinationCategoryGroupFilterObject.items.push(item);
+              }
+            });
+          }
+        }
+      }
+
     } else {
       this.selectedCategories.push(category);
       this.selectedCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-    }
 
-    if (this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
-      for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
-        if (this.selectedDestinationCategories[i].id == category.id && this.selectedDestinationCategories[i].group == category.group) {
-          this.selectedDestinationCategories.splice(i, 1);
-          break;
+      if (this.ruleFilterType == 'categories') {
+        if (!destination) {
+          this.selectedDestinationCategories.push(category);
+          if (this.selectedCategoryGroupFilter == this.selectedDestinationCategoryGroupFilter) {
+            let items = this.selectedDestinationCategoryGroupFilterObject.items;
+            this.selectedDestinationCategoryGroupFilterObject.items = [];
+            setTimeout(() => {
+              for (let item of items) {
+                this.selectedDestinationCategoryGroupFilterObject.items.push(item);
+              }
+            });
+          }
         }
       }
-    } else {
-      this.selectedDestinationCategories.push(category);
+
     }
 
     this.filterProducts('categories');
@@ -492,20 +595,6 @@ export class NewRuleComponent implements OnInit {
     }
   }
 
-  /*reorganizeDestinationCategories() {
-    this.destinationCategoriesCopy = this.destinationCategories.slice();
-    for (let category of this.selectedCategories) {
-      for (let destinationCategory of this.destinationCategoriesCopy) {
-        if (destinationCategory.id == category.id && destinationCategory.group == category.group) {
-          this.destinationCategoriesCopy.splice(this.destinationCategoriesCopy.indexOf(destinationCategory), 1);
-          if (this.selectedDestinationCategories.some(cat => (cat.id == destinationCategory.id && cat.group == destinationCategory.group))) {
-            this.selectedDestinationCategories.splice(this.selectedDestinationCategories.map(cat => cat.id).indexOf(destinationCategory.id), 1);
-          }
-        }
-      }
-    }
-  }*/
-
   createRule() {
     this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'flex');
   }
@@ -555,18 +644,48 @@ export class NewRuleComponent implements OnInit {
   }
 
   checkCategoryRuleValidation() {
-    return true;
-    //return (JSON.stringify(this.selectedCategories) != JSON.stringify(this.selectedDestinationCategories));
+    return (JSON.stringify(this.selectedCategories).trim() != JSON.stringify(this.selectedDestinationCategories).trim());
   }
 
   async finishCreateRule() {
     if (this.ruleName != '') {
 
       let rule = null;
+      let description = '';
 
       switch (this.ruleFilterType) {
 
         case 'enabling':
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+            for (let i = 0; i < this.selectedCategories.length; i++) {
+              if (i == 0 && i != this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i == 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+              if (i > 0 && i < this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i != 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+            }
+
+            if (this.minPriceFilter != '' && this.minPriceFilter != '') {
+              if (this.selectedCategories.length) {
+                description += ', ';
+              }
+              description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+          }
+
           rule = {
             name: this.ruleName,
             filterType: this.ruleFilterType,
@@ -577,11 +696,42 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: [],
             stockToReduce: 0,
-            referencesExceptions: this.referencesExceptions
+            referencesExceptions: this.referencesExceptions,
+            description
           };
           break;
 
-        case 'category':
+        case 'categories':
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+            for (let i = 0; i < this.selectedCategories.length; i++) {
+              if (i == 0 && i != this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i == 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+              if (i > 0 && i < this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i != 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+            }
+
+            if (this.minPriceFilter != '' && this.minPriceFilter != '') {
+              if (this.selectedCategories.length) {
+                description += ', ';
+              }
+              description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+          }
+
           rule = {
             name: this.ruleName,
             filterType: this.ruleFilterType,
@@ -592,11 +742,13 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: this.selectedDestinationCategories,
             stockToReduce: 0,
-            referencesExceptions: this.referencesExceptions
+            referencesExceptions: this.referencesExceptions,
+            description
           };
           break;
 
         case 'stock':
+          description += this.stockFilter;
           rule = {
             name: this.ruleName,
             filterType: this.ruleFilterType,
@@ -607,7 +759,8 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: [],
             stockToReduce: parseInt(this.stockToReduce),
-            referencesExceptions: this.referencesExceptions
+            referencesExceptions: this.referencesExceptions,
+            description
           };
           break;
       }
