@@ -4,52 +4,17 @@
     <div class="form-fields">
       <ion-row>
 
-        <ion-col size="4">
+        <ion-col size="6">
           <div class="content-select">
             <ion-label class="title-select">Almacén</ion-label>
             <ion-item class="content-icon-select">
-              <ion-icon slot="start" name="home"></ion-icon>
               <ion-item>
-                <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' [(ngModel)]="valueWarehouse" (ionChange)="validateRangeDate()">
-                  <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.name }}</ion-select-option>
+                <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' [(ngModel)]="valueWarehouse" (ionChange)="getAllInfo()">
+                  <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.reference }} - {{ warehouse.name }}</ion-select-option>
                 </ion-select>
               </ion-item>
             </ion-item>
           </div>
-        </ion-col>
-
-        <ion-col size="3">
-          <div class="content-select">
-            <ion-label class="title-select">Fecha de inicio</ion-label>
-            <ion-item class="content-icon-select">
-              <ion-icon slot="start" name="trending-up"></ion-icon>
-              <mat-form-field>
-                <input #dateStart matInput (focus)="pickerStart.open()" [matDatepicker]="pickerStart" formControlName='beginDate' [(ngModel)]="valueStarDate" (dateChange)="onDate('start', $event)">
-                <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-                <mat-datepicker #pickerStart></mat-datepicker>
-              </mat-form-field>
-            </ion-item>
-          </div>
-        </ion-col>
-
-        <ion-col size="3">
-          <div class="content-select">
-            <ion-label class="title-select">Fecha final</ion-label>
-            <ion-item class="content-icon-select">
-              <ion-icon slot="start" name="trending-down"></ion-icon>
-              <mat-form-field>
-                <input #dateEnd matInput (focus)="pickerEnd.open()" formControlName='endDate' [(ngModel)]="valueEndDate" [matDatepicker]="pickerEnd" [min]="endMinDate" (dateChange)="onDate('end', $event)">
-                <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-                <mat-datepicker  #pickerEnd ></mat-datepicker>
-              </mat-form-field>
-            </ion-item>
-          </div>
-        </ion-col>
-
-        <ion-col size="2" class="ion-align-self-end bt-right">
-          <ion-button class="btn-search" (click)='getAllInfo()' matTooltip="Aplicar cambios" matTooltipClass="tooltip" color="primary" [disabled]="!validateDates">
-            <ion-icon name="search" [matTooltip]="'Aplicar cambios'"></ion-icon>
-          </ion-button>
         </ion-col>
 
       </ion-row>
@@ -87,36 +52,54 @@
       </ion-row>
     </div>
 </form>
-    <table mat-table [dataSource]="dataSource" matSort>
+    <table mat-table [dataSource]="listHistory" matSort>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
         <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="type">
+            <th mat-header-cell *matHeaderCellDef >
                 Tipo
             </th>
-            <td mat-cell *matCellDef="let type">
-                {{ setMovementType(type.type) }}
+            <td mat-cell *matCellDef="let item">
+                {{ item?.type?.name }}
             </td>
         </ng-container>
 
+        <ng-container matColumnDef="origin">
+          <th mat-header-cell *matHeaderCellDef >
+            Origen
+          </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item?.originWarehouse }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="destiny">
+          <th mat-header-cell *matHeaderCellDef >
+            Destino
+          </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item?.destinyWarehouse }}
+          </td>
+        </ng-container>
+
         <ng-container matColumnDef="dateSend">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="dateSend">
+            <th mat-header-cell *matHeaderCellDef >
                 Fecha y hora envío
             </th>
-            <td mat-cell *matCellDef="let dateSend">
-                {{ dateSend.dateSend | date: 'dd/MM/yyyy hh:mm:ss' }}
+            <td mat-cell *matCellDef="let item">
+                {{ item?.dateSend | date: 'dd/MM/yyyy HH:mm' }}
             </td>
         </ng-container>
 
         <ng-container matColumnDef="dateReceive">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="end">
+            <th mat-header-cell *matHeaderCellDef >
                 Fecha y hora recepción
             </th>
-            <td mat-cell *matCellDef="let dateReceive">
-                {{ dateReceive?.dateReceive | date: 'dd/MM/yyyy hh:mm:ss' }}
+            <td mat-cell *matCellDef="let item">
+                {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
             </td>
         </ng-container>
 
@@ -124,8 +107,8 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header="reference">
                 Nombre del bulto
             </th>
-            <td mat-cell *matCellDef="let reference">
-              {{ reference['carrier']['reference'] }}
+            <td mat-cell *matCellDef="let item">
+              {{ item.reference }}
             </td>
         </ng-container>
     </table>

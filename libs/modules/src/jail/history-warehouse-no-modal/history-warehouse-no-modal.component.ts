@@ -7,9 +7,7 @@ import { DatePipe } from '@angular/common';
 import {DateTimeParserService} from "../../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 export interface CallToService{
-  warehouse:number,
-  startDate:string,
-  endDate:string,
+  warehouse:number
 }
 
 @Component({
@@ -22,7 +20,7 @@ export class HistoryWarehouseNMComponent implements OnInit {
   title = 'Destinos';
   redirectTo = '/jails';
 
-  displayedColumns: string[] = ['type', 'dateSend', 'dateReceive', 'reference'];
+  displayedColumns: string[] = ['reference', 'type', 'origin', 'destiny', 'dateSend', 'dateReceive'];
   pagerValues = [50, 100, 500];
 
   public datemin = "";
@@ -38,6 +36,7 @@ export class HistoryWarehouseNMComponent implements OnInit {
   valueEndDate;
 
   dataSource = new MatTableDataSource<any>();
+  listHistory = [];
   nStore:string;
   jOnStore:string;
   jOnTI:string;
@@ -56,8 +55,6 @@ export class HistoryWarehouseNMComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.valueStarDate = new Date(this.dateTimeParserService.firstDayOfMonth());
-    this.valueEndDate = new Date(this.dateTimeParserService.lastDayOfMonth());
     this.getCarriers();
     this.setForms();
     this.getMovementTypeFromService();
@@ -77,8 +74,6 @@ export class HistoryWarehouseNMComponent implements OnInit {
     this.getParamsFromForm();
     let body: CallToService={
       warehouse:this.whsCode,
-      startDate:this.datemin.toString(),
-      endDate:this.datemax.toString(),
     };
     this.carrierService.postMovementsHistory(body).subscribe(sql_result => {
       this.results = sql_result;
@@ -87,6 +82,7 @@ export class HistoryWarehouseNMComponent implements OnInit {
       this.jOnStore = this.results['carriesInWarehouse'];
       this.jOnTI = this.results['goingCarries'];
       this.jOnTV = this.results['returnCarries'];
+      this.listHistory = this.results['listHistory'];
     });
   }
 
