@@ -1,7 +1,7 @@
 import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
-import { MarketplacesService } from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
-import { MarketplacesMgaService } from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
+import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 
 @Component({
   selector: 'suite-new-rule',
@@ -10,7 +10,8 @@ import { MarketplacesMgaService } from '../../../../../services/src/lib/endpoint
 })
 export class NewRuleComponent implements OnInit {
 
-  @ViewChild('priceInput') priceInput;
+  @ViewChild('minPriceInput') minPriceInput;
+  @ViewChild('maxPriceInput') maxPriceInput;
   @ViewChild('stockInput') stockInput;
   @ViewChild('reduceStockInput') reduceStockInput;
   @ViewChild('ruleNameWindow') ruleNameWindow;
@@ -19,7 +20,6 @@ export class NewRuleComponent implements OnInit {
   private rule;
   private ruleFilterType;
   private numberOfProducts;
-  private action;
   private categoryList;
   private selectedCategoryGroupFilter;
   private selectedCategoryGroupFilterObject;
@@ -28,12 +28,15 @@ export class NewRuleComponent implements OnInit {
   private destinationCategoriesCopy;
   private selectedDestinationCategories;
   private minPriceFilter;
+  private maxPriceFilter;
+  private priceRange;
   private stockFilter;
   private stockToReduce;
   private stockToReduceDescription;
   private filterDescription;
   private ruleName;
   private originalRuleName;
+  private referencesExceptions;
   private idToEdit;
 
   constructor(
@@ -48,27 +51,25 @@ export class NewRuleComponent implements OnInit {
   ngOnInit() {
     this.mode = this.navParams.get('mode');
     this.numberOfProducts = 0;
-    this.action = 'activation';
     this.ruleFilterType = this.navParams.get('ruleFilterType');
     this.selectedDestinationCategories = [];
     this.filterDescription = '';
     this.minPriceFilter = '';
+    this.maxPriceFilter = '';
+    this.priceRange = '';
     this.stockFilter = '';
     this.stockToReduce = '';
     this.stockToReduceDescription = '';
     this.selectedCategories = [];
     this.ruleName = '';
+    this.referencesExceptions = [];
     this.idToEdit = this.navParams.get('id');
 
     this.categoryList = [
       {
         id: 1,
         name: 'Sección',
-        items: [/*
-          {id: 1, group: 1, name: 'Sección 1'},
-          {id: 2, group: 1, name: 'Sección 2'},
-          {id: 3, group: 1, name: 'Sección 3'},
-          {id: 4, group: 1, name: 'Sección 4'}*/]
+        items: []
       },
       {
         id: 2,
@@ -118,13 +119,18 @@ export class NewRuleComponent implements OnInit {
         id: 17,
         name: 'Talla',
         items: []
+      },
+      {
+        id: 18,
+        name: 'Precio',
+        items: []
       }
     ];
     this.selectedCategoryGroupFilterObject = this.categoryList[0];
     this.destinationCategories = [];
 
     this.marketplacesMgaService.getFeaturesRuleMarket(1).subscribe(data => {
-      if(data) {
+      if (data) {
         data.forEach(item => {
           let listItem = {
             id: item.id,
@@ -176,6 +182,11 @@ export class NewRuleComponent implements OnInit {
           this.categoryList[listIndex].items.push(listItem);
           this.destinationCategories.push(listItem);
         });
+        this.categoryList[10].items.push({
+          id: 18,
+          name: 'Precio',
+          items: []
+        });
         for (let category of this.categoryList) {
           category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         }
@@ -185,20 +196,20 @@ export class NewRuleComponent implements OnInit {
       this.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
       this.destinationCategoriesCopy = this.destinationCategories.slice();
 
-      if (this.mode == 'edit') {
+      /*if (this.mode == 'edit') {
         this.rule = this.navParams.get('rule');
-        this.action = this.navParams.get('action');
         this.ruleName = this.navParams.get('ruleName');
         this.originalRuleName = this.ruleName;
         this.selectedCategories = this.navParams.get('selectedCategories');
         this.minPriceFilter = this.navParams.get('minPriceFilter') == 0 ? '' : this.navParams.get('minPriceFilter');
+        this.maxPriceFilter = this.navParams.get('maxPriceFilter') == 0 ? '' : this.navParams.get('maxPriceFilter');
         this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
         this.numberOfProducts = this.navParams.get('numberOfProducts');
         this.selectedDestinationCategories = this.navParams.get('selectedDestinationCategories');
         this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
-        this.reorganizeDestinationCategories();
+        this.referencesExceptions = this.navParams.get('referencesExceptions') == [] ? [] : this.navParams.get('referencesExceptions');
 
-        if (this.action == 'stock') {
+        if (this.ruleFilterType == 'stock') {
           this.addReduceStockFilter();
         }
 
@@ -222,11 +233,11 @@ export class NewRuleComponent implements OnInit {
             this.addStockFilter();
             break;
         }
-      } else {
-        this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
-          this.numberOfProducts = count;
-        });
-      }
+      } else {*/
+      this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
+        this.numberOfProducts = count;
+      });
+      //}
 
     });
   }
@@ -242,12 +253,28 @@ export class NewRuleComponent implements OnInit {
 
   addCategoryToCategoriesFilter(category) {
     if (this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
-      this.selectedCategories.splice(this.selectedCategories.map(cat => cat.id).indexOf(category.id), 1);
+      for (let i = 0; i < this.selectedCategories.length; i++) {
+        if (this.selectedCategories[i].id == category.id && this.selectedCategories[i].group == category.group) {
+          this.selectedCategories.splice(i, 1);
+          break;
+        }
+      }
     } else {
       this.selectedCategories.push(category);
       this.selectedCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
     }
-    this.reorganizeDestinationCategories();
+
+    if (this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
+      for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
+        if (this.selectedDestinationCategories[i].id == category.id && this.selectedDestinationCategories[i].group == category.group) {
+          this.selectedDestinationCategories.splice(i, 1);
+          break;
+        }
+      }
+    } else {
+      this.selectedDestinationCategories.push(category);
+    }
+
     this.filterProducts('categories');
     this.filterDescription = '';
     for (let category of this.selectedCategories) {
@@ -257,9 +284,55 @@ export class NewRuleComponent implements OnInit {
         this.filterDescription += ', ';
       }
     }
+    if (this.priceRange != '') {
+      if (this.selectedCategories.length) {
+        this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      } else {
+        this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      }
+    }
   }
 
-  formatCurrency() {
+  addPriceRangeToFilter() {
+    if (this.selectedCategories.length) {
+      this.priceRange = ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+    } else {
+      this.priceRange = 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+    }
+
+    this.filterDescription = '';
+
+    for (let category of this.selectedCategories) {
+      let group = this.categoryList.find(x => x.id === category.group);
+      this.filterDescription += group.name + ': ' + category.name;
+      if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+        this.filterDescription += ', ';
+      }
+    }
+    this.filterDescription += this.priceRange;
+    this.filterProducts('categories');
+  }
+
+  deletePriceRangeFromFilter() {
+    this.minPriceFilter = '';
+    this.maxPriceFilter = '';
+    this.priceRange = '';
+    this.filterDescription = '';
+
+    for (let category of this.selectedCategories) {
+      let group = this.categoryList.find(x => x.id === category.group);
+      this.filterDescription += group.name + ': ' + category.name;
+      if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+        this.filterDescription += ', ';
+      }
+    }
+  }
+
+  priceRangeIsInFilter() {
+    return (this.priceRange != '');
+  }
+
+  formatMinPriceCurrency() {
     if (this.minPriceFilter == '') {
       return true;
     }
@@ -268,7 +341,7 @@ export class NewRuleComponent implements OnInit {
 
   }
 
-  blurCurrencyInput() {
+  blurMinPriceCurrencyInput() {
     if (/^[0-9]+(\.[0-9]{1,2})?$/.test(this.minPriceFilter)) {
       this.minPriceFilter = parseFloat(this.minPriceFilter).toString();
       if (this.minPriceFilter.includes('.')) {
@@ -281,21 +354,47 @@ export class NewRuleComponent implements OnInit {
     } else {
       this.minPriceFilter = '';
     }
-    this.addPriceFilter();
-    this.filterProducts('price');
+
   }
 
-  addPriceFilter() {
-    if (this.minPriceFilter != '' && /^[0-9]+(\.[0-9]{1,2})?$/.test(this.minPriceFilter)) {
-      this.filterDescription = 'Precio mínimo: ' + this.minPriceFilter + ' €';
+  blurMaxPriceCurrencyInput() {
+    if (/^[0-9]+(\.[0-9]{1,2})?$/.test(this.maxPriceFilter)) {
+      this.maxPriceFilter = parseFloat(this.maxPriceFilter).toString();
+      if (this.maxPriceFilter.includes('.')) {
+        if (this.maxPriceFilter.split('.')[1].length == 1) {
+          this.maxPriceFilter += '0';
+        }
+      } else {
+        this.maxPriceFilter += '.00';
+      }
     } else {
-      this.filterDescription = '';
+      this.maxPriceFilter = '';
+    }
+
+  }
+
+  formatMaxPriceCurrency() {
+    if (this.maxPriceFilter == '') {
+      return true;
+    }
+
+    return (/^[0-9]+(\.[0-9]{1,2})?$/.test(this.maxPriceFilter));
+
+  }
+
+  addPriceRangeButtonActivation() {
+    return ((/^[0-9]+(\.[0-9]{1,2})?$/.test(this.minPriceFilter)) && (/^[0-9]+(\.[0-9]{1,2})?$/.test(this.maxPriceFilter)) && this.maxPriceFilter != '' && this.minPriceFilter != '' && parseFloat(this.maxPriceFilter) > parseFloat(this.minPriceFilter));
+  }
+
+  checkEnterKeyMinPriceInput(e) {
+    if (e.key == "Enter") {
+      this.maxPriceInput.nativeElement.focus();
     }
   }
 
-  checkEnterKeyPriceInput(e) {
+  checkEnterKeyMaxPriceInput(e) {
     if (e.key == "Enter") {
-      this.priceInput.nativeElement.blur();
+      this.maxPriceInput.nativeElement.blur();
     }
   }
 
@@ -364,10 +463,15 @@ export class NewRuleComponent implements OnInit {
 
   selectCategoryRow(category) {
     if (this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
-      this.selectedDestinationCategories.splice(this.selectedDestinationCategories.map(cat => cat.id).indexOf(category.id), 1);
+      for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
+        if (this.selectedDestinationCategories[i].id == category.id && this.selectedDestinationCategories[i].group == category.group) {
+          this.selectedDestinationCategories.splice(i, 1);
+          break;
+        }
+      }
     } else {
       this.selectedDestinationCategories.push(category);
-      this.selectedDestinationCategories.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+      this.selectedDestinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
     }
   }
 
@@ -378,13 +482,8 @@ export class NewRuleComponent implements OnInit {
   filterProducts(filter) {
     switch (filter) {
 
-      // EN TODOS LOS TIPOS DE FILTROS, SI ESTOS ESTÁN VACÍOS SE DEVUELVEN EL TOTAL DE LOS PRODUCTOS (TODOS LOS PRODUCTOS ENTRAN EN LA REGLA, YA QUE NO HAY FILTRO)
-
       case 'categories':
         // CONSULTA Y CONTEO DE LOS PRODUCTOS QUE TENGAN LAS CATEGORÍAS SELECCIONADAS
-        break;
-      case 'price':
-        // CONSULTA Y CONTEO DE LOS PRODUCTOS QUE TENGAN UN PRECIO IGUAL O MAYOR AL INTRODUCIDO
         break;
       case 'stock':
         // CONSULTA Y CONTEO DE LOS PRODUCTOS QUE TENGAN UN STOCK IGUAL O MAYOR AL INTRODUCIDO
@@ -392,11 +491,11 @@ export class NewRuleComponent implements OnInit {
     }
   }
 
-  reorganizeDestinationCategories() {
+  /*reorganizeDestinationCategories() {
     this.destinationCategoriesCopy = this.destinationCategories.slice();
     for (let category of this.selectedCategories) {
       for (let destinationCategory of this.destinationCategoriesCopy) {
-        if (destinationCategory.id == category.id) {
+        if (destinationCategory.id == category.id && destinationCategory.group == category.group) {
           this.destinationCategoriesCopy.splice(this.destinationCategoriesCopy.indexOf(destinationCategory), 1);
           if (this.selectedDestinationCategories.some(cat => (cat.id == destinationCategory.id && cat.group == destinationCategory.group))) {
             this.selectedDestinationCategories.splice(this.selectedDestinationCategories.map(cat => cat.id).indexOf(destinationCategory.id), 1);
@@ -404,13 +503,7 @@ export class NewRuleComponent implements OnInit {
         }
       }
     }
-  }
-
-  actionChange() {
-    if (this.ruleFilterType == 'category') {
-      this.reorganizeDestinationCategories();
-    }
-  }
+  }*/
 
   createRule() {
     this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'flex');
@@ -431,64 +524,26 @@ export class NewRuleComponent implements OnInit {
       return false;
     }
 
-    switch (this.action) {
+    switch (this.ruleFilterType) {
 
-      case 'activation':
+      case 'enabling':
 
-        switch (this.ruleFilterType) {
-
-          case 'category':
-            return true;
-            break;
-          case 'price':
-             return (this.minPriceFilter != '' && this.formatCurrency());
-            break;
-          case 'stock':
-            return (this.stockFilter != '' && this.formatStock());
-            break;
-        }
+        return true;
 
         break;
 
       case 'categories':
 
-        if (!this.selectedDestinationCategories.length) {
-          return false;
-        }
-
-        switch (this.ruleFilterType) {
-
-          case 'category':
-            return true;
-            break;
-          case 'price':
-            return (this.minPriceFilter != '' && this.formatCurrency());
-            break;
-          case 'stock':
-            return (this.stockFilter != '' && this.formatStock());
-            break;
-        }
+        return this.checkCategoryRuleValidation();
 
         break;
 
       case 'stock':
 
-        if (this.stockToReduce == '' || this.stockToReduce == 0 || !this.formatReduceStock()) {
+        if (this.stockToReduce == '' || this.stockToReduce == 0 || !this.formatReduceStock() || this.stockFilter == '' || (parseInt(this.stockToReduce) > parseInt(this.stockFilter))) {
           return false;
         }
-
-        switch (this.ruleFilterType) {
-
-          case 'category':
-            return true;
-            break;
-          case 'price':
-            return (this.minPriceFilter != '' && this.formatCurrency());
-            break;
-          case 'stock':
-            return (this.stockFilter != '' && this.formatStock());
-            break;
-        }
+        return this.formatStock();
 
         break;
 
@@ -498,163 +553,75 @@ export class NewRuleComponent implements OnInit {
     }
   }
 
+  checkCategoryRuleValidation() {
+    return true;
+    //return (JSON.stringify(this.selectedCategories) != JSON.stringify(this.selectedDestinationCategories));
+  }
+
   async finishCreateRule() {
     if (this.ruleName != '') {
 
       let rule = null;
 
-      switch (this.action) {
+      switch (this.ruleFilterType) {
 
-        case 'activation':
-
-          switch (this.ruleFilterType) {
-
-            case 'category':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: this.selectedCategories,
-                minPriceFilter: 0,
-                stockFilter: 0,
-                products: this.numberOfProducts,
-                destinationCategories: [],
-                stockToReduce: 0
-              };
-              break;
-            case 'price':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: [],
-                minPriceFilter: this.minPriceFilter,
-                stockFilter: 0,
-                products: this.numberOfProducts,
-                destinationCategories: [],
-                stockToReduce: 0
-              };
-              break;
-            case 'stock':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: [],
-                minPriceFilter: 0,
-                stockFilter: parseInt(this.stockFilter),
-                products: this.numberOfProducts,
-                destinationCategories: [],
-                stockToReduce: 0
-              };
-              break;
-          }
-
+        case 'enabling':
+          rule = {
+            name: this.ruleName,
+            filterType: this.ruleFilterType,
+            categoriesFilter: this.selectedCategories,
+            minPriceFilter: this.minPriceFilter == '' ? '0.00' : this.minPriceFilter,
+            maxPriceFilter: this.maxPriceFilter == '' ? '0.00' : this.maxPriceFilter,
+            stockFilter: 0,
+            products: this.numberOfProducts,
+            destinationCategories: [],
+            stockToReduce: 0,
+            referencesExceptions: this.referencesExceptions
+          };
           break;
 
-        case 'categories':
-
-          switch (this.ruleFilterType) {
-
-            case 'category':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: this.selectedCategories,
-                minPriceFilter: 0,
-                stockFilter: 0,
-                products: this.numberOfProducts,
-                destinationCategories: this.selectedDestinationCategories,
-                stockToReduce: 0
-              };
-              break;
-            case 'price':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: [],
-                minPriceFilter: this.minPriceFilter,
-                stockFilter: 0,
-                products: this.numberOfProducts,
-                destinationCategories: this.selectedDestinationCategories,
-                stockToReduce: 0
-              };
-              break;
-            case 'stock':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: [],
-                minPriceFilter: 0,
-                stockFilter: parseInt(this.stockFilter),
-                products: this.numberOfProducts,
-                destinationCategories: this.selectedDestinationCategories,
-                stockToReduce: 0
-              };
-              break;
-          }
-
+        case 'category':
+          rule = {
+            name: this.ruleName,
+            filterType: this.ruleFilterType,
+            categoriesFilter: this.selectedCategories,
+            minPriceFilter: this.minPriceFilter == '' ? '0.00' : this.minPriceFilter,
+            maxPriceFilter: this.maxPriceFilter == '' ? '0.00' : this.maxPriceFilter,
+            stockFilter: 0,
+            products: this.numberOfProducts,
+            destinationCategories: this.selectedDestinationCategories,
+            stockToReduce: 0,
+            referencesExceptions: this.referencesExceptions
+          };
           break;
 
         case 'stock':
-
-          switch (this.ruleFilterType) {
-
-            case 'category':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: this.selectedCategories,
-                minPriceFilter: 0,
-                stockFilter: 0,
-                products: this.numberOfProducts,
-                destinationCategories: [],
-                stockToReduce: parseInt(this.stockToReduce)
-              };
-              break;
-            case 'price':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: [],
-                minPriceFilter: this.minPriceFilter,
-                stockFilter: 0,
-                products: this.numberOfProducts,
-                destinationCategories: [],
-                stockToReduce: parseInt(this.stockToReduce)
-              };
-              break;
-            case 'stock':
-              rule = {
-                name: this.ruleName,
-                filterType: this.ruleFilterType,
-                action: this.action,
-                categoriesFilter: [],
-                minPriceFilter: 0,
-                stockFilter: parseInt(this.stockFilter),
-                products: this.numberOfProducts,
-                destinationCategories: [],
-                stockToReduce: parseInt(this.stockToReduce)
-              };
-              break;
-          }
-
+          rule = {
+            name: this.ruleName,
+            filterType: this.ruleFilterType,
+            categoriesFilter: [],
+            minPriceFilter: '0.00',
+            maxPriceFilter: '0.00',
+            stockFilter: parseInt(this.stockFilter),
+            products: this.numberOfProducts,
+            destinationCategories: [],
+            stockToReduce: parseInt(this.stockToReduce),
+            referencesExceptions: this.referencesExceptions
+          };
           break;
       }
 
       this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'none');
-      rule['id'] = this.idToEdit;
       this.close(rule);
     }
   }
 
   selectedCategoriesIncludes(category) {
     return this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group));
+  }
+
+  deleteExceptionReference(exception) {
+
   }
 
 }

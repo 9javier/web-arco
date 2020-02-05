@@ -17,9 +17,9 @@ export class RulesComponent implements OnInit {
   private dataSourceRulesCategories;
   private displayedCategoriesColumns;
 
-  private dataSourcePrice;
-  private dataSourceRulesPrice;
-  private displayedPriceColumns;
+  private dataSourceEnabling;
+  private dataSourceRulesEnabling;
+  private displayedEnablingColumns;
 
   private dataSourceStocks;
   private dataSourceRulesStocks;
@@ -42,9 +42,9 @@ export class RulesComponent implements OnInit {
     this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
     this.displayedCategoriesColumns = ['name', 'categories', 'products', 'edit'];
 
-    this.dataSourcePrice = [];
-    this.dataSourceRulesPrice = new MatTableDataSource(this.dataSourcePrice);
-    this.displayedPriceColumns = ['name', 'price', 'products', 'edit'];
+    this.dataSourceEnabling = [];
+    this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
+    this.displayedEnablingColumns = ['name', 'categories', 'products', 'edit'];
 
     this.dataSourceStocks = [];
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
@@ -52,7 +52,7 @@ export class RulesComponent implements OnInit {
 
 
 
-    this.marketplacesService.getRulesFilter().subscribe(data => {
+    /*this.marketplacesService.getRulesFilter().subscribe(data => {
       if(data) {
         data.forEach(rule => {
           if(rule.ruleFilterType == 1) {
@@ -122,7 +122,7 @@ export class RulesComponent implements OnInit {
       } else {
         console.log('error get rules filter')
       }
-    })
+    })*/
     
   }
 
@@ -138,12 +138,12 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data.data) {
 
-        let filterType = 0;
+        /*let filterType = 0;
 
         let dataGroupToSend = '';
 
         switch(data.data.filterType) {
-          case 'category':
+          case 'categories':
             filterType = 1;
 
             data.data.categoriesFilter.forEach(item => {
@@ -178,9 +178,9 @@ export class RulesComponent implements OnInit {
 
         this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
-        })
+        })*/
 
-        this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
+        //this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
         // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
         // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
@@ -191,7 +191,7 @@ export class RulesComponent implements OnInit {
   }
 
   // BORRAR LUEGO /////////////////////////////////////////////////////////////
-  temporalAddNeRule(rule) {
+  /*temporalAddNeRule(rule) {
 
     let maxIdCategory = 0;
     let maxIdPrice = 0;
@@ -220,7 +220,7 @@ export class RulesComponent implements OnInit {
     rule.id = maxId + 1;
 
     switch (rule.filterType) {
-      case 'category':
+      case 'categories':
 
         this.dataSourceCategories.push(rule);
         this.dataSourceCategories.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
@@ -248,10 +248,10 @@ export class RulesComponent implements OnInit {
         break;
     }
 
-  }
+  }*/
   //////////////////////////////////////////////////////////////////////////////
 
-  async editRule(ruleToEdit): Promise<void> {
+  /*async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
     let modal = await this.modalController.create({
       component: NewRuleComponent,
@@ -281,7 +281,7 @@ export class RulesComponent implements OnInit {
         let dataGroupToSend = '';
 
         switch(editedRule.filterType) {
-          case 'category':
+          case 'categories':
             filterType = 1;
 
             editedRule.categoriesFilter.forEach(item => {
@@ -319,9 +319,9 @@ export class RulesComponent implements OnInit {
           // EL SIGUIENTE BLOQUE ES ALGO TEMPORAL PARA ACTUALIZAR EN EL FRONT LAS LISTAS DE REGLAS. EN UN FUTURO SE MANDARA LA REGLA EDITADA A LA API Y ALLI SE ACTUALIZARÁ, Y A CONTINUACIÓN SE HARÁ LA CONSULTA DE LA LISTA DE NUEVO PARA QUE YA RECOGA EL DATO ACTUALIZADO DESDE LAS TABLAS
 
           switch (ruleToEdit.filterType) {
-            case 'category':
+            case 'categories':
 
-              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)]/*.action*/ = editedRule;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)]/!*.action*!/ = editedRule;
               this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
 
               break;
@@ -355,9 +355,9 @@ export class RulesComponent implements OnInit {
       }
     });
     modal.present();
-  }
+  }*/
 
-  checkForRuleEdition(rule, editedRule) {
+  /*checkForRuleEdition(rule, editedRule) {
 
     if (rule.name == editedRule.name && rule.action == editedRule.action && rule.minPriceFilter == editedRule.minPriceFilter && rule.stockFilter == editedRule.stockFilter && rule.products == editedRule.products && rule.stockToReduce == editedRule.stockToReduce) {
       if (rule.categoriesFilter.length != editedRule.categoriesFilter.length) {
@@ -396,6 +396,6 @@ export class RulesComponent implements OnInit {
     } else {
       return false;
     }
-  }
+  }*/
 
 }

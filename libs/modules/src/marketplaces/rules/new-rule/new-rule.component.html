@@ -14,7 +14,7 @@
   <div class="nr-modal-body-wrapper">
     <div class="nr-modal-content">
       <div class="nr-filter-selection-wrapper">
-        <div class="rule-filter-category" *ngIf="ruleFilterType == 'category'">
+        <div class="rule-filter-category" *ngIf="ruleFilterType == 'categories' || ruleFilterType == 'enabling'">
           <div>
             <i class="material-icons">search</i>
           </div>
@@ -26,25 +26,54 @@
                 </mat-option>
               </mat-select>
             </div>
-            <div>
+            <div *ngIf="selectedCategoryGroupFilter != 18">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
                 <span *ngIf="!selectedCategoriesIncludes(category)">{{category.name}}</span>
                 <span class="bold-category" *ngIf="selectedCategoriesIncludes(category)">{{category.name}}</span>
               </div>
             </div>
+            <div *ngIf="selectedCategoryGroupFilter == 18" class="nr-price-range">
+              <input matInput #minPriceInput type="text" placeholder="Precio mínimo" [ngClass]="formatMinPriceCurrency() ? '' : 'incorrect-input-value'" [(ngModel)]="minPriceFilter" (keydown)="checkEnterKeyMinPriceInput($event);" (blur)="blurMinPriceCurrencyInput()" [readonly]="priceRangeIsInFilter()"/>
+              <input matInput #maxPriceInput type="text" placeholder="Precio máximo" [ngClass]="formatMaxPriceCurrency() ? '' : 'incorrect-input-value'" [(ngModel)]="maxPriceFilter" (keydown)="checkEnterKeyMaxPriceInput($event);" (blur)="blurMaxPriceCurrencyInput()" [readonly]="priceRangeIsInFilter()"/>
+              <div>
+                <div *ngIf="addPriceRangeButtonActivation() && !priceRangeIsInFilter()" (click)="addPriceRangeToFilter()">Aplicar</div>
+                <div *ngIf="!addPriceRangeButtonActivation() || priceRangeIsInFilter()" class="disabled-range-price-button">Aplicar</div>
+                <div *ngIf="priceRangeIsInFilter()" (click)="deletePriceRangeFromFilter()">Eliminar</div>
+                <div *ngIf="!priceRangeIsInFilter()" class="disabled-range-price-button">Eliminar</div>
           </div>
-        </div>
-        <div class="rule-filter-price" *ngIf="ruleFilterType == 'price'">
-          <input matInput #priceInput type="text" placeholder="Precio mínimo" [ngClass]="formatCurrency() ? '' : 'incorrect-input-value'" [(ngModel)]="minPriceFilter" (keydown)="checkEnterKeyPriceInput($event);" (blur)="blurCurrencyInput()"/>
+            </div>
+          </div>
         </div>
         <div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
           <input matInput #stockInput type="text" placeholder="Stock de seguridad" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockFilter" (keydown)="checkEnterKeyStockInput($event);" (blur)="blurStockInput()"/>
         </div>
       </div>
+      <div class="nr-references-extra-wrapper">
+        <div>
+          Excepciones del filtro
+          <div class="add-reference-condition-button">Gestionar productos filtrados</div>
+        </div>
+        <div>
+          <span *ngIf="!referencesExceptions.length" class="no-exceptions">
+            Sin excepciones en el filtro
+          </span>
+          <span *ngIf="referencesExceptions.length">
+            <div *ngFor="let exception of referencesExceptions">
+              <div>{{exception.reference}}</div>
+              <div>{{exception.productName}}</div>
+              <div>{{exception.type}}</div>
+              <div (click)="deleteExceptionReference(exception)">X</div>
+            </div>
+          </span>
+        </div>
+      </div>
       <div class="nr-filter-selected-wrapper">
         <div>Filtro</div>
-        <div class="nr-filter-list">
+        <div class="nr-filter-list" *ngIf="filterDescription != ''">
           {{filterDescription}}
+        </div>
+        <div class="nr-filter-list no-filters" *ngIf="filterDescription == ''">
+          Sin filtros
         </div>
         <div>
           {{numberOfProducts}}
@@ -52,16 +81,8 @@
           <span *ngIf="numberOfProducts.length != 1">productos seleccionados</span>
         </div>
       </div>
-      <div class="nr-action-selection-wrapper">
-        <div>Acción</div>
-        <mat-radio-group [name]="'Acción'" [value]="action" [(ngModel)]="action" (ngModelChange)="actionChange()">
-          <mat-radio-button [value]="'activation'">Activar</mat-radio-button>
-          <mat-radio-button [value]="'categories'">Añadir categorías</mat-radio-button>
-          <mat-radio-button [value]="'stock'">Restar stock</mat-radio-button>
-        </mat-radio-group>
-      </div>
       <div class="nr-action-selected-wrapper">
-        <div class="action-categories" *ngIf="action == 'categories'">
+        <div class="action-categories" *ngIf="ruleFilterType == 'categories'">
           <div>Seleccionar categorías destino</div>
           <div>
             <div>
@@ -85,11 +106,11 @@
 
           </div>
         </div>
-        <div class="action-stock" *ngIf="action == 'stock'">
+        <div class="action-stock" *ngIf="ruleFilterType == 'stock'">
           <div>Indicar stock a restar</div>
           <input matInput #reduceStockInput type="text" placeholder="Stock a restar" [ngClass]="formatReduceStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockToReduce" (keydown)="checkEnterKeyReduceStockInput($event);" (blur)="blurReduceStockInput()"/>
         </div>
-        <div *ngIf="action == 'activation'">
+        <div *ngIf="ruleFilterType == 'enabling'">
           &nbsp;
         </div>
       </div>
@@ -99,17 +120,17 @@
 <ion-footer>
   <div class="nr-modal-buttons-wrapper">
     <div class="nr-selected-action-description">
-        <span *ngIf="action == 'categories'">
-          {{selectedDestinationCategories.length}}
-          <span *ngIf="selectedDestinationCategories.length == 1">categoría seleccionada</span>
-          <span *ngIf="selectedDestinationCategories.length != 1">categorías seleccionadas</span>
-        </span>
-      <span *ngIf="action == 'stock'">
+      <span *ngIf="ruleFilterType == 'categories'">
+        {{selectedDestinationCategories.length}}
+        <span *ngIf="selectedDestinationCategories.length == 1">categoría seleccionada</span>
+        <span *ngIf="selectedDestinationCategories.length != 1">categorías seleccionadas</span>
+      </span>
+      <span *ngIf="ruleFilterType == 'stock'">
         Stock a reducir:
         <span *ngIf="stockToReduceDescription != ''">{{stockToReduceDescription}}</span>
         <span *ngIf="stockToReduceDescription == ''">0</span>
         </span>
-      <span *ngIf="action == 'activation'"></span>
+      <span *ngIf="ruleFilterType == 'enabling'"></span>
     </div>
     <div *ngIf="createRuleButtonActivation();" class="nr-rule-button" (click)="createRule()">
       <span *ngIf="mode == 'create'">CREAR REGLA</span>

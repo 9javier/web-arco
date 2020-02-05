@@ -33,19 +33,19 @@
                 <span>Categorías</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-              <span *ngIf="element.categoriesFilter.length">
-                <span *ngFor="let category of element.categoriesFilter; let i = index">
-                  <span *ngIf="i == 0 && i != element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}, </span>
-                  <span *ngIf="i == 0 && i == element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}</span>
-                  <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
-                  <span *ngIf="i != 0 && i == element.categoriesFilter.length -1">{{category.name}}</span>
+                <span *ngIf="element.categoriesFilter.length">
+                  <span *ngFor="let category of element.categoriesFilter; let i = index">
+                    <span *ngIf="i == 0 && i != element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}, </span>
+                    <span *ngIf="i == 0 && i == element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}</span>
+                    <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
+                    <span *ngIf="i != 0 && i == element.categoriesFilter.length -1">{{category.name}}</span>
+                  </span>
                 </span>
-              </span>
                 <span *ngIf="!element.categoriesFilter.length">
-                <span class="no-items-list-text">
-                  Sin filtro (todos los productos)
+                  <span class="no-items-list-text">
+                    Sin filtro (todos los productos)
+                  </span>
                 </span>
-              </span>
               </td>
             </ng-container>
 
@@ -72,29 +72,29 @@
 
           </table>
         </div>
-        <button class="mp-rules-new-rule-button" (click)="openModalNewRule('category')">NUEVA REGLA</button>
+        <button class="mp-rules-new-rule-button" (click)="openModalNewRule('categories')">NUEVA REGLA</button>
       </div>
 
     </mat-expansion-panel>
 
-    <mat-expansion-panel #price hideToggle="true">
+    <mat-expansion-panel #enabling hideToggle="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Precio mínimo
+          Desactivar
         </mat-panel-title>
         <mat-panel-description>
-          <i class="material-icons" *ngIf="!price.expanded">add</i>
-          <span class="white-space" *ngIf="!price.expanded">&nbsp;</span>
-          <i class="material-icons" *ngIf="price.expanded">remove</i>
-          <i class="material-icons" *ngIf="price.expanded">warning</i>
+          <i class="material-icons" *ngIf="!enabling.expanded">add</i>
+          <span class="white-space" *ngIf="!enabling.expanded">&nbsp;</span>
+          <i class="material-icons" *ngIf="enabling.expanded">remove</i>
+          <i class="material-icons" *ngIf="enabling.expanded">warning</i>
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="mp-rules-expansion-panel-content">
-        <div *ngIf="dataSourcePrice.length">
-          <table mat-table [dataSource]="dataSourceRulesPrice">
+        <div *ngIf="dataSourceEnabling.length">
+          <table mat-table [dataSource]="dataSourceRulesEnabling">
 
-            <tr mat-header-row *matHeaderRowDef="displayedPriceColumns; sticky: true;"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedPriceColumns;"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedEnablingColumns; sticky: true;"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedEnablingColumns;"></tr>
 
             <ng-container matColumnDef="name">
               <th class="mp-rules-table-name-column" mat-header-cell *matHeaderCellDef>
@@ -105,12 +105,24 @@
               </td>
             </ng-container>
 
-            <ng-container matColumnDef="price">
+            <ng-container matColumnDef="categories">
               <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-                <span>Precio mínimo</span>
+                <span>Categorías</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-                <span>{{element.minPriceFilter}} €</span>
+                <span *ngIf="element.categoriesFilter.length">
+                  <span *ngFor="let category of element.categoriesFilter; let i = index">
+                    <span *ngIf="i == 0 && i != element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}, </span>
+                    <span *ngIf="i == 0 && i == element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}</span>
+                    <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
+                    <span *ngIf="i != 0 && i == element.categoriesFilter.length -1">{{category.name}}</span>
+                  </span>
+                </span>
+                  <span *ngIf="!element.categoriesFilter.length">
+                  <span class="no-items-list-text">
+                    Sin filtro (todos los productos)
+                  </span>
+                </span>
               </td>
             </ng-container>
 
@@ -137,7 +149,7 @@
 
           </table>
         </div>
-        <button class="mp-rules-new-rule-button" (click)="openModalNewRule('price')">NUEVA REGLA</button>
+        <button class="mp-rules-new-rule-button" (click)="openModalNewRule('enabling')">NUEVA REGLA</button>
       </div>
 
     </mat-expansion-panel>
