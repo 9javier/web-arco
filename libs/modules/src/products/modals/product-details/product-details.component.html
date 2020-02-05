@@ -52,6 +52,12 @@
                     {{ product?.container?.reference ? product?.container?.reference : product?.carrier?.reference ? product?.carrier?.reference : product.locationType == 3 ? 'Sorter': ''}}
                 </ion-label>
             </ion-item>
+            <ion-item>
+              <ion-label>
+                No Apto Online:
+                {{ product.productShoeUnit.noOnline ? 'Sí': 'No'}}
+              </ion-label>
+            </ion-item>
             <div padding *ngIf="isProductRelocationEnabled">
                 <ion-label class="title-section">Reubicar</ion-label>
                 <div class="form-fields">
