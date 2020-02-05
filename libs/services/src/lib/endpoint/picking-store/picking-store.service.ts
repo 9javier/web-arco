@@ -22,6 +22,7 @@ export class PickingStoreService {
   private getLoadRejectionReasonsUrl = environment.apiBase + '/processes/picking-store/lines-request-reasons-reject';
   private postRejectRequestUrl = environment.apiBase + '/processes/picking-store/line-request-reject';
   private postLineRequestDisassociateUrl = environment.apiBase + '/processes/picking-store/line-request-disassociate';
+  private postVentilateUrl = environment.apiBase + '/processes/picking-store/ventilate';
 
   constructor(
     private http: HttpClient,
@@ -66,6 +67,10 @@ export class PickingStoreService {
 
   postLineRequestDisassociate(params: PickingStoreModel.ParamsLineRequestDisassociate) : Promise<HttpRequestModel.Response> {
     return this.requestsProvider.post(this.postLineRequestDisassociateUrl, params);
+  }
+
+  postVentilate(params: PickingStoreModel.ParamsVentilate) : Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postVentilateUrl, params);
   }
 
   // Send_Process endpoints

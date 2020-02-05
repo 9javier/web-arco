@@ -74,4 +74,26 @@ div.matrix-main {
       }
     }
   }
+  div.content-legend {
+    div.zone {
+      display: block;
+      line-height: 18px;
+
+      .column-color {
+        text-align: right;
+      }
+
+      div.color-zone {
+        width: 12px;
+        height: 12px;
+        display: inline-block;
+        margin-right: 8px;
+        padding-top: 3px;
+        border: 1px solid black;
+      }
+      span.name-zone {
+        display: inline-block;
+      }
+    }
+  }
 }

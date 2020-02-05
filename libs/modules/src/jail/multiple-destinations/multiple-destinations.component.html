@@ -1,52 +1,53 @@
 <ion-header>
   <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-          <ion-button (click)="close()">
-              <ion-icon name="close" class="toogleArrow"></ion-icon>
-          </ion-button>
-      </ion-buttons>
-      <ion-title>Precintar</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Precintado de embalajes</ion-title>
   </ion-toolbar>
 </ion-header>
 
-  
-<ion-content padding="false" >
-  <!--<hr *ngIf="listWithNoDestiny.length <= 0 && ListToSeal.length >0" style="height: 2px; background-color: black; "/>-->
-  <label id="lblPrecintar" *ngIf=" ListToAddDestiny.length > 0 || ListToSeal.length >0 ">Embalaje a Precintar:</label> 
-  <div *ngIf=" ListToAddDestiny.length > 0">
-      <div *ngFor="let item2 of ListToAddDestiny; index as i">
-     <label>  {{item2.reference}}</label> 
+<ion-content padding="false">
+  <mat-list>
+    <h3 matSubheader>
+      Embalajes a precintar
+    </h3>
+    <mat-list-item *ngFor="let packingWoDestiny of ListToAddDestiny; index as i">
+      <label>{{packingWoDestiny.reference}} → </label>
       <mat-form-field id="form01">
-        <mat-label>Agregar destino</mat-label>
-        <mat-select  (selectionChange)="selectDestiny($event,item2.id)">
-          <mat-option *ngFor="let warehouse of warehouses" [value]="warehouse">
-            <div *ngIf="(warehouse.id != item2.idWarehouse)">
-              {{warehouse.name}}
-            </div> 
+        <mat-label>Asignar destino</mat-label>
+        <mat-select (selectionChange)="selectDestiny($event,packingWoDestiny)">
+          <mat-option *ngFor="let warehouse of getWarehousesForPacking(packingWoDestiny.idWarehouse)" [value]="warehouse">
+            {{warehouse.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      </div>
-    </div>
-    <div  *ngIf="ListToSeal.length > 0">
-      <div  *ngFor="let item3 of ListToSeal; index as i">
-        <label class="lblReference">  {{item3.reference}}</label>     
-          <label>{{item3.idWarehouseName}} </label>
-      </div>
-   </div>
-   <br>
-      <div *ngIf="ListNoProducts.length > 0">
-        <label id="lblNotPrecintar">Los Embalajes no se pueden precintar:</label>
-        <div class="lblReference" *ngFor="let item4 of ListNoProducts; index as i">
-          <label style="margin-right: 3%;">  {{item4.reference}}</label> 
-          <label>{{item4.mesage}}</label>
-        </div>
-      </div>
+    </mat-list-item>
+    <mat-list-item *ngFor="let packingWithDestiny of ListToSeal; index as i">
+      <label class="lblReference">{{packingWithDestiny.reference}} → </label>
+      <label>{{packingWithDestiny.idWarehouseName}} </label>
+    </mat-list-item>
 
-  </ion-content>
+    <mat-divider *ngIf="ListNoProducts.length > 0"></mat-divider>
+
+    <h3 matSubheader *ngIf="ListNoProducts.length > 0">
+      Embalajes que no se pueden precintar
+    </h3>
+    <mat-list-item *ngFor="let packingNoSeal of ListNoProducts; index as i">
+      <mat-icon mat-list-icon>{{packingNoSeal.icon}}</mat-icon>
+      <h4 mat-line>{{packingNoSeal.reference}}</h4>
+      <p mat-line>{{packingNoSeal.mesage}} </p>
+    </mat-list-item>
+  </mat-list>
+</ion-content>
+
 <ion-footer>
   <ion-toolbar>
     <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>
-    <ion-button  *ngIf="ListToAddDestiny.length > 0 || ListToSeal.length > 0" slot="end" color="primary" (click)="submit()">Precintar</ion-button>
-</ion-toolbar>
+    <ion-button *ngIf="ListToAddDestiny.length > 0 || ListToSeal.length > 0" slot="end" color="primary"
+                (click)="submit()">Precintar
+    </ion-button>
+  </ion-toolbar>
 </ion-footer>

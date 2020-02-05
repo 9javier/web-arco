@@ -105,13 +105,17 @@ export namespace SorterOutputModel {
   }
 
   // Get products by way
+  export interface ProductInSorterWithIncidence extends ProductSorterModel.ProductSorter {
+    with_incidence?: boolean
+  }
   export interface ParamsGetProductsByWay {
     wayId: number
   }
   export interface GetProductsByWay {
+    with_incidences?: boolean,
     way: WaySorterModel.WaySorter,
     warehouse: WarehouseModel.Warehouse,
-    products: ProductSorterModel.ProductSorter[]
+    products: ProductInSorterWithIncidence[]
   }
   export interface ResponseGetProductsByWay extends HttpRequestModel.Response {
     data: GetProductsByWay

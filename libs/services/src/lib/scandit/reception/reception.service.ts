@@ -5,7 +5,7 @@ import {AuthenticationService} from "../../endpoint/authentication/authenticatio
 import {AlertController, Events} from "@ionic/angular";
 import {ScanditProvider} from "../../../providers/scandit/scandit.provider";
 import {ReceptionService} from "../../endpoint/process/reception/reception.service";
-import {WarehouseModel} from "@suite/services";
+import {ProductModel, WarehouseModel} from "@suite/services";
 import {ReceptionModel} from "../../../models/endpoints/Reception";
 import {ReceptionProvider} from "../../../providers/reception/reception.provider";
 import {Router} from "@angular/router";
@@ -244,6 +244,15 @@ export class ReceptionScanditService {
       .then((res: ReceptionModel.ResponseReceive) => {
         ScanditMatrixSimple.hideLoadingDialog();
         if (res.code == 200 || res.code == 201) {
+
+          // Update the stock of all the products form this packing in this warehouse.
+          this.receptionService.getCheckProductsPacking(packingReference).subscribe(response=>{
+            const packingProducts: ProductModel.Product[] = response.data.products;
+            for(let product of packingProducts){
+              this.receptionService.postUpdateStock({productReference: product.reference});
+            }
+          });
+
           if (this.typeReception == 1) {
             ScanditMatrixSimple.showFixedTextBottom(false, '');
 
@@ -323,6 +332,9 @@ export class ReceptionScanditService {
             this.scanditProvider.colorText.color,
             18);
           this.hideTextMessage(1500);
+
+          // Update the stock of this product in this warehouse.
+          this.receptionService.postUpdateStock({productReference: referenceProduct});
 
           if (response.data.hasNewProducts) {
             ScanditMatrixSimple.showWarning(true, `El producto escaneado es nuevo en la tienda. ¿Quiere imprimir su código de exposición ahora?`, 'new_product_expo', 'Sí', 'No');

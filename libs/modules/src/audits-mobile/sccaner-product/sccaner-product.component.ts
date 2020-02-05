@@ -86,7 +86,7 @@ export class SccanerProductComponent implements OnInit {
 
     this.audit.addProduct(data).subscribe((res: AuditsModel.ResponseAuditProductInPacking) => {
       if (res.data.auditCorrect) {
-        this.intermediaryService.presentToastError('Producto válido', TimesToastType.DURATION_SUCCESS_TOAST_2000);
+        this.intermediaryService.presentToastSuccess('Producto válido', TimesToastType.DURATION_SUCCESS_TOAST_2000, "bottom");
         this.audioProvider.playDefaultOk();
       } else {
         this.intermediaryService.presentToastError('El producto no debería estar en la jaula');

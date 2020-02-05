@@ -82,11 +82,11 @@ export class TextareaComponent implements OnInit {
 
   ngOnInit() {
     console.log('passiamo di qui');
-    
+
     this.pickingId = this.pickingProvider.pickingId;
     this.listProducts = this.pickingProvider.listProducts;
     // console.log(this.listProducts);
-    
+
     this.typePacking = this.pickingProvider.typePacking;
     this.typePicking = this.pickingProvider.typePicking;
     this.packingReference = this.pickingProvider.packingReference;
@@ -113,13 +113,13 @@ export class TextareaComponent implements OnInit {
 
   private async modalList( jaula:string){
     let modal = await this.modalCtrl.create({
-      
+
       component: ListProductsCarrierComponent,
       componentProps: {
         carrierReference:jaula,
         process: 'picking'
       }
-      
+
     })
     modal.onDidDismiss().then((data) => {
       console.log(data);
@@ -127,7 +127,7 @@ export class TextareaComponent implements OnInit {
         this.focusToInput();
         return;
       }
-      
+
       if(data.data && data.role === undefined){
         if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
           this.focusToInput();
@@ -138,7 +138,7 @@ export class TextareaComponent implements OnInit {
           this.focusToInput();
         }
       }
-      
+
     })
     modal.present();
   }
@@ -304,7 +304,7 @@ export class TextareaComponent implements OnInit {
             })
         }
 
-        
+
       } else if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PRODUCT) {
         if (!this.processInitiated) {
           this.audioProvider.playDefaultError();
@@ -420,7 +420,7 @@ export class TextareaComponent implements OnInit {
                   .subscribe((res3: ShoesPickingModel.ResponseProductNotFound) => {
                     if (res3.code === 200 || res3.code === 201) {
                       // console.log('passa di qui',res);
-                      
+
                       this.scanContainerToNotFound = null;
                       this.dataToWrite = "PRODUCTO";
                       this.focusToInput();
@@ -585,6 +585,7 @@ export class TextareaComponent implements OnInit {
             this.audioProvider.playDefaultError();
             this.scanContainerToNotFound = null;
             this.dataToWrite = "PRODUCTO";
+            this.focusToInput();
           }
         },
         {
@@ -593,6 +594,7 @@ export class TextareaComponent implements OnInit {
             this.audioProvider.playDefaultOk();
             this.scanContainerToNotFound = "Escanea la ubicación que estás revisando para comprobar que sea la correcta. Escanea el producto si lo encuentra.";
             this.dataToWrite = "UBICACIÓN";
+            this.focusToInput();
           }
         }]
     });

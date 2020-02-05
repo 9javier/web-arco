@@ -17,7 +17,7 @@
     </ion-list>
   </ion-menu-toggle>
   <!-- Item with Children -->
-  <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none" class="parent-subitems">
+  <ion-item button *ngIf="p.children?.length > 0" (click)="openSubMenuItem(p)" [class.parent-active]="p.open" detail="false" lines="none" class="parent-subitems" matTooltip="{{p.tooltip}}" matTooltipClass="tooltip" matTooltipPosition="right" matTooltipShowDelay="1000" matTooltipHideDelay="4000">
     <ion-icon slot="start" [name]="p.icon"></ion-icon>
     <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">{{ p.title }}</ion-label>
     <ion-icon slot="end" name="information-circle" *ngIf="checkIfChildrenHasNewTariffs(p)" class="color-notification"></ion-icon>
@@ -27,7 +27,7 @@
   <!-- Children List for clicked Item -->
   <ion-list *ngIf="p.open" lines="none">
     <ng-container *ngFor="let sub of p.children">
-      <ion-item *ngIf="!sub.header"   class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)">
+      <ion-item *ngIf="!sub.header"   class="sub-item" [routerLink]="sub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(sub)" matTooltip="{{sub.tooltip}}" matTooltipClass="tooltip" matTooltipPosition="right" matTooltipShowDelay="1000" matTooltipHideDelay="4000">
         <ion-icon [slot]="iconsDirection" [name]="sub.icon"></ion-icon>
         <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
           {{ sub.title }}

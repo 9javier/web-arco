@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {SettingsService} from "../../../services/src/lib/storage/settings/settings.service";
-import {PrinterConnectionService} from "../../../services/src/lib/printer-connection/printer-connection.service";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { SettingsService } from "../../../services/src/lib/storage/settings/settings.service";
+import { PrinterConnectionService } from "../../../services/src/lib/printer-connection/printer-connection.service";
 import { IntermediaryService } from '@suite/services';
 import { TimesToastType } from '../../../services/src/models/timesToastType';
 import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
@@ -34,8 +34,12 @@ export class SettingsComponent implements OnInit {
       }));
   }
 
-  btnOnClick(idElement:string, txtElement?:string){
-    this.holderTooltipText.setTootlTip(idElement,true);
+
+
+  showTooltip() { }
+
+  btnOnClick(idElement: string, txtElement?: string) {
+    this.holderTooltipText.setTootlTip(idElement, true);
   }
 
   /**

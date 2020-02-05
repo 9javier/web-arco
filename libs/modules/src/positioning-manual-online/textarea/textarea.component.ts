@@ -19,7 +19,7 @@ import { ListProductsCarrierComponent } from '../../components/list-products-car
 })
 export class TextareaComponent implements OnInit {
 
-  dataToWrite: string = 'CONTENEDOR / EMBALAJE';
+  dataToWrite: string = 'CONTENEDOR';
   containerReference: string = null;
   packingReference: string = null;
   inputPositioning: string = null;
@@ -76,7 +76,8 @@ export class TextareaComponent implements OnInit {
 
       component: ListProductsCarrierComponent,
       componentProps: {
-        carrierReference:jaula
+        carrierReference:jaula,
+        process: 'positioning'
       }
 
     })
@@ -167,24 +168,10 @@ export class TextareaComponent implements OnInit {
         this.errorMessage = null;
       } else if (false && !this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         // console.log('passa qui por Jaula');
-        this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
-          if(data.packingInventorys.length > 0 && !prova){
-            this.modalList(this.lastCodeScanned);
-          }else{
-            this.processInitiated = false;
-            this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
-              setTimeout(() => {
-                document.getElementById('input-ta').focus();
-              }, 500);
-            });
-            this.audioProvider.playDefaultOk();
-            this.containerReference = null;
-            this.packingReference = dataWrited;
-            this.dataToWrite = 'PRODUCTO/CONTENEDOR';
-            this.inputPositioning = null;
-            this.errorMessage = null;
-          }
-        })
+        this.audioProvider.playDefaultError();
+        this.inputPositioning = null;
+        this.errorMessage = '¡No es posible ubicar no aptos online en embalajes!';
+        this.processInitiated = false;
       } else if (!this.isStoreUser && !this.containerReference && !this.packingReference) {
         this.audioProvider.playDefaultError();
         this.inputPositioning = null;
@@ -214,12 +201,12 @@ export class TextareaComponent implements OnInit {
         if (res.code === 200 || res.code === 201) {
           let msgSetText = '';
           if (this.isStoreUser) {
-            msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name}`;
+            msgSetText = `Producto ${params.productReference} añadido a la tienda ${this.storeUserObj.name} como No apto Online`;
           } else {
             if (params.packingReference) {
-              msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference}`;
+              msgSetText = `Producto ${params.productReference} añadido al embalaje ${params.packingReference} como No apto Online`;
             } else {
-              msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference}`;
+              msgSetText = `Producto ${params.productReference} añadido a la ubicación ${params.containerReference} como No apto Online`;
             }
           }
           this.processInitiated = false;
@@ -306,6 +293,7 @@ export class TextareaComponent implements OnInit {
               const permissions = await this.inventoryService.checkUserPermissions();
               if (permissions.data) {
                 params.force = true;
+                params.avoidAvelonMovement = false;
                 this.storeProductInContainer(params);
                 this.processInitiated = false;
               } else {
