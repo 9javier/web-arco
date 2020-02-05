@@ -22,9 +22,9 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
+  displayedColumns: string[] = ['select','model','size','store','color','brand','style','provider','c1','c2','c3'];
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
-  // displayedColumns: string[] = ['select', 'article', 'store'];
+  //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -55,7 +55,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   providers: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
-  entities 
+  entities
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
   // pagerValues = [50, 100, 1000];
@@ -78,21 +78,21 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     })
   });
   length: any;
-  
- 
+
+
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
-    private intermediaryService:IntermediaryService 
+    private intermediaryService:IntermediaryService
   ) {}
 
   ngOnInit(): void {
-    
+
     this.initEntity()
     this.initForm()
     this.getFilters()
     this.getList(this.form)
-    this.listenChanges() 
+    this.listenChanges()
     // this.paginator._intl.itemsPerPageLabel = 'Ver';
     // this.paginator._intl.getRangeLabel = this.getRangeLabel;
     // this.dataSource.results.forEach(row => {
@@ -150,7 +150,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         this.dataSource.paginator = This.paginator;
     }, 2000)
   }
-  
+
   getRangeLabel = (page: number, pageSize: number, length: number) =>  {
     if (length === 0 || pageSize === 0) {
       return `0 / ${length}`;
@@ -290,26 +290,26 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         modelId: dataRow.model.id,
         sizeId: dataRow.size.id,
         warehouseId: dataRow.warehouse.id
-      })      
+      })
     });
     // call to services ..
     this.intermediaryService.presentLoading();
     let This = this;
     await this.predistributionsService.updateBlockReserved(list).subscribe(function(data){
-      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");  
+      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
       console.log('debug', data);
-      // reload page   
+      // reload page
       This.initEntity()
       This.initForm()
       This.getFilters()
       This.getList(This.form)
-      This.listenChanges()  
+      This.listenChanges()
     }, (error) => {
-      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");  
+      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
       This.intermediaryService.dismissLoading();
     }, () => {
       This.intermediaryService.dismissLoading();
-    });  
+    });
   }
   getFilters() {
     this.predistributionsService.entities2().subscribe(entities => {
@@ -327,7 +327,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
       }, 0);
     })
-    
+
   }
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading()
@@ -337,7 +337,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
         const paginator = resp.pagination;
         console.log(paginator);
-        
+
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
@@ -352,7 +352,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       },
       async err => {
         await this.intermediaryService.dismissLoading()
-      }, 
+      },
       async () => {
         await this.intermediaryService.dismissLoading()
       }
@@ -383,15 +383,15 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         let modelsFiltered: string[] = [];
         for (let model of filters) {
           console.log(model);
-          
+
           if (model.checked) modelsFiltered.push(model.id);
         }
         console.log(modelsFiltered);
           console.log(modelsFiltered.length, '>=' ,this.models.length);
-          
+
         if (modelsFiltered.length >= this.models.length) {
           console.log('entre en model');
-          
+
           this.form.value.models = [];
           this.isFilteringModels = this.models.length;
         } else {
@@ -404,7 +404,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
           }
         }
         console.log(this.form.value);
-        
+
         break;
       case 'colors':
         let colorsFiltered: number[] = [];
@@ -448,7 +448,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
           if (warehouse.checked) warehousesFiltered.push(warehouse.id);
         }
         console.log(warehousesFiltered.length, '>=' ,this.warehouses.length);
-        
+
         if (warehousesFiltered.length >= this.warehouses.length) {
           this.form.value.warehouses = [];
           this.isFilteringWarehouses = this.warehouses.length;
@@ -460,7 +460,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
             this.form.value.warehouses = [99999];
             this.isFilteringWarehouses = this.warehouses.length;
           }
-        }        
+        }
         break;
       case 'providers':
         let providersFiltered: number[] = [];
@@ -513,7 +513,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       let filteredModels = entities['models'] as unknown as string[];
       for (let index in this.models) {
         this.models[index].hide = filteredModels.includes(this.models[index].value);
-      }      
+      }
       this.filterButtonModels.listItems = this.models;
     }
     if (this.lastUsedFilter != 'colors') {
@@ -562,7 +562,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       return brand;
     });
     console.log(this.brands);
-    
+
     if (value && value.length) {
       this.form.get("brands").patchValue(value, { emitEvent: false });
     }
@@ -613,7 +613,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       return model;
     });
     console.log(this.models);
-    
+
     if (value && value.length) {
       this.form.get("models").patchValue(value, { emitEvent: false });
     }
@@ -670,7 +670,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.dataSource.data.forEach(function(value){
       if(value.expeditionLineId == row.expeditionLineId) {
         value.distribution = event.checked;
-      }  
+      }
     });
   }
   public  isCheckedStatusBlocked( element) {
@@ -678,13 +678,13 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
   public changeStatusBlockedAll( event:MatCheckboxChange) {
     this.dataSource.data.forEach(function(value){
-      value.distribution = event.checked;  
+      value.distribution = event.checked;
     });
   }
   public  isCheckedStatusBlockedAll() {
     let result = true;
     this.dataSource.data.forEach(function(value){
-      result = result && value.distribution;   
+      result = result && value.distribution;
     });
     return result;
   }
@@ -693,23 +693,23 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.dataSource.data.forEach(function(value){
       if(value.expeditionLineId == row.expeditionLineId) {
         value.distribution = !event.checked;
-      }  
+      }
     });
   }
 
-  public isCheckedStatusReserved( element) { 
+  public isCheckedStatusReserved( element) {
     return !element.distribution;
   }
 
   public changeStatusReservedAll( event:MatCheckboxChange) {
     this.dataSource.data.forEach(function(value){
-      value.distribution = !event.checked;  
+      value.distribution = !event.checked;
     });
   }
   public  isCheckedStatusReservedAll() {
     let result = true;
     this.dataSource.data.forEach(function(value){
-      result = result && !value.distribution;   
+      result = result && !value.distribution;
     });
     return result;
   }
