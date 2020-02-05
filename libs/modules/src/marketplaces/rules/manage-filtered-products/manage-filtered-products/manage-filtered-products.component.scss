@@ -5,6 +5,7 @@ ion-header {
 
   .cp-modal-header-wrapper {
     display: flex;
+    justify-content: flex-end;display: flex;
     justify-content: space-between;
     align-content: center;
     padding: 20px;
@@ -25,6 +26,15 @@ ion-header {
 }
 
 ion-content {
+
+  table {
+    width: 80%;    
+    margin-left: 10%;
+
+    .delete:hover {
+      cursor: pointer;
+    }
+  }
 
   .nr-modal-body-wrapper {
     width: 100%;

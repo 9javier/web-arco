@@ -8,6 +8,20 @@ import {ModalController} from '@ionic/angular';
 })
 export class ManageFilteredProductsComponent implements OnInit {
 
+  productReferences = [
+    { 
+      name: 'product1',
+      reference: 'reference1'
+    },
+    { 
+      name: 'product2',
+      reference: 'reference2'
+    }
+  ];
+
+  displayedColumns: string[] = ['name', 'reference', 'delete'];
+  dataSource = this.productReferences;
+
   constructor(
     private modalController: ModalController
   ) { }
@@ -17,6 +31,10 @@ export class ManageFilteredProductsComponent implements OnInit {
 
   close(data) {
     this.modalController.dismiss(data);
+  }
+
+  deleteProduct(product) {
+    console.log(product)
   }
 
 }
