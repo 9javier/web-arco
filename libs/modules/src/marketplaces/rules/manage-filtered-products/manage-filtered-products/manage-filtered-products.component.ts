@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ModalController} from '@ionic/angular';
+import { MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'suite-manage-filtered-products',
@@ -20,7 +21,7 @@ export class ManageFilteredProductsComponent implements OnInit {
   ];
 
   displayedColumns: string[] = ['name', 'reference', 'delete'];
-  dataSource = this.productReferences;
+  dataSource  = new MatTableDataSource(this.productReferences);
 
   constructor(
     private modalController: ModalController
@@ -34,7 +35,13 @@ export class ManageFilteredProductsComponent implements OnInit {
   }
 
   deleteProduct(product) {
-    console.log(product)
+    for(let i = 0; i < this.productReferences.length; i++) {
+      if(this.productReferences[i].reference == product.reference) {
+        this.productReferences.splice(i, 1);
+      }
+    }
+
+    this.dataSource.data = this.productReferences;
   }
 
 }

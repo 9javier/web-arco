@@ -31,9 +31,14 @@ ion-content {
     width: 80%;    
     margin-left: 10%;
 
-    .delete:hover {
-      cursor: pointer;
+    .delete {
+      font-weight: bold;
+      
+      &:hover {
+        cursor: pointer;
+      }
     }
+
   }
 
   .nr-modal-body-wrapper {
