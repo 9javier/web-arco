@@ -136,13 +136,11 @@ export class RulesComponent implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      if (data.data) {
+      if (data && data.data) {
 
-        /*let filterType = 0;
+        console.log('data->', data.data);
 
-        let dataGroupToSend = '';
-
-        switch(data.data.filterType) {
+        /*switch(data.data.filterType) {
           case 'categories':
             filterType = 1;
 
@@ -174,13 +172,13 @@ export class RulesComponent implements OnInit {
           marketsIds: [
             "1"
           ]
-        }
+        }*/
 
-        this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
+        /*this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
         })*/
 
-        //this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
+        this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
         // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
         // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
@@ -191,10 +189,10 @@ export class RulesComponent implements OnInit {
   }
 
   // BORRAR LUEGO /////////////////////////////////////////////////////////////
-  /*temporalAddNeRule(rule) {
+  temporalAddNeRule(rule) {
 
     let maxIdCategory = 0;
-    let maxIdPrice = 0;
+    let maxIdEnabling = 0;
     let maxIdStock = 0;
 
     this.dataSourceCategories.map((existingRule) => {
@@ -203,9 +201,9 @@ export class RulesComponent implements OnInit {
       }
     });
 
-    this.dataSourcePrice.map((existingRule) => {
-      if (existingRule.id > maxIdPrice) {
-        maxIdPrice = existingRule.id;
+    this.dataSourceEnabling.map((existingRule) => {
+      if (existingRule.id > maxIdEnabling) {
+        maxIdEnabling = existingRule.id;
       }
     });
 
@@ -215,7 +213,7 @@ export class RulesComponent implements OnInit {
       }
     });
 
-    let maxId = Math.max(maxIdCategory, maxIdPrice, maxIdStock);
+    let maxId = Math.max(maxIdCategory, maxIdEnabling, maxIdStock);
 
     rule.id = maxId + 1;
 
@@ -228,14 +226,11 @@ export class RulesComponent implements OnInit {
 
         break;
 
-      case 'price':
+      case 'enabling':
 
-        this.dataSourcePrice.push(rule);
-        this.dataSourcePrice.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        for (let ruleByPrice of this.dataSourcePrice) {
-          ruleByPrice.minPriceFilter = <any>parseFloat(ruleByPrice.minPriceFilter).toFixed(2);
-        }
-        this.dataSourceRulesPrice = new MatTableDataSource(this.dataSourcePrice);
+        this.dataSourceEnabling.push(rule);
+        this.dataSourceEnabling.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+        this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
 
         break;
 
@@ -248,7 +243,7 @@ export class RulesComponent implements OnInit {
         break;
     }
 
-  }*/
+  }
   //////////////////////////////////////////////////////////////////////////////
 
   /*async editRule(ruleToEdit): Promise<void> {

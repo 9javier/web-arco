@@ -30,21 +30,14 @@
 
             <ng-container matColumnDef="categories">
               <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-                <span>Categorías</span>
+                <span>Filtros</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-                <span *ngIf="element.categoriesFilter.length">
-                  <span *ngFor="let category of element.categoriesFilter; let i = index">
-                    <span *ngIf="i == 0 && i != element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}, </span>
-                    <span *ngIf="i == 0 && i == element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}</span>
-                    <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
-                    <span *ngIf="i != 0 && i == element.categoriesFilter.length -1">{{category.name}}</span>
-                  </span>
+                <span *ngIf="element.description != ''">
+                  {{element.description}}
                 </span>
-                <span *ngIf="!element.categoriesFilter.length">
-                  <span class="no-items-list-text">
-                    Sin filtro (todos los productos)
-                  </span>
+                <span *ngIf="element.description == ''" class="no-items-list-text">
+                  Sin filtros (todos los productos)
                 </span>
               </td>
             </ng-container>
@@ -107,21 +100,14 @@
 
             <ng-container matColumnDef="categories">
               <th class="mp-rules-table-filter-column" mat-header-cell *matHeaderCellDef>
-                <span>Categorías</span>
+                <span>Filtros</span>
               </th>
               <td class="mp-rules-table-filter-column" mat-cell *matCellDef="let element">
-                <span *ngIf="element.categoriesFilter.length">
-                  <span *ngFor="let category of element.categoriesFilter; let i = index">
-                    <span *ngIf="i == 0 && i != element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}, </span>
-                    <span *ngIf="i == 0 && i == element.categoriesFilter.length -1" class="capitalized-property">{{category.name}}</span>
-                    <span *ngIf="i > 0 && i < element.categoriesFilter.length -1">{{category.name}}, </span>
-                    <span *ngIf="i != 0 && i == element.categoriesFilter.length -1">{{category.name}}</span>
-                  </span>
+                <span *ngIf="element.description != ''">
+                  {{element.description}}
                 </span>
-                  <span *ngIf="!element.categoriesFilter.length">
-                  <span class="no-items-list-text">
-                    Sin filtro (todos los productos)
-                  </span>
+                <span *ngIf="element.description == ''" class="no-items-list-text">
+                  Sin filtros (todos los productos)
                 </span>
               </td>
             </ng-container>

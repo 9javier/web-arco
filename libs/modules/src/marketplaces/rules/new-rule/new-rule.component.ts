@@ -650,10 +650,41 @@ export class NewRuleComponent implements OnInit {
     if (this.ruleName != '') {
 
       let rule = null;
+      let description = '';
 
       switch (this.ruleFilterType) {
 
         case 'enabling':
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+            for (let i = 0; i < this.selectedCategories.length; i++) {
+              if (i == 0 && i != this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i == 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+              if (i > 0 && i < this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i != 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+            }
+
+            if (this.minPriceFilter != '' && this.minPriceFilter != '') {
+              if (this.selectedCategories.length) {
+                description += ', ';
+              }
+              description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+          }
+
           rule = {
             name: this.ruleName,
             filterType: this.ruleFilterType,
@@ -664,11 +695,42 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: [],
             stockToReduce: 0,
-            referencesExceptions: this.referencesExceptions
+            referencesExceptions: this.referencesExceptions,
+            description
           };
           break;
 
-        case 'category':
+        case 'categories':
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+            for (let i = 0; i < this.selectedCategories.length; i++) {
+              if (i == 0 && i != this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i == 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+              if (i > 0 && i < this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name + ', ';
+              }
+
+              if (i != 0 && i == this.selectedCategories.length - 1) {
+                description += this.selectedCategories[i].name;
+              }
+
+            }
+
+            if (this.minPriceFilter != '' && this.minPriceFilter != '') {
+              if (this.selectedCategories.length) {
+                description += ', ';
+              }
+              description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+          }
+
           rule = {
             name: this.ruleName,
             filterType: this.ruleFilterType,
@@ -679,11 +741,13 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: this.selectedDestinationCategories,
             stockToReduce: 0,
-            referencesExceptions: this.referencesExceptions
+            referencesExceptions: this.referencesExceptions,
+            description
           };
           break;
 
         case 'stock':
+          description += this.stockFilter;
           rule = {
             name: this.ruleName,
             filterType: this.ruleFilterType,
@@ -694,7 +758,8 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: [],
             stockToReduce: parseInt(this.stockToReduce),
-            referencesExceptions: this.referencesExceptions
+            referencesExceptions: this.referencesExceptions,
+            description
           };
           break;
       }
