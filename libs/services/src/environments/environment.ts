@@ -16,5 +16,3 @@ export const environment = {
 export let app: { name: "sga" | "al" } = {
   name: 'sga'
 };
-
-

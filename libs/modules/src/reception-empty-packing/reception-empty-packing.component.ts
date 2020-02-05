@@ -29,7 +29,7 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
   async ionViewWillEnter(){
     await this.intermediaryService.presentLoading('Cargando')
     this.empty$ = this.carrierService.getCarriesEmptyPacking().subscribe(list => {
-      this.items = list 
+      this.items = list
     },
     async e => {
       await this.intermediaryService.dismissLoading()
@@ -40,13 +40,14 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
     }
   )
   }
+
   ngOnDestroy() {
     if (this.empty$) {
         this.empty$.unsubscribe();
     }
     if (this.reception$) {
       this.reception$.unsubscribe();
-  }
+    }
   }
 
   onClick(item , index) {
@@ -70,7 +71,7 @@ export class ReceptionEmptyPackingComponent implements OnInit, OnDestroy {
         }
       ]
     });
-  
+
     await alert.present();
   }
 

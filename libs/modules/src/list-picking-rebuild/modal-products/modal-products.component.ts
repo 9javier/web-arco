@@ -28,7 +28,8 @@ export class ListProductsComponent implements OnInit {
     this.pickingId = this.navParams.get('id');
     this.loadPicking();
   }
-loadPicking(){
+
+  loadPicking(){
     this.intermediaryService.presentLoading("Actualizando...");
     this.shoesPickingService
     .getListByPicking(this.pickingId)
@@ -39,12 +40,11 @@ loadPicking(){
     }, error => {
       console.error('Error Subscribe to Query Products for Pickings of a Workwave of History -> ', error);
     });
-}
+  }
+
   goToList() {
     this.modalController.dismiss();
   }
-
-
 
   getProductStatusName(product: ShoesPickingModel.ShoesPicking): string {
     if (product && product.status) {
@@ -53,8 +53,14 @@ loadPicking(){
           return 'PENDIENTE';
         case 2:
           return 'ESCANEADO';
+        case 3:
+          return 'ASIGNACION TEMP.';
         case 4:
           return 'PREVENTILADO';
+        case 5:
+          return 'PRECINTADO';
+        case 6:
+          return 'ASIGNACION TEMP.';
         case 7:
           return 'PREVERIFICADO';
         case 8:
@@ -63,6 +69,8 @@ loadPicking(){
           return 'NO APTO ONLINE';
         case 10:
           return 'VERIFICADO';
+        case 11:
+          return 'PREVERIFICADO TEMP.';
         default:
           return 'error';
       }

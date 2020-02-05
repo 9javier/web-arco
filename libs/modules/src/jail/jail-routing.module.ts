@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { JailComponent } from './jail.component';
 import { StoreComponent } from './store/store.component';
 import { UpdateComponent } from './update/update.component';
+import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
+import { HistoryWarehouseNMComponent } from './history-warehouse-no-modal/history-warehouse-no-modal.component';
 
 const routes: Routes = [
   {
@@ -22,9 +24,18 @@ const routes: Routes = [
     component: JailComponent
   },
   {
+    path: 'history/:datemin/:datemax/:whsCode',
+    component: HistoryWarehouseComponent
+  },
+  {
+    path: 'history',
+    component: HistoryWarehouseNMComponent
+  },
+  {
     path: 'menu',
     component: JailComponent
   }
+
 ];
 
 @NgModule({
@@ -32,4 +43,3 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class JailRoutingModule {}
-

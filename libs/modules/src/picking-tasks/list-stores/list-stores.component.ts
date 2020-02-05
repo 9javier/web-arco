@@ -32,6 +32,8 @@ export class ListStoresPickingTasksTemplateComponent implements OnInit {
   ngOnInit() {
     this.loadRejectionReasons();
     this.loadPossibleLineRequestsByStores();
+    this.allStoresSelected = false;
+    this.qtyStoresSelected = 0;
   }
 
   private loadRejectionReasons() {

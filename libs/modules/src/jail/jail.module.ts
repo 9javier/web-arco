@@ -7,7 +7,7 @@ import {
   MatCheckboxModule,
   MatPaginatorModule,
   MatListModule,
-  MatTooltipModule
+  MatDatepickerModule, MatInputModule, MatTooltipModule, MatIconModule, MatSortModule
 } from '@angular/material';
 import { CdkTableModule } from '@angular/cdk/table';
 import { JailRoutingModule } from './jail-routing.module';
@@ -26,6 +26,9 @@ import { SendJailComponent } from './send-jail/send-jail.component';
 import { AddDestinyComponent } from './add-destiny/add-destiny.component';
 import { MultipleDestinationsComponent } from './multiple-destinations/multiple-destinations.component';
 import { HistoryModalComponent } from './history-modal/history-modal.component';
+import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
+import { HistoryWarehouseNMComponent } from './history-warehouse-no-modal/history-warehouse-no-modal.component';
+import { DatePipe } from '@angular/common';
 
 
 @NgModule({
@@ -38,7 +41,8 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     ShowDestinationsComponent,
     SendJailComponent,
     HistoryModalComponent,
-    AddDestinyComponent, 
+    HistoryWarehouseComponent,
+    HistoryWarehouseNMComponent,
     MultipleDestinationsComponent,
     AddDestinyComponent
   ],
@@ -59,7 +63,12 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     BreadcrumbModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatTooltipModule,
+    MatIconModule,
+    MatSortModule
   ],
   entryComponents: [
     StoreComponent,
@@ -67,10 +76,15 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
     SendPackingComponent,
     ShowDestinationsComponent,
     SendJailComponent,
+    HistoryModalComponent,
+    MultipleDestinationsComponent
+  ],
+  providers: [
+    DatePipe,
     AddDestinyComponent,
     MultipleDestinationsComponent,
     HistoryModalComponent,
-    
+
   ]
 })
-export class JailModule {}
+export class JailModule { }
