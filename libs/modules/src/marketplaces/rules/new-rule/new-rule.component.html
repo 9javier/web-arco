@@ -18,7 +18,7 @@
           <div>
             <i class="material-icons">search</i>
           </div>
-          <div>
+          <div *ngIf="selectedCategoryGroupFilterObject">
             <div>
               <mat-select (selectionChange)="changeSelectedCategoryGroupFilter($event)" [(ngModel)]="selectedCategoryGroupFilter">
                 <mat-option *ngFor="let item of categoryList" [value]="item.id">
@@ -84,14 +84,21 @@
       <div class="nr-action-selected-wrapper">
         <div class="action-categories" *ngIf="ruleFilterType == 'categories'">
           <div>Seleccionar categorías destino</div>
+          <div class="destination-category-types">
+            <mat-select (selectionChange)="changeSelectedDestinationCategories($event)" [(ngModel)]="selectedDestinationCategoryGroupFilter">
+              <mat-option *ngFor="let item of destinationCategories" [value]="item.id">
+                {{item.name}}
+              </mat-option>
+            </mat-select>
+          </div>
           <div>
             <div>
               <div>&nbsp;</div>
               <div class="destination-category-id">ID</div>
               <div>Nombre</div>
             </div>
-            <div>
-              <div *ngFor="let category of destinationCategoriesCopy">
+            <div *ngIf="selectedDestinationCategoryGroupFilterObject">
+              <div *ngFor="let category of selectedDestinationCategoryGroupFilterObject.items;">
                 <div>
                   <ion-checkbox [checked]="checkCategorySelected(category)" (ionChange)="selectCategoryRow(category)"></ion-checkbox>
                 </div>

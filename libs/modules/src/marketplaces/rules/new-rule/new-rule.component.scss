@@ -270,7 +270,7 @@ ion-content {
       }
 
       .nr-action-selected-wrapper {
-        margin-bottom: 20px;
+        margin-bottom: 7px;
         margin-left: 50px;
 
         & > .action-categories {
@@ -281,6 +281,17 @@ ion-content {
               font-size: 14px;
               padding-bottom: 10px;
             }
+
+            &.destination-category-types {
+              background-color: #f5f4f6;
+              padding: 6px 10px;
+              font-size: 14px;
+              margin-bottom: 10px;
+              mat-select {
+
+              }
+            }
+
             &:last-of-type {
               & > div {
                 &:first-of-type {
@@ -323,8 +334,8 @@ ion-content {
                   flex-direction: column;
                   overflow-y: auto;
                   padding-top: 5px;
-                  height: 120px;
-                  max-height: 120px;
+                  height: 94px;
+                  max-height: 94px;
                   & > div {
                     margin-bottom: 5px;
                     display: flex;
