@@ -77,11 +77,13 @@
         margin-right: -24px;
         display: flex;
         flex-direction: column;
+        min-height: 500px;
 
         & > div {
           width: 50%;
           max-height: 444px;
           overflow-y: auto;
+
           & > table {
             width: 100%;
 
@@ -124,9 +126,12 @@
                   border-right: 1px solid #c7c8ce;
                   vertical-align: top;
 
+                  &.empty-table-border {
+                    border-bottom: 1px solid #c7c8ce;;
+                  }
+
                   span {
                     background-color: #f5f4f6;
-                    margin-bottom: 24px;
                     display: block;
                     padding: 9px;
                     text-align: center;
@@ -135,6 +140,15 @@
                     text-overflow: ellipsis;
                     overflow-x: hidden;
                     font-weight: 500;
+                  }
+
+                  input {
+                    width: 100%;
+                    height: 33px;
+                    border: none;
+                    padding: 5px 10px;
+                    font-size: 14px;
+                    font-weight: 400;
                   }
 
                   &.mp-mapping-blank-column {
@@ -147,6 +161,7 @@
                     i {
                       margin-top: 42px;
                       opacity: .5;
+
                     }
                   }
 
@@ -160,6 +175,10 @@
         & > mat-paginator {
           padding: 0;
           width: 50%;
+
+          &.hidden-paginator {
+            visibility: hidden;
+          }
         }
 
       }
@@ -185,6 +204,7 @@
 
           & > mat-paginator {
             width: 75%;
+
           }
 
         }

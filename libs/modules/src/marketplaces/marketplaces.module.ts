@@ -23,6 +23,7 @@ import { RulesComponent } from './rules/rules.component';
 import { RulesModule } from './rules/rules.module';
 import { SecurityStocksComponent } from './security-stocks/security-stocks.component';
 import {CategorizeProductsModule} from "./catalog/modals/categorize-products/categorize-products.module";
+import {FormsModule} from "@angular/forms";
 
 const routes: Routes = [
   {
@@ -132,7 +133,8 @@ const routes: Routes = [
     CategorizeProductsModule,
     RulesModule,
     MatListModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    FormsModule
   ]
 })
 export class MarketplacesModule { }
