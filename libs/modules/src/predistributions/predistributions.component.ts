@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
   dataSourceOriginal;
   dataSource;
@@ -161,12 +161,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       return numSelected === numRows;
     }
     return false
-  }
-
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   predistributionToggle() {
@@ -451,7 +445,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       }
       this.filterButtonModels.listItems = this.models;
     }
-    if (this.lastUsedFilter != 'colors') {
+    if (this.lastUsedFilter !== 'colors') {
       let filteredColors = entities['colors'] as unknown as string[];
       for (let index in this.colors) {
         this.colors[index].hide = filteredColors.includes(this.colors[index].value);
@@ -504,7 +498,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   private updateFilterSourceSizes(sizes: FiltersModel.Size[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("sizes").value;
+    let valueSize = this.form.get("sizes").value;
     this.sizes = sizes
       .filter((value, index, array) => array.findIndex(x => x.name === value.name) === index)
       .map(size => {
@@ -515,8 +509,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         return size;
       })
       ;
-    if (value && value.length) {
-      this.form.get("sizes").patchValue(value, { emitEvent: false });
+    if (valueSize && valueSize.length) {
+      this.form.get("sizes").patchValue(valueSize, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
