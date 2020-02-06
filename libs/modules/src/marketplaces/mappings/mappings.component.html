@@ -27,7 +27,7 @@
             </ng-container>
 
             <ng-container matColumnDef="avelonData">
-              <th mat-header-cell *matHeaderCellDef>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingBrands.data || !dataSourceMappingBrands.data.length) ? 'empty-table-border' : ''">
                 <span>MARCA ORIGEN</span>
                 <input matInput type="text" placeholder="Buscar..." [(ngModel)]="brandSearched" (keyup)="searchOnMappingList('brand')"/>
               </th>
@@ -35,7 +35,7 @@
             </ng-container>
 
             <ng-container matColumnDef="marketData">
-              <th mat-header-cell *matHeaderCellDef><span>MARCA DESTINO</span></th>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingBrands.data || !dataSourceMappingBrands.data.length) ? 'empty-table-border' : ''"><span>MARCA DESTINO</span></th>
               <td mat-cell *matCellDef="let element">
                 <span *ngIf="isRowShowing(element.avelonData.id, 'brands')">
                   <mat-select (selectionChange)="changeBrandSelect($event, element)" [value]="element.marketData.id">
@@ -51,7 +51,7 @@
         </div>
         <mat-paginator
          #paginatorBrands="matPaginator"
-          [ngClass]="dataSourceMappingBrands?.filteredData.length > 10 ? '' : 'hidden-paginator'"
+          [ngClass]="(dataSourceMappingBrands.data && dataSourceMappingBrands.data.length && dataSourceMappingBrands?.filteredData.length > 10) ? '' : 'hidden-paginator'"
           [length]="dataSourceMappingBrands?.filteredData.length"
           [pageSize]="10"
           (page)="setSelectorValues($event, 'brands')">
@@ -87,7 +87,7 @@
             </ng-container>
 
             <ng-container matColumnDef="avelonData">
-              <th mat-header-cell *matHeaderCellDef>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingFeatures.data || !dataSourceMappingFeatures.data.length) ? 'empty-table-border' : ''">
                 <span>CARACTERÍSTICA ORIGEN</span>
                 <input matInput type="text" placeholder="Buscar..." [(ngModel)]="featureSearched" (keyup)="searchOnMappingList('feature')"/>
               </th>
@@ -96,7 +96,7 @@
             </ng-container>
 
             <ng-container matColumnDef="marketData">
-              <th mat-header-cell *matHeaderCellDef><span>CARACTERÍSTICA DESTINO</span></th>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingFeatures.data || !dataSourceMappingFeatures.data.length) ? 'empty-table-border' : ''"><span>CARACTERÍSTICA DESTINO</span></th>
               <td mat-cell *matCellDef="let element">
                 <span *ngIf="isRowShowing(element.avelonData.id, 'features', element.avelonData.group)">
                    <mat-select (selectionChange)="changeFeatureSelect($event, element)" [value]="element.marketData.id">
@@ -112,7 +112,7 @@
         </div>
         <mat-paginator
           #paginatorFeatures="matPaginator"
-          [ngClass]="dataSourceMappingFeatures?.filteredData.length > 10 ? '' : 'hidden-paginator'"
+          [ngClass]="(dataSourceMappingFeatures.data && dataSourceMappingFeatures.data.length && dataSourceMappingFeatures?.filteredData.length > 10) ? '' : 'hidden-paginator'"
           [length]="dataSourceMappingFeatures?.filteredData.length"
           [pageSize]="10"
           (page)="setSelectorValues($event, 'features')">
@@ -147,7 +147,7 @@
             </ng-container>
 
             <ng-container matColumnDef="avelonData">
-              <th mat-header-cell *matHeaderCellDef>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingColors.data || !dataSourceMappingColors.data.length) ? 'empty-table-border' : ''">
                 <span>COLOR ORIGEN</span>
                 <input matInput type="text" placeholder="Buscar..." [(ngModel)]="colorSearched" (keyup)="searchOnMappingList('color')"/>
               </th>
@@ -155,7 +155,7 @@
             </ng-container>
 
             <ng-container matColumnDef="marketData">
-              <th mat-header-cell *matHeaderCellDef><span>COLOR DESTINO</span></th>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingColors.data || !dataSourceMappingColors.data.length) ? 'empty-table-border' : ''"><span>COLOR DESTINO</span></th>
               <td mat-cell *matCellDef="let element">
                 <span *ngIf="isRowShowing(element.avelonData.id, 'colors')">
                   <mat-select (selectionChange)="changeColorSelect($event, element)" [value]="element.marketData.id">
@@ -171,7 +171,7 @@
         </div>
         <mat-paginator
           #paginatorColors="matPaginator"
-          [ngClass]="dataSourceMappingColors?.filteredData.length > 10 ? '' : 'hidden-paginator'"
+          [ngClass]="(dataSourceMappingColors.data && dataSourceMappingColors.data.length && dataSourceMappingColors?.filteredData.length > 10) ? '' : 'hidden-paginator'"
           [length]="dataSourceMappingColors?.filteredData.length"
           [pageSize]="10"
           (page)="setSelectorValues($event, 'colors')">
@@ -206,7 +206,7 @@
             </ng-container>
 
             <ng-container matColumnDef="avelonData">
-              <th mat-header-cell *matHeaderCellDef>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingSizes.data || !dataSourceMappingSizes.data.length) ? 'empty-table-border' : ''">
                 <span>TALLA ORIGEN</span>
                 <input matInput type="text" placeholder="Buscar..." [(ngModel)]="sizeSearched" (keyup)="searchOnMappingList('size')"/>
               </th>
@@ -214,7 +214,7 @@
             </ng-container>
 
             <ng-container matColumnDef="marketData">
-              <th mat-header-cell *matHeaderCellDef><span>TALLA DESTINO</span></th>
+              <th mat-header-cell *matHeaderCellDef [ngClass]="(!dataSourceMappingSizes.data || !dataSourceMappingSizes.data.length) ? 'empty-table-border' : ''"><span>TALLA DESTINO</span></th>
               <td mat-cell *matCellDef="let element">
                 <span *ngIf="isRowShowing(element.avelonData.id, 'sizes')">
                   <mat-select (selectionChange)="changeSizeSelect($event, element)" [value]="element.marketData.id">
@@ -230,7 +230,7 @@
         </div>
         <mat-paginator
           #paginatorSizes="matPaginator"
-          [ngClass]="dataSourceMappingSizes?.filteredData.length > 10 ? '' : 'hidden-paginator'"
+          [ngClass]="(dataSourceMappingSizes.data && dataSourceMappingSizes.data.length && dataSourceMappingSizes?.filteredData.length > 10) ? '' : 'hidden-paginator'"
           [length]="dataSourceMappingSizes?.filteredData.length"
           [pageSize]="10"
           (page)="setSelectorValues($event, 'sizes')">

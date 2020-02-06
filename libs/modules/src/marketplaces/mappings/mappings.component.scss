@@ -126,9 +126,12 @@
                   border-right: 1px solid #c7c8ce;
                   vertical-align: top;
 
+                  &.empty-table-border {
+                    border-bottom: 1px solid #c7c8ce;;
+                  }
+
                   span {
                     background-color: #f5f4f6;
-                    //margin-bottom: 24px;
                     display: block;
                     padding: 9px;
                     text-align: center;
@@ -172,6 +175,10 @@
         & > mat-paginator {
           padding: 0;
           width: 50%;
+
+          &.hidden-paginator {
+            visibility: hidden;
+          }
         }
 
       }
@@ -197,10 +204,6 @@
 
           & > mat-paginator {
             width: 75%;
-
-            &.hidden-paginator {
-              visibility: hidden;
-            }
 
           }
 
