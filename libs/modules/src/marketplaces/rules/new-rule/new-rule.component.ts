@@ -3,6 +3,7 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import { ManageFilteredProductsComponent } from '../manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'suite-new-rule',
@@ -16,6 +17,44 @@ export class NewRuleComponent implements OnInit {
   @ViewChild('stockInput') stockInput;
   @ViewChild('reduceStockInput') reduceStockInput;
   @ViewChild('ruleNameWindow') ruleNameWindow;
+
+  private productReferences = [
+    { 
+      name: 'product1',
+      reference: 'reference1',
+      type: 'Incluyente'
+    },
+    { 
+      name: 'product2',
+      reference: 'reference2',
+      type: 'Excluyente'
+    },
+    { 
+      name: 'product1',
+      reference: 'reference1',
+      type: 'Incluyente'
+    },
+    { 
+      name: 'product2',
+      reference: 'reference2',
+      type: 'Excluyente'
+    },
+    { 
+      name: 'product1',
+      reference: 'reference1',
+      type: 'Incluyente'
+    },
+    { 
+      name: 'product2',
+      reference: 'reference2',
+      type: 'Excluyente'
+    }
+  ];
+  
+  @ViewChild('paginatorReferences') paginatorReferences: MatPaginator;
+
+  private displayedColumns: string[] = ['name', 'reference', 'type', 'delete'];
+  private dataSource  = new MatTableDataSource(this.productReferences);
 
   private mode;
   private rule;
@@ -64,8 +103,11 @@ export class NewRuleComponent implements OnInit {
     this.stockToReduceDescription = '';
     this.selectedCategories = [];
     this.ruleName = '';
-    this.referencesExceptions = [];
+    this.referencesExceptions = [1];
     this.idToEdit = this.navParams.get('id');
+
+    setTimeout(() => this.dataSource.paginator = this.paginatorReferences);
+
 
     this.categoryList = [
       {

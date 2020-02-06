@@ -12,15 +12,17 @@ export class ManageFilteredProductsComponent implements OnInit {
   productReferences = [
     { 
       name: 'product1',
-      reference: 'reference1'
+      reference: 'reference1',
+      type: 'Incluyente'
     },
     { 
       name: 'product2',
-      reference: 'reference2'
+      reference: 'reference2',
+      type: 'Excluyente'
     }
   ];
 
-  displayedColumns: string[] = ['name', 'reference', 'delete'];
+  displayedColumns: string[] = ['name', 'reference', 'type', 'delete'];
   dataSource  = new MatTableDataSource(this.productReferences);
 
   constructor(

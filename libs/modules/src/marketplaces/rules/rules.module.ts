@@ -9,6 +9,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NewRuleComponent } from './new-rule/new-rule.component';
 import {FormsModule} from "@angular/forms";
 import { ManageFilteredProductsComponent } from './manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ManageFilteredProductsComponent } from './manage-filtered-products/mana
     MatCheckboxModule,
     MatSelectModule,
     MatRadioModule,
-    FormsModule
+    FormsModule,
+    MatPaginatorModule
   ], 
   entryComponents: [NewRuleComponent, ManageFilteredProductsComponent]
 })

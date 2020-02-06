@@ -26,6 +26,19 @@ ion-header {
 
 ion-content {
 
+  table {
+    width: 100%;    
+
+    .delete {
+      font-weight: bold;
+      
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+  }
+
   .nr-modal-body-wrapper {
     width: 100%;
     height: 100%;
@@ -203,6 +216,7 @@ ion-content {
         flex-direction: column;
         margin-left: 50px;
         margin-bottom: 20px;
+        margin-top: 30px;
         & > div {
           font-size: 14px;
 
@@ -233,7 +247,7 @@ ion-content {
       }
 
       .nr-references-extra-wrapper {
-        height: 138px;
+        height: 45%;
         margin-bottom: 20px;
         margin-left: 50px;
         & > div {
