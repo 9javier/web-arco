@@ -62,14 +62,7 @@ export class ManageFilteredProductsComponent implements OnInit {
     this.modalController.dismiss(data);
   }
 
-  deleteProduct(product) {
-    for(let i = 0; i < this.productReferences.length; i++) {
-      if(this.productReferences[i].reference == product.reference) {
-        this.productReferences.splice(i, 1);
-      }
-    }
-
-    this.dataSource.data = this.productReferences;
+  accept() {
+    console.log('accept')
   }
-
 }
