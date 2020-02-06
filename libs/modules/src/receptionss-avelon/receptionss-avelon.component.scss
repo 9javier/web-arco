@@ -223,3 +223,17 @@
 
   }
 }
+
+.footer-products {
+   position: fixed;
+   width: 100%;
+   bottom: 0;
+   .horizontal-fab {
+     display: flex;
+     flex: 1;
+     flex-direction: row;
+     ion-fab-button {
+       margin-left: 16px;
+     }
+   }
+ }

@@ -37,7 +37,7 @@
         </suite-filter-button>
               <ion-label>Modelo</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="my-sticky-col info type"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="my-sticky-col info type"> {{element.model.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="size">
@@ -48,7 +48,7 @@
           </suite-filter-button>
               <ion-label>Tallas</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type"> {{element.size.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="store">
@@ -64,13 +64,13 @@
 
       <ng-container matColumnDef="color">
         <mat-header-cell *matHeaderCellDef class="info-product" mat-sort-header>
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonColors [title]="'Colores'" [listItems]="entities.colors"
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonColors [title]="'Color'" [listItems]="entities.colors"
               [isFiltering]="isFilteringColors != entities.colors.length"
               (applyFilters)="applyFilters($event, 'colors')">
             </suite-filter-button>
             <ion-label>Colores</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.color.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="brand">
@@ -81,18 +81,7 @@
         </suite-filter-button>
               <ion-label>Marca</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.warehouse.name}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="style">
-        <mat-header-cell  *matHeaderCellDef class="info-product" mat-sort-header>
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
-              [isFiltering]="isFilteringProviders != entities.colors.length"
-              (applyFilters)="applyFilters($event, 'providers')">
-            </suite-filter-button>
-            <ion-label>Lifestyle</ion-label>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.brand.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="provider">
@@ -103,41 +92,7 @@
             </suite-filter-button>
             <ion-label>Proveedores</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product reference"> {{element.warehouse.name}} </mat-cell>
-      </ng-container>
-
-      <!-- prueba -->
-      <ng-container matColumnDef="c1">
-        <mat-header-cell  *matHeaderCellDef class="info-product" mat-sort-header>
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
-              [isFiltering]="isFilteringProviders != entities.colors.length"
-              (applyFilters)="applyFilters($event, 'providers')">
-            </suite-filter-button>
-            <ion-label>Lifestyle</ion-label>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.warehouse.name}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="c2">
-        <mat-header-cell  *matHeaderCellDef class="info-product" mat-sort-header>
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
-              [isFiltering]="isFilteringProviders != entities.colors.length"
-              (applyFilters)="applyFilters($event, 'providers')">
-            </suite-filter-button>
-            <ion-label>Lifestyle</ion-label>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.warehouse.name}} </mat-cell>
-      </ng-container>
-
-      <ng-container matColumnDef="c3">
-        <mat-header-cell  *matHeaderCellDef class="info-product" mat-sort-header>
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
-              [isFiltering]="isFilteringProviders != entities.colors.length"
-              (applyFilters)="applyFilters($event, 'providers')">
-            </suite-filter-button>
-            <ion-label>Lifestyle</ion-label>
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product reference"> {{element.provider.name}} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
@@ -148,10 +103,9 @@
 
   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
 </ion-content>
-<ion-footer>
-  <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button matTooltip="Guardar Predistibuciones" matTooltipClass="tooltip" (click)="savePredistributions()">
-      <ion-icon name="save"></ion-icon>
-    </ion-fab-button>
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button matTooltip="Liberar" matTooltipClass="tooltip" (click)="savePredistributions()"><i class="material-icons">launch</i></ion-fab-button>
+    <ion-fab-button matTooltip="Enviar" matTooltipClass="tooltip" (click)="savePredistributions()"><i class="material-icons">send</i></ion-fab-button>
   </ion-fab>
 </ion-footer>

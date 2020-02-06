@@ -12,6 +12,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import { ReceptionsAvelonService,ReceptionAvelonModel,ProductsService } from '@suite/services';
 
 
 
@@ -22,7 +23,7 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  displayedColumns: string[] = ['select','model','size','store','color','brand','style','provider','c1','c2','c3'];
+  displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
   @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
@@ -78,7 +79,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     })
   });
   length: any;
-
+ 
 
   constructor(
     private predistributionsService: PredistributionsService,
@@ -281,22 +282,37 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     });
   }
 
-  async savePredistributions() {
-    let list = [];
-    this.dataSource.data.forEach(dataRow => {
-      list.push({
-        distribution: dataRow.distribution,
-        reserved: !dataRow.distribution,
-        modelId: dataRow.model.id,
-        sizeId: dataRow.size.id,
-        warehouseId: dataRow.warehouse.id
-      })
-    });
+   savePredistributions() {
+    let receptionList =[];
+      receptionList.length=0;
+    for(let i=0; i<this.selection.selected.length; i++){
+      let distribution =JSON.stringify(this.selection.selected[i].distribution);
+      let reserved =JSON.stringify(this.selection.selected[i].reserved);
+      let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
+      let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
+      let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
+        receptionList.push({
+        modelId: modelId,
+        sizeId: sizeId,
+        warehouseId: warehouseId
+      });
+
+      /**receptionList.push({
+        distribution: distribution,
+        reserved: reserved,
+        modelId: modelId,
+        sizeId: sizeId,
+        warehouseId: warehouseId
+      }); */
+    }
+
     // call to services ..
     this.intermediaryService.presentLoading();
     let This = this;
-    await this.predistributionsService.updateBlockReserved(list).subscribe(function(data){
+     this.predistributionsService.updateBlockReserved2(receptionList).subscribe(function(data){
       This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
+      receptionList.length=0;
+      console.log(receptionList.length);
       console.log('debug', data);
       // reload page
       This.initEntity()
@@ -305,13 +321,37 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       This.getList(This.form)
       This.listenChanges()
     }, (error) => {
+      receptionList.length=0;
       This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
       This.intermediaryService.dismissLoading();
     }, () => {
+      receptionList.length=0;
       This.intermediaryService.dismissLoading();
     });
   }
+
+  getDataReception(){
+     let receptionList =[];
+    for(let i=0; i<this.selection.selected.length; i++){
+      let distribution =JSON.stringify(this.selection.selected[i].distribution);
+      let reserved =JSON.stringify(this.selection.selected[i].reserved);
+      let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
+      let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
+      let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
+        receptionList.push({
+        distribution: distribution,
+        reserved: reserved,
+        modelId: modelId,
+        sizeId: sizeId,
+        warehouseId: warehouseId
+      });
+    }
+   // this.savePredistributions(receptionList);
+    
+  }
+
   getFilters() {
+
     this.predistributionsService.entities2().subscribe(entities => {
       this.updateFilterSourceBrands(entities.brands)
       this.updateFilterSourceModels(entities.models)
