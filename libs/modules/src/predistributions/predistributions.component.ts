@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['article', 'store', 'date_service', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['select', 'article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
   dataSourceOriginal;
   dataSource;
@@ -86,11 +86,11 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
-    this.initEntity();
-    this.initForm();
-    this.getFilters();
-    this.getList(this.form);
-    this.listenChanges();
+    this.initEntity()
+    this.initForm()
+    this.getFilters()
+    this.getList(this.form)
+    this.listenChanges()
   }
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -137,6 +137,14 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     }, 2000)
   }
 
+  getRangeLabel = (page: number, pageSize: number, length: number) =>  {
+    if (length === 0 || pageSize === 0) {
+      return `0 / ${length}`;
+    }
+    length = Math.max(length, 0);
+    return `${length} resultados / pág. ${page + 1} de ${Math.ceil(length / pageSize)}`;
+  };
+
   isAllSelectedPredistribution() {
     if (this.dataSource) {
       const numSelected = this.selectionPredistribution.selected.length;
@@ -153,6 +161,12 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       return numSelected === numRows;
     }
     return false
+  }
+
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   predistributionToggle() {
@@ -437,7 +451,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       }
       this.filterButtonModels.listItems = this.models;
     }
-    if (this.lastUsedFilter !== 'colors') {
+    if (this.lastUsedFilter != 'colors') {
       let filteredColors = entities['colors'] as unknown as string[];
       for (let index in this.colors) {
         this.colors[index].hide = filteredColors.includes(this.colors[index].value);
@@ -567,6 +581,70 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       this.form.get("colors").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+  private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("references").value;
+    this.references = references.map(reference => {
+      reference.id = <number>(<unknown>reference.reference);
+      reference.name = reference.reference;
+      reference.value = reference.name;
+      reference.checked = true;
+      reference.hide = false;
+      return reference;
+    });
+    if (value && value.length) {
+      this.form.get("references").patchValue(value, { emitEvent: false });
+    }
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+  // new
+  public changeStatusBlocked( event:MatCheckboxChange, row) {
+    this.dataSource.data.forEach(function(value){
+      if(value.expeditionLineId === row.expeditionLineId) {
+        value.distribution = event.checked;
+      }
+    });
+  }
+  public  isCheckedStatusBlocked( element) {
+    return element.distribution;
+  }
+  public changeStatusBlockedAll( event:MatCheckboxChange) {
+    this.dataSource.data.forEach(function(value){
+      value.distribution = event.checked;
+    });
+  }
+  public  isCheckedStatusBlockedAll() {
+    let result = true;
+    this.dataSource.data.forEach(function(value){
+      result = result && value.distribution;
+    });
+    return result;
+  }
+  // reserved
+  public changeStatusReserved(event:MatCheckboxChange, row) {
+    this.dataSource.data.forEach(function(value){
+      if(value.expeditionLineId === row.expeditionLineId) {
+        value.distribution = !event.checked;
+      }
+    });
+  }
+
+  public isCheckedStatusReserved( element) {
+    return !element.distribution;
+  }
+
+  public changeStatusReservedAll( event:MatCheckboxChange) {
+    this.dataSource.data.forEach(function(value){
+      value.distribution = !event.checked;
+    });
+  }
+  public  isCheckedStatusReservedAll() {
+    let result = true;
+    this.dataSource.data.forEach(function(value){
+      result = result && !value.distribution;
+    });
+    return result;
   }
 
   refreshPredistributions() {
