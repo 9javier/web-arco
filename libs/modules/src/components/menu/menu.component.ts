@@ -307,6 +307,12 @@ export class MenuComponent implements OnInit {
       url: '/predistributions',
       icon: 'archive'
     },
+    {
+      title: 'Recepciones2',
+      id: 'receptions',
+      url: '/receptions',
+      icon: 'archive'
+    },
   ];
 
   alPages: MenuItemList = [
