@@ -52,6 +52,11 @@ export class MappingsComponent implements OnInit {
   private showingFeatures;
   private showingSizes;
 
+  private brandSearched;
+  private colorSearched;
+  private featureSearched;
+  private sizeSearched;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -103,7 +108,7 @@ export class MappingsComponent implements OnInit {
         this.dataSourceBrands.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
         setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginatorBrands);
-        this.showingBrands = this.dataSourceBrands.slice(0, 10);
+        this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
       }
 
       if(results[1].length) {
@@ -117,7 +122,7 @@ export class MappingsComponent implements OnInit {
         this.dataSourceColors.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
         setTimeout(() => this.dataSourceMappingColors.paginator = this.paginatorColors);
-        this.showingColors = this.dataSourceColors.slice(0, 10);
+        this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
       }
 
       if(results[2].length) {
@@ -131,7 +136,7 @@ export class MappingsComponent implements OnInit {
         this.dataSourceSizes.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginatorSizes);
-        this.showingSizes = this.dataSourceSizes.slice(0, 10);
+        this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
       }
 
       if(results[3].length) {
@@ -145,7 +150,7 @@ export class MappingsComponent implements OnInit {
         this.dataSourceFeatures.sort((a, b) => (a.avelonData.group > b.avelonData.group) ? 1 : ((b.avelonData.group > a.avelonData.group) ? -1 : ((a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0))));
         this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
         setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginatorFeatures);
-        this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
+        this.showingFeatures = this.dataSourceMappingFeatures.data.slice(0, 10);
       }
 
       this.getEntities();
@@ -186,6 +191,9 @@ export class MappingsComponent implements OnInit {
 
             this.dataSourceColors = dataColor;
             this.dataSourceMappingColors.data = this.dataSourceColors;
+            if (this.colorSearched && this.colorSearched.trim() != '') {
+              this.searchOnMappingList('color');
+            }
             break;
           case 4:
             let dataSize = this.dataSourceSizes;
@@ -210,6 +218,9 @@ export class MappingsComponent implements OnInit {
 
             this.dataSourceSizes = dataSize;
             this.dataSourceMappingSizes.data = this.dataSourceSizes;
+            if (this.sizeSearched && this.sizeSearched.trim() != '') {
+              this.searchOnMappingList('size');
+            }
             break;
           case 5:
             let dataBrand = this.dataSourceBrands;
@@ -234,6 +245,9 @@ export class MappingsComponent implements OnInit {
 
             this.dataSourceBrands = dataBrand;
             this.dataSourceMappingBrands.data = this.dataSourceBrands;
+            if (this.brandSearched && this.brandSearched.trim() != '') {
+              this.searchOnMappingList('brand');
+            }
             break;
           case 8:
             let dataFeature = this.dataSourceFeatures;
@@ -258,6 +272,9 @@ export class MappingsComponent implements OnInit {
 
             this.dataSourceFeatures = dataFeature;
             this.dataSourceMappingFeatures.data = this.dataSourceFeatures;
+            if (this.featureSearched && this.featureSearched.trim() != '') {
+              this.searchOnMappingList('feature');
+            }
             break;
         }
       });
@@ -280,36 +297,39 @@ export class MappingsComponent implements OnInit {
 
   setSelectorValues(e, type) {
     let page = e.pageIndex;
+    console.log(page);
     switch (type) {
       case 'brands':
+        console.log('this.dataSourceMappingBrands.data', this.dataSourceMappingBrands.data);
         if (page == 0) {
-          this.showingBrands = this.dataSourceBrands.slice(0, 10);
+          this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
         } else {
-          this.showingBrands = this.dataSourceBrands.slice(page * 10, page * 10 + 10);
+          this.showingBrands = this.dataSourceMappingBrands.data.slice(page * 10, page * 10 + 10);
         }
+        console.log('this.showingBrands', this.showingBrands);
         break;
 
       case 'features':
         if (page == 0) {
-          this.showingFeatures = this.dataSourceFeatures.slice(0, 10);
+          this.showingFeatures = this.dataSourceMappingFeatures.data.slice(0, 10);
         } else {
-          this.showingFeatures = this.dataSourceFeatures.slice(page * 10, page * 10 + 10);
+          this.showingFeatures = this.dataSourceMappingFeatures.data.slice(page * 10, page * 10 + 10);
         }
         break;
 
       case 'colors':
         if (page == 0) {
-          this.showingColors = this.dataSourceColors.slice(0, 10);
+          this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
         } else {
-          this.showingColors = this.dataSourceColors.slice(page * 10, page * 10 + 10);
+          this.showingColors = this.dataSourceMappingColors.data.slice(page * 10, page * 10 + 10);
         }
         break;
 
       case 'sizes':
         if (page == 0) {
-          this.showingSizes = this.dataSourceSizes.slice(0, 10);
+          this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
         } else {
-          this.showingSizes = this.dataSourceSizes.slice(page * 10, page * 10 + 10);
+          this.showingSizes = this.dataSourceMappingSizes.data.slice(page * 10, page * 10 + 10);
         }
         break;
     }
@@ -344,133 +364,6 @@ export class MappingsComponent implements OnInit {
         this.enumTypes = data.enumItem;
       }
     })
-  }
-
-  saveMock() {
-    this.dataSourceMappingBrands.filteredData.forEach(item => {
-      this.brandsList.forEach(brand => {
-        if (item.id == brand.id) {
-          let brandMockToSave = {};
-          if (item.marketData.name != null) {
-            brandMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: brand.name,
-              typeMapped: 5,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          } else {
-            brandMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: null,
-              typeMapped: 5,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          }
-
-          this.marketplacesService.postMapDataRules(brandMockToSave).subscribe(data => {
-            console.log(data)
-          })
-        }
-      });
-    });
-
-    this.dataSourceMappingColors.filteredData.forEach(item => {
-      this.colorsList.forEach(color => {
-        if (item.id == color.id) {
-          let colorsMockToSave = {};
-          if (item.marketData.name != null) {
-            colorsMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: color.name,
-              typeMapped: 3,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          } else {
-            colorsMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: null,
-              typeMapped: 3,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          }
-
-          this.marketplacesService.postMapDataRules(colorsMockToSave).subscribe(data => {
-            console.log(data)
-          })
-        }
-      });
-    });
-
-    this.dataSourceMappingSizes.filteredData.forEach(item => {
-      this.sizesList.forEach(size => {
-        if (item.id == size.id) {
-          let sizesMockToSave = {};
-          if (item.marketData.name != null) {
-            sizesMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: size.name,
-              typeMapped: 4,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          } else {
-            sizesMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: null,
-              typeMapped: 4,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          }
-
-          this.marketplacesService.postMapDataRules(sizesMockToSave).subscribe(data => {
-            console.log(data)
-          })
-        }
-      });
-    });
-
-
-    this.dataSourceMappingFeatures.filteredData.forEach(item => {
-      this.featuresList.forEach(feature => {
-        if (item.id == feature.id) {
-          let featuresMockToSave = {};
-          if (item.marketData.name != null) {
-            featuresMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: feature.name,
-              typeMapped: 8,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          } else {
-            featuresMockToSave = {
-              id: item.id,
-              originDataId: item.avelonData.name,
-              marketDataId: null,
-              typeMapped: 5,
-              marketId: 1,
-              aditionalMapInfo: 'more info'
-            };
-          }
-
-          this.marketplacesService.postMapDataRules(featuresMockToSave).subscribe(data => {
-            console.log(data)
-          })
-        }
-      });
-    });
   }
 
   changeBrandSelect(e, element) {
@@ -508,14 +401,12 @@ export class MappingsComponent implements OnInit {
 
     if (update) {
       this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
-        console.log(data);
         this.updateDataSaved();
-      })
+      });
     } else {
       this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
-        console.log(data);
         this.updateDataSaved();
-      })
+      });
     }
   }
 
@@ -680,16 +571,163 @@ export class MappingsComponent implements OnInit {
     }
   }
 
-  /*brandsFilter(filterValue: string) {
-    this.dataSourceMappingBrands.filter = filterValue.trim().toLowerCase();
+  searchOnMappingList(type) {
+    switch (type) {
+      case 'brand':
+        if (this.brandSearched && this.brandSearched.trim() != '') {
+          let brands = [];
+          for (let brand of this.dataSourceBrands) {
+            if (brand.avelonData.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.brandSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+            !== -1) {
+              brands.push(brand);
+            }
+          }
+          this.dataSourceMappingBrands.data = brands;
+        } else {
+          this.dataSourceMappingBrands.data = this.dataSourceBrands.slice();
+        }
+
+        if (this.dataSourceMappingBrands.data.length > 10) {
+          let page = this.paginatorBrands.pageIndex;
+          if (page == 0) {
+            this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
+          } else {
+            this.showingBrands = this.dataSourceMappingBrands.data.slice(page * 10, page * 10 + 10);
+          }
+        } else {
+          this.showingBrands = this.dataSourceMappingBrands.data.slice();
+          this.paginatorBrands.firstPage();
+        }
+
+        break;
+      case 'feature':
+        if (this.featureSearched && this.featureSearched.trim() != '') {
+          let features = [];
+          for (let feature of this.dataSourceFeatures) {
+            if (feature.avelonData.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.featureSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+              !== -1) {
+              features.push(feature);
+            }
+          }
+          this.dataSourceMappingFeatures.data = features;
+        } else {
+          this.dataSourceMappingFeatures.data = this.dataSourceFeatures.slice();
+        }
+
+        if (this.dataSourceMappingFeatures.data.length > 10) {
+          let page = this.paginatorFeatures.pageIndex;
+          if (page == 0) {
+            this.showingFeatures = this.dataSourceMappingFeatures.data.slice(0, 10);
+          } else {
+            this.showingFeatures = this.dataSourceMappingFeatures.data.slice(page * 10, page * 10 + 10);
+          }
+        } else {
+          this.showingFeatures = this.dataSourceMappingFeatures.data.slice();
+          this.paginatorFeatures.firstPage();
+        }
+        break;
+      case 'color':
+        if (this.colorSearched && this.colorSearched.trim() != '') {
+          let colors = [];
+          for (let color of this.dataSourceColors) {
+            if (color.avelonData.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.colorSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+              !== -1) {
+              colors.push(color);
+            }
+          }
+          this.dataSourceMappingColors.data = colors;
+        } else {
+          this.dataSourceMappingColors.data = this.dataSourceColors.slice();
+        }
+
+        if (this.dataSourceMappingColors.data.length > 10) {
+          let page = this.paginatorColors.pageIndex;
+          if (page == 0) {
+            this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
+          } else {
+            this.showingColors = this.dataSourceMappingColors.data.slice(page * 10, page * 10 + 10);
+          }
+        } else {
+          this.showingColors = this.dataSourceMappingColors.data.slice();
+          this.paginatorColors.firstPage();
+        }
+        break;
+      case 'size':
+        if (this.sizeSearched && this.sizeSearched.trim() != '') {
+          let sizes = [];
+          for (let size of this.dataSourceSizes) {
+            if (size.avelonData.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.sizeSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+              !== -1) {
+              sizes.push(size);
+            }
+          }
+          this.dataSourceMappingSizes.data = sizes;
+        } else {
+          this.dataSourceMappingSizes.data = this.dataSourceSizes.slice();
+        }
+
+        if (this.dataSourceMappingSizes.data.length > 10) {
+          let page = this.paginatorSizes.pageIndex;
+          if (page == 0) {
+            this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
+          } else {
+            this.showingSizes = this.dataSourceMappingSizes.data.slice(page * 10, page * 10 + 10);
+          }
+        } else {
+          this.showingSizes = this.dataSourceMappingSizes.data.slice();
+          this.paginatorSizes.firstPage();
+        }
+        break;
+    }
   }
 
-  colorsFilter(filterValue: string) {
-    this.dataSourceMappingColors.filter = filterValue.trim().toLowerCase();
-  }
+  expandPanel(type) {
+    switch (type) {
+      case 'brand':
+        this.brandSearched = '';
+        this.dataSourceMappingBrands.data = this.dataSourceBrands.slice();
 
-  sizesFilter(filterValue: string) {
-    this.dataSourceMappingSizes.filter = filterValue.trim().toLowerCase();
-  }*/
+        if (this.dataSourceMappingBrands.data.length > 10) {
+          this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
+        } else {
+          this.showingBrands = this.dataSourceMappingBrands.data.slice();
+        }
+        this.paginatorBrands.firstPage();
+        break;
+      case 'feature':
+        this.featureSearched = '';
+        this.dataSourceMappingFeatures.data = this.dataSourceFeatures.slice();
+
+        if (this.dataSourceMappingFeatures.data.length > 10) {
+          this.showingFeatures = this.dataSourceMappingFeatures.data.slice(0, 10);
+        } else {
+          this.showingFeatures = this.dataSourceMappingFeatures.data.slice();
+        }
+        this.paginatorFeatures.firstPage();
+        break;
+      case 'color':
+        this.colorSearched = '';
+        this.dataSourceMappingColors.data = this.dataSourceColors.slice();
+
+        if (this.dataSourceMappingColors.data.length > 10) {
+          this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
+        } else {
+          this.showingColors = this.dataSourceMappingColors.data.slice();
+        }
+        this.paginatorColors.firstPage();
+        break;
+      case 'size':
+        this.sizeSearched = '';
+        this.dataSourceMappingSizes.data = this.dataSourceSizes.slice();
+
+        if (this.dataSourceMappingSizes.data.length > 10) {
+          this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
+        } else {
+          this.showingSizes = this.dataSourceMappingSizes.data.slice();
+        }
+        this.paginatorSizes.firstPage();
+        break;
+    }
+  }
 
 }
