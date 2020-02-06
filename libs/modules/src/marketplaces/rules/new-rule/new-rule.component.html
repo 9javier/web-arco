@@ -51,7 +51,7 @@
       <div class="nr-references-extra-wrapper">
         <div>
           Excepciones del filtro
-          <div class="add-reference-condition-button">Gestionar productos filtrados</div>
+          <div class="add-reference-condition-button" (click)="openManageFilteredProductsModal()">Gestionar productos filtrados</div>
         </div>
         <div>
           <span *ngIf="!referencesExceptions.length" class="no-exceptions">

@@ -2,6 +2,7 @@ import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import { ManageFilteredProductsComponent } from '../manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
 
 @Component({
   selector: 'suite-new-rule',
@@ -775,6 +776,17 @@ export class NewRuleComponent implements OnInit {
 
   deleteExceptionReference(exception) {
 
+  }
+
+  async openManageFilteredProductsModal(): Promise<void> {
+    let modal = await this.modalController.create({
+      component: ManageFilteredProductsComponent,
+      componentProps: {}
+    });
+
+    modal.onDidDismiss().then((data) => {})
+
+    modal.present();
   }
 
 }
