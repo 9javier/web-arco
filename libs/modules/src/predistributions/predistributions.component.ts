@@ -217,9 +217,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   async savePredistributions() {
     let list = [];
 
-    console.log(this.dataSource.data);
-    console.log(this.dataSourceOriginal.data);
-
     this.dataSource.data.forEach((dataRow, index) => {
       if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution ||
         this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
@@ -228,7 +225,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
           reserved: dataRow.reserved,
           modelId: dataRow.model.id,
           sizeId: dataRow.size.id,
-          warehouseId: dataRow.warehouse.id
+          warehouseId: dataRow.warehouse.id,
+          expeditionLineId: dataRow.expeditionLineId
         })
       }
     });
