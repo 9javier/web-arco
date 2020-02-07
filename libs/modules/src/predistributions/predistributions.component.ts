@@ -10,6 +10,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'suite-predistributions',
@@ -19,10 +20,10 @@ import { PaginatorComponent } from '../components/paginator/paginator.component'
 export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select', 'article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
-  dataSource
-  selection = new SelectionModel<Predistribution>(true, []);
+  dataSourceOriginal;
+  dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
 
@@ -81,13 +82,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private intermediaryService:IntermediaryService
 
-  ) {
-
-    // this.predistributionsService.getIndex().then((ELEMENT_DATA) => {
-    //   console.log(ELEMENT_DATA);
-    //   this.dataSource = new MatTableDataSource<Predistribution>(ELEMENT_DATA);
-    // });
-  }
+  ) {}
 
   ngOnInit(): void {
 
@@ -96,24 +91,12 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getFilters()
     this.getList(this.form)
     this.listenChanges()
-    // this.paginator._intl.itemsPerPageLabel = 'Ver';
-    // this.paginator._intl.getRangeLabel = this.getRangeLabel;
-    // this.dataSource.results.forEach(row => {
-    //   if (row.distribution) {
-    //     this.selectionPredistribution.select(row);
-    //   }
-
-    //   if (row.reserved) {
-    //     this.selectionReserved.select(row);
-    //   }
-    // });
   }
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
-      console.log(page);
       let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
@@ -162,53 +145,35 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     return `${length} resultados / pág. ${page + 1} de ${Math.ceil(length / pageSize)}`;
   };
 
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
   isAllSelectedPredistribution() {
-    let result = true;
-
-    this.dataSource.data.forEach(row => {
-      if (row && !row.distribution) {
-        result = false;
-      }
-    });
-
-    return result;
+    if (this.dataSource) {
+      const numSelected = this.selectionPredistribution.selected.length;
+      const numRows = this.dataSource.data.length;
+      return numSelected === numRows;
+    }
+    return false
   }
 
   isAllSelectedReserved() {
-    let result = true;
-    this.dataSource.data.forEach(row => {
-      if (row && !row.reserved) {
-        result = false;
-      }
-    });
-
-    return result;
-  }
-
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
+    if (this.dataSource) {
+      const numSelected = this.selectionReserved.selected.length;
+      const numRows = this.dataSource.data.length;
+      return numSelected === numRows;
+    }
+    return false
   }
 
   predistributionToggle() {
     if (this.isAllSelectedPredistribution()) {
       this.dataSource.data.forEach(row => {
         row.distribution = false;
-        this.selectionPredistribution.clear();
-      })
+      });
+
+      this.selectionPredistribution.clear()
     } else {
       this.dataSource.data.forEach(row => {
         row.distribution = true;
         this.selectionPredistribution.select(row);
-        row.reserved = false;
-        this.selectionReserved.clear();
       });
     }
   }
@@ -217,114 +182,82 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     if (this.isAllSelectedReserved()) {
       this.dataSource.data.forEach(row => {
         row.reserved = false;
-        this.selectionReserved.clear();
       });
+      this.selectionReserved.clear();
     } else {
       this.dataSource.data.forEach(row => {
         row.reserved = true;
         this.selectionReserved.select(row);
-        row.distribution = false;
-        this.selectionPredistribution.clear();
       });
     }
-  }
-
-  checkboxLabel(row?): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
 
   checkboxLabelPredistribution(row?): string {
     if (!row) {
       return `${this.isAllSelectedPredistribution() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selectionPredistribution.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+    return `${this.selectionPredistribution.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
-  checkboxLabelReserved(row?: Predistribution): string {
+  checkboxLabelReserved(row?): string {
     if (!row) {
       return `${this.isAllSelectedReserved() ? 'select' : 'deselect'} all`;
     }
-    return `${this.selectionReserved.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
+    return `${this.selectionReserved.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
 
-  changePredistribution(row: Predistribution) {
-    if (this.selectionPredistribution.isSelected(row)) {
-      this.selectionReserved.deselect(row);
-    }
-
-    this.dataSource.data.forEach(dataRow => {
-      if (dataRow && dataRow.id === row.id) {
-        if (dataRow.distribution) {
-          dataRow.distribution = false;
-        } else {
-          dataRow.distribution = true;
-          dataRow.reserved = false;
-        }
-      }
-    });
+  changePredistribution(row, position: number) {
+    this.dataSource.data[position].distribution = !this.dataSource.data[position].distribution;
   }
 
-  changeReserved(row: Predistribution) {
-    if (this.selectionReserved.isSelected(row)) {
-      this.selectionPredistribution.deselect(row);
-    }
-
-    this.dataSource.data.forEach(dataRow => {
-      if (dataRow && dataRow.id === row.id) {
-        if (dataRow.reserved) {
-          dataRow.reserved = false;
-        } else {
-          dataRow.reserved = true;
-          dataRow.distribution = false;
-        }
-      }
-    });
+  changeReserved(row, position: number) {
+    this.dataSource.data[position].reserved = !this.dataSource.data[position].reserved;
   }
 
   async savePredistributions() {
     let list = [];
-    this.dataSource.data.forEach(dataRow => {
-      list.push({
-        distribution: dataRow.distribution,
-        reserved: !dataRow.distribution,
-        modelId: dataRow.model.id,
-        sizeId: dataRow.size.id,
-        warehouseId: dataRow.warehouse.id
-      })
+
+    this.dataSource.data.forEach((dataRow, index) => {
+      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution ||
+        this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
+        list.push({
+          distribution: dataRow.distribution,
+          reserved: dataRow.reserved,
+          modelId: dataRow.model.id,
+          sizeId: dataRow.size.id,
+          warehouseId: dataRow.warehouse.id,
+          expeditionLineId: dataRow.expeditionLineId
+        })
+      }
     });
-    // call to services ..
+
+    console.log(list);
+
     this.intermediaryService.presentLoading();
-    let This = this;
-    await this.predistributionsService.updateBlockReserved(list).subscribe(function(data){
-      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-      console.log('debug', data);
-      // reload page
-      This.initEntity()
-      This.initForm()
-      This.getFilters()
-      This.getList(This.form)
-      This.listenChanges()
+
+    await this.predistributionsService.updateBlockReserved(list).subscribe((data) => {
+      this.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
+      this.initEntity();
+      this.initForm();
+      this.getFilters();
+      this.getList(this.form);
+      this.listenChanges();
     }, (error) => {
-      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-      This.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError("Error Actualizado predistribuciones");
+      this.intermediaryService.dismissLoading();
     }, () => {
-      This.intermediaryService.dismissLoading();
+      this.intermediaryService.dismissLoading();
     });
   }
-
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
-      console.log(entities)
-      this.updateFilterSourceBrands(entities.brands)
-      this.updateFilterSourceModels(entities.models)
-      this.updateFilterSourceSizes(entities.sizes)
-      this.updateFilterSourceColors(entities.colors)
-      this.updateFilterSourceWarehouses(entities.destinyShop)
-      this.updateFilterSourceProviders(entities.provider)
-      this.reduceFilters(entities)
+      this.updateFilterSourceBrands(entities.brands);
+      this.updateFilterSourceModels(entities.models);
+      this.updateFilterSourceSizes(entities.sizes);
+      this.updateFilterSourceColors(entities.colors);
+      this.updateFilterSourceWarehouses(entities.destinyShop);
+      this.updateFilterSourceProviders(entities.provider);
+      this.reduceFilters(entities);
       setTimeout(() => {
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
@@ -335,17 +268,18 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
 
   }
   async getList(form?: FormGroup){
-    await this.intermediaryService.presentLoading()
+    await this.intermediaryService.presentLoading();
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
-        console.log(resp);
-        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
+        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
         const paginator = resp.pagination;
-        console.log(paginator);
 
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
+        this.selectionPredistribution.clear();
+        this.selectionReserved.clear();
+
         this.dataSource.data.forEach(row => {
         if (row.distribution) {
           this.selectionPredistribution.select(row);
@@ -353,6 +287,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         if (row.reserved) {
            this.selectionReserved.select(row);
         }
+
+        this.dataSourceOriginal = _.cloneDeep(this.dataSource)
        });
       },
       async err => {
@@ -387,16 +323,11 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       case 'models':
         let modelsFiltered: string[] = [];
         for (let model of filters) {
-          console.log(model);
 
           if (model.checked) modelsFiltered.push(model.id);
         }
-        console.log(modelsFiltered);
-          console.log(modelsFiltered.length, '>=' ,this.models.length);
 
         if (modelsFiltered.length >= this.models.length) {
-          console.log('entre en model');
-
           this.form.value.models = [];
           this.isFilteringModels = this.models.length;
         } else {
@@ -408,7 +339,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
             this.isFilteringModels = this.models.length;
           }
         }
-        console.log(this.form.value);
 
         break;
       case 'colors':
@@ -452,7 +382,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         for (let warehouse of filters) {
           if (warehouse.checked) warehousesFiltered.push(warehouse.id);
         }
-        console.log(warehousesFiltered.length, '>=' ,this.warehouses.length);
 
         if (warehousesFiltered.length >= this.warehouses.length) {
           this.form.value.warehouses = [];
@@ -507,13 +436,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getList(this.form);
   }
   private reduceFilters(entities){
-    // if (this.lastUsedFilter != 'references') {
-    //   let filteredReferences = entities['references'] as unknown as string[];
-    //   for (let index in this.references) {
-    //     this.references[index].hide = !filteredReferences.includes(this.references[index].value);
-    //   }
-    //   this.filterButtonReferences.listItems = this.references;
-    // }
     if (this.lastUsedFilter !== 'models') {
       let filteredModels = entities['models'] as unknown as string[];
       for (let index in this.models) {
@@ -566,7 +488,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       brand.hide = false;
       return brand;
     });
-    console.log(this.brands);
 
     if (value && value.length) {
       this.form.get("brands").patchValue(value, { emitEvent: false });
@@ -575,7 +496,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   private updateFilterSourceSizes(sizes: FiltersModel.Size[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("sizes").value;
+    let valueSize = this.form.get("sizes").value;
     this.sizes = sizes
       .filter((value, index, array) => array.findIndex(x => x.name === value.name) === index)
       .map(size => {
@@ -586,8 +507,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         return size;
       })
       ;
-    if (value && value.length) {
-      this.form.get("sizes").patchValue(value, { emitEvent: false });
+    if (valueSize && valueSize.length) {
+      this.form.get("sizes").patchValue(valueSize, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
@@ -617,7 +538,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       model.hide = false;
       return model;
     });
-    console.log(this.models);
 
     if (value && value.length) {
       this.form.get("models").patchValue(value, { emitEvent: false });
@@ -717,5 +637,13 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       result = result && !value.distribution;
     });
     return result;
+  }
+
+  refreshPredistributions() {
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
   }
 }
