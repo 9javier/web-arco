@@ -30,23 +30,23 @@ export class NewRuleComponent implements OnInit {
       type: 'Excluyente'
     },
     { 
-      name: 'product1',
-      reference: 'reference1',
+      name: 'product3',
+      reference: 'reference3',
       type: 'Incluyente'
     },
     { 
-      name: 'product2',
-      reference: 'reference2',
+      name: 'product4',
+      reference: 'reference4',
       type: 'Excluyente'
     },
     { 
-      name: 'product1',
-      reference: 'reference1',
+      name: 'product5',
+      reference: 'reference5',
       type: 'Incluyente'
     },
     { 
-      name: 'product2',
-      reference: 'reference2',
+      name: 'product6',
+      reference: 'reference6',
       type: 'Excluyente'
     }
   ];
@@ -829,6 +829,16 @@ export class NewRuleComponent implements OnInit {
     modal.onDidDismiss().then((data) => {})
 
     modal.present();
+  }
+
+  deleteProduct(product) {
+    console.log(product)
+    for(let i = 0; i < this.productReferences.length; i++) {
+      if(this.productReferences[i].reference == product.reference) {
+         this.productReferences.splice(i, 1);
+        }
+      }
+    this.dataSource.data = this.productReferences;
   }
 
 }

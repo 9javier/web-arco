@@ -45,9 +45,12 @@ export class ManageFilteredProductsComponent implements OnInit {
   @ViewChild('paginatorReferencesNotFilter') paginatorReferencesNotFilter: MatPaginator;
   @ViewChild('paginatorReferencesFilter') paginatorReferencesFilter: MatPaginator;
 
-  displayedColumns: string[] = ['name', 'reference'];
-  dataSourceReferencesFilter  = new MatTableDataSource(this.productReferences);
-  dataSourceReferencesNotFilter  = new MatTableDataSource(this.productReferences);
+  private displayedColumns: string[] = ['name', 'reference'];
+  private dataSourceReferencesFilter  = new MatTableDataSource(this.productReferences);
+  private dataSourceReferencesNotFilter  = new MatTableDataSource(this.productReferences);
+  private changeBackground: boolean = false;
+
+  private exceptionsToReturn = [];
 
   constructor(
     private modalController: ModalController
@@ -62,7 +65,14 @@ export class ManageFilteredProductsComponent implements OnInit {
     this.modalController.dismiss(data);
   }
 
+  getRow(row) {
+    console.log(row)
+    this.exceptionsToReturn.push(row);
+    this.changeBackground = !this.changeBackground;
+  }
+
   accept() {
     console.log('accept')
+    console.log(this.exceptionsToReturn)
   }
 }
