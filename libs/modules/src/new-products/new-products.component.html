@@ -182,19 +182,17 @@
               <mat-expansion-panel-header class="custom-panel-header">
                 <ion-grid>
                   <ion-row class="custom-panel-header">
-                                        <ion-col size="1" class="check-print">
-                                          <ion-checkbox
-                                            [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
-                                            (click)="$event.stopPropagation();itemSelected(price.id);">
-                                          </ion-checkbox>
-                                        </ion-col>
-                    <ion-col size="10" class="content-prices-header">
+                    <ion-col size="1" class="check-print">
+                      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                        (click)="$event.stopPropagation();itemSelected(price.id);">
+                      </ion-checkbox>
+                    </ion-col>
+                    <ion-col size="11" class="content-prices-header">
                       <mat-panel-title>
                         <ion-row class="row-title-prices">
                           <ion-col class="product" size="8">
                             {{price?.model?.reference}} - {{ price?.model?.brand?.name }}
                           </ion-col>
-
                         </ion-row>
                       </mat-panel-title>
                       <mat-panel-description class="panel-description">
