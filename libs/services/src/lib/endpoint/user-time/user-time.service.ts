@@ -14,6 +14,7 @@ export class UserTimeService {
   private registerTimeUrl:string = environment.apiBase+"/users-register-time/";
   private userRegisterTimeUrl:string = environment.apiBase+"/users-register-time/user";
   private getListUsersRegisterUrl: string = environment.apiBase + "/users-register-time/";
+  private getNewUserListUrl: string = environment.apiBase + '/users-register-time/users-pickings';
 
   constructor(
     private http:HttpClient
@@ -44,6 +45,14 @@ export class UserTimeService {
    */
   getListUsersRegister():Observable<UserTimeModel.ListUsersRegisterTimeActiveInactive>{
     return this.http.get<UserTimeModel.ListUsersRegisterResponse>(this.getListUsersRegisterUrl).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+  /**
+   * List employees and if they are active or inactive
+   */
+  getNewListUsersRegister():Observable<UserTimeModel.ListUsersRegisterTimeActiveInactive>{
+    return this.http.get<UserTimeModel.ListUsersRegisterResponse>(this.getNewUserListUrl).pipe(map(response=>{
       return response.data;
     }));
   }
