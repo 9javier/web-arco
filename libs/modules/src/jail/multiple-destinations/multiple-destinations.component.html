@@ -20,7 +20,7 @@
         <mat-label>Asignar destino</mat-label>
         <mat-select (selectionChange)="selectDestiny($event,packingWoDestiny)">
           <mat-option *ngFor="let warehouse of getWarehousesForPacking(packingWoDestiny.idWarehouse)" [value]="warehouse">
-            {{warehouse.name}}
+            {{warehouse.reference}}-{{warehouse.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
