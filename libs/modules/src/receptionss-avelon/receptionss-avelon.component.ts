@@ -119,10 +119,11 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
 
   async presentModal() {
     const users = await this.listUserTime();
+    console.log(users);
     const modal = await this.modalController.create({
       component: ModalUserComponent,
       componentProps: {
-        users:users.usersInactive
+        users
       }
     });
     return await modal.present();
@@ -131,7 +132,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   private async listUserTime(){
     // let x:UserTimeModel.ListUsersRegisterTimeActiveInactive = null;
     // let users = null;
-    return await this.userTimeService.getListUsersRegister().toPromise();
+    return await this.userTimeService.getNewListUsersRegister().toPromise();
 
   }
 

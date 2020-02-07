@@ -14,12 +14,20 @@
     <ion-radio-group>
 
       <ion-list-header>
-        <ion-label>Lista Usuarios con Picking</ion-label>
+<!--        <ion-label>Lista Usuarios con Picking</ion-label>-->
+        <ion-grid>
+          <ion-row>
+            <ion-col size="1"></ion-col>
+            <ion-col align-self-start>Nombre</ion-col>
+            <ion-col align-self-end>Lista Zapatos</ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-list-header>
 
       <ion-item  *ngFor="let user of users" >
-        <ion-label slot="end">{{user.list}}</ion-label>
-        <ion-label>{{user.name}}</ion-label>
+        <ion-label slot="end">{{user.listaZapatos}}</ion-label>
+        <ion-label >{{user.name}}</ion-label>
+<!--        <ion-label>{{user.listaZapatos}}</ion-label>-->
         <ion-radio slot="start" [value]="user.id" (click)="valorId(user)"  ></ion-radio>
       </ion-item>
     </ion-radio-group>
@@ -27,12 +35,13 @@
   </ion-list>
 
 
+
+
 </ion-contect>
 <ion-footer>
   <ion-toolbar>
     <ion-button [disabled]="!id_user" slot="end" (click)="enviar()" type="button" color="dark">Enviar</ion-button>
-<!--    <ion-button slot="end" color="light" (click)="close()">Cancelar</ion-button>-->
-<!--    <ion-button slot="end" color="primary" (click)="submit()">Guardar</ion-button>-->
+
   </ion-toolbar>
 </ion-footer>
 
