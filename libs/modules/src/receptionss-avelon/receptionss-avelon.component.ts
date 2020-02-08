@@ -19,8 +19,7 @@ import {
   UserTimeModel
 } from '@suite/services';
 import {ModalUserComponent} from "../components/modal-user/modal-user.component";
-
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'suite-receptionss-avelon',
@@ -94,6 +93,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
     private userTimeService: UserTimeService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -119,15 +119,90 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
 
   async presentModal() {
     const users = await this.listUserTime();
-    console.log(users);
+   let ListReceptions = this.getListReceptions();
+    console.log(ListReceptions);
     const modal = await this.modalController.create({
       component: ModalUserComponent,
       componentProps: {
-        users
+        users,
+        ListReceptions
       }
     });
+    modal.onDidDismiss().then((p) => {
+      this.router.navigate(['/receptions']);
+    });
+
+
     return await modal.present();
   }
+
+  close():void{
+  }
+
+ async release(){
+  this.intermediaryService.presentLoading();
+
+   let ListReceptions = this.getListReceptions();
+
+   let _data: Array<PredistributionModel.BlockReservedRequest> = ListReceptions;
+   _data = _data.map(item => {
+     return {
+       reserved: false,
+       distribution: false,
+       modelId: item.modelId,
+       warehouseId: item.warehouseId,
+       sizeId: item.sizeId,
+       userId: 0
+     };
+
+   });
+   let This = this;
+   await this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
+     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
+     This.intermediaryService.dismissLoading();
+     // reload page
+     //this.close();
+     This.initEntity();
+     This.initForm();
+     This.getFilters();
+     This.getList(This.form);
+     This.listenChanges();
+   }, (error) => {
+     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
+     This.intermediaryService.dismissLoading();
+   }, () => {
+     This.intermediaryService.dismissLoading();
+   });
+  }
+
+  getListReceptions(){
+    let receptionList =[];
+        receptionList.length=0;
+       for(let i=0; i<this.selection.selected.length; i++){
+         let distribution =JSON.stringify(this.selection.selected[i].distribution);
+         let reserved =JSON.stringify(this.selection.selected[i].reserved);
+         let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
+         let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
+         let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
+           receptionList.push({
+          modelId: modelId,
+           sizeId: sizeId,
+           warehouseId: warehouseId
+         });
+    
+    
+         /**receptionList.push({
+           distribution: distribution,
+         reserved: reserved,
+           modelId: modelId,
+           sizeId: sizeId,
+           warehouseId: warehouseId
+         }); */
+       }
+
+       return receptionList;
+  }
+
 
   private async listUserTime(){
     // let x:UserTimeModel.ListUsersRegisterTimeActiveInactive = null;
@@ -340,7 +415,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   //   }
   //
   //   // call to services ..
-  //   this.intermediaryService.presentLoading();
+  //   this..presenintermediaryServicetLoading();
   //   let This = this;
   //    this.predistributionsService.updateBlockReserved2(receptionList).subscribe(function(data){
   //     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
