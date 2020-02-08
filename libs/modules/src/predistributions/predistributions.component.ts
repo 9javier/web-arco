@@ -221,8 +221,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution ||
         this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
         list.push({
-          distribution: dataRow.distribution,
-          reserved: dataRow.reserved,
+          distribution: !!dataRow.distribution,
+          reserved: !!dataRow.reserved,
           modelId: dataRow.model.id,
           sizeId: dataRow.size.id,
           warehouseId: dataRow.warehouse.id,

@@ -1,7 +1,6 @@
-import { AlertController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import { ModalController} from '@ionic/angular';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import {  MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
 import Predistribution = PredistributionModel.Predistribution;
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
@@ -12,7 +11,14 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { ReceptionsAvelonService,ReceptionAvelonModel,ProductsService } from '@suite/services';
+import {
+  ReceptionsAvelonService,
+  ReceptionAvelonModel,
+  ProductsService,
+  UserTimeService,
+  UserTimeModel
+} from '@suite/services';
+import {ModalUserComponent} from "../components/modal-user/modal-user.component";
 
 
 
@@ -31,6 +37,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
 
+  users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
   @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
@@ -79,21 +86,24 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     })
   });
   length: any;
- 
+
 
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
-    private intermediaryService:IntermediaryService
+    private intermediaryService:IntermediaryService,
+    private modalController: ModalController,
+    private userTimeService: UserTimeService,
   ) {}
 
   ngOnInit(): void {
 
-    this.initEntity()
-    this.initForm()
-    this.getFilters()
-    this.getList(this.form)
-    this.listenChanges()
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
+    this.getList(this.form);
+    this.listenChanges();
+
     // this.paginator._intl.itemsPerPageLabel = 'Ver';
     // this.paginator._intl.getRangeLabel = this.getRangeLabel;
     // this.dataSource.results.forEach(row => {
@@ -106,13 +116,33 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     //   }
     // });
   }
+
+  async presentModal() {
+    const users = await this.listUserTime();
+    console.log(users);
+    const modal = await this.modalController.create({
+      component: ModalUserComponent,
+      componentProps: {
+        users
+      }
+    });
+    return await modal.present();
+  }
+
+  private async listUserTime(){
+    // let x:UserTimeModel.ListUsersRegisterTimeActiveInactive = null;
+    // let users = null;
+    return await this.userTimeService.getNewListUsersRegister().toPromise();
+
+  }
+
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
     /**detect changes in the paginator */
     this.paginator.page.subscribe(page => {
       /**true if only change the number of results */
       console.log(page);
-      let flag = previousPageSize == page.pageSize;
+      let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
       this.form.get("pagination").patchValue({
         limit: page.pageSize,
@@ -282,54 +312,60 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     });
   }
 
-   savePredistributions() {
-    let receptionList =[];
-      receptionList.length=0;
-    for(let i=0; i<this.selection.selected.length; i++){
-      let distribution =JSON.stringify(this.selection.selected[i].distribution);
-      let reserved =JSON.stringify(this.selection.selected[i].reserved);
-      let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
-      let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
-      let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
-        receptionList.push({
-        modelId: modelId,
-        sizeId: sizeId,
-        warehouseId: warehouseId
-      });
+  //  savePredistributions() {
+  //
+  //
+  //   let receptionList =[];
+  //     receptionList.length=0;
+  //   for(let i=0; i<this.selection.selected.length; i++){
+  //     let distribution =JSON.stringify(this.selection.selected[i].distribution);
+  //     let reserved =JSON.stringify(this.selection.selected[i].reserved);
+  //     let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
+  //     let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
+  //     let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
+  //       receptionList.push({
+  //       modelId: modelId,
+  //       sizeId: sizeId,
+  //       warehouseId: warehouseId
+  //     });
+  //
+  //
+  //     /**receptionList.push({
+  //       distribution: distribution,
+  //       reserved: reserved,
+  //       modelId: modelId,
+  //       sizeId: sizeId,
+  //       warehouseId: warehouseId
+  //     }); */
+  //   }
+  //
+  //   // call to services ..
+  //   this.intermediaryService.presentLoading();
+  //   let This = this;
+  //    this.predistributionsService.updateBlockReserved2(receptionList).subscribe(function(data){
+  //     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
+  //     receptionList.length=0;
+  //     console.log(receptionList.length);
+  //     console.log('debug', data);
+  //     // reload page
+  //     This.initEntity()
+  //     This.initForm()
+  //     This.getFilters()
+  //     This.getList(This.form)
+  //     This.listenChanges()
+  //   }, (error) => {
+  //     receptionList.length=0;
+  //     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
+  //     This.intermediaryService.dismissLoading();
+  //   }, () => {
+  //     receptionList.length=0;
+  //     This.intermediaryService.dismissLoading();
+  //   });
+  // }
 
-      /**receptionList.push({
-        distribution: distribution,
-        reserved: reserved,
-        modelId: modelId,
-        sizeId: sizeId,
-        warehouseId: warehouseId
-      }); */
-    }
-
-    // call to services ..
-    this.intermediaryService.presentLoading();
-    let This = this;
-     this.predistributionsService.updateBlockReserved2(receptionList).subscribe(function(data){
-      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-      receptionList.length=0;
-      console.log(receptionList.length);
-      console.log('debug', data);
-      // reload page
-      This.initEntity()
-      This.initForm()
-      This.getFilters()
-      This.getList(This.form)
-      This.listenChanges()
-    }, (error) => {
-      receptionList.length=0;
-      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-      This.intermediaryService.dismissLoading();
-    }, () => {
-      receptionList.length=0;
-      This.intermediaryService.dismissLoading();
-    });
+  savePredistributions(){
+    this.presentModal();
   }
-
   getDataReception(){
      let receptionList =[];
     for(let i=0; i<this.selection.selected.length; i++){
@@ -347,7 +383,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       });
     }
    // this.savePredistributions(receptionList);
-    
+
   }
 
   getFilters() {
@@ -549,42 +585,42 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     //   }
     //   this.filterButtonReferences.listItems = this.references;
     // }
-    if (this.lastUsedFilter != 'models') {
+    if (this.lastUsedFilter !== 'models') {
       let filteredModels = entities['models'] as unknown as string[];
       for (let index in this.models) {
         this.models[index].hide = filteredModels.includes(this.models[index].value);
       }
       this.filterButtonModels.listItems = this.models;
     }
-    if (this.lastUsedFilter != 'colors') {
+    if (this.lastUsedFilter !== 'colors') {
       let filteredColors = entities['colors'] as unknown as string[];
       for (let index in this.colors) {
         this.colors[index].hide = filteredColors.includes(this.colors[index].value);
       }
       this.filterButtonColors.listItems = this.colors;
     }
-    if (this.lastUsedFilter != 'sizes') {
+    if (this.lastUsedFilter !== 'sizes') {
       let filteredSizes = entities['sizes'] as unknown as string[];
       for (let index in this.sizes) {
         this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
       }
       this.filterButtonSizes.listItems = this.sizes;
     }
-    if (this.lastUsedFilter != 'warehouses') {
+    if (this.lastUsedFilter !== 'warehouses') {
       let filteredWarehouses = entities['destinyShop'] as unknown as (string | number)[];
       for (let index in this.warehouses) {
         this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
       }
       this.filterButtonWarehouses.listItems = this.warehouses;
     }
-    if (this.lastUsedFilter != 'brands') {
+    if (this.lastUsedFilter !== 'brands') {
       let filteredBrands = entities['brands'] as unknown as string[];
       for (let index in this.brands) {
         this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
       }
       this.filterButtonBrands.listItems = this.brands;
     }
-    if (this.lastUsedFilter != 'providers') {
+    if (this.lastUsedFilter !== 'providers') {
       let filteredProviders = entities['provider'] as unknown as string[];
       for (let index in this.providers) {
         this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
@@ -612,15 +648,14 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.pauseListenFormChange = true;
     let value = this.form.get("sizes").value;
     this.sizes = sizes
-      .filter((value, index, array) => array.findIndex(x => x.name == value.name) === index)
+      .filter((value, index, array) => array.findIndex(x => x.name === value.name) === index)
       .map(size => {
         size.id = <number>(<unknown>size.id);
         size.value = size.name;
         size.checked = true;
         size.hide = false;
         return size;
-      })
-      ;
+      });
     if (value && value.length) {
       this.form.get("sizes").patchValue(value, { emitEvent: false });
     }
@@ -708,7 +743,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   // new
   public changeStatusBlocked( event:MatCheckboxChange, row) {
     this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId == row.expeditionLineId) {
+      if(value.expeditionLineId === row.expeditionLineId) {
         value.distribution = event.checked;
       }
     });
@@ -731,7 +766,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   // reserved
   public changeStatusReserved(event:MatCheckboxChange, row) {
     this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId == row.expeditionLineId) {
+      if(value.expeditionLineId === row.expeditionLineId) {
         value.distribution = !event.checked;
       }
     });
