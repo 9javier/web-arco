@@ -65,7 +65,8 @@ export class ManageFilteredProductsComponent implements OnInit {
     this.modalController.dismiss(data);
   }
 
-  getRow(row) {
+  getRow(e, row) {
+    console.log(e.target.outerHTML)
     console.log(row)
     this.exceptionsToReturn.push(row);
     this.changeBackground = !this.changeBackground;

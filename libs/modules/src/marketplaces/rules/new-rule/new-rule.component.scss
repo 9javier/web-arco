@@ -39,6 +39,21 @@ ion-content {
 
   }
 
+  .iconSearch {
+    margin-top: 30px;
+  }
+
+  .inputSearch {
+    margin-bottom: 20px;
+
+    input {
+      border: none;
+      margin-left: 10px;
+      width: 100%;
+      padding: 10px;
+    }
+  }
+
   .nr-modal-body-wrapper {
     width: 100%;
     height: 100%;
@@ -216,7 +231,6 @@ ion-content {
         flex-direction: column;
         margin-left: 50px;
         margin-bottom: 20px;
-        margin-top: 30px;
         & > div {
           font-size: 14px;
 
@@ -250,6 +264,7 @@ ion-content {
         height: 45%;
         margin-bottom: 20px;
         margin-left: 50px;
+        margin-top: 65px;
         & > div {
           &:first-of-type {
             display: flex;

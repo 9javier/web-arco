@@ -15,7 +15,7 @@
     <div class="nr-modal-content">
       <div class="nr-filter-selection-wrapper">
         <div class="rule-filter-category" *ngIf="ruleFilterType == 'categories' || ruleFilterType == 'enabling'">
-          <div>
+          <div class="iconSearch">
             <i class="material-icons">search</i>
           </div>
           <div *ngIf="selectedCategoryGroupFilterObject">
@@ -25,6 +25,9 @@
                   {{item.name}}
                 </mat-option>
               </mat-select>
+            </div>
+            <div class="inputSearch">
+              <input matInput type="text" placeholder="Buscar..."/>
             </div>
             <div *ngIf="selectedCategoryGroupFilter != 18">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
@@ -40,7 +43,7 @@
                 <div *ngIf="!addPriceRangeButtonActivation() || priceRangeIsInFilter()" class="disabled-range-price-button">Aplicar</div>
                 <div *ngIf="priceRangeIsInFilter()" (click)="deletePriceRangeFromFilter()">Eliminar</div>
                 <div *ngIf="!priceRangeIsInFilter()" class="disabled-range-price-button">Eliminar</div>
-          </div>
+              </div>
             </div>
           </div>
         </div>
