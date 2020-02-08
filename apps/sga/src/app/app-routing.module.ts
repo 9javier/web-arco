@@ -357,6 +357,14 @@ const routes: Routes = [
     data: {
       name: 'Recepciones2'
     }
+  },
+  { 
+    path:'pr-ta-se-av',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/products-avelon/products-avelon.module#ProductsAvelonModule',
+    data: {
+      name: 'ProductsAvelon'
+    }
   }
 ];
 

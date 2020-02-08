@@ -302,3 +302,7 @@ export  * from './send-empty-packing/send-empty-packing.module';
 // // /**Receptionss avelon */
 export  * from './receptionss-avelon/receptionss-avelon.component'
 export  * from './receptionss-avelon/receptionss-avelon.module';
+
+// // /**Receptionss avelon */
+export  * from './products-avelon/products-avelon.component'
+export  * from './products-avelon/products-avelon.module';
