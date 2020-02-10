@@ -17,10 +17,10 @@ export class ReceptionsAvelonService {
   constructor(
     private http: HttpClient
   ) {
-    this.url = `${environment.apiReception}/reception`
-    this.providersUrl = `${environment.apiReception}/avelonProviders/all`
-    this.checkUrl = `${environment.apiReception}/avelonProviders`,
-    this.urlReception =`${environment.apiReception}/reception/expedition/lines-destiny-impress/blocked`
+    this.url = `${environment.apiBase}/reception`
+    this.providersUrl = `${environment.apiBase}/avelonProviders/all`
+    this.checkUrl = `${environment.apiBase}/avelonProviders`,
+    this.urlReception =`${environment.apiBase}/reception/expedition/lines-destiny-impress/blocked`
 
   }
 
