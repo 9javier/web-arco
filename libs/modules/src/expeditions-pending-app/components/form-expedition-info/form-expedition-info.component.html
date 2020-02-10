@@ -2,7 +2,7 @@
   <form [formGroup]="expeditionForm" (ngSubmit)="check()">
     <mat-card-content>
       <mat-form-field>
-        <input matInput placeholder="Nº de expedición" formControlName="number_expedition" required>
+        <input #inputExpeditionNumber matInput placeholder="Nº de expedición" formControlName="number_expedition" required>
       </mat-form-field>
       <mat-form-field>
         <input matInput placeholder="Proveedor" type="text" [matAutocomplete]="autoCompleteProvider" formControlName="provider_expedition" required>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Subscription} from "rxjs";
 
@@ -10,6 +10,7 @@ import {Subscription} from "rxjs";
 export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
 
   @Output() checkExpedition: EventEmitter<any> = new EventEmitter();
+  @ViewChild('inputExpeditionNumber') inputExpeditionNumber: ElementRef;
 
   public listProviders: {id: number, name: string}[] = [];
   private listProvidersOriginal: {id: number, name: string}[] = [];
@@ -28,6 +29,7 @@ export class FormExpeditionInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadProviders();
     this.listenFormChanges();
+    setTimeout(() => this.inputExpeditionNumber.nativeElement.focus(), 0.5 * 1000);
   }
 
   ngOnDestroy() {
