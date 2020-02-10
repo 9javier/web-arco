@@ -7,6 +7,7 @@ export namespace ReceptionAvelonModel {
     selected: boolean;
     newSelectd?: boolean
     belongsModels?: Array<number>
+    state?:number;
   }
 
   export interface Reception {
@@ -42,3 +43,4 @@ export namespace ReceptionAvelonModel {
     brandId: number;
   }
 }
+ 
