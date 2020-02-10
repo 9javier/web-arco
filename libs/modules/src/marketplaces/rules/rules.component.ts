@@ -140,26 +140,30 @@ export class RulesComponent implements OnInit {
 
         console.log('data->', data.data);
 
-        /*switch(data.data.filterType) {
+        let dataGroupToSend = [];
+        let filterType = 0;
+
+        switch(data.data.filterType) {
           case 'categories':
             filterType = 1;
-
             data.data.categoriesFilter.forEach(item => {
               dataGroupToSend = dataGroupToSend.concat(item.name);
-              dataGroupToSend = dataGroupToSend.concat(',')
-            })
-            
-            dataGroupToSend = dataGroupToSend.slice(0,-1);
+            });
             break;
           case 'price':
             filterType = 2;
-            dataGroupToSend = data.data.minPriceFilter;
+            data.data.categoriesFilter.forEach(item => {
+              dataGroupToSend = dataGroupToSend.concat(item.name);
+            });
+            //dataGroupToSend = data.data.minPriceFilter;
             break;
           case 'stock':
             filterType = 3;
             dataGroupToSend = data.data.stockFilter;
             break;
         } 
+
+        console.log(dataGroupToSend)
 
         let dataToSend = {
          filterToAdd: {
@@ -172,8 +176,9 @@ export class RulesComponent implements OnInit {
           marketsIds: [
             "1"
           ]
-        }*/
+        }
 
+        console.log(dataToSend)
         /*this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
         })*/

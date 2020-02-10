@@ -27,7 +27,7 @@
               </mat-select>
             </div>
             <div class="inputSearch">
-              <input matInput type="text" placeholder="Buscar..."/>
+              <input matInput type="text" placeholder="Buscar..." [(ngModel)]="filterSearched" (keyup)="searchOnFilterList()" />
             </div>
             <div *ngIf="selectedCategoryGroupFilter != 18">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
@@ -52,21 +52,24 @@
         </div>
       </div>
       <div class="nr-references-extra-wrapper">
-        <div>
+        <!--<div>
           Excepciones del filtro
           <div class="add-reference-condition-button" (click)="openManageFilteredProductsModal()">Gestionar productos filtrados</div>
-        </div>
+        </div>-->
         <div>
           <span *ngIf="!referencesExceptions.length" class="no-exceptions">
             Sin excepciones en el filtro
           </span>
-          <span *ngIf="referencesExceptions.length">
+          <span class="inputReferences" *ngIf="referencesExceptions.length">
+            <input matInput type="text" placeholder="Buscar..." />
+            <input matInput type="text" placeholder="Buscar..." />
+
             <!--<div *ngFor="let exception of referencesExceptions">
               <div>{{exception.reference}}</div>
               <div>{{exception.productName}}</div>
               <div>{{exception.type}}</div>
               <div (click)="deleteExceptionReference(exception)">X</div>
-            </div>-->
+            </div>
             <div>
               <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
@@ -99,7 +102,7 @@
                 [length]="dataSource?.filteredData.length"
                 [pageSize]="5">
               </mat-paginator>
-            </div>
+            </div>-->
           </span>
         </div>
       </div>

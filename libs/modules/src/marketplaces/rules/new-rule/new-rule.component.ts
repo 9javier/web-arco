@@ -79,6 +79,8 @@ export class NewRuleComponent implements OnInit {
   private originalRuleName;
   private referencesExceptions;
   private idToEdit;
+  private filterSearched;
+  private filterItemsAux;
 
   constructor(
     private modalController: ModalController,
@@ -302,6 +304,7 @@ export class NewRuleComponent implements OnInit {
       }
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = this.categoryList[0];
+      this.filterItemsAux = this.selectedCategoryGroupFilterObject;
       if (this.ruleFilterType == 'categories') {
         this.selectedDestinationCategoryGroupFilter = this.destinationCategories[0].id;
         this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories[0];
@@ -360,6 +363,7 @@ export class NewRuleComponent implements OnInit {
   changeSelectedCategoryGroupFilter(e) {
     this.selectedCategoryGroupFilter = e.value;
     this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === e.value);
+    this.filterItemsAux = this.selectedCategoryGroupFilterObject;
   }
 
   changeSelectedDestinationCategories(e) {
@@ -839,6 +843,23 @@ export class NewRuleComponent implements OnInit {
         }
       }
     this.dataSource.data = this.productReferences;
+  }
+
+  searchOnFilterList() {
+    console.log(this.filterSearched)
+    console.log(this.selectedCategoryGroupFilterObject)
+    if (this.filterSearched && this.filterSearched.trim() != '') { 
+      let filters = [];
+      for (let itemFilter of this.selectedCategoryGroupFilterObject.items) {
+        if (itemFilter.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.filterSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+        !== -1) {
+          filters.push(itemFilter);
+        }
+      }
+      this.selectedCategoryGroupFilterObject.items = filters;
+    } /*else {
+      this.selectedCategoryGroupFilterObject.items = this.filterItemsAux.items.slice();
+    }*/
   }
 
 }
