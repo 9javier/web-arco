@@ -290,34 +290,42 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Expediciones',
+      open: true,
+      type: 'wrapper',
+      icon: 'archive',
+      children: [
+        {
+          title: 'Proceso recepción',
+          id: 'receptions-avelon',
+          url: '/receptions-avelon',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Predistribuciones',
+          id: 'predistributions',
+          url: '/predistributions',
+          icon: 'options'
+        },
+        {
+          title: 'Stock Reservado',
+          id: 'receptions',
+          url: '/receptions',
+          icon: 'hand'
+        },
+        {
+          title: 'Pendiente notificar Avelon',
+          id: 'products-table-seconds-avelon',
+          url: '/pr-ta-se-av',
+          icon: 'cloud-upload'
+        },
+      ]
+    },
+    {
       title: 'Regiones',
       id: 'regions',
       url: '/regions',
       icon: 'map'
-    },
-    {
-      title: 'Recepciones',
-      id: 'receptions-avelon',
-      url: '/receptions-avelon',
-      icon: 'archive'
-    },
-    {
-      title: 'Predistribuciones',
-      id: 'predistributions',
-      url: '/predistributions',
-      icon: 'archive'
-    },
-    {
-      title: 'Recepciones2',
-      id: 'receptions',
-      url: '/receptions',
-      icon: 'archive'
-    },
-    {
-      title: 'Notificar Avelon',
-      id: 'products-table-seconds-avelon',
-      url: '/pr-ta-se-av',
-      icon: 'archive'
     },
   ];
 
