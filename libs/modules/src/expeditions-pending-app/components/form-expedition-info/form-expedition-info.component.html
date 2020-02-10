@@ -1,0 +1,22 @@
+<mat-card>
+  <form [formGroup]="expeditionForm" (ngSubmit)="check()">
+    <mat-card-content>
+      <mat-form-field>
+        <input matInput placeholder="Nº de expedición" formControlName="number_expedition" required>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Proveedor" type="text" [matAutocomplete]="autoCompleteProvider" formControlName="provider_expedition" required>
+        <mat-autocomplete #autoCompleteProvider="matAutocomplete">
+          <mat-option *ngFor="let provider of listProviders" [value]="provider.name">
+            {{provider.name}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-button type="submit" [ngClass]="checkingExpeditionInProcess ? 'spinner' : ''" [disabled]="!expeditionForm.valid || checkingExpeditionInProcess">
+        {{checkingExpeditionInProcess ? 'COMPROBANDO' : 'COMPROBAR'}}
+      </button>
+    </mat-card-actions>
+  </form>
+</mat-card>
