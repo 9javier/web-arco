@@ -26,7 +26,7 @@
                 </mat-option>
               </mat-select>
             </div>
-            <div *ngIf="selectedCategoryGroupFilter != 18">
+            <div *ngIf="selectedCategoryGroupFilter != 18 && selectedCategoryGroupFilter != 19 && selectedCategoryGroupFilter != 20">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
                 <span *ngIf="!selectedCategoriesIncludes(category)">{{category.name}}</span>
                 <span class="bold-category" *ngIf="selectedCategoriesIncludes(category)">{{category.name}}</span>
@@ -40,31 +40,30 @@
                 <div *ngIf="!addPriceRangeButtonActivation() || priceRangeIsInFilter()" class="disabled-range-price-button">Aplicar</div>
                 <div *ngIf="priceRangeIsInFilter()" (click)="deletePriceRangeFromFilter()">Eliminar</div>
                 <div *ngIf="!priceRangeIsInFilter()" class="disabled-range-price-button">Eliminar</div>
-          </div>
+              </div>
+            </div>
+            <div *ngIf="selectedCategoryGroupFilter == 19" class="nr-include-exclude-ref">
+              <input matInput #includeReferenceInput type="text" placeholder="Añadir referencias" [ngClass]="formatIncludeReferences() ? '' : 'incorrect-input-value'" [(ngModel)]="includeReferenceText" [readonly]="includeReferenceIsInFilter()"/>
+              <div>
+                <div *ngIf="addIncludeReferenceButtonActivation() && !includeReferenceIsInFilter()" (click)="addIncludeReferenceToFilter()">Aplicar</div>
+                <div *ngIf="!addIncludeReferenceButtonActivation() || includeReferenceIsInFilter()" class="disabled-include-exclude-reference-button">Aplicar</div>
+                <div *ngIf="includeReferenceIsInFilter()" (click)="deleteIncludeReferenceFromFilter()">Eliminar</div>
+                <div *ngIf="!includeReferenceIsInFilter()" class="disabled-include-exclude-button">Eliminar</div>
+              </div>
+            </div>
+            <div *ngIf="selectedCategoryGroupFilter == 20" class="nr-include-exclude-ref">
+              <input matInput #excludeReferenceInput type="text" placeholder="Excluír referencias" [ngClass]="formatExcludeReferences() ? '' : 'incorrect-input-value'" [(ngModel)]="excludeReferenceText" [readonly]="excludeReferenceIsInFilter()"/>
+              <div>
+                <div *ngIf="addExcludeReferenceButtonActivation() && !excludeReferenceIsInFilter()" (click)="addExcludeReferenceToFilter()">Aplicar</div>
+                <div *ngIf="!addExcludeReferenceButtonActivation() || excludeReferenceIsInFilter()" class="disabled-include-exclude-reference-button">Aplicar</div>
+                <div *ngIf="excludeReferenceIsInFilter()" (click)="deleteExcludeReferenceFromFilter()">Eliminar</div>
+                <div *ngIf="!excludeReferenceIsInFilter()" class="disabled-include-exclude-button">Eliminar</div>
+              </div>
             </div>
           </div>
         </div>
         <div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
           <input matInput #stockInput type="text" placeholder="Stock de seguridad" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockFilter" (keydown)="checkEnterKeyStockInput($event);" (blur)="blurStockInput()"/>
-        </div>
-      </div>
-      <div class="nr-references-extra-wrapper">
-        <div>
-          Excepciones del filtro
-          <div class="add-reference-condition-button" (click)="openManageFilteredProductsModal()">Gestionar productos filtrados</div>
-        </div>
-        <div>
-          <span *ngIf="!referencesExceptions.length" class="no-exceptions">
-            Sin excepciones en el filtro
-          </span>
-          <span *ngIf="referencesExceptions.length">
-            <div *ngFor="let exception of referencesExceptions">
-              <div>{{exception.reference}}</div>
-              <div>{{exception.productName}}</div>
-              <div>{{exception.type}}</div>
-              <div (click)="deleteExceptionReference(exception)">X</div>
-            </div>
-          </span>
         </div>
       </div>
       <div class="nr-filter-selected-wrapper">
