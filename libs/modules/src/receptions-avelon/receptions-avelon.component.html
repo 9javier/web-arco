@@ -30,19 +30,19 @@
       </ion-row>
       <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
         <ion-col size="4">
+          <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
+            <ion-title> Marcas </ion-title>
+            <i slot="end" class="material-icons">keyboard</i>
+          </ion-item>
+          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
+        </ion-col>
+        <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
             <ion-title> Modelos </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
 
           <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
-        </ion-col>
-        <ion-col size="4">
-          <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
-            <ion-title> Marcas </ion-title>
-            <i slot="end" class="material-icons">keyboard</i>
-          </ion-item>
-          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
         </ion-col>
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
