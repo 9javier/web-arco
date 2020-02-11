@@ -45,7 +45,10 @@ export namespace InventoryModel {
       status: number;
       productShoeUnit: {
           id: number,
-          reference: string
+          reference: string,
+          noOnline: boolean,
+          model?: any,
+          size?: any
       },
       container: {
           id: number,
@@ -57,7 +60,9 @@ export namespace InventoryModel {
           on_right_side: boolean,
           items: number
       },
-      warehouse: any
+      warehouse: any,
+      carrier?: any,
+      locationType?: any
   }
 
   export interface ResponseSearchInContainer extends Request.Success{
@@ -87,6 +92,7 @@ export namespace InventoryModel {
         sizes: FiltersModel.Size[],
         warehouses: FiltersModel.Warehouse[],
         ordertypes: FiltersModel.Group[],
+        online: FiltersModel.Online[]
       }
     }
   }
