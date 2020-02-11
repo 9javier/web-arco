@@ -28,7 +28,9 @@ import { Router } from '@angular/router';
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
+  //displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
+  displayedColumns: string[] = ['select','articulo','size','store','fecha','brand','provider','model','color','category','family','lifestyle'];
+
   @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
@@ -118,18 +120,23 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
 
   async presentModal() {
-    const users = await this.listUserTime();
+   // const users = await this.listUserTime();
+  
    let ListReceptions = this.getListReceptions();
     console.log(ListReceptions);
     const modal = await this.modalController.create({
       component: ModalUserComponent,
       componentProps: {
-        users,
         ListReceptions
       }
     });
     modal.onDidDismiss().then((p) => {
-      this.router.navigate(['/receptions']);
+      //this.router.navigate(['/receptions']);
+      this.initEntity();
+     this.initForm();
+     this.getFilters();
+     this.getList(this.form);
+     this.listenChanges();
     });
 
 
@@ -139,11 +146,9 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   close():void{
   }
 
- async release(){
-  this.intermediaryService.presentLoading();
-
+  release(){
+   
    let ListReceptions = this.getListReceptions();
-
    let _data: Array<PredistributionModel.BlockReservedRequest> = ListReceptions;
    _data = _data.map(item => {
      return {
@@ -156,12 +161,14 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
      };
 
    });
+   console.log(" "+JSON.stringify(ListReceptions));
+
    let This = this;
-   await this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
+    this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
      This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
      This.intermediaryService.dismissLoading();
      // reload page
-     //this.close();
+     This.close();
      This.initEntity();
      This.initForm();
      This.getFilters();
@@ -204,10 +211,54 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
 
 
-  private async listUserTime(){
-    // let x:UserTimeModel.ListUsersRegisterTimeActiveInactive = null;
-    // let users = null;
-    return await this.userTimeService.getNewListUsersRegister().toPromise();
+  async  listUserTime(){
+  
+    let users=[1,13,14]
+    let This = this;
+    
+   this.userTimeService.getUsersShoesPicking(users).subscribe(function (data) {;
+    return data['data'];
+
+   }, (error) => {
+     This.intermediaryService.presentToastError("No cuentas con usuarios asignados para liberar");
+     This.intermediaryService.dismissLoading();
+ 
+   }, () => {
+   });
+   
+   //return data;
+  }
+
+
+  isEnableSend(): boolean{
+    let ListReceptions = this.getListReceptions();
+    if(ListReceptions.length>0){
+      return true
+    }
+  }
+ 
+
+  async openModalSend(users,ListReceptions){
+    let This = this;
+    console.log(users);
+    console.log(ListReceptions);
+    const modal = await This.modalController.create({
+      component: ModalUserComponent,
+      componentProps: {
+        users,
+        ListReceptions
+      }
+    });
+    modal.onDidDismiss().then((p) => {
+      //this.router.navigate(['/receptions']);
+      this.initEntity();
+     this.initForm();
+     this.getFilters();
+     this.getList(this.form);
+     this.listenChanges();
+    });
+   
+   
 
   }
 

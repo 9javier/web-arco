@@ -52,4 +52,11 @@ export namespace UserTimeModel{
         updatedAt: string;
         id: number;
     }
+
+    
+  export interface GetUserShoePicking {
+    id: number;
+    name: string;
+    shoes: number;
+  }
 }
