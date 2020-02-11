@@ -318,27 +318,27 @@ export class MenuComponent implements OnInit {
           icon: 'document'
         },
         {
-          title: 'KrackOnline',
+          title: 'MiniPrecios',
           open: true,
           type: 'wrapper',
-          id: 'krackonline',
+          id: 'miniprecios',
           icon: 'apps',
           children: [ 
             {
               title: 'Catálogo',
-              id: 'ko-catalog',
-              url: '/marketplaces/krackonline/catalog',
+              id: 'mp-catalog',
+              url: '/marketplaces/miniprecios/catalog',
               icon: 'document'
             },
             {
               title: 'Mapeos',
-              id: 'ko-mapping',
-              url: '/marketplaces/krackonline/mapping',
+              id: 'mp-mapping',
+              url: '/marketplaces/miniprecios/mapping',
               icon: 'document'
             },{
               title: 'Reglas',
-              id: 'ko-rules',
-              url: '/marketplaces/krackonline/rules',
+              id: 'mp-rules',
+              url: '/marketplaces/miniprecios/rules',
               icon: 'document'
             }
           ]
