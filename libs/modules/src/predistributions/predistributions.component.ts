@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 export class PredistributionsComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['article','model','store','size','brand','color','provider', 'date_service', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['article','size','store','date_service','brand','provider','model','color','category','family','lifestyle', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
   dataSourceOriginal;
   dataSource;
@@ -108,6 +108,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   initEntity() {
     this.entities = {
+      references: [],
       brands: [],
       colors: [],
       destinyShop: [],
@@ -231,8 +232,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       }
     });
 
-    console.log(list);
-
     this.intermediaryService.presentLoading();
 
     await this.predistributionsService.updateBlockReserved(list).subscribe((data) => {
@@ -251,6 +250,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
+      // this.updateFilterSourceReferences(entities.references);
       this.updateFilterSourceBrands(entities.brands);
       this.updateFilterSourceModels(entities.models);
       this.updateFilterSourceSizes(entities.sizes);
@@ -287,7 +287,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         if (row.reserved) {
            this.selectionReserved.select(row);
         }
-
         this.dataSourceOriginal = _.cloneDeep(this.dataSource)
        });
       },
@@ -436,6 +435,13 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getList(this.form);
   }
   private reduceFilters(entities){
+    if (this.lastUsedFilter !== 'references') {
+      let filteredReferences = entities['references'] as unknown as string[];
+      for (let index in this.references) {
+        this.references[index].hide = filteredReferences.includes(this.references[index].value);
+      }
+      this.filterButtonReferences.listItems = this.references;
+    }
     if (this.lastUsedFilter !== 'models') {
       let filteredModels = entities['models'] as unknown as string[];
       for (let index in this.models) {

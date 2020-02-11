@@ -228,12 +228,6 @@ export class MenuComponent implements OnInit {
           id: 'jails',
           url: '/jails/menu',
           icon: 'grid'
-        },
-        {
-          title: 'Estado de expedición',
-          id: 'state-expedition-avelon',
-          url: '/state-expedition-avelon/menu',
-          icon: 'apps'
         }
       ]
     },
@@ -319,6 +313,12 @@ export class MenuComponent implements OnInit {
           url: '/pr-ta-se-av',
           icon: 'cloud-upload'
         },
+        {
+          title: 'Estados de expediciones',
+          id: 'state-expedition-avelon',
+          url: '/state-expedition-avelon/menu',
+          icon: 'cog'
+        }
       ]
     },
     {
@@ -621,6 +621,21 @@ export class MenuComponent implements OnInit {
           url: 'audits/scan',
           icon: 'aperture',
           tooltip: 'Auditoría mediante escáner de la cámara sin necesidad de escaner todos los productos'
+        }
+      ]
+    },
+    {
+      title: 'Expediciones',
+      open: false,
+      type: 'wrapper',
+      icon: 'archive',
+      children: [
+        {
+          title: 'Expediciones pendientes',
+          id: 'expditions-pending',
+          url: '/expeditions/pending/app',
+          icon: 'timer',
+          tooltip: 'Consulta de información sobre una expedición pendiente de recibir de un proveedor.'
         }
       ]
     },

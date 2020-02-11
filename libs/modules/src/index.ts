@@ -306,3 +306,9 @@ export  * from './receptionss-avelon/receptionss-avelon.module';
 // // /**Receptionss avelon */
 export  * from './products-avelon/products-avelon.component'
 export  * from './products-avelon/products-avelon.module';
+
+export  * from './receptions-avelon-app/receptions-avelon-app.component'
+export  * from './receptions-avelon-app/receptions-avelon-app.module';
+
+export  * from './expeditions-pending-app/expeditions-pending-app.component'
+export  * from './expeditions-pending-app/expeditions-pending-app.module';

@@ -19,13 +19,13 @@
           <ion-row>
             <ion-col size="1"></ion-col>
             <ion-col align-self-start>Nombre</ion-col>
-            <ion-col align-self-end>Lista Zapatos</ion-col>
+            <ion-col align-self-end>Lista Pickings</ion-col>
           </ion-row>
         </ion-grid>
       </ion-list-header>
 
       <ion-item  *ngFor="let user of users" >
-        <ion-label slot="end">{{user.listaZapatos}}</ion-label>
+        <ion-label slot="end">{{user.shoes}}</ion-label>
         <ion-label >{{user.name}}</ion-label>
 <!--        <ion-label>{{user.listaZapatos}}</ion-label>-->
         <ion-radio slot="start" [value]="user.id" (click)="valorId(user)"  ></ion-radio>
