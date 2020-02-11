@@ -72,6 +72,10 @@ export class ReceptionsAvelonService {
   eanProduct(ean: string) {
     return this.http.post<HttpRequestModel.Response>(`${this.url}/ean-product`, {ean}).pipe(map(resp => resp.data));
   }
+
+  eanProductPrint(ean: string, expedition: string, providerId: number) {
+    return this.http.post<HttpRequestModel.Response>(`${this.url}/ean-product/print-reception-label`, {ean, expedition, providerId}).pipe(map(resp => resp.data));
+  }
 /*
   index2(body) {
     return this.http.post<HttpRequestModel.Response>(this.index2Url,body).pipe(
