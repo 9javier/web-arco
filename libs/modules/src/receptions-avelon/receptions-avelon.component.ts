@@ -145,7 +145,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     //   clearInterval(this.interval);
     // }
     this.intermediaryService.presentLoading('Cargando');
-    this.reception.isProviderAviable(data).subscribe(
+    this.reception.isProviderAvailable(data).subscribe(
       (resp: boolean) => {
         this.isProviderAviable = resp;
         if (!this.isProviderAviable) {

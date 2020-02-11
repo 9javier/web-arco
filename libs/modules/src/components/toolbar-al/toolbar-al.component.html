@@ -1,6 +1,7 @@
 <ion-header>
   <ion-toolbar color="primary" [class.display-none]="hideByUrl()">
-    <ion-buttons slot="start">
+    <!-- Buttons used to show/hide side menu -->
+    <ion-buttons slot="start" *ngIf="!showBackArrow">
       <ion-button (window:resize)="onResize($event)" *ngIf="showAlMenu" (click)="toggleSideMenu(true)">
         <ion-icon name="menu" class="menu"></ion-icon>
       </ion-button>
@@ -8,6 +9,13 @@
         <ion-icon name="arrow-round-back" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
+    <!-- Back-button to go back to the last page -->
+    <ion-buttons slot="start" *ngIf="showBackArrow">
+      <ion-button (click)="goBackInApp()">
+        <ion-icon name="arrow-round-back" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
     <ion-buttons *ngIf="isAndroid" slot="end">
       <ion-button (click)="onActiveKeyboard()" *ngIf="showKeyboard">
             <i [ngStyle]="{'color': state ? 'green': 'grey'}" class="material-icons">keyboard</i>

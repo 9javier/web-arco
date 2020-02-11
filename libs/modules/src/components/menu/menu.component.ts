@@ -625,6 +625,21 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Expediciones',
+      open: false,
+      type: 'wrapper',
+      icon: 'archive',
+      children: [
+        {
+          title: 'Expediciones pendientes',
+          id: 'expditions-pending',
+          url: '/expeditions/pending/app',
+          icon: 'timer',
+          tooltip: 'Consulta de información sobre una expedición pendiente de recibir de un proveedor.'
+        }
+      ]
+    },
+    {
       title: 'Configuración',
       open: false,
       type: 'wrapper',

@@ -5,6 +5,7 @@ import { ActionToolbarModel } from "../../../../services/src/models/endpoints/Ac
 import { PopoverController, Platform } from "@ionic/angular";
 import { PopoverMenuToolbarComponent } from "../popover-menu-toolbar/popover-menu-toolbar.component";
 import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.service';
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'toolbar',
@@ -14,6 +15,7 @@ import { KeyboardService } from '../../../../services/src/lib/keyboard/keyboard.
 export class ToolbarAlComponent implements OnInit {
 
   @Input() showAlMenu: boolean = false;
+  @Input() showBackArrow: boolean = false;
   @Output() windowResize = new EventEmitter();
   @Output() toggleSideMenuSga = new EventEmitter();
   @Output() toggleSideMenuAl = new EventEmitter();
@@ -29,7 +31,8 @@ export class ToolbarAlComponent implements OnInit {
     private popoverController: PopoverController,
     private toolbarProvider: ToolbarProvider,
     private keyboard: KeyboardService,
-    private plt: Platform
+    private plt: Platform,
+    private location: Location
   ) { }
 
   ngOnInit() {
@@ -59,6 +62,9 @@ export class ToolbarAlComponent implements OnInit {
     this.toolbarProvider.showAlMenu.subscribe((show) => {
       this.showAlMenu = show;
     });
+    this.toolbarProvider.showBackArrow.subscribe((show) => {
+      this.showBackArrow = show;
+    });
     this.toolbarProvider.optionsActions.subscribe((options) => {
       this.optionsActions = options;
       this.toolbarProvider.currentOptionsActions = options;
@@ -79,6 +85,10 @@ export class ToolbarAlComponent implements OnInit {
     } else {
       this.toggleSideMenuSga.next();
     }
+  }
+
+  goBackInApp() {
+    this.location.back();
   }
 
   actionFromToolbar(optionAction: ActionToolbarModel.ActionToolbar) {
