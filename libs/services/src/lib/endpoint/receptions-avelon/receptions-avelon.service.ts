@@ -17,10 +17,10 @@ export class ReceptionsAvelonService {
   constructor(
     private http: HttpClient
   ) {
-    this.url = `${environment.apiSorter}/reception`
-    this.providersUrl = `${environment.apiSorter}/avelonProviders/all`
-    this.checkUrl = `${environment.apiSorter}/avelonProviders`,
-    this.urlReception =`${environment.apiSorter}/reception/expedition/lines-destiny-impress/blocked`
+    this.url = `${environment.apiBase}/reception`
+    this.providersUrl = `${environment.apiBase}/avelonProviders/all`
+    this.checkUrl = `${environment.apiBase}/avelonProviders`,
+    this.urlReception =`${environment.apiBase}/reception/expedition/lines-destiny-impress/blocked`
 
   }
 
@@ -71,6 +71,10 @@ export class ReceptionsAvelonService {
 
   eanProduct(ean: string) {
     return this.http.post<HttpRequestModel.Response>(`${this.url}/ean-product`, {ean}).pipe(map(resp => resp.data));
+  }
+
+  eanProductPrint(ean: string, expedition: string, providerId: number) {
+    return this.http.post<HttpRequestModel.Response>(`${this.url}/ean-product/print-reception-label`, {ean, expedition, providerId}).pipe(map(resp => resp.data));
   }
 /*
   index2(body) {

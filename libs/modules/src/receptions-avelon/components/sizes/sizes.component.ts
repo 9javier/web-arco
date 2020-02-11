@@ -25,9 +25,9 @@ export class SizesComponent implements OnInit {
   selected(dato: ReceptionAvelonModel.Data) {
     dato.selected = !dato.selected
     console.log(dato.selected);
-    
+    console.log(dato);
     if (dato.selected) {
-      this.seleccionado.emit(dato)
+      this.seleccionado.emit({dato})
     }else {
       this.seleccionado.emit({dato: undefined})
     }
