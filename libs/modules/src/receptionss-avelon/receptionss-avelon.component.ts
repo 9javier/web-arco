@@ -1,6 +1,6 @@
 import { ModalController} from '@ionic/angular';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {  MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import {  MatSort, PageEvent, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
 import Predistribution = PredistributionModel.Predistribution;
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
@@ -11,6 +11,8 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
+
 import {
   ReceptionsAvelonService,
   ReceptionAvelonModel,
@@ -31,12 +33,13 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   //displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
   displayedColumns: string[] = ['select','articulo','size','store','fecha','brand','provider','model','color','category','family','lifestyle'];
 
-  @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
+
+  @ViewChild(MatSort) sort: MatSort;
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -87,7 +90,8 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     })
   });
   length: any;
-
+  public paginatorPagerValues = [20, 50, 100];
+  private currentPageFilter: IncidenceModel.SearchParameters;
 
   constructor(
     private predistributionsService: PredistributionsService,
@@ -105,6 +109,32 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
+   
+
+
+/*
+    this.currentPageFilter = {
+      order: {
+        field: 'id',
+        direction: 'DESC'
+      },
+      filters: {},
+      page: 0,
+      size: this.paginatorPagerValues[0]
+    };
+    this.form = this.formBuilder.group({
+      filters: {},
+      pagination: this.formBuilder.group({
+        page: 1,
+        limit: this.paginatorPagerValues[0]
+      }),
+      orderby: this.formBuilder.group({
+        type: 'id',
+        order: 'DESC'
+      })
+    });*/
+    //this.listenPaginatorChanges();
+
 
     // this.paginator._intl.itemsPerPageLabel = 'Ver';
     // this.paginator._intl.getRangeLabel = this.getRangeLabel;
@@ -117,6 +147,81 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     //     this.selectionReserved.select(row);
     //   }
     // });
+  }
+
+  listenPaginatorChanges(){
+ 
+    this.sort.sortChange.subscribe((sort: Sort) => {
+      console.log("1----");
+      
+        console.log("2---");
+        if (sort.direction == '') {
+        this.currentPageFilter.order = {
+          field: 'id',
+          direction: 'ASC'
+        };
+      } else {
+        this.currentPageFilter.order = {
+          field: sort.active,
+          direction: sort.direction.toUpperCase()
+        };
+      }
+        //this.copyValuesToForm();
+        //this.searchIncidences(this.currentPageFilter);
+     
+    });
+    console.log("3----");
+    
+    /*this.intermediaryService.presentLoading('Cargando valores...').then(() => {
+      this.searchIncidences(this.currentPageFilter);
+    });*/
+  }
+
+  copyValuesToForm(){
+    this.form = this.formBuilder.group({
+      filters: this.currentPageFilter.filters,
+      pagination: this.formBuilder.group({
+        page: this.currentPageFilter.page,
+        limit: this.currentPageFilter.size
+      }),
+      orderby: this.formBuilder.group({
+        type: this.currentPageFilter.order.field,
+        order: this.currentPageFilter.order.direction
+      })
+    });
+  }
+
+  private searchIncidences(parameters: IncidenceModel.SearchParameters) {
+    console.log("llamar endpoint de buscar...")
+    /*
+    this.incidencesService
+      .postSearch(parameters)
+      .then((res: IncidenceModel.ResponseSearch) => {
+        this.intermediaryService.dismissLoading();
+        if (res.code === 200) {
+          this.listAvailableStatus = res.data.listAvailableStatus;
+          this.incidences = res.data.incidences;
+          this.incidencesService.incidencesQuantityList = res.data.count_search;
+          this.paginator.length = res.data.count_search;
+          this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.currentPageFilter.page;
+          this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count_search/this.currentPageFilter.size);
+          this.incidencesService.incidencesUnattendedQuantity = res.data.count_search;
+          this.incidencesService.incidencesList = res.data.incidences;
+        } else {
+          let errorMessage = 'Ha ocurrido un error al intentar cargar las incidencias';
+          if (res.errors) {
+            errorMessage = res.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      }, (error) => {
+        this.intermediaryService.dismissLoading();
+        let errorMessage = 'Ha ocurrido un error al intentar cargar las incidencias';
+        if (error.error && error.error.errors) {
+          errorMessage = error.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+      });*/
   }
 
   async presentModal() {
@@ -486,6 +591,7 @@ dismissCheckbox(){
            this.selectionReserved.select(row);
         }
        });
+     
       },
       async err => {
         await this.intermediaryService.dismissLoading()
