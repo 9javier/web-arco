@@ -178,23 +178,21 @@
         </div>
         <div class="list-items-mobile">
           <mat-accordion multi="false" *ngFor="let price of prices;let i = index">
-            <mat-expansion-panel [hideToggle]="true" [disabled]="true" (click)="printPrice(price)" *ngIf="price.status != 4">
+            <mat-expansion-panel [hideToggle]="!getPhotoUrl(price)" [disabled]="!getPhotoUrl(price)">
               <mat-expansion-panel-header class="custom-panel-header">
                 <ion-grid>
                   <ion-row class="custom-panel-header">
-                                        <ion-col size="1" class="check-print">
-                                          <ion-checkbox
-                                            [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
-                                            (click)="$event.stopPropagation();itemSelected(price.id);">
-                                          </ion-checkbox>
-                                        </ion-col>
-                    <ion-col size="10" class="content-prices-header">
+                    <ion-col size="1" class="check-print">
+                      <ion-checkbox [formControl]="selectedForm['controls']?.toSelect['controls'][i]"
+                        (click)="$event.stopPropagation();itemSelected(price.id);">
+                      </ion-checkbox>
+                    </ion-col>
+                    <ion-col size="11" class="content-prices-header">
                       <mat-panel-title>
                         <ion-row class="row-title-prices">
                           <ion-col class="product" size="8">
                             {{price?.model?.reference}} - {{ price?.model?.brand?.name }}
                           </ion-col>
-
                         </ion-row>
                       </mat-panel-title>
                       <mat-panel-description class="panel-description">
