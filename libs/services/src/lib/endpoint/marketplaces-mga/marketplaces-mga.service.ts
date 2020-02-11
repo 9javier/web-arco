@@ -17,6 +17,7 @@ export class MarketplacesMgaService {
   private getFeaturesRuleMarketUrl = this.apiBase + '/products/models/internalgroups/rulemarket/{{idMarketplace}}';
   private getFeaturesByMarketUrl = this.apiBase + '/products/models/internalgroups/{{idMarketplace}}';
   private getTotalProductsUrl = this.apiBase + '/products/models/numberOfModels';
+  private getReferencesFilteredUrl = this.apiBase + '/products/models/filtered';
 
   constructor(
     private http: HttpClient,
@@ -73,6 +74,15 @@ export class MarketplacesMgaService {
     return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
       let headers:HttpHeaders = new HttpHeaders({Authorization:token});
       return this.http.get<any>(this.getTotalProductsUrl, {headers}).pipe(map(response=>{
+        return response.data;
+      }));
+    }));
+  }
+
+  postReferencesFiltered(data):Observable<any> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token=>{
+      let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+      return this.http.post<any>(this.getReferencesFilteredUrl, data, {headers}).pipe(map(response=>{
         return response.data;
       }));
     }));

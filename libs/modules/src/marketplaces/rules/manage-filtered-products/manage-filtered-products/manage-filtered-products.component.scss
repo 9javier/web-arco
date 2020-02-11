@@ -31,6 +31,16 @@ ion-content {
     width: 80%;    
     margin-left: 10%;
 
+    .mat-row:hover {
+      background-color: #f5f4f6;
+    }  
+
+    /*
+    .mat-row {
+      background-color: white;
+    }
+    */
+
     .delete {
       font-weight: bold;
       
@@ -39,6 +49,18 @@ ion-content {
       }
     }
 
+  }
+
+  button {
+    font-size: 14px;
+    background-color: #000;
+    color: #fff;
+    width: 202px;
+    padding: 12px;
+    text-align: center;
+    float: right;
+    margin-bottom: 20px;
+    margin-right: 20px;
   }
 
   .nr-modal-body-wrapper {
