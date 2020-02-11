@@ -250,7 +250,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
-      console.log(entities);
       // this.updateFilterSourceReferences(entities.references);
       this.updateFilterSourceBrands(entities.brands);
       this.updateFilterSourceModels(entities.models);
@@ -288,7 +287,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         if (row.reserved) {
            this.selectionReserved.select(row);
         }
-        console.log(this.dataSource);
         this.dataSourceOriginal = _.cloneDeep(this.dataSource)
        });
       },
