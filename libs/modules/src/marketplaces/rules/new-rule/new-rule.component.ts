@@ -3,6 +3,7 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import { ManageFilteredProductsComponent } from '../manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
+import {falseIfMissing} from "protractor/built/util";
 
 @Component({
   selector: 'suite-new-rule',
@@ -44,10 +45,9 @@ export class NewRuleComponent implements OnInit {
   private includeReferenceArray;
   private excludeReferenceText;
   private excludeReferenceArray;
-  private referencesExceptions;
-  private idToEdit;
+  private referencesExceptions;/*
   private filterSearched;
-  private filterItemsAux;
+  private filterItemsAux;*/
 
   constructor(
     private modalController: ModalController,
@@ -73,7 +73,6 @@ export class NewRuleComponent implements OnInit {
     this.selectedCategories = [];
     this.ruleName = '';
     this.referencesExceptions = [];
-    this.idToEdit = this.navParams.get('id');
     this.includeReferenceText = '';
     this.includeReferenceArray = [];
     this.excludeReferenceText = '';
@@ -113,11 +112,7 @@ export class NewRuleComponent implements OnInit {
       {
         id: 12,
         name: 'Comercial',
-        items: [
-          /*{id: 1, group: 7, name: 'Comercial 1'},
-          {id: 2, group: 7, name: 'Comercial 2'},
-          {id: 3, group: 7, name: 'Comercial 3'}*/
-        ]
+        items: []
       },
       {
         id: 15,
@@ -186,11 +181,7 @@ export class NewRuleComponent implements OnInit {
         {
           id: 12,
           name: 'Comercial',
-          items: [
-            /*{id: 1, group: 7, name: 'Comercial 1'},
-            {id: 2, group: 7, name: 'Comercial 2'},
-            {id: 3, group: 7, name: 'Comercial 3'}*/
-          ]
+          items: []
         },
         {
           id: 15,
@@ -292,13 +283,13 @@ export class NewRuleComponent implements OnInit {
       }
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = this.categoryList[0];
-      this.filterItemsAux = this.selectedCategoryGroupFilterObject;
+      /*this.filterItemsAux = this.selectedCategoryGroupFilterObject;*/
       if (this.ruleFilterType == 'categories') {
         this.selectedDestinationCategoryGroupFilter = this.destinationCategories[0].id;
         this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories[0];
       }
 
-      /*if (this.mode == 'edit') {
+      if (this.mode == 'edit') {
         this.rule = this.navParams.get('rule');
         this.ruleName = this.navParams.get('ruleName');
         this.originalRuleName = this.ruleName;
@@ -315,8 +306,34 @@ export class NewRuleComponent implements OnInit {
           this.addReduceStockFilter();
         }
 
+        if (this.referencesExceptions.length) {
+          for (let exception of this.referencesExceptions) {
+            if (exception.type == "include") {
+              this.includeReferenceArray.push(exception.reference);
+            } else {
+              this.excludeReferenceArray.push(exception.reference);
+            }
+          }
+          this.includeReferenceText = '';
+          this.excludeReferenceText = '';
+          for (let i = 0; i < this.includeReferenceArray.length; i++) {
+            this.includeReferenceText += this.includeReferenceArray[i];
+            if (i != this.includeReferenceArray.length - 1) {
+              this.includeReferenceText += ', ';
+            }
+          }
+
+          for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+            this.excludeReferenceText += this.excludeReferenceArray[i];
+            if (i != this.excludeReferenceArray.length - 1) {
+              this.excludeReferenceText += ', ';
+            }
+          }
+        }
+
         switch (this.ruleFilterType) {
           case 'category':
+          case 'enabling':
             this.filterDescription = '';
             for (let category of this.selectedCategories) {
               let group = this.categoryList.find(x => x.id === category.group);
@@ -325,21 +342,50 @@ export class NewRuleComponent implements OnInit {
                 this.filterDescription += ', ';
               }
             }
-            break;
-
-          case 'price':
-            this.addPriceFilter();
+            if (this.priceRange != '') {
+              if (this.selectedCategories.length) {
+                this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+              } else {
+                this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+              }
+            }
+            if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+              if (this.selectedCategories.length || this.priceRange != '') {
+                this.filterDescription += ', Referencias añadidas: ';
+              } else {
+                this.filterDescription += 'Referencias añadidas: ';
+              }
+              for (let i = 0; i < this.includeReferenceArray.length; i++) {
+                this.filterDescription += this.includeReferenceArray[i];
+                if (i != this.includeReferenceArray.length - 1) {
+                  this.filterDescription += ', ';
+                }
+              }
+            }
+            if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+              if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+                this.filterDescription += ', Referencias excluídas: ';
+              } else {
+                this.filterDescription += 'Referencias excluídas: ';
+              }
+              for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+                this.filterDescription += this.excludeReferenceArray[i];
+                if (i != this.excludeReferenceArray.length - 1) {
+                  this.filterDescription += ', ';
+                }
+              }
+            }
             break;
 
           case 'stock':
             this.addStockFilter();
             break;
         }
-      } else {*/
+      } else {
       this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
         this.numberOfProducts = count;
       });
-      //}
+    }
 
     });
   }
@@ -351,7 +397,7 @@ export class NewRuleComponent implements OnInit {
   changeSelectedCategoryGroupFilter(e) {
     this.selectedCategoryGroupFilter = e.value;
     this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === e.value);
-    this.filterItemsAux = this.selectedCategoryGroupFilterObject;
+    /*this.filterItemsAux = this.selectedCategoryGroupFilterObject;*/
   }
 
   changeSelectedDestinationCategories(e) {
@@ -802,10 +848,30 @@ export class NewRuleComponent implements OnInit {
   }
 
   addIncludeReferenceButtonActivation() {
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      let includeArray = this.includeReferenceText.split(",");
+      for (let i = 0; i < includeArray.length; i++) {
+        for (let j = 0; j < this.excludeReferenceArray.length; j++) {
+          if (includeArray[i].trim() == this.excludeReferenceArray[j].trim()) {
+            return false;
+          }
+        }
+      }
+    }
     return (/^[0-9]+(,\s?[0-9]+)*$/.test(this.includeReferenceText));
   }
 
   addExcludeReferenceButtonActivation() {
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      let excludeArray = this.excludeReferenceText.split(",");
+      for (let i = 0; i < excludeArray.length; i++) {
+        for (let j = 0; j < this.includeReferenceArray.length; j++) {
+          if (excludeArray[i].trim() == this.includeReferenceArray[j].trim()) {
+            return false;
+          }
+        }
+      }
+    }
     return (/^[0-9]+(,\s?[0-9]+)*$/.test(this.excludeReferenceText));
   }
 
@@ -976,7 +1042,19 @@ export class NewRuleComponent implements OnInit {
 
         case 'enabling':
 
-          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+          if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+            for (let includeReference of this.includeReferenceArray) {
+              this.referencesExceptions.push({reference: includeReference.trim(), type: 'include'});
+            }
+          }
+
+          if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+            for (let excludeReference of this.excludeReferenceArray) {
+              this.referencesExceptions.push({reference: excludeReference.trim(), type: 'exclude'});
+            }
+          }
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length || this.excludeReferenceArray.length) {
             for (let i = 0; i < this.selectedCategories.length; i++) {
               if (i == 0 && i != this.selectedCategories.length - 1) {
                 description += this.selectedCategories[i].name + ', ';
@@ -1001,6 +1079,32 @@ export class NewRuleComponent implements OnInit {
                 description += ', ';
               }
               description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+            if (this.includeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+                description += ', ';
+              }
+              description += 'Referencias añadidas: ';
+              for (let i = 0; i < this.includeReferenceArray.length; i++) {
+                description += this.includeReferenceArray[i];
+                if (i != this.includeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
+            }
+
+            if (this.excludeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length) {
+                description += ', ';
+              }
+              description += 'Referencias excluídas: ';
+              for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+                description += this.excludeReferenceArray[i];
+                if (i != this.excludeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
             }
 
           }
@@ -1022,7 +1126,19 @@ export class NewRuleComponent implements OnInit {
 
         case 'categories':
 
-          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+          if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+            for (let includeReference of this.includeReferenceArray) {
+              this.referencesExceptions.push({reference: includeReference.trim(), type: 'include'});
+            }
+          }
+
+          if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+            for (let excludeReference of this.excludeReferenceArray) {
+              this.referencesExceptions.push({reference: excludeReference.trim(), type: 'exclude'});
+            }
+          }
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length || this.excludeReferenceArray.length) {
             for (let i = 0; i < this.selectedCategories.length; i++) {
               if (i == 0 && i != this.selectedCategories.length - 1) {
                 description += this.selectedCategories[i].name + ', ';
@@ -1047,6 +1163,32 @@ export class NewRuleComponent implements OnInit {
                 description += ', ';
               }
               description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+            if (this.includeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+                description += ', ';
+              }
+              description += 'Referencias añadidas: ';
+              for (let i = 0; i < this.includeReferenceArray.length; i++) {
+                description += this.includeReferenceArray[i];
+                if (i != this.includeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
+            }
+
+            if (this.excludeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length) {
+                description += ', ';
+              }
+              description += 'Referencias excluídas: ';
+              for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+                description += this.excludeReferenceArray[i];
+                if (i != this.excludeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
             }
 
           }
@@ -1078,7 +1220,7 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: [],
             stockToReduce: parseInt(this.stockToReduce),
-            referencesExceptions: this.referencesExceptions,
+            referencesExceptions: [],
             description
           };
           break;
@@ -1093,7 +1235,7 @@ export class NewRuleComponent implements OnInit {
     return this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
-  deleteProduct(product) {
+  /*deleteProduct(product) {
     console.log(product)
     for(let i = 0; i < this.productReferences.length; i++) {
       if(this.productReferences[i].reference == product.reference) {
@@ -1115,9 +1257,9 @@ export class NewRuleComponent implements OnInit {
         }
       }
       this.selectedCategoryGroupFilterObject.items = filters;
-    } /*else {
+    } /!*else {
       this.selectedCategoryGroupFilterObject.items = this.filterItemsAux.items.slice();
-    }*/
-  }
+    }*!/
+  }*/
 
 }
