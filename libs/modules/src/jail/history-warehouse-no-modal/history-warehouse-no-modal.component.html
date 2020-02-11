@@ -4,7 +4,7 @@
     <div class="form-fields">
       <ion-row>
 
-        <ion-col size="6">
+        <ion-col size="9">
           <div class="content-select">
             <ion-label class="title-select">Almacén</ion-label>
             <ion-item class="content-icon-select">
@@ -21,35 +21,37 @@
 
       <hr>
 
-      <ion-row>
-        <ion-col size="6" >
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">N° y nombre de Tienda:</ion-title>
-            <ion-label color="primary"> {{ nStore  }} </ion-label>
-          </ion-item>
-        </ion-col>
+      <div class="content-info">
+       <ion-row>
+          <ion-col size="6" >
+            <ion-item class="item-text-wrap">
+              <ion-title size="small" color="dark">Nº Tienda:</ion-title>
+              <ion-label color="primary"> {{ nStore  }} </ion-label>
+            </ion-item>
+          </ion-col>
 
-        <ion-col size="6">
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Embalajes en tienda:</ion-title>
-            <ion-label color="primary"> {{ jOnStore  }} </ion-label>
-          </ion-item>
-        </ion-col>
+          <ion-col size="6">
+            <ion-item class="item-text-wrap">
+              <ion-title size="small"  color="dark">En Tienda:</ion-title>
+              <ion-label color="primary"> {{ jOnStore  }} </ion-label>
+            </ion-item>
+          </ion-col>
 
-        <ion-col size="6">
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Embalajes en tránsito Ida:</ion-title>
-            <ion-label color="primary"> {{ jOnTI  }} </ion-label>
-          </ion-item>
-        </ion-col>
+          <ion-col size="6">
+            <ion-item class="item-text-wrap">
+              <ion-title size="small"  color="dark">En Tránsito Ida:</ion-title>
+              <ion-label color="primary"> {{ jOnTI  }} </ion-label>
+            </ion-item>
+          </ion-col>
 
-        <ion-col size="6">
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Embalajes en tránsito Vuelta:</ion-title>
-            <ion-label color="primary"> {{ jOnTV  }} </ion-label>
-          </ion-item>
-        </ion-col>
-      </ion-row>
+          <ion-col size="6">
+            <ion-item class="item-text-wrap">
+              <ion-title size="small"  color="dark">En Tránsito Vuelta:</ion-title>
+              <ion-label color="primary"> {{ jOnTV  }} </ion-label>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </div>
     </div>
 </form>
     <table mat-table [dataSource]="listHistory" matSort>
@@ -59,17 +61,25 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
         <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef >
-                Tipo
-            </th>
-            <td mat-cell *matCellDef="let item">
-                {{ item?.type?.name }}
-            </td>
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="title" (click)="sort('type')">Tipo</span>
+            <suite-filter-button #filterButtonTypes class="filter" [title]="'Tipo'" [listItems]="types"
+                                 [isFiltering]="isFilteringTypes != types.length"
+                                 (applyFilters)="applyFilters($event, 'types')">
+            </suite-filter-button>
+          </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item?.type?.name }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="origin">
-          <th mat-header-cell *matHeaderCellDef >
-            Origen
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="title" (click)="sort('origin')">Origen</span>
+            <suite-filter-button #filterButtonOrigins class="filter" [title]="'Origen'" [listItems]="origins"
+                                 [isFiltering]="isFilteringOrigins != origins.length"
+                                 (applyFilters)="applyFilters($event, 'origins')">
+            </suite-filter-button>
           </th>
           <td mat-cell *matCellDef="let item">
             {{ item?.originWarehouse }}
@@ -77,8 +87,12 @@
         </ng-container>
 
         <ng-container matColumnDef="destiny">
-          <th mat-header-cell *matHeaderCellDef >
-            Destino
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="title" (click)="sort('destiny')">Destino</span>
+            <suite-filter-button #filterButtonDestinies class="filter" [title]="'Destino'" [listItems]="destinies"
+                                 [isFiltering]="isFilteringDestinies != destinies.length"
+                                 (applyFilters)="applyFilters($event, 'destinies')">
+            </suite-filter-button>
           </th>
           <td mat-cell *matCellDef="let item">
             {{ item?.destinyWarehouse }}
@@ -86,31 +100,48 @@
         </ng-container>
 
         <ng-container matColumnDef="dateSend">
-            <th mat-header-cell *matHeaderCellDef >
-                Fecha y hora envío
-            </th>
-            <td mat-cell *matCellDef="let item">
-                {{ item?.dateSend | date: 'dd/MM/yyyy HH:mm' }}
-            </td>
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="title" (click)="sort('dateSend')">Fecha y hora envío</span>
+            <suite-filter-button #filterButtonDatesSend class="filter" [title]="'Fecha y hora envío'" [listItems]="datesSend"
+                                 [isFiltering]="isFilteringDatesSend != datesSend.length"
+                                 (applyFilters)="applyFilters($event, 'datesSend')">
+            </suite-filter-button>
+          </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item?.dateSend | date: 'dd/MM/yyyy HH:mm' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="dateReceive">
-            <th mat-header-cell *matHeaderCellDef >
-                Fecha y hora recepción
-            </th>
-            <td mat-cell *matCellDef="let item">
-                {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
-            </td>
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="title" (click)="sort('dateReceive')">Fecha y hora recepción</span>
+            <suite-filter-button #filterButtonDatesReceive class="filter" [title]="'Fecha y hora recepción'" [listItems]="datesReceive"
+                                 [isFiltering]="isFilteringDatesReceive != datesReceive.length"
+                                 (applyFilters)="applyFilters($event, 'datesReceive')">
+            </suite-filter-button>
+          </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="reference">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="reference">
-                Nombre del bulto
+            <th mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('reference')">Nombre del bulto</span>
+              <suite-filter-button #filterButtonReferences class="filter" [title]="'Nombre del bulto'" [listItems]="references"
+                                   [isFiltering]="isFilteringReferences != references.length"
+                                   (applyFilters)="applyFilters($event, 'references')">
+              </suite-filter-button>
             </th>
             <td mat-cell *matCellDef="let item">
               {{ item.reference }}
             </td>
         </ng-container>
     </table>
-    <!-- <suite-paginator [pagerValues]="pagerValues"></suite-paginator> -->
+   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+     <ion-fab-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
+       <ion-icon name="document"></ion-icon>
+     </ion-fab-button>
+   </ion-fab>
+   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
 </ion-content>

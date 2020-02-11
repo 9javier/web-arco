@@ -1,6 +1,16 @@
 
 table {
-    width: 100%;
+  width: 100%;
+
+}
+
+table.mat-table {
+  th {
+    padding-left: 2px;
+  }
+  td {
+    padding-left: 2px;
+  }
 }
 
 .title {
@@ -66,10 +76,6 @@ div.table-container {
         padding-right: 12px;
       }
     }
-}
-
-table {
-    width: 100%;
 }
 
 tr.example-detail-row {
@@ -161,7 +167,7 @@ ion-modal{
 }
 
 .form-fields {
-  padding: 20px;
+  padding-top: 20px;
 
   .content-select {
     padding-top: 20px;
@@ -191,10 +197,31 @@ ion-modal{
         width: 100%;
 
         ion-select {
+          padding-left: 1px;
+          font-size: 12px;
           width: 100%;
           max-width: 100%;
           --padding-start: 0;
+
         }
+      }
+    }
+  }
+
+  .content-info {
+
+    ion-item.item-text-wrap {
+      padding-left: 0px;
+      font-size: 12px;
+
+
+      ion-select {
+        padding-left: 0px;
+      }
+
+      ion-title {
+        padding-left: 0px;
+        font-size: 12px;
       }
     }
   }
@@ -206,4 +233,17 @@ ion-modal{
   .btn-search {
     margin-bottom: 20px;
   }
+}
+
+span {
+  width: 100%;
+  text-align: left;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+suite-filter-button{
+  text-align: end;
+  padding-right: 8px;
+  display: table-cell;
 }
