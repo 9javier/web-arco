@@ -72,7 +72,7 @@ export class ReceptionsAvelonService {
   }
 
   eanProductPrint(ean: string, expedition: string, providerId: number) {
-    return this.http.post<HttpRequestModel.Response>(`${this.url}/ean-product/print-reception-label`, {ean, expedition, providerId}).pipe(map(resp => resp.data));
+    return this.http.post<HttpRequestModel.Response>(`${this.receptionsUrl}/ean-product/print-reception-label`, {ean, expedition, providerId}).pipe(map(resp => resp.data));
   }
 
   checkExpeditionsByNumberAndProvider(params: ReceptionAvelonModel.ParamsCheckExpeditionsByNumberAndProvider): Observable<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider> {
