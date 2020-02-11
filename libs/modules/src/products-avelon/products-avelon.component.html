@@ -3,52 +3,73 @@
     <ion-grid>
       <ion-row>
         <ion-col class="ion-align-self-center">
-          <ion-list>
-            <ion-item>
-              <ion-label *ngIf="seconds !== undefined">
-                Segundos a avelon: {{seconds?.GlobalVariable_value}}
-              </ion-label>
-            </ion-item>
-          </ion-list>
+        </ion-col>
+        <ion-col class="ion-align-self-center">
         </ion-col>
         <ion-col>
+          <ion-item  *ngIf="isShow">
+            <ion-label>
+              Segundos a avelon: 
+            </ion-label>
+            <ion-input  [(ngModel)]="seconds.GlobalVariable_value"></ion-input> 
+          </ion-item>
         </ion-col>
         <ion-col>
+          <ion-button (click)="insertSecond()" *ngIf="isShow" >
+            <ion-icon  name="checkmark-circle-outline"></ion-icon> Actualizar Tiempo
+          </ion-button>
+          <ion-button *ngIf="!isShow" (click)="showForm()">
+            <ion-icon name="clock"></ion-icon> Tiempo de sincronizacion
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-text>
-  <div class="mat-table-wrapper-overflow-x">
-    <table mat-table [dataSource]="dataSource">
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+
+  <div class="incidences-container">
+    <mat-table [dataSource]="dataSource" matSort class="table-incidences">
+      <ng-container matColumnDef="model">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Modelo </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.model.name}} </mat-cell>
+        <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Modelos'" [listItems]="entities.models"
+                              [isFiltering]="isFilteringModels != entities.models.length"
+                              (applyFilters)="applyFilters($event, 'models')">
+        </suite-filter-button>
+      </ng-container>
+     
+      <ng-container matColumnDef="size">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Talla </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.size.name}} </mat-cell>
       </ng-container>
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+      <ng-container matColumnDef="color">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Color </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.color.name}} </mat-cell>
       </ng-container>
 
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+      <ng-container matColumnDef="brand">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Marca </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.brand.name}} </mat-cell>
       </ng-container>
 
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef> Symbol </th>
-        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+      <ng-container matColumnDef="provider">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> Proveedor </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.provider.name}} </mat-cell>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <ng-container matColumnDef="warehouseDestiny">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header> WareHouse </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.warehouseDestiny.name}} </mat-cell>
+      </ng-container>
 
-    </table>
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
+      </mat-row>
+    </mat-table>
+
+     
   </div>
+  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
 </ion-content>
 
 <ion-footer>
@@ -57,7 +78,7 @@
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
     <ion-fab-button matTooltip="Notificar Avelon Predistribucion" matTooltipClass="tooltip" (click)="notifyAvelonPredistribution()">
-      <ion-icon name="save"></ion-icon>
+      <ion-icon name="notifications"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 </ion-footer>
