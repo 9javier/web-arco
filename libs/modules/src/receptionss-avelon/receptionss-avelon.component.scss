@@ -139,21 +139,26 @@
       z-index: 1;
     }
 
-    .my-sticky-col.info.number {
-      left: 0;
+    .my-sticky-col.info.checkbox{
+      left: 0px;
     }
-    .my-sticky-col.info.type-120 {
+
+    .my-sticky-col.info.number {
       left: 120px;
     }
-    .my-sticky-col.info.type-240 {
+    
+    .my-sticky-col.info.type-120 {
       left: 240px;
     }
-    .my-sticky-col.info.type-360 {
+    .my-sticky-col.info.type-240 {
       left: 360px;
+    }
+    .my-sticky-col.info.type-360 {
+      left: 480px;
     }
 
     .my-sticky-col.info.process {
-      left: 360px;
+      left: 480px;
       border-right-width: 1px;
       border-right-color: var(--ion-color-primary);
       border-right-style: solid;

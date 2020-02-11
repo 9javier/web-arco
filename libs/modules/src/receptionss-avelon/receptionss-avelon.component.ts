@@ -137,6 +137,8 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
      this.getFilters();
      this.getList(this.form);
      this.listenChanges();
+     this.isAllSelected();
+    this.selection.clear();
     });
 
 
@@ -174,6 +176,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
      This.getFilters();
      This.getList(This.form);
      This.listenChanges();
+     This.selection.clear();
    }, (error) => {
      This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
      This.intermediaryService.dismissLoading();
@@ -238,29 +241,12 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
  
 
-  async openModalSend(users,ListReceptions){
-    let This = this;
-    console.log(users);
-    console.log(ListReceptions);
-    const modal = await This.modalController.create({
-      component: ModalUserComponent,
-      componentProps: {
-        users,
-        ListReceptions
-      }
-    });
-    modal.onDidDismiss().then((p) => {
-      //this.router.navigate(['/receptions']);
-      this.initEntity();
-     this.initForm();
-     this.getFilters();
-     this.getList(this.form);
-     this.listenChanges();
-    });
-   
-   
+ 
 
-  }
+dismissCheckbox(){
+  this.selection.selected.length = 0;
+  console.log(JSON.stringify(this.selection.selected));
+}
 
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -437,58 +423,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
-  //  savePredistributions() {
-  //
-  //
-  //   let receptionList =[];
-  //     receptionList.length=0;
-  //   for(let i=0; i<this.selection.selected.length; i++){
-  //     let distribution =JSON.stringify(this.selection.selected[i].distribution);
-  //     let reserved =JSON.stringify(this.selection.selected[i].reserved);
-  //     let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
-  //     let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
-  //     let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
-  //       receptionList.push({
-  //       modelId: modelId,
-  //       sizeId: sizeId,
-  //       warehouseId: warehouseId
-  //     });
-  //
-  //
-  //     /**receptionList.push({
-  //       distribution: distribution,
-  //       reserved: reserved,
-  //       modelId: modelId,
-  //       sizeId: sizeId,
-  //       warehouseId: warehouseId
-  //     }); */
-  //   }
-  //
-  //   // call to services ..
-  //   this..presenintermediaryServicetLoading();
-  //   let This = this;
-  //    this.predistributionsService.updateBlockReserved2(receptionList).subscribe(function(data){
-  //     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-  //     receptionList.length=0;
-  //     console.log(receptionList.length);
-  //     console.log('debug', data);
-  //     // reload page
-  //     This.initEntity()
-  //     This.initForm()
-  //     This.getFilters()
-  //     This.getList(This.form)
-  //     This.listenChanges()
-  //   }, (error) => {
-  //     receptionList.length=0;
-  //     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-  //     This.intermediaryService.dismissLoading();
-  //   }, () => {
-  //     receptionList.length=0;
-  //     This.intermediaryService.dismissLoading();
-  //   });
-  // }
-
+  
   savePredistributions(){
     this.presentModal();
   }
