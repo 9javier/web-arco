@@ -163,8 +163,6 @@ export class RulesComponent implements OnInit {
             break;
         } 
 
-        console.log(dataGroupToSend)
-
         let dataToSend = {
          filterToAdd: {
           name: data.data.name,
@@ -179,9 +177,9 @@ export class RulesComponent implements OnInit {
         }
 
         console.log(dataToSend)
-        /*this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
+        this.marketplacesService.postRulesFilter(dataToSend).subscribe(data => {
           console.log(data)
-        })*/
+        })
 
         this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
