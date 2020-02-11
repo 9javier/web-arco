@@ -26,12 +26,12 @@ ion-header {
 
 ion-content {
 
-  table {
-    width: 100%;    
+  /*table {
+    width: 100%;
 
     .delete {
       font-weight: bold;
-      
+
       &:hover {
         cursor: pointer;
       }
@@ -52,7 +52,7 @@ ion-content {
       width: 100%;
       padding: 10px;
     }
-  }
+  }*/
 
   .nr-modal-body-wrapper {
     width: 100%;
@@ -165,6 +165,59 @@ ion-content {
 
                   }
 
+                  &.nr-include-exclude-ref {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+
+                    input {
+                      font-size: 14px;
+                      width: 100%;
+                      padding: 5px 10px;
+                      margin-bottom: 10px;
+
+                      &.incorrect-input-value {
+                        color: #f00;
+                      }
+
+                    }
+
+                    & > div {
+                      display: flex;
+                      justify-content: flex-end;
+                      cursor: auto;
+                      padding: 0;
+
+                      &:hover {
+                        background-color: #f5f4f6;
+                      }
+
+                      & > div {
+                        font-size: 11px;
+                        height: 32px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        font-weight: 500;
+                        color: #FFF;
+                        background-color: #000;
+                        text-align: center;
+                        width: 86px;
+                        cursor: pointer;
+
+                        &:last-of-type {
+                          margin-left: 10px;
+                        }
+
+                        &.disabled-include-exclude-reference-button {
+                          opacity: .4;
+                          cursor: auto;
+                        }
+                      }
+                    }
+
+                  }
+
                   & > div {
                     font-size: 14px;
                     padding: 5px;
@@ -241,7 +294,7 @@ ion-content {
           &.nr-filter-list {
             background-color: #f5f4f6;
             padding: 12px 10px;
-            height: 58px;
+            height: 148px;
             overflow-y: auto;
 
             &.no-filters {
@@ -257,59 +310,6 @@ ion-content {
             font-size: 12px;
           }
 
-        }
-      }
-
-      .nr-references-extra-wrapper {
-        margin-bottom: 20px;
-        margin-left: 50px;
-        margin-top: 65px;
-
-        .inputReferences {
-          display: flex;
-          flex-direction: column;
-
-          input {
-            
-            &:first-child {
-              margin-bottom: 20px;
-            }
-            width: 420px;
-            padding: 10px;
-            border: none;
-          }
-        }
-
-        & > div {
-          &:first-of-type {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            font-size: 14px;
-            margin-bottom: 4px;
-
-            .add-reference-condition-button {
-              font-size: 11px;
-              background-color: #000;
-              color: #fff;
-              padding: 12px;
-              text-align: center;
-              cursor: pointer;
-            }
-          }
-
-          &:last-of-type {
-            background-color: #f5f4f6;
-            padding: 12px 10px;
-            height: calc(100% - 41px);
-
-            & > .no-exceptions {
-              opacity: .6;
-              font-style: italic;
-              font-size: 14px;
-            }
-
-          }
         }
       }
 
@@ -378,8 +378,8 @@ ion-content {
                   flex-direction: column;
                   overflow-y: auto;
                   padding-top: 5px;
-                  height: 94px;
-                  max-height: 94px;
+                  height: 162px;
+                  max-height: 162px;
                   & > div {
                     margin-bottom: 5px;
                     display: flex;

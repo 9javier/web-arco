@@ -3,7 +3,7 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import { ManageFilteredProductsComponent } from '../manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import {falseIfMissing} from "protractor/built/util";
 
 @Component({
   selector: 'suite-new-rule',
@@ -17,44 +17,8 @@ export class NewRuleComponent implements OnInit {
   @ViewChild('stockInput') stockInput;
   @ViewChild('reduceStockInput') reduceStockInput;
   @ViewChild('ruleNameWindow') ruleNameWindow;
-
-  private productReferences = [
-    { 
-      name: 'product1',
-      reference: 'reference1',
-      type: 'Incluyente'
-    },
-    { 
-      name: 'product2',
-      reference: 'reference2',
-      type: 'Excluyente'
-    },
-    { 
-      name: 'product3',
-      reference: 'reference3',
-      type: 'Incluyente'
-    },
-    { 
-      name: 'product4',
-      reference: 'reference4',
-      type: 'Excluyente'
-    },
-    { 
-      name: 'product5',
-      reference: 'reference5',
-      type: 'Incluyente'
-    },
-    { 
-      name: 'product6',
-      reference: 'reference6',
-      type: 'Excluyente'
-    }
-  ];
-  
-  @ViewChild('paginatorReferences') paginatorReferences: MatPaginator;
-
-  private displayedColumns: string[] = ['name', 'reference', 'type', 'delete'];
-  private dataSource  = new MatTableDataSource(this.productReferences);
+  @ViewChild('includeReferenceInput') includeReferenceInput;
+  @ViewChild('excludeReferenceInput') excludeReferenceInput;
 
   private mode;
   private rule;
@@ -77,10 +41,13 @@ export class NewRuleComponent implements OnInit {
   private filterDescription;
   private ruleName;
   private originalRuleName;
-  private referencesExceptions;
-  private idToEdit;
+  private includeReferenceText;
+  private includeReferenceArray;
+  private excludeReferenceText;
+  private excludeReferenceArray;
+  private referencesExceptions;/*
   private filterSearched;
-  private filterItemsAux;
+  private filterItemsAux;*/
 
   constructor(
     private modalController: ModalController,
@@ -105,11 +72,11 @@ export class NewRuleComponent implements OnInit {
     this.stockToReduceDescription = '';
     this.selectedCategories = [];
     this.ruleName = '';
-    this.referencesExceptions = [1];
-    this.idToEdit = this.navParams.get('id');
-
-    setTimeout(() => this.dataSource.paginator = this.paginatorReferences);
-
+    this.referencesExceptions = [];
+    this.includeReferenceText = '';
+    this.includeReferenceArray = [];
+    this.excludeReferenceText = '';
+    this.excludeReferenceArray = [];
 
     this.categoryList = [
       {
@@ -145,11 +112,7 @@ export class NewRuleComponent implements OnInit {
       {
         id: 12,
         name: 'Comercial',
-        items: [
-          /*{id: 1, group: 7, name: 'Comercial 1'},
-          {id: 2, group: 7, name: 'Comercial 2'},
-          {id: 3, group: 7, name: 'Comercial 3'}*/
-        ]
+        items: []
       },
       {
         id: 15,
@@ -170,7 +133,17 @@ export class NewRuleComponent implements OnInit {
         id: 18,
         name: 'Precio',
         items: []
-      }
+      },
+      {
+        id: 19,
+        name: 'Añadir referencias',
+        items: []
+      },
+      {
+        id: 20,
+        name: 'Excluír referencias',
+        items: []
+      },
     ];
     this.destinationCategories = [];
     if (this.ruleFilterType == 'categories') {
@@ -208,11 +181,7 @@ export class NewRuleComponent implements OnInit {
         {
           id: 12,
           name: 'Comercial',
-          items: [
-            /*{id: 1, group: 7, name: 'Comercial 1'},
-            {id: 2, group: 7, name: 'Comercial 2'},
-            {id: 3, group: 7, name: 'Comercial 3'}*/
-          ]
+          items: []
         },
         {
           id: 15,
@@ -292,6 +261,16 @@ export class NewRuleComponent implements OnInit {
           name: 'Precio',
           items: []
         });
+        this.categoryList[11].items.push({
+          id: 19,
+          name: 'Añadir referencias',
+          items: []
+        });
+        this.categoryList[12].items.push({
+          id: 20,
+          name: 'Excluír referencias',
+          items: []
+        });
         for (let category of this.categoryList) {
           category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         }
@@ -304,13 +283,13 @@ export class NewRuleComponent implements OnInit {
       }
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = this.categoryList[0];
-      this.filterItemsAux = this.selectedCategoryGroupFilterObject;
+      /*this.filterItemsAux = this.selectedCategoryGroupFilterObject;*/
       if (this.ruleFilterType == 'categories') {
         this.selectedDestinationCategoryGroupFilter = this.destinationCategories[0].id;
         this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories[0];
       }
 
-      /*if (this.mode == 'edit') {
+      if (this.mode == 'edit') {
         this.rule = this.navParams.get('rule');
         this.ruleName = this.navParams.get('ruleName');
         this.originalRuleName = this.ruleName;
@@ -327,8 +306,34 @@ export class NewRuleComponent implements OnInit {
           this.addReduceStockFilter();
         }
 
+        if (this.referencesExceptions.length) {
+          for (let exception of this.referencesExceptions) {
+            if (exception.type == "include") {
+              this.includeReferenceArray.push(exception.reference);
+            } else {
+              this.excludeReferenceArray.push(exception.reference);
+            }
+          }
+          this.includeReferenceText = '';
+          this.excludeReferenceText = '';
+          for (let i = 0; i < this.includeReferenceArray.length; i++) {
+            this.includeReferenceText += this.includeReferenceArray[i];
+            if (i != this.includeReferenceArray.length - 1) {
+              this.includeReferenceText += ', ';
+            }
+          }
+
+          for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+            this.excludeReferenceText += this.excludeReferenceArray[i];
+            if (i != this.excludeReferenceArray.length - 1) {
+              this.excludeReferenceText += ', ';
+            }
+          }
+        }
+
         switch (this.ruleFilterType) {
           case 'category':
+          case 'enabling':
             this.filterDescription = '';
             for (let category of this.selectedCategories) {
               let group = this.categoryList.find(x => x.id === category.group);
@@ -337,21 +342,50 @@ export class NewRuleComponent implements OnInit {
                 this.filterDescription += ', ';
               }
             }
-            break;
-
-          case 'price':
-            this.addPriceFilter();
+            if (this.priceRange != '') {
+              if (this.selectedCategories.length) {
+                this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+              } else {
+                this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+              }
+            }
+            if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+              if (this.selectedCategories.length || this.priceRange != '') {
+                this.filterDescription += ', Referencias añadidas: ';
+              } else {
+                this.filterDescription += 'Referencias añadidas: ';
+              }
+              for (let i = 0; i < this.includeReferenceArray.length; i++) {
+                this.filterDescription += this.includeReferenceArray[i];
+                if (i != this.includeReferenceArray.length - 1) {
+                  this.filterDescription += ', ';
+                }
+              }
+            }
+            if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+              if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+                this.filterDescription += ', Referencias excluídas: ';
+              } else {
+                this.filterDescription += 'Referencias excluídas: ';
+              }
+              for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+                this.filterDescription += this.excludeReferenceArray[i];
+                if (i != this.excludeReferenceArray.length - 1) {
+                  this.filterDescription += ', ';
+                }
+              }
+            }
             break;
 
           case 'stock':
             this.addStockFilter();
             break;
         }
-      } else {*/
+      } else {
       this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
         this.numberOfProducts = count;
       });
-      //}
+    }
 
     });
   }
@@ -363,7 +397,7 @@ export class NewRuleComponent implements OnInit {
   changeSelectedCategoryGroupFilter(e) {
     this.selectedCategoryGroupFilter = e.value;
     this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === e.value);
-    this.filterItemsAux = this.selectedCategoryGroupFilterObject;
+    /*this.filterItemsAux = this.selectedCategoryGroupFilterObject;*/
   }
 
   changeSelectedDestinationCategories(e) {
@@ -441,6 +475,32 @@ export class NewRuleComponent implements OnInit {
         this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
       }
     }
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias añadidas: ';
+      } else {
+        this.filterDescription += 'Referencias añadidas: ';
+      }
+      for (let i = 0; i < this.includeReferenceArray.length; i++) {
+        this.filterDescription += this.includeReferenceArray[i];
+        if (i != this.includeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+        this.filterDescription += ', Referencias excluídas: ';
+      } else {
+        this.filterDescription += 'Referencias excluídas: ';
+      }
+      for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+        this.filterDescription += this.excludeReferenceArray[i];
+        if (i != this.excludeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
   }
 
   addPriceRangeToFilter() {
@@ -460,7 +520,134 @@ export class NewRuleComponent implements OnInit {
       }
     }
     this.filterDescription += this.priceRange;
+
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias añadidas: ';
+      } else {
+        this.filterDescription += 'Referencias añadidas: ';
+      }
+      for (let i = 0; i < this.includeReferenceArray.length; i++) {
+        this.filterDescription += this.includeReferenceArray[i];
+        if (i != this.includeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+        this.filterDescription += ', Referencias excluídas: ';
+      } else {
+        this.filterDescription += 'Referencias excluídas: ';
+      }
+      for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+        this.filterDescription += this.excludeReferenceArray[i];
+        if (i != this.excludeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
     this.filterProducts('categories');
+  }
+
+  addIncludeReferenceToFilter() {
+
+    this.includeReferenceArray = this.includeReferenceText.split(",");
+    console.log('this.includeReferenceText', this.includeReferenceText);
+    console.log('this.includeReferenceArray', this.includeReferenceArray);
+
+    this.filterDescription = '';
+
+    for (let category of this.selectedCategories) {
+      let group = this.categoryList.find(x => x.id === category.group);
+      this.filterDescription += group.name + ': ' + category.name;
+      if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+        this.filterDescription += ', ';
+      }
+    }
+
+    if (this.priceRange != '') {
+      if (this.selectedCategories.length) {
+        this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      } else {
+        this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      }
+    }
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias añadidas: ';
+      } else {
+        this.filterDescription += 'Referencias añadidas: ';
+      }
+      for (let i = 0; i < this.includeReferenceArray.length; i++) {
+        this.filterDescription += this.includeReferenceArray[i].trim();
+        if (i != this.includeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+        this.filterDescription += ', Referencias excluídas: ';
+      } else {
+        this.filterDescription += 'Referencias excluídas: ';
+      }
+      for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+        this.filterDescription += this.excludeReferenceArray[i].trim();
+        if (i != this.excludeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+  }
+
+  addExcludeReferenceToFilter() {
+
+    this.excludeReferenceArray = this.excludeReferenceText.split(",");
+
+    this.filterDescription = '';
+
+    for (let category of this.selectedCategories) {
+      let group = this.categoryList.find(x => x.id === category.group);
+      this.filterDescription += group.name + ': ' + category.name;
+      if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+        this.filterDescription += ', ';
+      }
+    }
+
+    if (this.priceRange != '') {
+      if (this.selectedCategories.length) {
+        this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      } else {
+        this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      }
+    }
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias añadidas: ';
+      } else {
+        this.filterDescription += 'Referencias añadidas: ';
+      }
+      for (let i = 0; i < this.includeReferenceArray.length; i++) {
+        this.filterDescription += this.includeReferenceArray[i].trim();
+        if (i != this.includeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+        this.filterDescription += ', Referencias excluídas: ';
+      } else {
+        this.filterDescription += 'Referencias excluídas: ';
+      }
+      for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+        this.filterDescription += this.excludeReferenceArray[i].trim();
+        if (i != this.excludeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
   }
 
   deletePriceRangeFromFilter() {
@@ -476,10 +663,118 @@ export class NewRuleComponent implements OnInit {
         this.filterDescription += ', ';
       }
     }
+
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias añadidas: ';
+      } else {
+        this.filterDescription += 'Referencias añadidas: ';
+      }
+      for (let i = 0; i < this.includeReferenceArray.length; i++) {
+        this.filterDescription += this.includeReferenceArray[i];
+        if (i != this.includeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '' || (this.includeReferenceArray && this.includeReferenceText != '')) {
+        this.filterDescription += ', Referencias excluídas: ';
+      } else {
+        this.filterDescription += 'Referencias excluídas: ';
+      }
+      for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+        this.filterDescription += this.excludeReferenceArray[i];
+        if (i != this.excludeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+  }
+
+  deleteIncludeReferenceFromFilter() {
+    this.includeReferenceText = '';
+    this.includeReferenceArray = [];
+
+    this.filterDescription = '';
+
+    for (let category of this.selectedCategories) {
+      let group = this.categoryList.find(x => x.id === category.group);
+      this.filterDescription += group.name + ': ' + category.name;
+      if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+        this.filterDescription += ', ';
+      }
+    }
+
+    if (this.priceRange != '') {
+      if (this.selectedCategories.length) {
+        this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      } else {
+        this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      }
+    }
+
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias excluídas: ';
+      } else {
+        this.filterDescription += 'Referencias excluídas: ';
+      }
+      for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+        this.filterDescription += this.excludeReferenceArray[i].trim();
+        if (i != this.excludeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
+  }
+
+  deleteExcludeReferenceFromFilter() {
+    this.excludeReferenceText = '';
+    this.excludeReferenceArray = [];
+
+    this.filterDescription = '';
+
+    for (let category of this.selectedCategories) {
+      let group = this.categoryList.find(x => x.id === category.group);
+      this.filterDescription += group.name + ': ' + category.name;
+      if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
+        this.filterDescription += ', ';
+      }
+    }
+
+    if (this.priceRange != '') {
+      if (this.selectedCategories.length) {
+        this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      } else {
+        this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+      }
+    }
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      if (this.selectedCategories.length || this.priceRange != '') {
+        this.filterDescription += ', Referencias añadidas: ';
+      } else {
+        this.filterDescription += 'Referencias añadidas: ';
+      }
+      for (let i = 0; i < this.includeReferenceArray.length; i++) {
+        this.filterDescription += this.includeReferenceArray[i].trim();
+        if (i != this.includeReferenceArray.length - 1) {
+          this.filterDescription += ', ';
+        }
+      }
+    }
   }
 
   priceRangeIsInFilter() {
     return (this.priceRange != '');
+  }
+
+  includeReferenceIsInFilter() {
+    return (this.includeReferenceText != '' && this.includeReferenceArray.length);
+  }
+
+  excludeReferenceIsInFilter() {
+    return (this.excludeReferenceText != '' && this.excludeReferenceArray.length);
   }
 
   formatMinPriceCurrency() {
@@ -489,6 +784,22 @@ export class NewRuleComponent implements OnInit {
 
     return (/^[0-9]+(\.[0-9]{1,2})?$/.test(this.minPriceFilter));
 
+  }
+
+  formatIncludeReferences() {
+    if (this.includeReferenceText == '') {
+      return true;
+    }
+
+    return (/^[0-9]+(,\s?[0-9]+)*$/.test(this.includeReferenceText));
+  }
+
+  formatExcludeReferences() {
+    if (this.excludeReferenceText == '') {
+      return true;
+    }
+
+    return (/^[0-9]+(,\s?[0-9]+)*$/.test(this.excludeReferenceText));
   }
 
   blurMinPriceCurrencyInput() {
@@ -534,6 +845,34 @@ export class NewRuleComponent implements OnInit {
 
   addPriceRangeButtonActivation() {
     return ((/^[0-9]+(\.[0-9]{1,2})?$/.test(this.minPriceFilter)) && (/^[0-9]+(\.[0-9]{1,2})?$/.test(this.maxPriceFilter)) && this.maxPriceFilter != '' && this.minPriceFilter != '' && parseFloat(this.maxPriceFilter) > parseFloat(this.minPriceFilter));
+  }
+
+  addIncludeReferenceButtonActivation() {
+    if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+      let includeArray = this.includeReferenceText.split(",");
+      for (let i = 0; i < includeArray.length; i++) {
+        for (let j = 0; j < this.excludeReferenceArray.length; j++) {
+          if (includeArray[i].trim() == this.excludeReferenceArray[j].trim()) {
+            return false;
+          }
+        }
+      }
+    }
+    return (/^[0-9]+(,\s?[0-9]+)*$/.test(this.includeReferenceText));
+  }
+
+  addExcludeReferenceButtonActivation() {
+    if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+      let excludeArray = this.excludeReferenceText.split(",");
+      for (let i = 0; i < excludeArray.length; i++) {
+        for (let j = 0; j < this.includeReferenceArray.length; j++) {
+          if (excludeArray[i].trim() == this.includeReferenceArray[j].trim()) {
+            return false;
+          }
+        }
+      }
+    }
+    return (/^[0-9]+(,\s?[0-9]+)*$/.test(this.excludeReferenceText));
   }
 
   checkEnterKeyMinPriceInput(e) {
@@ -703,7 +1042,19 @@ export class NewRuleComponent implements OnInit {
 
         case 'enabling':
 
-          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+          if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+            for (let includeReference of this.includeReferenceArray) {
+              this.referencesExceptions.push({reference: includeReference.trim(), type: 'include'});
+            }
+          }
+
+          if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+            for (let excludeReference of this.excludeReferenceArray) {
+              this.referencesExceptions.push({reference: excludeReference.trim(), type: 'exclude'});
+            }
+          }
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length || this.excludeReferenceArray.length) {
             for (let i = 0; i < this.selectedCategories.length; i++) {
               if (i == 0 && i != this.selectedCategories.length - 1) {
                 description += this.selectedCategories[i].name + ', ';
@@ -728,6 +1079,32 @@ export class NewRuleComponent implements OnInit {
                 description += ', ';
               }
               description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+            if (this.includeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+                description += ', ';
+              }
+              description += 'Referencias añadidas: ';
+              for (let i = 0; i < this.includeReferenceArray.length; i++) {
+                description += this.includeReferenceArray[i];
+                if (i != this.includeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
+            }
+
+            if (this.excludeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length) {
+                description += ', ';
+              }
+              description += 'Referencias excluídas: ';
+              for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+                description += this.excludeReferenceArray[i];
+                if (i != this.excludeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
             }
 
           }
@@ -749,7 +1126,19 @@ export class NewRuleComponent implements OnInit {
 
         case 'categories':
 
-          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+          if (this.includeReferenceArray.length && this.includeReferenceText != '') {
+            for (let includeReference of this.includeReferenceArray) {
+              this.referencesExceptions.push({reference: includeReference.trim(), type: 'include'});
+            }
+          }
+
+          if (this.excludeReferenceArray.length && this.excludeReferenceText != '') {
+            for (let excludeReference of this.excludeReferenceArray) {
+              this.referencesExceptions.push({reference: excludeReference.trim(), type: 'exclude'});
+            }
+          }
+
+          if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length || this.excludeReferenceArray.length) {
             for (let i = 0; i < this.selectedCategories.length; i++) {
               if (i == 0 && i != this.selectedCategories.length - 1) {
                 description += this.selectedCategories[i].name + ', ';
@@ -774,6 +1163,32 @@ export class NewRuleComponent implements OnInit {
                 description += ', ';
               }
               description += this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+            }
+
+            if (this.includeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '')) {
+                description += ', ';
+              }
+              description += 'Referencias añadidas: ';
+              for (let i = 0; i < this.includeReferenceArray.length; i++) {
+                description += this.includeReferenceArray[i];
+                if (i != this.includeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
+            }
+
+            if (this.excludeReferenceArray.length) {
+              if (this.selectedCategories.length || (this.minPriceFilter != '' && this.minPriceFilter != '') || this.includeReferenceArray.length) {
+                description += ', ';
+              }
+              description += 'Referencias excluídas: ';
+              for (let i = 0; i < this.excludeReferenceArray.length; i++) {
+                description += this.excludeReferenceArray[i];
+                if (i != this.excludeReferenceArray.length - 1) {
+                  description += ', ';
+                }
+              }
             }
 
           }
@@ -805,7 +1220,7 @@ export class NewRuleComponent implements OnInit {
             products: this.numberOfProducts,
             destinationCategories: [],
             stockToReduce: parseInt(this.stockToReduce),
-            referencesExceptions: this.referencesExceptions,
+            referencesExceptions: [],
             description
           };
           break;
@@ -820,46 +1235,31 @@ export class NewRuleComponent implements OnInit {
     return this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
-  deleteExceptionReference(exception) {
-
-  }
-
-  async openManageFilteredProductsModal(): Promise<void> {
-    let modal = await this.modalController.create({
-      component: ManageFilteredProductsComponent,
-      componentProps: {}
-    });
-
-    modal.onDidDismiss().then((data) => {})
-
-    modal.present();
-  }
-
-  deleteProduct(product) {
+  /*deleteProduct(product) {
     console.log(product)
     for(let i = 0; i < this.productReferences.length; i++) {
       if(this.productReferences[i].reference == product.reference) {
-         this.productReferences.splice(i, 1);
-        }
+        this.productReferences.splice(i, 1);
       }
+    }
     this.dataSource.data = this.productReferences;
   }
 
   searchOnFilterList() {
     console.log(this.filterSearched)
     console.log(this.selectedCategoryGroupFilterObject)
-    if (this.filterSearched && this.filterSearched.trim() != '') { 
+    if (this.filterSearched && this.filterSearched.trim() != '') {
       let filters = [];
       for (let itemFilter of this.selectedCategoryGroupFilterObject.items) {
         if (itemFilter.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.filterSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-        !== -1) {
+          !== -1) {
           filters.push(itemFilter);
         }
       }
       this.selectedCategoryGroupFilterObject.items = filters;
-    } /*else {
+    } /!*else {
       this.selectedCategoryGroupFilterObject.items = this.filterItemsAux.items.slice();
-    }*/
-  }
+    }*!/
+  }*/
 
 }

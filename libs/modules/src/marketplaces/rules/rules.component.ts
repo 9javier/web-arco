@@ -249,26 +249,27 @@ export class RulesComponent implements OnInit {
   }
   //////////////////////////////////////////////////////////////////////////////
 
-  /*async editRule(ruleToEdit): Promise<void> {
+  async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
     let modal = await this.modalController.create({
       component: NewRuleComponent,
       componentProps: {
         ruleFilterType: rule.filterType,
-        action: rule.action,
         ruleName: rule.name,
         selectedCategories: rule.categoriesFilter,
         minPriceFilter: rule.minPriceFilter,
+        maxPriceFilter: rule.maxPriceFilter,
         stockFilter: rule.stockFilter,
         numberOfProducts: rule.products,
         selectedDestinationCategories: rule.destinationCategories,
         stockToReduce: rule.stockToReduce,
+        referencesExceptions: rule.referencesExceptions,
         id: rule.id,
         mode: 'edit'
       }
     });
     modal.onDidDismiss().then((data) => {
-      if (data.data) {
+      /*if (data.data) {
 
         let editedRule = data.data;
 
@@ -324,10 +325,10 @@ export class RulesComponent implements OnInit {
 
               break;
 
-            case 'price':
+            case 'enabling':
 
-              this.dataSourcePrice[this.dataSourcePrice.map(cat => cat.id).indexOf(ruleToEdit.id)] = editedRule;
-              this.dataSourceRulesPrice = new MatTableDataSource(this.dataSourcePrice);
+              this.dataSourceEnabling[this.dataSourceEnabling.map(cat => cat.id).indexOf(ruleToEdit.id)] = editedRule;
+              this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
 
               break;
 
@@ -345,17 +346,13 @@ export class RulesComponent implements OnInit {
           // LLAMAR AL ENDPOINT PARA ACTUALIZAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
           // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
 
-          for (let ruleByPrice of this.dataSourcePrice) {
-            ruleByPrice.minPriceFilter = <any>parseFloat(ruleByPrice.minPriceFilter).toFixed(2);
-          }
-
         }
-      }
+      }*/
     });
     modal.present();
-  }*/
+  }
 
-  /*checkForRuleEdition(rule, editedRule) {
+  checkForRuleEdition(rule, editedRule) {
 
     if (rule.name == editedRule.name && rule.action == editedRule.action && rule.minPriceFilter == editedRule.minPriceFilter && rule.stockFilter == editedRule.stockFilter && rule.products == editedRule.products && rule.stockToReduce == editedRule.stockToReduce) {
       if (rule.categoriesFilter.length != editedRule.categoriesFilter.length) {
@@ -394,6 +391,6 @@ export class RulesComponent implements OnInit {
     } else {
       return false;
     }
-  }*/
+  }
 
 }
