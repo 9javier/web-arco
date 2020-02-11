@@ -57,7 +57,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.intermediaryService.presentLoading('Cargando');
     this.response = new Reception();
     this.filterData = new Reception();
-
+    this.typeScreen = undefined;
     this.isProviderAviable = false;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
@@ -430,9 +430,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
             this.response.models = this.clearSelected(this.response.models);
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
+            this.typeScreen = resp.type
+            console.log(this.typeScreen);
+            this.intermediaryService.dismissLoading();
           },
           () => {
             this.typeScreen = resp.type
+            console.log(this.typeScreen);
           }
         );
       },
@@ -614,17 +618,49 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   onKey(e) {
     if (e.keyCode == 13) {
-      this.response.brands = this.clearSelected(this.response.brands);
-      this.response.colors = this.clearSelected(this.response.colors);
-      this.response.models = this.clearSelected(this.response.models);
-      this.response.sizes = this.clearSelected(this.response.sizes);
+      this.intermediaryService.presentLoading('Enviando');
+      // this.response.brands = this.clearSelected(this.response.brands);
+      // this.response.colors = this.clearSelected(this.response.colors);
+      // this.response.models = this.clearSelected(this.response.models);
+      // this.response.sizes = this.clearSelected(this.response.sizes);
 
-      this.reception.eanProduct(this.result.ean).subscribe(resp => {
-        this.setSelected(this.response.brands, resp.brand, Type.BRAND);
-        this.setSelected(this.response.colors, resp.color, Type.COLOR);
-        this.setSelected(this.response.models, resp.model, Type.MODEL);
-        this.setSelected(this.response.sizes, resp.size, Type.SIZE);
-      });
+      // this.reception.eanProduct(this.result.ean).subscribe(resp => {
+      //   this.setSelected(this.response.brands, resp.brand, Type.BRAND);
+      //   this.setSelected(this.response.colors, resp.color, Type.COLOR);
+      //   this.setSelected(this.response.models, resp.model, Type.MODEL);
+      //   this.setSelected(this.response.sizes, resp.size, Type.SIZE);
+      // });
+
+      console.log(this.result.ean);
+      console.log(this.result.expedition);
+      console.log(this.result.providerId);
+      
+      this.reception.eanProductPrint(this.result.ean, this.expedition, this.providerId).subscribe(
+        result => {
+          this.reception.getReceptions(this.providerId).subscribe(
+            (info: ReceptionAvelonModel.Reception) => {
+              this.response = info;
+              this.response.brands = this.clearSelected(this.response.brands);
+              this.response.models = this.clearSelected(this.response.models);
+              this.response.colors = this.clearSelected(this.response.colors);
+              this.response.sizes = this.clearSelected(this.response.sizes);
+              this.typeScreen = result.type
+              console.log(this.typeScreen);
+              this.intermediaryService.dismissLoading();
+            },
+            () => {
+              this.typeScreen = result.type
+              console.log(this.typeScreen);
+              
+          })
+        },
+        e =>  {
+          console.log(e.error);
+          this.intermediaryService.dismissLoading();
+          this.intermediaryService.presentToastError(e.error.errors)
+        }
+      )
+
     }
   }
 
