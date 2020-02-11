@@ -6,8 +6,8 @@
       </mat-form-field>
       <mat-form-field>
         <input matInput placeholder="Proveedor" type="text" [matAutocomplete]="autoCompleteProvider" formControlName="provider_expedition" required>
-        <mat-autocomplete #autoCompleteProvider="matAutocomplete">
-          <mat-option *ngFor="let provider of listProviders" [value]="provider.name">
+        <mat-autocomplete #autoCompleteProvider="matAutocomplete" [displayWith]="valueToDisplay">
+          <mat-option *ngFor="let provider of listProviders" [value]="provider">
             {{provider.name}}
           </mat-option>
         </mat-autocomplete>

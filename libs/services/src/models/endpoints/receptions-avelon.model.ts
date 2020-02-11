@@ -41,4 +41,31 @@ export namespace ReceptionAvelonModel {
     providerId: number;
     brandId: number;
   }
+
+  //region CheckExpeditionsByNumberAndProvider
+  export interface ParamsCheckExpeditionsByNumberAndProvider {
+    providerId: number,
+    expeditionNumber: string
+  }
+  export interface CheckExpeditionsByNumberAndProvider {
+    expedition_available: boolean,
+    has_expeditions: boolean,
+    another_expeditions: Expedition[],
+    expedition: Expedition
+  }
+  export interface ResponseCheckExpeditionsByNumberAndProvider extends HttpRequestModel.Response {
+    data: CheckExpeditionsByNumberAndProvider
+  }
+  //endregion
+
+  export interface Expedition {
+    reference: string,
+    provider_name: string,
+    provider_id: number,
+    total_packing: number,
+    delivery_date: string,
+    shipper: string,
+    states_list: number[],
+    reception_enabled: boolean
+  }
 }

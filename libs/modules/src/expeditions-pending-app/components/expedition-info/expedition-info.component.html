@@ -1,7 +1,7 @@
 <mat-card *ngIf="expedition">
   <mat-card-header>
-    <mat-card-title># {{expedition.code}}</mat-card-title>
-    <mat-card-subtitle>{{expedition.provider}}</mat-card-subtitle>
+    <mat-card-title># {{expedition.reference}}</mat-card-title>
+    <mat-card-subtitle>{{expedition.provider_name}}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
@@ -9,16 +9,15 @@
       Nº bultos: <span>{{expedition.total_packing}}</span>
     </p>
     <p>
-      Fecha de envío: <span>{{expedition.delivery_date}}</span>
+      Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
     </p>
     <p>
       Transportista: <span>{{expedition.shipper}}</span>
     </p>
     <p>
-      Estados: <span>{{expedition.status_list.join(', ')}}</span>
+      Estados: <span>{{expedition.states_list.join(', ')}}</span>
     </p>
   </mat-card-content>
-
 
   <mat-card-actions align="end">
     <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception()">
@@ -26,4 +25,15 @@
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>
   </mat-card-actions>
+</mat-card>
+
+<mat-card *ngIf="!expedition && expeditionNumber && providerName">
+  <mat-card-header>
+    <mat-card-title># {{expeditionNumber}}</mat-card-title>
+    <mat-card-subtitle>{{providerName}}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p>No hay ninguna expedición con el número escaneado para el proveedor seleccionado.</p>
+  </mat-card-content>
 </mat-card>

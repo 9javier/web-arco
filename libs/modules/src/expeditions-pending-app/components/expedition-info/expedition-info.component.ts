@@ -1,4 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ReceptionAvelonModel} from "../../../../../services/src/models/endpoints/receptions-avelon.model";
+import {DateTimeParserService} from "../../../../../services/src/lib/date-time-parser/date-time-parser.service";
 
 @Component({
   selector: 'expedition-info',
@@ -9,29 +11,25 @@ export class ExpeditionInfoComponent implements OnInit {
 
   @Output() receptionExpedition: EventEmitter<any> = new EventEmitter();
 
-  public expedition: ExpeditionInfo = null;
+  public expedition: ReceptionAvelonModel.Expedition = null;
+  public expeditionNumber: string = null;
+  public providerName: string = null;
 
-  constructor() {}
+  constructor(
+    public dateTimeParserService: DateTimeParserService
+  ) {}
 
   ngOnInit() {
 
   }
 
-  public loadNewExpeditionInfo(newExpeditionInfo: ExpeditionInfo) {
+  public loadNewExpeditionInfo(newExpeditionNumber: string, newProviderName: string, newExpeditionInfo: ReceptionAvelonModel.Expedition) {
     this.expedition = newExpeditionInfo;
+    this.expeditionNumber = newExpeditionNumber;
+    this.providerName = newProviderName;
   }
 
   public reception() {
     this.receptionExpedition.next();
   }
-}
-
-export interface ExpeditionInfo {
-  code: string,
-  provider: string,
-  total_packing: number,
-  delivery_date: string,
-  shipper: string,
-  status_list: string[],
-  reception_enabled: boolean
 }
