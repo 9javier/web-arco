@@ -332,7 +332,7 @@ export class NewRuleComponent implements OnInit {
         }
 
         switch (this.ruleFilterType) {
-          case 'category':
+          case 'categories':
           case 'enabling':
             this.filterDescription = '';
             for (let category of this.selectedCategories) {
@@ -342,13 +342,16 @@ export class NewRuleComponent implements OnInit {
                 this.filterDescription += ', ';
               }
             }
-            if (this.priceRange != '') {
+            if (this.minPriceFilter != '' && this.maxPriceFilter != '') {
+              this.priceRange = this.minPriceFilter + ' - ' + this.maxPriceFilter;
               if (this.selectedCategories.length) {
-                this.filterDescription += ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+                this.priceRange = ', Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
               } else {
-                this.filterDescription += 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
+                this.priceRange = 'Precio: ' + this.minPriceFilter + ' € - ' + this.maxPriceFilter + ' €';
               }
+              this.filterDescription += this.priceRange;
             }
+
             if (this.includeReferenceArray.length && this.includeReferenceText != '') {
               if (this.selectedCategories.length || this.priceRange != '') {
                 this.filterDescription += ', Referencias añadidas: ';

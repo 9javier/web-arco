@@ -271,16 +271,12 @@ export class RulesComponent implements OnInit {
       }
     });
     modal.onDidDismiss().then((data) => {
-      /*if (data.data) {
+      if (data.data) {
 
         let editedRule = data.data;
 
-        console.log(editedRule)
-
-        let filterType = 0;
-
+        /*let filterType = 0;
         let dataGroupToSend = '';
-
         switch(editedRule.filterType) {
           case 'categories':
             filterType = 1;
@@ -288,11 +284,11 @@ export class RulesComponent implements OnInit {
             editedRule.categoriesFilter.forEach(item => {
               dataGroupToSend = dataGroupToSend.concat(item.name);
               dataGroupToSend = dataGroupToSend.concat(',')
-            })
+            });
             
             dataGroupToSend = dataGroupToSend.slice(0,-1);
             break;
-          case 'price':
+          case 'enabling':
             filterType = 2;
             dataGroupToSend = editedRule.minPriceFilter;
             break;
@@ -309,11 +305,11 @@ export class RulesComponent implements OnInit {
           externalId: "1",
           dataGroup: dataGroupToSend,
           status: 0
-        }
+        }*/
 
-        this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
+        /*this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
           console.log(data)
-        });
+        });*/
 
         if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
@@ -322,7 +318,7 @@ export class RulesComponent implements OnInit {
           switch (ruleToEdit.filterType) {
             case 'categories':
 
-              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)]/!*.action*!/ = editedRule;
+              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)] = editedRule;
               this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
 
               break;
@@ -349,12 +345,14 @@ export class RulesComponent implements OnInit {
           // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
 
         }
-      }*/
+      }
     });
     modal.present();
   }
 
   checkForRuleEdition(rule, editedRule) {
+
+    return false;
 
     if (rule.name == editedRule.name && rule.action == editedRule.action && rule.minPriceFilter == editedRule.minPriceFilter && rule.stockFilter == editedRule.stockFilter && rule.products == editedRule.products && rule.stockToReduce == editedRule.stockToReduce) {
       if (rule.categoriesFilter.length != editedRule.categoriesFilter.length) {
