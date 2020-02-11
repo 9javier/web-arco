@@ -64,7 +64,7 @@ export class ProductsAvelonService {
 
   entities(): Observable<any>{
     return this.http.get(this.getEntities).pipe(map((data:any)=>{
-      return data.data;
+      return data.data.filters;
     }));
   }
 }

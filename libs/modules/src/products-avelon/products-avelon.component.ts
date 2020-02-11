@@ -1,5 +1,5 @@
 import { BehaviorSubject, of, Observable } from 'rxjs';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange } from '@angular/material';
 import * as Filesave from 'file-saver';
 import {
@@ -42,23 +42,21 @@ import * as _ from 'lodash';
   styleUrls: ['./products-avelon.component.scss']
 })
 
-export class ProductsAvelonComponent implements OnInit {
+export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['model', 'size', 'color', 'brand', 'provider', 'warehouseDestiny'];
-  // displayedColumns: string[] = ['select', 'article', 'store'];
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
-
-  // @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
-  // @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
-  // @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
+  @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
+  @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
   @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
-  // @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
-  // @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
-  // @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
+  @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
+  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
+  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
+
 
   isFilteringReferences: number = 0;
   isFilteringModels: number = 0;
@@ -77,6 +75,7 @@ export class ProductsAvelonComponent implements OnInit {
   providers: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
   groups: Array<TagsInputOption> = [];
+  suppliers: Array<TagsInputOption> = [];
   entities
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
@@ -181,7 +180,7 @@ export class ProductsAvelonComponent implements OnInit {
   ngOnInit(){
     this.initEntity()
     this.initForm()
-    // this.getFilters()
+    this.getFilters()
     this.getList(this.form)
     this.listenChanges()
     this.getSecondsAvelon();
@@ -202,10 +201,11 @@ export class ProductsAvelonComponent implements OnInit {
   }
   initEntity() {
     this.entities = {
-      warehouses: [],
       models: [],
       colors: [],
       sizes: [],
+      warehouses: [],
+      ordertypes: [],
       brands: [],
       suppliers: [],
     }
@@ -217,6 +217,7 @@ export class ProductsAvelonComponent implements OnInit {
       colors: [],
       sizes: [],
       brands: [],
+      ordertypes: [],
       suppliers: [],
     })
   }
@@ -224,12 +225,13 @@ export class ProductsAvelonComponent implements OnInit {
 
   ngAfterViewInit(): void {
     let This = this;
-    setTimeout(() => {
-      if(!!This.sort && !!this.dataSource)
-        this.dataSource.sort = This.sort;
-      if(!!This.paginator && !!this.dataSource)
-        this.dataSource.paginator = This.paginator;
-    }, 2000)
+    console.log(this.dataSource);
+    // setTimeout(() => {
+    //   if(!!This.sort && !!this.dataSource)
+    //     this.dataSource.sort = This.sort;
+    //   if(!!This.paginator && !!this.dataSource)
+    //     this.dataSource.paginator = This.paginator;
+    // }, 2000)
   }
 
   getRangeLabel = (page: number, pageSize: number, length: number) =>  {
@@ -333,7 +335,7 @@ export class ProductsAvelonComponent implements OnInit {
       this.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
       this.initEntity();
       this.initForm();
-      // this.getFilters();
+      this.getFilters();
       this.getList(this.form);
       this.listenChanges();
     }, (error) => {
@@ -343,25 +345,25 @@ export class ProductsAvelonComponent implements OnInit {
       this.intermediaryService.dismissLoading();
     });
   }
-  // getFilters() {
-  //   this.productAvelonService.entities().subscribe(entities => {
-  //     // this.entities = entities.filters.models;
-  //     // // this.updateFilterSourceBrands(entities.brands);
-  //     // this.updateFilterSourceModels(entities.filters.models);
-  //     // // this.updateFilterSourceSizes(entities.sizes);
-  //     // // this.updateFilterSourceColors(entities.colors);
-  //     // // this.updateFilterSourceWarehouses(entities.destinyShop);
-  //     // // this.updateFilterSourceProviders(entities.provider);
-  //     // this.reduceFilters(entities.filters);
-  //     // setTimeout(() => {
-  //     //   this.pauseListenFormChange = false;
-  //     //   this.pauseListenFormChange = true;
-  //     //   // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
-  //     //   // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
-  //     // }, 0);
-  //   })
+  getFilters() {
+    this.productAvelonService.entities().subscribe(entities => {
+      this.updateFilterSourceBrands(entities.brands);
+      this.updateFilterSourceModels(entities.models);
+      this.updateFilterSourceSizes(entities.sizes);
+      this.updateFilterSourceColors(entities.colors);
+      this.updateFilterSourceWarehouses(entities.warehouses);
+      this.updateFilterSourceProviders(entities.suppliers);
+      this.updateFilterSourceOrdertypes(entities.ordertypes);
+      this.reduceFilters(entities);
+      setTimeout(() => {
+        this.pauseListenFormChange = false;
+        this.pauseListenFormChange = true;
+        // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
+        // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
+      }, 0);
+    })
 
-  // }
+  }
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading();
     this.productAvelonService.index(form.value).subscribe(
@@ -410,7 +412,7 @@ export class ProductsAvelonComponent implements OnInit {
             this.form.value.productReferencePattern = referencesFiltered;
             this.isFilteringReferences = referencesFiltered.length;
           } else {
-            this.form.value.productReferencePattern = ['99999'];
+            this.form.value.productReferencePattern = [];
             this.isFilteringReferences = this.references.length;
           }
         }
@@ -430,7 +432,7 @@ export class ProductsAvelonComponent implements OnInit {
             this.form.value.models = modelsFiltered;
             this.isFilteringModels = modelsFiltered.length;
           } else {
-            this.form.value.models = [99999];
+            this.form.value.models = [];
             this.isFilteringModels = this.models.length;
           }
         }
@@ -449,7 +451,7 @@ export class ProductsAvelonComponent implements OnInit {
             this.form.value.colors = colorsFiltered;
             this.isFilteringColors = colorsFiltered.length;
           } else {
-            this.form.value.colors = [99999];
+            this.form.value.colors = [];
             this.isFilteringColors = this.colors.length;
           }
         }
@@ -467,7 +469,7 @@ export class ProductsAvelonComponent implements OnInit {
             this.form.value.sizes = sizesFiltered;
             this.isFilteringSizes = sizesFiltered.length;
           } else {
-            this.form.value.sizes = ["99999"];
+            this.form.value.sizes = [];
             this.isFilteringSizes = this.sizes.length;
           }
         }
@@ -486,7 +488,7 @@ export class ProductsAvelonComponent implements OnInit {
             this.form.value.warehouses = warehousesFiltered;
             this.isFilteringWarehouses = warehousesFiltered.length;
           } else {
-            this.form.value.warehouses = [99999];
+            this.form.value.warehouses = [];
             this.isFilteringWarehouses = this.warehouses.length;
           }
         }
@@ -494,17 +496,21 @@ export class ProductsAvelonComponent implements OnInit {
       case 'providers':
         let providersFiltered: number[] = [];
         for (let providers of filters) {
-          if (providers.checked) providersFiltered.push(providers.id);
+          if (providers.checked) providersFiltered.push(providers.value);
+        }
+        if(providersFiltered.length === this.providers.length){
+          this.form.value.suppliers = [];
+          this.isFilteringProviders = this.providers.length;
         }
         if (providersFiltered.length >= this.providers.length) {
           this.form.value.providers = [];
           this.isFilteringProviders = this.providers.length;
         } else {
           if (providersFiltered.length > 0) {
-            this.form.value.providers = providersFiltered;
+            this.form.value.suppliers = providersFiltered;
             this.isFilteringProviders = providersFiltered.length;
           } else {
-            this.form.value.containers = [99999];
+            this.form.value.suppliers = [];
             this.isFilteringProviders = this.providers.length;
           }
         }
@@ -512,7 +518,7 @@ export class ProductsAvelonComponent implements OnInit {
       case 'brands':
         let brandsFiltered: number[] = [];
         for (let brand of filters) {
-          if (brand.checked) brandsFiltered.push(brand.id);
+          if (brand.checked) brandsFiltered.push(brand.value);
         }
         if (brandsFiltered.length >= this.brands.length) {
           this.form.value.brands = [];
@@ -522,7 +528,7 @@ export class ProductsAvelonComponent implements OnInit {
             this.form.value.brands = brandsFiltered;
             this.isFilteringBrands = brandsFiltered.length;
           } else {
-            this.form.value.brands = [99999];
+            this.form.value.brands = [];
             this.isFilteringBrands = this.brands.length;
           }
         }
@@ -538,41 +544,41 @@ export class ProductsAvelonComponent implements OnInit {
       }
       this.filterButtonModels.listItems = this.models;
     }
-    // if (this.lastUsedFilter !== 'colors') {
-    //   let filteredColors = entities['colors'] as unknown as string[];
-    //   for (let index in this.colors) {
-    //     this.colors[index].hide = filteredColors.includes(this.colors[index].value);
-    //   }
-    //   this.filterButtonColors.listItems = this.colors;
-    // }
-    // if (this.lastUsedFilter !== 'sizes') {
-    //   let filteredSizes = entities['sizes'] as unknown as string[];
-    //   for (let index in this.sizes) {
-    //     this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
-    //   }
-    //   this.filterButtonSizes.listItems = this.sizes;
-    // }
-    // if (this.lastUsedFilter !== 'warehouses') {
-    //   let filteredWarehouses = entities['destinyShop'] as unknown as (string | number)[];
-    //   for (let index in this.warehouses) {
-    //     this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
-    //   }
-    //   this.filterButtonWarehouses.listItems = this.warehouses;
-    // }
-    // if (this.lastUsedFilter !== 'brands') {
-    //   let filteredBrands = entities['brands'] as unknown as string[];
-    //   for (let index in this.brands) {
-    //     this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
-    //   }
-    //   this.filterButtonBrands.listItems = this.brands;
-    // }
-    // if (this.lastUsedFilter !== 'providers') {
-    //   let filteredProviders = entities['provider'] as unknown as string[];
-    //   for (let index in this.providers) {
-    //     this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
-    //   }
-    //   this.filterButtonProviders.listItems = this.providers;
-    // }
+    if (this.lastUsedFilter !== 'colors') {
+      let filteredColors = entities['colors'] as unknown as string[];
+      for (let index in this.colors) {
+        this.colors[index].hide = filteredColors.includes(this.colors[index].value);
+      }
+      this.filterButtonColors.listItems = this.colors;
+    }
+    if (this.lastUsedFilter !== 'sizes') {
+      let filteredSizes = entities['sizes'] as unknown as string[];
+      for (let index in this.sizes) {
+        this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
+      }
+      this.filterButtonSizes.listItems = this.sizes;
+    }
+    if (this.lastUsedFilter !== 'warehouses') {
+      let filteredWarehouses = entities['warehouses'] as unknown as (string | number)[];
+      for (let index in this.warehouses) {
+        this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
+      }
+      this.filterButtonWarehouses.listItems = this.warehouses;
+    }
+    if (this.lastUsedFilter !== 'brands') {
+      let filteredBrands = entities['brands'] as unknown as string[];
+      for (let index in this.brands) {
+        this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
+      }
+      this.filterButtonBrands.listItems = this.brands;
+    }
+    if (this.lastUsedFilter !== 'providers') {
+      let filteredProviders = entities['suppliers'] as unknown as string[];
+      for (let index in this.providers) {
+        this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
+      }
+      this.filterButtonProviders.listItems = this.providers;
+    }
   }
   private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
     this.pauseListenFormChange = true;
@@ -622,12 +628,14 @@ export class ProductsAvelonComponent implements OnInit {
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
+
+
   private updateFilterSourceModels(models: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("models").value;
     this.models = models.map(model => {
-      model.id = <number>(<unknown>model.id);
-      model.name = model.name;
+      model.id = <number>(<unknown>model.reference);
+      model.name = model.reference;
       model.value = model.name;
       model.checked = true;
       model.hide = false;
@@ -639,9 +647,9 @@ export class ProductsAvelonComponent implements OnInit {
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
-  private updateFilterSourceProviders(providers: FiltersModel.Model[]) {
+  private updateFilterSourceProviders(providers: FiltersModel.Supplier[]) {
     this.pauseListenFormChange = true;
-    let value = this.form.get("providers").value;
+    let value = this.form.get("suppliers").value;
     this.providers = providers.map(provider => {
       provider.id = <number>(<unknown>provider.id);
       provider.name = provider.name;
@@ -651,7 +659,7 @@ export class ProductsAvelonComponent implements OnInit {
       return provider;
     });
     if (value && value.length) {
-      this.form.get("providers").patchValue(value, { emitEvent: false });
+      this.form.get("suppliers").patchValue(value, { emitEvent: false });
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
@@ -669,6 +677,16 @@ export class ProductsAvelonComponent implements OnInit {
     }
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
+ 
+  private updateFilterSourceOrdertypes(ordertypes: FiltersModel.Group[]) {
+    this.pauseListenFormChange = true;
+    let value = this.form.get("orderby").get("type").value;
+    this.groups = ordertypes;
+    this.form.get("orderby").get("type").patchValue(value, { emitEvent: false });
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+  }
+
+
   private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("references").value;
@@ -734,10 +752,10 @@ export class ProductsAvelonComponent implements OnInit {
     return result;
   }
 
-  refreshPredistributions() {
+  refreshTable() {
     this.initEntity();
     this.initForm();
-    // this.getFilters();
+    this.getFilters();
     this.getList(this.form);
     this.listenChanges();
   }
