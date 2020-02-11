@@ -15,9 +15,12 @@ export class UserTimeService {
   private userRegisterTimeUrl:string = environment.apiBase+"/users-register-time/user";
   private getListUsersRegisterUrl: string = environment.apiBase + "/users-register-time/";
   private getNewUserListUrl: string = environment.apiBase + '/users-register-time/users-pickings';
+  private getUserShoesPicking: string = environment.apiBase + '/workwaves/users/picking';
+ ;
 
   constructor(
-    private http:HttpClient
+    private http:HttpClient,
+    
   ) { }
 
     /**
@@ -56,5 +59,17 @@ export class UserTimeService {
       return response.data;
     }));
   }
+
+  getUsersShoesPicking(body:Array<Number>){
+    return this.http.post(this.getUserShoesPicking,body).pipe(map(response=>{
+      return response;
+      
+    }));
+
+  
+  }
+
+
+
 
 }
