@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ScannerManualComponent} from "@suite/common-modules";
-import {IntermediaryService} from "@suite/services";
+import {ScannerManualComponent} from "../../../components/scanner-manual/scanner-manual.component";
+import {IntermediaryService} from "../../../../../services/src/lib/endpoint/intermediary/intermediary.service";
 
 @Component({
   selector: 'suite-ean-scanner',

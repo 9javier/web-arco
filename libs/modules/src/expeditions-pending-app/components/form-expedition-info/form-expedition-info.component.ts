@@ -1,7 +1,9 @@
 import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {Subscription} from "rxjs";
-import {IntermediaryService, ReceptionAvelonModel, ReceptionsAvelonService} from "@suite/services";
+import {ReceptionsAvelonService} from "../../../../../services/src/lib/endpoint/receptions-avelon/receptions-avelon.service";
+import {IntermediaryService} from "../../../../../services/src/lib/endpoint/intermediary/intermediary.service";
+import {ReceptionAvelonModel} from "../../../../../services/src/models/endpoints/receptions-avelon.model";
 
 @Component({
   selector: 'form-expedition-info',
