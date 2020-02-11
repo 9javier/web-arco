@@ -21,6 +21,7 @@ export class MarketplacesService {
   private updateRulesFilterUrl = this.apiBase + "/RuleFilter/{{id}}";
   private getRulesFilterByTypeUrl = this.apiBase + "/RuleFilter/{{type}}";
   private getMarketsUrl = this.apiBase + "/Markets";
+  private postRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration";
 
   constructor(
     private http: HttpClient
@@ -84,6 +85,12 @@ export class MarketplacesService {
 
   getMarkets(): Observable<any> {
     return this.http.get<any>(this.getMarketsUrl, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  postRulesConfigurations(data): Observable<any> {
+    return this.http.post<any>(this.postRulesConfigurationsUrl, data, {}).pipe(map(response => {
       return response;
     }));
   }

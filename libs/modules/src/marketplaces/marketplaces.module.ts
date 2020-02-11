@@ -40,35 +40,6 @@ const routes: Routes = [
 
   //KrackOnline
   {
-    path: 'krackonline/catalog',
-    component: CatalogComponent,
-    data: {
-      name: 'KrackOnline'
-    }
-  },{
-    path: 'krackonline/mapping',
-    component: MappingsComponent,
-    data: {
-      name: 'KrackOnline'
-    }
-  },
-  {
-    path: 'krackonline/rules',
-    component: RulesComponent,
-    data: {
-      name: 'KrackOnline'
-    }
-  },
-  {
-    path: 'krackonline/security-stocks',
-    component: SecurityStocksComponent,
-    data: {
-      name: 'KrackOnline'
-    }
-  },
-
-  //Miniprecios
-  {
     path: 'miniprecios/catalog',
     component: CatalogComponent,
     data: {
