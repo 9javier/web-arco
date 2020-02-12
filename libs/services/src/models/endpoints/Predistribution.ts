@@ -83,6 +83,7 @@ export namespace PredistributionModel {
     distribution: boolean,
     modelId: number,
     sizeId: number,
-    warehouseId: number
+    warehouseId: number,
+    userId:number
    }
 }

@@ -286,6 +286,22 @@ const routes: Routes = [
     data: {
       name: 'Verificación de artículos'
     }
+  },
+  {
+    path: 'expeditions/pending/app',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/expeditions-pending-app/expeditions-pending-app.module#ExpeditionsPendingAppModule',
+    data: {
+      name: 'Expediciones pendientes'
+    }
+  },
+  {
+    path: 'receptions-avelon/app',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/receptions-avelon-app/receptions-avelon-app.module#ReceptionsAvelonAppModule',
+    data: {
+      name: 'Recepción mercancía'
+    }
   }
 ];
 

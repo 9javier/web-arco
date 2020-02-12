@@ -19,8 +19,7 @@ import {
   UserTimeModel
 } from '@suite/services';
 import {ModalUserComponent} from "../components/modal-user/modal-user.component";
-
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'suite-receptionss-avelon',
@@ -29,7 +28,9 @@ import {ModalUserComponent} from "../components/modal-user/modal-user.component"
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
+  //displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
+  displayedColumns: string[] = ['select','articulo','size','store','fecha','brand','provider','model','color','category','family','lifestyle'];
+
   @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
@@ -94,6 +95,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
     private userTimeService: UserTimeService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -118,23 +120,133 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
 
   async presentModal() {
-    const users = await this.listUserTime();
-    console.log(users);
+   // const users = await this.listUserTime();
+  
+   let ListReceptions = this.getListReceptions();
+    console.log(ListReceptions);
     const modal = await this.modalController.create({
       component: ModalUserComponent,
       componentProps: {
-        users
+        ListReceptions
       }
     });
+    modal.onDidDismiss().then((p) => {
+      //this.router.navigate(['/receptions']);
+      this.initEntity();
+     this.initForm();
+     this.getFilters();
+     this.getList(this.form);
+     this.listenChanges();
+     this.isAllSelected();
+    this.selection.clear();
+    });
+
+
     return await modal.present();
   }
 
-  private async listUserTime(){
-    // let x:UserTimeModel.ListUsersRegisterTimeActiveInactive = null;
-    // let users = null;
-    return await this.userTimeService.getNewListUsersRegister().toPromise();
-
+  close():void{
   }
+
+  release(){
+   
+   let ListReceptions = this.getListReceptions();
+   let _data: Array<PredistributionModel.BlockReservedRequest> = ListReceptions;
+   _data = _data.map(item => {
+     return {
+       reserved: false,
+       distribution: false,
+       modelId: item.modelId,
+       warehouseId: item.warehouseId,
+       sizeId: item.sizeId,
+       userId: 0
+     };
+
+   });
+   console.log(" "+JSON.stringify(ListReceptions));
+
+   let This = this;
+    this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
+     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
+     This.intermediaryService.dismissLoading();
+     // reload page
+     This.close();
+     This.initEntity();
+     This.initForm();
+     This.getFilters();
+     This.getList(This.form);
+     This.listenChanges();
+     This.selection.clear();
+   }, (error) => {
+     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
+     This.intermediaryService.dismissLoading();
+   }, () => {
+     This.intermediaryService.dismissLoading();
+   });
+  }
+
+  getListReceptions(){
+    let receptionList =[];
+        receptionList.length=0;
+       for(let i=0; i<this.selection.selected.length; i++){
+         let distribution =JSON.stringify(this.selection.selected[i].distribution);
+         let reserved =JSON.stringify(this.selection.selected[i].reserved);
+         let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
+         let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
+         let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
+           receptionList.push({
+          modelId: modelId,
+           sizeId: sizeId,
+           warehouseId: warehouseId
+         });
+    
+    
+         /**receptionList.push({
+           distribution: distribution,
+         reserved: reserved,
+           modelId: modelId,
+           sizeId: sizeId,
+           warehouseId: warehouseId
+         }); */
+       }
+
+       return receptionList;
+  }
+
+
+  async  listUserTime(){
+  
+    let users=[1,13,14]
+    let This = this;
+    
+   this.userTimeService.getUsersShoesPicking(users).subscribe(function (data) {;
+    return data['data'];
+
+   }, (error) => {
+     This.intermediaryService.presentToastError("No cuentas con usuarios asignados para liberar");
+     This.intermediaryService.dismissLoading();
+ 
+   }, () => {
+   });
+   
+   //return data;
+  }
+
+
+  isEnableSend(): boolean{
+    let ListReceptions = this.getListReceptions();
+    if(ListReceptions.length>0){
+      return true
+    }
+  }
+ 
+
+ 
+
+dismissCheckbox(){
+  this.selection.selected.length = 0;
+  console.log(JSON.stringify(this.selection.selected));
+}
 
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -311,58 +423,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
-  //  savePredistributions() {
-  //
-  //
-  //   let receptionList =[];
-  //     receptionList.length=0;
-  //   for(let i=0; i<this.selection.selected.length; i++){
-  //     let distribution =JSON.stringify(this.selection.selected[i].distribution);
-  //     let reserved =JSON.stringify(this.selection.selected[i].reserved);
-  //     let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
-  //     let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
-  //     let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
-  //       receptionList.push({
-  //       modelId: modelId,
-  //       sizeId: sizeId,
-  //       warehouseId: warehouseId
-  //     });
-  //
-  //
-  //     /**receptionList.push({
-  //       distribution: distribution,
-  //       reserved: reserved,
-  //       modelId: modelId,
-  //       sizeId: sizeId,
-  //       warehouseId: warehouseId
-  //     }); */
-  //   }
-  //
-  //   // call to services ..
-  //   this.intermediaryService.presentLoading();
-  //   let This = this;
-  //    this.predistributionsService.updateBlockReserved2(receptionList).subscribe(function(data){
-  //     This.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
-  //     receptionList.length=0;
-  //     console.log(receptionList.length);
-  //     console.log('debug', data);
-  //     // reload page
-  //     This.initEntity()
-  //     This.initForm()
-  //     This.getFilters()
-  //     This.getList(This.form)
-  //     This.listenChanges()
-  //   }, (error) => {
-  //     receptionList.length=0;
-  //     This.intermediaryService.presentToastError("Error Actualizado predistribuciones");
-  //     This.intermediaryService.dismissLoading();
-  //   }, () => {
-  //     receptionList.length=0;
-  //     This.intermediaryService.dismissLoading();
-  //   });
-  // }
-
+  
   savePredistributions(){
     this.presentModal();
   }

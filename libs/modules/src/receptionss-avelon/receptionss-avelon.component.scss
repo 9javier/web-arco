@@ -1,6 +1,23 @@
-.content-table-distributions {
+::ng-deep {
+  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: #000000 !important;
+  }
 
-  /*table {
+  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #000000 !important;
+  }
+
+  .mat-checkbox-checked .mat-checkbox-background {
+    background-color: #000000 !important;
+  }
+
+  .mat-checkbox:not(.mat-checkbox-disabled).mat-accent .mat-checkbox-ripple .mat-ripple-element {
+    background-color: #000000 !important;
+  }
+}
+
+.content-table-distributions {
+  table {
     text-align: center !important;
     width: 100%;
 
@@ -48,14 +65,9 @@
         }
       }
     }
-  }*/
+  }
 
   .mat-header-cell {
-
-    .header-checkbox {
-      padding-right: 20px;
-    }
-
     text-align: center;
   }
 
@@ -75,7 +87,6 @@
   margin-left: 10px !important;
   margin-top: 10px !important;
 }
-
 .incidences-container {
   height: calc(100% - 64px); // 64px from paginator located at bottom of page
   width: 100%;
@@ -128,14 +139,26 @@
       z-index: 1;
     }
 
-    .my-sticky-col.info.number {
-      left: 0;
+    .my-sticky-col.info.checkbox{
+      left: 0px;
     }
-    .my-sticky-col.info.type {
+
+    .my-sticky-col.info.number {
       left: 120px;
     }
+    
+    .my-sticky-col.info.type-120 {
+      left: 240px;
+    }
+    .my-sticky-col.info.type-240 {
+      left: 360px;
+    }
+    .my-sticky-col.info.type-360 {
+      left: 480px;
+    }
+
     .my-sticky-col.info.process {
-      left: 290px;
+      left: 480px;
       border-right-width: 1px;
       border-right-color: var(--ion-color-primary);
       border-right-style: solid;
@@ -156,6 +179,7 @@
     .my-sticky-col.info-status.time-status {
       right: 0;
     }
+
     /*endregion*/
 
     /*region Columns with custom size */
@@ -205,35 +229,15 @@
     mat-header-cell.info-status:nth-child(2n), mat-cell.info-status:nth-child(2n) {
       background-color: var(--ion-color-bg-incidence-status-info-opacity);
     }
-
-    /*CheckBox*/
-    .content-checkbox {
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    ::ng-deep .mat-checkbox .mat-checkbox-frame {
-      border-color: #757575;
-    }
-
-    ::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background, ::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-      background-color: #000000 !important;
-    }
-
-
   }
 }
 
-.footer-products {
-   position: fixed;
-   width: 100%;
-   bottom: 0;
-   .horizontal-fab {
-     display: flex;
-     flex: 1;
-     flex-direction: row;
-     ion-fab-button {
-       margin-left: 16px;
-     }
-   }
- }
+ion-footer {
+  ion-fab {
+    display: flex;
+
+    ion-fab-button {
+      margin-left: 10px;
+    }
+  }
+}
