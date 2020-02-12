@@ -45,9 +45,8 @@ export class NewRuleComponent implements OnInit {
   private includeReferenceArray;
   private excludeReferenceText;
   private excludeReferenceArray;
-  private referencesExceptions;/*
-  private filterSearched;
-  private filterItemsAux;*/
+  private referencesExceptions;
+  private categorySearched;
 
   constructor(
     private modalController: ModalController,
@@ -77,6 +76,7 @@ export class NewRuleComponent implements OnInit {
     this.includeReferenceArray = [];
     this.excludeReferenceText = '';
     this.excludeReferenceArray = [];
+    this.categorySearched = '';
 
     this.categoryList = [
       {
@@ -282,8 +282,7 @@ export class NewRuleComponent implements OnInit {
         }
       }
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
-      this.selectedCategoryGroupFilterObject = this.categoryList[0];
-      /*this.filterItemsAux = this.selectedCategoryGroupFilterObject;*/
+      this.selectedCategoryGroupFilterObject = {...this.categoryList[0]};
       if (this.ruleFilterType == 'categories') {
         this.selectedDestinationCategoryGroupFilter = this.destinationCategories[0].id;
         this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories[0];
@@ -399,8 +398,8 @@ export class NewRuleComponent implements OnInit {
 
   changeSelectedCategoryGroupFilter(e) {
     this.selectedCategoryGroupFilter = e.value;
-    this.selectedCategoryGroupFilterObject = this.categoryList.find(x => x.id === e.value);
-    /*this.filterItemsAux = this.selectedCategoryGroupFilterObject;*/
+    this.selectedCategoryGroupFilterObject = {...this.categoryList.find(x => x.id === e.value)};
+    this.categorySearched = '';
   }
 
   changeSelectedDestinationCategories(e) {
@@ -1236,6 +1235,21 @@ export class NewRuleComponent implements OnInit {
 
   selectedCategoriesIncludes(category) {
     return this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group));
+  }
+  
+  searchCategories() {
+    this.selectedCategoryGroupFilterObject.items = this.categoryList.find(x => x.id === this.selectedCategoryGroupFilter).items.slice();
+    if (this.categorySearched && this.categorySearched.trim() != '') {
+      let categories = [];
+      for (let category of this.selectedCategoryGroupFilterObject.items) {
+        if (category.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.categorySearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
+          !== -1) {
+          categories.push(category);
+        }
+      }
+      this.selectedCategoryGroupFilterObject.items = categories.slice();
+    }
+
   }
 
   /*deleteProduct(product) {

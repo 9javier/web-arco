@@ -26,6 +26,7 @@
                 </mat-option>
               </mat-select>
             </div>
+            <input matInput type="text" placeholder="Buscar..." [(ngModel)]="categorySearched" (keyup)="searchCategories()"/>
             <div *ngIf="selectedCategoryGroupFilter != 18 && selectedCategoryGroupFilter != 19 && selectedCategoryGroupFilter != 20">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
                 <span *ngIf="!selectedCategoriesIncludes(category)">{{category.name}}</span>
