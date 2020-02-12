@@ -23,9 +23,8 @@
           </ng-container>
         </ion-col>
         <ion-col *ngIf="isProviderAviable" size="4">
-          <ion-button class="ion-float-end" (click)="reset()">
-            <ion-icon slot="icon-only" name="refresh"></ion-icon>
-          </ion-button>
+          <ion-button> comprobar </ion-button>
+          <ion-button class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
@@ -52,21 +51,26 @@
 
           <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
         </ion-col>
-        <ion-col class="ion-margin-top" size="4">
-          <ion-button (click)="buscarMas()" > buscar mas </ion-button>
-        </ion-col>
       </ion-row>
       <ion-row *ngIf="isProviderAviable">
-        <ion-col size="12">
-          <ion-title>Talla</ion-title>
-          <suite-sizes (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
+        <ion-col size="4" id="pictureContainer">
+          <div>
+            <ion-img alt="imagen ocr"></ion-img>
+          </div>
         </ion-col>
-        <ion-col size="12">
-          <ion-item lines="none">
-            <ion-label>EAN:</ion-label>
-            <ion-input [(ngModel)]="result.ean" type="text" (keyup)="onKey($event)"></ion-input>
-            <ion-button slot="end" (click)="enviar()"> imprimir </ion-button>
-          </ion-item>
+        <ion-col size="4" id="sizeContainer" align-self-end>
+          <ion-row>
+            <suite-sizes *ngIf="response.sizes.length > 0" (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
+          </ion-row>
+          <ion-row>
+            <ion-item lines="none">
+              <ion-label>EAN:</ion-label>
+              <ion-input [(ngModel)]="result.ean" type="text" (keyup)="onKey($event)"></ion-input>
+            </ion-item>
+          </ion-row>
+        </ion-col>
+        <ion-col size="4" id="printContainer">
+          <ion-button (click)="enviar()"> imprimir </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
