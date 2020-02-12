@@ -1,7 +1,7 @@
 <ion-content>
 
   <div class="incidences-container">
-    <mat-table [dataSource]="dataSource" matSort class="table-incidences">
+    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
       <ng-container matColumnDef="article">
         <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Articulo
         <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Articulo'"
