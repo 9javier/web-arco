@@ -303,7 +303,7 @@ export class JailComponent implements OnInit {
       });
     });
     lista.forEach(item => {
-      //Lista no llenda toda
+      //Lista no llenada toda
       listWithNoDestiny.push({
         id: item.id,
         idWarehouse: item.warehouse.id,

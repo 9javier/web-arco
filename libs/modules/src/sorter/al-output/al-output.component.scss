@@ -12,3 +12,13 @@ div.loader-template-matrix {
     }
   }
 }
+
+.float-over-notification{
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-bottom: 50px;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}

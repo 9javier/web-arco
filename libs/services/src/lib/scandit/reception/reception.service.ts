@@ -166,7 +166,7 @@ export class ReceptionScanditService {
           ScanditMatrixSimple.hideLoadingDialog();
           if (res.code == 200) {
             ScanditMatrixSimple.setText(
-              `${this.receptionProvider.literalsJailPallet.packing_emptied}`,
+              `Embalaje ${code} vaciado`,
               this.scanditProvider.colorsMessage.success.color,
               this.scanditProvider.colorText.color,
               16);
