@@ -1,6 +1,6 @@
 import { ModalController} from '@ionic/angular';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {  MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import {  MatSort, PageEvent, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
 import Predistribution = PredistributionModel.Predistribution;
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
@@ -11,6 +11,8 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
+
 import {
   ReceptionsAvelonService,
   ReceptionAvelonModel,
@@ -28,15 +30,14 @@ import { Router } from '@angular/router';
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  //displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
   displayedColumns: string[] = ['select','articulo','size','store','fecha','brand','provider','model','color','category','family','lifestyle'];
 
-  @ViewChild(MatSort) sort: MatSort;
-  //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
+
+  @ViewChild(MatSort) sort: MatSort;
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -67,7 +68,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   entities
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
-  // pagerValues = [50, 100, 1000];
+
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
     brands: [],
@@ -78,17 +79,18 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     providers:[],
     warehouses: [],
     pagination: this.formBuilder.group({
-      page: 1,
+      page: 1,  
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
       type: '',
-      order: "asc"
+      order: "ASC"
     })
   });
   length: any;
-
-
+  public paginatorPagerValues = [20, 50, 100];
+  private currentPageFilter: IncidenceModel.SearchParameters;
+  public listAvailableStatus: any[] = [];
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
@@ -105,23 +107,91 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
-
-    // this.paginator._intl.itemsPerPageLabel = 'Ver';
-    // this.paginator._intl.getRangeLabel = this.getRangeLabel;
-    // this.dataSource.results.forEach(row => {
-    //   if (row.distribution) {
-    //     this.selectionPredistribution.select(row);
-    //   }
-
-    //   if (row.reserved) {
-    //     this.selectionReserved.select(row);
-    //   }
-    // });
+    this.listenPaginatorChanges();
   }
 
-  async presentModal() {
-   // const users = await this.listUserTime();
-  
+  listenPaginatorChanges(){ 
+    this.sort.sortChange.subscribe((sort: Sort) => {
+        let id=this.getSortId(sort.active);
+        this.searchReserved(sort.direction.toUpperCase(),id);
+      });
+  }
+
+  getSortId(column): number{
+   let id=0;
+    switch(column){
+      case 'articulo':
+        id=1;
+        break;
+      case 'brand': 
+        id= 4;
+        break;
+      case 'store':
+        id=2;
+        break;
+      case 'provider':
+        id=3;
+        break;
+      case 'color':
+        id= 5;
+        break;
+      case 'size':
+        id=6;
+        break;
+      }
+     return id;
+  }
+
+  copyValuesToForm(){
+    this.form = this.formBuilder.group({
+      filters: this.currentPageFilter.filters,
+      pagination: this.formBuilder.group({
+        page: this.currentPageFilter.page,
+        limit: this.currentPageFilter.size
+      }),
+      orderby: this.formBuilder.group({
+        type: this.currentPageFilter.order.field,
+        order: this.currentPageFilter.order.direction
+      })
+    });
+  } 
+
+  private async searchReserved(direction,id) {
+    console.log("llamar endpoint de buscar de forma... "+direction);
+    this.form.value.orderby.order = direction;
+    this.form.value.orderby.type = id;
+    console.log(JSON.stringify(this.form.value));  
+    await this.intermediaryService.presentLoading()
+    this.predistributionsService.index2(this.form.value).subscribe(
+      (resp:any) => {
+        console.log(resp);
+        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
+        const paginator = resp.pagination;
+        console.log(paginator);
+
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+        this.dataSource.data.forEach(row => {
+        if (row.distribution) {
+          this.selectionPredistribution.select(row);
+        }
+        if (row.reserved) {
+           this.selectionReserved.select(row);
+        }
+       });
+     
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
+  }
+
+  async presentModal() {  
    let ListReceptions = this.getListReceptions();
     console.log(ListReceptions);
     const modal = await this.modalController.create({
@@ -131,7 +201,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       }
     });
     modal.onDidDismiss().then((p) => {
-      //this.router.navigate(['/receptions']);
       this.initEntity();
      this.initForm();
      this.getFilters();
@@ -163,7 +232,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
      };
 
    });
-   console.log(" "+JSON.stringify(ListReceptions));
 
    let This = this;
     this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
@@ -199,15 +267,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
            sizeId: sizeId,
            warehouseId: warehouseId
          });
-    
-    
-         /**receptionList.push({
-           distribution: distribution,
-         reserved: reserved,
-           modelId: modelId,
-           sizeId: sizeId,
-           warehouseId: warehouseId
-         }); */
+  
        }
 
        return receptionList;
@@ -232,7 +292,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
    //return data;
   }
 
-
   isEnableSend(): boolean{
     let ListReceptions = this.getListReceptions();
     if(ListReceptions.length>0){
@@ -240,13 +299,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     }
   }
  
-
- 
-
-dismissCheckbox(){
-  this.selection.selected.length = 0;
-  console.log(JSON.stringify(this.selection.selected));
-}
 
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -461,7 +513,7 @@ dismissCheckbox(){
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
         // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
-        // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
+        this.form.get("orderby").get("order").patchValue("DESC");
       }, 0);
     })
 
@@ -486,6 +538,7 @@ dismissCheckbox(){
            this.selectionReserved.select(row);
         }
        });
+     
       },
       async err => {
         await this.intermediaryService.dismissLoading()
