@@ -99,7 +99,7 @@
       <ng-container matColumnDef="provider">
         <mat-header-cell  *matHeaderCellDef class="info-product" mat-sort-header>
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
-              [isFiltering]="isFilteringProviders != entities.providers.length"
+              [isFiltering]="isFilteringProviders != entities.models.length"
               (applyFilters)="applyFilters($event, 'providers')">
             </suite-filter-button>
             <ion-label>Proveedores</ion-label>
