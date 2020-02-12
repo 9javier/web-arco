@@ -1,6 +1,6 @@
 import { BehaviorSubject, of, Observable } from 'rxjs';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatCheckboxChange, Sort } from '@angular/material';
 import * as Filesave from 'file-saver';
 import {
   ProductModel,
@@ -45,7 +45,9 @@ import * as _ from 'lodash';
 export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['model', 'size', 'color', 'brand', 'provider', 'warehouseDestiny'];
+  displayedColumns: string[] = ['Ref. modelo', 'Talla', 'Color', 'Brand', 'Supplier', 'Warehouse'];
+  // displayedColumns: string[] = [];
+  columns = {};
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -81,6 +83,11 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   lastUsedFilter: string;
   // pagerValues = [50, 100, 1000];
   pagerValues = [10, 20, 80];
+  currentPageFilter = {
+    order:{type: '',
+    direction:''
+  }
+  };
   form: FormGroup = this.formBuilder.group({
     warehouses: [],
     models: [],
@@ -93,8 +100,8 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
-      type: '1',
-      order: "desc"
+      type: '3',
+      order: "ASC"
     })
   });
   length: any;
@@ -197,6 +204,25 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
         page: flag ? page.pageIndex : 1
       });
       this.getList(this.form)
+    });
+    this.sort.sortChange.subscribe((sort: Sort) => {
+      this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+        if (sort.direction == '') {
+        this.form.get("orderby").patchValue({
+          type: '1',
+          order: "ASC"
+        });
+      } else {
+        this.form.get("orderby").patchValue({
+          type: this.columns[sort.active],
+          order: sort.direction.toUpperCase()
+        });
+      }
+        this.getList(this.form);
+      });
+    });
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.form);
     });
   }
   initEntity() {
@@ -347,6 +373,9 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   }
   getFilters() {
     this.productAvelonService.entities().subscribe(entities => {
+      entities.ordertypes.forEach(element => {
+          this.columns[element.name] = element.id;
+      });
       this.updateFilterSourceBrands(entities.brands);
       this.updateFilterSourceModels(entities.models);
       this.updateFilterSourceSizes(entities.sizes);
@@ -518,7 +547,7 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
       case 'brands':
         let brandsFiltered: number[] = [];
         for (let brand of filters) {
-          if (brand.checked) brandsFiltered.push(brand.value);
+          if (brand.checked) brandsFiltered.push(brand.id);
         }
         if (brandsFiltered.length >= this.brands.length) {
           this.form.value.brands = [];
@@ -759,5 +788,21 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     this.getList(this.form);
     this.listenChanges();
   }
+
+  
+  // copyValuesToForm(){
+  //   this.form = this.formBuilder.group({
+  //     filters: this.currentPageFilter.filters,
+  //     pagination: this.formBuilder.group({
+  //       page: this.currentPageFilter.page,
+  //       limit: this.currentPageFilter.size
+  //     }),
+  //     orderby: this.formBuilder.group({
+  //       type: this.currentPageFilter.order.field,
+  //       order: this.currentPageFilter.order.direction
+  //     })
+  //   });
+  // }
+
 
 }
