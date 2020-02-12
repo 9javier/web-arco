@@ -139,52 +139,57 @@ export class RulesComponent implements OnInit {
       if (data && data.data) {
 
         console.log('data->', data.data);
-
-        let dataGroupToSend = [];
+        
         let filterType = 0;
 
-        switch(data.data.filterType) {
+       switch(data.data.filterType) {
           case 'categories':
             filterType = 1;
-            data.data.categoriesFilter.forEach(item => {
-              dataGroupToSend.push({
-                id: item.id,
-                group: item.group
-              })
-            });
             break;
           case 'enabling':
             filterType = 2;
-            data.data.categoriesFilter.forEach(item => {
-              dataGroupToSend.push({
-                id: item.id,
-                group: item.group
-              })
-            });
             break;
           case 'stock':
             filterType = 3;
-            dataGroupToSend = data.data.stockFilter;
             break;
         } 
 
-        let dataToSend = {
-         filterToAdd: {
+        let exceptions = {};
+
+        data.data.referencesExceptions.forEach(item => {
+          if(item.type == 'include') {
+            exceptions[item.reference] = 1;
+          } else {
+            exceptions[item.reference] = 0;
+          }
+        });
+
+        let rulesFilters = [];
+
+        data.data.categoriesFilter.forEach(item => {
+          rulesFilters.push({
+            name: item.name,
+            ruleFilterType: item.group,
+            externalId:  item.id,
+            dataGroup: filterType,
+            status: 0
+          })
+        });
+
+        let dataRuleConfiguration = {
           name: data.data.name,
-          ruleFilterType: filterType,
-          externalId: "1",
-          dataGroup: dataGroupToSend,
-          status: 0,
-         },
+          description: data.data.description,
+          status: 1,
+          rulesFilterIds: rulesFilters,
           marketsIds: [
             "1"
           ],
-          referenceExceptions: data.data.referencesExceptions,
+          referenceExceptions: exceptions,
           ruleDataValidactionAttributes: []
         }
 
-        console.log(dataToSend)
-        this.marketplacesService.postRulesConfigurations(dataToSend).subscribe(data => {
+        console.log(dataRuleConfiguration)
+        this.marketplacesService.postRulesConfigurations(dataRuleConfiguration).subscribe(data => {
           console.log(data)
         })
 
@@ -280,50 +285,57 @@ export class RulesComponent implements OnInit {
 
         let editedRule = data.data;
 
-        let dataGroupToSend = [];
         let filterType = 0;
 
-        switch(data.data.filterType) {
+       switch(data.data.filterType) {
           case 'categories':
             filterType = 1;
-            data.data.categoriesFilter.forEach(item => {
-              dataGroupToSend.push({
-                id: item.id,
-                group: item.group
-              })
-            });
             break;
           case 'enabling':
             filterType = 2;
-            data.data.categoriesFilter.forEach(item => {
-              dataGroupToSend.push({
-                id: item.id,
-                group: item.group
-              })
-            });
             break;
           case 'stock':
             filterType = 3;
-            dataGroupToSend = data.data.stockFilter;
             break;
         } 
 
-        let dataToSend = {
-         filterToAdd: {
+        let exceptions = {};
+
+        data.data.referencesExceptions.forEach(item => {
+          if(item.type == 'include') {
+            exceptions[item.reference] = 1;
+          } else {
+            exceptions[item.reference] = 0;
+          }
+        });
+
+        let rulesFilters = [];
+
+        data.data.categoriesFilter.forEach(item => {
+          rulesFilters.push({
+            name: item.name,
+            ruleFilterType: item.group,
+            externalId:  item.id,
+            dataGroup: filterType,
+            status: 0
+          })
+        });
+
+        let dataRuleConfiguration = {
           name: data.data.name,
-          ruleFilterType: filterType,
-          externalId: "1",
-          dataGroup: dataGroupToSend,
-          status: 0,
-         },
+          description: data.data.description,
+          status: 1,
+          rulesFilterIds: rulesFilters,
           marketsIds: [
             "1"
           ],
-          referenceExceptions: data.data.referencesExceptions,
+          referenceExceptions: exceptions,
           ruleDataValidactionAttributes: []
         }
 
-        console.log(dataToSend)
+        console.log(dataRuleConfiguration)
+
+
         /*this.marketplacesService.postRulesConfigurations(dataToSend).subscribe(data => {
           console.log(data)
         })*/
