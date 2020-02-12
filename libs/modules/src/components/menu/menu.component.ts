@@ -632,7 +632,7 @@ export class MenuComponent implements OnInit {
       children: [
         {
           title: 'Expediciones pendientes',
-          id: 'expditions-pending',
+          id: 'expeditions-pending',
           url: '/expeditions/pending/app',
           icon: 'timer',
           tooltip: 'Consulta de información sobre una expedición pendiente de recibir de un proveedor.'
