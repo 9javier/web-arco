@@ -725,17 +725,25 @@ dismissCheckbox(){
   private updateFilterSourceWarehouses(warehouses: FiltersModel.Warehouse[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("warehouses").value;
-    this.warehouses = warehouses.map(warehouse => {
-      warehouse.name = warehouse.name;
-      warehouse.value = warehouse.name;
-      warehouse.checked = true;
-      warehouse.hide = false;
-      return warehouse;
-    });
-    if (value && value.length) {
-      this.form.get("warehouses").patchValue(value, { emitEvent: false });
+    console.log(JSON.stringify(warehouses));
+
+    if(warehouses != undefined){
+      this.warehouses = warehouses.map(warehouse => {
+        warehouse.name = warehouse.name;
+        warehouse.value = warehouse.name;
+        warehouse.checked = true;
+        warehouse.hide = false;
+        return warehouse;
+      });
+
+      if (value && value.length) {
+        this.form.get("warehouses").patchValue(value, { emitEvent: false });
+      }
+      setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+
     }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+   
+   
   }
   private updateFilterSourceModels(models: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
@@ -758,18 +766,21 @@ dismissCheckbox(){
   private updateFilterSourceProviders(providers: FiltersModel.Model[]) {
     this.pauseListenFormChange = true;
     let value = this.form.get("providers").value;
-    this.providers = providers.map(provider => {
-      provider.id = <number>(<unknown>provider.id);
-      provider.name = provider.name;
-      provider.value = provider.name;
-      provider.checked = true;
-      provider.hide = false;
-      return provider;
-    });
-    if (value && value.length) {
-      this.form.get("providers").patchValue(value, { emitEvent: false });
+    if(providers != undefined){
+      this.providers = providers.map(provider => {
+        provider.id = <number>(<unknown>provider.id);
+        provider.name = provider.name;
+        provider.value = provider.name;
+        provider.checked = true;
+        provider.hide = false;
+        return provider;
+      });
+      if (value && value.length) {
+        this.form.get("providers").patchValue(value, { emitEvent: false });
+      }
+      setTimeout(() => { this.pauseListenFormChange = false; }, 0);
     }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+   
   }
   private updateFilterSourceColors(colors: FiltersModel.Color[]) {
     this.pauseListenFormChange = true;
