@@ -1,4 +1,4 @@
-import { AlertController } from '@ionic/angular';
+import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
 import {
   ReceptionsAvelonService,
@@ -9,10 +9,10 @@ import {
 import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
-import { element } from 'protractor';
 import { Reception } from './classes/reception.class';
 import {FormControl} from "@angular/forms";
 import {map, startWith} from "rxjs/operators";
+import {InfoModalComponent} from "./info-modal/info-modal.component";
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -48,6 +48,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   getReceptionsNotifiedProviders$: Subscription;
   myControl = new FormControl();
   filteredProviders: Observable<any[]>;
+  showCheck: boolean = true;
 
   @ViewChild('provider') providerInput: ElementRef;
 
@@ -56,11 +57,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private modalController: ModalController
   ) {}
 
   loadProvider(){
     this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+    this.showCheck = false;
+  }
+
+  changeShowCheck(){
+    this.showCheck = true;
   }
 
   displayFn(provider: any): string {
@@ -180,16 +187,25 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         } else {
           this.reception
             .getReceptions(data.providerId)
-            .subscribe((info: ReceptionAvelonModel.Reception) => {
+            .subscribe(async (info: ReceptionAvelonModel.Reception) => {
+              await this.reception.checkExpeditionsByNumberAndProvider({
+                expeditionNumber: data.expedition,
+                providerId: data.providerId
+              }).subscribe(async (response) => {
+                await (await this.modalController.create({
+                  component: InfoModalComponent,
+                  componentProps: {expedition: response.data.expedition}
+                })).present();
+              });
               this.response = info;
               this.response.brands = this.clearSelected(this.response.brands);
               this.response.models = this.clearSelected(this.response.models);
               this.response.colors = this.clearSelected(this.response.colors);
               this.response.sizes = this.clearSelected(this.response.sizes);
-              this.filterData.brands = this.clearSelected(info.brands)
-              this.filterData.models = this.clearSelected(info.models)
-              this.filterData.colors = this.clearSelected(info.colors)
-              this.filterData.sizes = this.clearSelected(info.sizes)
+              this.filterData.brands = this.clearSelected(info.brands);
+              this.filterData.models = this.clearSelected(info.models);
+              this.filterData.colors = this.clearSelected(info.colors);
+              this.filterData.sizes = this.clearSelected(info.sizes);
 
               // this.ocrFake();
               if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
@@ -239,9 +255,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     
     if (dato.belongsModels) {
       dato.belongsModels.forEach(modelId => {
-        const modelsFilter = this.response.models.filter(model => model.id === modelId)
+        const modelsFilter = this.response.models.filter(model => model.id === modelId);
         modelsFilter.forEach(m => {
-          const modelFind = model.find(elem => elem.id == m.id)
+          const modelFind = model.find(elem => elem.id == m.id);
           if(modelFind === undefined) {
             if (m.state == 0) {
               model.push(m)
@@ -250,13 +266,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
             }
             
           }
-        })
+        });
         /***************************brands******************************/
         const brandsFilter = this.response.brands.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
             return elem
           }
-        })
+        });
         brandsFilter.forEach(elem => {
           if(brand.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -265,14 +281,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               brand.push(elem)
             }
           }
-        })
+        });
         
         /****************************sizes*****************************/
         const sizesFilter = this.response.sizes.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
             return elem
           }
-        })
+        });
         sizesFilter.forEach(elem => {
           if(size.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -281,13 +297,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               size.push(elem)
             }
           }
-        })
+        });
         /*****************************color****************************/
         const colorFilter = this.response.colors.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
             return elem
           }
-        })
+        });
         colorFilter.forEach(elem => {
           if(color.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -299,9 +315,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         })
       })
     } else {
-      const modelsFilter = this.response.models.filter(model => model.id === dato.id)
+      const modelsFilter = this.response.models.filter(model => model.id === dato.id);
         modelsFilter.forEach(m => {
-          const modelFind = model.find(elem => elem.id == m.id)
+          const modelFind = model.find(elem => elem.id == m.id);
           if(modelFind === undefined) {
             if (m.state == 0) {
               model.push(m)
@@ -309,13 +325,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               model.push(m)
             }
           }
-        })
+        });
          /***************************brands******************************/
          const brandsFilter = this.response.brands.filter(elem => {
           if(elem.belongsModels.find(elem => elem === dato.id)){
             return elem
           }
-        })
+        });
         brandsFilter.forEach(elem => {
           if(brand.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -324,14 +340,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               brand.push(elem)
             }
           }
-        })
+        });
         
         /****************************sizes*****************************/
         const sizesFilter = this.response.sizes.filter(elem => {
           if(elem.belongsModels.find(elem => elem === dato.id)){
             return elem
           }
-        })
+        });
         sizesFilter.forEach(elem => {
           if(size.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -340,13 +356,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               size.push(elem)
             }
           }
-        })
+        });
         /*****************************color****************************/
         const colorFilter = this.response.colors.filter(elem => {
           if(elem.belongsModels.find(elem => elem === dato.id)){
             return elem
           }
-        })
+        });
         colorFilter.forEach(elem => {
           if(color.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -455,12 +471,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
             this.response.models = this.clearSelected(this.response.models);
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
-            this.typeScreen = resp.type
+            this.typeScreen = resp.type;
             console.log(this.typeScreen);
             this.intermediaryService.dismissLoading();
           },
           () => {
-            this.typeScreen = resp.type
+            this.typeScreen = resp.type;
             console.log(this.typeScreen);
           }
         );
@@ -551,7 +567,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
   clearSelected(array: Array<ReceptionAvelonModel.Data>) {
     array.map(element => {
-      element.state = 0
+      element.state = 0;
       if (element.selected) {
         element.selected = false;
       }
@@ -625,7 +641,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     array: Array<ReceptionAvelonModel.Data>
   ) {
     data.map(element => {
-      element.state = 1
+      element.state = 1;
       const findIndexResult: number = array.findIndex(
         item => item.id === element.id
       );
@@ -669,12 +685,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               this.response.models = this.clearSelected(this.response.models);
               this.response.colors = this.clearSelected(this.response.colors);
               this.response.sizes = this.clearSelected(this.response.sizes);
-              this.typeScreen = result.type
+              this.typeScreen = result.type;
               console.log(this.typeScreen);
               this.intermediaryService.dismissLoading();
             },
             () => {
-              this.typeScreen = result.type
+              this.typeScreen = result.type;
               console.log(this.typeScreen);
               
           })

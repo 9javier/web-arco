@@ -13,7 +13,7 @@
           <form>
             <mat-form-field id="providerSelector">
               <mat-label>Proveedor</mat-label>
-              <input #provider type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" >
+              <input #provider type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" (focusin)="changeShowCheck()">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let provider of filteredProviders | async" [value]="provider">
                   {{provider.name}}
@@ -23,7 +23,7 @@
           </form>
         </ion-col>
         <ion-col size="4">
-          <ion-button (click)="loadProvider()"> comprobar </ion-button>
+          <ion-button *ngIf="!isProviderAviable && showCheck" (click)="loadProvider()"> comprobar </ion-button>
           <ion-button *ngIf="isProviderAviable" class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
         </ion-col>
       </ion-row>

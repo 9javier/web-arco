@@ -1,0 +1,32 @@
+<ion-content>
+  <mat-card>
+
+    <mat-card-header>
+      <mat-card-title># {{expedition.reference}}</mat-card-title>
+      <mat-card-subtitle>{{expedition.provider_name}}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>
+        Nº bultos: <span>{{expedition.total_packing}}</span>
+      </p>
+      <p>
+        Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
+      </p>
+      <p>
+        Transportista: <span>{{expedition.shipper}}</span>
+      </p>
+      <p>
+        Estados: <span>{{expedition.states_list.join(', ')}}</span>
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button [disabled]="!expedition.reception_enabled" (click)="reception()">
+        RECEPCIONAR
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </mat-card-actions>
+
+  </mat-card>
+</ion-content>
