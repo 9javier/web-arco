@@ -10,21 +10,21 @@
           </ion-item>
         </ion-col>
         <ion-col size="4">
-          <ion-item lines="none">
-            <ion-label>Proveedor</ion-label>
-            <ion-input value="{{value}}" type="text" (ionBlur)="providerBlur($event)" (ionFocus)="providerFocus()" (click)="providerFocus()" (ionChange)="changeProvider($event)" ></ion-input>
-          </ion-item>
-          <ng-container *ngIf="filter" >
-            <ion-list lines="none" class="border-list">
-              <ion-item class="item-filter" (click)="load($event,provider)"  *ngFor="let provider of providers"> 
-                <ion-label>{{provider.name}}</ion-label>
-              </ion-item>
-            </ion-list>
-          </ng-container>
+          <form>
+            <mat-form-field id="providerSelector">
+              <mat-label>Proveedor</mat-label>
+              <input #provider type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" >
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let provider of filteredProviders | async" [value]="provider">
+                  {{provider.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>
         </ion-col>
-        <ion-col *ngIf="isProviderAviable" size="4">
-          <ion-button> comprobar </ion-button>
-          <ion-button class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
+        <ion-col size="4">
+          <ion-button (click)="loadProvider()"> comprobar </ion-button>
+          <ion-button *ngIf="isProviderAviable" class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
         </ion-col>
       </ion-row>
       <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">

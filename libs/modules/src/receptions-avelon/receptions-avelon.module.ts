@@ -6,9 +6,10 @@ import { ReceptionsAvelonComponent } from './receptions-avelon.component';
 import { ListsComponent } from './components/lists/lists.component';
 import { SizesComponent } from './components/sizes/sizes.component';
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
-import { FormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ScreenResultComponent } from './components/screen-result/screen-result.component';
 import { useAnimation, transition, trigger, style, animate } from '@angular/animations';
+import {MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule} from "@angular/material";
 
 
 const routes: Routes = [
@@ -28,6 +29,11 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     VirtualKeyboardModule,
     RouterModule.forChild(routes),
+    MatFormFieldModule,
+    MatAutocompleteModule,
+    MatSelectModule,
+    MatInputModule,
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,16 +1,18 @@
 import { AlertController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {
   ReceptionsAvelonService,
   ReceptionAvelonModel,
   IntermediaryService,
   ProductsService
 } from '@suite/services';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
 import { element } from 'protractor';
 import { Reception } from './classes/reception.class';
+import {FormControl} from "@angular/forms";
+import {map, startWith} from "rxjs/operators";
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -44,6 +46,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   providersAux;
   value;
   getReceptionsNotifiedProviders$: Subscription;
+  myControl = new FormControl();
+  filteredProviders: Observable<any[]>;
+
+  @ViewChild('provider') providerInput: ElementRef;
 
   constructor(
     private reception: ReceptionsAvelonService,
@@ -52,6 +58,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService
   ) {}
+
+  loadProvider(){
+    this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+  }
+
+  displayFn(provider: any): string {
+    return provider && provider.name ? provider.name : '';
+  }
+
+  private _filter(name: string): any[] {
+    const filterValue = name.toLowerCase();
+    return this.providers.filter(provider => provider.name.toLowerCase().indexOf(filterValue) === 0);
+  }
 
   ngOnInit() {
     this.intermediaryService.presentLoading('Cargando');
@@ -68,6 +87,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         this.intermediaryService.dismissLoading();
       },
       () => {
+        this.filteredProviders = this.myControl.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.name),
+            map(name => name ? this._filter(name) : this.providers.slice())
+          );
         this.intermediaryService.dismissLoading();
       }
     );
