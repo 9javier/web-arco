@@ -72,7 +72,7 @@ ion-content {
 
         .rule-filter-category {
           display: flex;
-          height: 187px;
+          height: 212px;
           margin-bottom: 20px;
 
           & > div {
@@ -80,7 +80,7 @@ ion-content {
             width: fit-content;
 
             &:first-of-type {
-              padding-top: 29px;
+              padding-top: 34px;
               padding-left: 16px;
               padding-right: 10px;
               text-align: center;
@@ -94,13 +94,22 @@ ion-content {
             &:last-of-type {
               width: 100%;
 
+              & > input {
+                width: 100%;
+                height: 33px;
+                border: none;
+                padding: 5px 10px;
+                font-size: 14px;
+                font-weight: 400;
+              }
+
               & > div {
 
                 &:first-of-type {
                   background-color: #f5f4f6;
                   padding: 6px 10px;
                   font-size: 14px;
-                  margin-bottom: 24px;
+                  margin-bottom: 0;
 
                   mat-select {
 
@@ -110,7 +119,7 @@ ion-content {
                 &:last-of-type {
                   background-color: #f5f4f6;
                   padding: 10px;
-                  height: 134px;
+                  height: 150px;
                   overflow-y: auto;
 
                   &.nr-price-range {
@@ -222,7 +231,6 @@ ion-content {
                     font-size: 14px;
                     padding: 5px;
                     cursor: pointer;
-
                     & > span {
 
 
@@ -294,7 +302,7 @@ ion-content {
           &.nr-filter-list {
             background-color: #f5f4f6;
             padding: 12px 10px;
-            height: 148px;
+            height: 123px;
             overflow-y: auto;
 
             &.no-filters {
