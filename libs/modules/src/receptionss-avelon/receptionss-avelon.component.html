@@ -82,7 +82,7 @@
             </suite-filter-button>
             <ion-label>Colores</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.color.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.color.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="brand">
@@ -93,7 +93,7 @@
         </suite-filter-button>
               <ion-label>Marca</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.brand.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.brand.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="provider">
@@ -137,7 +137,7 @@
         </suite-filter-button>
               <ion-label>Categoría</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="info-producte"> {{element.model.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="info-producte"> {{element.model.category.name}} </mat-cell>
       </ng-container>
       
       <ng-container matColumnDef="family">
@@ -148,7 +148,7 @@
         </suite-filter-button>
               <ion-label>Familia</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.family.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="lifestyle">
@@ -159,7 +159,7 @@
         </suite-filter-button>
               <ion-label>Lifestyle</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.lifestyle.name}} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
