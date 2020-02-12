@@ -30,10 +30,8 @@ import { Router } from '@angular/router';
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  //displayedColumns: string[] = ['select','model','size','store','color','brand','provider'];
   displayedColumns: string[] = ['select','articulo','size','store','fecha','brand','provider','model','color','category','family','lifestyle'];
 
-  //displayedColumns: string[] = ['select', 'article', 'store', 'model', 'size', 'brand','color','provider','style'];
   dataSource
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -70,7 +68,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   entities
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
-  // pagerValues = [50, 100, 1000];
+
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
     brands: [],
@@ -81,18 +79,18 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     providers:[],
     warehouses: [],
     pagination: this.formBuilder.group({
-      page: 1,
+      page: 1,  
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
       type: '',
-      order: "asc"
+      order: "ASC"
     })
   });
   length: any;
   public paginatorPagerValues = [20, 50, 100];
   private currentPageFilter: IncidenceModel.SearchParameters;
-
+  public listAvailableStatus: any[] = [];
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
@@ -109,72 +107,39 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
-   
-
-
-/*
-    this.currentPageFilter = {
-      order: {
-        field: 'id',
-        direction: 'DESC'
-      },
-      filters: {},
-      page: 0,
-      size: this.paginatorPagerValues[0]
-    };
-    this.form = this.formBuilder.group({
-      filters: {},
-      pagination: this.formBuilder.group({
-        page: 1,
-        limit: this.paginatorPagerValues[0]
-      }),
-      orderby: this.formBuilder.group({
-        type: 'id',
-        order: 'DESC'
-      })
-    });*/
-    //this.listenPaginatorChanges();
-
-
-    // this.paginator._intl.itemsPerPageLabel = 'Ver';
-    // this.paginator._intl.getRangeLabel = this.getRangeLabel;
-    // this.dataSource.results.forEach(row => {
-    //   if (row.distribution) {
-    //     this.selectionPredistribution.select(row);
-    //   }
-
-    //   if (row.reserved) {
-    //     this.selectionReserved.select(row);
-    //   }
-    // });
+    this.listenPaginatorChanges();
   }
 
-  listenPaginatorChanges(){
- 
+  listenPaginatorChanges(){ 
     this.sort.sortChange.subscribe((sort: Sort) => {
-      console.log("1----");
-      
-        console.log("2---");
-        if (sort.direction == '') {
-        this.currentPageFilter.order = {
-          field: 'id',
-          direction: 'ASC'
-        };
-      } else {
-        this.currentPageFilter.order = {
-          field: sort.active,
-          direction: sort.direction.toUpperCase()
-        };
+        let id=this.getSortId(sort.active);
+        this.searchReserved(sort.direction.toUpperCase(),id);
+      });
+  }
+
+  getSortId(column): number{
+   let id=0;
+    switch(column){
+      case 'articulo':
+        id=1;
+        break;
+      case 'brand': 
+        id= 4;
+        break;
+      case 'store':
+        id=2;
+        break;
+      case 'provider':
+        id=3;
+        break;
+      case 'color':
+        id= 5;
+        break;
+      case 'size':
+        id=6;
+        break;
       }
-        //this.copyValuesToForm();
-        //this.searchIncidences(this.currentPageFilter);
-     
-    });
-    console.log("3----");
-    
-    /*this.intermediaryService.presentLoading('Cargando valores...').then(() => {
-      this.searchIncidences(this.currentPageFilter);
-    });*/
+     return id;
   }
 
   copyValuesToForm(){
@@ -189,44 +154,44 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         order: this.currentPageFilter.order.direction
       })
     });
+  } 
+
+  private async searchReserved(direction,id) {
+    console.log("llamar endpoint de buscar de forma... "+direction);
+    this.form.value.orderby.order = direction;
+    this.form.value.orderby.type = id;
+    console.log(JSON.stringify(this.form.value));  
+    await this.intermediaryService.presentLoading()
+    this.predistributionsService.index2(this.form.value).subscribe(
+      (resp:any) => {
+        console.log(resp);
+        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
+        const paginator = resp.pagination;
+        console.log(paginator);
+
+        this.paginator.length = paginator.totalResults;
+        this.paginator.pageIndex = paginator.selectPage;
+        this.paginator.lastPage = paginator.lastPage;
+        this.dataSource.data.forEach(row => {
+        if (row.distribution) {
+          this.selectionPredistribution.select(row);
+        }
+        if (row.reserved) {
+           this.selectionReserved.select(row);
+        }
+       });
+     
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
   }
 
-  private searchIncidences(parameters: IncidenceModel.SearchParameters) {
-    console.log("llamar endpoint de buscar...")
-    /*
-    this.incidencesService
-      .postSearch(parameters)
-      .then((res: IncidenceModel.ResponseSearch) => {
-        this.intermediaryService.dismissLoading();
-        if (res.code === 200) {
-          this.listAvailableStatus = res.data.listAvailableStatus;
-          this.incidences = res.data.incidences;
-          this.incidencesService.incidencesQuantityList = res.data.count_search;
-          this.paginator.length = res.data.count_search;
-          this.paginator.pageIndex = res.data.pagination ? res.data.pagination.selectPage: this.currentPageFilter.page;
-          this.paginator.lastPage = res.data.pagination ? res.data.pagination.lastPage : Math.ceil(res.data.count_search/this.currentPageFilter.size);
-          this.incidencesService.incidencesUnattendedQuantity = res.data.count_search;
-          this.incidencesService.incidencesList = res.data.incidences;
-        } else {
-          let errorMessage = 'Ha ocurrido un error al intentar cargar las incidencias';
-          if (res.errors) {
-            errorMessage = res.errors;
-          }
-          this.intermediaryService.presentToastError(errorMessage);
-        }
-      }, (error) => {
-        this.intermediaryService.dismissLoading();
-        let errorMessage = 'Ha ocurrido un error al intentar cargar las incidencias';
-        if (error.error && error.error.errors) {
-          errorMessage = error.error.errors;
-        }
-        this.intermediaryService.presentToastError(errorMessage);
-      });*/
-  }
-
-  async presentModal() {
-   // const users = await this.listUserTime();
-  
+  async presentModal() {  
    let ListReceptions = this.getListReceptions();
     console.log(ListReceptions);
     const modal = await this.modalController.create({
@@ -236,7 +201,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       }
     });
     modal.onDidDismiss().then((p) => {
-      //this.router.navigate(['/receptions']);
       this.initEntity();
      this.initForm();
      this.getFilters();
@@ -268,7 +232,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
      };
 
    });
-   console.log(" "+JSON.stringify(ListReceptions));
 
    let This = this;
     this.predistributionsService.updateBlockReserved2(ListReceptions).subscribe(function (data) {
@@ -304,15 +267,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
            sizeId: sizeId,
            warehouseId: warehouseId
          });
-    
-    
-         /**receptionList.push({
-           distribution: distribution,
-         reserved: reserved,
-           modelId: modelId,
-           sizeId: sizeId,
-           warehouseId: warehouseId
-         }); */
+  
        }
 
        return receptionList;
@@ -337,7 +292,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
    //return data;
   }
 
-
   isEnableSend(): boolean{
     let ListReceptions = this.getListReceptions();
     if(ListReceptions.length>0){
@@ -345,13 +299,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     }
   }
  
-
- 
-
-dismissCheckbox(){
-  this.selection.selected.length = 0;
-  console.log(JSON.stringify(this.selection.selected));
-}
 
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -566,7 +513,7 @@ dismissCheckbox(){
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
         // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
-        // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
+        this.form.get("orderby").get("order").patchValue("DESC");
       }, 0);
     })
 
