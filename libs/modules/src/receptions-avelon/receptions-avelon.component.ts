@@ -6,18 +6,21 @@ import {
   IntermediaryService,
   ProductsService
 } from '@suite/services';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef } from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
-import { element } from 'protractor';
 import { Reception } from './classes/reception.class';
+import { ListsComponent } from './components/lists/lists.component';
 
 @Component({
   selector: 'suite-receptions-avelon',
   templateUrl: './receptions-avelon.component.html',
-  styleUrls: ['./receptions-avelon.component.scss']
+  styleUrls: ['./receptions-avelon.component.scss'],
 })
-export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
+export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit{
+
+  @ViewChild(ListsComponent) listsComponent:ListsComponent
+
   response: ReceptionAvelonModel.Reception;
   dato: ReceptionAvelonModel.Data;
   subscriptions: Subscription;
@@ -44,13 +47,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   providersAux;
   value;
   getReceptionsNotifiedProviders$: Subscription;
-
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
-    private productsService: ProductsService
+    private productsService: ProductsService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -77,7 +80,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
     clearInterval(this.interval);
   }
-
+  ngAfterContentInit() {
+    this.cd.detectChanges()
+  }
   openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: Type) {
     const dataList = [];
 
@@ -87,16 +92,26 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
     const keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter.subscribe(
       data => {
+        let dato;
         if (data.selected) {
           switch (data.selected.type) {
             case Type.BRAND:
-              this.findAndSelectObject(this.response.brands, data.selected);
+              dato = this.response.brands.find(elem => elem.id === data.selected.id)
+              this.listsComponent.selected(dato)
+              this.updateList(dato)
+              // this.findAndSelectObject(this.response.brands, data.selected);
               break;
             case Type.COLOR:
-              this.findAndSelectObject(this.response.colors, data.selected);
+              dato = this.response.colors.find(elem => elem.id === data.selected.id)
+              this.listsComponent.selected(dato)
+              this.updateList(dato)
+              // this.findAndSelectObject(this.response.colors, data.selected);
               break;
             case Type.MODEL:
-              this.findAndSelectObject(this.response.models, data.selected);
+              dato = this.response.models.find(elem => elem.id === data.selected.id)
+              this.listsComponent.selected(dato)
+              this.updateList(dato)
+              // this.findAndSelectObject(this.response.models, data.selected);
               break;
           }
         }
@@ -194,7 +209,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   sizeSelected(e) {
-    console.log(e);
+    // console.log(e);
     
     if (e.dato) {
       this.result.sizeId = e.dato.id;
@@ -210,7 +225,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     let size = [];
     let color = [];
     let findResult;
-    console.log(dato);
+    // console.log(dato);
     
     if (dato.belongsModels) {
       dato.belongsModels.forEach(modelId => {
@@ -344,10 +359,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     if (size.length > 0) {
       this.response.sizes = size;
     }
-    console.log('model',model);
-    console.log('brand',brand);
-    console.log('color',color);
-    console.log('size',size);
+    // console.log('model',model);
+    // console.log('brand',brand);
+    // console.log('color',color);
+    // console.log('size',size);
     
   }
 
@@ -356,6 +371,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.response.sizes = this.filterData.sizes;
     this.response.colors = this.filterData.colors;
     this.response.brands = this.filterData.brands;
+  }
+  resetAll() {
+    this.response.models = this.filterData.models;
+    this.response.models.map(elem => elem.selected = false);
+    this.response.sizes = this.filterData.sizes;
+    this.response.sizes.map(elem => elem.selected = false);
+    this.response.colors = this.filterData.colors;
+    this.response.colors.map(elem => elem.selected = false);
+    this.response.brands = this.filterData.brands;
+    this.response.brands.map(elem => elem.selected = false);
+    this.result.modelId = undefined
+    this.result.brandId = undefined
+    this.result.sizeId = undefined
+    this.result.colorId = undefined 
   }
 
   listSelected(e: any) {
@@ -431,17 +460,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
             this.typeScreen = resp.type
-            console.log(this.typeScreen);
+            // console.log(this.typeScreen);
             this.intermediaryService.dismissLoading();
           },
           () => {
             this.typeScreen = resp.type
-            console.log(this.typeScreen);
+            // console.log(this.typeScreen);
           }
         );
       },
       e => {
-        console.log(e.error);
+        // console.log(e.error);
         this.intermediaryService.dismissLoading();
         // if( e.error.errors.statusMessage){
         //   this.intermediaryService.presentToastError(e.error.errors.statusMessage)
@@ -500,8 +529,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       const ocrBrands: Array<any> = await this.reception.ocrBrands().toPromise();
       const ocrSizes: Array<any> = await this.reception.ocrSizes().toPromise();
       const ocrColors: Array<any> = await this.reception.ocrColors().toPromise();
-      // console.log(ocrColors);
-      // console.log(this.filterData);
+      // // console.log(ocrColors);
+      // // console.log(this.filterData);
 
       this.addOrcData(ocrModels, 'models');
       this.addOrcData(ocrBrands, 'brands');
@@ -590,7 +619,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
           data.sizes,
           this.response.sizes
         );
-        console.log(this.response);
+        // console.log(this.response);
         
       });
   }
@@ -631,9 +660,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       //   this.setSelected(this.response.sizes, resp.size, Type.SIZE);
       // });
 
-      console.log(this.result.ean);
-      console.log(this.result.expedition);
-      console.log(this.result.providerId);
+      // console.log(this.result.ean);
+      // console.log(this.result.expedition);
+      // console.log(this.result.providerId);
       
       this.reception.eanProductPrint(this.result.ean, this.expedition, this.providerId).subscribe(
         result => {
@@ -645,17 +674,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
               this.response.colors = this.clearSelected(this.response.colors);
               this.response.sizes = this.clearSelected(this.response.sizes);
               this.typeScreen = result.type
-              console.log(this.typeScreen);
+              // console.log(this.typeScreen);
               this.intermediaryService.dismissLoading();
             },
             () => {
               this.typeScreen = result.type
-              console.log(this.typeScreen);
+              // console.log(this.typeScreen);
               
           })
         },
         e =>  {
-          console.log(e.error);
+          // console.log(e.error);
           this.intermediaryService.dismissLoading();
           this.intermediaryService.presentToastError(e.error.errors)
         }
@@ -675,7 +704,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     // } else {
     //   this.filter = false
     // }
-    // console.log(this.filter);
+    // // console.log(this.filter);
     this.providers = this.providersAux;
 
     // if the value is an empty string don't filter the items
@@ -687,7 +716,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   }
 
   load(e,item) {
-    // console.log(e);
+    // // console.log(e);
     this.value = item.name;
     this.filter = false;
     this.providerId = item.id;
@@ -706,7 +735,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     this.filter = true;
   }
   providerBlur(e) {
-    // console.log(e)
+    // // console.log(e)
     // if (this.value) {
     //   this.filter = false;
     // }
