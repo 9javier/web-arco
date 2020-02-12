@@ -112,8 +112,24 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
 
   listenPaginatorChanges(){ 
     this.sort.sortChange.subscribe((sort: Sort) => {
-        let id=this.getSortId(sort.active);
-        this.searchReserved(sort.direction.toUpperCase(),id);
+
+        if (sort.direction == '') {
+          this.form.value.orderby = {
+            type: 'id',
+            order: 'ASC'
+          };
+        } else {
+          let id=this.getSortId(sort.active); 
+          this.form.value.orderby = {
+            type: id,
+            order: sort.direction.toUpperCase()
+          };
+        }
+
+        //this.searchReserved(sort.direction.toUpperCase(),id);
+         //this.searchReserved();
+        this.getList(this.form);
+
       });
   }
 
@@ -156,10 +172,10 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     });
   } 
 
-  private async searchReserved(direction,id) {
-    console.log("llamar endpoint de buscar de forma... "+direction);
-    this.form.value.orderby.order = direction;
-    this.form.value.orderby.type = id;
+   async searchReserved() {
+    console.log("llamar endpoint de buscar de forma... ");
+    //this.form.value.orderby.order = direction;
+    //this.form.value.orderby.type = id;
     console.log(JSON.stringify(this.form.value));  
     await this.intermediaryService.presentLoading()
     this.predistributionsService.index2(this.form.value).subscribe(
@@ -513,13 +529,14 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
         // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
-        this.form.get("orderby").get("order").patchValue("DESC");
+        //this.form.get("orderby").get("order").patchValue("DESC");
       }, 0);
     })
 
   }
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading()
+    console.log(JSON.stringify(form.value));
     this.predistributionsService.index2(form.value).subscribe(
       (resp:any) => {
         console.log(resp);
