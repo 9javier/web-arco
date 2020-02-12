@@ -1,6 +1,6 @@
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatSort, MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import { MatPaginator, MatSort, MatTableDataSource, MatCheckboxChange, Sort } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { PredistributionsService } from '../../../services/src/lib/endpoint/predistributions/predistributions.service';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
@@ -11,6 +11,7 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import * as _ from 'lodash';
+import { FilterTypes } from '../../../services/src/models/filter.types';
 
 @Component({
   selector: 'suite-predistributions',
@@ -85,7 +86,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
-      type: '',
+      type: 1,
       order: "asc"
     })
   });
@@ -571,5 +572,49 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
+  }
+
+  async sortData(event: Sort) {
+    console.log(event);
+    let type = 1;
+    switch (event.active) {
+      case 'article':
+        type = FilterTypes.REFERENCES;
+        break;
+      case 'size':
+        type = FilterTypes.SIZES;
+        break;
+      case 'store':
+        type = FilterTypes.WAREHOUSES;
+        break;
+      case 'date_service':
+        type = FilterTypes.DATESERVICES;
+        break;
+      case 'brand':
+        type = FilterTypes.BRANDS;
+        break;
+      case 'provider':
+        type = FilterTypes.PROVIDERS;
+        break;
+      case 'model':
+        type = FilterTypes.MODELS;
+        break;
+      case 'color':
+        type = FilterTypes.COLORS;
+        break;
+      case 'category':
+        type = FilterTypes.CATEGORY;
+        break;
+      case 'family':
+        type = FilterTypes.FAMILY;
+        break;
+      case 'lifestyle':
+        type = FilterTypes.LIFESTYLE;
+        break;
+    }
+
+    this.form.value.orderby.type = type;
+    this.form.value.orderby.order = event.direction;
+    await this.getList(this.form);
   }
 }
