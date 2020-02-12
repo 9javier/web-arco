@@ -28,43 +28,58 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   selectionReserved = new SelectionModel<Predistribution>(true, []);
 
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
+  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
+  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
   @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
   @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
-  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
-  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
+  @ViewChild('filterButtonCategory') filterButtonCategory: FilterButtonComponent;
+  @ViewChild('filterButtonFamily') filterButtonFamily: FilterButtonComponent;
+  @ViewChild('filterButtonLifestyle') filterButtonLifestyle: FilterButtonComponent;
+
 
   isFilteringReferences: number = 0;
-  isFilteringModels: number = 0;
-  isFilteringColors: number = 0;
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
-  isFilteringProviders: number = 0;
   isFilteringBrands: number = 0;
+  isFilteringProviders: number = 0;
+  isFilteringModels: number = 0;
+  isFilteringColors: number = 0;
+  isFilteringCategory: number = 0;
+  isFilteringFamily: number = 0;
+  isFilteringLifestyle: number = 0;
 
   /**Filters */
   references: Array<TagsInputOption> = [];
-  models: Array<TagsInputOption> = [];
-  colors: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
-  providers: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
+  providers: Array<TagsInputOption> = [];
+  models: Array<TagsInputOption> = [];
+  colors: Array<TagsInputOption> = [];
+  category: Array<TagsInputOption> = [];
+  family: Array<TagsInputOption> = [];
+  lifestyle: Array<TagsInputOption> = [];
+
   groups: Array<TagsInputOption> = [];
-  entities
+  entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
   // pagerValues = [50, 100, 1000];
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
-    brands: [],
     references: [],
+    sizes: [],
+    warehouses: [],
+    brands: [],
+    providers:[],
     models: [],
     colors: [],
-    sizes: [],
-    providers:[],
-    warehouses: [],
+    category: [],
+    family: [],
+    lifestyle: [],
+
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -109,23 +124,29 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   initEntity() {
     this.entities = {
       references: [],
+      sizes: [],
+      warehouses: [],
       brands: [],
-      colors: [],
-      destinyShop: [],
+      providers:[],
       models: [],
-      provider: [],
-      sizes:[]
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: [],
     }
   }
   initForm() {
     this.form.patchValue({
-      brands:[],
-      colors:[],
-      models:[],
+      references: [],
+      sizes: [],
+      warehouses: [],
+      brands: [],
       providers:[],
-      references:[],
-      sizes:[],
-      warehouses:[],
+      models: [],
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: [],
     })
   }
   ngAfterViewInit(): void {
@@ -250,13 +271,17 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
-      // this.updateFilterSourceReferences(entities.references);
-      this.updateFilterSourceBrands(entities.brands);
-      this.updateFilterSourceModels(entities.models);
-      this.updateFilterSourceSizes(entities.sizes);
-      this.updateFilterSourceColors(entities.colors);
-      this.updateFilterSourceWarehouses(entities.destinyShop);
-      this.updateFilterSourceProviders(entities.provider);
+      this.references = this.updateFilterSource(entities.references, 'references');
+      this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
+      this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
+      this.brands = this.updateFilterSource(entities.brands, 'brands');
+      this.providers = this.updateFilterSource(entities.providers, 'providers');
+      this.models = this.updateFilterSource(entities.models, 'models');
+      this.colors = this.updateFilterSource(entities.colors, 'colors');
+      this.category = this.updateFilterSource(entities.category, 'category');
+      this.family = this.updateFilterSource(entities.family, 'family');
+      this.lifestyle = this.updateFilterSource(entities.lifestyle, 'lifestyle');
+
       this.reduceFilters(entities);
       setTimeout(() => {
         this.pauseListenFormChange = false;
@@ -269,6 +294,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   }
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading();
+
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
@@ -304,18 +330,74 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       case 'references':
         let referencesFiltered: string[] = [];
         for (let reference of filters) {
-          if (reference.checked) referencesFiltered.push(reference.reference);
+
+          if (reference.checked) referencesFiltered.push(reference.id);
         }
+
         if (referencesFiltered.length >= this.references.length) {
-          this.form.value.productReferencePattern = [];
+          this.form.value.references = [];
           this.isFilteringReferences = this.references.length;
         } else {
           if (referencesFiltered.length > 0) {
-            this.form.value.productReferencePattern = referencesFiltered;
+            this.form.value.references = referencesFiltered;
             this.isFilteringReferences = referencesFiltered.length;
           } else {
-            this.form.value.productReferencePattern = ['99999'];
+            this.form.value.references = ['99999'];
             this.isFilteringReferences = this.references.length;
+          }
+        }
+        break;
+      case 'category':
+        let categoryFiltered: number[] = [];
+        for (let category of filters) {
+          if (category.checked) categoryFiltered.push(category.id);
+        }
+        if (categoryFiltered.length >= this.category.length) {
+          this.form.value.category = [];
+          this.isFilteringCategory = this.category.length;
+        } else {
+          if (categoryFiltered.length > 0) {
+            this.form.value.category = categoryFiltered;
+            this.isFilteringCategory = categoryFiltered.length;
+          } else {
+            this.form.value.category = ["99999"];
+            this.isFilteringCategory = this.category.length;
+          }
+        }
+        break;
+      case 'family':
+        let familyFiltered: number[] = [];
+        for (let family of filters) {
+          if (family.checked) familyFiltered.push(family.id);
+        }
+        if (familyFiltered.length >= this.family.length) {
+          this.form.value.family = [];
+          this.isFilteringFamily = this.family.length;
+        } else {
+          if (familyFiltered.length > 0) {
+            this.form.value.family = familyFiltered;
+            this.isFilteringFamily = familyFiltered.length;
+          } else {
+            this.form.value.family = ["99999"];
+            this.isFilteringFamily = this.family.length;
+          }
+        }
+        break;
+      case 'lifestyle':
+        let lifestyleFiltered: number[] = [];
+        for (let lifestyle of filters) {
+          if (lifestyle.checked) lifestyleFiltered.push(lifestyle.id);
+        }
+        if (lifestyleFiltered.length >= this.lifestyle.length) {
+          this.form.value.lifestyle = [];
+          this.isFilteringLifestyle = this.lifestyle.length;
+        } else {
+          if (lifestyleFiltered.length > 0) {
+            this.form.value.lifestyle = lifestyleFiltered;
+            this.isFilteringLifestyle = lifestyleFiltered.length;
+          } else {
+            this.form.value.lifestyle = ["99999"];
+            this.isFilteringLifestyle = this.lifestyle.length;
           }
         }
         break;
@@ -397,8 +479,8 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         break;
       case 'providers':
         let providersFiltered: number[] = [];
-        for (let providers of filters) {
-          if (providers.checked) providersFiltered.push(providers.id);
+        for (let provider of filters) {
+          if (provider.checked) providersFiltered.push(provider.id);
         }
         if (providersFiltered.length >= this.providers.length) {
           this.form.value.providers = [];
@@ -408,7 +490,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
             this.form.value.providers = providersFiltered;
             this.isFilteringProviders = providersFiltered.length;
           } else {
-            this.form.value.containers = [99999];
+            this.form.value.providers = [99999];
             this.isFilteringProviders = this.providers.length;
           }
         }
@@ -435,214 +517,52 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getList(this.form);
   }
   private reduceFilters(entities){
-    if (this.lastUsedFilter !== 'references') {
-      let filteredReferences = entities['references'] as unknown as string[];
-      for (let index in this.references) {
-        this.references[index].hide = filteredReferences.includes(this.references[index].value);
-      }
-      this.filterButtonReferences.listItems = this.references;
-    }
-    if (this.lastUsedFilter !== 'models') {
-      let filteredModels = entities['models'] as unknown as string[];
-      for (let index in this.models) {
-        this.models[index].hide = filteredModels.includes(this.models[index].value);
-      }
-      this.filterButtonModels.listItems = this.models;
-    }
-    if (this.lastUsedFilter !== 'colors') {
-      let filteredColors = entities['colors'] as unknown as string[];
-      for (let index in this.colors) {
-        this.colors[index].hide = filteredColors.includes(this.colors[index].value);
-      }
-      this.filterButtonColors.listItems = this.colors;
-    }
-    if (this.lastUsedFilter !== 'sizes') {
-      let filteredSizes = entities['sizes'] as unknown as string[];
-      for (let index in this.sizes) {
-        this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
-      }
-      this.filterButtonSizes.listItems = this.sizes;
-    }
-    if (this.lastUsedFilter !== 'warehouses') {
-      let filteredWarehouses = entities['destinyShop'] as unknown as (string | number)[];
-      for (let index in this.warehouses) {
-        this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
-      }
-      this.filterButtonWarehouses.listItems = this.warehouses;
-    }
-    if (this.lastUsedFilter !== 'brands') {
-      let filteredBrands = entities['brands'] as unknown as string[];
-      for (let index in this.brands) {
-        this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
-      }
-      this.filterButtonBrands.listItems = this.brands;
-    }
-    if (this.lastUsedFilter !== 'providers') {
-      let filteredProviders = entities['provider'] as unknown as string[];
-      for (let index in this.providers) {
-        this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
-      }
-      this.filterButtonProviders.listItems = this.providers;
-    }
-  }
-  private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("brands").value;
-    this.brands = brands.map(brand => {
-      brand.value = brand.name;
-      brand.checked = true;
-      brand.hide = false;
-      return brand;
-    });
-
-    if (value && value.length) {
-      this.form.get("brands").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceSizes(sizes: FiltersModel.Size[]) {
-    this.pauseListenFormChange = true;
-    let valueSize = this.form.get("sizes").value;
-    this.sizes = sizes
-      .filter((value, index, array) => array.findIndex(x => x.name === value.name) === index)
-      .map(size => {
-        size.id = <number>(<unknown>size.id);
-        size.value = size.name;
-        size.checked = true;
-        size.hide = false;
-        return size;
-      })
-      ;
-    if (valueSize && valueSize.length) {
-      this.form.get("sizes").patchValue(valueSize, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceWarehouses(warehouses: FiltersModel.Warehouse[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("warehouses").value;
-    this.warehouses = warehouses.map(warehouse => {
-      warehouse.name = warehouse.name;
-      warehouse.value = warehouse.name;
-      warehouse.checked = true;
-      warehouse.hide = false;
-      return warehouse;
-    });
-    if (value && value.length) {
-      this.form.get("warehouses").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceModels(models: FiltersModel.Model[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("models").value;
-    this.models = models.map(model => {
-      model.id = <number>(<unknown>model.id);
-      model.name = model.name;
-      model.value = model.name;
-      model.checked = true;
-      model.hide = false;
-      return model;
-    });
-
-    if (value && value.length) {
-      this.form.get("models").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceProviders(providers: FiltersModel.Model[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("providers").value;
-    this.providers = providers.map(provider => {
-      provider.id = <number>(<unknown>provider.id);
-      provider.name = provider.name;
-      provider.value = provider.name;
-      provider.checked = true;
-      provider.hide = false;
-      return provider;
-    });
-    if (value && value.length) {
-      this.form.get("providers").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceColors(colors: FiltersModel.Color[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("colors").value;
-    this.colors = colors.map(color => {
-      color.value = color.name;
-      color.checked = true;
-      color.hide = false;
-      return color;
-    });
-    if (value && value.length) {
-      this.form.get("colors").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("references").value;
-    this.references = references.map(reference => {
-      reference.id = <number>(<unknown>reference.reference);
-      reference.name = reference.reference;
-      reference.value = reference.name;
-      reference.checked = true;
-      reference.hide = false;
-      return reference;
-    });
-    if (value && value.length) {
-      this.form.get("references").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  // new
-  public changeStatusBlocked( event:MatCheckboxChange, row) {
-    this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId === row.expeditionLineId) {
-        value.distribution = event.checked;
-      }
-    });
-  }
-  public  isCheckedStatusBlocked( element) {
-    return element.distribution;
-  }
-  public changeStatusBlockedAll( event:MatCheckboxChange) {
-    this.dataSource.data.forEach(function(value){
-      value.distribution = event.checked;
-    });
-  }
-  public  isCheckedStatusBlockedAll() {
-    let result = true;
-    this.dataSource.data.forEach(function(value){
-      result = result && value.distribution;
-    });
-    return result;
-  }
-  // reserved
-  public changeStatusReserved(event:MatCheckboxChange, row) {
-    this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId === row.expeditionLineId) {
-        value.distribution = !event.checked;
-      }
-    });
+    this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
+    this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
+    this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
+    this.filterButtonBrands.listItems = this.reduceFilterEntities(this.brands, entities,'brands');
+    this.filterButtonProviders.listItems = this.reduceFilterEntities(this.providers, entities,'providers');
+    this.filterButtonModels.listItems = this.reduceFilterEntities(this.models, entities,'models');
+    this.filterButtonColors.listItems = this.reduceFilterEntities(this.colors, entities,'colors');
+    this.filterButtonCategory.listItems = this.reduceFilterEntities(this.category, entities,'category');
+    this.filterButtonFamily.listItems = this.reduceFilterEntities(this.family, entities,'family');
+    this.filterButtonLifestyle.listItems = this.reduceFilterEntities(this.lifestyle, entities,'lifestyle');
   }
 
-  public isCheckedStatusReserved( element) {
-    return !element.distribution;
+  private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
+    if (this.lastUsedFilter !== entityName) {
+      let filteredEntity = entities[entityName] as unknown as string[];
+
+      arrayEntity.forEach((item) => {
+        item.hide = filteredEntity.includes(item.value);
+      });
+
+      return arrayEntity;
+    }
   }
 
-  public changeStatusReservedAll( event:MatCheckboxChange) {
-    this.dataSource.data.forEach(function(value){
-      value.distribution = !event.checked;
+  private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
+    let resultEntity;
+
+    this.pauseListenFormChange = true;
+    let dataValue = this.form.get(entityName).value;
+
+    resultEntity = dataEntity.map(entity => {
+      entity.id = <number>(<unknown>entity.id);
+      entity.name = entity.name;
+      entity.value = entity.name;
+      entity.checked = true;
+      entity.hide = false;
+      return entity;
     });
-  }
-  public  isCheckedStatusReservedAll() {
-    let result = true;
-    this.dataSource.data.forEach(function(value){
-      result = result && !value.distribution;
-    });
-    return result;
+
+    if (dataValue && dataValue.length) {
+      this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
+    }
+
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+
+    return resultEntity;
   }
 
   refreshPredistributions() {
