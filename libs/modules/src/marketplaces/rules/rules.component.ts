@@ -280,41 +280,53 @@ export class RulesComponent implements OnInit {
 
         let editedRule = data.data;
 
-        /*let filterType = 0;
-        let dataGroupToSend = '';
-        switch(editedRule.filterType) {
+        let dataGroupToSend = [];
+        let filterType = 0;
+
+        switch(data.data.filterType) {
           case 'categories':
             filterType = 1;
-
-            editedRule.categoriesFilter.forEach(item => {
-              dataGroupToSend = dataGroupToSend.concat(item.name);
-              dataGroupToSend = dataGroupToSend.concat(',')
+            data.data.categoriesFilter.forEach(item => {
+              dataGroupToSend.push({
+                id: item.id,
+                group: item.group
+              })
             });
-            
-            dataGroupToSend = dataGroupToSend.slice(0,-1);
             break;
           case 'enabling':
             filterType = 2;
-            dataGroupToSend = editedRule.minPriceFilter;
+            data.data.categoriesFilter.forEach(item => {
+              dataGroupToSend.push({
+                id: item.id,
+                group: item.group
+              })
+            });
             break;
           case 'stock':
             filterType = 3;
-            dataGroupToSend = editedRule.stockFilter;
+            dataGroupToSend = data.data.stockFilter;
             break;
         } 
 
         let dataToSend = {
-          id: editedRule.id,
-          name: editedRule.name,
+         filterToAdd: {
+          name: data.data.name,
           ruleFilterType: filterType,
           externalId: "1",
           dataGroup: dataGroupToSend,
-          status: 0
-        }*/
+          status: 0,
+         },
+          marketsIds: [
+            "1"
+          ],
+          referenceExceptions: data.data.referencesExceptions,
+          ruleDataValidactionAttributes: []
+        }
 
-        /*this.marketplacesService.updateRulesFilter(editedRule.id, dataToSend).subscribe(data => {
+        console.log(dataToSend)
+        /*this.marketplacesService.postRulesConfigurations(dataToSend).subscribe(data => {
           console.log(data)
-        });*/
+        })*/
 
         if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
