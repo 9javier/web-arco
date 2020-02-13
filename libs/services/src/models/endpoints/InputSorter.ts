@@ -62,7 +62,8 @@ export namespace InputSorterModel {
   }
 
   export interface CheckProductInWay {
-    is_in_way: boolean
+    is_in_way: boolean,
+    newWay?: {id: number}
   }
 
   export interface ResponseCheckProductInWay {

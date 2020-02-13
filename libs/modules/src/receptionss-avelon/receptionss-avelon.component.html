@@ -30,7 +30,7 @@
       </ng-container>
 
       <ng-container matColumnDef="articulo">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Articulos'" [listItems]="entities.models"
           [isFiltering]="isFilteringModels != entities.models.length"
           (applyFilters)="applyFilters($event, 'models')">
@@ -41,7 +41,7 @@
       </ng-container>
 
       <ng-container matColumnDef="size">
-        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef>
+        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonSizes [title]="'Tallas'" [listItems]="entities.sizes"
               [isFiltering]="isFilteringSizes != entities.sizes.length"
               (applyFilters)="applyFilters($event, 'sizes')">
@@ -52,7 +52,7 @@
       </ng-container>
 
       <ng-container matColumnDef="store">
-        <mat-header-cell class="my-sticky-col info type-240" *matHeaderCellDef>
+        <mat-header-cell class="my-sticky-col info type-240" *matHeaderCellDef mat-sort-header>
             <suite-filter-button class="ion-margin-vertical" #filterButtonWarehouses [title]="'Tiendas'" [listItems]="entities.destinyShop"
                 [isFiltering]="isFilteringModels != entities.models.length"
                 (applyFilters)="applyFilters($event, 'models')">
@@ -63,14 +63,14 @@
       </ng-container>
 
       <ng-container matColumnDef="fecha">
-        <mat-header-cell class="my-sticky-col info process" *matHeaderCellDef>
+        <mat-header-cell class="my-sticky-col info process" *matHeaderCellDef mat-sort-header>
             <suite-filter-button class="ion-margin-vertical" #filterButtonWarehouses [title]="'Fecha'" [listItems]="entities.destinyShop"
                 [isFiltering]="isFilteringModels != entities.models.length"
                 (applyFilters)="applyFilters($event, 'models')">
               </suite-filter-button>
               <ion-label>Fecha</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info process"> {{element.date_service}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info process"> {{element.date_service | date}} </mat-cell>
       </ng-container>
     
 
@@ -82,7 +82,7 @@
             </suite-filter-button>
             <ion-label>Colores</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.color.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.color.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="brand">
@@ -93,13 +93,13 @@
         </suite-filter-button>
               <ion-label>Marca</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{element.brand.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.brand.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="provider">
-        <mat-header-cell  *matHeaderCellDef class="info-product">
+        <mat-header-cell  *matHeaderCellDef class="info-product" mat-sort-header>
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Proveedores'" [listItems]="entities.provider"
-              [isFiltering]="isFilteringProviders != entities.colors.length"
+              [isFiltering]="isFilteringProviders != entities.models.length"
               (applyFilters)="applyFilters($event, 'providers')">
             </suite-filter-button>
             <ion-label>Proveedores</ion-label>
@@ -108,7 +108,7 @@
       </ng-container>
 
       <ng-container matColumnDef="model">
-        <mat-header-cell class="info-product" *matHeaderCellDef>
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Modelo'" [listItems]="entities.models"
           [isFiltering]="isFilteringModels != entities.models.length"
           (applyFilters)="applyFilters($event, 'models')">
@@ -119,7 +119,7 @@
       </ng-container>
 
       <ng-container matColumnDef="mcategoryodel">
-        <mat-header-cell class="info-product" *matHeaderCellDef>
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Categoria'" [listItems]="entities.models"
           [isFiltering]="isFilteringModels != entities.models.length"
           (applyFilters)="applyFilters($event, 'models')">
@@ -130,36 +130,36 @@
       </ng-container>
       
       <ng-container matColumnDef="category">
-        <mat-header-cell class="info-product" *matHeaderCellDef>
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Categoría'" [listItems]="entities.models"
           [isFiltering]="isFilteringModels != entities.models.length"
           (applyFilters)="applyFilters($event, 'models')">
         </suite-filter-button>
               <ion-label>Categoría</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="info-producte"> {{element.model.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="info-producte"> {{element.model.category.name}} </mat-cell>
       </ng-container>
       
       <ng-container matColumnDef="family">
-        <mat-header-cell class="info-product" *matHeaderCellDef>
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Familia'" [listItems]="entities.models"
           [isFiltering]="isFilteringModels != entities.models.length"
           (applyFilters)="applyFilters($event, 'models')">
         </suite-filter-button>
               <ion-label>Familia</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.family.name}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="lifestyle">
-        <mat-header-cell class="info-product" *matHeaderCellDef>
+        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>
           <suite-filter-button class="ion-margin-vertical" #filterButtonModels [title]="'Lifestyle'" [listItems]="entities.models"
           [isFiltering]="isFilteringModels != entities.models.length"
           (applyFilters)="applyFilters($event, 'models')">
         </suite-filter-button>
               <ion-label>Lifestyle</ion-label>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.name}} </mat-cell>
+        <mat-cell *matCellDef="let element"class="info-product"> {{element.model.lifestyle.name}} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>

@@ -47,11 +47,11 @@ export class PredistributionsService {
   entities() {
     const body = {
       references: [],
-      warehouses: [],
-      providers: [],
-      brands: [],
-      colors: [],
       sizes: [],
+      warehouses: [],
+      brands: [],
+      providers: [],
+      colors: [],
       models: []
     }
     return this.http.post<HttpRequestModel.Response>(this.entitiesUrl,body).pipe(
@@ -77,7 +77,7 @@ export class PredistributionsService {
       map(resp => resp.data)
     )
   }
-  
+
   entities2() {
     const body = {
       references: [],
