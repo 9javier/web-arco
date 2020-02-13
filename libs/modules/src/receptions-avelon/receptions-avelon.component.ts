@@ -1,22 +1,21 @@
-import { AlertController } from '@ionic/angular';
-import { Subscription } from 'rxjs';
-import {
-  ReceptionsAvelonService,
-  ReceptionAvelonModel,
-  IntermediaryService,
-  ProductsService
-} from '@suite/services';
-import { Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import {AlertController, ModalController} from '@ionic/angular';
+import {Observable, Subscription} from 'rxjs';
+import {ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService} from '@suite/services';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
 import { Reception } from './classes/reception.class';
-import { ListsComponent } from './components/lists/lists.component';
+import {FormControl} from "@angular/forms";
+import {map, startWith} from "rxjs/operators";
+import {InfoModalComponent} from "./info-modal/info-modal.component";
 
 @Component({
   selector: 'suite-receptions-avelon',
   templateUrl: './receptions-avelon.component.html',
-  styleUrls: ['./receptions-avelon.component.scss'],
+  styleUrls: ['./receptions-avelon.component.scss']
 })
+export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
+
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit{
 
   @ViewChild(ListsComponent) listsComponent:ListsComponent
@@ -47,14 +46,40 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   providersAux;
   value;
   getReceptionsNotifiedProviders$: Subscription;
+  myControl = new FormControl();
+  filteredProviders: Observable<any[]>;
+  showCheck: boolean = true;
+
+  @ViewChild('provider') providerInput: ElementRef;
+
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
+    private modalController: ModalController
+    private productsService: ProductsService,
     private cd: ChangeDetectorRef
   ) {}
+
+  async loadProvider(){
+    await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+    this.showCheck = false;
+  }
+
+  changeShowCheck(){
+    this.showCheck = true;
+  }
+
+  displayFn(provider: any): string {
+    return provider && provider.name ? provider.name : '';
+  }
+
+  private _filter(name: string): any[] {
+    const filterValue = name.toLowerCase();
+    return this.providers.filter(provider => provider.name.toLowerCase().indexOf(filterValue) === 0);
+  }
 
   ngOnInit() {
     this.intermediaryService.presentLoading('Cargando');
@@ -71,6 +96,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.intermediaryService.dismissLoading();
       },
       () => {
+        this.filteredProviders = this.myControl.valueChanges
+          .pipe(
+            startWith(''),
+            map(value => typeof value === 'string' ? value : value.name),
+            map(name => name ? this._filter(name) : this.providers.slice())
+          );
         this.intermediaryService.dismissLoading();
       }
     );
@@ -156,45 +187,24 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   optionClick(e) {}
 
   checkProvider(data: ReceptionAvelonModel.CheckProvider) {
-    // if (this.interval) {
-    //   clearInterval(this.interval);
-    // }
     this.intermediaryService.presentLoading('Cargando');
-    this.reception.isProviderAvailable(data).subscribe(
-      (resp: boolean) => {
-        this.isProviderAviable = resp;
-        if (!this.isProviderAviable) {
-          this.alertMessage(
-            'Este proveedor no esta habilitado para recepcionar'
-          );
-        } else {
-          this.reception
-            .getReceptions(data.providerId)
-            .subscribe((info: ReceptionAvelonModel.Reception) => {
-              this.response = info;
-              this.response.brands = this.clearSelected(this.response.brands);
-              this.response.models = this.clearSelected(this.response.models);
-              this.response.colors = this.clearSelected(this.response.colors);
-              this.response.sizes = this.clearSelected(this.response.sizes);
-              this.filterData.brands = this.clearSelected(info.brands)
-              this.filterData.models = this.clearSelected(info.models)
-              this.filterData.colors = this.clearSelected(info.colors)
-              this.filterData.sizes = this.clearSelected(info.sizes)
+    this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
+        this.response = info;
+        this.response.brands = this.clearSelected(this.response.brands);
+        this.response.models = this.clearSelected(this.response.models);
+        this.response.colors = this.clearSelected(this.response.colors);
+        this.response.sizes = this.clearSelected(this.response.sizes);
+        this.filterData.brands = this.clearSelected(info.brands);
+        this.filterData.models = this.clearSelected(info.models);
+        this.filterData.colors = this.clearSelected(info.colors);
+        this.filterData.sizes = this.clearSelected(info.sizes);
 
-              // this.ocrFake();
-              if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
-                // this.getOcr();
-              }
-            });
+        // this.ocrFake();
+        if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
+          // this.getOcr();
         }
-      },
-      e => {
         this.intermediaryService.dismissLoading();
-      },
-      () => {
-        this.intermediaryService.dismissLoading();
-      }
-    );
+      });
   }
 
   async alertMessage(message: string) {
@@ -219,7 +229,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       this.reset();
     }
   }
-  updateList(dato) {    
+
+  updateList(dato) {
     let model = [];
     let brand = [];
     let size = [];
@@ -229,9 +240,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     
     if (dato.belongsModels) {
       dato.belongsModels.forEach(modelId => {
-        const modelsFilter = this.response.models.filter(model => model.id === modelId)
+        const modelsFilter = this.response.models.filter(model => model.id === modelId);
         modelsFilter.forEach(m => {
-          const modelFind = model.find(elem => elem.id == m.id)
+          const modelFind = model.find(elem => elem.id == m.id);
           if(modelFind === undefined) {
             if (m.state == 0) {
               model.push(m)
@@ -240,13 +251,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             }
             
           }
-        })
+        });
         /***************************brands******************************/
         const brandsFilter = this.response.brands.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
             return elem
           }
-        })
+        });
         brandsFilter.forEach(elem => {
           if(brand.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -255,14 +266,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               brand.push(elem)
             }
           }
-        })
+        });
         
         /****************************sizes*****************************/
         const sizesFilter = this.response.sizes.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
             return elem
           }
-        })
+        });
         sizesFilter.forEach(elem => {
           if(size.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -271,13 +282,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               size.push(elem)
             }
           }
-        })
+        });
         /*****************************color****************************/
         const colorFilter = this.response.colors.filter(elem => {
           if(elem.belongsModels.find(elem => elem === modelId)){
             return elem
           }
-        })
+        });
         colorFilter.forEach(elem => {
           if(color.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -289,9 +300,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         })
       })
     } else {
-      const modelsFilter = this.response.models.filter(model => model.id === dato.id)
+      const modelsFilter = this.response.models.filter(model => model.id === dato.id);
         modelsFilter.forEach(m => {
-          const modelFind = model.find(elem => elem.id == m.id)
+          const modelFind = model.find(elem => elem.id == m.id);
           if(modelFind === undefined) {
             if (m.state == 0) {
               model.push(m)
@@ -299,13 +310,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               model.push(m)
             }
           }
-        })
+        });
          /***************************brands******************************/
          const brandsFilter = this.response.brands.filter(elem => {
           if(elem.belongsModels.find(elem => elem === dato.id)){
             return elem
           }
-        })
+        });
         brandsFilter.forEach(elem => {
           if(brand.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -314,14 +325,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               brand.push(elem)
             }
           }
-        })
+        });
         
         /****************************sizes*****************************/
         const sizesFilter = this.response.sizes.filter(elem => {
           if(elem.belongsModels.find(elem => elem === dato.id)){
             return elem
           }
-        })
+        });
         sizesFilter.forEach(elem => {
           if(size.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -330,13 +341,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               size.push(elem)
             }
           }
-        })
+        });
         /*****************************color****************************/
         const colorFilter = this.response.colors.filter(elem => {
           if(elem.belongsModels.find(elem => elem === dato.id)){
             return elem
           }
-        })
+        });
         colorFilter.forEach(elem => {
           if(color.find(data => data.id === elem.id) === undefined) {
             if (elem.state == 0) {
@@ -384,7 +395,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.result.modelId = undefined
     this.result.brandId = undefined
     this.result.sizeId = undefined
-    this.result.colorId = undefined 
+    this.result.colorId = undefined
   }
 
   listSelected(e: any) {
@@ -542,6 +553,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
     }, seg);
   }
+
   addOrcData(sourceArray: Array<any>, collection: string) {
     sourceArray.forEach(elem => {
       const find = this.filterData[collection].find(
@@ -555,7 +567,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   clearSelected(array: Array<ReceptionAvelonModel.Data>) {
     array.map(element => {
-      element.state = 0
+      element.state = 0;
       if (element.selected) {
         element.selected = false;
       }
@@ -563,11 +575,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     return array;
   }
 
-  setSelected(
-    array: Array<ReceptionAvelonModel.Data>,
-    data: any,
-    type?: number
-  ) {
+  setSelected(array: Array<ReceptionAvelonModel.Data>, data: any, type?: number) {
     const findIndexResult: number = array.findIndex(
       element => element.id === data.id
     );
@@ -624,12 +632,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
 
-  mappingReceptionsNotifiedProvidersLists(
-    data: Array<ReceptionAvelonModel.Data>,
-    array: Array<ReceptionAvelonModel.Data>
-  ) {
+  mappingReceptionsNotifiedProvidersLists(data: Array<ReceptionAvelonModel.Data>, array: Array<ReceptionAvelonModel.Data>) {
     data.map(element => {
-      element.state = 1
+      element.state = 1;
       const findIndexResult: number = array.findIndex(
         item => item.id === element.id
       );
@@ -715,8 +720,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
-  load(e,item) {
-    // // console.log(e);
+  async load(e, item) {
+    // console.log(e);
     this.value = item.name;
     this.filter = false;
     this.providerId = item.id;
@@ -726,14 +731,41 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     };
 
     if (data.expedition === undefined || data.expedition.length === 0) {
-      this.alertMessage('El numero de expedicion no puede estar vacio');
-      return;
+      this.alertMessage('El numero de expedición no puede estar vacío');
+    }else{
+      await this.reception.checkExpeditionsByNumberAndProvider({
+        expeditionNumber: data.expedition,
+        providerId: data.providerId
+      }).subscribe(async (response) => {
+        if(response.data.expedition_available) {
+          const modal = await this.modalController.create({
+            component: InfoModalComponent,
+            componentProps: {
+              expedition: response.data.expedition,
+              anotherExpeditions: response.data.another_expeditions
+            }
+          });
+
+          modal.onDidDismiss().then(response => {
+            if (response.data && response.data.reception) {
+              this.isProviderAviable = true;
+              this.checkProvider(data);
+            }
+          });
+
+          modal.present();
+        }else{
+          this.isProviderAviable = false;
+          this.alertMessage('No se ha encontrado esa expedición');
+        }
+      });
     }
-    this.checkProvider(data);
   }
+
   providerFocus() {
     this.filter = true;
   }
+
   providerBlur(e) {
     // // console.log(e)
     // if (this.value) {
@@ -744,4 +776,5 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }, 500)
     
   }
+
 }

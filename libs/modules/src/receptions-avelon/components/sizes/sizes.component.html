@@ -1,3 +1,4 @@
+<ion-title>Talla</ion-title>
 <ng-container *ngFor="let item of datos; let i = index" >
   <ion-chip class="size" *ngIf="i < 8"  [ngClass]="{'selected': item.selected}" (click)="selected(item)" color="primary" mode="ios" >
       <ion-label>{{item.name}}</ion-label>
