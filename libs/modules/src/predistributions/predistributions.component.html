@@ -172,7 +172,15 @@
       </mat-row>
     </mat-table>
   </div>
-  <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+  <ion-grid>
+    <ion-row>
+      <ion-col size='8'>
+        <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+      </ion-col>
+      <ion-col>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
 <ion-footer>
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

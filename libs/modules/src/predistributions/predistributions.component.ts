@@ -116,10 +116,10 @@ export class PredistributionsComponent implements OnInit {
       /**true if only change the number of results */
       let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
-      this.form.get("pagination").patchValue({
+      this.form.value.pagination = {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
-      });
+      };
       this.getList(this.form)
     });
     this.sort.sortChange.subscribe((sort: Sort) => {
@@ -264,8 +264,7 @@ export class PredistributionsComponent implements OnInit {
     let list = [];
 
     this.dataSource.data.forEach((dataRow, index) => {
-      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution ||
-        this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
+      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution || this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
         list.push({
           distribution: !!dataRow.distribution,
           reserved: !!dataRow.reserved,
