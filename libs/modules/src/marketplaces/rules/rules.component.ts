@@ -123,6 +123,10 @@ export class RulesComponent implements OnInit {
         console.log('error get rules filter')
       }
     })*/
+  
+    this.marketplacesService.getRulesConfigurations().subscribe(data => {
+      console.log(data)
+    })
     
   }
 
@@ -174,7 +178,30 @@ export class RulesComponent implements OnInit {
             dataGroup: filterType,
             status: 0
           })
+
+          rulesFilters.push(
+            {
+              filterToAdd: {
+                name: item.name,
+                ruleFilterType: item.group,
+                externalId:  item.id,
+                dataGroup: filterType,
+                status: 0
+              },
+              marketsIds: [
+                "1"
+              ]
+            }
+          )
         });
+
+        console.log(rulesFilters)
+
+        rulesFilters.forEach(item => {
+          this.marketplacesService.postRulesFilter(item).subscribe(data => {
+            console.log(data)
+          })
+        })
 
         let dataRuleConfiguration = {
           name: data.data.name,
