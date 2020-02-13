@@ -86,7 +86,7 @@ export class PredistributionsComponent implements OnInit {
       page: 1,
       limit: this.pagerValues[0]
     }),
-    orderby: this.formBuilder.group({
+    orderBy: this.formBuilder.group({
       type: 1,
       order: "asc"
     })
@@ -126,12 +126,12 @@ export class PredistributionsComponent implements OnInit {
       this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
         console.log(this.form.value);
         if (sort.direction == '') {
-          this.form.value.orderby ={
+          this.form.value.orderBy ={
             type: '1',
             order: "ASC"
           };
         } else {
-          this.form.value.orderby = {
+          this.form.value.orderBy = {
             type: this.columns[sort.active],
             order: sort.direction.toUpperCase()
           };
