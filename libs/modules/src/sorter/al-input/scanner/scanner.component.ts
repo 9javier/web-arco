@@ -376,6 +376,9 @@ export class ScannerInputSorterComponent implements OnInit, OnDestroy {
           .postCheckProductInWay({ productReference, wayId })
           .subscribe((res: InputSorterModel.CheckProductInWay) => {
             if (!res.is_in_way && this.isWaitingSorterFeedback) {
+              if (res.newWay && res.newWay.id) {
+                this.idLastWaySet = res.newWay.id;
+              }
               setTimeout(() => {
                 if (!this.modalScanRack) {
                   checkProductInWayLocal(productReference)
