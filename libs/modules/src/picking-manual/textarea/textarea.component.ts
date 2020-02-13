@@ -165,10 +165,18 @@ export class TextareaComponent implements OnInit {
 
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         if(this.processInitiated && this.lastCarrierScanned == dataWrited){
-          if (this.typePicking === 1) {
-            this.alertSealPackingFinal(dataWrited);
+          if (this.listProducts && this.listProducts.length > 0) {
+            if (this.typePicking === 1) {
+              this.alertSealPackingIntermediate(dataWrited);
+            } else {
+              this.endProcessIntermediate(dataWrited);
+            }
           } else {
-            this.endProcessPacking(dataWrited);
+            if (this.typePicking === 1) {
+              this.alertSealPackingFinal(dataWrited);
+            } else {
+              this.endProcessPacking(dataWrited);
+            }
           }
         } else {
           this.carrierService.getSingle(this.lastCodeScanned)
@@ -603,26 +611,16 @@ export class TextareaComponent implements OnInit {
   }
 
   async alertSealPackingFinal(packingReference: string) {
-    const listCarriers = [];
-
     this.inventoryService.getPendingSeal(this.pickingId).then(async (res: InventoryModel.ResponseGlobal) => {
-      const pendingSealCarrier = Array(res.data)[0];
+      const pendingSealCarrier = res.data;
+      const listPackingReferences = pendingSealCarrier.filter(c => {return c != null && c.packing != null && c.packing[0] != null}).map(c => c.packing[0].reference);
 
-      pendingSealCarrier.forEach((item) => {
-        listCarriers.push(item.packing[0].reference);
-      });
+      if (listPackingReferences && listPackingReferences.length > 0) {
+        const listPackingReferencesToShow = listPackingReferences.join('<br/>');
 
-      let listShow = "";
-
-      listCarriers.map(x => {
-        listShow += `${x}</br>`;
-        return `${x}</br>`
-      });
-
-      if (listCarriers && listCarriers.length > 0) {
         const alertWarning = await this.alertController.create({
           header: 'Atención',
-          message: `<b>¿Desea precintar los embalajes utilizados?</b></br></br>${listShow}</br>`,
+          message: `<b>¿Desea precintar los embalajes utilizados?</b></br></br>${listPackingReferencesToShow}`,
           backdropDismiss: false,
           buttons: [
             {
@@ -634,7 +632,7 @@ export class TextareaComponent implements OnInit {
             {
               text: 'Si',
               handler: () => {
-                this.sealPackingFinal(listCarriers, packingReference);
+                this.sealPackingFinal(listPackingReferences, packingReference);
               }
             }]
         });
