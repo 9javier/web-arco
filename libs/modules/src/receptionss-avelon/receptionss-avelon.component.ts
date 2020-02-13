@@ -1,6 +1,6 @@
 import { ModalController} from '@ionic/angular';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import {  MatSort, PageEvent, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
+import {  MatSort, Sort ,MatTableDataSource, MatCheckboxChange } from '@angular/material';
 import { PredistributionModel } from '../../../services/src/models/endpoints/Predistribution';
 import Predistribution = PredistributionModel.Predistribution;
 import { IntermediaryService } from './../../../services/src/lib/endpoint/intermediary/intermediary.service';
@@ -11,16 +11,12 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import {IncidenceModel} from "../../../services/src/models/endpoints/Incidence";
-
+import { IncidenceModel } from "../../../services/src/models/endpoints/Incidence";
 import {
-  ReceptionsAvelonService,
-  ReceptionAvelonModel,
-  ProductsService,
   UserTimeService,
   UserTimeModel
 } from '@suite/services';
-import {ModalUserComponent} from "../components/modal-user/modal-user.component";
+import { ModalUserComponent } from "../components/modal-user/modal-user.component";
 import { Router } from '@angular/router';
 
 @Component({
@@ -30,60 +26,75 @@ import { Router } from '@angular/router';
 })
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
-  displayedColumns: string[] = ['select','articulo','size','store','fecha','brand','provider','model','color','category','family','lifestyle'];
-
-  dataSource
+  @ViewChild(MatSort) sort: MatSort;
+  displayedColumns: string[] = ['select','article','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
+  dataSource;
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
 
-  @ViewChild(MatSort) sort: MatSort;
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
+  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
+  @ViewChild('filterButtonDateServices') filterButtonDateServices: FilterButtonComponent;
+  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
   @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
   @ViewChild('filterButtonColors') filterButtonColors: FilterButtonComponent;
-  @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
-  @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
+  @ViewChild('filterButtonCategory') filterButtonCategory: FilterButtonComponent;
+  @ViewChild('filterButtonFamily') filterButtonFamily: FilterButtonComponent;
+  @ViewChild('filterButtonLifestyle') filterButtonLifestyle: FilterButtonComponent;
 
   isFilteringReferences: number = 0;
-  isFilteringModels: number = 0;
-  isFilteringColors: number = 0;
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
-  isFilteringProviders: number = 0;
+  isFilteringDateServices: number = 0;
   isFilteringBrands: number = 0;
+  isFilteringProviders: number = 0;
+  isFilteringModels: number = 0;
+  isFilteringColors: number = 0;
+  isFilteringCategory: number = 0;
+  isFilteringFamily: number = 0;
+  isFilteringLifestyle: number = 0;
 
   /**Filters */
   references: Array<TagsInputOption> = [];
-  models: Array<TagsInputOption> = [];
-  colors: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
-  providers: Array<TagsInputOption> = [];
+  dateServices: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
-  groups: Array<TagsInputOption> = [];
-  entities
+  providers: Array<TagsInputOption> = [];
+  models: Array<TagsInputOption> = [];
+  colors: Array<TagsInputOption> = [];
+  category: Array<TagsInputOption> = [];
+  family: Array<TagsInputOption> = [];
+  lifestyle: Array<TagsInputOption> = [];
+
+  entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
 
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
-    brands: [],
     references: [],
+    sizes: [],
+    warehouses: [],
+    date_service: [],
+    brands: [],
+    providers:[],
     models: [],
     colors: [],
-    sizes: [],
-    providers:[],
-    warehouses: [],
+    category: [],
+    family: [],
+    lifestyle: [],
     pagination: this.formBuilder.group({
-      page: 1,  
+      page: 1,
       limit: this.pagerValues[0]
     }),
-    orderby: this.formBuilder.group({
-      type: '',
+    orderBy: this.formBuilder.group({
+      type: 1,
       order: "ASC"
     })
   });
@@ -110,26 +121,21 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.listenPaginatorChanges();
   }
 
-  listenPaginatorChanges(){ 
+  listenPaginatorChanges(){
     this.sort.sortChange.subscribe((sort: Sort) => {
-
-        if (sort.direction == '') {
+        if (sort.direction === '') {
           this.form.value.orderby = {
             type: 'id',
             order: 'ASC'
           };
         } else {
-          let id=this.getSortId(sort.active); 
+          let id=this.getSortId(sort.active);
           this.form.value.orderby = {
             type: id,
             order: sort.direction.toUpperCase()
           };
         }
-
-        //this.searchReserved(sort.direction.toUpperCase(),id);
-         //this.searchReserved();
         this.getList(this.form);
-
       });
   }
 
@@ -139,7 +145,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       case 'articulo':
         id=1;
         break;
-      case 'brand': 
+      case 'brand':
         id= 4;
         break;
       case 'store':
@@ -170,13 +176,13 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         order: this.currentPageFilter.order.direction
       })
     });
-  } 
+  }
 
    async searchReserved() {
     console.log("llamar endpoint de buscar de forma... ");
     //this.form.value.orderby.order = direction;
     //this.form.value.orderby.type = id;
-    console.log(JSON.stringify(this.form.value));  
+    console.log(JSON.stringify(this.form.value));
     await this.intermediaryService.presentLoading()
     this.predistributionsService.index2(this.form.value).subscribe(
       (resp:any) => {
@@ -196,7 +202,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
            this.selectionReserved.select(row);
         }
        });
-     
+
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -207,7 +213,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     )
   }
 
-  async presentModal() {  
+  async presentModal() {
    let ListReceptions = this.getListReceptions();
     console.log(ListReceptions);
     const modal = await this.modalController.create({
@@ -234,7 +240,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
 
   release(){
-   
+
    let ListReceptions = this.getListReceptions();
    let _data: Array<PredistributionModel.BlockReservedRequest> = ListReceptions;
    _data = _data.map(item => {
@@ -283,7 +289,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
            sizeId: sizeId,
            warehouseId: warehouseId
          });
-  
+
        }
 
        return receptionList;
@@ -291,20 +297,20 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
 
 
   async  listUserTime(){
-  
+
     let users=[1,13,14]
     let This = this;
-    
+
    this.userTimeService.getUsersShoesPicking(users).subscribe(function (data) {;
     return data['data'];
 
    }, (error) => {
      This.intermediaryService.presentToastError("No cuentas con usuarios asignados para liberar");
      This.intermediaryService.dismissLoading();
- 
+
    }, () => {
    });
-   
+
    //return data;
   }
 
@@ -314,7 +320,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       return true
     }
   }
- 
+
 
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -333,23 +339,32 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
   initEntity() {
     this.entities = {
+      references: [],
+      sizes: [],
+      warehouses: [],
+      date_service: [],
       brands: [],
-      colors: [],
-      destinyShop: [],
+      providers:[],
       models: [],
-      provider: [],
-      sizes:[]
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: [],
     }
   }
   initForm() {
     this.form.patchValue({
-      brands:[],
-      colors:[],
-      models:[],
+      references: [],
+      sizes: [],
+      warehouses: [],
+      date_service: [],
+      brands: [],
       providers:[],
-      references:[],
-      sizes:[],
-      warehouses:[],
+      models: [],
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: [],
     })
   }
   ngAfterViewInit(): void {
@@ -491,7 +506,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
+
   savePredistributions(){
     this.presentModal();
   }
@@ -517,23 +532,52 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
 
   getFilters() {
 
-    this.predistributionsService.entities2().subscribe(entities => {
-      this.updateFilterSourceBrands(entities.brands)
-      this.updateFilterSourceModels(entities.models)
-      this.updateFilterSourceSizes(entities.sizes)
-      this.updateFilterSourceColors(entities.colors)
-      this.updateFilterSourceWarehouses(entities.destinyShop)
-      this.updateFilterSourceProviders(entities.provider)
-      this.reduceFilters(entities)
+    this.predistributionsService.entitiesBlocked().subscribe(entities => {
+      this.references = this.updateFilterSource(entities.references, 'references');
+      this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
+      this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
+      this.dateServices = this.updateFilterSource(entities.warehouses, 'date_service');
+      this.brands = this.updateFilterSource(entities.brands, 'brands');
+      this.providers = this.updateFilterSource(entities.providers, 'providers');
+      this.models = this.updateFilterSource(entities.models, 'models');
+      this.colors = this.updateFilterSource(entities.colors, 'colors');
+      this.category = this.updateFilterSource(entities.category, 'category');
+      this.family = this.updateFilterSource(entities.family, 'family');
+      this.lifestyle = this.updateFilterSource(entities.lifestyle, 'lifestyle');
+
+      this.reduceFilters(entities);
       setTimeout(() => {
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
-        // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
-        //this.form.get("orderby").get("order").patchValue("DESC");
       }, 0);
     })
 
   }
+
+  private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
+    let resultEntity;
+
+    this.pauseListenFormChange = true;
+    let dataValue = this.form.get(entityName).value;
+
+    resultEntity = dataEntity.map(entity => {
+      entity.id = <number>(<unknown>entity.id);
+      entity.name = entity.name;
+      entity.value = entity.name;
+      entity.checked = true;
+      entity.hide = false;
+      return entity;
+    });
+
+    if (dataValue && dataValue.length) {
+      this.form.get(entityName).patchValue(dataValue, { emitEvent: false });
+    }
+
+    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+
+    return resultEntity;
+  }
+
   async getList(form?: FormGroup){
     await this.intermediaryService.presentLoading()
     console.log(JSON.stringify(form.value));
@@ -555,7 +599,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
            this.selectionReserved.select(row);
         }
        });
-     
+
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -571,34 +615,85 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       case 'references':
         let referencesFiltered: string[] = [];
         for (let reference of filters) {
-          if (reference.checked) referencesFiltered.push(reference.reference);
+
+          if (reference.checked) referencesFiltered.push(reference.id);
         }
+
         if (referencesFiltered.length >= this.references.length) {
-          this.form.value.productReferencePattern = [];
+          this.form.value.references = [];
           this.isFilteringReferences = this.references.length;
         } else {
           if (referencesFiltered.length > 0) {
-            this.form.value.productReferencePattern = referencesFiltered;
+            this.form.value.references = referencesFiltered;
             this.isFilteringReferences = referencesFiltered.length;
           } else {
-            this.form.value.productReferencePattern = ['99999'];
+            this.form.value.references = ['99999'];
             this.isFilteringReferences = this.references.length;
+          }
+        }
+        break;
+      case 'category':
+        let categoryFiltered: number[] = [];
+        for (let category of filters) {
+          if (category.checked) categoryFiltered.push(category.id);
+        }
+        if (categoryFiltered.length >= this.category.length) {
+          this.form.value.category = [];
+          this.isFilteringCategory = this.category.length;
+        } else {
+          if (categoryFiltered.length > 0) {
+            this.form.value.category = categoryFiltered;
+            this.isFilteringCategory = categoryFiltered.length;
+          } else {
+            this.form.value.category = ["99999"];
+            this.isFilteringCategory = this.category.length;
+          }
+        }
+        break;
+      case 'family':
+        let familyFiltered: number[] = [];
+        for (let family of filters) {
+          if (family.checked) familyFiltered.push(family.id);
+        }
+        if (familyFiltered.length >= this.family.length) {
+          this.form.value.family = [];
+          this.isFilteringFamily = this.family.length;
+        } else {
+          if (familyFiltered.length > 0) {
+            this.form.value.family = familyFiltered;
+            this.isFilteringFamily = familyFiltered.length;
+          } else {
+            this.form.value.family = ["99999"];
+            this.isFilteringFamily = this.family.length;
+          }
+        }
+        break;
+      case 'lifestyle':
+        let lifestyleFiltered: number[] = [];
+        for (let lifestyle of filters) {
+          if (lifestyle.checked) lifestyleFiltered.push(lifestyle.id);
+        }
+        if (lifestyleFiltered.length >= this.lifestyle.length) {
+          this.form.value.lifestyle = [];
+          this.isFilteringLifestyle = this.lifestyle.length;
+        } else {
+          if (lifestyleFiltered.length > 0) {
+            this.form.value.lifestyle = lifestyleFiltered;
+            this.isFilteringLifestyle = lifestyleFiltered.length;
+          } else {
+            this.form.value.lifestyle = ["99999"];
+            this.isFilteringLifestyle = this.lifestyle.length;
           }
         }
         break;
       case 'models':
         let modelsFiltered: string[] = [];
         for (let model of filters) {
-          console.log(model);
 
           if (model.checked) modelsFiltered.push(model.id);
         }
-        console.log(modelsFiltered);
-          console.log(modelsFiltered.length, '>=' ,this.models.length);
 
         if (modelsFiltered.length >= this.models.length) {
-          console.log('entre en model');
-
           this.form.value.models = [];
           this.isFilteringModels = this.models.length;
         } else {
@@ -610,7 +705,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
             this.isFilteringModels = this.models.length;
           }
         }
-        console.log(this.form.value);
 
         break;
       case 'colors':
@@ -654,7 +748,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         for (let warehouse of filters) {
           if (warehouse.checked) warehousesFiltered.push(warehouse.id);
         }
-        console.log(warehousesFiltered.length, '>=' ,this.warehouses.length);
 
         if (warehousesFiltered.length >= this.warehouses.length) {
           this.form.value.warehouses = [];
@@ -669,10 +762,29 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
           }
         }
         break;
+        case 'date_service':
+        let dateServicesFiltered: number[] = [];
+        for (let dateServices of filters) {
+          if (dateServices.checked) dateServicesFiltered.push(dateServices.id);
+        }
+
+        if (dateServicesFiltered.length >= this.dateServices.length) {
+          this.form.value.dateServices = [];
+          this.isFilteringDateServices = this.dateServices.length;
+        } else {
+          if (dateServicesFiltered.length > 0) {
+            this.form.value.dateServices = dateServicesFiltered;
+            this.isFilteringDateServices = dateServicesFiltered.length;
+          } else {
+            this.form.value.dateServices = [99999];
+            this.isFilteringDateServices = this.dateServices.length;
+          }
+        }
+        break;
       case 'providers':
         let providersFiltered: number[] = [];
-        for (let providers of filters) {
-          if (providers.checked) providersFiltered.push(providers.id);
+        for (let provider of filters) {
+          if (provider.checked) providersFiltered.push(provider.id);
         }
         if (providersFiltered.length >= this.providers.length) {
           this.form.value.providers = [];
@@ -682,7 +794,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
             this.form.value.providers = providersFiltered;
             this.isFilteringProviders = providersFiltered.length;
           } else {
-            this.form.value.containers = [99999];
+            this.form.value.providers = [99999];
             this.isFilteringProviders = this.providers.length;
           }
         }
@@ -708,180 +820,32 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.lastUsedFilter = filterType;
     this.getList(this.form);
   }
+
   private reduceFilters(entities){
-    // if (this.lastUsedFilter != 'references') {
-    //   let filteredReferences = entities['references'] as unknown as string[];
-    //   for (let index in this.references) {
-    //     this.references[index].hide = !filteredReferences.includes(this.references[index].value);
-    //   }
-    //   this.filterButtonReferences.listItems = this.references;
-    // }
-    if (this.lastUsedFilter !== 'models') {
-      let filteredModels = entities['models'] as unknown as string[];
-      for (let index in this.models) {
-        this.models[index].hide = filteredModels.includes(this.models[index].value);
-      }
-      this.filterButtonModels.listItems = this.models;
-    }
-    if (this.lastUsedFilter !== 'colors') {
-      let filteredColors = entities['colors'] as unknown as string[];
-      for (let index in this.colors) {
-        this.colors[index].hide = filteredColors.includes(this.colors[index].value);
-      }
-      this.filterButtonColors.listItems = this.colors;
-    }
-    if (this.lastUsedFilter !== 'sizes') {
-      let filteredSizes = entities['sizes'] as unknown as string[];
-      for (let index in this.sizes) {
-        this.sizes[index].hide = filteredSizes.includes(this.sizes[index].value);
-      }
-      this.filterButtonSizes.listItems = this.sizes;
-    }
-    if (this.lastUsedFilter !== 'warehouses') {
-      let filteredWarehouses = entities['destinyShop'] as unknown as (string | number)[];
-      for (let index in this.warehouses) {
-        this.warehouses[index].hide = filteredWarehouses.includes(this.warehouses[index].reference);
-      }
-      this.filterButtonWarehouses.listItems = this.warehouses;
-    }
-    if (this.lastUsedFilter !== 'brands') {
-      let filteredBrands = entities['brands'] as unknown as string[];
-      for (let index in this.brands) {
-        this.brands[index].hide = filteredBrands.includes(this.brands[index].value);
-      }
-      this.filterButtonBrands.listItems = this.brands;
-    }
-    if (this.lastUsedFilter !== 'providers') {
-      let filteredProviders = entities['provider'] as unknown as string[];
-      for (let index in this.providers) {
-        this.providers[index].hide = filteredProviders.includes(this.providers[index].value);
-      }
-      this.filterButtonProviders.listItems = this.providers;
-    }
+    this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
+    this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
+    this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
+    this.filterButtonBrands.listItems = this.reduceFilterEntities(this.brands, entities,'brands');
+    this.filterButtonProviders.listItems = this.reduceFilterEntities(this.providers, entities,'providers');
+    this.filterButtonModels.listItems = this.reduceFilterEntities(this.models, entities,'models');
+    this.filterButtonColors.listItems = this.reduceFilterEntities(this.colors, entities,'colors');
+    this.filterButtonCategory.listItems = this.reduceFilterEntities(this.category, entities,'category');
+    this.filterButtonFamily.listItems = this.reduceFilterEntities(this.family, entities,'family');
+    this.filterButtonLifestyle.listItems = this.reduceFilterEntities(this.lifestyle, entities,'lifestyle');
   }
-  private updateFilterSourceBrands(brands: FiltersModel.Brand[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("brands").value;
-    this.brands = brands.map(brand => {
-      brand.value = brand.name;
-      brand.checked = true;
-      brand.hide = false;
-      return brand;
-    });
-    console.log(this.brands);
 
-    if (value && value.length) {
-      this.form.get("brands").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceSizes(sizes: FiltersModel.Size[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("sizes").value;
-    this.sizes = sizes
-      .filter((value, index, array) => array.findIndex(x => x.name === value.name) === index)
-      .map(size => {
-        size.id = <number>(<unknown>size.id);
-        size.value = size.name;
-        size.checked = true;
-        size.hide = false;
-        return size;
-      });
-    if (value && value.length) {
-      this.form.get("sizes").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceWarehouses(warehouses: FiltersModel.Warehouse[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("warehouses").value;
-    console.log(JSON.stringify(warehouses));
+  private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
+    if (this.lastUsedFilter !== entityName) {
+      let filteredEntity = entities[entityName] as unknown as string[];
 
-    if(warehouses != undefined){
-      this.warehouses = warehouses.map(warehouse => {
-        warehouse.name = warehouse.name;
-        warehouse.value = warehouse.name;
-        warehouse.checked = true;
-        warehouse.hide = false;
-        return warehouse;
+      arrayEntity.forEach((item) => {
+        item.hide = filteredEntity.includes(item.value);
       });
 
-      if (value && value.length) {
-        this.form.get("warehouses").patchValue(value, { emitEvent: false });
-      }
-      setTimeout(() => { this.pauseListenFormChange = false; }, 0);
+      return arrayEntity;
+    }
+  }
 
-    }
-   
-   
-  }
-  private updateFilterSourceModels(models: FiltersModel.Model[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("models").value;
-    this.models = models.map(model => {
-      model.id = <number>(<unknown>model.id);
-      model.name = model.name;
-      model.value = model.name;
-      model.checked = true;
-      model.hide = false;
-      return model;
-    });
-    console.log(this.models);
-
-    if (value && value.length) {
-      this.form.get("models").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceProviders(providers: FiltersModel.Model[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("providers").value;
-    if(providers != undefined){
-      this.providers = providers.map(provider => {
-        provider.id = <number>(<unknown>provider.id);
-        provider.name = provider.name;
-        provider.value = provider.name;
-        provider.checked = true;
-        provider.hide = false;
-        return provider;
-      });
-      if (value && value.length) {
-        this.form.get("providers").patchValue(value, { emitEvent: false });
-      }
-      setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-    }
-   
-  }
-  private updateFilterSourceColors(colors: FiltersModel.Color[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("colors").value;
-    this.colors = colors.map(color => {
-      color.value = color.name;
-      color.checked = true;
-      color.hide = false;
-      return color;
-    });
-    if (value && value.length) {
-      this.form.get("colors").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
-  private updateFilterSourceReferences(references: FiltersModel.Reference[]) {
-    this.pauseListenFormChange = true;
-    let value = this.form.get("references").value;
-    this.references = references.map(reference => {
-      reference.id = <number>(<unknown>reference.reference);
-      reference.name = reference.reference;
-      reference.value = reference.name;
-      reference.checked = true;
-      reference.hide = false;
-      return reference;
-    });
-    if (value && value.length) {
-      this.form.get("references").patchValue(value, { emitEvent: false });
-    }
-    setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-  }
   // new
   public changeStatusBlocked( event:MatCheckboxChange, row) {
     this.dataSource.data.forEach(function(value){
@@ -929,5 +893,9 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       result = result && !value.distribution;
     });
     return result;
+  }
+
+  sortData(event: Sort) {
+
   }
 }
