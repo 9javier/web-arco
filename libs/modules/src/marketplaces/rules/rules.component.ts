@@ -5,6 +5,7 @@ import {NewRuleComponent} from './new-rule/new-rule.component';
 import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MatTableDataSource} from '@angular/material';
 import {MarketplacesMgaService} from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'suite-rules',
@@ -49,6 +50,8 @@ export class RulesComponent implements OnInit {
     this.dataSourceStocks = [];
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
     this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
+
+
 
 
     /*this.marketplacesService.getRulesFilter().subscribe(data => {
@@ -123,13 +126,55 @@ export class RulesComponent implements OnInit {
       } else {
         console.log('error get rules filter')
       }*!/
-    });
+    });*/
 
-    this.marketplacesService.getRulesConfigurations().subscribe(data => {
-      console.log('data RulesConfigurations', data);
-      /!*console.log(data)*!/
+    /*this.marketplacesService.getRulesConfigurations().subscribe(data => {
+      console.log(data);
     })*/
 
+    this.getValues();
+
+  }
+
+  getValues() {
+    let rules = JSON.parse(localStorage.getItem("rules"));
+    console.log('ass', rules);
+    if (rules) {
+      for (let rule of rules.rule) {
+        switch (rule.filterType) {
+          case "categories":
+            this.dataSourceCategories.push(rule);
+            break;
+
+          case "enabling":
+            this.dataSourceEnabling.push(rule);
+            break;
+
+          case "stock":
+            this.dataSourceStocks.push(rule);
+            break;
+        }
+        this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
+        this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
+        this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
+      }
+    }
+  }
+
+  postInJosn() {
+    let rules = {
+      "rule": []
+    };
+    for (let cat of this.dataSourceCategories) {
+      rules.rule.push(cat);
+    }
+    for (let cat of this.dataSourceEnabling) {
+      rules.rule.push(cat);
+    }
+    for (let cat of this.dataSourceStocks) {
+      rules.rule.push(cat);
+    }
+    localStorage.setItem("rules", JSON.stringify(rules));
   }
 
   async openModalNewRule(ruleFilterType): Promise<void> {
@@ -144,7 +189,7 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
 
-        console.log(data.data);
+        /*console.log(data.data);
 
         let filterType = "0";
 
@@ -218,9 +263,9 @@ export class RulesComponent implements OnInit {
 
         this.marketplacesService.postRulesConfigurations(dataRuleConfiguration).subscribe(data => {
           console.log(data)
-        });
+        });*/
 
-        //this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
+        this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
         // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
         // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
@@ -284,6 +329,8 @@ export class RulesComponent implements OnInit {
 
         break;
     }
+
+    this.postInJosn();
 
   }
 
@@ -402,6 +449,7 @@ export class RulesComponent implements OnInit {
           // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
 
         }
+        this.postInJosn();
       }
     });
     modal.present();

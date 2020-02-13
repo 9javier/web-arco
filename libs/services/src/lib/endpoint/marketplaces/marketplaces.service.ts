@@ -21,7 +21,7 @@ export class MarketplacesService {
   private updateRulesFilterUrl = this.apiBase + "/RuleFilter/{{id}}";
   private getRulesFilterByTypeUrl = this.apiBase + "/RuleFilter/{{type}}";
   private getMarketsUrl = this.apiBase + "/Markets";
-  private getRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration";
+  private getRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration/get/all";
   private postRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration";
   private updateRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration/{{id}}";
   private getRulesConfigurationsByIdUrl = this.apiBase + "/RuleConfiguration/{{id}}";
