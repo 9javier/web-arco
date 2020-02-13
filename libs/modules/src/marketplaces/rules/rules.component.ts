@@ -174,7 +174,7 @@ export class RulesComponent implements OnInit {
         let ruleFiltersConfig = [];
 
         data.data.categoriesFilter.forEach(item => {
-          rulesFilters.push({
+          ruleFiltersConfig.push({
             name: item.name,
             ruleFilterType: item.group,
             externalId: item.id,
