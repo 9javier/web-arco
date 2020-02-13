@@ -169,45 +169,24 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
   optionClick(e) {}
 
   checkProvider(data: ReceptionAvelonModel.CheckProvider) {
-    // if (this.interval) {
-    //   clearInterval(this.interval);
-    // }
     this.intermediaryService.presentLoading('Cargando');
-    this.reception.isProviderAvailable(data).subscribe(
-      (resp: boolean) => {
-        this.isProviderAviable = resp;
-        if (!this.isProviderAviable) {
-          this.alertMessage(
-            'Este proveedor no esta habilitado para recepcionar'
-          );
-        } else {
-          this.reception
-            .getReceptions(data.providerId)
-            .subscribe((info: ReceptionAvelonModel.Reception) => {
-              this.response = info;
-              this.response.brands = this.clearSelected(this.response.brands);
-              this.response.models = this.clearSelected(this.response.models);
-              this.response.colors = this.clearSelected(this.response.colors);
-              this.response.sizes = this.clearSelected(this.response.sizes);
-              this.filterData.brands = this.clearSelected(info.brands);
-              this.filterData.models = this.clearSelected(info.models);
-              this.filterData.colors = this.clearSelected(info.colors);
-              this.filterData.sizes = this.clearSelected(info.sizes);
+    this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
+        this.response = info;
+        this.response.brands = this.clearSelected(this.response.brands);
+        this.response.models = this.clearSelected(this.response.models);
+        this.response.colors = this.clearSelected(this.response.colors);
+        this.response.sizes = this.clearSelected(this.response.sizes);
+        this.filterData.brands = this.clearSelected(info.brands);
+        this.filterData.models = this.clearSelected(info.models);
+        this.filterData.colors = this.clearSelected(info.colors);
+        this.filterData.sizes = this.clearSelected(info.sizes);
 
-              // this.ocrFake();
-              if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
-                // this.getOcr();
-              }
-            });
+        // this.ocrFake();
+        if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
+          // this.getOcr();
         }
-      },
-      e => {
         this.intermediaryService.dismissLoading();
-      },
-      () => {
-        this.intermediaryService.dismissLoading();
-      }
-    );
+      });
   }
 
   async alertMessage(message: string) {
@@ -737,12 +716,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
 
           modal.onDidDismiss().then(response => {
             if (response.data && response.data.reception) {
+              this.isProviderAviable = true;
               this.checkProvider(data);
             }
           });
 
           modal.present();
         }else{
+          this.isProviderAviable = false;
           this.alertMessage('No se ha encontrado esa expedición');
         }
       });
