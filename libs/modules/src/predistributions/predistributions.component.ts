@@ -12,21 +12,22 @@ import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import * as _ from 'lodash';
 import { FilterTypes } from '../../../services/src/models/filter.types';
-
 @Component({
   selector: 'suite-predistributions',
   templateUrl: './predistributions.component.html',
   styleUrls: ['./predistributions.component.scss'],
 })
-export class PredistributionsComponent implements OnInit, AfterViewInit {
+export class PredistributionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['article','size','store','date_service','brand','provider','model','color','category','family','lifestyle', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['article','tallas','tienda','date_service','marcas','proveedores','model','colores','category','family','lifestyle', 'distribution', 'reserved'];
   // displayedColumns: string[] = ['select', 'article', 'store'];
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
+
+  columns = {};
 
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
@@ -92,7 +93,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
   });
   length: any;
 
-
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
@@ -105,6 +105,7 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.initEntity()
     this.initForm()
     this.getFilters()
+    this.getColumns(this.form);
     this.getList(this.form)
     this.listenChanges()
   }
@@ -120,6 +121,28 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
         page: flag ? page.pageIndex : 1
       });
       this.getList(this.form)
+    });
+    this.sort.sortChange.subscribe((sort: Sort) => {
+      this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+        console.log(this.form.value);
+        if (sort.direction == '') {
+          this.form.value.orderby ={
+            type: '1',
+            order: "ASC"
+          };
+        } else {
+          this.form.value.orderby = {
+            type: this.columns[sort.active],
+            order: sort.direction.toUpperCase()
+          };
+        }
+        console.log(this.form.value);
+        this.getList(this.form);
+  
+      });
+    });
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.form);
     });
   }
   initEntity() {
@@ -150,15 +173,15 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
       lifestyle: [],
     })
   }
-  ngAfterViewInit(): void {
-    let This = this;
-    setTimeout(() => {
-      if(!!This.sort && !!this.dataSource)
-        this.dataSource.sort = This.sort;
-      if(!!This.paginator && !!this.dataSource)
-        this.dataSource.paginator = This.paginator;
-    }, 2000)
-  }
+  // ngAfterViewInit(): void {
+  //   let This = this;
+  //   setTimeout(() => {
+  //     if(!!This.sort && !!this.dataSource)
+  //       this.dataSource.sort = This.sort;
+  //     if(!!This.paginator && !!this.dataSource)
+  //       this.dataSource.paginator = This.paginator;
+  //   }, 2000)
+  // }
 
   getRangeLabel = (page: number, pageSize: number, length: number) =>  {
     if (length === 0 || pageSize === 0) {
@@ -566,6 +589,24 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     return resultEntity;
   }
 
+  async getColumns(form?: FormGroup){
+    await this.intermediaryService.presentLoading();
+    this.predistributionsService.index(form.value).subscribe(
+      (resp:any) => {
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
+  }
+
+
   refreshPredistributions() {
     this.initEntity();
     this.initForm();
@@ -573,7 +614,6 @@ export class PredistributionsComponent implements OnInit, AfterViewInit {
     this.getList(this.form);
     this.listenChanges();
   }
-
   async sortData(event: Sort) {
     console.log(event);
     let type = 1;
