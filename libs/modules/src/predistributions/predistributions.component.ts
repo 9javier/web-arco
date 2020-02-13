@@ -88,7 +88,7 @@ export class PredistributionsComponent implements OnInit {
       page: 1,
       limit: this.pagerValues[0]
     }),
-    orderBy: this.formBuilder.group({
+    orderby: this.formBuilder.group({
       type: 1,
       order: "asc"
     })
@@ -128,12 +128,12 @@ export class PredistributionsComponent implements OnInit {
       this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
         console.log(this.form.value);
         if (sort.direction == '') {
-          this.form.value.orderBy ={
+          this.form.value.orderby ={
             type: '1',
             order: "ASC"
           };
         } else {
-          this.form.value.orderBy = {
+          this.form.value.orderby = {
             type: this.columns[sort.active],
             order: sort.direction.toUpperCase()
           };
@@ -281,7 +281,6 @@ export class PredistributionsComponent implements OnInit {
   }
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
-      console.log(entities);
       this.references = this.updateFilterSource(entities.references, 'references');
       this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
