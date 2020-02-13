@@ -1,10 +1,16 @@
 import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
-import {ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService} from '@suite/services';
-import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
+import {
+  ReceptionsAvelonService,
+  ReceptionAvelonModel,
+  IntermediaryService,
+  ProductsService
+} from '@suite/services';
+import {Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef, ElementRef} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
 import { Reception } from './classes/reception.class';
+import { ListsComponent } from './components/lists/lists.component';
 import {FormControl} from "@angular/forms";
 import {map, startWith} from "rxjs/operators";
 import {InfoModalComponent} from "./info-modal/info-modal.component";
@@ -14,8 +20,6 @@ import {InfoModalComponent} from "./info-modal/info-modal.component";
   templateUrl: './receptions-avelon.component.html',
   styleUrls: ['./receptions-avelon.component.scss']
 })
-export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
-
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit{
 
   @ViewChild(ListsComponent) listsComponent:ListsComponent
@@ -58,8 +62,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
-    private modalController: ModalController
-    private productsService: ProductsService,
+    private modalController: ModalController,
     private cd: ChangeDetectorRef
   ) {}
 
