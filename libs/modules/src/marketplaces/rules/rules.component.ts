@@ -174,9 +174,7 @@ export class RulesComponent implements OnInit {
         let ruleFiltersConfig = [];
 
         data.data.categoriesFilter.forEach(item => {
-          let id = item.id + Math.floor(Math.random() * 10);
           rulesFilters.push({
-            id: id,
             name: item.name,
             ruleFilterType: item.group,
             externalId: item.id,
@@ -187,7 +185,6 @@ export class RulesComponent implements OnInit {
           rulesFilters.push(
             {
               filterToAdd: {
-                id: id,
                 name: item.name,
                 ruleFilterType: item.group,
                 externalId: item.id,
@@ -209,7 +206,7 @@ export class RulesComponent implements OnInit {
 
         let dataRuleConfiguration = {
           name: data.data.name,
-          description: data.data.description,
+          description: data.data.name,
           status: 1,
           rulesFilterIds: ruleFiltersConfig,
           marketsIds: [
