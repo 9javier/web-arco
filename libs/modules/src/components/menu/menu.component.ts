@@ -318,7 +318,7 @@ export class MenuComponent implements OnInit {
           icon: 'document'
         },
         {
-          title: 'MiniPrecios',
+          title: 'Miniprecios',
           open: true,
           type: 'wrapper',
           id: 'miniprecios',

@@ -1,10 +1,10 @@
-import { Component, OnInit} from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ModalController } from '@ionic/angular';
-import { NewRuleComponent } from './new-rule/new-rule.component';
-import { MarketplacesService } from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
-import { MatTableDataSource } from '@angular/material';
-import { MarketplacesMgaService } from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {ModalController} from '@ionic/angular';
+import {NewRuleComponent} from './new-rule/new-rule.component';
+import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
+import {MatTableDataSource} from '@angular/material';
+import {MarketplacesMgaService} from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 
 @Component({
   selector: 'suite-rules',
@@ -30,7 +30,7 @@ export class RulesComponent implements OnInit {
     private modalController: ModalController,
     private marketplacesService: MarketplacesService,
     private marketplacesMgaService: MarketplacesMgaService
-  ) { 
+  ) {
     console.log(this.route.snapshot.data['name']);
   }
 
@@ -51,10 +51,10 @@ export class RulesComponent implements OnInit {
     this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
 
 
-
     /*this.marketplacesService.getRulesFilter().subscribe(data => {
-      if(data) {
-        data.forEach(rule => {
+      console.log('data RuleFilter', data);
+      if (data) {
+        /!*data.forEach(rule => {
           if(rule.ruleFilterType == 1) {
             const dataCategoriesGet = this.dataSourceRulesCategories.data;
             let category = {
@@ -111,23 +111,25 @@ export class RulesComponent implements OnInit {
             dataStocksGet.push(stock);
             this.dataSourceRulesStocks.data = dataStocksGet;
           }
-        })
+        })*!/
       } else {
         console.log('error get rules filter')
       }
-    })
+    });
     this.marketplacesService.getRulesFilterTypes().subscribe(data => {
-      if(data) {
+      console.log('data RuleFilterType', data);
+      /!*if(data) {
         console.log(data)
       } else {
         console.log('error get rules filter')
-      }
-    })*/
-  
+      }*!/
+    });
+
     this.marketplacesService.getRulesConfigurations().subscribe(data => {
-      console.log(data)
-    })
-    
+      console.log('data RulesConfigurations', data);
+      /!*console.log(data)*!/
+    })*/
+
   }
 
   async openModalNewRule(ruleFilterType): Promise<void> {
@@ -142,26 +144,26 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
 
-        console.log('data->', data.data);
-        
-        let filterType = 0;
+        console.log(data.data);
 
-       switch(data.data.filterType) {
+        let filterType = "0";
+
+        switch (data.data.filterType) {
           case 'categories':
-            filterType = 1;
+            filterType = "1";
             break;
           case 'enabling':
-            filterType = 2;
+            filterType = "2";
             break;
           case 'stock':
-            filterType = 3;
+            filterType = "3";
             break;
-        } 
+        }
 
         let exceptions = {};
 
         data.data.referencesExceptions.forEach(item => {
-          if(item.type == 'include') {
+          if (item.type == 'include') {
             exceptions[item.reference] = 1;
           } else {
             exceptions[item.reference] = 0;
@@ -169,58 +171,59 @@ export class RulesComponent implements OnInit {
         });
 
         let rulesFilters = [];
+        let ruleFiltersConfig = [];
 
         data.data.categoriesFilter.forEach(item => {
+          let id = item.id + Math.floor(Math.random() * 10);
           rulesFilters.push({
+            id: id,
             name: item.name,
             ruleFilterType: item.group,
-            externalId:  item.id,
+            externalId: item.id,
             dataGroup: filterType,
-            status: 0
-          })
+            status: 1
+          });
 
           rulesFilters.push(
             {
               filterToAdd: {
+                id: id,
                 name: item.name,
                 ruleFilterType: item.group,
-                externalId:  item.id,
+                externalId: item.id,
                 dataGroup: filterType,
-                status: 0
+                status: 1
               },
               marketsIds: [
                 "1"
               ]
             }
-          )
+          );
         });
-
-        console.log(rulesFilters)
 
         rulesFilters.forEach(item => {
           this.marketplacesService.postRulesFilter(item).subscribe(data => {
             console.log(data)
-          })
-        })
+          });
+        });
 
         let dataRuleConfiguration = {
           name: data.data.name,
           description: data.data.description,
           status: 1,
-          rulesFilterIds: rulesFilters,
+          rulesFilterIds: ruleFiltersConfig,
           marketsIds: [
             "1"
           ],
           referenceExceptions: exceptions,
           ruleDataValidactionAttributes: []
-        }
+        };
 
-        console.log(dataRuleConfiguration)
         this.marketplacesService.postRulesConfigurations(dataRuleConfiguration).subscribe(data => {
           console.log(data)
-        })
+        });
 
-        this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
+        //this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
         // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
         // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
@@ -263,7 +266,7 @@ export class RulesComponent implements OnInit {
       case 'categories':
 
         this.dataSourceCategories.push(rule);
-        this.dataSourceCategories.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+        this.dataSourceCategories.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
         this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
 
         break;
@@ -271,7 +274,7 @@ export class RulesComponent implements OnInit {
       case 'enabling':
 
         this.dataSourceEnabling.push(rule);
-        this.dataSourceEnabling.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+        this.dataSourceEnabling.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
         this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
 
         break;
@@ -279,13 +282,14 @@ export class RulesComponent implements OnInit {
       case 'stock':
 
         this.dataSourceStocks.push(rule);
-        this.dataSourceStocks.sort((a,b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+        this.dataSourceStocks.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
         this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
 
         break;
     }
 
   }
+
   //////////////////////////////////////////////////////////////////////////////
 
   async editRule(ruleToEdit): Promise<void> {
@@ -314,7 +318,7 @@ export class RulesComponent implements OnInit {
 
         let filterType = 0;
 
-       switch(data.data.filterType) {
+        switch (data.data.filterType) {
           case 'categories':
             filterType = 1;
             break;
@@ -324,12 +328,12 @@ export class RulesComponent implements OnInit {
           case 'stock':
             filterType = 3;
             break;
-        } 
+        }
 
         let exceptions = {};
 
         data.data.referencesExceptions.forEach(item => {
-          if(item.type == 'include') {
+          if (item.type == 'include') {
             exceptions[item.reference] = 1;
           } else {
             exceptions[item.reference] = 0;
@@ -342,7 +346,7 @@ export class RulesComponent implements OnInit {
           rulesFilters.push({
             name: item.name,
             ruleFilterType: item.group,
-            externalId:  item.id,
+            externalId: item.id,
             dataGroup: filterType,
             status: 0
           })
@@ -367,7 +371,7 @@ export class RulesComponent implements OnInit {
           console.log(data)
         })*/
 
-        if(!this.checkForRuleEdition(ruleToEdit, editedRule)) {
+        if (!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
           // EL SIGUIENTE BLOQUE ES ALGO TEMPORAL PARA ACTUALIZAR EN EL FRONT LAS LISTAS DE REGLAS. EN UN FUTURO SE MANDARA LA REGLA EDITADA A LA API Y ALLI SE ACTUALIZARÁ, Y A CONTINUACIÓN SE HARÁ LA CONSULTA DE LA LISTA DE NUEVO PARA QUE YA RECOGA EL DATO ACTUALIZADO DESDE LAS TABLAS
 
