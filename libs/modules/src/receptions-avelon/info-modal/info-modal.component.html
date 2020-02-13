@@ -1,3 +1,14 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title> Información de la expedición </ion-title>
+    <ion-buttons slot="end">
+      <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content>
   <mat-card>
 
@@ -17,7 +28,10 @@
         Transportista: <span>{{expedition.shipper}}</span>
       </p>
       <p>
-        Estados: <span>{{expedition.states_list.join(', ')}}</span>
+        Estados: <span>{{stringStates(expedition)}}</span>
+      </p>
+      <p id="blocked" *ngIf="!expedition.reception_enabled">
+        <span> Esta expedición se encuentra bloqueada </span>
       </p>
     </mat-card-content>
 
@@ -28,5 +42,45 @@
       </button>
     </mat-card-actions>
 
+  </mat-card>
+
+  <mat-card *ngIf="!expedition && expeditionNumber && providerName">
+    <mat-card-header>
+      <mat-card-title># {{expeditionNumber}}</mat-card-title>
+      <mat-card-subtitle>{{providerName}}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>No hay ninguna expedición con el número escaneado para el proveedor seleccionado.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="anotherExpeditions && anotherExpeditions.length > 0">
+    <mat-card-header>
+      <mat-card-title>Otras expediciones</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngFor="let expedition of anotherExpeditions">
+        <mat-divider></mat-divider>
+        <div>
+          <p>
+            Nº de expedición: <span>{{expedition.reference}}</span>
+          </p>
+          <p>
+            Nº bultos: <span>{{expedition.total_packing}}</span>
+          </p>
+          <p>
+            Fecha de envío: <span>{{dateTimeParserService.date(expedition.delivery_date)}}</span>
+          </p>
+          <p>
+            Transportista: <span>{{expedition.shipper}}</span>
+          </p>
+          <p>
+            Estados: <span>{{stringStates(expedition)}}</span>
+          </p>
+        </div>
+      </div>
+    </mat-card-content>
   </mat-card>
 </ion-content>

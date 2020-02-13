@@ -23,7 +23,7 @@
           </form>
         </ion-col>
         <ion-col size="4">
-          <ion-button *ngIf="!isProviderAviable && showCheck" (click)="loadProvider()"> comprobar </ion-button>
+          <ion-button *ngIf="showCheck" (click)="loadProvider()"> comprobar </ion-button>
           <ion-button *ngIf="isProviderAviable" class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
         </ion-col>
       </ion-row>

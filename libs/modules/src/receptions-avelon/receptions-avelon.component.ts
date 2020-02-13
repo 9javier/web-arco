@@ -1,11 +1,6 @@
 import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
-import {
-  ReceptionsAvelonService,
-  ReceptionAvelonModel,
-  IntermediaryService,
-  ProductsService
-} from '@suite/services';
+import {ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService} from '@suite/services';
 import {Component, OnInit, OnDestroy, ViewChild, ElementRef} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
@@ -20,6 +15,7 @@ import {InfoModalComponent} from "./info-modal/info-modal.component";
   styleUrls: ['./receptions-avelon.component.scss']
 })
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
+
   response: ReceptionAvelonModel.Reception;
   dato: ReceptionAvelonModel.Data;
   subscriptions: Subscription;
@@ -61,8 +57,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     private modalController: ModalController
   ) {}
 
-  loadProvider(){
-    this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+  async loadProvider(){
+    await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
     this.showCheck = false;
   }
 
@@ -187,16 +183,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
         } else {
           this.reception
             .getReceptions(data.providerId)
-            .subscribe(async (info: ReceptionAvelonModel.Reception) => {
-              await this.reception.checkExpeditionsByNumberAndProvider({
-                expeditionNumber: data.expedition,
-                providerId: data.providerId
-              }).subscribe(async (response) => {
-                await (await this.modalController.create({
-                  component: InfoModalComponent,
-                  componentProps: {expedition: response.data.expedition}
-                })).present();
-              });
+            .subscribe((info: ReceptionAvelonModel.Reception) => {
               this.response = info;
               this.response.brands = this.clearSelected(this.response.brands);
               this.response.models = this.clearSelected(this.response.models);
@@ -245,6 +232,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       this.reset();
     }
   }
+
   updateList(dato) {    
     let model = [];
     let brand = [];
@@ -554,6 +542,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       }
     }, seg);
   }
+
   addOrcData(sourceArray: Array<any>, collection: string) {
     sourceArray.forEach(elem => {
       const find = this.filterData[collection].find(
@@ -575,11 +564,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     return array;
   }
 
-  setSelected(
-    array: Array<ReceptionAvelonModel.Data>,
-    data: any,
-    type?: number
-  ) {
+  setSelected(array: Array<ReceptionAvelonModel.Data>, data: any, type?: number) {
     const findIndexResult: number = array.findIndex(
       element => element.id === data.id
     );
@@ -636,10 +621,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
       });
   }
 
-  mappingReceptionsNotifiedProvidersLists(
-    data: Array<ReceptionAvelonModel.Data>,
-    array: Array<ReceptionAvelonModel.Data>
-  ) {
+  mappingReceptionsNotifiedProvidersLists(data: Array<ReceptionAvelonModel.Data>, array: Array<ReceptionAvelonModel.Data>) {
     data.map(element => {
       element.state = 1;
       const findIndexResult: number = array.findIndex(
@@ -727,7 +709,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     }
   }
 
-  load(e,item) {
+  async load(e, item) {
     // console.log(e);
     this.value = item.name;
     this.filter = false;
@@ -738,14 +720,39 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     };
 
     if (data.expedition === undefined || data.expedition.length === 0) {
-      this.alertMessage('El numero de expedicion no puede estar vacio');
-      return;
+      this.alertMessage('El numero de expedición no puede estar vacío');
+    }else{
+      await this.reception.checkExpeditionsByNumberAndProvider({
+        expeditionNumber: data.expedition,
+        providerId: data.providerId
+      }).subscribe(async (response) => {
+        if(response.data.expedition_available) {
+          const modal = await this.modalController.create({
+            component: InfoModalComponent,
+            componentProps: {
+              expedition: response.data.expedition,
+              anotherExpeditions: response.data.another_expeditions
+            }
+          });
+
+          modal.onDidDismiss().then(response => {
+            if (response.data && response.data.reception) {
+              this.checkProvider(data);
+            }
+          });
+
+          modal.present();
+        }else{
+          this.alertMessage('No se ha encontrado esa expedición');
+        }
+      });
     }
-    this.checkProvider(data);
   }
+
   providerFocus() {
     this.filter = true;
   }
+
   providerBlur(e) {
     // console.log(e)
     // if (this.value) {
@@ -756,4 +763,5 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy {
     }, 500)
     
   }
+
 }

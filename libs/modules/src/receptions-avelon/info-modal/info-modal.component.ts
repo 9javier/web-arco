@@ -12,6 +12,9 @@ import {DateTimeParserService} from "../../../../services/src/lib/date-time-pars
 export class InfoModalComponent implements OnInit {
 
   expedition: Expedition;
+  anotherExpeditions: Expedition[];
+  expeditionNumber: string;
+  providerName: string;
 
   constructor(
     private modalController: ModalController,
@@ -19,22 +22,28 @@ export class InfoModalComponent implements OnInit {
   ){}
 
   ngOnInit() {
-    this.expedition = {
-      reference: "123456789",
-      provider_name: "Calzados Lucatoni, S.L.U",
-      provider_id: 3,
-      total_packing: 2,
-      delivery_date: "2019-09-06T14:07:55.513",
-      shipper: "dhl",
-      states_list: [2],
-      reception_enabled: true
-    };
-    console.log('expedition:', this.expedition);
+    this.providerName = this.expedition.provider_name;
+    this.expeditionNumber = this.expedition.reference;
   }
 
+  stringStates(expedition: Expedition){
+    const stringStates: string[] = [];
+    for(let state of expedition.states_list){
+      if(state == 1){
+        stringStates.push('Bloqueado');
+      }else{
+        stringStates.push('Desconocido');
+      }
+    }
+    return stringStates.join(', ');
+  }
 
   async close() {
-    await this.modalController.dismiss();
+    await this.modalController.dismiss({reception: false});
+  }
+
+  async reception() {
+    await this.modalController.dismiss({reception: true});
   }
 
 }
