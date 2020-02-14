@@ -11,7 +11,7 @@ import { TagsInputOption } from '../components/tags-input/models/tags-input-opti
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
 import * as _ from 'lodash';
-import { FilterTypes } from '../../../services/src/models/filter.types';
+
 @Component({
   selector: 'suite-predistributions',
   templateUrl: './predistributions.component.html',
@@ -20,8 +20,7 @@ import { FilterTypes } from '../../../services/src/models/filter.types';
 export class PredistributionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['article','tallas','tienda','date_service','marcas','proveedores','model','colores','category','family','lifestyle', 'distribution', 'reserved'];
-  // displayedColumns: string[] = ['select', 'article', 'store'];
+  displayedColumns: string[] = ['article','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -32,6 +31,7 @@ export class PredistributionsComponent implements OnInit {
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
+  @ViewChild('filterButtonDateServices') filterButtonDateServices: FilterButtonComponent;
   @ViewChild('filterButtonBrands') filterButtonBrands: FilterButtonComponent;
   @ViewChild('filterButtonProviders') filterButtonProviders: FilterButtonComponent;
   @ViewChild('filterButtonModels') filterButtonModels: FilterButtonComponent;
@@ -44,6 +44,7 @@ export class PredistributionsComponent implements OnInit {
   isFilteringReferences: number = 0;
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
+  isFilteringDateServices: number = 0;
   isFilteringBrands: number = 0;
   isFilteringProviders: number = 0;
   isFilteringModels: number = 0;
@@ -56,6 +57,7 @@ export class PredistributionsComponent implements OnInit {
   references: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
+  date_service: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
   providers: Array<TagsInputOption> = [];
   models: Array<TagsInputOption> = [];
@@ -68,12 +70,13 @@ export class PredistributionsComponent implements OnInit {
   entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
-  // pagerValues = [50, 100, 1000];
+
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
     references: [],
     sizes: [],
     warehouses: [],
+    date_service: [],
     brands: [],
     providers:[],
     models: [],
@@ -81,7 +84,6 @@ export class PredistributionsComponent implements OnInit {
     category: [],
     family: [],
     lifestyle: [],
-
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -101,13 +103,12 @@ export class PredistributionsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
-    this.initEntity()
-    this.initForm()
-    this.getFilters()
+    this.initEntity();
+    this.initForm();
+    this.getFilters();
     this.getColumns(this.form);
-    this.getList(this.form)
-    this.listenChanges()
+    this.getList(this.form);
+    this.listenChanges();
   }
   listenChanges() {
     let previousPageSize = this.form.value.pagination.limit;
@@ -116,13 +117,14 @@ export class PredistributionsComponent implements OnInit {
       /**true if only change the number of results */
       let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
-      this.form.get("pagination").patchValue({
+      this.form.value.pagination = {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
-      });
+      };
       this.getList(this.form)
     });
     this.sort.sortChange.subscribe((sort: Sort) => {
+      console.log(sort);
       this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
         console.log(this.form.value);
         if (sort.direction == '') {
@@ -138,7 +140,7 @@ export class PredistributionsComponent implements OnInit {
         }
         console.log(this.form.value);
         this.getList(this.form);
-  
+
       });
     });
     this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
@@ -150,6 +152,7 @@ export class PredistributionsComponent implements OnInit {
       references: [],
       sizes: [],
       warehouses: [],
+      date_service: [],
       brands: [],
       providers:[],
       models: [],
@@ -164,6 +167,7 @@ export class PredistributionsComponent implements OnInit {
       references: [],
       sizes: [],
       warehouses: [],
+      date_service: [],
       brands: [],
       providers:[],
       models: [],
@@ -173,23 +177,6 @@ export class PredistributionsComponent implements OnInit {
       lifestyle: [],
     })
   }
-  // ngAfterViewInit(): void {
-  //   let This = this;
-  //   setTimeout(() => {
-  //     if(!!This.sort && !!this.dataSource)
-  //       this.dataSource.sort = This.sort;
-  //     if(!!This.paginator && !!this.dataSource)
-  //       this.dataSource.paginator = This.paginator;
-  //   }, 2000)
-  // }
-
-  getRangeLabel = (page: number, pageSize: number, length: number) =>  {
-    if (length === 0 || pageSize === 0) {
-      return `0 / ${length}`;
-    }
-    length = Math.max(length, 0);
-    return `${length} resultados / pág. ${page + 1} de ${Math.ceil(length / pageSize)}`;
-  };
 
   isAllSelectedPredistribution() {
     if (this.dataSource) {
@@ -264,8 +251,7 @@ export class PredistributionsComponent implements OnInit {
     let list = [];
 
     this.dataSource.data.forEach((dataRow, index) => {
-      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution ||
-        this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
+      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution || this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
         list.push({
           distribution: !!dataRow.distribution,
           reserved: !!dataRow.reserved,
@@ -298,6 +284,7 @@ export class PredistributionsComponent implements OnInit {
       this.references = this.updateFilterSource(entities.references, 'references');
       this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
+      this.date_service = this.updateFilterSource(entities.date_service, 'date_service');
       this.brands = this.updateFilterSource(entities.brands, 'brands');
       this.providers = this.updateFilterSource(entities.providers, 'providers');
       this.models = this.updateFilterSource(entities.models, 'models');
@@ -310,8 +297,6 @@ export class PredistributionsComponent implements OnInit {
       setTimeout(() => {
         this.pauseListenFormChange = false;
         this.pauseListenFormChange = true;
-        // this.form.get("warehouses").patchValue([warehouse.id], { emitEvent: false });
-        // this.form.get("orderby").get("type").patchValue("" + TypesService.ID_TYPE_ORDER_PRODUCT_DEFAULT, { emitEvent: false });
       }, 0);
     })
 
@@ -501,6 +486,25 @@ export class PredistributionsComponent implements OnInit {
           }
         }
         break;
+      case 'date_service':
+        let dateServicesFiltered: number[] = [];
+        for (let date_service of filters) {
+          if (date_service.checked) dateServicesFiltered.push(date_service.id);
+        }
+
+        if (dateServicesFiltered.length >= this.date_service.length) {
+          this.form.value.date_service = [];
+          this.isFilteringDateServices = this.date_service.length;
+        } else {
+          if (dateServicesFiltered.length > 0) {
+            this.form.value.date_service = dateServicesFiltered;
+            this.isFilteringDateServices = dateServicesFiltered.length;
+          } else {
+            this.form.value.date_service = [99999];
+            this.isFilteringDateServices = this.date_service.length;
+          }
+        }
+        break;
       case 'providers':
         let providersFiltered: number[] = [];
         for (let provider of filters) {
@@ -544,6 +548,7 @@ export class PredistributionsComponent implements OnInit {
     this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
     this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
     this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
+    this.filterButtonDateServices.listItems = this.reduceFilterEntities(this.date_service, entities,'date_service');
     this.filterButtonBrands.listItems = this.reduceFilterEntities(this.brands, entities,'brands');
     this.filterButtonProviders.listItems = this.reduceFilterEntities(this.providers, entities,'providers');
     this.filterButtonModels.listItems = this.reduceFilterEntities(this.models, entities,'models');
@@ -613,48 +618,5 @@ export class PredistributionsComponent implements OnInit {
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
-  }
-  async sortData(event: Sort) {
-    console.log(event);
-    let type = 1;
-    switch (event.active) {
-      case 'article':
-        type = FilterTypes.REFERENCES;
-        break;
-      case 'size':
-        type = FilterTypes.SIZES;
-        break;
-      case 'store':
-        type = FilterTypes.WAREHOUSES;
-        break;
-      case 'date_service':
-        type = FilterTypes.DATESERVICES;
-        break;
-      case 'brand':
-        type = FilterTypes.BRANDS;
-        break;
-      case 'provider':
-        type = FilterTypes.PROVIDERS;
-        break;
-      case 'model':
-        type = FilterTypes.MODELS;
-        break;
-      case 'color':
-        type = FilterTypes.COLORS;
-        break;
-      case 'category':
-        type = FilterTypes.CATEGORY;
-        break;
-      case 'family':
-        type = FilterTypes.FAMILY;
-        break;
-      case 'lifestyle':
-        type = FilterTypes.LIFESTYLE;
-        break;
-    }
-
-    this.form.value.orderby.type = type;
-    this.form.value.orderby.order = event.direction;
-    await this.getList(this.form);
   }
 }

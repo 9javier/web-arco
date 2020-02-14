@@ -23,7 +23,7 @@ export class PredistributionsService {
   private indexUrl: string;
   private index2Url: string;
   private entitiesUrl: string;
-  private entities2Url: string;
+  private entitiesBlockedUrl: string;
   private updateBlockReservedUrl: string;
   private updateBlockReservedUrl2: string;
   constructor(private http: HttpClient) {
@@ -33,7 +33,7 @@ export class PredistributionsService {
     this.updateBlockReservedUrl = `${this.baseUrl}/reception/expedition/update-block-reserved`;
     this.updateBlockReservedUrl2 = `${this.baseUrl}/handler/test/BlockProduct`;
     this.index2Url = `${this.baseUrl}/reception/expedition/lines-destiny-impress/blocked`;
-    this.entities2Url = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`;
+    this.entitiesBlockedUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/filters-blocked`;
 
   }
 
@@ -49,11 +49,16 @@ export class PredistributionsService {
       references: [],
       sizes: [],
       warehouses: [],
+      date_service: [],
       brands: [],
       providers: [],
+      models: [],
       colors: [],
-      models: []
-    }
+      category: [],
+      family: [],
+      lifestyle: []
+    };
+
     return this.http.post<HttpRequestModel.Response>(this.entitiesUrl,body).pipe(
       map(resp => resp.data)
     )
@@ -78,17 +83,22 @@ export class PredistributionsService {
     )
   }
 
-  entities2() {
+  entitiesBlocked() {
     const body = {
       references: [],
-      warehouses: [],
-      providers: [],
-      brands: [],
-      colors: [],
       sizes: [],
-      models: []
-    }
-    return this.http.post<HttpRequestModel.Response>(this.entitiesUrl,body).pipe(
+      warehouses: [],
+      date_service: [],
+      brands: [],
+      providers: [],
+      models: [],
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: []
+    };
+
+    return this.http.post<HttpRequestModel.Response>(this.entitiesBlockedUrl,body).pipe(
       map(resp => resp.data)
     )
   }
