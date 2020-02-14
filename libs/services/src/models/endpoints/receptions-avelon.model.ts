@@ -16,6 +16,7 @@ export namespace ReceptionAvelonModel {
     colors: Array<Data>;
     sizes: Array<Data>;
     ean: string,
+    image?: string
   }
 
   export interface Providers {
@@ -70,4 +71,3 @@ export namespace ReceptionAvelonModel {
     reception_enabled: boolean
   }
 }
- 

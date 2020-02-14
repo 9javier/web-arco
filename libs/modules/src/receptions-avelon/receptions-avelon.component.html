@@ -55,7 +55,7 @@
       <ion-row *ngIf="isProviderAvailable">
         <ion-col size="4" id="pictureContainer">
           <div>
-            <ion-img alt="imagen ocr"></ion-img>
+            <ion-img *ngIf="response.image" [src]="response.image"></ion-img>
           </div>
         </ion-col>
         <ion-col size="4" id="sizeContainer" align-self-end>
