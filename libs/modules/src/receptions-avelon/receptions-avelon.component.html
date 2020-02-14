@@ -60,7 +60,7 @@
         </ion-col>
         <ion-col size="4" id="sizeContainer" align-self-end>
           <ion-row>
-            <suite-sizes *ngIf="response.sizes.length > 0" (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
+            <suite-sizes [hidden]="!(result.brandId && result.modelId && result.colorId)" (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
           </ion-row>
           <ion-row>
             <ion-item lines="none">
