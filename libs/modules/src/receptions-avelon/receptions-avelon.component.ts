@@ -6,7 +6,7 @@ import {
   IntermediaryService,
   ProductsService
 } from '@suite/services';
-import { Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
 import { Reception } from './classes/reception.class';
@@ -17,9 +17,10 @@ import { ListsComponent } from './components/lists/lists.component';
   templateUrl: './receptions-avelon.component.html',
   styleUrls: ['./receptions-avelon.component.scss'],
 })
-export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit{
 
-  @ViewChild(ListsComponent) listsComponent:ListsComponent
+
+export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewInit{
+
 
   response: ReceptionAvelonModel.Reception;
   dato: ReceptionAvelonModel.Data;
@@ -47,18 +48,23 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   providersAux;
   value;
   getReceptionsNotifiedProviders$: Subscription;
+  show: boolean
+  itemParent: ReceptionAvelonModel.Data
+
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
-    private cd: ChangeDetectorRef
+    private cdRef : ChangeDetectorRef
   ) {}
-
+  
   ngOnInit() {
     this.intermediaryService.presentLoading('Cargando');
     this.response = new Reception();
+    console.log(this.response);
+    
     this.filterData = new Reception();
     this.typeScreen = undefined;
     this.isProviderAviable = false;
@@ -80,8 +86,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.subscriptions.unsubscribe();
     clearInterval(this.interval);
   }
-  ngAfterContentInit() {
-    this.cd.detectChanges()
+
+  ngAfterViewInit() {
+    this.listSelected()
+    this.sizeSelected()
+    this.show = false
+    // this.cdRef.detectChanges()
+
   }
   openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: Type) {
     const dataList = [];
@@ -97,19 +108,19 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           switch (data.selected.type) {
             case Type.BRAND:
               dato = this.response.brands.find(elem => elem.id === data.selected.id)
-              this.listsComponent.selected(dato)
+              // this.listsComponent.selected(dato)
               this.updateList(dato)
               // this.findAndSelectObject(this.response.brands, data.selected);
               break;
             case Type.COLOR:
               dato = this.response.colors.find(elem => elem.id === data.selected.id)
-              this.listsComponent.selected(dato)
+              // this.listsComponent.selected(dato)
               this.updateList(dato)
               // this.findAndSelectObject(this.response.colors, data.selected);
               break;
             case Type.MODEL:
               dato = this.response.models.find(elem => elem.id === data.selected.id)
-              this.listsComponent.selected(dato)
+              // this.listsComponent.selected(dato)
               this.updateList(dato)
               // this.findAndSelectObject(this.response.models, data.selected);
               break;
@@ -153,8 +164,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
-  optionClick(e) {}
-
   checkProvider(data: ReceptionAvelonModel.CheckProvider) {
     // if (this.interval) {
     //   clearInterval(this.interval);
@@ -180,6 +189,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.filterData.models = this.clearSelected(info.models)
               this.filterData.colors = this.clearSelected(info.colors)
               this.filterData.sizes = this.clearSelected(info.sizes)
+              this.reception.setModelsList(this.response.models)
+              this.reception.setBrandsList(this.response.brands)
+              this.reception.setColorsList(this.response.colors)
+              this.reception.setSizesList(this.response.sizes)
 
               // this.ocrFake();
               if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
@@ -208,16 +221,25 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     await alert.present();
   }
 
-  sizeSelected(e) {
-    // console.log(e);
-    
-    if (e.dato) {
-      this.result.sizeId = e.dato.id;
-      this.updateList(e.dato);
-    } else {
-      this.result.sizeId = undefined;
-      this.reset();
-    }
+  sizeSelected() {
+    this.reception.getEmitList().subscribe((e:any) => {
+      this.dato = e.dato;
+      console.log(e);
+      
+      console.log(this.dato);
+      if (e && e.dato) {
+        if(e.dato.selected){
+          this.result.sizeId = e.dato.id;
+          // const interval = setTimeout(() => {
+          //   this.updateList(this.dato);
+          // }, 0);
+        }
+      } else {
+        this.result.sizeId = undefined;
+        // this.reset();
+      }
+
+    })
   }
   updateList(dato) {    
     let model = [];
@@ -349,16 +371,22 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
     if (model.length > 0) {
       this.response.models = model;
+      this.reception.setModelsList(model)
     }
     if (brand.length > 0) {
       this.response.brands = brand;
+      this.reception.setBrandsList(brand)
     }
     if (color.length > 0) {
       this.response.colors = color;
+      this.reception.setColorsList(color)
     }
     if (size.length > 0) {
+      console.log('size',size);
       this.response.sizes = size;
+      this.reception.setSizesList(size)
     }
+    
     // console.log('model',model);
     // console.log('brand',brand);
     // console.log('color',color);
@@ -366,11 +394,17 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     
   }
 
+
   reset(dato?: ReceptionAvelonModel.Data) {
     this.response.models = this.filterData.models;
     this.response.sizes = this.filterData.sizes;
     this.response.colors = this.filterData.colors;
     this.response.brands = this.filterData.brands;
+    this.reception.setModelsList(this.response.models)
+    this.reception.setBrandsList(this.response.brands)
+    this.reception.setColorsList(this.response.colors)
+    this.reception.setSizesList(this.response.sizes)
+    this.show = false
   }
   resetAll() {
     this.response.models = this.filterData.models;
@@ -385,41 +419,81 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.result.brandId = undefined
     this.result.sizeId = undefined
     this.result.colorId = undefined 
+    this.show = false
+    this.reception.setModelsList(this.response.models)
+    this.reception.setBrandsList(this.response.brands)
+    this.reception.setColorsList(this.response.colors)
+    this.reception.setSizesList(this.response.sizes)
   }
 
-  listSelected(e: any) {
-    this.dato = e.dato;
-    switch (e.type) {
-      case 'brands':
-        if (e.dato) {
-          this.result.brandId = e.dato.id;
-          this.updateList(e.dato);
-        } else {
-          this.result.brandId = undefined;
-          this.reset();
-        }
-        break;
-      case 'models':
-        if (e.dato) {
-          this.result.modelId = e.dato.id;
-          this.updateList(e.dato);
-        } else {
-          this.result.modelId = undefined;
-          this.reset();
-        }
-        break;
-      case 'colors':
-        if (e.dato) {
-          this.result.colorId = e.dato.id;
-          this.updateList(e.dato);
-        } else {
-          this.result.colorId = undefined;
-          this.reset();
-        }
-        break;
+  listSelected() {
+    
+    this.reception.getEmitList().subscribe((e:any) => {
+      this.dato = e.dato;
+      console.log(this.dato);
+      if (!this.result.modelId && !this.result.brandId && !this.result.colorId) {
+        this.itemParent = this.dato
+        console.log(this.itemParent);
+        
+      }
+      
+      switch (e.type) {
+        case 'brands':
+          if (e.dato.selected) {
+            this.result.brandId = e.dato.id;
+            const timeout = setTimeout(() => {
+              this.updateList(this.dato);
+            }, 0);
+          } else {
+            this.result.brandId = undefined;
+            console.log(this.dato.id === this.itemParent.id);
+            
+            if (this.dato.id === this.itemParent.id) {
+              this.reset();
+            }
+          }
+          break;
+        case 'models':
+          if (e.dato.selected) {
+            this.result.modelId = e.dato.id;
+            const timeout = setTimeout(() => {
+              this.updateList(this.dato);
+            }, 0);
+          } else {
+            console.log(this.dato.id === this.itemParent.id);
+            this.result.modelId = undefined;
+            
+            if (this.dato.id === this.itemParent.id) {
+              this.reset();
+            }
+          }
+          break;
+        case 'colors':
+          if (e.dato.selected) {
+            this.result.colorId = e.dato.id;
+            const timeout = setTimeout(() => {
+              this.updateList(this.dato);
+            }, 0);
+          } else {
+            console.log(this.dato.id === this.itemParent.id);
+            this.result.colorId = undefined;
+            if (this.dato.id === this.itemParent.id) {
+              this.reset();
+            }
+          }
+          break;
+      }
+      this.showSize()
+    })
+   
+  }
+  showSize(){
+    if (this.result.brandId && this.result.modelId && this.result.colorId) {
+      this.show = true
+    } else {
+      this.show = false
     }
   }
-
   enviar() {
     if (!this.result.brandId) {
       this.alertMessage('Debe seleccionar una marca');
@@ -555,7 +629,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   clearSelected(array: Array<ReceptionAvelonModel.Data>) {
     array.map(element => {
-      element.state = 0
       if (element.selected) {
         element.selected = false;
       }
@@ -600,9 +673,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   buscarMas() {
+    this.resetAll()
     this.getReceptionsNotifiedProviders$ = this.reception
       .getReceptionsNotifiedProviders(this.providerId)
       .subscribe((data: ReceptionAvelonModel.Reception) => {
+
         this.response.brands = this.mappingReceptionsNotifiedProvidersLists(
           data.brands,
           this.response.brands
@@ -619,8 +694,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           data.sizes,
           this.response.sizes
         );
-        // console.log(this.response);
-        
       });
   }
 
@@ -629,7 +702,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     array: Array<ReceptionAvelonModel.Data>
   ) {
     data.map(element => {
-      element.state = 1
       const findIndexResult: number = array.findIndex(
         item => item.id === element.id
       );
