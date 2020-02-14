@@ -28,7 +28,12 @@
 
 #printContainer{
   position: relative;
-  ion-button{
+  #refresh{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  #print{
     position: absolute;
     bottom: 0;
     right: 0;

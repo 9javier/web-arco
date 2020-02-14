@@ -649,6 +649,21 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
+  resetAll() {
+    this.response.models = this.filterData.models;
+    this.response.models.map(elem => elem.selected = false);
+    this.response.sizes = this.filterData.sizes;
+    this.response.sizes.map(elem => elem.selected = false);
+    this.response.colors = this.filterData.colors;
+    this.response.colors.map(elem => elem.selected = false);
+    this.response.brands = this.filterData.brands;
+    this.response.brands.map(elem => elem.selected = false);
+    this.result.modelId = undefined;
+    this.result.brandId = undefined;
+    this.result.sizeId = undefined;
+    this.result.colorId = undefined;
+  }
+
   findAndSelectObject(array: Array<ReceptionAvelonModel.Data>, selected: any) {
     let object = array.find(data => data.id === selected.id);
     if (object) {
@@ -676,21 +691,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   optionClick(e) {}
-
-  resetAll() {
-    this.response.models = this.filterData.models;
-    this.response.models.map(elem => elem.selected = false);
-    this.response.sizes = this.filterData.sizes;
-    this.response.sizes.map(elem => elem.selected = false);
-    this.response.colors = this.filterData.colors;
-    this.response.colors.map(elem => elem.selected = false);
-    this.response.brands = this.filterData.brands;
-    this.response.brands.map(elem => elem.selected = false);
-    this.result.modelId = undefined;
-    this.result.brandId = undefined;
-    this.result.sizeId = undefined;
-    this.result.colorId = undefined;
-  }
 
   ocrFake() {
     // const seg: number = 30000;
