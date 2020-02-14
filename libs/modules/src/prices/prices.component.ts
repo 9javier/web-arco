@@ -263,7 +263,7 @@ export class PricesComponent implements OnInit {
 
   changeStatusImpress() {
     this.prices.forEach((price) => {
-      if (this.itemIdSelected.includes(price.id)) {
+      if (this.itemIdSelected.includes(price.id) && price.status != 7 && price.status != 3) {
         price.status = 4;
       }
     });
