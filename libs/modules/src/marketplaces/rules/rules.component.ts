@@ -25,6 +25,9 @@ export class RulesComponent implements OnInit {
   private dataSourceRulesStocks;
   private displayedStocksColumns;
 
+  private rulesConfigurations = [];
+  private numberOfProducts: number;
+
   constructor(
     private route: ActivatedRoute,
     private modalController: ModalController,
@@ -49,6 +52,38 @@ export class RulesComponent implements OnInit {
     this.dataSourceStocks = [];
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
     this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
+
+    this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
+      this.numberOfProducts = count;
+    });
+
+    this.marketplacesService.getRulesConfigurations().subscribe(data => {
+      data.forEach(rule => {
+        if(rule.rulesFilters && rule.rulesFilters.length > 0) {
+          this.rulesConfigurations.push(rule);
+        }
+      });
+      console.log('data RulesConfigurations', this.rulesConfigurations);
+      this.rulesConfigurations.forEach(ruleConfiguration => {
+        ruleConfiguration['products'] = this.numberOfProducts;
+        switch (ruleConfiguration.rulesFilters[0].dataGroup) {
+          case 'categories':
+            this.dataSourceCategories.push(ruleConfiguration);
+            this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
+            break;
+          case 'enabling':
+            this.dataSourceEnabling.push(ruleConfiguration);
+            this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
+            break;
+          case 'stock':
+            this.dataSourceStocks.push(ruleConfiguration);
+            this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
+            break;
+        }
+      });
+    })
+
+   
 
 
     /*this.marketplacesService.getRulesFilter().subscribe(data => {
@@ -123,12 +158,7 @@ export class RulesComponent implements OnInit {
       } else {
         console.log('error get rules filter')
       }*!/
-    });
-
-    this.marketplacesService.getRulesConfigurations().subscribe(data => {
-      console.log('data RulesConfigurations', data);
-      /!*console.log(data)*!/
-    })*/
+    });*/
 
   }
 
@@ -175,12 +205,12 @@ export class RulesComponent implements OnInit {
 
         data.data.categoriesFilter.forEach(item => {
           let id = item.id + Math.floor(Math.random() * 10);
-          rulesFilters.push({
+          ruleFiltersConfig.push({
             id: id,
             name: item.name,
             ruleFilterType: item.group,
             externalId: item.id,
-            dataGroup: filterType,
+            dataGroup: data.data.filterType,
             status: 1
           });
 
@@ -191,7 +221,7 @@ export class RulesComponent implements OnInit {
                 name: item.name,
                 ruleFilterType: item.group,
                 externalId: item.id,
-                dataGroup: filterType,
+                dataGroup: data.data.filterType,
                 status: 1
               },
               marketsIds: [
@@ -218,6 +248,8 @@ export class RulesComponent implements OnInit {
           referenceExceptions: exceptions,
           ruleDataValidactionAttributes: []
         };
+
+        console.log(dataRuleConfiguration)
 
         this.marketplacesService.postRulesConfigurations(dataRuleConfiguration).subscribe(data => {
           console.log(data)
@@ -294,6 +326,7 @@ export class RulesComponent implements OnInit {
 
   async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
+    console.log(rule.referenceExceptions)
     let modal = await this.modalController.create({
       component: NewRuleComponent,
       componentProps: {
