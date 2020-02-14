@@ -11,7 +11,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
-import { IncidenceModel } from "../../../services/src/models/endpoints/Incidence";
 import {
   UserTimeService,
   UserTimeModel
@@ -27,12 +26,12 @@ import { Router } from '@angular/router';
 export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['select','article','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
+  displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
   dataSource;
   selection = new SelectionModel<Predistribution>(true, []);
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
   selectionReserved = new SelectionModel<Predistribution>(true, []);
-
+  columns = {};
 
   users:UserTimeModel.ListUsersRegisterTimeActiveInactive;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -63,7 +62,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   references: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
-  dateServices: Array<TagsInputOption> = [];
+  date_service: Array<TagsInputOption> = [];
   brands: Array<TagsInputOption> = [];
   providers: Array<TagsInputOption> = [];
   models: Array<TagsInputOption> = [];
@@ -93,15 +92,13 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
       page: 1,
       limit: this.pagerValues[0]
     }),
-    orderBy: this.formBuilder.group({
+    orderby: this.formBuilder.group({
       type: 1,
       order: "ASC"
     })
   });
   length: any;
-  public paginatorPagerValues = [20, 50, 100];
-  private currentPageFilter: IncidenceModel.SearchParameters;
-  public listAvailableStatus: any[] = [];
+
   constructor(
     private predistributionsService: PredistributionsService,
     private formBuilder: FormBuilder,
@@ -116,106 +113,63 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.initEntity();
     this.initForm();
     this.getFilters();
+    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
-    this.listenPaginatorChanges();
   }
 
-  listenPaginatorChanges(){
-    this.sort.sortChange.subscribe((sort: Sort) => {
-        if (sort.direction === '') {
-          this.form.value.orderby = {
-            type: 'id',
-            order: 'ASC'
-          };
-        } else {
-          let id=this.getSortId(sort.active);
-          this.form.value.orderby = {
-            type: id,
-            order: sort.direction.toUpperCase()
-          };
-        }
-        this.getList(this.form);
-      });
-  }
+  listenChanges() {
+    let previousPageSize = this.form.value.pagination.limit;
+    /**detect changes in the paginator */
+    this.paginator.page.subscribe(page => {
+      /**true if only change the number of results */
+      let flag = previousPageSize === page.pageSize;
+      previousPageSize = page.pageSize;
+      this.form.value.pagination = {
+        limit: page.pageSize,
+        page: flag ? page.pageIndex : 1
+      };
+      this.getList(this.form)
+    });
 
-  getSortId(column): number{
-   let id=0;
-    switch(column){
-      case 'articulo':
-        id=1;
-        break;
-      case 'brand':
-        id= 4;
-        break;
-      case 'store':
-        id=2;
-        break;
-      case 'provider':
-        id=3;
-        break;
-      case 'color':
-        id= 5;
-        break;
-      case 'size':
-        id=6;
-        break;
-      }
-     return id;
-  }
-
-  copyValuesToForm(){
-    this.form = this.formBuilder.group({
-      filters: this.currentPageFilter.filters,
-      pagination: this.formBuilder.group({
-        page: this.currentPageFilter.page,
-        limit: this.currentPageFilter.size
-      }),
-      orderby: this.formBuilder.group({
-        type: this.currentPageFilter.order.field,
-        order: this.currentPageFilter.order.direction
-      })
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.form);
     });
   }
 
-   async searchReserved() {
-    console.log("llamar endpoint de buscar de forma... ");
-    //this.form.value.orderby.order = direction;
-    //this.form.value.orderby.type = id;
-    console.log(JSON.stringify(this.form.value));
-    await this.intermediaryService.presentLoading()
-    this.predistributionsService.index2(this.form.value).subscribe(
-      (resp:any) => {
-        console.log(resp);
-        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
-        const paginator = resp.pagination;
-        console.log(paginator);
-
-        this.paginator.length = paginator.totalResults;
-        this.paginator.pageIndex = paginator.selectPage;
-        this.paginator.lastPage = paginator.lastPage;
-        this.dataSource.data.forEach(row => {
-        if (row.distribution) {
-          this.selectionPredistribution.select(row);
-        }
-        if (row.reserved) {
-           this.selectionReserved.select(row);
-        }
-       });
-
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
+  initEntity() {
+    this.entities = {
+      references: [],
+      sizes: [],
+      warehouses: [],
+      date_service: [],
+      brands: [],
+      providers:[],
+      models: [],
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: [],
+    }
+  }
+  initForm() {
+    this.form.patchValue({
+      references: [],
+      sizes: [],
+      warehouses: [],
+      date_service: [],
+      brands: [],
+      providers:[],
+      models: [],
+      colors: [],
+      category: [],
+      family: [],
+      lifestyle: [],
+    })
   }
 
   async presentModal() {
    let ListReceptions = this.getListReceptions();
-    console.log(ListReceptions);
     const modal = await this.modalController.create({
       component: ModalUserComponent,
       componentProps: {
@@ -295,25 +249,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
        return receptionList;
   }
 
-
-  async  listUserTime(){
-
-    let users=[1,13,14]
-    let This = this;
-
-   this.userTimeService.getUsersShoesPicking(users).subscribe(function (data) {;
-    return data['data'];
-
-   }, (error) => {
-     This.intermediaryService.presentToastError("No cuentas con usuarios asignados para liberar");
-     This.intermediaryService.dismissLoading();
-
-   }, () => {
-   });
-
-   //return data;
-  }
-
   isEnableSend(): boolean{
     let ListReceptions = this.getListReceptions();
     if(ListReceptions.length>0){
@@ -321,52 +256,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-  listenChanges() {
-    let previousPageSize = this.form.value.pagination.limit;
-    /**detect changes in the paginator */
-    this.paginator.page.subscribe(page => {
-      /**true if only change the number of results */
-      console.log(page);
-      let flag = previousPageSize === page.pageSize;
-      previousPageSize = page.pageSize;
-      this.form.get("pagination").patchValue({
-        limit: page.pageSize,
-        page: flag ? page.pageIndex : 1
-      });
-      this.getList(this.form)
-    });
-  }
-  initEntity() {
-    this.entities = {
-      references: [],
-      sizes: [],
-      warehouses: [],
-      date_service: [],
-      brands: [],
-      providers:[],
-      models: [],
-      colors: [],
-      category: [],
-      family: [],
-      lifestyle: [],
-    }
-  }
-  initForm() {
-    this.form.patchValue({
-      references: [],
-      sizes: [],
-      warehouses: [],
-      date_service: [],
-      brands: [],
-      providers:[],
-      models: [],
-      colors: [],
-      category: [],
-      family: [],
-      lifestyle: [],
-    })
-  }
   ngAfterViewInit(): void {
     let This = this;
     setTimeout(() => {
@@ -376,14 +265,6 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         this.dataSource.paginator = This.paginator;
     }, 2000)
   }
-
-  getRangeLabel = (page: number, pageSize: number, length: number) =>  {
-    if (length === 0 || pageSize === 0) {
-      return `0 / ${length}`;
-    }
-    length = Math.max(length, 0);
-    return `${length} resultados / pág. ${page + 1} de ${Math.ceil(length / pageSize)}`;
-  };
 
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -403,53 +284,10 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     return result;
   }
 
-  isAllSelectedReserved() {
-    let result = true;
-    this.dataSource.data.forEach(row => {
-      if (row && !row.reserved) {
-        result = false;
-      }
-    });
-
-    return result;
-  }
-
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
-  }
-
-  predistributionToggle() {
-    if (this.isAllSelectedPredistribution()) {
-      this.dataSource.data.forEach(row => {
-        row.distribution = false;
-        this.selectionPredistribution.clear();
-      })
-    } else {
-      this.dataSource.data.forEach(row => {
-        row.distribution = true;
-        this.selectionPredistribution.select(row);
-        row.reserved = false;
-        this.selectionReserved.clear();
-      });
-    }
-  }
-
-  reservedToggle() {
-    if (this.isAllSelectedReserved()) {
-      this.dataSource.data.forEach(row => {
-        row.reserved = false;
-        this.selectionReserved.clear();
-      });
-    } else {
-      this.dataSource.data.forEach(row => {
-        row.reserved = true;
-        this.selectionReserved.select(row);
-        row.distribution = false;
-        this.selectionPredistribution.clear();
-      });
-    }
   }
 
   checkboxLabel(row?): string {
@@ -459,84 +297,16 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
   }
 
-  checkboxLabelPredistribution(row?): string {
-    if (!row) {
-      return `${this.isAllSelectedPredistribution() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selectionPredistribution.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
-  }
-
-  checkboxLabelReserved(row?: Predistribution): string {
-    if (!row) {
-      return `${this.isAllSelectedReserved() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selectionReserved.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
-  }
-
-  changePredistribution(row: Predistribution) {
-    if (this.selectionPredistribution.isSelected(row)) {
-      this.selectionReserved.deselect(row);
-    }
-
-    this.dataSource.data.forEach(dataRow => {
-      if (dataRow && dataRow.id === row.id) {
-        if (dataRow.distribution) {
-          dataRow.distribution = false;
-        } else {
-          dataRow.distribution = true;
-          dataRow.reserved = false;
-        }
-      }
-    });
-  }
-
-  changeReserved(row: Predistribution) {
-    if (this.selectionReserved.isSelected(row)) {
-      this.selectionPredistribution.deselect(row);
-    }
-
-    this.dataSource.data.forEach(dataRow => {
-      if (dataRow && dataRow.id === row.id) {
-        if (dataRow.reserved) {
-          dataRow.reserved = false;
-        } else {
-          dataRow.reserved = true;
-          dataRow.distribution = false;
-        }
-      }
-    });
-  }
-
   savePredistributions(){
     this.presentModal();
   }
-  getDataReception(){
-     let receptionList =[];
-    for(let i=0; i<this.selection.selected.length; i++){
-      let distribution =JSON.stringify(this.selection.selected[i].distribution);
-      let reserved =JSON.stringify(this.selection.selected[i].reserved);
-      let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
-      let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
-      let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
-        receptionList.push({
-        distribution: distribution,
-        reserved: reserved,
-        modelId: modelId,
-        sizeId: sizeId,
-        warehouseId: warehouseId
-      });
-    }
-   // this.savePredistributions(receptionList);
-
-  }
 
   getFilters() {
-
     this.predistributionsService.entitiesBlocked().subscribe(entities => {
       this.references = this.updateFilterSource(entities.references, 'references');
       this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
-      this.dateServices = this.updateFilterSource(entities.warehouses, 'date_service');
+      this.date_service = this.updateFilterSource(entities.date_service, 'date_service');
       this.brands = this.updateFilterSource(entities.brands, 'brands');
       this.providers = this.updateFilterSource(entities.providers, 'providers');
       this.models = this.updateFilterSource(entities.models, 'models');
@@ -551,7 +321,22 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
         this.pauseListenFormChange = true;
       }, 0);
     })
+  }
 
+  async getColumns(form?: FormGroup){
+    this.predistributionsService.index2(form.value).subscribe(
+      (resp:any) => {
+        resp.filters.forEach(element => {
+          this.columns[element.name] = element.id;
+        });
+      },
+      async err => {
+        await this.intermediaryService.dismissLoading()
+      },
+      async () => {
+        await this.intermediaryService.dismissLoading()
+      }
+    )
   }
 
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
@@ -579,27 +364,26 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
 
   async getList(form?: FormGroup){
-    await this.intermediaryService.presentLoading()
-    console.log(JSON.stringify(form.value));
     this.predistributionsService.index2(form.value).subscribe(
       (resp:any) => {
-        console.log(resp);
-        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results)
+        console.log(resp.results);
+        this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
         const paginator = resp.pagination;
-        console.log(paginator);
 
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
         this.paginator.lastPage = paginator.lastPage;
-        this.dataSource.data.forEach(row => {
-        if (row.distribution) {
-          this.selectionPredistribution.select(row);
-        }
-        if (row.reserved) {
-           this.selectionReserved.select(row);
-        }
-       });
+        this.selectionPredistribution.clear();
+        this.selectionReserved.clear();
 
+        this.dataSource.data.forEach(row => {
+          if (row.distribution) {
+            this.selectionPredistribution.select(row);
+          }
+          if (row.reserved) {
+            this.selectionReserved.select(row);
+          }
+        });
       },
       async err => {
         await this.intermediaryService.dismissLoading()
@@ -768,16 +552,16 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
           if (dateServices.checked) dateServicesFiltered.push(dateServices.id);
         }
 
-        if (dateServicesFiltered.length >= this.dateServices.length) {
+        if (dateServicesFiltered.length >= this.date_service.length) {
           this.form.value.dateServices = [];
-          this.isFilteringDateServices = this.dateServices.length;
+          this.isFilteringDateServices = this.date_service.length;
         } else {
           if (dateServicesFiltered.length > 0) {
             this.form.value.dateServices = dateServicesFiltered;
             this.isFilteringDateServices = dateServicesFiltered.length;
           } else {
             this.form.value.dateServices = [99999];
-            this.isFilteringDateServices = this.dateServices.length;
+            this.isFilteringDateServices = this.date_service.length;
           }
         }
         break;
@@ -825,6 +609,7 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
     this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
     this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
+    this.filterButtonDateServices.listItems = this.reduceFilterEntities(this.date_service, entities,'date_service');
     this.filterButtonBrands.listItems = this.reduceFilterEntities(this.brands, entities,'brands');
     this.filterButtonProviders.listItems = this.reduceFilterEntities(this.providers, entities,'providers');
     this.filterButtonModels.listItems = this.reduceFilterEntities(this.models, entities,'models');
@@ -846,56 +631,12 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // new
-  public changeStatusBlocked( event:MatCheckboxChange, row) {
-    this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId === row.expeditionLineId) {
-        value.distribution = event.checked;
-      }
-    });
-  }
-  public  isCheckedStatusBlocked( element) {
-    return element.distribution;
-  }
-  public changeStatusBlockedAll( event:MatCheckboxChange) {
-    this.dataSource.data.forEach(function(value){
-      value.distribution = event.checked;
-    });
-  }
-  public  isCheckedStatusBlockedAll() {
-    let result = true;
-    this.dataSource.data.forEach(function(value){
-      result = result && value.distribution;
-    });
-    return result;
-  }
-  // reserved
-  public changeStatusReserved(event:MatCheckboxChange, row) {
-    this.dataSource.data.forEach(function(value){
-      if(value.expeditionLineId === row.expeditionLineId) {
-        value.distribution = !event.checked;
-      }
-    });
-  }
+  async sortData(event: Sort) {
+    this.form.value.orderby.type = this.columns[event.active];
+    this.form.value.orderby.order = event.direction;
 
-  public isCheckedStatusReserved( element) {
-    return !element.distribution;
-  }
-
-  public changeStatusReservedAll( event:MatCheckboxChange) {
-    this.dataSource.data.forEach(function(value){
-      value.distribution = !event.checked;
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.form);
     });
-  }
-  public  isCheckedStatusReservedAll() {
-    let result = true;
-    this.dataSource.data.forEach(function(value){
-      result = result && !value.distribution;
-    });
-    return result;
-  }
-
-  sortData(event: Sort) {
-
   }
 }

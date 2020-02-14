@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 export class PredistributionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['article','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -123,26 +123,7 @@ export class PredistributionsComponent implements OnInit {
       };
       this.getList(this.form)
     });
-    this.sort.sortChange.subscribe((sort: Sort) => {
-      console.log(sort);
-      this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-        console.log(this.form.value);
-        if (sort.direction == '') {
-          this.form.value.orderby ={
-            type: '1',
-            order: "ASC"
-          };
-        } else {
-          this.form.value.orderby = {
-            type: this.columns[sort.active],
-            order: sort.direction.toUpperCase()
-          };
-        }
-        console.log(this.form.value);
-        this.getList(this.form);
 
-      });
-    });
     this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
     });
@@ -248,6 +229,7 @@ export class PredistributionsComponent implements OnInit {
   }
 
   async savePredistributions() {
+    this.intermediaryService.presentLoading();
     let list = [];
 
     this.dataSource.data.forEach((dataRow, index) => {
@@ -262,8 +244,6 @@ export class PredistributionsComponent implements OnInit {
         })
       }
     });
-
-    this.intermediaryService.presentLoading();
 
     await this.predistributionsService.updateBlockReserved(list).subscribe((data) => {
       this.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
@@ -302,8 +282,6 @@ export class PredistributionsComponent implements OnInit {
 
   }
   async getList(form?: FormGroup){
-    await this.intermediaryService.presentLoading();
-
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
@@ -333,7 +311,9 @@ export class PredistributionsComponent implements OnInit {
       }
     )
   }
-  applyFilters(filtersResult, filterType) {
+
+  async applyFilters(filtersResult, filterType) {
+    await this.intermediaryService.presentLoading();
     const filters = filtersResult.filters;
     switch (filterType) {
       case 'references':
@@ -544,6 +524,7 @@ export class PredistributionsComponent implements OnInit {
     this.lastUsedFilter = filterType;
     this.getList(this.form);
   }
+
   private reduceFilters(entities){
     this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
     this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
@@ -595,7 +576,7 @@ export class PredistributionsComponent implements OnInit {
   }
 
   async getColumns(form?: FormGroup){
-    await this.intermediaryService.presentLoading();
+    // await this.intermediaryService.presentLoading();
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
         resp.filters.forEach(element => {
@@ -611,12 +592,20 @@ export class PredistributionsComponent implements OnInit {
     )
   }
 
-
   refreshPredistributions() {
     this.initEntity();
     this.initForm();
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
+  }
+
+  async sortData(event: Sort) {
+    this.form.value.orderby.type = this.columns[event.active];
+    this.form.value.orderby.order = event.direction;
+
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.form);
+    });
   }
 }
