@@ -301,11 +301,12 @@ export class NewRuleComponent implements OnInit {
         this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
         this.referencesExceptions = this.navParams.get('referencesExceptions') == [] ? [] : this.navParams.get('referencesExceptions');
 
+        console.log(this.referencesExceptions)
         if (this.ruleFilterType == 'stock') {
           this.addReduceStockFilter();
         }
 
-        if (this.referencesExceptions.length) {
+        if (this.referencesExceptions && this.referencesExceptions.length) {
           for (let exception of this.referencesExceptions) {
             if (exception.type == "include") {
               this.includeReferenceArray.push(exception.reference);
