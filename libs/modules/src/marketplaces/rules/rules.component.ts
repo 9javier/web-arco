@@ -5,7 +5,6 @@ import {NewRuleComponent} from './new-rule/new-rule.component';
 import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MatTableDataSource} from '@angular/material';
 import {MarketplacesMgaService} from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
-import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'suite-rules',
@@ -138,7 +137,6 @@ export class RulesComponent implements OnInit {
 
   getValues() {
     let rules = JSON.parse(localStorage.getItem("rules"));
-    console.log('ass', rules);
     if (rules) {
       for (let rule of rules.rule) {
         switch (rule.filterType) {
@@ -188,6 +186,8 @@ export class RulesComponent implements OnInit {
 
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
+
+        console.log("REGLA CREADA --> ", data.data);
 
         /*console.log(data.data);
 
@@ -414,6 +414,8 @@ export class RulesComponent implements OnInit {
         /*this.marketplacesService.postRulesConfigurations(dataToSend).subscribe(data => {
           console.log(data)
         })*/
+
+        console.log(ruleToEdit, editedRule);
 
         if (!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
