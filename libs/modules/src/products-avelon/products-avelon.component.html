@@ -84,7 +84,7 @@
                                 (applyFilters)="applyFilters($event, 'warehouses')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.warehouseDestiny.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info"> {{element.warehouse.name}} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>

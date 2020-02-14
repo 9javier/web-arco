@@ -95,6 +95,9 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
     sizes: [],
     brands: [],
     suppliers: [],
+    categories:[],
+    families:[],
+    lifestyles:[],
     pagination: this.formBuilder.group({
       page: 1,
       limit: this.pagerValues[0]
@@ -245,6 +248,9 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
       brands: [],
       ordertypes: [],
       suppliers: [],
+      categories  :[],
+      families  :[],
+      lifestyles  :[],
     })
   }
 
