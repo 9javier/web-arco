@@ -86,6 +86,8 @@ export class RulesComponent implements OnInit {
    
 
 
+
+
     /*this.marketplacesService.getRulesFilter().subscribe(data => {
       console.log('data RuleFilter', data);
       if (data) {
@@ -160,6 +162,52 @@ export class RulesComponent implements OnInit {
       }*!/
     });*/
 
+    /*this.marketplacesService.getRulesConfigurations().subscribe(data => {
+      console.log(data);
+    })*/
+
+    this.getValues();
+
+  }
+
+  getValues() {
+    let rules = JSON.parse(localStorage.getItem("rules"));
+    if (rules) {
+      for (let rule of rules.rule) {
+        switch (rule.filterType) {
+          case "categories":
+            this.dataSourceCategories.push(rule);
+            break;
+
+          case "enabling":
+            this.dataSourceEnabling.push(rule);
+            break;
+
+          case "stock":
+            this.dataSourceStocks.push(rule);
+            break;
+        }
+        this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
+        this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
+        this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
+      }
+    }
+  }
+
+  postInJosn() {
+    let rules = {
+      "rule": []
+    };
+    for (let cat of this.dataSourceCategories) {
+      rules.rule.push(cat);
+    }
+    for (let cat of this.dataSourceEnabling) {
+      rules.rule.push(cat);
+    }
+    for (let cat of this.dataSourceStocks) {
+      rules.rule.push(cat);
+    }
+    localStorage.setItem("rules", JSON.stringify(rules));
   }
 
   async openModalNewRule(ruleFilterType): Promise<void> {
@@ -174,7 +222,9 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
 
-        console.log(data.data);
+        console.log("REGLA CREADA --> ", data.data);
+
+        /*console.log(data.data);
 
         let filterType = "0";
 
@@ -204,9 +254,7 @@ export class RulesComponent implements OnInit {
         let ruleFiltersConfig = [];
 
         data.data.categoriesFilter.forEach(item => {
-          let id = item.id + Math.floor(Math.random() * 10);
           ruleFiltersConfig.push({
-            id: id,
             name: item.name,
             ruleFilterType: item.group,
             externalId: item.id,
@@ -217,7 +265,6 @@ export class RulesComponent implements OnInit {
           rulesFilters.push(
             {
               filterToAdd: {
-                id: id,
                 name: item.name,
                 ruleFilterType: item.group,
                 externalId: item.id,
@@ -239,7 +286,7 @@ export class RulesComponent implements OnInit {
 
         let dataRuleConfiguration = {
           name: data.data.name,
-          description: data.data.description,
+          description: data.data.name,
           status: 1,
           rulesFilterIds: ruleFiltersConfig,
           marketsIds: [
@@ -253,9 +300,9 @@ export class RulesComponent implements OnInit {
 
         this.marketplacesService.postRulesConfigurations(dataRuleConfiguration).subscribe(data => {
           console.log(data)
-        });
+        });*/
 
-        //this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
+        this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
 
         // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
         // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
@@ -319,6 +366,8 @@ export class RulesComponent implements OnInit {
 
         break;
     }
+
+    this.postInJosn();
 
   }
 
@@ -404,6 +453,8 @@ export class RulesComponent implements OnInit {
           console.log(data)
         })*/
 
+        console.log(ruleToEdit, editedRule);
+
         if (!this.checkForRuleEdition(ruleToEdit, editedRule)) {
 
           // EL SIGUIENTE BLOQUE ES ALGO TEMPORAL PARA ACTUALIZAR EN EL FRONT LAS LISTAS DE REGLAS. EN UN FUTURO SE MANDARA LA REGLA EDITADA A LA API Y ALLI SE ACTUALIZARÁ, Y A CONTINUACIÓN SE HARÁ LA CONSULTA DE LA LISTA DE NUEVO PARA QUE YA RECOGA EL DATO ACTUALIZADO DESDE LAS TABLAS
@@ -438,6 +489,7 @@ export class RulesComponent implements OnInit {
           // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
 
         }
+        this.postInJosn();
       }
     });
     modal.present();
