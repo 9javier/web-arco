@@ -22,13 +22,14 @@ import {InfoModalComponent} from "./info-modal/info-modal.component";
 })
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit{
 
-  @ViewChild(ListsComponent) listsComponent:ListsComponent
+  @ViewChild(ListsComponent) listsComponent:ListsComponent;
+  @ViewChild('provider') providerInput: ElementRef;
 
   response: ReceptionAvelonModel.Reception;
   dato: ReceptionAvelonModel.Data;
   subscriptions: Subscription;
   providers: Array<any>;
-  isProviderAviable: boolean;
+  isProviderAvailable: boolean;
   expedition: string;
   providerId: number;
   interval: any;
@@ -54,8 +55,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
 
-  @ViewChild('provider') providerInput: ElementRef;
-
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
@@ -68,7 +67,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   async loadProvider(){
     await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
-    this.showCheck = false;
   }
 
   changeShowCheck(){
@@ -89,7 +87,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.response = new Reception();
     this.filterData = new Reception();
     this.typeScreen = undefined;
-    this.isProviderAviable = false;
+    this.isProviderAvailable = false;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
@@ -114,9 +112,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.subscriptions.unsubscribe();
     clearInterval(this.interval);
   }
+
   ngAfterContentInit() {
     this.cd.detectChanges()
   }
+
   openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: Type) {
     const dataList = [];
 
@@ -130,21 +130,21 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         if (data.selected) {
           switch (data.selected.type) {
             case Type.BRAND:
-              dato = this.response.brands.find(elem => elem.id === data.selected.id)
-              this.listsComponent.selected(dato)
-              this.updateList(dato)
+              dato = this.response.brands.find(elem => elem.id === data.selected.id);
+              this.listsComponent.selected(dato);
+              this.updateList(dato);
               // this.findAndSelectObject(this.response.brands, data.selected);
               break;
             case Type.COLOR:
-              dato = this.response.colors.find(elem => elem.id === data.selected.id)
-              this.listsComponent.selected(dato)
-              this.updateList(dato)
+              dato = this.response.colors.find(elem => elem.id === data.selected.id);
+              this.listsComponent.selected(dato);
+              this.updateList(dato);
               // this.findAndSelectObject(this.response.colors, data.selected);
               break;
             case Type.MODEL:
-              dato = this.response.models.find(elem => elem.id === data.selected.id)
-              this.listsComponent.selected(dato)
-              this.updateList(dato)
+              dato = this.response.models.find(elem => elem.id === data.selected.id);
+              this.listsComponent.selected(dato);
+              this.updateList(dato);
               // this.findAndSelectObject(this.response.models, data.selected);
               break;
           }
@@ -160,34 +160,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         });
       });
   }
-
-  findAndSelectObject(array: Array<ReceptionAvelonModel.Data>, selected: any) {
-    let object = array.find(data => data.id === selected.id);
-    if (object) {
-      this.setSelected(array, object, selected.type);
-    }
-  }
-
-  proveedorSelected(e, item) {
-    if (e.detail.value) {
-      this.providerId = e.detail.value;
-      e.target.value = null;
-
-      const data: ReceptionAvelonModel.CheckProvider = {
-        expedition: this.expedition,
-        providerId: this.providerId
-      };
-
-      if (data.expedition === undefined || data.expedition.length === 0) {
-        this.alertMessage('El numero de expedicion no puede estar vacio');
-        return;
-      }
-
-      this.checkProvider(data);
-    }
-  }
-
-  optionClick(e) {}
 
   checkProvider(data: ReceptionAvelonModel.CheckProvider) {
     this.intermediaryService.presentLoading('Cargando');
@@ -386,20 +358,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.response.colors = this.filterData.colors;
     this.response.brands = this.filterData.brands;
   }
-  resetAll() {
-    this.response.models = this.filterData.models;
-    this.response.models.map(elem => elem.selected = false);
-    this.response.sizes = this.filterData.sizes;
-    this.response.sizes.map(elem => elem.selected = false);
-    this.response.colors = this.filterData.colors;
-    this.response.colors.map(elem => elem.selected = false);
-    this.response.brands = this.filterData.brands;
-    this.response.brands.map(elem => elem.selected = false);
-    this.result.modelId = undefined
-    this.result.brandId = undefined
-    this.result.sizeId = undefined
-    this.result.colorId = undefined
-  }
 
   listSelected(e: any) {
     this.dato = e.dato;
@@ -473,7 +431,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             this.response.models = this.clearSelected(this.response.models);
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
-            this.typeScreen = resp.type
+            this.typeScreen = resp.type;
             // console.log(this.typeScreen);
             this.intermediaryService.dismissLoading();
           },
@@ -498,63 +456,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.intermediaryService.dismissLoading();
       }
     );
-  }
-
-  ocrFake() {
-    // const seg: number = 30000;
-    // this.interval = setInterval(() => {
-    //   this.reception.ocrFake().subscribe(resp => {
-    //     this.response.brands = this.clearSelected(this.response.brands);
-    //     this.response.colors = this.clearSelected(this.response.colors);
-    //     this.response.models = this.clearSelected(this.response.models);
-    //     this.response.sizes = this.clearSelected(this.response.sizes);
-
-    //     if (resp.ean) {
-    //       this.result.ean = resp.ean;
-    //       this.reception.eanProduct(resp.ean).subscribe(resp => {
-    //         this.setSelected(this.response.brands, resp.brand, Type.BRAND);
-    //         this.setSelected(this.response.colors, resp.color, Type.COLOR);
-    //         this.setSelected(this.response.models, resp.model, Type.MODEL);
-    //         this.setSelected(this.response.sizes, resp.size, Type.SIZE);
-    //       });
-    //     } else {
-    //       if (resp.brand) {
-    //         this.setSelected(this.response.brands, resp.brand, Type.BRAND);
-    //       }
-    //       if (resp.color) {
-    //         this.setSelected(this.response.colors, resp.color, Type.COLOR);
-    //       }
-    //       if (resp.model) {
-    //         this.setSelected(this.response.models, resp.model, Type.MODEL);
-    //       }
-    //       if (resp.size) {
-    //         this.setSelected(this.response.sizes, resp.size, Type.SIZE);
-    //       }
-    //     }
-    //   });
-    // }, seg);
-  }
-
-  async getOcr() {
-    const seg = 10000;
-
-    this.interval = setInterval(async () => {
-      const ocrModels: Array<any> = await this.reception.ocrModels().toPromise();
-      const ocrBrands: Array<any> = await this.reception.ocrBrands().toPromise();
-      const ocrSizes: Array<any> = await this.reception.ocrSizes().toPromise();
-      const ocrColors: Array<any> = await this.reception.ocrColors().toPromise();
-      // // console.log(ocrColors);
-      // // console.log(this.filterData);
-
-      this.addOrcData(ocrModels, 'models');
-      this.addOrcData(ocrBrands, 'brands');
-      this.addOrcData(ocrSizes, 'sizes');
-      this.addOrcData(ocrColors, 'colors');
-      this.reset();
-      if (this.dato) {
-        this.updateList(this.dato);
-      }
-    }, seg);
   }
 
   addOrcData(sourceArray: Array<any>, collection: string) {
@@ -681,7 +582,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.response.models = this.clearSelected(this.response.models);
               this.response.colors = this.clearSelected(this.response.colors);
               this.response.sizes = this.clearSelected(this.response.sizes);
-              this.typeScreen = result.type
+              this.typeScreen = result.type;
               // console.log(this.typeScreen);
               this.intermediaryService.dismissLoading();
             },
@@ -703,24 +604,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   screenExit(e) {
     this.typeScreen = undefined;
-  }
-
-  changeProvider(e) {
-    const value: string = e.detail.value;
-    // if (value.length > 0) {
-    //   this.filter = true
-    // } else {
-    //   this.filter = false
-    // }
-    // // console.log(this.filter);
-    this.providers = this.providersAux;
-
-    // if the value is an empty string don't filter the items
-    if (value && value.trim() != '') {
-      this.providers = this.providers.filter(item => {
-        return item.name.toLowerCase().indexOf(value.toLowerCase()) > -1;
-      });
-    }
   }
 
   async load(e, item) {
@@ -751,16 +634,135 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
           modal.onDidDismiss().then(response => {
             if (response.data && response.data.reception) {
-              this.isProviderAviable = true;
+              this.showCheck = false;
+              this.isProviderAvailable = true;
               this.checkProvider(data);
             }
           });
 
           modal.present();
         }else{
-          this.isProviderAviable = false;
+          this.isProviderAvailable = false;
           this.alertMessage('No se ha encontrado esa expedición');
         }
+      });
+    }
+  }
+
+  findAndSelectObject(array: Array<ReceptionAvelonModel.Data>, selected: any) {
+    let object = array.find(data => data.id === selected.id);
+    if (object) {
+      this.setSelected(array, object, selected.type);
+    }
+  }
+
+  proveedorSelected(e, item) {
+    if (e.detail.value) {
+      this.providerId = e.detail.value;
+      e.target.value = null;
+
+      const data: ReceptionAvelonModel.CheckProvider = {
+        expedition: this.expedition,
+        providerId: this.providerId
+      };
+
+      if (data.expedition === undefined || data.expedition.length === 0) {
+        this.alertMessage('El numero de expedicion no puede estar vacio');
+        return;
+      }
+
+      this.checkProvider(data);
+    }
+  }
+
+  optionClick(e) {}
+
+  resetAll() {
+    this.response.models = this.filterData.models;
+    this.response.models.map(elem => elem.selected = false);
+    this.response.sizes = this.filterData.sizes;
+    this.response.sizes.map(elem => elem.selected = false);
+    this.response.colors = this.filterData.colors;
+    this.response.colors.map(elem => elem.selected = false);
+    this.response.brands = this.filterData.brands;
+    this.response.brands.map(elem => elem.selected = false);
+    this.result.modelId = undefined;
+    this.result.brandId = undefined;
+    this.result.sizeId = undefined;
+    this.result.colorId = undefined;
+  }
+
+  ocrFake() {
+    // const seg: number = 30000;
+    // this.interval = setInterval(() => {
+    //   this.reception.ocrFake().subscribe(resp => {
+    //     this.response.brands = this.clearSelected(this.response.brands);
+    //     this.response.colors = this.clearSelected(this.response.colors);
+    //     this.response.models = this.clearSelected(this.response.models);
+    //     this.response.sizes = this.clearSelected(this.response.sizes);
+
+    //     if (resp.ean) {
+    //       this.result.ean = resp.ean;
+    //       this.reception.eanProduct(resp.ean).subscribe(resp => {
+    //         this.setSelected(this.response.brands, resp.brand, Type.BRAND);
+    //         this.setSelected(this.response.colors, resp.color, Type.COLOR);
+    //         this.setSelected(this.response.models, resp.model, Type.MODEL);
+    //         this.setSelected(this.response.sizes, resp.size, Type.SIZE);
+    //       });
+    //     } else {
+    //       if (resp.brand) {
+    //         this.setSelected(this.response.brands, resp.brand, Type.BRAND);
+    //       }
+    //       if (resp.color) {
+    //         this.setSelected(this.response.colors, resp.color, Type.COLOR);
+    //       }
+    //       if (resp.model) {
+    //         this.setSelected(this.response.models, resp.model, Type.MODEL);
+    //       }
+    //       if (resp.size) {
+    //         this.setSelected(this.response.sizes, resp.size, Type.SIZE);
+    //       }
+    //     }
+    //   });
+    // }, seg);
+  }
+
+  async getOcr() {
+    const seg = 10000;
+
+    this.interval = setInterval(async () => {
+      const ocrModels: Array<any> = await this.reception.ocrModels().toPromise();
+      const ocrBrands: Array<any> = await this.reception.ocrBrands().toPromise();
+      const ocrSizes: Array<any> = await this.reception.ocrSizes().toPromise();
+      const ocrColors: Array<any> = await this.reception.ocrColors().toPromise();
+      // // console.log(ocrColors);
+      // // console.log(this.filterData);
+
+      this.addOrcData(ocrModels, 'models');
+      this.addOrcData(ocrBrands, 'brands');
+      this.addOrcData(ocrSizes, 'sizes');
+      this.addOrcData(ocrColors, 'colors');
+      this.reset();
+      if (this.dato) {
+        this.updateList(this.dato);
+      }
+    }, seg);
+  }
+
+  changeProvider(e) {
+    const value: string = e.detail.value;
+    // if (value.length > 0) {
+    //   this.filter = true
+    // } else {
+    //   this.filter = false
+    // }
+    // // console.log(this.filter);
+    this.providers = this.providersAux;
+
+    // if the value is an empty string don't filter the items
+    if (value && value.trim() != '') {
+      this.providers = this.providers.filter(item => {
+        return item.name.toLowerCase().indexOf(value.toLowerCase()) > -1;
       });
     }
   }

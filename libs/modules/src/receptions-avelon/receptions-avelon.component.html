@@ -6,7 +6,7 @@
         <ion-col size="4">
           <ion-item lines="none">
             <ion-label>Nro Expedicion</ion-label>
-            <ion-input [(ngModel)]="expedition" type="text"></ion-input>
+            <ion-input [(ngModel)]="expedition" type="text" (focusin)="changeShowCheck()"></ion-input>
           </ion-item>
         </ion-col>
         <ion-col size="4">
@@ -24,10 +24,10 @@
         </ion-col>
         <ion-col size="4">
           <ion-button *ngIf="showCheck" (click)="loadProvider()"> comprobar </ion-button>
-          <ion-button *ngIf="isProviderAviable" class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
+          <ion-button *ngIf="isProviderAvailable" class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="isProviderAviable"  class="ion-margin-top">
+      <ion-row *ngIf="isProviderAvailable" class="ion-margin-top">
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
             <ion-title> Marcas </ion-title>
@@ -52,7 +52,7 @@
           <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="isProviderAviable">
+      <ion-row *ngIf="isProviderAvailable">
         <ion-col size="4" id="pictureContainer">
           <div>
             <ion-img alt="imagen ocr"></ion-img>
