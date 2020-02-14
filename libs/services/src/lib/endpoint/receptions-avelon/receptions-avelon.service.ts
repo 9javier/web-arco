@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpRequestModel} from '../../../models/endpoints/HttpRequest';
-import {Observable} from "rxjs";
+import {Observable, BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,16 @@ export class ReceptionsAvelonService {
   postIsProviderAvailableUrl: string = `${environment.apiBase}/avelonProviders`;
   urlReception: string = `${environment.apiBase}/reception/expedition/lines-destiny-impress/blocked`;
   checkExpeditionsByNumberAndProviderUrl: string = `${environment.apiBase}/avelonProviders/check/expedition/provider`;
-
+  private models = new BehaviorSubject([]); 
+  private models$ = this.models.asObservable()
+  private brands = new BehaviorSubject([]); 
+  private brands$ = this.brands.asObservable()
+  private sizes = new BehaviorSubject([]); 
+  private sizes$ = this.sizes.asObservable()
+  private colors = new BehaviorSubject([]); 
+  private colors$ = this.colors.asObservable()
+  private emit = new BehaviorSubject({}); 
+  private emit$ = this.emit.asObservable()
   constructor(
     private http: HttpClient
   ) {}
@@ -78,4 +87,38 @@ export class ReceptionsAvelonService {
   checkExpeditionsByNumberAndProvider(params: ReceptionAvelonModel.ParamsCheckExpeditionsByNumberAndProvider): Observable<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider> {
     return this.http.post<ReceptionAvelonModel.ResponseCheckExpeditionsByNumberAndProvider>(this.checkExpeditionsByNumberAndProviderUrl, params);
   }
+  setModelsList(data: Array<any>){
+    this.models.next(data)
+  }
+  getModelsList(){
+    return this.models$
+  }
+  
+  setBrandsList(data: Array<any>){
+    this.brands.next(data)
+  }
+  getBrandsList(){
+    return this.brands$
+  }
+  setColorsList(data: Array<any>){
+    this.colors.next(data)
+  }
+  getColorsList(){
+    return this.colors$
+  }
+  setSizesList(data: Array<any>){
+    this.sizes.next(data)
+  }
+  getSizesList(){
+    return this.sizes$
+  }
+  setEmitList(data: any){
+    this.emit.next(data)
+  }
+  getEmitList(){
+    return this.emit$
+  }
+
+ 
+  
 }

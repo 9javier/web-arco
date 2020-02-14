@@ -1,6 +1,20 @@
 <div class="list-wrapper ion-padding">
-    <ion-item lines="none" *ngFor="let dato of datos" (click)="selected(dato)" [ngClass]="{'selected': dato.selected, 'unselected': !dato.selected}">
-       <ion-label class="ion-text-capitalize">{{dato.name}}</ion-label>
-       <ion-icon *ngIf="dato.newSelectd"  slot="end" name="add"></ion-icon>
-     </ion-item>
+    <ng-container *ngIf="brands" >
+      <ion-item lines="none" *ngFor="let dato of brands" (click)="selected(dato)" [ngClass]="{'selected': dato.selected, 'unselected': !dato.selected}">
+         <ion-label class="ion-text-capitalize">{{dato.name}}</ion-label>
+         <ion-icon *ngIf="dato.newSelectd"  slot="end" name="add"></ion-icon>
+       </ion-item>
+    </ng-container>
+    <ng-container *ngIf="models" >
+      <ion-item lines="none" *ngFor="let dato of models" (click)="selected(dato)" [ngClass]="{'selected': dato.selected, 'unselected': !dato.selected}">
+         <ion-label class="ion-text-capitalize">{{dato.name}}</ion-label>
+         <ion-icon *ngIf="dato.newSelectd"  slot="end" name="add"></ion-icon>
+       </ion-item>
+    </ng-container>
+    <ng-container *ngIf="colors" >
+      <ion-item lines="none" *ngFor="let dato of colors" (click)="selected(dato)" [ngClass]="{'selected': dato.selected, 'unselected': !dato.selected}">
+         <ion-label class="ion-text-capitalize">{{dato.name}}</ion-label>
+         <ion-icon *ngIf="dato.newSelectd"  slot="end" name="add"></ion-icon>
+       </ion-item>
+    </ng-container>
 </div>

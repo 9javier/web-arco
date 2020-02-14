@@ -34,7 +34,7 @@
             <ion-title> Marcas </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
-          <suite-lists type="brands" (seleccionado)="listSelected($event)" [data]="response.brands"></suite-lists>
+          <suite-lists type="brands"></suite-lists>
         </ion-col>
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
@@ -42,7 +42,7 @@
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
 
-          <suite-lists type="models" (seleccionado)="listSelected($event)" [data]="response.models"></suite-lists>
+          <suite-lists type="models" ></suite-lists>
         </ion-col>
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
@@ -50,7 +50,7 @@
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
 
-          <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
+          <suite-lists type="colors" ></suite-lists>
         </ion-col>
         <ion-col class="ion-margin-top" size="4">
           <ion-button (click)="buscarMas()" > buscar mas </ion-button>
@@ -58,9 +58,9 @@
       </ion-row>
       <ion-row *ngIf="isProviderAviable">
         <ion-col size="12">
-          <ng-container *ngIf="result.modelId && result.brandId && result.colorId" >
+          <ng-container *ngIf="show" >
             <ion-title>Talla</ion-title>
-            <suite-sizes (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
+            <suite-sizes></suite-sizes>
           </ng-container>
         </ion-col>
         <ion-col size="12">
