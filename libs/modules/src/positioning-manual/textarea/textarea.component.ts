@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { WarehouseService } from "../../../../services/src/lib/endpoint/warehouse/warehouse.service";
 import { AuthenticationService, InventoryModel, InventoryService, WarehouseModel, IntermediaryService } from "@suite/services";
 import { AlertController, ModalController } from "@ionic/angular";
@@ -8,9 +8,9 @@ import { AudioProvider } from "../../../../services/src/providers/audio-provider
 import { KeyboardService } from "../../../../services/src/lib/keyboard/keyboard.service";
 import { TimesToastType } from '../../../../services/src/models/timesToastType';
 import { PositionsToast } from '../../../../services/src/models/positionsToast.type';
-import { ListasProductosComponent } from '../../picking-manual/lista/listas-productos/listas-productos.component';
 import { CarrierService } from '../../../../services/src/lib/endpoint/carrier/carrier.service';
 import { ListProductsCarrierComponent } from '../../components/list-products-carrier/list-products-carrier.component';
+import {LoadingMessageComponent} from "../../components/loading-message/loading-message.component";
 
 @Component({
   selector: 'suite-textarea',
@@ -18,6 +18,8 @@ import { ListProductsCarrierComponent } from '../../components/list-products-car
   styleUrls: ['./textarea.component.scss']
 })
 export class TextareaComponent implements OnInit {
+
+  @ViewChild(LoadingMessageComponent) loadingMessageComponent: LoadingMessageComponent;
 
   dataToWrite: string = 'CONTENEDOR / EMBALAJE';
   containerReference: string = null;
@@ -52,8 +54,6 @@ export class TextareaComponent implements OnInit {
   }
 
   async ngOnInit() {
-    console.log('siamo qui');
-
     this.isStoreUser = await this.authenticationService.isStoreUser();
     if (this.isStoreUser) {
       this.storeUserObj = await this.authenticationService.getStoreCurrentUser();
@@ -80,9 +80,9 @@ export class TextareaComponent implements OnInit {
         process: 'positioning'
       }
 
-    })
+    });
+
     modal.onDidDismiss().then((data) => {
-      console.log(data);
       if(data.data === undefined && data.role === undefined){
         this.focusToInput();
         return;
@@ -90,8 +90,6 @@ export class TextareaComponent implements OnInit {
 
       if(data.data && data.role === undefined){
         if(this.itemReferencesProvider.checkCodeValue(data.data) === this.itemReferencesProvider.codeValue.PACKING){
-          console.log('passo di qui ',this.lastCodeScanned);
-
           this.focusToInput();
           this.inputPositioning = data.data;
           this.processInitiated = false;
@@ -101,8 +99,8 @@ export class TextareaComponent implements OnInit {
           this.focusToInput();
         }
       }
+    });
 
-    })
     modal.present();
   }
 
@@ -112,16 +110,11 @@ export class TextareaComponent implements OnInit {
     },500);
   }
 
-
   keyUpInput(event?,prova:boolean=false) {
     let warehouseId = this.isStoreUser ? this.storeUserObj.id : this.warehouseService.idWarehouseMain;
     let dataWrited = (this.inputPositioning || "").trim();
-    // console.log('chiamo metodo Key',dataWrited,this.processInitiated);
 
     if (event.keyCode === 13 || prova && dataWrited && !this.processInitiated) {
-      // console.log('passo di primo');
-      // console.log(dataWrited,this.lastCodeScanned);
-
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
         return;
@@ -135,10 +128,8 @@ export class TextareaComponent implements OnInit {
 
       this.processInitiated = true;
       if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
-        // console.log('passa qui');
-
         this.processInitiated = false;
-        this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+        this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM).then(() => {
           setTimeout(() => {
             document.getElementById('input-ta').focus();
           }, 500);
@@ -167,13 +158,12 @@ export class TextareaComponent implements OnInit {
 
         this.errorMessage = null;
       } else if (!this.isStoreUser && this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
-        // console.log('passa qui por Jaula');
         this.carrierService.getSingle(this.lastCodeScanned).subscribe(data => {
           if(data.packingInventorys.length > 0 && !prova){
             this.modalList(this.lastCodeScanned);
           }else{
             this.processInitiated = false;
-            this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+            this.intermediaryService.presentToastSuccess(`Inicio de ubicación en el embalaje ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM).then(() => {
               setTimeout(() => {
                 document.getElementById('input-ta').focus();
               }, 500);
@@ -205,11 +195,10 @@ export class TextareaComponent implements OnInit {
   }
 
   private storeProductInContainer(params) {
-    this.intermediaryService.presentLoading();
+    this.loadingMessageComponent.show(true);
     this.inventoryService
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
-        this.intermediaryService.dismissLoading();
         if (res.code === 200 || res.code === 201) {
           let msgSetText = '';
           if (this.isStoreUser) {
@@ -222,22 +211,26 @@ export class TextareaComponent implements OnInit {
             }
           }
           this.processInitiated = false;
-          this.intermediaryService.presentToastSuccess(msgSetText, TimesToastType.DURATION_SUCCESS_TOAST_2000).then(() => {
+          this.intermediaryService.presentToastSuccess(msgSetText, TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM).then(() => {
             setTimeout(() => {
+              this.loadingMessageComponent.show(false);
               document.getElementById('input-ta').focus();
+              this.audioProvider.playDefaultOk();
             }, 500);
           });
-          this.audioProvider.playDefaultOk();
         } else if (res.code === 428) {
+          this.loadingMessageComponent.show(false);
           this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
         } else if (res.code === 401) {
           if (res.message === 'UserConfirmationRequiredException') {
+            this.loadingMessageComponent.show(false);
             this.warningToForce(params, res.errors, false, 'Continuar');
           } else {
             /** Comprobando si tienes permisos para el forzado */
             const permission = await this.inventoryService.checkUserPermissions();
             /** Forzado de empaquetado */
+            this.loadingMessageComponent.show(false);
             if (permission.data) {
               this.warningToForce(params, res.errors);
             } else {
@@ -258,20 +251,24 @@ export class TextareaComponent implements OnInit {
           }
           this.intermediaryService.presentToastError(errorMessage, PositionsToast.BOTTOM).then(() => {
             setTimeout(() => {
+              this.loadingMessageComponent.show(false);
               document.getElementById('input-ta').focus();
+              this.audioProvider.playDefaultError();
             }, 500);
           });
           this.processInitiated = false;
         }
       }, (error) => {
-        this.intermediaryService.dismissLoading();
-        this.audioProvider.playDefaultError();
         if (error.error.code === 428) {
+          this.loadingMessageComponent.show(false);
+          this.audioProvider.playDefaultError();
           this.showWarningToForce(params);
         } else {
           this.intermediaryService.presentToastError(error.message, PositionsToast.BOTTOM).then(() => {
             setTimeout(() => {
+              this.loadingMessageComponent.show(false);
               document.getElementById('input-ta').focus();
+              this.audioProvider.playDefaultError();
             }, 500);
           });
           this.processInitiated = false;
