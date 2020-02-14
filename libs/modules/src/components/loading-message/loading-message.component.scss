@@ -3,6 +3,7 @@ div {
   top: 24px;
   width: 100%;
   text-align: center;
+  z-index: 9;
   p {
     width: 100%;
     text-align: center;
@@ -13,9 +14,11 @@ div {
       background: black;
       color: white;
       display: inline-block;
-      min-width: 30vw;
+      min-width: 35vw;
       border-radius: 30px;
       border-color: white;
+      border-width: 2px;
+      border-style: solid;
     }
   }
 }

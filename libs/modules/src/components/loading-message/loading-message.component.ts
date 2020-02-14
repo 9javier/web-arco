@@ -14,7 +14,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
       ]),
       transition('out => in', [
         style({ opacity: 0 }),
-        animate('300ms ease-out', style({ opacity: 1 }))
+        animate('1ms ease-out', style({ opacity: 1 }))
       ])
     ])
   ]
@@ -40,9 +40,14 @@ export class LoadingMessageComponent implements OnInit, OnDestroy {
     this.stopLoading();
   }
 
-  public show(show: boolean) {
+  public show(show: boolean, customMessage?: string) {
     this.showMessage = show;
     if (show) {
+      if (customMessage) {
+        this.message = customMessage;
+      } else {
+        this.message = this.originalMessage;
+      }
       this.stateAnimation = 'in';
       this.startLoading();
     } else {
