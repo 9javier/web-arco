@@ -117,12 +117,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.cd.detectChanges()
   }
 
-  openVirtualKeyboard(list: Array<ReceptionAvelonModel.Data>, type: Type) {
+  openVirtualKeyboard(list?: Array<ReceptionAvelonModel.Data>, type?: Type) {
     const dataList = [];
 
-    list.forEach(item => {
-      dataList.push({ id: item.id, value: item.name });
-    });
+    if(list) {
+      list.forEach(item => {
+        dataList.push({id: item.id, value: item.name});
+      });
+    }
 
     const keyboardEventEmitterSubscribe = this.virtualKeyboardService.eventEmitter.subscribe(
       data => {
@@ -146,6 +148,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.listsComponent.selected(dato);
               this.updateList(dato);
               // this.findAndSelectObject(this.response.models, data.selected);
+              break;
+            case undefined:
+              this.expedition = data.selected.id;
               break;
           }
         }

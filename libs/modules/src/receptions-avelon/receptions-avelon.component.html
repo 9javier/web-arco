@@ -7,6 +7,7 @@
           <ion-item lines="none">
             <ion-label>Nro Expedicion</ion-label>
             <ion-input [(ngModel)]="expedition" type="text" (focusin)="changeShowCheck()"></ion-input>
+            <i slot="end" class="material-icons" (click)="openVirtualKeyboard()">keyboard</i>
           </ion-item>
         </ion-col>
         <ion-col size="4">
