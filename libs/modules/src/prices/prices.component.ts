@@ -9,11 +9,10 @@ import {
   WarehousesService,
   WarehouseService,
   ProductsService, AuthenticationService, WarehouseModel
-
 } from '@suite/services';
 import { FormBuilder, FormGroup, FormControl, FormArray } from '@angular/forms';
 import { validators } from '../utils/validators';
-import {AlertController, Events, NavParams, PopoverController} from '@ionic/angular';
+import {AlertController, Events, PopoverController} from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 import { environment } from "../../../services/src/environments/environment";
@@ -22,7 +21,6 @@ import { Range } from './interfaces/range.interface';
 import { PricesRangePopoverComponent } from "./prices-range-popover/prices-range-popover.component";
 import { PricesRangePopoverProvider } from "../../../services/src/providers/prices-range-popover/prices-range-popover.provider";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
-import {AuditMultipleScanditService} from "../../../services/src/lib/scandit/audit-multiple/audit-multiple.service";
 import {TariffPricesScanditService} from "../../../services/src/lib/scandit/tariff-prices/tariff-prices.service";
 import { HolderTooltipText } from '../../../services/src/lib/tooltipText/holderTooltipText.service';
 
@@ -48,8 +46,6 @@ export class PricesComponent implements OnInit {
   public itemIdSelected: any = [];
 
   limit: number = this.pagerValues[0];
-
-  selectAllBinding;
 
   /**timeout for send request */
   requestTimeout;
@@ -91,9 +87,6 @@ export class PricesComponent implements OnInit {
   groups: Array<TagsInputOption> = [];
   priceses: Range;
 
-  /**List of SearchInContainer */
-  searchsInContainer: Array<PriceModel.Price> = [];
-
   getWarehouses(): void {
     this.warehousesService.getIndex().then(observable => {
       observable.subscribe(warehouses => {
@@ -120,8 +113,6 @@ export class PricesComponent implements OnInit {
 
   printAllStock: boolean = false;
 
-  public disableExpansionPanel: boolean = true;
-
   public mobileVersionTypeList: 'list' | 'table' = 'list';
   public showFiltersMobileVersion: boolean = false;
 
@@ -129,6 +120,8 @@ export class PricesComponent implements OnInit {
   private storeUserObj: WarehouseModel.Warehouse = null;
 
   private isLoadingProductPrices: boolean = false;
+
+  private priceStatusToRequestPrintCurrentTariff = [3, 7];
 
   constructor(
     private printerService: PrinterService,
@@ -156,7 +149,6 @@ export class PricesComponent implements OnInit {
       }
     });
   }
-
 
   btnOnClick(idElement:string){
     this.holderTooltipText.setTootlTip(idElement,false);
@@ -213,7 +205,6 @@ export class PricesComponent implements OnInit {
     return object;
   }
 
-
   /**
    * Listen changes in form to resend the request for search
    */
@@ -241,7 +232,7 @@ export class PricesComponent implements OnInit {
     let value = event.detail.checked;
 
     for (let index = 0; index < this.prices.length; index++) {
-      if (this.prices[index].status !== 3) {
+      if (!this.priceStatusToRequestPrintCurrentTariff.find(f => f == this.prices[index].status)) {
         this.itemSelected(this.prices[index].id);
       }
     }
@@ -272,7 +263,7 @@ export class PricesComponent implements OnInit {
 
   changeStatusImpress() {
     this.prices.forEach((price) => {
-      if (this.itemIdSelected.includes(price.id)) {
+      if (this.itemIdSelected.includes(price.id) && price.status != 7 && price.status != 3) {
         price.status = 4;
       }
     });
@@ -281,13 +272,12 @@ export class PricesComponent implements OnInit {
     this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
     this.itemIdSelected = [];
   }
+
   /**
    * Print the selected labels
    * @param items - Reference items to extract he ids
    */
   async printPrices(items, warehouseId: number) {
-    //this.initSelectForm(this.prices);
-
     if (this.verifyPricesDeleted()) {
       await this.presentAlertConfirm(warehouseId, items);
     } else {
@@ -296,7 +286,6 @@ export class PricesComponent implements OnInit {
   }
 
   private printPricesWithDeleted(warehouseId: number, items) {
-
     if (!warehouseId) {
       if (this.isStoreUser) {
         warehouseId = this.storeUserObj.id;
@@ -306,7 +295,7 @@ export class PricesComponent implements OnInit {
     }
 
     let prices = this.selectedForm.value.toSelect.map((price, i) => {
-      if (items[i].status != 3 && items[i].status != 7) {
+      if (!this.priceStatusToRequestPrintCurrentTariff.find(f => f == items[i].status)) {
         let object = {
           warehouseId: warehouseId,
           tariffId: items[i].tariff.id,
@@ -319,7 +308,7 @@ export class PricesComponent implements OnInit {
       .filter(price => price);
 
     let pricesDeleted = this.selectedForm.value.toSelect.map((priceD, i) => {
-      if (items[i].status == 3 || items[i].status == 7) {
+      if (!!this.priceStatusToRequestPrintCurrentTariff.find(f => f == items[i].status)) {
         let priceDeleted: any = items[i];
         let object = {
           warehouseId: this.isStoreUser ? this.storeUserObj.id : null,
@@ -341,8 +330,6 @@ export class PricesComponent implements OnInit {
         this.changeStatusImpress();
       }
       this.initSelectForm(this.prices);
-
-      //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
     });
@@ -360,7 +347,7 @@ export class PricesComponent implements OnInit {
     let prices = [];
 
     for (let i = 0; i < this.selectedForm.value.toSelect.length; i++) {
-      if (this.selectedForm.value.toSelect[i] && items[i].status != 3) {
+      if (this.selectedForm.value.toSelect[i] && !this.priceStatusToRequestPrintCurrentTariff.find(f => f == items[i].status)) {
         if (this.printAllStock) {
           for (let j = 0; j < items[i].stockStore.length; j++) {
             prices.push({
@@ -390,8 +377,6 @@ export class PricesComponent implements OnInit {
       }
 
       this.initSelectForm(this.prices);
-
-      //this.searchInContainer(this.sanitize(this.getFormValueCopy()));
     }, error => {
       this.intermediaryService.dismissLoading();
     });
@@ -443,7 +428,6 @@ export class PricesComponent implements OnInit {
     this.listenChanges();
   }
 
-
   /**
    * Cancel event and stop it propagation
    * @params e - the event to cancel
@@ -462,28 +446,6 @@ export class PricesComponent implements OnInit {
     this.selectedForm.addControl("toSelect", this.formBuilder.array(items.map(prices => new FormControl(false))));
   }
 
-  // TODO REMOVE AS SOON AS POSIBLE
-  /**
-   * Get the tarif associatest to a tariff
-   * @param tariffId - the id of the tariff
-   * @param page
-   * @param limit
-   */
-  // getPrices(tariffId:number,page:number,limit:number, status:number,warehouseId:number):void{
-  //   this.intermediaryService.presentLoading();
-  //   this.priceService.getIndex(tariffId, page, limit, status,warehouseId).subscribe(prices=>{
-  //     this.intermediaryService.dismissLoading();
-  //     this.prices = prices.results;
-  //     this.initSelectForm(this.prices);
-  //     this.dataSource = new MatTableDataSource<PriceModel.Price>(this.prices);
-  //     let paginator = prices.pagination;
-  //     this.paginator.length = paginator.totalResults;
-  //     this.paginator.pageIndex = paginator.page - 1;
-  //   },()=>{
-  //     this.intermediaryService.dismissLoading();
-  //   });
-  // }
-
   /**
    * get all filters to fill the selects
    */
@@ -491,9 +453,8 @@ export class PricesComponent implements OnInit {
     this.priceses = {
       min: 0,
       max: 1000
-    }
+    };
     this.productsService.getAllFilters(this.sanitize(this.getFormValueCopy())).subscribe(filters => {
-
       this.colors = filters.colors;
       this.brands = filters.brands;
       this.sizes = filters.sizes;
@@ -506,7 +467,7 @@ export class PricesComponent implements OnInit {
       this.maxPrices = this.priceses.max;
       this.form.patchValue({
         prices: filters.prices
-      })
+      });
       this.applyFilters();
 
       this.pricesRangePopoverProvider.minValue = this.priceses.min;
@@ -589,15 +550,6 @@ export class PricesComponent implements OnInit {
     }
 
     return '';
-  }
-
-  getFinalDiscountPercent(priceObj): string {
-    if (priceObj.percentOutlet && priceObj.percentOutlet != 0) {
-      return priceObj.percentOutlet;
-    } else if (priceObj.percent && priceObj.percent != 0) {
-      return priceObj.percent;
-    }
-    return null;
   }
 
   getPhotoUrl(priceObj: PriceModel.Price): string | boolean {
@@ -696,7 +648,7 @@ export class PricesComponent implements OnInit {
   verifyPricesDeleted() {
     this.pricesDeleted = [];
     this.selectedForm.value.toSelect.map((selected, i) => {
-      if (selected && this.prices[i].status === 3) {
+      if (selected && !!this.priceStatusToRequestPrintCurrentTariff.find(f => f == this.prices[i].status)) {
         this.pricesDeleted.push(this.prices[i]);
       }
     }).filter(price => price);
@@ -762,32 +714,5 @@ export class PricesComponent implements OnInit {
 
   set tariffId(id) {
     this.form.patchValue({ tariffId: id });
-  }
-
-  async presentPopover(ev: any) {
-    const popover = await this.popoverController.create({
-      component: SliderComponent,
-      event: ev,
-      translucent: true,
-      mode: 'ios',
-      cssClass: 'custom-popover',
-      componentProps: {
-        params: { min: this.priceses.min, max: this.priceses.max },
-        values: { min: this.minPrices, max: this.maxPrices }
-
-      }
-    });
-    popover.onDidDismiss().then(data => {
-      this.minPrices = data.data.min;
-      this.maxPrices = data.data.max;
-      this.form.patchValue({
-        prices: {
-          min: data.data.min,
-          max: data.data.max
-        }
-      })
-
-    })
-    return await popover.present();
   }
 }

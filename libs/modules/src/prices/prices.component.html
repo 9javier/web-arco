@@ -452,7 +452,7 @@
   <!--<mat-paginator [pageSizeOptions]="pagerValues"></mat-paginator>-->
 </ion-content>
 <ion-fab vertical="bottom" horizontal="end">
-  <ion-fab-button id="btnPrint" (click)="printPrices(prices, null); btnOnClick('btnPrintPrices'); " [matTooltipDisabled]="showTooltip" matTooltip="Imprimir precios" matTooltipClass="tooltip" (click)="printPrices(prices, null)" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
+  <ion-fab-button id="btnPrint" (click)="printPrices(prices, null); btnOnClick('btnPrintPrices'); " [matTooltipDisabled]="showTooltip" matTooltip="Imprimir precios" matTooltipClass="tooltip" *ngIf="selectedForm['controls']?.toSelect && selectedForm.valid">
     <ion-icon name="print"></ion-icon>
   </ion-fab-button>
 </ion-fab>
