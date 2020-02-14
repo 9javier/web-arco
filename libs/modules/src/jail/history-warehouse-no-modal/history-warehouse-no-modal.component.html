@@ -54,11 +54,24 @@
       </div>
     </div>
 </form>
-    <table mat-table [dataSource]="listHistory" matSort>
+    <table mat-table [dataSource]="listHistory" matSort *ngIf="valueWarehouse">
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <ng-container matColumnDef="reference">
+          <th mat-header-cell *matHeaderCellDef>
+            <span class="title" (click)="sort('reference')">Nombre del bulto</span>
+            <suite-filter-button #filterButtonReferences class="filter" [title]="'Nombre del bulto'" [listItems]="references"
+                                 [isFiltering]="isFilteringReferences != references.length"
+                                 (applyFilters)="applyFilters($event, 'references')">
+            </suite-filter-button>
+          </th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.reference }}
+          </td>
+        </ng-container>
 
         <ng-container matColumnDef="type">
           <th mat-header-cell *matHeaderCellDef>
@@ -124,24 +137,11 @@
             {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
           </td>
         </ng-container>
-
-        <ng-container matColumnDef="reference">
-            <th mat-header-cell *matHeaderCellDef>
-              <span class="title" (click)="sort('reference')">Nombre del bulto</span>
-              <suite-filter-button #filterButtonReferences class="filter" [title]="'Nombre del bulto'" [listItems]="references"
-                                   [isFiltering]="isFilteringReferences != references.length"
-                                   (applyFilters)="applyFilters($event, 'references')">
-              </suite-filter-button>
-            </th>
-            <td mat-cell *matCellDef="let item">
-              {{ item.reference }}
-            </td>
-        </ng-container>
     </table>
-   <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+   <ion-fab *ngIf="valueWarehouse" vertical="bottom" horizontal="end" class="horizontal-fab">
      <ion-fab-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
        <ion-icon name="document"></ion-icon>
      </ion-fab-button>
    </ion-fab>
-   <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+   <suite-paginator [pagerValues]="pagerValues" *ngIf="valueWarehouse"></suite-paginator>
 </ion-content>

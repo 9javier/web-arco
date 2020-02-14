@@ -10,6 +10,7 @@ import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
 import {AuthenticationService, TypeModel} from "@suite/services";
 import {from, Observable} from "rxjs";
 import {switchMap} from "rxjs/operators";
+import {InventoryModel} from "../../../models/endpoints/Inventory";
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,7 @@ export class CarrierService {
   private getAllWhsonCarries = environment.apiBase + '/packing/getWhs/getWhsOnCarrier';
   private movementHistory = environment.apiBase + '/packing/warehouse/movementHistory';
   private typeMovement = environment.apiBase + '/types/movement-history';
-  private sendexcell = environment.apiBase + "/incidences/export-to-excel";
+  private sendexcell = environment.apiBase + "/packing/export-to-excel";
 
   constructor(
     private http: HttpClient,
@@ -233,4 +234,5 @@ export class CarrierService {
       return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
     }));
   }
+
 }
