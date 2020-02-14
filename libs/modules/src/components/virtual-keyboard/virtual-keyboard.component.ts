@@ -68,6 +68,14 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
     this.setFilteredItems();
   }
 
+  itemClick(item){
+    if(this.type == 5){
+      this.selectItem(item.value)
+    } else{
+      this.selectItem(item.id)
+    }
+  }
+
   async selectItem(id: any) {
     this.result.selected = {id, type: this.type};
     this.eventOnKeyPress.emit(this.result);

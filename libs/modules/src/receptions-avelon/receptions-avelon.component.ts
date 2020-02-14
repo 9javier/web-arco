@@ -149,6 +149,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.updateList(dato);
               // this.findAndSelectObject(this.response.models, data.selected);
               break;
+            case Type.PROVIDER:
+              this.providerInput.nativeElement.value = data.selected.id;
+              break;
             case undefined:
               this.expedition = data.selected.id;
               break;

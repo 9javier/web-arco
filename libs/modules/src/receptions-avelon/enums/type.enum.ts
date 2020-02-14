@@ -3,4 +3,5 @@ export enum Type {
   COLOR = 2,
   MODEL = 3,
   SIZE  = 4,
+  PROVIDER = 5
 }
