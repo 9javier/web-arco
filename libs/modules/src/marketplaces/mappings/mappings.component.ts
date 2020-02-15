@@ -62,7 +62,6 @@ export class MappingsComponent implements OnInit {
     private router: Router,
     private marketplacesService: MarketplacesService,
     private marketplacesPrestaService: MarketplacesPrestaService,
-    private marketplacesMgaService: MarketplacesMgaService,
     private http: HttpClient
   ) {
     console.log(this.route.snapshot.data['name'])
@@ -87,21 +86,20 @@ export class MappingsComponent implements OnInit {
     this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
     this.featuresList = [];
 
-    this.enumTypes = [];
     this.displayedColumns = ['blank', 'avelonData', 'marketData'];
 
     forkJoin([
-      this.marketplacesMgaService.getBrands(),
-      this.marketplacesMgaService.getColors(),
-      this.marketplacesMgaService.getSizes(),
-      this.marketplacesMgaService.getFeaturesByMarket(1)
+      this.marketplacesService.getBrands(),
+      this.marketplacesService.getColors(),
+      this.marketplacesService.getSizes(),
+      this.marketplacesService.getFeatures()
     ]).subscribe(results => {
 
-      if (results[0].length) {
+      if (results[0] && results[0].length) {
         results[0].forEach(brand => {
           this.dataSourceBrands.push({
             id: null,
-            avelonData: {id: brand.id, name: brand.name.trim()},
+            avelonData: {id: brand.externalId, name: brand.name.trim()},
             marketData: {id: -1, name: null}
           });
         });
@@ -111,11 +109,11 @@ export class MappingsComponent implements OnInit {
         this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
       }
 
-      if(results[1].length) {
+      if(results[1] && results[1].length) {
         results[1].forEach(color => {
           this.dataSourceColors.push({
             id: null,
-            avelonData: {id: color.id, name: color.name.trim()},
+            avelonData: {id: color.externalId, name: color.name.trim()},
             marketData: {id: -1, name: null}
           });
         });
@@ -125,11 +123,11 @@ export class MappingsComponent implements OnInit {
         this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
       }
 
-      if(results[2].length) {
+      if(results[2] && results[2].length) {
         results[2].forEach(size => {
           this.dataSourceSizes.push({
             id: null,
-            avelonData: {id: size.id, name: size.name.trim()},
+            avelonData: {id: size.externalId, name: size.name.trim()},
             marketData: {id: -1, name: null}
           });
         });
@@ -139,11 +137,11 @@ export class MappingsComponent implements OnInit {
         this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
       }
 
-      if(results[3].length) {
+      if(results[3] && results[3].length) {
         results[3].forEach(feature => {
           this.dataSourceFeatures.push({
             id: null,
-            avelonData: {id: feature.id, name: feature.name.trim(), group: feature.groupNumber},
+            avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
             marketData: {id: -1, name: null}
           });
         });
@@ -153,7 +151,6 @@ export class MappingsComponent implements OnInit {
         this.showingFeatures = this.dataSourceMappingFeatures.data.slice(0, 10);
       }
 
-      this.getEntities();
       this.getDestinyValues();
     });
   }
@@ -297,16 +294,13 @@ export class MappingsComponent implements OnInit {
 
   setSelectorValues(e, type) {
     let page = e.pageIndex;
-    console.log(page);
     switch (type) {
       case 'brands':
-        console.log('this.dataSourceMappingBrands.data', this.dataSourceMappingBrands.data);
         if (page == 0) {
           this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
         } else {
           this.showingBrands = this.dataSourceMappingBrands.data.slice(page * 10, page * 10 + 10);
         }
-        console.log('this.showingBrands', this.showingBrands);
         break;
 
       case 'features':
@@ -356,14 +350,6 @@ export class MappingsComponent implements OnInit {
         return (this.showingSizes.some(e => e.avelonData.id == id));
         break;
     }
-  }
-
-  getEntities() {
-    this.marketplacesService.getMapEntities().subscribe(data => {
-      if (data && data.enumItem) {
-        this.enumTypes = data.enumItem;
-      }
-    })
   }
 
   changeBrandSelect(e, element) {

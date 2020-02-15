@@ -26,6 +26,10 @@ export class MarketplacesService {
   private postRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration";
   private updateRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration/{{id}}";
   private getRulesConfigurationsByIdUrl = this.apiBase + "/RuleConfiguration/{{id}}";
+  private getBrandsRuleFilters = this.apiBase + "/RuleFilter/5";
+  private getColorsRuleFilters = this.apiBase + "/RuleFilter/3";
+  private getFeaturesRuleFilters = this.apiBase + "/RuleFilter/2";
+  private getSizesRuleFilters = this.apiBase + "/RuleFilter/4";
 
   constructor(
     private http: HttpClient
@@ -69,8 +73,26 @@ export class MarketplacesService {
     }));
   }
 
-  getRulesFilter(): Observable<any> {
-    return this.http.get<any>(this.getRulesFilterUrl, {}).pipe(map(response => {
+  getBrands(): Observable<any> {
+    return this.http.get<any>(this.getBrandsRuleFilters, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getSizes(): Observable<any> {
+    return this.http.get<any>(this.getSizesRuleFilters, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getFeatures(): Observable<any> {
+    return this.http.get<any>(this.getFeaturesRuleFilters, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getColors(): Observable<any> {
+    return this.http.get<any>(this.getColorsRuleFilters, {}).pipe(map(response => {
       return response;
     }));
   }
