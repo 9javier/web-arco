@@ -384,14 +384,20 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-    if (update) {
-      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+    if(marketDataId == -1) {
+      this.marketplacesService.deleteMapDataRules(idToUpdate).subscribe(data => {
         this.updateDataSaved();
       });
     } else {
-      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
-        this.updateDataSaved();
-      });
+      if (update) {
+        this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      } else {
+        this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      }
     }
   }
 
@@ -428,14 +434,20 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-    if (update) {
-      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+    if(marketDataId == -1) {
+      this.marketplacesService.deleteMapDataRules(idToUpdate).subscribe(data => {
         this.updateDataSaved();
-      })
+      });
     } else {
-      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
-        this.updateDataSaved();
-      })
+      if (update) {
+        this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      } else {
+        this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      }
     }
   }
 
@@ -472,14 +484,20 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-    if (update) {
-      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+    if(marketDataId == -1) {
+      this.marketplacesService.deleteMapDataRules(idToUpdate).subscribe(data => {
         this.updateDataSaved();
-      })
+      });
     } else {
-      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
-        this.updateDataSaved();
-      })
+      if (update) {
+        this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      } else {
+        this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      }
     }
   }
 
@@ -516,14 +534,20 @@ export class MappingsComponent implements OnInit {
       }
     });
 
-    if (update) {
-      this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+    if(marketDataId == -1) {
+      this.marketplacesService.deleteMapDataRules(idToUpdate).subscribe(data => {
         this.updateDataSaved();
-      })
+      });
     } else {
-      this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
-        this.updateDataSaved();
-      })
+      if (update) {
+        this.marketplacesService.updateMapDataRules(idToUpdate, dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      } else {
+        this.marketplacesService.postMapDataRules(dataSend).subscribe(data => {
+          this.updateDataSaved();
+        });
+      }
     }
   }
 

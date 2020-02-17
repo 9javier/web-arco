@@ -14,6 +14,7 @@ export class MarketplacesService {
   private getMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
   private postMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
   private updateMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
+  private deleteMapDataRulesUrl = this.apiBase + "/MapDataRules/";
   private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
   private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
@@ -56,6 +57,12 @@ export class MarketplacesService {
 
   updateMapDataRules(mapDataId: number, data): Observable<any> {
     return this.http.put<any>(this.updateMapDataRulesUrl + mapDataId.toString(), data, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  deleteMapDataRules(mapDataId: number): Observable<any> {
+    return this.http.delete<any>(this.deleteMapDataRulesUrl + mapDataId.toString(), {}).pipe(map(response => {
       return response;
     }));
   }
