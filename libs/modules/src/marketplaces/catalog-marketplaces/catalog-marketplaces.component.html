@@ -1,3 +1,92 @@
-<p>
-  catalog-marketplaces works!
-</p>
+<div class="catalog-marketplaces">
+  <div class="catalog-selects">
+    <mat-select [placeholder]="selectsPlaceholders[0]">
+      <mat-option [value]="-1">-</mat-option>
+    </mat-select>
+    <mat-select [placeholder]="selectsPlaceholders[1]">
+      <mat-option [value]="-1">-</mat-option>
+    </mat-select>
+    <mat-select [placeholder]="selectsPlaceholders[2]">
+      <mat-option [value]="-1">-</mat-option>
+    </mat-select>
+    <mat-select [placeholder]="selectsPlaceholders[3]">
+      <mat-option [value]="-1">-</mat-option>
+    </mat-select>
+  </div>
+  <div class="mp-catalog-table-wrapper">
+    <table mat-table [dataSource]="catalogTableData">
+
+      <tr mat-header-row *matHeaderRowDef="catalogTableHeader; sticky: true;"></tr>
+      <tr mat-row *matRowDef="let row; columns: catalogTableHeader;"></tr>
+
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <i class="material-icons">search</i>
+        </th>
+        <td mat-cell *matCellDef="let product">
+          <ion-checkbox (ionChange)="selectProductRow(product)"></ion-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ref">
+        <th mat-header-cell *matHeaderCellDef><span>Ref.</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.ref}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="model">
+        <th mat-header-cell *matHeaderCellDef><span>Modelo</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.model}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="brand">
+        <th mat-header-cell *matHeaderCellDef><span>Marca</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.brand}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="KO">
+        <th mat-header-cell *matHeaderCellDef><span>KO</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.ko}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Mini">
+        <th mat-header-cell *matHeaderCellDef><span>Mini</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.mini}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Amazon">
+        <th mat-header-cell *matHeaderCellDef><span>Amazon</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.amazon}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Spartoo">
+        <th mat-header-cell *matHeaderCellDef><span>Spartoo</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.spartoo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Zalando">
+        <th mat-header-cell *matHeaderCellDef><span>Zalando</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.zalando}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="CDiscount">
+        <th mat-header-cell *matHeaderCellDef><span>CDiscount</span></th>
+        <td mat-cell *matCellDef="let product"> {{product.cdiscount}} </td>
+      </ng-container>
+
+    </table>
+  </div>
+  <div class="mp-catalog-table-footer-wrapper">
+    <div class="mp-catalog-first-footer-section">
+      <div class="mp-catalog-massive-actions-button">
+        ACCIONES MASIVAS
+      </div>
+      <div class="mp-catalog-results">
+        {{catalogData.length}} <span>resultados</span>
+      </div>
+    </div>
+    <div class="exportExcel">
+      <span>Exportar a Excel</span>
+    </div>
+  </div>
+</div>
+
