@@ -327,7 +327,7 @@ export class MenuComponent implements OnInit {
               title: 'Reglas',
               id: 'mp-rules',
               url: '/marketplaces/miniprecios/rules',
-              icon: 'document'
+              icon: 'code-working'
             },
             {
               title: 'Catálogo',
