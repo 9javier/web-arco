@@ -17,13 +17,14 @@ import {
 } from '@suite/services';
 import { ModalUserComponent } from "../components/modal-user/modal-user.component";
 import { Router } from '@angular/router';
+import * as _ from "lodash";
 
 @Component({
   selector: 'suite-receptionss-avelon',
   templateUrl: './receptionss-avelon.component.html',
   styleUrls: ['./receptionss-avelon.component.scss']
 })
-export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
+export class ReceptionssAvelonComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
@@ -104,12 +105,9 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
-    private userTimeService: UserTimeService,
-    private router: Router
   ) {}
 
   ngOnInit(): void {
-
     this.initEntity();
     this.initForm();
     this.getFilters();
@@ -256,32 +254,10 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-    let This = this;
-    setTimeout(() => {
-      if(!!This.sort && !!this.dataSource)
-        this.dataSource.sort = This.sort;
-      if(!!This.paginator && !!this.dataSource)
-        this.dataSource.paginator = This.paginator;
-    }, 2000)
-  }
-
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
-  }
-
-  isAllSelectedPredistribution() {
-    let result = true;
-
-    this.dataSource.data.forEach(row => {
-      if (row && !row.distribution) {
-        result = false;
-      }
-    });
-
-    return result;
   }
 
   masterToggle() {
@@ -364,9 +340,8 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
   }
 
   async getList(form?: FormGroup){
-    this.predistributionsService.index2(form.value).subscribe(
-      (resp:any) => {
-        console.log(resp.results);
+    this.predistributionsService.index2(form.value).subscribe((resp:any) => {
+      if (resp.results) {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
         const paginator = resp.pagination;
 
@@ -384,15 +359,16 @@ export class ReceptionssAvelonComponent implements OnInit, AfterViewInit {
             this.selectionReserved.select(row);
           }
         });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
       }
-    )
+    },
+    async err => {
+      await this.intermediaryService.dismissLoading()
+    },
+    async () => {
+      await this.intermediaryService.dismissLoading()
+    })
   }
+
   applyFilters(filtersResult, filterType) {
     const filters = filtersResult.filters;
     switch (filterType) {
