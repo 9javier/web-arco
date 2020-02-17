@@ -14,7 +14,7 @@ export class MarketplacesService {
   private getMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
   private postMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
   private updateMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
-  private deleteMapDataRulesUrl = this.apiBase + "/MapDataRules/";
+  private deleteMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
   private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
   private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
   private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";

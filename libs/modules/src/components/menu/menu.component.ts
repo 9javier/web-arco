@@ -303,75 +303,45 @@ export class MenuComponent implements OnInit {
       title: 'Marketplaces',
       open: true,
       type: 'wrapper',
-      icon: 'apps',
+      icon: 'cart',
       children: [ 
         {
           title: 'Catálogos Marketplaces',
           id: 'catalogs-marketplaces',
           url: '/marketplaces/catalogs-marketplaces',
-          icon: 'document'
-        },
-        {
-          title: 'Prioridad de Tienda',
-          id: 'store-priority',
-          url: '/marketplaces/store-priority',
-          icon: 'document'
+          icon: 'apps'
         },
         {
           title: 'Miniprecios',
           open: true,
           type: 'wrapper',
           id: 'miniprecios',
-          icon: 'apps',
-          children: [ 
-            {
-              title: 'Catálogo',
-              id: 'mp-catalog',
-              url: '/marketplaces/miniprecios/catalog',
-              icon: 'document'
-            },
+          icon: 'add-circle-outline',
+          children: [
             {
               title: 'Mapeos',
               id: 'mp-mapping',
               url: '/marketplaces/miniprecios/mapping',
-              icon: 'document'
+              icon: 'code'
             },{
               title: 'Reglas',
               id: 'mp-rules',
               url: '/marketplaces/miniprecios/rules',
               icon: 'document'
+            },
+            {
+              title: 'Catálogo',
+              id: 'mp-catalog',
+              url: '/marketplaces/miniprecios/catalog',
+              icon: 'apps'
             }
           ]
         },
         {
-          title: 'Miniprecios',
-          open: true,
-          type: 'wrapper',
-          icon: 'apps',
-          children: [ 
-            {
-              title: 'Catálogo',
-              id: 'mp-catalog',
-              url: '/marketplaces/miniprecios/catalog',
-              icon: 'document'
-            },
-            {
-              title: 'Mapeos',
-              id: 'mp-mapping',
-              url: '/marketplaces/miniprecios/mapping',
-              icon: 'document'
-            },{
-              title: 'Reglas',
-              id: 'mp-rules',
-              url: '/marketplaces/miniprecios/rules',
-              icon: 'document'
-            },{
-              title: 'Stocks seguridad',
-              id: 'mp-security-stocks',
-              url: '/marketplaces/miniprecios/security-stocks',
-              icon: 'document'
-            },
-          ]
+          title: 'Prioridad de Tienda',
+          id: 'store-priority',
+          url: '/marketplaces/store-priority',
+          icon: 'document'
         }
       ]
     },

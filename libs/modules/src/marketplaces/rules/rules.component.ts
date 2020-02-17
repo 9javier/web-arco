@@ -4,7 +4,6 @@ import {ModalController} from '@ionic/angular';
 import {NewRuleComponent} from './new-rule/new-rule.component';
 import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MatTableDataSource} from '@angular/material';
-import {MarketplacesMgaService} from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 
 @Component({
   selector: 'suite-rules',

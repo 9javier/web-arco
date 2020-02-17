@@ -2,9 +2,8 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesPrestaService} from '../../../../services/src/lib/endpoint/marketplaces-presta/marketplaces-presta.service';
-import {MarketplacesMgaService} from '../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import {MatTableDataSource, MatPaginator, MatPaginatorIntl} from '@angular/material';
-import {Observable, forkJoin} from 'rxjs'
+import {forkJoin} from 'rxjs'
 
 import {PaginatorLanguageComponent} from "../../components/paginator-language/paginator-language.component";
 import {HttpClient} from "@angular/common/http";
