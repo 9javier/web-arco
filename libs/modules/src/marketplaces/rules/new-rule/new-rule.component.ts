@@ -2,8 +2,9 @@ import {Component, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
-import { ManageFilteredProductsComponent } from '../manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
+import {ManageFilteredProductsComponent} from '../manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
 import {falseIfMissing} from "protractor/built/util";
+import {forkJoin} from "rxjs";
 
 @Component({
   selector: 'suite-new-rule',
@@ -201,76 +202,108 @@ export class NewRuleComponent implements OnInit {
       ];
     }
 
-    this.marketplacesMgaService.getFeaturesRuleMarket(1).subscribe(data => {
-      if (data) {
-        data.forEach(item => {
-          let listItem = {
-            id: item.id,
-            group: item.groupNumber,
-            name: item.name.trim()
-          };
-          let listIndex = -1;
-          switch (item.groupNumber) {
-            case 1:
-              listIndex = 0;
-              break;
+    forkJoin([
+      this.marketplacesService.getBrands(),
+      this.marketplacesService.getColors(),
+      this.marketplacesService.getSizes(),
+      this.marketplacesService.getFeatures()
+    ]).subscribe((results: any) => {
 
-            case 2:
-              listIndex = 1;
-              break;
+      if (results && results.length) {
+        if (results[0] && results[0].length) {
+          results[0].forEach(brand => {
+            let listItem = {
+              id: brand.id,
+              externalId: brand.externalId,
+              type: brand.ruleFilterType,
+              group: 15,
+              name: brand.name.trim()
+            };
+            this.categoryList[7].items.push(listItem);
+            if (this.ruleFilterType == 'categories') {
+              this.destinationCategories[7].items.push(listItem);
+            }
+          });
+        }
 
-            case 5:
-              listIndex = 2;
-              break;
+        if (results[1] && results[1].length) {
+          results[1].forEach(color => {
+            let listItem = {
+              id: color.id,
+              externalId: color.externalId,
+              type: color.ruleFilterType,
+              group: 16,
+              name: color.name.trim()
+            };
+            this.categoryList[8].items.push(listItem);
+            if (this.ruleFilterType == 'categories') {
+              this.destinationCategories[8].items.push(listItem);
+            }
+          });
+        }
 
-            case 7:
-              listIndex = 3;
-              break;
+        if (results[2] && results[2].length) {
+          results[2].forEach(size => {
+            let listItem = {
+              id: size.id,
+              externalId: size.externalId,
+              type: size.ruleFilterType,
+              group: 17,
+              name: size.name.trim()
+            };
+            this.categoryList[9].items.push(listItem);
+            if (this.ruleFilterType == 'categories') {
+              this.destinationCategories[9].items.push(listItem);
+            }
+          });
+        }
 
-            case 9:
-              listIndex = 4;
-              break;
+        if (results[3] && results[3].length) {
+          results[3].forEach(feature => {
+            let listItem = {
+              id: feature.id,
+              externalId: feature.externalId,
+              type: feature.ruleFilterType,
+              group: feature.dataGroup,
+              name: feature.name.trim()
+            };
+            let listIndex = -1;
+            switch (listItem.group) {
+              case 1:
+                listIndex = 0;
+                break;
 
-            case 10:
-              listIndex = 5;
-              break;
+              case 2:
+                listIndex = 1;
+                break;
 
-            case 12:
-              listIndex = 6;
-              break;
+              case 5:
+                listIndex = 2;
+                break;
 
-            case 15:
-              listIndex = 7;
-              break;
+              case 7:
+                listIndex = 3;
+                break;
 
-            case 16:
-              listIndex = 8;
-              break;
+              case 9:
+                listIndex = 4;
+                break;
 
-            case 17:
-              listIndex = 9;
-              break;
-          }
-          this.categoryList[listIndex].items.push(listItem);
-          if (this.ruleFilterType == 'categories') {
-            this.destinationCategories[listIndex].items.push(listItem);
-          }
-        });
-        this.categoryList[10].items.push({
-          id: 18,
-          name: 'Precio',
-          items: []
-        });
-        this.categoryList[11].items.push({
-          id: 19,
-          name: 'Añadir referencias',
-          items: []
-        });
-        this.categoryList[12].items.push({
-          id: 20,
-          name: 'Excluír referencias',
-          items: []
-        });
+              case 10:
+                listIndex = 5;
+                break;
+
+              case 12:
+                listIndex = 6;
+                break;
+            }
+
+            this.categoryList[listIndex].items.push(listItem);
+            if (this.ruleFilterType == 'categories') {
+              this.destinationCategories[listIndex].items.push(listItem);
+            }
+          });
+        }
         for (let category of this.categoryList) {
           category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
         }
@@ -281,6 +314,7 @@ export class NewRuleComponent implements OnInit {
           }
         }
       }
+
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = {...this.categoryList[0]};
       if (this.ruleFilterType == 'categories') {
@@ -301,7 +335,6 @@ export class NewRuleComponent implements OnInit {
         this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
         this.referencesExceptions = this.navParams.get('referencesExceptions') == [] ? [] : this.navParams.get('referencesExceptions');
 
-        console.log(this.referencesExceptions)
         if (this.ruleFilterType == 'stock') {
           this.addReduceStockFilter();
         }
@@ -385,10 +418,10 @@ export class NewRuleComponent implements OnInit {
             break;
         }
       } else {
-      this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
-        this.numberOfProducts = count;
-      });
-    }
+        this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
+          this.numberOfProducts = count;
+        });
+      }
 
     });
   }
@@ -448,6 +481,7 @@ export class NewRuleComponent implements OnInit {
       if (this.ruleFilterType == 'categories') {
         if (!destination) {
           this.selectedDestinationCategories.push(category);
+          this.selectedDestinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
           if (this.selectedCategoryGroupFilter == this.selectedDestinationCategoryGroupFilter) {
             let items = this.selectedDestinationCategoryGroupFilterObject.items;
             this.selectedDestinationCategoryGroupFilterObject.items = [];
@@ -459,6 +493,8 @@ export class NewRuleComponent implements OnInit {
           }
         }
       }
+      console.log('this.selectedCategories', this.selectedCategories);
+      console.log('this.selectedDestinationCategories', this.selectedDestinationCategories);
 
     }
 
@@ -1237,7 +1273,7 @@ export class NewRuleComponent implements OnInit {
   selectedCategoriesIncludes(category) {
     return this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
-  
+
   searchCategories() {
     this.selectedCategoryGroupFilterObject.items = this.categoryList.find(x => x.id === this.selectedCategoryGroupFilter).items.slice();
     if (this.categorySearched && this.categorySearched.trim() != '') {
@@ -1252,32 +1288,4 @@ export class NewRuleComponent implements OnInit {
     }
 
   }
-
-  /*deleteProduct(product) {
-    console.log(product)
-    for(let i = 0; i < this.productReferences.length; i++) {
-      if(this.productReferences[i].reference == product.reference) {
-        this.productReferences.splice(i, 1);
-      }
-    }
-    this.dataSource.data = this.productReferences;
-  }
-
-  searchOnFilterList() {
-    console.log(this.filterSearched)
-    console.log(this.selectedCategoryGroupFilterObject)
-    if (this.filterSearched && this.filterSearched.trim() != '') {
-      let filters = [];
-      for (let itemFilter of this.selectedCategoryGroupFilterObject.items) {
-        if (itemFilter.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.filterSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-          !== -1) {
-          filters.push(itemFilter);
-        }
-      }
-      this.selectedCategoryGroupFilterObject.items = filters;
-    } /!*else {
-      this.selectedCategoryGroupFilterObject.items = this.filterItemsAux.items.slice();
-    }*!/
-  }*/
-
 }

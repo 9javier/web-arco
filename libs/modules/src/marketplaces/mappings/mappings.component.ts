@@ -45,7 +45,6 @@ export class MappingsComponent implements OnInit {
   private dataDBsave = [];
 
   private displayedColumns;
-  private enumTypes;
 
   private showingBrands;
   private showingColors;
@@ -103,13 +102,13 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        this.dataSourceBrands.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
+        this.dataSourceBrands.sort((a, b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingBrands = new MatTableDataSource(this.dataSourceBrands);
         setTimeout(() => this.dataSourceMappingBrands.paginator = this.paginatorBrands);
         this.showingBrands = this.dataSourceMappingBrands.data.slice(0, 10);
       }
 
-      if(results[1] && results[1].length) {
+      if (results[1] && results[1].length) {
         results[1].forEach(color => {
           this.dataSourceColors.push({
             id: null,
@@ -117,13 +116,13 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        this.dataSourceColors.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
+        this.dataSourceColors.sort((a, b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
         setTimeout(() => this.dataSourceMappingColors.paginator = this.paginatorColors);
         this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
       }
 
-      if(results[2] && results[2].length) {
+      if (results[2] && results[2].length) {
         results[2].forEach(size => {
           this.dataSourceSizes.push({
             id: null,
@@ -131,13 +130,13 @@ export class MappingsComponent implements OnInit {
             marketData: {id: -1, name: null}
           });
         });
-        this.dataSourceSizes.sort((a,b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
+        this.dataSourceSizes.sort((a, b) => (a.avelonData.name > b.avelonData.name) ? 1 : ((b.avelonData.name > a.avelonData.name) ? -1 : 0));
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginatorSizes);
         this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
       }
 
-      if(results[3] && results[3].length) {
+      if (results[3] && results[3].length) {
         results[3].forEach(feature => {
           this.dataSourceFeatures.push({
             id: null,
@@ -165,6 +164,33 @@ export class MappingsComponent implements OnInit {
 
       this.dataDBsave.forEach(item => {
         switch (item.typeMapped) {
+          case 2:
+            let dataFeature = this.dataSourceFeatures;
+
+            let featureMarket = {id: -1, name: null};
+
+            if (item.marketDataId != -1) {
+              this.featuresList.forEach(feature => {
+                if (feature.id == item.marketDataId) {
+                  featureMarket = feature;
+                }
+              })
+            }
+            dataFeature.forEach(data => {
+              if (data.avelonData.id == item.originDataId) {
+                data.marketData = {
+                  id: featureMarket.id,
+                  name: featureMarket.name
+                }
+              }
+            });
+
+            this.dataSourceFeatures = dataFeature;
+            this.dataSourceMappingFeatures.data = this.dataSourceFeatures;
+            if (this.featureSearched && this.featureSearched.trim() != '') {
+              this.searchOnMappingList('feature');
+            }
+            break;
           case 3:
             let dataColor = this.dataSourceColors;
 
@@ -244,33 +270,6 @@ export class MappingsComponent implements OnInit {
             this.dataSourceMappingBrands.data = this.dataSourceBrands;
             if (this.brandSearched && this.brandSearched.trim() != '') {
               this.searchOnMappingList('brand');
-            }
-            break;
-          case 8:
-            let dataFeature = this.dataSourceFeatures;
-
-            let featureMarket = {id: -1, name: null};
-
-            if (item.marketDataId != -1) {
-              this.featuresList.forEach(feature => {
-                if (feature.id == item.marketDataId) {
-                  featureMarket = feature;
-                }
-              })
-            }
-            dataFeature.forEach(data => {
-              if (data.avelonData.id == item.originDataId) {
-                data.marketData = {
-                  id: featureMarket.id,
-                  name: featureMarket.name
-                }
-              }
-            });
-
-            this.dataSourceFeatures = dataFeature;
-            this.dataSourceMappingFeatures.data = this.dataSourceFeatures;
-            if (this.featureSearched && this.featureSearched.trim() != '') {
-              this.searchOnMappingList('feature');
             }
             break;
         }
@@ -502,7 +501,7 @@ export class MappingsComponent implements OnInit {
     let dataSend = {
       originDataId: element.avelonData.id,
       marketDataId,
-      typeMapped: 8,
+      typeMapped: 2,
       marketId: 1,
       aditionalMapInfo: marketData ? 'Mapping of the feature ' + element.avelonData.name + ' to ' + marketData.name : 'Not mapped'
     };
@@ -558,7 +557,7 @@ export class MappingsComponent implements OnInit {
           let brands = [];
           for (let brand of this.dataSourceBrands) {
             if (brand.avelonData.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").search(this.brandSearched.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))
-            !== -1) {
+              !== -1) {
               brands.push(brand);
             }
           }

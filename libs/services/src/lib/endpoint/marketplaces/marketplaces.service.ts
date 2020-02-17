@@ -11,24 +11,24 @@ import {environment} from "../../../environments/environment";
 export class MarketplacesService {
 
   private apiBase = environment.apiRule;
-  private getMapDataRulesUrl = this.apiBase + "/MapDataRules";
-  private postMapDataRulesUrl = this.apiBase + "/MapDataRules";
-  private updateMapDataRulesUrl = this.apiBase + "/MapDataRules/";
-  private getMapEntitiesUrl = this.apiBase + "/EnumMetadata/get/mapentity";
-  private getRulesFilterTypesUrl = this.apiBase + "/EnumMetadata/get/rulefiltertype";
-  private getRulesFilterUrl = this.apiBase + "/RuleFilter";
-  private postRulesFilterUrl = this.apiBase + "/RuleFilter";
-  private updateRulesFilterUrl = this.apiBase + "/RuleFilter/{{id}}";
-  private getRulesFilterByTypeUrl = this.apiBase + "/RuleFilter/{{type}}";
-  private getMarketsUrl = this.apiBase + "/Markets";
-  private getRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration/get/all";
-  private postRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration";
-  private updateRulesConfigurationsUrl = this.apiBase + "/RuleConfiguration/{{id}}";
-  private getRulesConfigurationsByIdUrl = this.apiBase + "/RuleConfiguration/{{id}}";
-  private getBrandsRuleFilters = this.apiBase + "/RuleFilter/5";
-  private getColorsRuleFilters = this.apiBase + "/RuleFilter/3";
-  private getFeaturesRuleFilters = this.apiBase + "/RuleFilter/2";
-  private getSizesRuleFilters = this.apiBase + "/RuleFilter/4";
+  private getMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
+  private postMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
+  private updateMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
+  private getMapEntitiesUrl = this.apiBase + "/api/EnumMetadata/get/mapentity";
+  private getRulesFilterTypesUrl = this.apiBase + "/api/EnumMetadata/get/rulefiltertype";
+  private getRulesFilterUrl = this.apiBase + "/api/RuleFilter";
+  private postRulesFilterUrl = this.apiBase + "/api/RuleFilter";
+  private updateRulesFilterUrl = this.apiBase + "/api/RuleFilter/{{id}}";
+  private getRulesFilterByTypeUrl = this.apiBase + "/api/RuleFilter/{{type}}";
+  private getMarketsUrl = this.apiBase + "/api/Markets";
+  private getRulesConfigurationsUrl = this.apiBase + "/rc/bymarket/";
+  private postRulesConfigurationsUrl = this.apiBase + "/api/RuleConfiguration";
+  private updateRulesConfigurationsUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
+  private getRulesConfigurationsByIdUrl = this.apiBase + "/api/RuleConfiguration/{{id}}";
+  private getBrandsRuleFilters = this.apiBase + "/api/RuleFilter/5";
+  private getColorsRuleFilters = this.apiBase + "/api/RuleFilter/3";
+  private getFeaturesRuleFilters = this.apiBase + "/api/RuleFilter/2";
+  private getSizesRuleFilters = this.apiBase + "/api/RuleFilter/4";
 
   constructor(
     private http: HttpClient
@@ -114,8 +114,8 @@ export class MarketplacesService {
     }));
   }
 
-  getRulesConfigurations(): Observable<any> {
-    return this.http.get<any>(this.getRulesConfigurationsUrl, {}).pipe(map(response => {
+  getRulesConfigurations(market): Observable<any> {
+    return this.http.get<any>(this.getRulesConfigurationsUrl + market, {}).pipe(map(response => {
       return response;
     }));
   }
@@ -132,7 +132,7 @@ export class MarketplacesService {
     }));
   }
 
-  updateRulesConfigurations(ruleConfigurationId: number, data): Observable<any> {
+  updateRulesConfigurations(ruleConfigurationId, data): Observable<any> {
     return this.http.put<any>(this.updateRulesConfigurationsUrl.replace('{{id}}', ruleConfigurationId.toString()), data, {}).pipe(map(response => {
       return response;
     }));

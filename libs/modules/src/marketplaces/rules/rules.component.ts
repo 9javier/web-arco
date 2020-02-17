@@ -25,21 +25,22 @@ export class RulesComponent implements OnInit {
   private dataSourceRulesStocks;
   private displayedStocksColumns;
 
-  private rulesConfigurations = [];
-  private numberOfProducts: number;
+  private market = "";
 
   constructor(
     private route: ActivatedRoute,
     private modalController: ModalController,
     private marketplacesService: MarketplacesService,
-    private marketplacesMgaService: MarketplacesMgaService
   ) {
-    console.log(this.route.snapshot.data['name']);
+    console.log();
+    switch (this.route.snapshot.data['name']) {
+      case "Miniprecios":
+        this.market = "1";
+        break;
+    }
   }
 
   ngOnInit() {
-
-    // LLAMAR AL ENDPOINT PARA RECOGER LOS DATOS. UNA VEZ OBTENIDOS, HABRÁ QUE AÑADIR CÓDIGO PARA CLASIFICAR LAS REGLAS SEGÚN SU TIPO DE FILTRO
 
     this.dataSourceCategories = [];
     this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
@@ -53,161 +54,75 @@ export class RulesComponent implements OnInit {
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
     this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
 
-    this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
-      this.numberOfProducts = count;
-    });
-
-    this.marketplacesService.getRulesConfigurations().subscribe(data => {
-      data.forEach(rule => {
-        if(rule.rulesFilters && rule.rulesFilters.length > 0) {
-          this.rulesConfigurations.push(rule);
-        }
-      });
-      console.log('data RulesConfigurations', this.rulesConfigurations);
-      this.rulesConfigurations.forEach(ruleConfiguration => {
-        ruleConfiguration['products'] = this.numberOfProducts;
-        switch (ruleConfiguration.rulesFilters[0].dataGroup) {
-          case 'categories':
-            this.dataSourceCategories.push(ruleConfiguration);
-            this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
-            break;
-          case 'enabling':
-            this.dataSourceEnabling.push(ruleConfiguration);
-            this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
-            break;
-          case 'stock':
-            this.dataSourceStocks.push(ruleConfiguration);
-            this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
-            break;
-        }
-      });
-    })
-
-   
-
-
-
-
-    /*this.marketplacesService.getRulesFilter().subscribe(data => {
-      console.log('data RuleFilter', data);
-      if (data) {
-        /!*data.forEach(rule => {
-          if(rule.ruleFilterType == 1) {
-            const dataCategoriesGet = this.dataSourceRulesCategories.data;
-            let category = {
-              id: rule.id,
-              name: rule.name,
-              action: "categories",
-              filterType: "category",
-              categoriesFilter: [
-                {id: 78, group: 2, name: rule.dataGroup}
-              ],
-              minPriceFilter: "0.00",
-              stockFilter: 0,
-              products: 10,
-              destinationCategories: [],
-              stockToReduce: 0
-            };
-
-            dataCategoriesGet.push(category);
-            this.dataSourceRulesCategories.data = dataCategoriesGet;
-          } else if(rule.ruleFilterType == 2) {
-            const dataPricesGet = this.dataSourceRulesPrice.data;
-            let price = {
-              id: rule.id,
-              name: rule.name,
-              filterType: "price",
-              action: "categories",
-              categoriesFilter: [
-                {id: 78, group: 2, name: rule.dataGroup}
-              ],
-              minPriceFilter: rule.dataGroup,
-              stockFilter: 0,
-              products: 10,
-              destinationCategories: [],
-              stockToReduce: 0
-            };
-
-            dataPricesGet.push(price);
-            this.dataSourceRulesPrice.data = dataPricesGet;
-          } else if(rule.ruleFilterType == 3) {
-            const dataStocksGet = this.dataSourceRulesStocks.data;
-            let stock = {
-              id: rule.id,
-              name: rule.name,
-              filterType: "stock",
-              action: "stock",
-              categoriesFilter: [],
-              minPriceFilter: "0.00",
-              stockFilter: rule.dataGroup,
-              products: 100,
-              destinationCategories: [],
-              stockToReduce: 5
-            };
-
-            dataStocksGet.push(stock);
-            this.dataSourceRulesStocks.data = dataStocksGet;
-          }
-        })*!/
-      } else {
-        console.log('error get rules filter')
-      }
-    });
-    this.marketplacesService.getRulesFilterTypes().subscribe(data => {
-      console.log('data RuleFilterType', data);
-      /!*if(data) {
-        console.log(data)
-      } else {
-        console.log('error get rules filter')
-      }*!/
-    });*/
-
-    /*this.marketplacesService.getRulesConfigurations().subscribe(data => {
-      console.log(data);
-    })*/
-
     this.getValues();
 
   }
 
   getValues() {
-    let rules = JSON.parse(localStorage.getItem("rules"));
-    if (rules) {
-      for (let rule of rules.rule) {
-        switch (rule.filterType) {
-          case "categories":
-            this.dataSourceCategories.push(rule);
-            break;
+    this.dataSourceEnabling = [];
+    this.marketplacesService.getRulesConfigurations(this.market).subscribe((data: any) => {
+      if (data && data.length) {
+        for (let ruleConfiguration of data) {
+          let rule = {
+            id: ruleConfiguration.id,
+            name: ruleConfiguration.name,
+            filterType: "enabling",
+            categoriesFilter: [],
+            minPriceFilter: "0.00",
+            maxPriceFilter: "0.00",
+            stockFilter: 0,
+            products: 132824,
+            destinationCategories: [],
+            stockToReduce: 0,
+            referencesExceptions: [],
+            description: ruleConfiguration.description
+          };
 
-          case "enabling":
-            this.dataSourceEnabling.push(rule);
-            break;
+          if (ruleConfiguration.rulesFilters) {
+            for (let ruleFilter of ruleConfiguration.rulesFilters) {
+              let category = {
+                id: ruleFilter.id,
+                name: ruleFilter.name,
+                externalId: ruleFilter.externalId,
+                type: ruleFilter.ruleFilterType,
+                group: 0
+              };
+              switch (ruleFilter.ruleFilterType) {
+                case 2:
+                  category.group = ruleConfiguration.dataGroup;
+                  break;
+                case 3:
+                  category.group = 16;
+                  break;
+                case 4:
+                  category.group = 17;
+                  break;
+                case 5:
+                  category.group = 15;
+                  break;
+              }
+              rule.categoriesFilter.push(category);
+            }
+          }
 
-          case "stock":
-            this.dataSourceStocks.push(rule);
-            break;
+          if (ruleConfiguration.referenceExceptions) {
+            for (let exception of ruleConfiguration.referenceExceptions) {
+              rule.referencesExceptions.push(
+                {
+                  reference: exception.reference,
+                  type: exception.exceptionType ? "include" : "exclude"
+                }
+              );
+            }
+          }
+
+          this.dataSourceEnabling.push(rule);
+
         }
-        this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
-        this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
-        this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
-      }
-    }
-  }
 
-  postInJosn() {
-    let rules = {
-      "rule": []
-    };
-    for (let cat of this.dataSourceCategories) {
-      rules.rule.push(cat);
-    }
-    for (let cat of this.dataSourceEnabling) {
-      rules.rule.push(cat);
-    }
-    for (let cat of this.dataSourceStocks) {
-      rules.rule.push(cat);
-    }
-    localStorage.setItem("rules", JSON.stringify(rules));
+        this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
+      }
+    });
   }
 
   async openModalNewRule(ruleFilterType): Promise<void> {
@@ -222,26 +137,70 @@ export class RulesComponent implements OnInit {
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
 
-        console.log("REGLA CREADA --> ", data.data);
+        let ruleConfiguration = {
+          name: data.data.name,
+          description: data.data.description,
+          status: 1,
+          rulesFilterIds: [],
+          marketsIds: [
+            this.market
+          ],
+          referenceExceptions: {},
+          ruleDataValidactionAttributes: [
+          ]
+        };
 
-        /*console.log(data.data);
-
-        let filterType = "0";
-
-        switch (data.data.filterType) {
-          case 'categories':
-            filterType = "1";
-            break;
-          case 'enabling':
-            filterType = "2";
-            break;
-          case 'stock':
-            filterType = "3";
-            break;
+        for (let category of data.data.categoriesFilter) {
+          switch (category.type) {
+            case 2:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  dataGroup: category.group,
+                  status: 1
+                }
+              );
+              break;
+            case 3:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  status: 1
+                }
+              );
+              break;
+            case 4:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  status: 1
+                }
+              );
+              break;
+            case 5:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  status: 1
+                }
+              );
+              break;
+          }
         }
 
         let exceptions = {};
-
         data.data.referencesExceptions.forEach(item => {
           if (item.type == 'include') {
             exceptions[item.reference] = 1;
@@ -249,133 +208,20 @@ export class RulesComponent implements OnInit {
             exceptions[item.reference] = 0;
           }
         });
+        
+        ruleConfiguration.referenceExceptions = exceptions;
 
-        let rulesFilters = [];
-        let ruleFiltersConfig = [];
-
-        data.data.categoriesFilter.forEach(item => {
-          ruleFiltersConfig.push({
-            name: item.name,
-            ruleFilterType: item.group,
-            externalId: item.id,
-            dataGroup: data.data.filterType,
-            status: 1
-          });
-
-          rulesFilters.push(
-            {
-              filterToAdd: {
-                name: item.name,
-                ruleFilterType: item.group,
-                externalId: item.id,
-                dataGroup: data.data.filterType,
-                status: 1
-              },
-              marketsIds: [
-                "1"
-              ]
-            }
-          );
+        this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
+          this.getValues();
         });
-
-        rulesFilters.forEach(item => {
-          this.marketplacesService.postRulesFilter(item).subscribe(data => {
-            console.log(data)
-          });
-        });
-
-        let dataRuleConfiguration = {
-          name: data.data.name,
-          description: data.data.name,
-          status: 1,
-          rulesFilterIds: ruleFiltersConfig,
-          marketsIds: [
-            "1"
-          ],
-          referenceExceptions: exceptions,
-          ruleDataValidactionAttributes: []
-        };
-
-        console.log(dataRuleConfiguration)
-
-        this.marketplacesService.postRulesConfigurations(dataRuleConfiguration).subscribe(data => {
-          console.log(data)
-        });*/
-
-        this.temporalAddNeRule(data.data); // FUNCIÓN TEMPORAL PARA QUE SE VEA EN EL FRONT LA NUEVA REGLA CREADA. BORRAR LUEGO
-
-        // LLAMAR AL ENDPOINT PARA INSERTAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
-        // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS CON UNA CONSULTA. TRAER EL ID AUTOGENERADO
       }
     });
 
     modal.present();
   }
 
-  // BORRAR LUEGO /////////////////////////////////////////////////////////////
-  temporalAddNeRule(rule) {
-
-    let maxIdCategory = 0;
-    let maxIdEnabling = 0;
-    let maxIdStock = 0;
-
-    this.dataSourceCategories.map((existingRule) => {
-      if (existingRule.id > maxIdCategory) {
-        maxIdCategory = existingRule.id;
-      }
-    });
-
-    this.dataSourceEnabling.map((existingRule) => {
-      if (existingRule.id > maxIdEnabling) {
-        maxIdEnabling = existingRule.id;
-      }
-    });
-
-    this.dataSourceStocks.map((existingRule) => {
-      if (existingRule.id > maxIdStock) {
-        maxIdStock = existingRule.id;
-      }
-    });
-
-    let maxId = Math.max(maxIdCategory, maxIdEnabling, maxIdStock);
-
-    rule.id = maxId + 1;
-
-    switch (rule.filterType) {
-      case 'categories':
-
-        this.dataSourceCategories.push(rule);
-        this.dataSourceCategories.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
-
-        break;
-
-      case 'enabling':
-
-        this.dataSourceEnabling.push(rule);
-        this.dataSourceEnabling.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
-
-        break;
-
-      case 'stock':
-
-        this.dataSourceStocks.push(rule);
-        this.dataSourceStocks.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
-        this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
-
-        break;
-    }
-
-    this.postInJosn();
-
-  }
-
-  //////////////////////////////////////////////////////////////////////////////
-
   async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
-    console.log(rule.referenceExceptions)
     let modal = await this.modalController.create({
       component: NewRuleComponent,
       componentProps: {
@@ -394,26 +240,73 @@ export class RulesComponent implements OnInit {
       }
     });
     modal.onDidDismiss().then((data) => {
-      if (data.data) {
+      if (data && data.data) {
 
-        let editedRule = data.data;
+        let ruleConfiguration = {
+          id: ruleToEdit.id,
+          name: data.data.name,
+          description: data.data.description,
+          status: 1,
+          rulesFilterIds: [],
+          marketsIds: [
+            this.market
+          ],
+          referenceExceptions: {},
+          ruleDataValidactionAttributes: [
+          ]
+        };
 
-        let filterType = 0;
-
-        switch (data.data.filterType) {
-          case 'categories':
-            filterType = 1;
-            break;
-          case 'enabling':
-            filterType = 2;
-            break;
-          case 'stock':
-            filterType = 3;
-            break;
+        for (let category of data.data.categoriesFilter) {
+          switch (category.type) {
+            case 2:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  dataGroup: category.group,
+                  status: 1
+                }
+              );
+              break;
+            case 3:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  status: 1
+                }
+              );
+              break;
+            case 4:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  status: 1
+                }
+              );
+              break;
+            case 5:
+              ruleConfiguration.rulesFilterIds.push(
+                {
+                  id: category.id,
+                  name: category.name,
+                  ruleFilterType: category.type,
+                  externalId: category.externalId,
+                  status: 1
+                }
+              );
+              break;
+          }
         }
 
         let exceptions = {};
-
         data.data.referencesExceptions.forEach(item => {
           if (item.type == 'include') {
             exceptions[item.reference] = 1;
@@ -422,120 +315,14 @@ export class RulesComponent implements OnInit {
           }
         });
 
-        let rulesFilters = [];
+        ruleConfiguration.referenceExceptions = exceptions;
 
-        data.data.categoriesFilter.forEach(item => {
-          rulesFilters.push({
-            name: item.name,
-            ruleFilterType: item.group,
-            externalId: item.id,
-            dataGroup: filterType,
-            status: 0
-          })
+        this.marketplacesService.updateRulesConfigurations(ruleToEdit.id, ruleConfiguration).subscribe(data => {
+          this.getValues();
         });
-
-        let dataRuleConfiguration = {
-          name: data.data.name,
-          description: data.data.description,
-          status: 1,
-          rulesFilterIds: rulesFilters,
-          marketsIds: [
-            "1"
-          ],
-          referenceExceptions: exceptions,
-          ruleDataValidactionAttributes: []
-        }
-
-        console.log(dataRuleConfiguration)
-
-
-        /*this.marketplacesService.postRulesConfigurations(dataToSend).subscribe(data => {
-          console.log(data)
-        })*/
-
-        console.log(ruleToEdit, editedRule);
-
-        if (!this.checkForRuleEdition(ruleToEdit, editedRule)) {
-
-          // EL SIGUIENTE BLOQUE ES ALGO TEMPORAL PARA ACTUALIZAR EN EL FRONT LAS LISTAS DE REGLAS. EN UN FUTURO SE MANDARA LA REGLA EDITADA A LA API Y ALLI SE ACTUALIZARÁ, Y A CONTINUACIÓN SE HARÁ LA CONSULTA DE LA LISTA DE NUEVO PARA QUE YA RECOGA EL DATO ACTUALIZADO DESDE LAS TABLAS
-
-          switch (ruleToEdit.filterType) {
-            case 'categories':
-
-              this.dataSourceCategories[this.dataSourceCategories.map(cat => cat.id).indexOf(ruleToEdit.id)] = editedRule;
-              this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
-
-              break;
-
-            case 'enabling':
-
-              this.dataSourceEnabling[this.dataSourceEnabling.map(cat => cat.id).indexOf(ruleToEdit.id)] = editedRule;
-              this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
-
-              break;
-
-            case 'stock':
-
-              this.dataSourceStocks[this.dataSourceStocks.map(cat => cat.id).indexOf(ruleToEdit.id)] = editedRule;
-              this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
-
-              break;
-          }
-
-          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-          // LLAMAR AL ENDPOINT PARA ACTUALIZAR EN BBDD. ADAPTAR LOS DATOS LO QUE SEA NECESARIO.
-          // HACER TAMBIÉN LLAMADA AL ENDPOINT PARA ACTUALIZAR LAS LISTAS DE LAS TABLAS DE REGLAS
-
-        }
-        this.postInJosn();
       }
     });
     modal.present();
-  }
-
-  checkForRuleEdition(rule, editedRule) {
-
-    return false;
-
-    if (rule.name == editedRule.name && rule.action == editedRule.action && rule.minPriceFilter == editedRule.minPriceFilter && rule.stockFilter == editedRule.stockFilter && rule.products == editedRule.products && rule.stockToReduce == editedRule.stockToReduce) {
-      if (rule.categoriesFilter.length != editedRule.categoriesFilter.length) {
-        return false;
-      }
-
-      if (rule.destinationCategories.length != editedRule.destinationCategories.length) {
-        return false;
-      }
-
-      if (rule.categoriesFilter.length) {
-        rule.categoriesFilter.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-        editedRule.categoriesFilter.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-
-        for (let i = 0; i < rule.categoriesFilter.length; i++) {
-          if (rule.categoriesFilter[i].id != editedRule.categoriesFilter[i].id) {
-            return false;
-          }
-        }
-
-      }
-      if (rule.destinationCategories.length) {
-        rule.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-        editedRule.destinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-
-        for (let i = 0; i < rule.destinationCategories.length; i++) {
-          if (rule.destinationCategories[i].id != editedRule.destinationCategories[i].id) {
-            return false;
-          }
-        }
-
-      }
-
-      return true;
-
-    } else {
-      return false;
-    }
   }
 
 }
