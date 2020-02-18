@@ -52,6 +52,7 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
 
   onKeyPress = (button: string) => {
     if (button === "{shift}" || button === "{lock}") this.handleShift();
+    if (!this.type && button === "{enter}") this.selectItem(this.searchTerm);
   };
 
   handleShift = () => {
@@ -65,6 +66,14 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setFilteredItems();
+  }
+
+  itemClick(item){
+    if(this.type == 5){
+      this.selectItem(item.value)
+    } else{
+      this.selectItem(item.id)
+    }
   }
 
   async selectItem(id: any) {
