@@ -45,6 +45,12 @@
       tr {
         height: 30px;
 
+        &:first-of-type {
+          td {
+            border-top: none;
+          }
+        }
+
         td {
           padding: 0!important;
           width: 10%;
@@ -60,14 +66,16 @@
           overflow-x: hidden;
           text-align: center;
           vertical-align: middle;
-
+          border-top: 1px solid #ccc;
+          
           &:first-of-type {
             padding: 0 5px!important;
             width: fit-content;
             border-right: none;
             margin-bottom: 0;
             background-color: #fff;
-
+            border-top: none;
+            
             ion-checkbox {
               --size: 20px;
               --border-width: 1px;
@@ -102,6 +110,7 @@
             border-bottom: none;
             border-right: 1px solid #c7c8ce;
             vertical-align: top;
+            border-top: none;
 
             span {
               background-color: #f5f4f6;
