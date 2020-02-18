@@ -4,7 +4,7 @@
     <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
       <ng-container matColumnDef="references">
         <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Articulo
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Articulo'"
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Artículos'"
                              [listItems]="entities.references"
                              [isFiltering]="isFilteringReferences != entities.references.length"
                              (applyFilters)="applyFilters($event, 'references')">
@@ -36,13 +36,14 @@
       </ng-container>
 
       <ng-container matColumnDef="date_service">
-        <mat-header-cell class="my-sticky-col info type-360" *matHeaderCellDef mat-sort-header>Fecha de servicio</mat-header-cell>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateServices [title]="'Fecha de servicio'"
-                             [listItems]="entities.date_service"
-                             [isFiltering]="isFilteringDateServices != entities.date_service.length"
-                             (applyFilters)="applyFilters($event, 'date_service')">
-        </suite-filter-button>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-360">{{element.date_service | date:"dd/MM/yyyy"}}  </mat-cell>
+        <mat-header-cell class="my-sticky-col info type-360" *matHeaderCellDef mat-sort-header>Fecha de servicio
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateServices [title]="'Fecha de servicio'"
+                               [listItems]="entities.date_service"
+                               [isFiltering]="isFilteringDateServices != entities.date_service.length"
+                               (applyFilters)="applyFilters($event, 'date_service')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-360">{{element.date_service | date:"DD/MM/YYYY"}}  </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="brands">

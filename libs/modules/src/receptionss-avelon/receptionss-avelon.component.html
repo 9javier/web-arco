@@ -62,12 +62,13 @@
       </ng-container>
 
       <ng-container matColumnDef="date_service">
-        <mat-header-cell class="my-sticky-col info type-360" *matHeaderCellDef mat-sort-header>Fecha de servicio</mat-header-cell>
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateServices [title]="'Fecha de Servicio'"
-                             [listItems]="entities.date_service"
-                             [isFiltering]="isFilteringDateServices != entities.date_service.length"
-                             (applyFilters)="applyFilters($event, 'date_service')">
-        </suite-filter-button>
+        <mat-header-cell class="my-sticky-col info type-360" *matHeaderCellDef mat-sort-header>Fecha de servicio
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDateServices [title]="'Fecha de servicio'"
+                               [listItems]="entities.date_service"
+                               [isFiltering]="isFilteringDateServices != entities.date_service.length"
+                               (applyFilters)="applyFilters($event, 'date_service')">
+          </suite-filter-button>
+        </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info type-360">{{element.date_service | date:"dd/MM/yyyy"}}  </mat-cell>
       </ng-container>
 

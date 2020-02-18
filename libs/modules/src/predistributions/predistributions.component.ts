@@ -480,7 +480,7 @@ export class PredistributionsComponent implements OnInit {
             this.form.value.date_service = dateServicesFiltered;
             this.isFilteringDateServices = dateServicesFiltered.length;
           } else {
-            this.form.value.date_service = [99999];
+            this.form.value.date_service = ['99999'];
             this.isFilteringDateServices = this.date_service.length;
           }
         }
