@@ -163,7 +163,9 @@ export class HistoryWarehouseNMComponent implements OnInit {
     private printerService: PrinterService,
     private usersService: UsersService,
     private permisionService: PermissionsService
-  ) {}
+  ) {
+    this.isMobileApp = typeof window.cordova !== "undefined";
+  }
 
   ngOnInit() {
     this.getCarriers();
@@ -699,7 +701,7 @@ export class HistoryWarehouseNMComponent implements OnInit {
     this.pauseListenFormChange = true;
     let typesList: any[] = [];
     listHistory.forEach(key => {
-      if(!typesList.find( f => f.value == key['type'])) {
+      if(!typesList.find( f => f.value == key['type'].name)) {
         typesList.push({value: key['type'].name});
       }
     });
@@ -749,7 +751,7 @@ export class HistoryWarehouseNMComponent implements OnInit {
     this.pauseListenFormChange = true;
     let datesSendList: any[] = [];
     listHistory.forEach(key => {
-      if(!datesSendList.find( f => f.value == key['dateSend'])) {
+      if(!datesSendList.find( f => f.value == this.dateTimeParserService.dateTime(key['dateSend']))) {
         datesSendList.push({value: this.dateTimeParserService.dateTime(key['dateSend'])});
       }
     });
@@ -766,8 +768,10 @@ export class HistoryWarehouseNMComponent implements OnInit {
     this.pauseListenFormChange = true;
     let datesReceiveList: any[] = [];
     listHistory.forEach(key => {
-      if(!datesReceiveList.find( f => f.value == key['dateReceive'])) {
-        datesReceiveList.push({value: this.dateTimeParserService.dateTime(key['dateReceive'])});
+      if(!datesReceiveList.find( f => f.value == this.dateTimeParserService.dateTime(key['dateReceive']))) {
+        if(key['dateReceive']) {
+          datesReceiveList.push({value: this.dateTimeParserService.dateTime(key['dateReceive'])});
+        }
       }
     });
     if(stable == true) {
@@ -808,6 +812,26 @@ export class HistoryWarehouseNMComponent implements OnInit {
       formToExcel.pagination.limit = 0;
       formToExcel.warehouse = this.whsCode;
     }
+
+    if(this.isFilteringReferences == this.references.length){
+      formToExcel.references = null;
+    }
+    if(this.isFilteringTypes == this.types.length){
+      formToExcel.types = null;
+    }
+    if(this.isFilteringOrigins == this.origins.length){
+      formToExcel.origins = null;
+    }
+    if(this.isFilteringDestinies == this.destinies.length){
+      formToExcel.destinies = null;
+    }
+    if(this.isFilteringDatesSend == this.datesSend.length) {
+      formToExcel.datesSend = null;
+    }
+    if(this.isFilteringDatesReceive == this.datesReceive.length){
+      formToExcel.datesReceive = null;
+    }
+
     this.carrierService.getFileExcell(formToExcel).pipe(
       catchError(error => of(error)),
       // map(file => file.error.text)

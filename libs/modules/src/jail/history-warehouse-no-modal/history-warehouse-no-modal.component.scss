@@ -5,11 +5,29 @@ table {
 }
 
 table.mat-table {
-  th {
+  th.mobile {
+    padding-right: 0px;
+    min-width: 100px;
     padding-left: 2px;
+    font-size: 14px;
   }
-  td {
+  td.mobile {
+    padding-right: 0px;
+    min-width: 100px;
     padding-left: 2px;
+    font-size: 14px;
+  }
+  th.normal {
+    padding-right: 0px;
+    min-width: 100px;
+    padding-left: 16px;
+    font-size: 14px;
+  }
+  td.normal {
+    padding-right: 0px;
+    min-width: 100px;
+    padding-left: 16px;
+    font-size: 14px;
   }
 }
 
@@ -22,60 +40,7 @@ table.mat-table {
 }
 
 div.table-container {
-    table.table-incidences {
-        width: 100%;
-        tr.incidence-row:not(.incidence-expanded-row):hover {
-            background: #EEEEEE;
-        }
-        tr.incidence-row:not(.incidence-expanded-row):active {
-            background: #efefef;
-        }
-        .incidence-row td {
-            border-bottom-width: 0;
-        }
-        tr.incidence-detail-row {
-            height: 0px !important;
-        }
-        td.incidence-column {
-            padding: 0 0 0 64px;
-            .incidence-detail {
-                overflow: hidden;
-                display: flex;
-            }
-            .example-element-description {
-                padding: 0 10px;
-            }
-            .example-element-description-attribution {
-                opacity: 0.5;
-            }
-        }
-        td.btn-attend {
-            text-align: end;
-            p.time-text {
-                font-size: 0.8em;
-                margin-top: 0;
-                color: var(--ion-color-secondary-shade);
-            }
-        }
-
-      th {
-        i.settings-header {
-          font-size: 20px;
-        }
-      }
-      .left-border {
-        border-left: 1px solid var(--ion-color-primary);
-      }
-      .center-content {
-        text-align: center;
-      }
-      .right-content {
-        text-align: right;
-      }
-      .right-space {
-        padding-right: 12px;
-      }
-    }
+  overflow-x: auto;
 }
 
 tr.example-detail-row {
@@ -131,19 +96,23 @@ i.warning-icon {
   cursor: default;
 }
 
-.footer-products {
-   position: fixed;
-   width: 100%;
-   bottom: 0;
-   .horizontal-fab {
-     display: flex;
-     flex: 1;
-     flex-direction: row;
-     ion-fab-button {
-       margin-left: 16px;
-     }
-   }
- }
+suite-filter-button{
+  text-align: end;
+  padding-right: 8px;
+  display: table-cell;
+}
+
+.horizontal-fab {
+  position: fixed;
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-bottom: 40px;
+  margin-right: 16px;
+  ion-fab-button {
+    margin-left: 16px;
+  }
+}
 
 .footer-products:before {
   background: none;
@@ -167,13 +136,13 @@ ion-modal{
 }
 
 .form-fields {
-  padding-top: 20px;
+  padding-top: 10px;
 
-  .content-select {
-    padding-top: 20px;
+  .content-select-mobile {
+    padding-top: 5px;
 
     ion-label.title-select {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
       margin-left: 35px;
     }
@@ -208,7 +177,46 @@ ion-modal{
     }
   }
 
-  .content-info {
+  .content-select-normal {
+    padding-top: 5px;
+
+    ion-label.title-select {
+      font-size: 14px;
+      font-weight: 500;
+      margin-left: 35px;
+    }
+
+    ion-item.content-icon-select {
+      --border-style: none;
+      --border-width: 0;
+      margin-top: 10px;
+      --padding-start: 0;
+      --inner-padding-end: 0px;
+
+      ion-icon {
+        color: #000000;
+      }
+
+      ion-icon, .material-icons {
+        margin-inline-end: 10px;
+      }
+
+      ion-item {
+        width: 100%;
+
+        ion-select {
+          padding-left: 1px;
+          font-size: 14px;
+          width: 100%;
+          max-width: 100%;
+          --padding-start: 0;
+
+        }
+      }
+    }
+  }
+
+  .content-info-mobile {
 
     ion-item.item-text-wrap {
       padding-left: 0px;
@@ -222,6 +230,24 @@ ion-modal{
       ion-title {
         padding-left: 0px;
         font-size: 12px;
+      }
+    }
+  }
+
+  .content-info-normal {
+
+    ion-item.item-text-wrap {
+      padding-left: 0px;
+      font-size: 14px;
+
+
+      ion-select {
+        padding-left: 0px;
+      }
+
+      ion-title {
+        padding-left: 0px;
+        font-size: 14px;
       }
     }
   }
@@ -240,10 +266,4 @@ span {
   text-align: left;
   display: table-cell;
   vertical-align: middle;
-}
-
-suite-filter-button{
-  text-align: end;
-  padding-right: 8px;
-  display: table-cell;
 }
