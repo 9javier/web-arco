@@ -522,21 +522,21 @@ export class ReceptionssAvelonComponent implements OnInit {
           }
         }
         break;
-        case 'date_service':
+      case 'date_service':
         let dateServicesFiltered: number[] = [];
-        for (let dateServices of filters) {
-          if (dateServices.checked) dateServicesFiltered.push(dateServices.id);
+        for (let date_service of filters) {
+          if (date_service.checked) dateServicesFiltered.push(date_service.id);
         }
 
         if (dateServicesFiltered.length >= this.date_service.length) {
-          this.form.value.dateServices = [];
+          this.form.value.date_service = [];
           this.isFilteringDateServices = this.date_service.length;
         } else {
           if (dateServicesFiltered.length > 0) {
-            this.form.value.dateServices = dateServicesFiltered;
+            this.form.value.date_service = dateServicesFiltered;
             this.isFilteringDateServices = dateServicesFiltered.length;
           } else {
-            this.form.value.dateServices = [99999];
+            this.form.value.date_service = ['99999'];
             this.isFilteringDateServices = this.date_service.length;
           }
         }
