@@ -341,7 +341,7 @@ export class MenuComponent implements OnInit {
           title: 'Prioridad de Tienda',
           id: 'store-priority',
           url: '/marketplaces/store-priority',
-          icon: 'document'
+          icon: 'ios-albums'
         }
       ]
     },
