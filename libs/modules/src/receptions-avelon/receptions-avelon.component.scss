@@ -6,3 +6,46 @@
   border: 1px solid #dedede !important;
   z-index: 1 !important;
 }
+
+#pictureContainer{
+  border-color: lightgray;
+  border-style: solid;
+  border-width: 3px;
+  div {
+    padding-top: 100%;
+    position: relative;
+    ion-img{
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+}
+
+#sizeContainer{
+  padding-left: 10px;
+}
+
+#printContainer{
+  position: relative;
+  #refresh{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  #print{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+#providerSelector{
+  width: 100%;
+}
+
+#providerKeyboard{
+  position: absolute;
+  right: 10px;
+  top: 20px;
+}
