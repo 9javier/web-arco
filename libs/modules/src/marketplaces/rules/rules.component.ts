@@ -20,9 +20,9 @@ export class RulesComponent implements OnInit {
   private dataSourceRulesEnabling;
   private displayedEnablingColumns;
 
-  private dataSourceStocks;
+  /*private dataSourceStocks;
   private dataSourceRulesStocks;
-  private displayedStocksColumns;
+  private displayedStocksColumns;*/
 
   private market = "";
 
@@ -31,7 +31,6 @@ export class RulesComponent implements OnInit {
     private modalController: ModalController,
     private marketplacesService: MarketplacesService,
   ) {
-    console.log();
     switch (this.route.snapshot.data['name']) {
       case "Miniprecios":
         this.market = "1";
@@ -49,9 +48,9 @@ export class RulesComponent implements OnInit {
     this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
     this.displayedEnablingColumns = ['name', 'categories', 'products', 'edit'];
 
-    this.dataSourceStocks = [];
+    /*this.dataSourceStocks = [];
     this.dataSourceRulesStocks = new MatTableDataSource(this.dataSourceStocks);
-    this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];
+    this.displayedStocksColumns = ['name', 'stock', 'products', 'edit'];*/
 
     this.getValues();
 
@@ -69,10 +68,10 @@ export class RulesComponent implements OnInit {
             categoriesFilter: [],
             minPriceFilter: "0.00",
             maxPriceFilter: "0.00",
-            stockFilter: 0,
+            // stockFilter: 0,
             products: 132824,
             destinationCategories: [],
-            stockToReduce: 0,
+            // stockToReduce: 0,
             referencesExceptions: [],
             description: ruleConfiguration.description
           };
@@ -229,10 +228,10 @@ export class RulesComponent implements OnInit {
         selectedCategories: rule.categoriesFilter,
         minPriceFilter: rule.minPriceFilter,
         maxPriceFilter: rule.maxPriceFilter,
-        stockFilter: rule.stockFilter,
+        // stockFilter: rule.stockFilter,
         numberOfProducts: rule.products,
         selectedDestinationCategories: rule.destinationCategories,
-        stockToReduce: rule.stockToReduce,
+        // stockToReduce: rule.stockToReduce,
         referencesExceptions: rule.referencesExceptions,
         id: rule.id,
         mode: 'edit'

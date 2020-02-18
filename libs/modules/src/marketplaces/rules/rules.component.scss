@@ -86,9 +86,12 @@
 
           & > table {
             width: 100%;
+            display: flex;
+            flex-direction: column;
 
             tr {
               height: fit-content;
+              display: flex;
 
               td {
                 padding: 5px 0!important;
@@ -96,8 +99,6 @@
                 border-top: none;
                 border-bottom: none;
                 color: #000;
-                white-space: nowrap;
-                text-overflow: ellipsis;
                 overflow-x: hidden;
                 text-align: left;
                 vertical-align: middle;
@@ -107,6 +108,10 @@
                   background-color: #f5f4f6;
                   display: block;
                   height: 36px;
+                  overflow-x: hidden;
+                  overflow-y: hidden;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
 
                   .capitalized-property {
                     text-transform: capitalize;
@@ -133,7 +138,7 @@
                 }
 
                 &.mp-rules-table-edit-column {
-                  width: fit-content;
+                  width: 45px;
 
                   span {
                     text-align: center;
@@ -178,7 +183,7 @@
                   }
 
                   &.mp-rules-table-edit-column {
-                    width: fit-content;
+                    width: 45px;
                   }
 
                 }
@@ -204,4 +209,30 @@
 
   }
 
+}
+
+@media (max-width: 749px) {
+  .mp-rules-wrapper {
+
+    & > mat-accordion {
+
+      & > mat-expansion-panel {
+
+        .mp-rules-expansion-panel-content {
+
+          & > div {
+
+            & > table {
+              width: 669px;
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
 }

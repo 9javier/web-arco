@@ -13,8 +13,8 @@ export class NewRuleComponent implements OnInit {
 
   @ViewChild('minPriceInput') minPriceInput;
   @ViewChild('maxPriceInput') maxPriceInput;
-  @ViewChild('stockInput') stockInput;
-  @ViewChild('reduceStockInput') reduceStockInput;
+  // @ViewChild('stockInput') stockInput;
+  // @ViewChild('reduceStockInput') reduceStockInput;
   @ViewChild('ruleNameWindow') ruleNameWindow;
   @ViewChild('includeReferenceInput') includeReferenceInput;
   @ViewChild('excludeReferenceInput') excludeReferenceInput;
@@ -34,9 +34,9 @@ export class NewRuleComponent implements OnInit {
   private minPriceFilter;
   private maxPriceFilter;
   private priceRange;
-  private stockFilter;
-  private stockToReduce;
-  private stockToReduceDescription;
+  // private stockFilter;
+  // private stockToReduce;
+  // private stockToReduceDescription;
   private filterDescription;
   private ruleName;
   private originalRuleName;
@@ -65,9 +65,9 @@ export class NewRuleComponent implements OnInit {
     this.minPriceFilter = '';
     this.maxPriceFilter = '';
     this.priceRange = '';
-    this.stockFilter = '';
-    this.stockToReduce = '';
-    this.stockToReduceDescription = '';
+    // this.stockFilter = '';
+    // this.stockToReduce = '';
+    // this.stockToReduceDescription = '';
     this.selectedCategories = [];
     this.ruleName = '';
     this.referencesExceptions = [];
@@ -327,15 +327,15 @@ export class NewRuleComponent implements OnInit {
         this.selectedCategories = this.navParams.get('selectedCategories');
         this.minPriceFilter = this.navParams.get('minPriceFilter') == 0 ? '' : this.navParams.get('minPriceFilter');
         this.maxPriceFilter = this.navParams.get('maxPriceFilter') == 0 ? '' : this.navParams.get('maxPriceFilter');
-        this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
+        // this.stockFilter = this.navParams.get('stockFilter') == 0 ? '' : this.navParams.get('stockFilter');
         this.numberOfProducts = this.navParams.get('numberOfProducts');
         this.selectedDestinationCategories = this.navParams.get('selectedDestinationCategories');
-        this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
+        // this.stockToReduce = this.navParams.get('stockToReduce') == 0 ? '' : this.navParams.get('stockToReduce');
         this.referencesExceptions = this.navParams.get('referencesExceptions') == [] ? [] : this.navParams.get('referencesExceptions');
 
-        if (this.ruleFilterType == 'stock') {
-          this.addReduceStockFilter();
-        }
+        // if (this.ruleFilterType == 'stock') {
+        //   this.addReduceStockFilter();
+        // }
 
         if (this.referencesExceptions && this.referencesExceptions.length) {
           for (let exception of this.referencesExceptions) {
@@ -411,9 +411,9 @@ export class NewRuleComponent implements OnInit {
             }
             break;
 
-          case 'stock':
-            this.addStockFilter();
-            break;
+          // case 'stock':
+          //   this.addStockFilter();
+          //   break;
         }
       } else {
         this.marketplacesMgaService.getTotalNumberOfProducts().subscribe(count => {
@@ -491,12 +491,10 @@ export class NewRuleComponent implements OnInit {
           }
         }
       }
-      console.log('this.selectedCategories', this.selectedCategories);
-      console.log('this.selectedDestinationCategories', this.selectedDestinationCategories);
 
     }
 
-    this.filterProducts('categories');
+    this.filterProducts();
     this.filterDescription = '';
     for (let category of this.selectedCategories) {
       let group = this.categoryList.find(x => x.id === category.group);
@@ -584,14 +582,12 @@ export class NewRuleComponent implements OnInit {
         }
       }
     }
-    this.filterProducts('categories');
+    this.filterProducts();
   }
 
   addIncludeReferenceToFilter() {
 
     this.includeReferenceArray = this.includeReferenceText.split(",");
-    console.log('this.includeReferenceText', this.includeReferenceText);
-    console.log('this.includeReferenceArray', this.includeReferenceArray);
 
     this.filterDescription = '';
 
@@ -924,7 +920,7 @@ export class NewRuleComponent implements OnInit {
     }
   }
 
-  formatStock() {
+  /*formatStock() {
     if (this.stockFilter == '') {
       return true;
     }
@@ -939,7 +935,7 @@ export class NewRuleComponent implements OnInit {
       this.stockFilter = '';
     }
     this.addStockFilter();
-    this.filterProducts('stock');
+    this.filterProducts();
   }
 
   addStockFilter() {
@@ -985,7 +981,7 @@ export class NewRuleComponent implements OnInit {
     if (e.key == "Enter") {
       this.reduceStockInput.nativeElement.blur();
     }
-  }
+  }*/
 
   selectCategoryRow(category) {
     if (this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
@@ -1005,16 +1001,8 @@ export class NewRuleComponent implements OnInit {
     return this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
-  filterProducts(filter) {
-    switch (filter) {
+  filterProducts() {
 
-      case 'categories':
-        // CONSULTA Y CONTEO DE LOS PRODUCTOS QUE TENGAN LAS CATEGORÍAS SELECCIONADAS
-        break;
-      case 'stock':
-        // CONSULTA Y CONTEO DE LOS PRODUCTOS QUE TENGAN UN STOCK IGUAL O MAYOR AL INTRODUCIDO
-        break;
-    }
   }
 
   createRule() {
@@ -1050,14 +1038,14 @@ export class NewRuleComponent implements OnInit {
 
         break;
 
-      case 'stock':
-
-        if (this.stockToReduce == '' || this.stockToReduce == 0 || !this.formatReduceStock() || this.stockFilter == '' || (parseInt(this.stockToReduce) > parseInt(this.stockFilter))) {
-          return false;
-        }
-        return this.formatStock();
-
-        break;
+      // case 'stock':
+      //
+      //   if (this.stockToReduce == '' || this.stockToReduce == 0 || !this.formatReduceStock() || this.stockFilter == '' || (parseInt(this.stockToReduce) > parseInt(this.stockFilter))) {
+      //     return false;
+      //   }
+      //   return this.formatStock();
+      //
+      //   break;
 
       default:
         return false;
@@ -1152,10 +1140,10 @@ export class NewRuleComponent implements OnInit {
             categoriesFilter: this.selectedCategories,
             minPriceFilter: this.minPriceFilter == '' ? '0.00' : this.minPriceFilter,
             maxPriceFilter: this.maxPriceFilter == '' ? '0.00' : this.maxPriceFilter,
-            stockFilter: 0,
+            // stockFilter: 0,
             products: this.numberOfProducts,
             destinationCategories: [],
-            stockToReduce: 0,
+            // stockToReduce: 0,
             referencesExceptions: this.referencesExceptions,
             description
           };
@@ -1236,31 +1224,31 @@ export class NewRuleComponent implements OnInit {
             categoriesFilter: this.selectedCategories,
             minPriceFilter: this.minPriceFilter == '' ? '0.00' : this.minPriceFilter,
             maxPriceFilter: this.maxPriceFilter == '' ? '0.00' : this.maxPriceFilter,
-            stockFilter: 0,
+            // stockFilter: 0,
             products: this.numberOfProducts,
             destinationCategories: this.selectedDestinationCategories,
-            stockToReduce: 0,
+            // stockToReduce: 0,
             referencesExceptions: this.referencesExceptions,
             description
           };
           break;
 
-        case 'stock':
-          description += this.stockFilter;
-          rule = {
-            name: this.ruleName,
-            filterType: this.ruleFilterType,
-            categoriesFilter: [],
-            minPriceFilter: '0.00',
-            maxPriceFilter: '0.00',
-            stockFilter: parseInt(this.stockFilter),
-            products: this.numberOfProducts,
-            destinationCategories: [],
-            stockToReduce: parseInt(this.stockToReduce),
-            referencesExceptions: [],
-            description
-          };
-          break;
+        // case 'stock':
+        //   description += this.stockFilter;
+        //   rule = {
+        //     name: this.ruleName,
+        //     filterType: this.ruleFilterType,
+        //     categoriesFilter: [],
+        //     minPriceFilter: '0.00',
+        //     maxPriceFilter: '0.00',
+        //     stockFilter: parseInt(this.stockFilter),
+        //     products: this.numberOfProducts,
+        //     destinationCategories: [],
+        //     stockToReduce: parseInt(this.stockToReduce),
+        //     referencesExceptions: [],
+        //     description
+        //   };
+        //   break;
       }
 
       this.renderer.setStyle(this.ruleNameWindow.nativeElement, 'display', 'none');
