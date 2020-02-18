@@ -13,7 +13,19 @@ export class CatalogMarketplacesComponent implements OnInit {
   private catalogTableData;
   private catalogTableHeader;
   private selectedProducts;
-  private selectsPlaceholders = ['Marketplaces', 'Descripción', 'Familia', 'Activos'];
+  private selectsPlaceholders = ['Marketplaces', 'Descripción', 'Familia'];
+  private tableValueSelect = [
+    {
+      name: 'Activos',
+      type: 1
+    },
+    {
+      name: 'Stocks',
+      type: 2
+    }
+  ];
+  private preselect = this.tableValueSelect[0].name;
+  private currentType: number = 1;
 
   constructor() { }
 
@@ -23,23 +35,59 @@ export class CatalogMarketplacesComponent implements OnInit {
         ref: 1,
         model: 'model1',
         brand: 'brand1',
-        ko: 'x',
-        mini: '',
-        amazon: 'x',
-        spartoo: '',
-        zalando: '',
-        cdiscount: 'x'
+        ko: {
+          symbol: '●',
+          stock: '120'
+        },
+        mini: {
+          symbol: '',
+          stock: ''
+        },
+        amazon: {
+          symbol: '●',
+          stock: ''
+        },
+        spartoo: {
+          symbol: '',
+          stock: '452'
+        },
+        zalando: {
+          symbol: '●',
+          stock: '788'
+        },
+        cdiscount: {
+          symbol: '',
+          stock: '58'
+        }
       },
       {
         ref: 2,
         model: 'model2',
         brand: 'brand2',
-        ko: 'x',
-        mini: 'x',
-        amazon: '',
-        spartoo: '',
-        zalando: 'x',
-        cdiscount: 'x'
+        ko: {
+          symbol: '',
+          stock: '120'
+        },
+        mini: {
+          symbol: '●',
+          stock: '234'
+        },
+        amazon: {
+          symbol: '●',
+          stock: '444'
+        },
+        spartoo: {
+          symbol: '●',
+          stock: ''
+        },
+        zalando: {
+          symbol: '●',
+          stock: ''
+        },
+        cdiscount: {
+          symbol: '●',
+          stock: '858'
+        }
       }
     ];
     this.catalogTableData = new MatTableDataSource(this.catalogData);
@@ -48,6 +96,14 @@ export class CatalogMarketplacesComponent implements OnInit {
   }
 
   selectProductRow(row) {
-  console.log(row)    
+    console.log(row);
+  }
+
+  getType(type) {
+    this.currentType = type;
+  }
+
+  exportToExcel() {
+    console.log('Export to Excel');
   }
 }
