@@ -180,6 +180,60 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewIn
           this.reception
             .getReceptions(data.providerId)
             .subscribe((info: ReceptionAvelonModel.Reception) => {
+              let array = [];
+              let i =0;
+              info.models.forEach(data => {
+                 array[i] = {
+                   id:data.id,
+                   name:data.name.trim(),
+                   newSelectd:data.newSelectd,
+                   selected:data.selected,
+                   state:data.state,
+                   belongsModels:data.belongsModels
+                 }
+                 i++;
+              });
+              info.models = array;
+              info.models.sort(function(a,b) {
+
+                if (a.name > b.name) {
+                  return 1;
+                }
+                if (a.name < b.name) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+
+              console.log(info.models);
+
+              info.brands.sort(function(a,b) {
+                if (a.name > b.name) {
+                  return 1;
+                }
+                if (a.name < b.name) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+
+    
+              info.colors.sort(function(a,b) {
+                if (a.name > b.name) {
+                  return 1;
+                }
+                if (a.name < b.name) {
+                  return -1;
+                }
+                // a must be equal to b
+                return 0;
+              });
+              // console.log(info.models);
+              // info.models.sort((a:any, b:any) => a.name - b.name);
+              // info.brands.sort((a:any, b:any) => a.name - b.name);
+              // info.colors.sort((a:any, b:any) => a.name - b.name);
               this.response = info;
               this.response.brands = this.clearSelected(this.response.brands);
               this.response.models = this.clearSelected(this.response.models);
@@ -512,8 +566,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewIn
       return;
     }
     if (!this.result.ean) {
-      this.alertMessage('Debe introducir un EAN');
-      return;
+      // this.alertMessage('Debe introducir un EAN');
+      delete this.result.ean;
+      // return;
     }
     this.result.providerId = this.providerId;
     this.result.expedition = this.expedition;
@@ -816,4 +871,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewIn
     }, 500)
     
   }
+
+  naturalSorter(as, bs){
+    
+}
 }
