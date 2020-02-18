@@ -2,13 +2,24 @@
 
   <div class="incidences-container">
     <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
+      <ng-container matColumnDef="avelonOrder">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Orden
+        <suite-filter-button class="ion-margin-vertical filter" #filterButtonAvelonOrder [title]="'Orden'"
+                             [listItems]="entities.avelonOrder"
+                             [isFiltering]="isFilteringAvelonOrder != entities.avelonOrder.length"
+                             (applyFilters)="applyFilters($event, 'avelonOrder')">
+        </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.avelonOrder}} </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="references">
         <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Articulo
-        <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Artículos'"
-                             [listItems]="entities.references"
-                             [isFiltering]="isFilteringReferences != entities.references.length"
-                             (applyFilters)="applyFilters($event, 'references')">
-        </suite-filter-button>
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Artículos'"
+                               [listItems]="entities.references"
+                               [isFiltering]="isFilteringReferences != entities.references.length"
+                               (applyFilters)="applyFilters($event, 'references')">
+          </suite-filter-button>
         </mat-header-cell>
         <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.article}} </mat-cell>
       </ng-container>
