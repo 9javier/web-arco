@@ -36,6 +36,7 @@
       </span>
     </ion-row>
   </p>
+  <loading-message [message]="'COMPROBANDO'"></loading-message>
   <p class="scan-jail-picking" *ngIf="scanJail">{{scanJail}}</p>
   <input hideKeyboard id="input-ta" class="ta-picking" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)" (focus)="onFocus($event)"
     [(ngModel)]="inputPicking">
