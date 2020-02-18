@@ -43,7 +43,7 @@
                                (applyFilters)="applyFilters($event, 'date_service')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-360">{{element.date_service | date:"DD/MM/YYYY"}}  </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-360">{{element.date_service | date:"dd/MM/yyyy"}}  </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="brands">
