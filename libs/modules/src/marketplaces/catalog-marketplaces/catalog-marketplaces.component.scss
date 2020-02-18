@@ -32,8 +32,14 @@
       width: 100%;
 
       
-      .symbol {
+      .symbolActivate {
         font-size: 24px;
+        color: darkgreen;
+      }
+
+      .symbolDisabled {
+        font-size: 24px;
+        color: darkorange;
       }
 
       tr {

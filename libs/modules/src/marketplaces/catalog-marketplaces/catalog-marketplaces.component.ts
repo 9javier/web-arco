@@ -37,27 +37,33 @@ export class CatalogMarketplacesComponent implements OnInit {
         brand: 'brand1',
         ko: {
           symbol: '●',
-          stock: '120'
+          stock: '120',
+          activate: true
         },
         mini: {
           symbol: '',
-          stock: ''
+          stock: '',
+          activate: false
         },
         amazon: {
           symbol: '●',
-          stock: ''
+          stock: '452',
+          activate: true
         },
         spartoo: {
           symbol: '',
-          stock: '452'
+          stock: '',
+          activate: false
         },
         zalando: {
           symbol: '●',
-          stock: '788'
+          stock: '788',
+          activate: true
         },
         cdiscount: {
-          symbol: '',
-          stock: '58'
+          symbol: '●',
+          stock: '58',
+          activate: false
         }
       },
       {
@@ -65,28 +71,32 @@ export class CatalogMarketplacesComponent implements OnInit {
         model: 'model2',
         brand: 'brand2',
         ko: {
-          symbol: '',
-          stock: '120'
+          symbol: '●',
+          stock: '120',
+          activate: false
         },
         mini: {
           symbol: '●',
-          stock: '234'
+          stock: '234',
+          activate: true
         },
         amazon: {
-          symbol: '●',
-          stock: '444'
+          symbol: '',
+          stock: ''
         },
         spartoo: {
           symbol: '●',
-          stock: ''
+          stock: '333',
+          activate: false
         },
         zalando: {
-          symbol: '●',
+          symbol: '',
           stock: ''
         },
         cdiscount: {
           symbol: '●',
-          stock: '858'
+          stock: '858',
+          activate: true
         }
       }
     ];
