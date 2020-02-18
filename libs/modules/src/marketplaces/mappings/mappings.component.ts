@@ -55,6 +55,8 @@ export class MappingsComponent implements OnInit {
   private featureSearched;
   private sizeSearched;
 
+  private market;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -62,7 +64,11 @@ export class MappingsComponent implements OnInit {
     private marketplacesPrestaService: MarketplacesPrestaService,
     private http: HttpClient
   ) {
-    console.log(this.route.snapshot.data['name'])
+    switch (this.route.snapshot.data['name']) {
+      case "Miniprecios":
+        this.market = "1";
+        break;
+    }
   }
 
   ngOnInit() {
