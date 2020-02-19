@@ -26,8 +26,7 @@
           <div>
             <div>
               <ion-button (click)="loadProvider()" [ngClass]="showCheck ? '' : 'hide'">comprobar</ion-button>
-              <ion-button (click)="resetAll()" [ngClass]="isProviderAvailable ? '' : 'hide'">refresh</ion-button>
-              <ion-button (click)="returnHome()" [ngClass]="isProviderAvailable ? '' : 'hide'">return-left</ion-button>
+              <ion-button (click)="returnHome()" [ngClass]="isProviderAvailable ? '' : 'hide'">resetear</ion-button>
             </div>
           </div>
         </form>
@@ -91,8 +90,8 @@
     </ion-grid>
 
   </ng-container>
+
   <ng-template #screen>
     <suite-screen-result [type]="typeScreen" (screenExit)="screenExit($event)"></suite-screen-result>
   </ng-template>
-
 </ion-content>
