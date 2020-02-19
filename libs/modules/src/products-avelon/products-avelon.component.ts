@@ -32,6 +32,7 @@ import Predistribution = PredistributionModel.Predistribution;
 import { SelectionModel } from '@angular/cdk/collections';
 import { PredistributionsService } from '../../../services/src/lib/endpoint/predistributions/predistributions.service';
 import * as _ from 'lodash';
+import { parse } from 'querystring';
 
 
 
@@ -140,7 +141,9 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
   getSecondsAvelon(){
     this.intermediaryService.presentLoading('Actualizando Avelon').then(() => {
       this.productAvelonService.GetSecondAvelon().subscribe(result => {
-        this.seconds= result;
+        let seconds = parseInt(result.GlobalVariable_value)/60
+        seconds.toString();
+        this.seconds.GlobalVariable_value = seconds ;
         this.intermediaryService.dismissLoading();
         this.intermediaryService.presentToastSuccess("Actualizacion exitosa.")
       },()=>{
@@ -168,8 +171,10 @@ export class ProductsAvelonComponent implements OnInit, AfterViewInit {
 
   insertSecond(){
     this.intermediaryService.presentLoading('Actualizando tiempo de avelon').then(() => {
+      let value = parseInt(this.seconds.GlobalVariable_value)*60;
+      value.toString(); 
       let body = {
-        "value": this.seconds.GlobalVariable_value
+        "value": value
       };
       this.productAvelonService.updateSecondAvelon(body).subscribe(result => {
         this.intermediaryService.dismissLoading();

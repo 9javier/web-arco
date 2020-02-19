@@ -2,16 +2,16 @@
 
   <ng-container *ngIf="typeScreen == undefined; else screen">
     <ion-grid fixed>
-      <ion-row>
-        <ion-col size="4">
-          <ion-item lines="none">
-            <ion-label>Nro Expedicion</ion-label>
-            <ion-input [(ngModel)]="expedition" type="text" (focusin)="changeShowCheck()"></ion-input>
-            <i slot="end" class="material-icons" (click)="openVirtualKeyboard()">keyboard</i>
-          </ion-item>
-        </ion-col>
-        <ion-col size="4">
-          <form>
+      <ion-row class="row-selectors">
+        <form>
+          <div>
+            <mat-form-field id="expeditionReference">
+              <mat-label>Nº Expedicion</mat-label>
+              <input #expedition type="text" matInput (focusin)="changeShowCheck()">
+            </mat-form-field>
+            <i slot="end" class="material-icons" (click)="openVirtualKeyboard(null, objectType.EXPEDITION_NUMBER)" id="expeditionKeyboard">keyboard</i>
+          </div>
+          <div>
             <mat-form-field id="providerSelector">
               <mat-label>Proveedor</mat-label>
               <input #provider type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" (focusin)="changeShowCheck()">
@@ -22,13 +22,16 @@
               </mat-autocomplete>
             </mat-form-field>
             <i slot="end" class="material-icons" (click)="openVirtualKeyboard(providers, objectType.PROVIDER)" id="providerKeyboard">keyboard</i>
-          </form>
-        </ion-col>
-        <ion-col size="4">
-          <ion-button *ngIf="showCheck" (click)="loadProvider()"> comprobar </ion-button>
-          <ion-button *ngIf="isProviderAvailable" class="ion-float-end" (click)="buscarMas()"> buscar mas </ion-button>
-        </ion-col>
+          </div>
+          <div>
+            <div>
+              <ion-button (click)="loadProvider()" [ngClass]="showCheck ? '' : 'hide'">comprobar</ion-button>
+              <ion-button (click)="returnHome()" [ngClass]="isProviderAvailable ? '' : 'hide'">resetear</ion-button>
+            </div>
+          </div>
+        </form>
       </ion-row>
+
       <ion-row *ngIf="isProviderAvailable" class="ion-margin-top">
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
@@ -37,32 +40,34 @@
           </ion-item>
           <suite-lists type="brands"></suite-lists>
         </ion-col>
+
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
             <ion-title> Modelos </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
-
           <suite-lists type="models" ></suite-lists>
         </ion-col>
+
         <ion-col size="4">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
             <ion-title> Colores </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
-
-          <suite-lists type="colors" (seleccionado)="listSelected($event)" [data]="response.colors"></suite-lists>
+          <suite-lists type="colors"></suite-lists>
         </ion-col>
       </ion-row>
+
       <ion-row *ngIf="isProviderAvailable">
         <ion-col size="4" id="pictureContainer">
           <div>
             <ion-img *ngIf="response.image" [src]="response.image"></ion-img>
           </div>
         </ion-col>
+
         <ion-col size="4" id="sizeContainer" align-self-end>
           <ion-row>
-            <suite-sizes [hidden]="!(result.brandId && result.modelId && result.colorId)" (seleccionado)="sizeSelected($event)" [data]="response.sizes"></suite-sizes>
+            <suite-sizes [hidden]="!(result.brandId && result.modelId && result.colorId)"></suite-sizes>
           </ion-row>
           <ion-row>
             <ion-item lines="none">
@@ -71,18 +76,22 @@
             </ion-item>
           </ion-row>
         </ion-col>
+
         <ion-col size="4" id="printContainer">
-          <ion-button (click)="resetAll()" id="refresh">
-            <ion-icon name="refresh"></ion-icon>
-          </ion-button>
+          <div class="refresh-search-more">
+            <ion-button (click)="resetAll()" id="refresh">
+              <ion-icon name="refresh"></ion-icon>
+            </ion-button>
+            <ion-button class="ion-float-end" (click)="buscarMas()">buscar mas</ion-button>
+          </div>
           <ion-button (click)="enviar()" id="print"> imprimir </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
 
   </ng-container>
+
   <ng-template #screen>
     <suite-screen-result [type]="typeScreen" (screenExit)="screenExit($event)"></suite-screen-result>
   </ng-template>
-
 </ion-content>
