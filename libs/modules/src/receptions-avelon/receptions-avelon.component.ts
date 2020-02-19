@@ -68,7 +68,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   ) {}
 
   async loadProvider(){
-    await this.load(null, this.expeditionInput.nativeElement.value, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+    await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
   }
 
   changeShowCheck(){
@@ -158,6 +158,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               break;
             case Type.PROVIDER:
               this.providerInput.nativeElement.value = data.selected.id;
+              break;
+            case Type.EXPEDITION_NUMBER:
+              this.expeditionInput.nativeElement.value = data.selected.id;
               break;
             case undefined:
               this.expedition = data.selected.id;
@@ -689,12 +692,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.typeScreen = undefined;
   }
 
-  async load(e, expeditionReference, item) {
+  async load(e, item) {
+    this.expedition = this.expeditionInput && this.expeditionInput.nativeElement && this.expeditionInput.nativeElement.value ? this.expeditionInput.nativeElement.value : null;
     this.value = item.name;
     this.filter = false;
     this.providerId = item.id;
     const data: ReceptionAvelonModel.CheckProvider = {
-      expedition: expeditionReference,
+      expedition: this.expedition,
       providerId: this.providerId
     };
 
