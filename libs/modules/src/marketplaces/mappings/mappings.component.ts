@@ -22,7 +22,7 @@ export class MappingsComponent implements OnInit {
   @ViewChild('paginatorBrands') paginatorBrands: MatPaginator;
   @ViewChild('paginatorFeatures') paginatorFeatures: MatPaginator;
   @ViewChild('paginatorColors') paginatorColors: MatPaginator;
-  @ViewChild('paginatorSizes') paginatorSizes: MatPaginator;
+  // @ViewChild('paginatorSizes') paginatorSizes: MatPaginator;
 
 
   private dataSourceBrands;
@@ -33,9 +33,9 @@ export class MappingsComponent implements OnInit {
   private dataSourceMappingColors;
   private colorsList;
 
-  private dataSourceSizes;
+  /*private dataSourceSizes;
   private dataSourceMappingSizes;
-  private sizesList;
+  private sizesList;*/
 
   private dataSourceFeatures;
   private dataSourceMappingFeatures;
@@ -48,12 +48,12 @@ export class MappingsComponent implements OnInit {
   private showingBrands;
   private showingColors;
   private showingFeatures;
-  private showingSizes;
+  // private showingSizes;
 
   private brandSearched;
   private colorSearched;
   private featureSearched;
-  private sizeSearched;
+  // private sizeSearched;
 
   private market;
 
@@ -82,9 +82,9 @@ export class MappingsComponent implements OnInit {
     this.dataSourceMappingColors = new MatTableDataSource(this.dataSourceColors);
     this.colorsList = [];
 
-    this.dataSourceSizes = [];
+    /*this.dataSourceSizes = [];
     this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
-    this.sizesList = [];
+    this.sizesList = [];*/
 
     this.dataSourceFeatures = [];
     this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
@@ -95,7 +95,7 @@ export class MappingsComponent implements OnInit {
     forkJoin([
       this.marketplacesService.getBrands(),
       this.marketplacesService.getColors(),
-      this.marketplacesService.getSizes(),
+      // this.marketplacesService.getSizes(),
       this.marketplacesService.getFeatures()
     ]).subscribe(results => {
 
@@ -127,7 +127,7 @@ export class MappingsComponent implements OnInit {
         this.showingColors = this.dataSourceMappingColors.data.slice(0, 10);
       }
 
-      if (results[2] && results[2].length) {
+      /*if (results[2] && results[2].length) {
         results[2].forEach(size => {
           this.dataSourceSizes.push({
             id: null,
@@ -139,10 +139,10 @@ export class MappingsComponent implements OnInit {
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginatorSizes);
         this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
-      }
+      }*/
 
-      if (results[3] && results[3].length) {
-        results[3].forEach(feature => {
+      if (results[2] && results[2].length) {
+        results[2].forEach(feature => {
           this.dataSourceFeatures.push({
             id: null,
             avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
@@ -223,7 +223,7 @@ export class MappingsComponent implements OnInit {
               this.searchOnMappingList('color');
             }
             break;
-          case 4:
+          /*case 4:
             let dataSize = this.dataSourceSizes;
 
             let sizeMarket = {id: -1, name: null};
@@ -249,7 +249,7 @@ export class MappingsComponent implements OnInit {
             if (this.sizeSearched && this.sizeSearched.trim() != '') {
               this.searchOnMappingList('size');
             }
-            break;
+            break;*/
           case 5:
             let dataBrand = this.dataSourceBrands;
 
@@ -286,8 +286,8 @@ export class MappingsComponent implements OnInit {
     this.http.get('assets/data/mapping-prestashop-data.json').subscribe((data: any) => {
       this.brandsList = data.brands;
       this.brandsList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
-      this.sizesList = data.sizes;
-      this.sizesList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+      // this.sizesList = data.sizes;
+      // this.sizesList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
       this.featuresList = data.features;
       this.featuresList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
       this.colorsList = data.colors;
@@ -323,13 +323,13 @@ export class MappingsComponent implements OnInit {
         }
         break;
 
-      case 'sizes':
+      /*case 'sizes':
         if (page == 0) {
           this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
         } else {
           this.showingSizes = this.dataSourceMappingSizes.data.slice(page * 10, page * 10 + 10);
         }
-        break;
+        break;*/
     }
   }
 
@@ -350,9 +350,9 @@ export class MappingsComponent implements OnInit {
         return (this.showingColors.some(e => e.avelonData.id == id));
         break;
 
-      case 'sizes':
+      /*case 'sizes':
         return (this.showingSizes.some(e => e.avelonData.id == id));
-        break;
+        break;*/
     }
   }
 
@@ -456,7 +456,7 @@ export class MappingsComponent implements OnInit {
     }
   }
 
-  changeSizeSelect(e, element) {
+  /*changeSizeSelect(e, element) {
     let marketData = null;
 
     this.sizesList.forEach(item => {
@@ -504,7 +504,7 @@ export class MappingsComponent implements OnInit {
         });
       }
     }
-  }
+  }*/
 
   changeFeatureSelect(e, element) {
     let marketData = null;
@@ -660,7 +660,7 @@ export class MappingsComponent implements OnInit {
           this.paginatorColors.firstPage();
         }
         break;
-      case 'size':
+      /*case 'size':
         if (this.sizeSearched && this.sizeSearched.trim() != '') {
           let sizes = [];
           for (let size of this.dataSourceSizes) {
@@ -685,7 +685,7 @@ export class MappingsComponent implements OnInit {
           this.showingSizes = this.dataSourceMappingSizes.data.slice();
           this.paginatorSizes.firstPage();
         }
-        break;
+        break;*/
     }
   }
 
@@ -724,7 +724,7 @@ export class MappingsComponent implements OnInit {
         }
         this.paginatorColors.firstPage();
         break;
-      case 'size':
+      /*case 'size':
         this.sizeSearched = '';
         this.dataSourceMappingSizes.data = this.dataSourceSizes.slice();
 
@@ -734,7 +734,7 @@ export class MappingsComponent implements OnInit {
           this.showingSizes = this.dataSourceMappingSizes.data.slice();
         }
         this.paginatorSizes.firstPage();
-        break;
+        break;*/
     }
   }
 
