@@ -911,6 +911,12 @@ export class ProductsComponent implements OnInit {
       case 3:
         location = 'SORTER';
         break;
+      case 9:
+        location = 'RECEPCIÓN SORTER';
+        break;
+      case 10:
+        location = 'RECEPCIÓN ALMACEN';
+        break;
     }
     return location;
   }
