@@ -26,7 +26,6 @@
           <div>
             <div>
               <ion-button (click)="loadProvider()" [ngClass]="showCheck ? '' : 'hide'">comprobar</ion-button>
-              <ion-button class="ion-float-end" (click)="buscarMas()" [ngClass]="isProviderAvailable ? '' : 'hide'">buscar mas</ion-button>
             </div>
           </div>
         </form>
@@ -57,12 +56,14 @@
           <suite-lists type="colors"></suite-lists>
         </ion-col>
       </ion-row>
+
       <ion-row *ngIf="isProviderAvailable">
         <ion-col size="4" id="pictureContainer">
           <div>
             <ion-img *ngIf="response.image" [src]="response.image"></ion-img>
           </div>
         </ion-col>
+
         <ion-col size="4" id="sizeContainer" align-self-end>
           <ion-row>
             <suite-sizes [hidden]="!(result.brandId && result.modelId && result.colorId)"></suite-sizes>
@@ -74,10 +75,14 @@
             </ion-item>
           </ion-row>
         </ion-col>
+
         <ion-col size="4" id="printContainer">
-          <ion-button (click)="resetAll()" id="refresh">
-            <ion-icon name="refresh"></ion-icon>
-          </ion-button>
+          <div class="refresh-search-more">
+            <ion-button (click)="resetAll()" id="refresh">
+              <ion-icon name="refresh"></ion-icon>
+            </ion-button>
+            <ion-button class="ion-float-end" (click)="buscarMas()">buscar mas</ion-button>
+          </div>
           <ion-button (click)="enviar()" id="print"> imprimir </ion-button>
         </ion-col>
       </ion-row>
