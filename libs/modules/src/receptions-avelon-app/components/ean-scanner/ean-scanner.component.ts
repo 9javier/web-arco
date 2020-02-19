@@ -33,27 +33,43 @@ export class EanScannerComponent implements OnInit {
 
   eanScanned(response: string) {
     this.loadingMessageComponent.show(true, 'Comprobando EAN');
+    this.scannerManual.setValue(null);
     this.scannerManual.blockScan(true);
 
     if (this.expeditionDataToQuery != null) {
       this.receptionsAvelonService
         .eanProductPrint(response, this.expeditionDataToQuery.reference, this.expeditionDataToQuery.providerId)
-        .subscribe(result => {
-          // TODO print code obtained here
-
-          this.processFinishOk({
-            hideLoading: true,
-            unlockScan: true,
-            focusInput: {
-              playSound: true
-            },
-            toast: {
-              message: 'Código EAN comprobado',
-              position: PositionsToast.BOTTOM,
-              duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
-            }
-          });
-        }, e =>  {
+        .subscribe((resultCheck) => {
+          this.receptionsAvelonService
+            .printReceptionLabel(resultCheck)
+            .subscribe((resultPrint) => {
+              this.processFinishOk({
+                hideLoading: true,
+                unlockScan: true,
+                focusInput: {
+                  playSound: true
+                },
+                toast: {
+                  message: 'Código EAN comprobado, imprimiendo etiqueta de producto...',
+                  position: PositionsToast.BOTTOM,
+                  duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
+                }
+              });
+              // TODO print code obtained here
+            }, (error) => {
+              this.processFinishError({
+                hideLoading: true,
+                unlockScan: true,
+                focusInput: {
+                  playSound: true
+                },
+                toast: {
+                  message: 'Ha ocurrido un error al intentar obtener la información del código EAN escaneado.',
+                  position: PositionsToast.BOTTOM
+                }
+              });
+            });
+        }, (error) =>  {
           this.processFinishError({
             hideLoading: true,
             unlockScan: true,
