@@ -126,12 +126,13 @@
     <mat-grid-list *ngFor="let requestOrder of listRequestOrders; let i = index" class="requests-orders-line" cols="24" rowHeight="48px">
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
-          <ion-checkbox [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
+          <ion-checkbox *ngIf="requestOrder.request" [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
+          <ion-checkbox *ngIf="requestOrder.deliveryRequest" [(ngModel)]="deliveryRequestOrdersSelection[requestOrder.deliveryRequest.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
         </div>
       </mat-grid-tile>
 
       <mat-grid-tile class="reference border-right" colspan="2">
-        <div class="tile-value">{{requestOrder.request.requestId}}</div>
+        <div class="tile-value">{{requestOrder.request ? requestOrder.request.requestId : requestOrder.deliveryRequest.externalId}}</div>
       </mat-grid-tile>
 
       <mat-grid-tile class="date border-right" colspan="3">

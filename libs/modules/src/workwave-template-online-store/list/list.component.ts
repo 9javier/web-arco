@@ -43,6 +43,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   listGroupsWarehousesToUpdate: Array<GroupWarehousePickingModel.GroupWarehousesSelected> = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>();
   listEmployeesToUpdate: Array<number> = new Array<number>();
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
+  listDeliveryRequestOrdersToUpdate: Array<number> = new Array<number>();
   private listWarehousesThresholdAndSelectedQty: any = {};
   private checkRequestsSelectedIsOverThreshold: boolean = false;
   private ObservablePendings: Array<any> = new Array();
@@ -171,10 +172,11 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   }
 
   private loadTeamAssignations() {
-    if (this.listEmployeesToUpdate.length > 0 && this.listRequestOrdersToUpdate.length > 0) {
+    if (this.listEmployeesToUpdate.length > 0 && (this.listRequestOrdersToUpdate.length > 0 || this.listDeliveryRequestOrdersToUpdate.length > 0)) {
       this.workwavesService
         .postAssignUserToMatchLineOnlineStoreRequest({
           requestIds: this.listRequestOrdersToUpdate,
+          deliveryRequestIds: this.listDeliveryRequestOrdersToUpdate,
           userIds: this.listEmployeesToUpdate
         })
         .then((res: WorkwaveModel.ResponseAssignUserToMatchLineRequestOnlineStore) => {
@@ -237,6 +239,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   employeeChanged(data) {
     this.listEmployeesToUpdate = data.user;
     this.listRequestOrdersToUpdate = data.table.listSelected;
+    this.listDeliveryRequestOrdersToUpdate = data.table.listSelectedDelivery;
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }

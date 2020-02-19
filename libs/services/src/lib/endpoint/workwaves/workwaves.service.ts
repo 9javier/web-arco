@@ -68,6 +68,7 @@ export class WorkwavesService {
       data: {
         table: {
           listSelected: [],
+          listSelectedDelivery: [],
           listThreshold: {}
         },
         user: []
