@@ -25,11 +25,7 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
     this.receptionAvelonProvider.expeditionData = null;
   }
 
-  receptionByEan() {
-    this.router.navigate(['receptions-avelon', 'app', 'scanner']);
-  }
-
   receptionBySearch() {
-
+    this.router.navigate(['receptions-avelon', 'app', 'manual']);
   }
 }
