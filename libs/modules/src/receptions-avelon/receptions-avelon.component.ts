@@ -383,6 +383,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   resetAll() {
+    this.intermediaryService.presentLoading('Cargando');
     this.response.models = this.filterData.models;
     this.response.models.map(elem => elem.selected = false);
     this.response.sizes = this.filterData.sizes;
@@ -399,6 +400,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.reception.setBrandsList(this.response.brands);
     this.reception.setColorsList(this.response.colors);
     this.reception.setSizesList(this.response.sizes);
+    this.intermediaryService.dismissLoading();
     this.expedit =this.expedition;
     this.result.ean="";
   }
