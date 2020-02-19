@@ -303,12 +303,12 @@ export class NewRuleComponent implements OnInit {
           });
         }
         for (let category of this.categoryList) {
-          category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+          category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
         }
 
         if (this.ruleFilterType == 'categories') {
           for (let category of this.destinationCategories) {
-            category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+            category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
           }
         }
       }
