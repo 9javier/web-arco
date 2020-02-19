@@ -473,6 +473,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       this.alertMessage('Debe seleccionar una talla');
       return;
     }
+    if(this.result.ean != undefined && this.result.ean.length > 0) {
+      this.onKey();
+      return;
+    }
+
     if (!this.result.ean) {
       delete this.result.ean;
     }
@@ -565,34 +570,29 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     return array;
   }
 
-  onKey(e) {
-    if (e.keyCode == 13) {
-      this.intermediaryService.presentLoading('Enviando');
-
-      this.reception.eanProductPrint(this.result.ean, this.expedition, this.providerId).subscribe(
-        result => {
-          this.reception.getReceptions(this.providerId).subscribe(
-            (info: ReceptionAvelonModel.Reception) => {
-              this.response = info;
-              this.response.brands = this.clearSelected(this.response.brands);
-              this.response.models = this.clearSelected(this.response.models);
-              this.response.colors = this.clearSelected(this.response.colors);
-              this.response.sizes = this.clearSelected(this.response.sizes);
-              this.typeScreen = result.type;
-              this.intermediaryService.dismissLoading();
-            },
-            () => {
-              this.typeScreen = result.type
-
-          })
-        },
-        e =>  {
-          this.intermediaryService.dismissLoading();
-          this.intermediaryService.presentToastError(e.error.errors)
-        }
-      )
-
-    }
+  onKey() {
+    this.intermediaryService.presentLoading('Enviando');
+    this.reception.eanProductPrint(this.result.ean, this.expedition, this.providerId).subscribe(
+      result => {
+        this.reception.getReceptions(this.providerId).subscribe(
+          (info: ReceptionAvelonModel.Reception) => {
+            this.response = info;
+            this.response.brands = this.clearSelected(this.response.brands);
+            this.response.models = this.clearSelected(this.response.models);
+            this.response.colors = this.clearSelected(this.response.colors);
+            this.response.sizes = this.clearSelected(this.response.sizes);
+            this.typeScreen = result.type;
+            this.intermediaryService.dismissLoading();
+          },
+          () => {
+            this.typeScreen = result.type
+        })
+      },
+      e =>  {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError(e.error.errors)
+      }
+    )
   }
 
  async screenExit(e) {
