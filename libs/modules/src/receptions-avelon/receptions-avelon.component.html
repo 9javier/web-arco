@@ -14,7 +14,7 @@
           <div>
             <mat-form-field id="providerSelector">
               <mat-label>Proveedor</mat-label>
-              <input #provider type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" (focusin)="changeShowCheck()">
+              <input #provider type="text" matInput [formControl]="myControl"  [matAutocomplete]="auto" (focusin)="changeShowCheck()">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let provider of filteredProviders | async" [value]="provider">
                   {{provider.name}}

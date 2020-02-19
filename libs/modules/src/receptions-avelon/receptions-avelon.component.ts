@@ -56,7 +56,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
   itemParent: ReceptionAvelonModel.Data;
-
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
@@ -69,6 +68,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   async loadProvider(){
     await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+
   }
 
   returnHome(){
@@ -195,7 +195,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.filterData.sizes = this.clearSelected(info.sizes);
 
         this.reset();
-
+        this.expedition = data.expedition;
         this.intermediaryService.dismissLoading();
       });
   }
@@ -593,8 +593,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
-  screenExit(e) {
-    this.typeScreen = undefined;
+ async screenExit(e) {
+  this.typeScreen = undefined;
+  this.resetAll();
   }
 
   async load(e, item) {
