@@ -94,7 +94,7 @@ export class ReceptionssAvelonComponent implements OnInit {
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
-      type: 1,
+      type: 4,
       order: "ASC"
     })
   });
