@@ -40,12 +40,33 @@
   }
 }
 
-#providerSelector{
+#expeditionReference, #providerSelector{
   width: 100%;
 }
-
-#providerKeyboard{
+#expeditionKeyboard, #providerKeyboard{
   position: absolute;
   right: 10px;
   top: 20px;
+}
+
+ion-row.row-selectors {
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    div {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 8px;
+
+      div {
+        flex-direction: row;
+        ion-button.hide {
+          display: none;
+        }
+      }
+    }
+  }
 }

@@ -24,6 +24,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   @ViewChild(ListsComponent) listsComponent:ListsComponent;
   @ViewChild('provider') providerInput: ElementRef;
+  @ViewChild('expedition') expeditionInput: ElementRef;
 
   response: ReceptionAvelonModel.Reception;
   dato: ReceptionAvelonModel.Data;
@@ -67,7 +68,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   ) {}
 
   async loadProvider(){
-    await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+    await this.load(null, this.expeditionInput.nativeElement.value, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
   }
 
   changeShowCheck(){
@@ -213,6 +214,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.filterData.models = this.clearSelected(info.models);
         this.filterData.colors = this.clearSelected(info.colors);
         this.filterData.sizes = this.clearSelected(info.sizes);
+
+        this.reset();
 
         // this.ocrFake();
         if (info.brands.length > 0 && info.models.length > 0 && info.sizes.length > 0 && info.colors.length > 0) {
@@ -686,18 +689,18 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.typeScreen = undefined;
   }
 
-  async load(e, item) {
+  async load(e, expeditionReference, item) {
     this.value = item.name;
     this.filter = false;
     this.providerId = item.id;
     const data: ReceptionAvelonModel.CheckProvider = {
-      expedition: this.expedition,
+      expedition: expeditionReference,
       providerId: this.providerId
     };
 
     if (data.expedition === undefined || data.expedition.length === 0) {
-      this.alertMessage('El numero de expedición no puede estar vacío');
-    }else{
+      this.alertMessage('Introduzca un número de expedición para poder iniciar la recepción.');
+    } else {
       await this.reception.checkExpeditionsByNumberAndProvider({
         expeditionNumber: data.expedition,
         providerId: data.providerId
