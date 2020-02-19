@@ -408,7 +408,7 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.loadingMessageComponent.show(true);
+            this.loadingMessageComponent.show(true, `Procesando ${picking.productReference || ''}`);
             let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
               if (res.code === 200 || res.code === 201) {
                 this.listProducts = res.data.shoePickingPending;
@@ -535,7 +535,7 @@ export class TextareaComponent implements OnInit {
       } else if (this.scanContainerToNotFound) {
         if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER
           || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD) {
-          this.loadingMessageComponent.show(true);
+          this.loadingMessageComponent.show(true, `Comprobando ${dataWrited}`);
           this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id)
             .subscribe((res: InventoryModel.ResponseCheckContainer) => {
               if (res.code === 200) {

@@ -220,7 +220,7 @@ export class TextareaComponent implements OnInit {
   }
 
   private storeProductInContainer(params) {
-    this.loadingMessageComponent.show(true);
+    this.loadingMessageComponent.show(true, `Ubicando ${params.productReference || ''}`);
     this.inventoryService
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
