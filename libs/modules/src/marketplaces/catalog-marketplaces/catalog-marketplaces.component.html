@@ -9,8 +9,10 @@
     <mat-select [placeholder]="selectsPlaceholders[2]">
       <mat-option [value]="-1">-</mat-option>
     </mat-select>
-    <mat-select [placeholder]="selectsPlaceholders[3]">
-      <mat-option [value]="-1">-</mat-option>
+    <mat-select [(ngModel)]="preselect">
+      <mat-option *ngFor="let item of tableValueSelect" [value]="item.name" (click)="getType(item.type)">
+        {{item.name}}
+      </mat-option>
     </mat-select>
   </div>
   <div class="mp-catalog-table-wrapper">
@@ -45,32 +47,74 @@
 
       <ng-container matColumnDef="KO">
         <th mat-header-cell *matHeaderCellDef><span>KO</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.ko}} </td>
+        <td mat-cell *matCellDef="let product">
+          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.ko.activate ? 'symbolActivate' : 'symbolDisabled'">
+            {{product.ko.symbol}}
+          </span>  
+          <span *ngIf="currentType == 2">
+            {{product.ko.stock}}
+          </span> 
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Mini">
         <th mat-header-cell *matHeaderCellDef><span>Mini</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.mini}} </td>
+        <td mat-cell *matCellDef="let product">
+          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.mini.activate ? 'symbolActivate' : 'symbolDisabled'">
+            {{product.mini.symbol}}
+          </span>  
+          <span *ngIf="currentType == 2">
+            {{product.mini.stock}}
+          </span> 
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Amazon">
         <th mat-header-cell *matHeaderCellDef><span>Amazon</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.amazon}} </td>
+        <td mat-cell *matCellDef="let product"> 
+          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.amazon.activate ? 'symbolActivate' : 'symbolDisabled'">
+            {{product.amazon.symbol}}
+          </span>  
+          <span *ngIf="currentType == 2">
+            {{product.amazon.stock}}
+          </span> 
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Spartoo">
         <th mat-header-cell *matHeaderCellDef><span>Spartoo</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.spartoo}} </td>
+        <td mat-cell *matCellDef="let product"> 
+          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.spartoo.activate ? 'symbolActivate' : 'symbolDisabled'">
+            {{product.spartoo.symbol}}
+          </span>  
+          <span *ngIf="currentType == 2">
+            {{product.spartoo.stock}}
+          </span> 
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="Zalando">
         <th mat-header-cell *matHeaderCellDef><span>Zalando</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.zalando}} </td>
+        <td mat-cell *matCellDef="let product"> 
+          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.zalando.activate ? 'symbolActivate' : 'symbolDisabled'">
+            {{product.zalando.symbol}}
+          </span>  
+          <span *ngIf="currentType == 2">
+            {{product.zalando.stock}}
+          </span> 
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="CDiscount">
         <th mat-header-cell *matHeaderCellDef><span>CDiscount</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.cdiscount}} </td>
+        <td mat-cell *matCellDef="let product"> 
+          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.cdiscount.activate ? 'symbolActivate' : 'symbolDisabled'">
+            {{product.cdiscount.symbol}}
+          </span>  
+          <span *ngIf="currentType == 2">
+            {{product.cdiscount.stock}}
+          </span> 
+        </td>
       </ng-container>
 
     </table>
@@ -85,7 +129,7 @@
       </div>
     </div>
     <div class="exportExcel">
-      <span>Exportar a Excel</span>
+      <span (click)="exportToExcel()">Exportar a Excel</span>
     </div>
   </div>
 </div>

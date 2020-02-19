@@ -31,8 +31,25 @@
     & > table {
       width: 100%;
 
+      
+      .symbolActivate {
+        font-size: 24px;
+        color: darkgreen;
+      }
+
+      .symbolDisabled {
+        font-size: 24px;
+        color: darkorange;
+      }
+
       tr {
         height: 30px;
+
+        &:first-of-type {
+          td {
+            border-top: none;
+          }
+        }
 
         td {
           padding: 0!important;
@@ -49,14 +66,16 @@
           overflow-x: hidden;
           text-align: center;
           vertical-align: middle;
-
+          border-top: 1px solid #ccc;
+          
           &:first-of-type {
             padding: 0 5px!important;
             width: fit-content;
             border-right: none;
             margin-bottom: 0;
             background-color: #fff;
-
+            border-top: none;
+            
             ion-checkbox {
               --size: 20px;
               --border-width: 1px;
@@ -91,6 +110,7 @@
             border-bottom: none;
             border-right: 1px solid #c7c8ce;
             vertical-align: top;
+            border-top: none;
 
             span {
               background-color: #f5f4f6;
@@ -141,6 +161,10 @@
       font-size: 14px;
       margin-right: 25px;
       margin-bottom: 30px;
+
+      &:hover {
+        cursor: pointer;
+      }
     }
 
     .mp-catalog-first-footer-section {
