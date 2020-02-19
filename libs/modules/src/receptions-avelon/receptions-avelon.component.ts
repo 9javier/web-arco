@@ -1,5 +1,6 @@
 import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
+import { Router } from '@angular/router';
 import {
   ReceptionsAvelonService,
   ReceptionAvelonModel,
@@ -32,6 +33,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   providers: Array<any>;
   isProviderAvailable: boolean;
   expedition: string;
+  provid: string;
   providerId: number;
   interval: any;
   option: any;
@@ -55,7 +57,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   myControl = new FormControl();
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
-  itemParent: ReceptionAvelonModel.Data
+  itemParent: ReceptionAvelonModel.Data;
+  show: boolean;
 
   constructor(
     private reception: ReceptionsAvelonService,
@@ -64,7 +67,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
     private modalController: ModalController,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private cdRef : ChangeDetectorRef,
+    private router: Router
   ) {}
 
   async loadProvider(){
@@ -122,6 +127,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   ngAfterViewInit() {
     this.listSelected()
     this.sizeSelected()
+    this.show = false
+    // this.cdRef.detectChanges()
+
   }
 
   openVirtualKeyboard(list?: Array<ReceptionAvelonModel.Data>, type?: Type) {
@@ -408,6 +416,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.reception.setBrandsList(this.response.brands)
     this.reception.setColorsList(this.response.colors)
     this.reception.setSizesList(this.response.sizes)
+    this.show = false
   }
 
   resetAll() {
@@ -422,7 +431,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.result.modelId = undefined
     this.result.brandId = undefined
     this.result.sizeId = undefined
-    this.result.colorId = undefined
+    this.result.colorId = undefined 
+    this.show = false
     this.reception.setModelsList(this.response.models)
     this.reception.setBrandsList(this.response.brands)
     this.reception.setColorsList(this.response.colors)
@@ -500,8 +510,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       return;
     }
     if (!this.result.ean) {
-      this.alertMessage('Debe introducir un EAN');
-      return;
+      // this.alertMessage('Debe introducir un EAN');
+      delete this.result.ean;
+      // return;
     }
     this.result.providerId = this.providerId;
     this.result.expedition = this.expedition;
@@ -540,7 +551,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   ocrFake() {
-    
+
   }
 
   async getOcr() {
@@ -759,4 +770,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }, 500)
   }
 
+  naturalSorter(as, bs){
+
+  }
 }

@@ -26,6 +26,8 @@
           <div>
             <div>
               <ion-button (click)="loadProvider()" [ngClass]="showCheck ? '' : 'hide'">comprobar</ion-button>
+              <ion-button (click)="resetAll()" [ngClass]="isProviderAvailable ? '' : 'hide'">refresh</ion-button>
+              <ion-button (click)="returnHome()" [ngClass]="isProviderAvailable ? '' : 'hide'">return-left</ion-button>
             </div>
           </div>
         </form>
