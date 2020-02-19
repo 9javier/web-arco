@@ -1,4 +1,6 @@
 import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
+
 import { Subscription } from 'rxjs';
 import {
   ReceptionsAvelonService,
@@ -28,6 +30,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewIn
   providers: Array<any>;
   isProviderAviable: boolean;
   expedition: string;
+  provid: string;
   providerId: number;
   interval: any;
   option: any;
@@ -57,7 +60,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewIn
     private alertCtrl: AlertController,
     private virtualKeyboardService: VirtualKeyboardService,
     private productsService: ProductsService,
-    private cdRef : ChangeDetectorRef
+    private cdRef : ChangeDetectorRef,
+    private router: Router
   ) {}
   
   ngOnInit() {
@@ -478,6 +482,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterViewIn
     this.reception.setBrandsList(this.response.brands)
     this.reception.setColorsList(this.response.colors)
     this.reception.setSizesList(this.response.sizes)
+  }
+
+  returnHome(){
+    this.expedition="";
+    this.provid="";
+    this.ngOnInit();
   }
 
   listSelected() {
