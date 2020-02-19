@@ -148,8 +148,13 @@ export class TextareaComponent implements OnInit {
   async keyUpInput(event?,prova:boolean=false) {
     let dataWrited = (this.inputPicking || "").trim();
     if ((event.keyCode === 13 || prova && dataWrited) && !this.isScannerBlocked) {
+      this.isScannerBlocked = true;
+      document.getElementById('input-ta').blur();
+
       if (dataWrited === this.lastCodeScanned) {
         this.inputPicking = null;
+        this.isScannerBlocked = false;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrited;
@@ -161,9 +166,6 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputPicking = null;
-
-      this.isScannerBlocked = true;
-      document.getElementById('input-ta').blur();
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         if(this.processInitiated && this.lastCarrierScanned == dataWrited){
           if (this.listProducts && this.listProducts.length > 0) {
