@@ -25,7 +25,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   @ViewChild(ListsComponent) listsComponent:ListsComponent;
   @ViewChild('provider') providerInput: ElementRef;
   @ViewChild('expedition') expeditionInput: ElementRef;
-
+  public expedit:string="";
   response: ReceptionAvelonModel.Reception;
   dato: ReceptionAvelonModel.Data;
   subscriptions: Subscription;
@@ -59,7 +59,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
   itemParent: ReceptionAvelonModel.Data;
-
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
@@ -72,6 +71,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   async loadProvider(){
     await this.load(null, this.providers.find((provider)=>{return provider.name == this.providerInput.nativeElement.value}));
+
   }
 
   returnHome(){
@@ -198,7 +198,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         this.filterData.sizes = this.clearSelected(info.sizes);
 
         this.reset();
-
+        this.expedition = data.expedition;
         this.intermediaryService.dismissLoading();
       });
   }
@@ -386,6 +386,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   resetAll() {
+    this.intermediaryService.presentLoading('Cargando');
     this.response.models = this.filterData.models;
     this.response.models.map(elem => elem.selected = false);
     this.response.sizes = this.filterData.sizes;
@@ -402,6 +403,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.reception.setBrandsList(this.response.brands);
     this.reception.setColorsList(this.response.colors);
     this.reception.setSizesList(this.response.sizes);
+    this.intermediaryService.dismissLoading();
+    this.expedit =this.expedition;
+    this.result.ean="";
   }
 
   listSelected() {
@@ -603,8 +607,10 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     )
   }
 
-  screenExit(e) {
-    this.typeScreen = undefined;
+ async screenExit(e) {
+  this.typeScreen = undefined;
+  this.resetAll();
+
   }
 
   async load(e, item) {

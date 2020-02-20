@@ -7,14 +7,14 @@
           <div>
             <mat-form-field id="expeditionReference">
               <mat-label>Nº Expedicion</mat-label>
-              <input #expedition type="text" matInput (focusin)="changeShowCheck()">
+              <input #expedition [value]="expedit" type="text"  matInput (focusin)="changeShowCheck()">
             </mat-form-field>
             <i slot="end" class="material-icons" (click)="openVirtualKeyboard(null, objectType.EXPEDITION_NUMBER)" id="expeditionKeyboard">keyboard</i>
           </div>
           <div>
             <mat-form-field id="providerSelector">
               <mat-label>Proveedor</mat-label>
-              <input #provider type="text" matInput [formControl]="myControl" [matAutocomplete]="auto" (focusin)="changeShowCheck()">
+              <input #provider type="text" matInput [formControl]="myControl"  [matAutocomplete]="auto" (focusin)="changeShowCheck()">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let provider of filteredProviders | async" [value]="provider">
                   {{provider.name}}
