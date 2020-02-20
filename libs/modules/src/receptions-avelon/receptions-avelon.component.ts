@@ -49,6 +49,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     expedition: '',
     ean: ''
   };
+  isErrorEan = false;
+  oldEan = '';
+
   providersAux;
   value;
   getReceptionsNotifiedProviders$: Subscription;
@@ -455,6 +458,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   enviar() {
+    if( this.result.ean != undefined &&
+      this.result.ean.length > 0 &&
+      this.oldEan !=  this.result.ean  
+      ) {
+      this.onKey();
+      return;
+    }
     if (!this.result.brandId) {
       this.alertMessage('Debe seleccionar una marca');
       return;
@@ -469,10 +479,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
     if (!this.result.sizeId) {
       this.alertMessage('Debe seleccionar una talla');
-      return;
-    }
-    if(this.result.ean != undefined && this.result.ean.length > 0) {
-      this.onKey();
       return;
     }
 
@@ -587,8 +593,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         })
       },
       e =>  {
+
         this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError(e.error.errors)
+        //this.intermediaryService.presentToastError(e.error.errors)
+        this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
+        this.isErrorEan = true;
+        this.oldEan = this.result.ean;
       }
     )
   }
