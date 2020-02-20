@@ -143,13 +143,15 @@ export class MappingsComponent implements OnInit {
 
       if (results[2] && results[2].length) {
         results[2].forEach(feature => {
-          this.dataSourceFeatures.push({
-            id: null,
-            avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
-            marketData: {id: -1, name: null}
-          });
+          if (feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10") {
+            this.dataSourceFeatures.push({
+              id: null,
+              avelonData: {id: feature.externalId, name: feature.name.trim(), group: feature.dataGroup},
+              marketData: {id: -1, name: null}
+            });
+          }
         });
-        this.dataSourceFeatures.sort((a, b) => (a.avelonData.group > b.avelonData.group) ? 1 : ((b.avelonData.group > a.avelonData.group) ? -1 : ((a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0))));
+        this.dataSourceFeatures.sort((a, b) => (parseInt(a.avelonData.group) > parseInt(b.avelonData.group)) ? 1 : ((parseInt(b.avelonData.group) > parseInt(a.avelonData.group)) ? -1 : ((a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0))));
         this.dataSourceMappingFeatures = new MatTableDataSource(this.dataSourceFeatures);
         setTimeout(() => this.dataSourceMappingFeatures.paginator = this.paginatorFeatures);
         this.showingFeatures = this.dataSourceMappingFeatures.data.slice(0, 10);
@@ -174,15 +176,14 @@ export class MappingsComponent implements OnInit {
 
             let featureMarket = {id: -1, name: null};
 
-            if (item.marketDataId != -1) {
-              this.featuresList.forEach(feature => {
-                if (feature.id == item.marketDataId) {
-                  featureMarket = feature;
-                }
-              })
-            }
+            this.featuresList.forEach(feature => {
+              if (feature.id == item.marketDataId) {
+                featureMarket = feature;
+              }
+            });
+
             dataFeature.forEach(data => {
-              if (data.avelonData.id == item.originDataId) {
+              if (data.avelonData.id == item.originDataId && data.avelonData.group == item.aditionalMapInfo) {
                 data.marketData = {
                   id: featureMarket.id,
                   name: featureMarket.name
@@ -376,7 +377,7 @@ export class MappingsComponent implements OnInit {
       marketDataId,
       typeMapped: 5,
       marketId: 1,
-      aditionalMapInfo: marketData ? 'Mapping of the brand ' + element.avelonData.name + ' to ' + marketData.name : 'Not mapped'
+      aditionalMapInfo: ""
     };
 
     let update: boolean = false;
@@ -426,7 +427,7 @@ export class MappingsComponent implements OnInit {
       marketDataId,
       typeMapped: 3,
       marketId: 1,
-      aditionalMapInfo: marketData ? 'Mapping of the color ' + element.avelonData.name + ' to ' + marketData.name : 'Not mapped'
+      aditionalMapInfo: ""
     };
 
     let update: boolean = false;
@@ -526,14 +527,14 @@ export class MappingsComponent implements OnInit {
       marketDataId,
       typeMapped: 2,
       marketId: 1,
-      aditionalMapInfo: marketData ? 'Mapping of the feature ' + element.avelonData.name + ' to ' + marketData.name : 'Not mapped'
+      aditionalMapInfo: element.avelonData.group
     };
 
     let update: boolean = false;
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id) {
+      if (item.originDataId == element.avelonData.id && item.aditionalMapInfo == element.avelonData.group) {
         update = true;
         idToUpdate = item.id;
       }
@@ -558,19 +559,19 @@ export class MappingsComponent implements OnInit {
 
   getGroupName(group) {
     switch (group) {
-      case 2:
+      case "2":
         return "FAMILIA: ";
         break;
-      case 5:
+      case "5":
         return "TACÓN: ";
         break;
-      case 7:
+      case "7":
         return "DESCRIPCIÓN: ";
         break;
-      case 9:
+      case "9":
         return "MAT. EXTERIOR: ";
         break;
-      case 10:
+      case "10":
         return "MAT. INTERIOR: ";
         break;
       default:
