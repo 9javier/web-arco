@@ -1,21 +1,18 @@
 <ion-content>
   <div class="container">
-    <div>
-      <p class="title">Recepcione mercancía escaneando el código EAN asociado al artículo recibido</p>
-      <button mat-raised-button color="dark" (click)="receptionByEan()">
-        ESCANEAR EAN
-        <mat-icon>fullscreen</mat-icon>
-      </button>
+    <div class="scanner">
+      <suite-ean-scanner></suite-ean-scanner>
     </div>
 
     <mat-divider></mat-divider>
 
-    <div>
-      <p class="title">O busque los posibles artículos a recibir por su marca, modelo, color y talla</p>
-      <button mat-raised-button color="dark" (click)="receptionBySearch()">
-        BUSCAR
-        <mat-icon>search</mat-icon>
-      </button>
+    <div class="browser">
+      <div>
+        <button mat-raised-button color="dark" (click)="receptionBySearch()">
+          BUSCAR
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
 </ion-content>

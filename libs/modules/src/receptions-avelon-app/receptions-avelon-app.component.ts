@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {ToolbarProvider} from "../../../services/src/providers/toolbar/toolbar.provider";
+import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
 
 @Component({
   selector: 'suite-receptions-avelon-app',
@@ -11,7 +12,8 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private toolbarProvider: ToolbarProvider
+    private toolbarProvider: ToolbarProvider,
+    private receptionAvelonProvider: ReceptionAvelonProvider
   ) {}
 
   ngOnInit() {
@@ -20,13 +22,10 @@ export class ReceptionsAvelonAppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.toolbarProvider.showBackArrow.next(false);
-  }
-
-  receptionByEan() {
-    this.router.navigate(['receptions-avelon', 'app', 'scanner']);
+    this.receptionAvelonProvider.expeditionData = null;
   }
 
   receptionBySearch() {
-
+    this.router.navigate(['receptions-avelon', 'app', 'manual']);
   }
 }

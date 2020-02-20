@@ -6,6 +6,7 @@ import {ReceptionsAvelonService} from "../../../services/src/lib/endpoint/recept
 import {IntermediaryService} from "../../../services/src/lib/endpoint/intermediary/intermediary.service";
 import {ReceptionAvelonModel} from "../../../services/src/models/endpoints/receptions-avelon.model";
 import {AnotherExpeditionsComponent} from "./components/another-expeditions/another-expeditions.component";
+import {ReceptionAvelonProvider} from "../../../services/src/providers/reception-avelon/reception-avelon.provider";
 
 @Component({
   selector: 'suite-expeditions-pending-app',
@@ -18,10 +19,13 @@ export class ExpeditionsPendingAppComponent implements OnInit {
   @ViewChild(ExpeditionInfoComponent) expeditionInfo: ExpeditionInfoComponent;
   @ViewChild(AnotherExpeditionsComponent) anotherExpeditions: AnotherExpeditionsComponent;
 
+  private lastExepeditionQueried = {reference: null, providerId: null};
+
   constructor(
     private router: Router,
     private receptionsAvelonService: ReceptionsAvelonService,
-    private intermediaryService: IntermediaryService
+    private intermediaryService: IntermediaryService,
+    private receptionAvelonProvider: ReceptionAvelonProvider
   ) {}
 
   ngOnInit() {
@@ -29,6 +33,10 @@ export class ExpeditionsPendingAppComponent implements OnInit {
 
   public checkExpedition(data) {
     this.formExpeditionInfo.checkingExpeditionInProcess = true;
+    this.lastExepeditionQueried = {
+      reference: data.number_expedition,
+      providerId: data.provider_expedition.id
+    };
 
     this.receptionsAvelonService
       .checkExpeditionsByNumberAndProvider({
@@ -58,6 +66,7 @@ export class ExpeditionsPendingAppComponent implements OnInit {
   }
 
   public receptionExpedition(data) {
+    this.receptionAvelonProvider.expeditionData = this.lastExepeditionQueried;
     this.router.navigate(['receptions-avelon', 'app']);
   }
 }
