@@ -36,6 +36,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   interval: any;
   option: any;
   typeScreen: number;
+  reference: string;
   filter;
   objectType = Type;
   filterData: ReceptionAvelonModel.Reception;
@@ -528,10 +529,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
             this.typeScreen = resp.type;
+            this.reference = resp.reference;
             this.intermediaryService.dismissLoading();
           },
           () => {
             this.typeScreen = resp.type
+            this.reference = resp.reference
           }
         );
       },
@@ -610,11 +613,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
             this.typeScreen = result.type;
+            this.reference = result.reference;
             this.intermediaryService.dismissLoading();
           },
           () => {
             this.typeScreen = result.type
-        })
+            this.reference = result.reference;
+          })
       },
       e =>  {
 
@@ -629,6 +634,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
  async screenExit(e) {
   this.typeScreen = undefined;
+  this.reference = '';
   this.resetAll();
 
   }

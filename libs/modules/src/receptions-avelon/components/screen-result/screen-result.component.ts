@@ -9,6 +9,7 @@ import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 export class ScreenResultComponent implements OnInit {
 
   @Input('type') type: number
+  @Input('reference') reference: string
   @Output('screenExit') exit: EventEmitter<boolean> = new EventEmitter(false)
   constructor(
     private printerService: PrinterService
@@ -24,7 +25,7 @@ export class ScreenResultComponent implements OnInit {
   }
 
   private async printCodes() {
-    let codes = ['J0002'];
+    let codes = [this.reference];
     if ((<any>window).cordova) {
       console.log(JSON.stringify(codes));
       this.printerService.print({ text: codes, type: 2 });
