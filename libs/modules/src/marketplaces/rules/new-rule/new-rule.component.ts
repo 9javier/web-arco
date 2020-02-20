@@ -258,57 +258,59 @@ export class NewRuleComponent implements OnInit {
 
         if (results[3] && results[3].length) {
           results[3].forEach(feature => {
-            let listItem = {
-              id: feature.id,
-              externalId: feature.externalId,
-              type: feature.ruleFilterType,
-              group: feature.dataGroup,
-              name: feature.name.trim()
-            };
-            let listIndex = -1;
-            switch (listItem.group) {
-              case 1:
-                listIndex = 0;
-                break;
+            if (feature.dataGroup == "1" || feature.dataGroup == "2" || feature.dataGroup == "5" || feature.dataGroup == "7" || feature.dataGroup == "9" || feature.dataGroup == "10" || feature.dataGroup == "12") {
+              let listItem = {
+                id: feature.id,
+                externalId: feature.externalId,
+                type: feature.ruleFilterType,
+                group: feature.dataGroup,
+                name: feature.name.trim()
+              };
+              let listIndex = -1;
+              switch (listItem.group) {
+                case "1":
+                  listIndex = 0;
+                  break;
 
-              case 2:
-                listIndex = 1;
-                break;
+                case "2":
+                  listIndex = 1;
+                  break;
 
-              case 5:
-                listIndex = 2;
-                break;
+                case "5":
+                  listIndex = 2;
+                  break;
 
-              case 7:
-                listIndex = 3;
-                break;
+                case "7":
+                  listIndex = 3;
+                  break;
 
-              case 9:
-                listIndex = 4;
-                break;
+                case "9":
+                  listIndex = 4;
+                  break;
 
-              case 10:
-                listIndex = 5;
-                break;
+                case "10":
+                  listIndex = 5;
+                  break;
 
-              case 12:
-                listIndex = 6;
-                break;
-            }
+                case "12":
+                  listIndex = 6;
+                  break;
+              }
 
-            this.categoryList[listIndex].items.push(listItem);
-            if (this.ruleFilterType == 'categories') {
-              this.destinationCategories[listIndex].items.push(listItem);
+              this.categoryList[listIndex].items.push(listItem);
+              if (this.ruleFilterType == 'categories') {
+                this.destinationCategories[listIndex].items.push(listItem);
+              }
             }
           });
         }
         for (let category of this.categoryList) {
-          category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+          category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
         }
 
         if (this.ruleFilterType == 'categories') {
           for (let category of this.destinationCategories) {
-            category.items.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
+            category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
           }
         }
       }
@@ -474,12 +476,12 @@ export class NewRuleComponent implements OnInit {
 
     } else {
       this.selectedCategories.push(category);
-      this.selectedCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+      this.selectedCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
 
       if (this.ruleFilterType == 'categories') {
         if (!destination) {
           this.selectedDestinationCategories.push(category);
-          this.selectedDestinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+          this.selectedDestinationCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
           if (this.selectedCategoryGroupFilter == this.selectedDestinationCategoryGroupFilter) {
             let items = this.selectedDestinationCategoryGroupFilterObject.items;
             this.selectedDestinationCategoryGroupFilterObject.items = [];
@@ -993,7 +995,7 @@ export class NewRuleComponent implements OnInit {
       }
     } else {
       this.selectedDestinationCategories.push(category);
-      this.selectedDestinationCategories.sort((a, b) => (a.group > b.group) ? 1 : ((b.group > a.group) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
+      this.selectedDestinationCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
     }
   }
 
