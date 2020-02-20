@@ -67,6 +67,11 @@ export class GlobalVariablesComponent implements OnInit {
     this.globalVariableService
       .getAll()
       .subscribe((globalVariables) => {
+        globalVariables.map(function(x){
+          if(x.type == 4){
+            x.value  = (parseInt(x.value)/60).toString();
+          }
+        });
         this.listVariablesFromDb = globalVariables;
         this.events.publish('load_of_variables');
       });
@@ -94,7 +99,11 @@ export class GlobalVariablesComponent implements OnInit {
       this.listVariables[index].error = !variable.value;
       return variable.value;
     });
-
+    variablesToUpdate.map(function(x){
+      if(x.type == 4){
+        x.value  = (parseInt(x.value)*60).toString();
+      }
+    });
     if (variablesToUpdate.length == this.listVariables.length) {
       this.intermediaryService.presentLoading('Actualizando las variables...').then(() => {
         this.globalVariableService.store(variablesToUpdate).subscribe((res) => {
