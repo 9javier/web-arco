@@ -8,6 +8,7 @@ export namespace ReceptionAvelonModel {
     newSelectd?: boolean
     belongsModels?: Array<number>
     state?:number;
+    available_ids?: number[]
   }
 
   export interface Reception {

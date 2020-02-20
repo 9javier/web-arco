@@ -60,6 +60,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
   itemParent: ReceptionAvelonModel.Data;
+
+  modelSelected: any = null;
+
   constructor(
     private reception: ReceptionsAvelonService,
     private intermediaryService: IntermediaryService,
@@ -132,7 +135,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   ngAfterViewInit() {
     this.listSelected();
-    this.sizeSelected();
     this.clickSizeSelected();
 
   }
@@ -216,35 +218,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     await alert.present();
   }
 
-  sizeSelected() {
-    // this.reception.getEmitList().subscribe((e:any) => {
-    //   // this.dato = e.dato;
-
-    //   // if (e && e.dato) {
-    //   //   if(e.dato.selected){
-    //   //     this.result.sizeId = e.dato.id;
-    //   //   }
-    //   // } else {
-    //   //   this.result.sizeId = undefined;
-    //   // }
-    // })
-  }
-
   clickSizeSelected() {
-    this.reception.getEmitSizes().subscribe((e:any) => {
-      // this.result.sizeId = undefined;
-      // this.dato = e.dato;
-      // console.log('queque',e.dato.click);
+    this.reception.getEmitSizes().subscribe((e: any) => {
       if (e && e.dato) {
-        if(e.dato.selected){
+        if (e.dato.selected) {
           this.result.sizeId = e.dato.id;
-          // const interval = setTimeout(() => {
-          //   this.updateList(this.dato);
-          // }, 0);
         }
       } else {
         this.result.sizeId = undefined;
-        // this.reset();
       }
     })
   }
@@ -254,20 +235,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     let brand = [];
     let size = [];
     let color = [];
-    let findResult;
 
     if (dato.belongsModels) {
       dato.belongsModels.forEach(modelId => {
-        const modelsFilter = this.response.models.filter(model => model.id === modelId);
+        const modelsFilter = this.response.models.filter(model => !!model.available_ids.find(id => id == modelId));
         modelsFilter.forEach(m => {
           const modelFind = model.find(elem => elem.id == m.id);
           if(modelFind === undefined) {
-            if (m.state == 0) {
-              model.push(m)
-            } else {
-              model.push(m)
-            }
-
+            model.push(m)
           }
         });
         /***************************brands******************************/
@@ -278,11 +253,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         });
         brandsFilter.forEach(elem => {
           if(brand.find(data => data.id === elem.id) === undefined) {
-            if (elem.state == 0) {
-              brand.push(elem)
-            } else {
-              brand.push(elem)
-            }
+            brand.push(elem)
           }
         });
 
@@ -294,11 +265,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         });
         sizesFilter.forEach(elem => {
           if(size.find(data => data.id === elem.id) === undefined) {
-            if (elem.state == 0) {
-              size.push(elem)
-            } else {
-              size.push(elem)
-            }
+            size.push(elem)
           }
         });
         /*****************************color****************************/
@@ -309,73 +276,44 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         });
         colorFilter.forEach(elem => {
           if(color.find(data => data.id === elem.id) === undefined) {
-            if (elem.state == 0) {
-              color.push(elem)
-            } else {
-              color.push(elem)
-            }
+            color.push(elem)
           }
         })
       })
     } else {
       const modelsFilter = this.response.models.filter(model => model.id === dato.id);
-        modelsFilter.forEach(m => {
-          const modelFind = model.find(elem => elem.id == m.id);
-          if(modelFind === undefined) {
-            if (m.state == 0) {
-              model.push(m)
-            } else {
-              model.push(m)
-            }
-          }
-        });
-         /***************************brands******************************/
-         const brandsFilter = this.response.brands.filter(elem => {
-          if(elem.belongsModels.find(elem => elem === dato.id)){
-            return elem
-          }
-        });
-        brandsFilter.forEach(elem => {
-          if(brand.find(data => data.id === elem.id) === undefined) {
-            if (elem.state == 0) {
-              brand.push(elem)
-            } else {
-              brand.push(elem)
-            }
-          }
-        });
+      modelsFilter.forEach(m => {
+        const modelFind = model.find(elem => elem.id == m.id);
+        if (modelFind === undefined) {
+          model.push(m)
+        }
+      });
 
-        /****************************sizes*****************************/
-        const sizesFilter = this.response.sizes.filter(elem => {
-          if(elem.belongsModels.find(elem => elem === dato.id)){
-            return elem
-          }
-        });
-        sizesFilter.forEach(elem => {
-          if(size.find(data => data.id === elem.id) === undefined) {
-            if (elem.state == 0) {
-              size.push(elem)
-            } else {
-              size.push(elem)
-            }
-          }
-        });
-        /*****************************color****************************/
-        const colorFilter = this.response.colors.filter(elem => {
-          if(elem.belongsModels.find(elem => elem === dato.id)){
-            return elem
-          }
-        });
-        colorFilter.forEach(elem => {
-          if(color.find(data => data.id === elem.id) === undefined) {
-            if (elem.state == 0) {
-              color.push(elem)
-            } else {
-              color.push(elem)
-            }
-          }
-        })
+      /***************************brands******************************/
+      const brandsFilter = this.response.brands.filter(elem => !!elem.belongsModels.find(model => !!dato.available_ids.find(id => id == model)));
+      brandsFilter.forEach(elem => {
+        if (brand.find(data => data.id === elem.id) === undefined) {
+          brand.push(elem)
+        }
+      });
+
+      /****************************sizes*****************************/
+      const sizesFilter = this.response.sizes.filter(elem => !!elem.belongsModels.find(model => !!dato.available_ids.find(id => id == model)));
+      sizesFilter.forEach(elem => {
+        if (size.find(data => data.id === elem.id) === undefined) {
+          size.push(elem)
+        }
+      });
+
+      /*****************************color****************************/
+      const colorFilter = this.response.colors.filter(elem => !!elem.belongsModels.find(model => !!dato.available_ids.find(id => id == model)));
+      colorFilter.forEach(elem => {
+        if (color.find(data => data.id === elem.id) === undefined) {
+          color.push(elem)
+        }
+      })
     }
+
     if (model.length > 0) {
       this.response.models = model;
       this.reception.setModelsList(model)
@@ -420,6 +358,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.result.brandId = undefined;
     this.result.sizeId = undefined;
     this.result.colorId = undefined ;
+    this.modelSelected = null;
     this.reception.setModelsList(this.response.models);
     this.reception.setBrandsList(this.response.brands);
     this.reception.setColorsList(this.response.colors);
@@ -454,11 +393,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         case 'models':
           if (e.dato.selected) {
             this.result.modelId = e.dato.id;
+            this.modelSelected = e.dato;
             const timeout = setTimeout(() => {
               this.updateList(this.dato);
             }, 0);
           } else {
             this.result.modelId = undefined;
+            this.modelSelected = null;
 
             if (this.dato.id === this.itemParent.id) {
               this.reset();
@@ -468,6 +409,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         case 'colors':
           if (e.dato.selected) {
             this.result.colorId = e.dato.id;
+            if (this.modelSelected) {
+              this.result.modelId = this.modelSelected.available_ids.find(id => e.dato.belongsModels.find(model => model == id));
+            }
             const timeout = setTimeout(() => {
               this.updateList(this.dato);
             }, 0);
@@ -622,7 +566,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           })
       },
       e =>  {
-
         this.intermediaryService.dismissLoading();
         //this.intermediaryService.presentToastError(e.error.errors)
         this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
