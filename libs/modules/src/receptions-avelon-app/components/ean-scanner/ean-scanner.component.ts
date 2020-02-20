@@ -7,6 +7,7 @@ import {ReceptionAvelonProvider} from "../../../../../services/src/providers/rec
 import {AudioProvider} from "../../../../../services/src/providers/audio-provider/audio-provider.provider";
 import {TimesToastType} from "../../../../../services/src/models/timesToastType";
 import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
+import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
 
 @Component({
   selector: 'suite-ean-scanner',
@@ -23,6 +24,7 @@ export class EanScannerComponent implements OnInit {
   constructor(
     private intermediaryService: IntermediaryService,
     private receptionsAvelonService: ReceptionsAvelonService,
+    private printerService: PrinterService,
     private receptionAvelonProvider: ReceptionAvelonProvider,
     private audioProvider: AudioProvider
   ) { }
@@ -55,7 +57,20 @@ export class EanScannerComponent implements OnInit {
                   duration: TimesToastType.DURATION_SUCCESS_TOAST_2000
                 }
               });
-              // TODO print code obtained here
+
+              this.printerService.printTagBarcode([resultPrint.reference])
+                .subscribe((resPrint) => {
+                  console.log('Print reference of reception successful');
+                  if (typeof resPrint == 'boolean') {
+                    console.log(resPrint);
+                  } else {
+                    resPrint.subscribe((resPrintTwo) => {
+                      console.log('Print reference of reception successful two', resPrintTwo);
+                    })
+                  }
+                }, (error) => {
+                  console.error('Some error success to print reference of reception', error);
+                });
             }, (error) => {
               this.processFinishError({
                 hideLoading: true,

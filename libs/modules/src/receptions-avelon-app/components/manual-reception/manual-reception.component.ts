@@ -5,6 +5,7 @@ import {ReceptionsAvelonService} from "@suite/services";
 import {ReceptionAvelonProvider} from "../../../../../services/src/providers/reception-avelon/reception-avelon.provider";
 import {LoadingMessageComponent} from "../../../components/loading-message/loading-message.component";
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
+import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -30,6 +31,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   constructor(
     private modalController: ModalController,
     private receptionsAvelonService: ReceptionsAvelonService,
+    private printerService: PrinterService,
     private receptionAvelonProvider: ReceptionAvelonProvider,
     private toolbarProvider: ToolbarProvider
   ) { }
@@ -125,17 +127,45 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   public checkProduct() {
     this.loadingMessageComponent.show(true);
-    setTimeout(() => {
-      this.loadingMessageComponent.show(false);
-      this.resultsList = [{
-        model: this.modelSelected.name,
-        brand: this.brandSelected.name,
-        color: this.colorSelected.name,
-        size: '34',
-        ean: '123456789',
-        reference: '001234567891234567'
-      }];
-    }, 5 * 1000);
+
+    const params: any = {
+      providerId: this.receptionAvelonProvider.expeditionData.providerId,
+      expedition: this.receptionAvelonProvider.expeditionData.reference,
+      brandId: this.brandSelected.id,
+      colorId: this.colorSelected.id,
+      sizeId: this.sizeSelected.id,
+      modelId: this.modelSelected.id
+    };
+    this.receptionsAvelonService
+      .printReceptionLabel(params)
+      .subscribe((res) => {
+        this.loadingMessageComponent.show(false);
+        this.resultsList = [{
+          model: this.modelSelected.name,
+          brand: this.brandSelected.name,
+          color: this.colorSelected.name,
+          size: this.sizeSelected.name,
+          reference: res.reference
+        }];
+      }, (error) => {
+        this.loadingMessageComponent.show(false);
+      });
+  }
+
+  public printProductReceived(item) {
+    this.printerService.printTagBarcode([item.reference])
+      .subscribe((resPrint) => {
+        console.log('Print reference of reception successful');
+        if (typeof resPrint == 'boolean') {
+          console.log(resPrint);
+        } else {
+          resPrint.subscribe((resPrintTwo) => {
+            console.log('Print reference of reception successful two', resPrintTwo);
+          })
+        }
+      }, (error) => {
+        console.error('Some error success to print reference of reception', error);
+      });
   }
 
   private updateFilterLists(filterUsed) {
