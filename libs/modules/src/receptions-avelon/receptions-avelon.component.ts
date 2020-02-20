@@ -241,6 +241,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           // const interval = setTimeout(() => {
           //   this.updateList(this.dato);
           // }, 0);
+        }else{
+          this.result.sizeId = undefined;
         }
       } else {
         this.result.sizeId = undefined;
