@@ -46,4 +46,6 @@ export class InfoModalComponent implements OnInit {
     await this.modalController.dismiss({reception: true});
   }
 
+
+
 }
