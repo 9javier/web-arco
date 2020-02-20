@@ -130,8 +130,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   ngAfterViewInit() {
-    this.listSelected()
-    this.sizeSelected()
+    this.listSelected();
+    this.sizeSelected();
+    this.clickSizeSelected();
 
   }
 
@@ -215,15 +216,34 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   sizeSelected() {
-    this.reception.getEmitList().subscribe((e:any) => {
-      this.dato = e.dato;
+    // this.reception.getEmitList().subscribe((e:any) => {
+    //   // this.dato = e.dato;
 
+    //   // if (e && e.dato) {
+    //   //   if(e.dato.selected){
+    //   //     this.result.sizeId = e.dato.id;
+    //   //   }
+    //   // } else {
+    //   //   this.result.sizeId = undefined;
+    //   // }
+    // })
+  }
+
+  clickSizeSelected() {
+    this.reception.getEmitSizes().subscribe((e:any) => {
+      // this.result.sizeId = undefined;
+      // this.dato = e.dato;
+      // console.log('queque',e.dato.click);
       if (e && e.dato) {
         if(e.dato.selected){
           this.result.sizeId = e.dato.id;
+          // const interval = setTimeout(() => {
+          //   this.updateList(this.dato);
+          // }, 0);
         }
       } else {
         this.result.sizeId = undefined;
+        // this.reset();
       }
     })
   }

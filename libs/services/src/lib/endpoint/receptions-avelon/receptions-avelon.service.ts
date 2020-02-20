@@ -26,6 +26,9 @@ export class ReceptionsAvelonService {
   private colors$ = this.colors.asObservable()
   private emit = new BehaviorSubject({}); 
   private emit$ = this.emit.asObservable()
+  private emitSize = new BehaviorSubject({}); 
+  private emitSize$ = this.emitSize.asObservable();
+
   constructor(
     private http: HttpClient
   ) {}
@@ -118,7 +121,15 @@ export class ReceptionsAvelonService {
   getEmitList(){
     return this.emit$
   }
+  
+  setEmitSizes(data: any){
+    this.emitSize.next(data)
+  }
+  getEmitSizes(){
+    return this.emitSize$
+  }
 
+ 
  
   
 }

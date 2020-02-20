@@ -28,12 +28,9 @@ export class SizesComponent implements OnInit {
 
   selected(dato: ReceptionAvelonModel.Data) {
     setTimeout(() => {
+      console.log('entre a seleccionar talla');
       dato.selected = !dato.selected
-      if (dato.selected) {
-        this.receptions.setEmitList({dato})
-      }else {
-        this.receptions.setEmitList({dato})
-      }
+      this.receptions.setEmitSizes({dato})
       this.datos.map(elem => {
         if (elem.id !== dato.id) {
           elem.selected = false
