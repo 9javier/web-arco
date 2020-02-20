@@ -381,7 +381,7 @@ export class PrinterService {
     return out;
   }
 
-  printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<Boolean | Observable<any>> {
+  printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
     /** declare and obsevable to merge all print results */
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
