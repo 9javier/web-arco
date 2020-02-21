@@ -298,6 +298,7 @@ export namespace WorkwaveModel {
   export interface ParamsConfirmMatchLineRequestOnlineStore {
     type: number,
     requestIds: number[],
+    deliveryRequestIds: number[],
     userIds: number[]
   }
   export interface ConfirmMatchLineRequestOnlineStore {

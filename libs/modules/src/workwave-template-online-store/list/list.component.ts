@@ -217,7 +217,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   saveWorkWave() {
     if (this.listEmployeesToUpdate.length < 1) {
       this.intermediaryService.presentToastError('Seleccione almenos un usuario para generar las tareas de picking.', TimesToastType.DURATION_ERROR_TOAST);
-    } else if (this.listRequestOrdersToUpdate.length < 1) {
+    } else if (this.listRequestOrdersToUpdate.length < 1 && this.listDeliveryRequestOrdersToUpdate.length < 1) {
       this.intermediaryService.presentToastError('Seleccione almenos una operación de envío para generar las tareas de picking.', TimesToastType.DURATION_ERROR_TOAST);
     } else {
       this.presentAlertConfirmPickings();
@@ -268,6 +268,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
       .postConfirmMatchLineRequestOnlineStore({
         type: this.TYPE_EXECUTION_ID,
         requestIds: this.listRequestOrdersToUpdate,
+        deliveryRequestIds: this.listDeliveryRequestOrdersToUpdate,
         userIds: this.listEmployeesToUpdate
       })
       .then((res: WorkwaveModel.ResponseConfirmMatchLineRequestOnlineStore) => {
