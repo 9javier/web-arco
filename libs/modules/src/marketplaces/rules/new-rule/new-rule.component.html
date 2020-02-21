@@ -15,7 +15,7 @@
     <div class="nr-modal-content">
       <div class="nr-filter-selection-wrapper">
         <div class="rule-filter-category" *ngIf="ruleFilterType == 'categories' || ruleFilterType == 'enabling'">
-          <div>
+          <div [ngClass]="filterWithSearcher() ? '' : 'hidden-searcher'">
             <i class="material-icons">search</i>
           </div>
           <div *ngIf="selectedCategoryGroupFilterObject">
@@ -26,7 +26,7 @@
                 </mat-option>
               </mat-select>
             </div>
-            <input matInput type="text" placeholder="Buscar..." [(ngModel)]="categorySearched" (keyup)="searchCategories()"/>
+            <input matInput type="text" placeholder="Buscar..." [(ngModel)]="categorySearched" (keyup)="searchCategories()" [ngClass]="filterWithSearcher() ? '' : 'hidden-searcher'"/>
             <div *ngIf="selectedCategoryGroupFilter != 18 && selectedCategoryGroupFilter != 19 && selectedCategoryGroupFilter != 20">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
                 <span *ngIf="!selectedCategoriesIncludes(category)">{{category.name}}</span>

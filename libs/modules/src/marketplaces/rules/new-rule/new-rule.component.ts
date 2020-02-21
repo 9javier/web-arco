@@ -1161,4 +1161,7 @@ export class NewRuleComponent implements OnInit {
     return this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
+  filterWithSearcher() {
+    return (this.selectedCategoryGroupFilter != 18 && this. selectedCategoryGroupFilter != 19 && this.selectedCategoryGroupFilter != 20);
+  }
 }

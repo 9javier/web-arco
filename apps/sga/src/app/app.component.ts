@@ -14,6 +14,7 @@ import {TypesService} from "../../../../libs/services/src/lib/endpoint/types/typ
 import {TypeModel} from "../../../../libs/services/src/models/endpoints/Type";
 import {app} from '@suite/services'
 import {DateAdapter} from "@angular/material";
+import {LocalStorageProvider} from "../../../../libs/services/src/providers/local-storage/local-storage.provider";
 
 interface MenuItem {
   title: string;
@@ -165,7 +166,8 @@ export class AppComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private warehouseService: WarehouseService,
     private scannerConfigurationService: ScannerConfigurationService,
-    private typesService: TypesService
+    private typesService: TypesService,
+    private localStorageProvider: LocalStorageProvider
   ) {
     this.menu.enable(false, 'sidebar');
     this.dateAdapter.setLocale('es');
@@ -227,12 +229,14 @@ export class AppComponent implements OnInit {
                 })
               )
               .catch((possibleMainWarehouse404Error) => {})
-              .then(() => this.router.navigate(
-                [this.dictionary['user-time']?'user-time/products':'/products']
-                ).then(sucess => {
+              .then( async () => {
+                this.router.navigate(
+                [(await this.checkIfHasMarketplaceRole() ? 'marketplaces/catalogs-marketplaces' : (this.dictionary['user-time']?'user-time/products':'/products'))]
+              ).then(sucess => {
                   this.mainHeaderShowHide(true);
                   this.menu.enable(true, 'sidebar');
                 })
+                }
               );
           } else {
             this.menu.enable(false, 'sidebar');
@@ -332,5 +336,26 @@ export class AppComponent implements OnInit {
     if (this.iconsDirection === 'end') this.toggleSidebar();
 
     menuItem.open = !menuItem.open;
+  }
+
+  async checkIfHasMarketplaceRole() {
+    let userJson = await <any> this.localStorageProvider.get(this.localStorageProvider.KEYS.USER);
+    let user = JSON.parse(userJson);
+    for (let permit of user.permits) {
+      if (permit.rol) {
+        if (permit.rol.id == 10) {
+          this.changeMenutTitle("Catálogos Marketplaces");
+          return true;
+        }
+      } else if (permit.roles && permit.roles.length) {
+        for (let role of permit.roles) {
+          if (role.id == 10) {
+            this.changeMenutTitle("Catálogos Marketplaces");
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }
