@@ -406,6 +406,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.intermediaryService.dismissLoading();
     this.expedit =this.expedition;
     this.result.ean="";
+    this.oldEan="";
   }
 
   listSelected() {
