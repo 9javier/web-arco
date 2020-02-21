@@ -1,0 +1,51 @@
+div.fields-to-search {
+  mat-list-item {
+    height: 56px;
+  }
+  mat-icon.right {
+    right: 16px;
+    width: 24px;
+    padding: 4px;
+    position: absolute;
+  }
+  div.check-btn {
+    text-align: end;
+    padding: 8px 16px 16px;
+    button {
+      color: white;
+      background: black;
+    }
+    button.disabled {
+      background-color: #8e8e8e;
+    }
+  }
+}
+
+div.items {
+  padding: 16px;
+  position: relative;
+
+  h4.results {
+    margin: 0 0 16px;
+    text-align: center;
+  }
+  div {
+    position: relative;
+    h4, p {
+      margin: 0;
+      span.brand {
+        font-style: italic;
+      }
+    }
+    p {
+      margin: 4px 0;
+    }
+    button {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      color: white;
+      background: black;
+    }
+  }
+}

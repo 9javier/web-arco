@@ -381,7 +381,7 @@ export class PrinterService {
     return out;
   }
 
-  printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<Boolean | Observable<any>> {
+  printTagBarcode(listReferences: string[], cntPrint: number = 1): Observable<boolean | Observable<any>> {
     console.debug("PRINT::printTagBarcode 1 [" + new Date().toJSON() + "]", listReferences);
     /** declare and obsevable to merge all print results */
     let observable: Observable<boolean | Observable<any>> = new Observable(observer => observer.next(true)).pipe(flatMap(dummyValue => {
@@ -1010,13 +1010,13 @@ export class PrinterService {
 
     let imageLoadPromises: Promise<void>[] = [];
 
-    for (let reference of codes) {
+    for (let key in codes) {
       let newImage = document.createElement('img');
       imageLoadPromises.push(new Promise((resolve) => { newImage.onload = <any>resolve; }));
-      newImage.id = reference;
+      newImage.id = 'image-barcode-'+key;
       newImage.className = 'barcode';
       divBarcodes.appendChild(newImage);
-      JsBarcode("#" + reference, reference);
+      JsBarcode("#image-barcode-" + key, codes[key]);
     }
 
     return Promise.all(imageLoadPromises)

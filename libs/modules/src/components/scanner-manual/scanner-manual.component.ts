@@ -14,6 +14,8 @@ export class ScannerManualComponent implements OnInit {
   @Output() newValue = new EventEmitter();
   @Output() currentValue = new EventEmitter();
 
+  private isScanBlocked: boolean = false;
+
   constructor(
     private keyboardService: KeyboardService
   ) {
@@ -27,8 +29,11 @@ export class ScannerManualComponent implements OnInit {
   keyUpInput(event) {
     let data = (this.value || "").trim();
     this.currentValue.next(data);
-    if (event.keyCode == 13 && data) {
+    if (event.keyCode == 13 && data && !this.isScanBlocked) {
       this.newValue.next(data);
+    } else if (event.keyCode == 13 && this.isScanBlocked) {
+      this.setValue(null);
+      this.focusToInput();
     }
   }
 
@@ -52,4 +57,7 @@ export class ScannerManualComponent implements OnInit {
     }
   }
 
+  public blockScan(mustBlockScan) {
+    this.isScanBlocked = mustBlockScan;
+  }
 }

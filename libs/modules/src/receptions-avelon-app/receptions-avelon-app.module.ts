@@ -4,8 +4,9 @@ import { RouterModule, Routes } from "@angular/router";
 import { CommonModule } from '@angular/common';
 import { ReceptionsAvelonAppComponent } from './receptions-avelon-app.component';
 import {MatButtonModule, MatDividerModule, MatIconModule} from "@angular/material";
-import {EanScannerComponent} from "./components/ean-scanner/ean-scanner.component";
 import {EanScannerModule} from "./components/ean-scanner/ean-scanner.module";
+import {ManualReceptionComponent} from "./components/manual-reception/manual-reception.component";
+import {ManualReceptionModule} from "./components/manual-reception/manual-reception.module";
 
 const routes: Routes = [
   {
@@ -13,8 +14,8 @@ const routes: Routes = [
     component: ReceptionsAvelonAppComponent
   },
   {
-    path: 'scanner',
-    component: EanScannerComponent
+    path: 'manual',
+    component: ManualReceptionComponent
   }
 ];
 
@@ -29,7 +30,8 @@ const routes: Routes = [
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
-    EanScannerModule
+    EanScannerModule,
+    ManualReceptionModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

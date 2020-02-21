@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { PrinterService } from 'libs/services/src/lib/printer/printer.service';
 
 @Component({
   selector: 'suite-screen-result',
@@ -8,15 +9,29 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 export class ScreenResultComponent implements OnInit {
 
   @Input('type') type: number
+  @Input('reference') reference: string
   @Output('screenExit') exit: EventEmitter<boolean> = new EventEmitter(false)
-  constructor() { }
+  constructor(
+    private printerService: PrinterService
+  ) { }
 
   ngOnInit() {
     console.log(this.type);
+    this.printCodes();
   }
 
   screenExit() {
     this.exit.emit(true)
+  }
+
+  private async printCodes() {
+    let codes = [this.reference];
+    if ((<any>window).cordova) {
+      console.log(JSON.stringify(codes));
+      this.printerService.print({ text: codes, type: 2 });
+    } else {
+      return await this.printerService.printBarcodesOnBrowser(codes);
+    }
   }
 
 }
