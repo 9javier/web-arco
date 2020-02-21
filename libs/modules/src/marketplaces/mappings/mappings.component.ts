@@ -143,7 +143,7 @@ export class MappingsComponent implements OnInit {
             });
           }
         });
-        // this.dataSourceSizes.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
+        this.dataSourceSizes.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginatorSizes);
         this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
@@ -306,7 +306,7 @@ export class MappingsComponent implements OnInit {
           this.sizesList.push({id: size.name, name: size.name});
         }
       }
-      //this.sizesList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+      this.sizesList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
 
       this.featuresList = data.features;
       for (let feature of this.featuresList) {
