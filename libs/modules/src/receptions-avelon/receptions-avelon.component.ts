@@ -223,6 +223,8 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       if (e && e.dato) {
         if (e.dato.selected) {
           this.result.sizeId = e.dato.id;
+        } else {
+          this.result.sizeId = undefined;
         }
       } else {
         this.result.sizeId = undefined;
@@ -366,6 +368,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.intermediaryService.dismissLoading();
     this.expedit =this.expedition;
     this.result.ean="";
+    this.oldEan="";
   }
 
   listSelected() {
