@@ -32,12 +32,12 @@
 
       <ng-container matColumnDef="ref">
         <th mat-header-cell *matHeaderCellDef><span>Ref.</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.ref}} </td>
+        <td mat-cell *matCellDef="let product"> {{product.reference}} </td>
       </ng-container>
 
       <ng-container matColumnDef="model">
         <th mat-header-cell *matHeaderCellDef><span>Modelo</span></th>
-        <td mat-cell *matCellDef="let product"> {{product.model}} </td>
+        <td mat-cell *matCellDef="let product"> {{product.name}} </td>
       </ng-container>
 
       <ng-container matColumnDef="brand">
@@ -48,72 +48,96 @@
       <ng-container matColumnDef="KO">
         <th mat-header-cell *matHeaderCellDef><span>KO</span></th>
         <td mat-cell *matCellDef="let product">
-          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.ko.activate ? 'symbolActivate' : 'symbolDisabled'">
-            {{product.ko.symbol}}
+          <span *ngFor="let market of product.marketplaces">
+            <span *ngIf="currentType == 1 && product.marketplaces.length > 0 && market.avaible && market.marketId == 1" class="symbol" [ngClass]="market.status == 'active' ? 'symbolActivate' : 'symbolDisabled'">
+              ●
+            </span>
           </span>  
-          <span *ngIf="currentType == 2">
-            {{product.ko.stock}}
-          </span> 
+          <span *ngFor="let stock of product.stocks">
+            <span *ngIf="currentType == 2 && product.stocks.length > 0 && stock.marketId == 1">
+              {{stock.stock}}
+            </span> 
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Mini">
         <th mat-header-cell *matHeaderCellDef><span>Mini</span></th>
         <td mat-cell *matCellDef="let product">
-          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.mini.activate ? 'symbolActivate' : 'symbolDisabled'">
-            {{product.mini.symbol}}
+          <span *ngFor="let market of product.marketplaces">
+            <span *ngIf="currentType == 1 && product.marketplaces.length > 0 && market.avaible && market.marketId == 2" class="symbol" [ngClass]="market.status == 'active' ? 'symbolActivate' : 'symbolDisabled'">
+              ●
+            </span>
           </span>  
-          <span *ngIf="currentType == 2">
-            {{product.mini.stock}}
-          </span> 
+          <span *ngFor="let stock of product.stocks">
+            <span *ngIf="currentType == 2 && product.stocks.length > 0 && stock.marketId == 2">
+              {{stock.stock}}
+            </span> 
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Amazon">
         <th mat-header-cell *matHeaderCellDef><span>Amazon</span></th>
         <td mat-cell *matCellDef="let product"> 
-          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.amazon.activate ? 'symbolActivate' : 'symbolDisabled'">
-            {{product.amazon.symbol}}
+          <span *ngFor="let market of product.marketplaces">
+            <span *ngIf="currentType == 1 && product.marketplaces.length > 0 && market.avaible && market.marketId == 3" class="symbol" [ngClass]="market.status == 'active' ? 'symbolActivate' : 'symbolDisabled'">
+              ●
+            </span>
           </span>  
-          <span *ngIf="currentType == 2">
-            {{product.amazon.stock}}
-          </span> 
+          <span *ngFor="let stock of product.stocks">
+            <span *ngIf="currentType == 2 && product.stocks.length > 0 && stock.marketId == 3">
+              {{stock.stock}}
+            </span> 
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Spartoo">
         <th mat-header-cell *matHeaderCellDef><span>Spartoo</span></th>
         <td mat-cell *matCellDef="let product"> 
-          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.spartoo.activate ? 'symbolActivate' : 'symbolDisabled'">
-            {{product.spartoo.symbol}}
+          <span *ngFor="let market of product.marketplaces">
+            <span *ngIf="currentType == 1 && product.marketplaces.length > 0 && market.avaible && market.marketId == 4" class="symbol" [ngClass]="market.status == 'active' ? 'symbolActivate' : 'symbolDisabled'">
+              ●
+            </span>
           </span>  
-          <span *ngIf="currentType == 2">
-            {{product.spartoo.stock}}
-          </span> 
+          <span *ngFor="let stock of product.stocks">
+            <span *ngIf="currentType == 2 && product.stocks.length > 0 && stock.marketId == 4">
+              {{stock.stock}}
+            </span> 
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="Zalando">
         <th mat-header-cell *matHeaderCellDef><span>Zalando</span></th>
         <td mat-cell *matCellDef="let product"> 
-          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.zalando.activate ? 'symbolActivate' : 'symbolDisabled'">
-            {{product.zalando.symbol}}
+          <span *ngFor="let market of product.marketplaces">
+            <span *ngIf="currentType == 1 && product.marketplaces.length > 0 && market.avaible && market.marketId == 5" class="symbol" [ngClass]="market.status == 'active' ? 'symbolActivate' : 'symbolDisabled'">
+              ●
+            </span>
           </span>  
-          <span *ngIf="currentType == 2">
-            {{product.zalando.stock}}
-          </span> 
+          <span *ngFor="let stock of product.stocks">
+            <span *ngIf="currentType == 2 && product.stocks.length > 0 && stock.marketId == 5">
+              {{stock.stock}}
+            </span> 
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="CDiscount">
         <th mat-header-cell *matHeaderCellDef><span>CDiscount</span></th>
         <td mat-cell *matCellDef="let product"> 
-          <span *ngIf="currentType == 1" class="symbol" [ngClass]="product.cdiscount.activate ? 'symbolActivate' : 'symbolDisabled'">
-            {{product.cdiscount.symbol}}
+          <span *ngFor="let market of product.marketplaces">
+            <span *ngIf="currentType == 1 && product.marketplaces.length > 0 && market.avaible && market.marketId == 6" class="symbol" [ngClass]="market.status == 'active' ? 'symbolActivate' : 'symbolDisabled'">
+              ●
+            </span>
           </span>  
-          <span *ngIf="currentType == 2">
-            {{product.cdiscount.stock}}
-          </span> 
+          <span *ngFor="let stock of product.stocks">
+            <span *ngIf="currentType == 2 && product.stocks.length > 0 && stock.marketId == 6">
+              {{stock.stock}}
+            </span> 
+          </span>
         </td>
       </ng-container>
 

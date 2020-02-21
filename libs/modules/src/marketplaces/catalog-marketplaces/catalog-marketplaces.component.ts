@@ -10,6 +10,7 @@ import { MatTableDataSource } from '@angular/material';
 export class CatalogMarketplacesComponent implements OnInit {
 
   private catalogData;
+  private products: any[];
   private catalogTableData;
   private catalogTableHeader;
   private selectedProducts;
@@ -32,7 +33,7 @@ export class CatalogMarketplacesComponent implements OnInit {
   ngOnInit() {
     this.catalogData = [
       {
-        ref: 1,
+        reference: 1,
         model: 'model1',
         brand: 'brand1',
         ko: {
@@ -100,9 +101,66 @@ export class CatalogMarketplacesComponent implements OnInit {
         }
       }
     ];
-    this.catalogTableData = new MatTableDataSource(this.catalogData);
+    
+
+    this.getProducts();
+    console.log(this.products);
+    this.catalogTableData = new MatTableDataSource(this.products);
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
     this.selectedProducts = [];
+  }
+
+  getProducts() {
+    this.products = [
+      {
+        reference: '123456',
+        name: 'test',
+        brand: 'brand test',
+        description: 'description test',
+        familfy: 'family test',
+        marketplaces: [
+          {
+            marketId: '1',
+            avaible: true,
+            status: 'active'
+          },
+          {
+            marketId: '2',
+            avaible: false,
+            status: 'sadasdada'
+          },
+          {
+            marketId: '3',
+            avaible: true,
+            status: 'sadasdada'
+          },
+          
+          {
+            marketId: '5',
+            avaible: true,
+            status: 'active'
+          }
+        ],
+        stocks: [
+          {
+            marketId: '1',
+            stock: 123
+          },
+          {
+            marketId: '2',
+            stock: ''
+          },
+          {
+            marketId: '3',
+            stock: 12312
+          },
+          {
+            marketId: '6',
+            stock: 5654
+          }
+        ]
+      }
+    ];
   }
 
   selectProductRow(row) {
