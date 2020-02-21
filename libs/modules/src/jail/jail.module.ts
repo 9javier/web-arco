@@ -29,7 +29,12 @@ import { HistoryModalComponent } from './history-modal/history-modal.component';
 import { HistoryWarehouseComponent } from './history-warehouse/history-warehouse.component';
 import { HistoryWarehouseNMComponent } from './history-warehouse-no-modal/history-warehouse-no-modal.component';
 import { DatePipe } from '@angular/common';
-
+import {ProductRelocationModule} from "../products/modals/product-relocation/product-relocation.module";
+import {PaginatorComponentModule} from "../components/paginator/paginator.component.module";
+import {FilterButtonModule} from "../components/filter-button/filter-button.module";
+import {ProductDetailsModule} from "../products/modals/product-details/product-details.module";
+import {TagsInputModule} from "../components/tags-input/tags-input.module";
+import {ProductsComponent} from "../products/products.component";
 
 @NgModule({
   declarations: [
@@ -68,7 +73,17 @@ import { DatePipe } from '@angular/common';
     MatInputModule,
     MatTooltipModule,
     MatIconModule,
-    MatSortModule
+    MatSortModule,
+    ReactiveFormsModule,
+    IonicModule,
+    MatListModule,
+    MatTableModule,
+    MatPaginatorModule,
+    BreadcrumbModule,
+    TagsInputModule,
+    PaginatorComponentModule,
+    FilterButtonModule,
+    MatTooltipModule
   ],
   entryComponents: [
     StoreComponent,
