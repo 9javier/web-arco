@@ -39,6 +39,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadReceptions();
+    this.toolbarProvider.currentPage.next('Recepción manual');
     this.toolbarProvider.optionsActions.next([
       {
         label: 'recargar',
