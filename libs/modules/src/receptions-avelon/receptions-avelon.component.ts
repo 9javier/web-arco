@@ -36,6 +36,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   interval: any;
   option: any;
   typeScreen: number;
+  reference: string;
   filter;
   objectType = Type;
   filterData: ReceptionAvelonModel.Reception;
@@ -130,8 +131,9 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   ngAfterViewInit() {
-    this.listSelected()
-    this.sizeSelected()
+    this.listSelected();
+    this.sizeSelected();
+    this.clickSizeSelected();
 
   }
 
@@ -215,15 +217,36 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   sizeSelected() {
-    this.reception.getEmitList().subscribe((e:any) => {
-      this.dato = e.dato;
+    // this.reception.getEmitList().subscribe((e:any) => {
+    //   // this.dato = e.dato;
 
+    //   // if (e && e.dato) {
+    //   //   if(e.dato.selected){
+    //   //     this.result.sizeId = e.dato.id;
+    //   //   }
+    //   // } else {
+    //   //   this.result.sizeId = undefined;
+    //   // }
+    // })
+  }
+
+  clickSizeSelected() {
+    this.reception.getEmitSizes().subscribe((e:any) => {
+      // this.result.sizeId = undefined;
+      // this.dato = e.dato;
+      // console.log('queque',e.dato.click);
       if (e && e.dato) {
         if(e.dato.selected){
           this.result.sizeId = e.dato.id;
+          // const interval = setTimeout(() => {
+          //   this.updateList(this.dato);
+          // }, 0);
+        }else{
+          this.result.sizeId = undefined;
         }
       } else {
         this.result.sizeId = undefined;
+        // this.reset();
       }
     })
   }
@@ -509,10 +532,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
             this.typeScreen = resp.type;
+            this.reference = resp.reference;
             this.intermediaryService.dismissLoading();
           },
           () => {
             this.typeScreen = resp.type
+            this.reference = resp.reference
           }
         );
       },
@@ -591,11 +616,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             this.response.colors = this.clearSelected(this.response.colors);
             this.response.sizes = this.clearSelected(this.response.sizes);
             this.typeScreen = result.type;
+            this.reference = result.reference;
             this.intermediaryService.dismissLoading();
           },
           () => {
             this.typeScreen = result.type
-        })
+            this.reference = result.reference;
+          })
       },
       e =>  {
 
@@ -610,6 +637,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
  async screenExit(e) {
   this.typeScreen = undefined;
+  this.reference = '';
   this.resetAll();
 
   }

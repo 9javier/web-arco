@@ -92,6 +92,6 @@
   </ng-container>
 
   <ng-template #screen>
-    <suite-screen-result [type]="typeScreen" (screenExit)="screenExit($event)"></suite-screen-result>
+    <suite-screen-result [type]="typeScreen" [reference]="reference" (screenExit)="screenExit($event)"></suite-screen-result>
   </ng-template>
 </ion-content>
