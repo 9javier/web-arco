@@ -2,7 +2,8 @@ import { IonicModule } from '@ionic/angular';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FilterItemsListComponent } from './filter-items-list.component';
-import {MatListModule, MatRippleModule, MatTooltipModule} from "@angular/material";
+import {MatButtonModule, MatIconModule, MatInputModule, MatListModule, MatRippleModule, MatTooltipModule} from "@angular/material";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [FilterItemsListComponent],
@@ -12,7 +13,11 @@ import {MatListModule, MatRippleModule, MatTooltipModule} from "@angular/materia
     IonicModule,
     MatListModule,
     MatRippleModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    FormsModule
   ],
   exports: [FilterItemsListComponent]
 })
