@@ -26,8 +26,6 @@ export class NewRuleComponent implements OnInit {
   private categoryList;
   private selectedCategoryGroupFilter;
   private selectedCategoryGroupFilterObject;
-  private selectedDestinationCategoryGroupFilter;
-  private selectedDestinationCategoryGroupFilterObject;
   private selectedCategories;
   private destinationCategories;
   private selectedDestinationCategories;
@@ -144,61 +142,20 @@ export class NewRuleComponent implements OnInit {
         items: []
       },
     ];
-    this.destinationCategories = [];
-    if (this.ruleFilterType == 'categories') {
-      this.destinationCategories = [
-        {
-          id: 1,
-          name: 'Sección',
-          items: []
-        },
-        {
-          id: 2,
-          name: 'Familia',
-          items: []
-        },
-        {
-          id: 5,
-          name: 'Tacón',
-          items: []
-        },
-        {
-          id: 7,
-          name: 'Descripción',
-          items: []
-        },
-        {
-          id: 9,
-          name: 'Material exterior',
-          items: []
-        },
-        {
-          id: 10,
-          name: 'Material interior',
-          items: []
-        },
-        {
-          id: 12,
-          name: 'Comercial',
-          items: []
-        },
-        {
-          id: 15,
-          name: 'Marca',
-          items: []
-        },
-        {
-          id: 16,
-          name: 'Color',
-          items: []
-        },
-        {
-          id: 17,
-          name: 'Talla',
-          items: []
-        }
-      ];
-    }
+    this.destinationCategories = [
+      {
+        id: 3,
+        name: 'MUJER'
+      },
+      {
+        id: 4,
+        name: 'HOMBRE'
+      },
+      {
+        id: 1592,
+        name: 'NIÑOS'
+      }
+    ];
 
     forkJoin([
       this.marketplacesService.getBrands(),
@@ -214,13 +171,10 @@ export class NewRuleComponent implements OnInit {
               id: brand.id,
               externalId: brand.externalId,
               type: brand.ruleFilterType,
-              group: 15,
+              group: "15",
               name: brand.name.trim()
             };
             this.categoryList[7].items.push(listItem);
-            if (this.ruleFilterType == 'categories') {
-              this.destinationCategories[7].items.push(listItem);
-            }
           });
         }
 
@@ -230,13 +184,10 @@ export class NewRuleComponent implements OnInit {
               id: color.id,
               externalId: color.externalId,
               type: color.ruleFilterType,
-              group: 16,
+              group: "16",
               name: color.name.trim()
             };
             this.categoryList[8].items.push(listItem);
-            if (this.ruleFilterType == 'categories') {
-              this.destinationCategories[8].items.push(listItem);
-            }
           });
         }
 
@@ -246,13 +197,10 @@ export class NewRuleComponent implements OnInit {
               id: size.id,
               externalId: size.externalId,
               type: size.ruleFilterType,
-              group: 17,
+              group: "17",
               name: size.name.trim()
             };
             this.categoryList[9].items.push(listItem);
-            if (this.ruleFilterType == 'categories') {
-              this.destinationCategories[9].items.push(listItem);
-            }
           });
         }
 
@@ -298,29 +246,16 @@ export class NewRuleComponent implements OnInit {
               }
 
               this.categoryList[listIndex].items.push(listItem);
-              if (this.ruleFilterType == 'categories') {
-                this.destinationCategories[listIndex].items.push(listItem);
-              }
             }
           });
         }
         for (let category of this.categoryList) {
           category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
         }
-
-        if (this.ruleFilterType == 'categories') {
-          for (let category of this.destinationCategories) {
-            category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
-          }
-        }
       }
 
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = {...this.categoryList[0]};
-      if (this.ruleFilterType == 'categories') {
-        this.selectedDestinationCategoryGroupFilter = this.destinationCategories[0].id;
-        this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories[0];
-      }
 
       if (this.mode == 'edit') {
         this.rule = this.navParams.get('rule');
@@ -369,7 +304,7 @@ export class NewRuleComponent implements OnInit {
           case 'enabling':
             this.filterDescription = '';
             for (let category of this.selectedCategories) {
-              let group = this.categoryList.find(x => x.id === category.group);
+              let group = this.categoryList.find(x => x.id === parseInt(category.group));
               this.filterDescription += group.name + ': ' + category.name;
               if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
                 this.filterDescription += ', ';
@@ -436,16 +371,7 @@ export class NewRuleComponent implements OnInit {
     this.categorySearched = '';
   }
 
-  changeSelectedDestinationCategories(e) {
-    this.selectedDestinationCategoryGroupFilter = e.value;
-    this.selectedDestinationCategoryGroupFilterObject = this.destinationCategories.find(x => x.id === e.value);
-  }
-
   addCategoryToCategoriesFilter(category) {
-    let destination = false;
-    if (this.ruleFilterType == 'categories') {
-      destination = this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
-    }
     if (this.selectedCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
       for (let i = 0; i < this.selectedCategories.length; i++) {
         if (this.selectedCategories[i].id == category.id && this.selectedCategories[i].group == category.group) {
@@ -454,52 +380,16 @@ export class NewRuleComponent implements OnInit {
         }
       }
 
-      if (this.ruleFilterType == 'categories') {
-        if (destination) {
-          for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
-            if (this.selectedDestinationCategories[i].id == category.id && this.selectedDestinationCategories[i].group == category.group) {
-              this.selectedDestinationCategories.splice(i, 1);
-              break;
-            }
-          }
-          if (this.selectedCategoryGroupFilter == this.selectedDestinationCategoryGroupFilter) {
-            let items = this.selectedDestinationCategoryGroupFilterObject.items;
-            this.selectedDestinationCategoryGroupFilterObject.items = [];
-            setTimeout(() => {
-              for (let item of items) {
-                this.selectedDestinationCategoryGroupFilterObject.items.push(item);
-              }
-            });
-          }
-        }
-      }
-
     } else {
       this.selectedCategories.push(category);
-      this.selectedCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-
-      if (this.ruleFilterType == 'categories') {
-        if (!destination) {
-          this.selectedDestinationCategories.push(category);
-          this.selectedDestinationCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
-          if (this.selectedCategoryGroupFilter == this.selectedDestinationCategoryGroupFilter) {
-            let items = this.selectedDestinationCategoryGroupFilterObject.items;
-            this.selectedDestinationCategoryGroupFilterObject.items = [];
-            setTimeout(() => {
-              for (let item of items) {
-                this.selectedDestinationCategoryGroupFilterObject.items.push(item);
-              }
-            });
-          }
-        }
-      }
+      this.selectedCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0))));
 
     }
 
     this.filterProducts();
     this.filterDescription = '';
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -550,7 +440,7 @@ export class NewRuleComponent implements OnInit {
     this.filterDescription = '';
 
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -594,7 +484,7 @@ export class NewRuleComponent implements OnInit {
     this.filterDescription = '';
 
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -643,7 +533,7 @@ export class NewRuleComponent implements OnInit {
     this.filterDescription = '';
 
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -692,7 +582,7 @@ export class NewRuleComponent implements OnInit {
     this.filterDescription = '';
 
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -734,7 +624,7 @@ export class NewRuleComponent implements OnInit {
     this.filterDescription = '';
 
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -771,7 +661,7 @@ export class NewRuleComponent implements OnInit {
     this.filterDescription = '';
 
     for (let category of this.selectedCategories) {
-      let group = this.categoryList.find(x => x.id === category.group);
+      let group = this.categoryList.find(x => x.id === parseInt(category.group));
       this.filterDescription += group.name + ': ' + category.name;
       if (this.selectedCategories.indexOf(category) != this.selectedCategories.length - 1) {
         this.filterDescription += ', ';
@@ -986,21 +876,16 @@ export class NewRuleComponent implements OnInit {
   }*/
 
   selectCategoryRow(category) {
-    if (this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group))) {
+    if (this.selectedDestinationCategories.some(cat => (cat.id == category.id))) {
       for (let i = 0; i < this.selectedDestinationCategories.length; i++) {
-        if (this.selectedDestinationCategories[i].id == category.id && this.selectedDestinationCategories[i].group == category.group) {
+        if (this.selectedDestinationCategories[i].id == category.id) {
           this.selectedDestinationCategories.splice(i, 1);
           break;
         }
       }
     } else {
       this.selectedDestinationCategories.push(category);
-      this.selectedDestinationCategories.sort((a, b) => (parseInt(a.group) > parseInt(b.group)) ? 1 : ((parseInt(b.group) > parseInt(a.group)) ? -1 : ((a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))));
     }
-  }
-
-  checkCategorySelected(category) {
-    return this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
   }
 
   filterProducts() {
@@ -1033,10 +918,9 @@ export class NewRuleComponent implements OnInit {
         return true;
 
         break;
-
       case 'categories':
 
-        return this.checkCategoryRuleValidation();
+        return this.selectedDestinationCategories.length;
 
         break;
 
@@ -1053,10 +937,6 @@ export class NewRuleComponent implements OnInit {
         return false;
         break;
     }
-  }
-
-  checkCategoryRuleValidation() {
-    return (JSON.stringify(this.selectedCategories).trim() != JSON.stringify(this.selectedDestinationCategories).trim());
   }
 
   async finishCreateRule() {
@@ -1275,5 +1155,13 @@ export class NewRuleComponent implements OnInit {
       this.selectedCategoryGroupFilterObject.items = categories.slice();
     }
 
+  }
+
+  checkCategorySelected(category) {
+    return this.selectedDestinationCategories.some(cat => (cat.id == category.id && cat.group == category.group));
+  }
+
+  filterWithSearcher() {
+    return (this.selectedCategoryGroupFilter != 18 && this. selectedCategoryGroupFilter != 19 && this.selectedCategoryGroupFilter != 20);
   }
 }

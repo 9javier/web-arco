@@ -15,7 +15,7 @@
     <div class="nr-modal-content">
       <div class="nr-filter-selection-wrapper">
         <div class="rule-filter-category" *ngIf="ruleFilterType == 'categories' || ruleFilterType == 'enabling'">
-          <div>
+          <div [ngClass]="filterWithSearcher() ? '' : 'hidden-searcher'">
             <i class="material-icons">search</i>
           </div>
           <div *ngIf="selectedCategoryGroupFilterObject">
@@ -26,11 +26,14 @@
                 </mat-option>
               </mat-select>
             </div>
-            <input matInput type="text" placeholder="Buscar..." [(ngModel)]="categorySearched" (keyup)="searchCategories()"/>
+            <input matInput type="text" placeholder="Buscar..." [(ngModel)]="categorySearched" (keyup)="searchCategories()" [ngClass]="filterWithSearcher() ? '' : 'hidden-searcher'"/>
             <div *ngIf="selectedCategoryGroupFilter != 18 && selectedCategoryGroupFilter != 19 && selectedCategoryGroupFilter != 20">
               <div *ngFor="let category of selectedCategoryGroupFilterObject.items;" (click)="addCategoryToCategoriesFilter(category);">
                 <span *ngIf="!selectedCategoriesIncludes(category)">{{category.name}}</span>
                 <span class="bold-category" *ngIf="selectedCategoriesIncludes(category)">{{category.name}}</span>
+              </div>
+              <div *ngIf="!selectedCategoryGroupFilterObject.items.length" class="empty-selected-category">
+                Sin resultados
               </div>
             </div>
             <div *ngIf="selectedCategoryGroupFilter == 18" class="nr-price-range">
@@ -63,9 +66,9 @@
             </div>
           </div>
         </div>
-        <div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
+        <!--<div class="rule-filter-stock" *ngIf="ruleFilterType == 'stock'">
           <input matInput #stockInput type="text" placeholder="Stock de seguridad" [ngClass]="formatStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockFilter" (keydown)="checkEnterKeyStockInput($event);" (blur)="blurStockInput()"/>
-        </div>
+        </div>-->
       </div>
       <div class="nr-filter-selected-wrapper">
         <div>Filtro</div>
@@ -84,21 +87,15 @@
       <div class="nr-action-selected-wrapper">
         <div class="action-categories" *ngIf="ruleFilterType == 'categories'">
           <div>Seleccionar categorías destino</div>
-          <div class="destination-category-types">
-            <mat-select (selectionChange)="changeSelectedDestinationCategories($event)" [(ngModel)]="selectedDestinationCategoryGroupFilter">
-              <mat-option *ngFor="let item of destinationCategories" [value]="item.id">
-                {{item.name}}
-              </mat-option>
-            </mat-select>
-          </div>
           <div>
+
             <div>
               <div>&nbsp;</div>
               <div class="destination-category-id">ID</div>
               <div>Nombre</div>
             </div>
-            <div *ngIf="selectedDestinationCategoryGroupFilterObject">
-              <div *ngFor="let category of selectedDestinationCategoryGroupFilterObject.items;">
+            <div *ngIf="destinationCategories.length">
+              <div *ngFor="let category of destinationCategories;">
                 <div>
                   <ion-checkbox [checked]="checkCategorySelected(category)" (ionChange)="selectCategoryRow(category)"></ion-checkbox>
                 </div>
@@ -110,13 +107,16 @@
                 </div>
               </div>
             </div>
+            <div *ngIf="!destinationCategories.length" class="no-destination-categories">
+              No hay categorías para añadir
+            </div>
 
           </div>
         </div>
-        <div class="action-stock" *ngIf="ruleFilterType == 'stock'">
+        <!--<div class="action-stock" *ngIf="ruleFilterType == 'stock'">
           <div>Indicar stock a restar</div>
           <input matInput #reduceStockInput type="text" placeholder="Stock a restar" [ngClass]="formatReduceStock() ? '' : 'incorrect-input-value'" [(ngModel)]="stockToReduce" (keydown)="checkEnterKeyReduceStockInput($event);" (blur)="blurReduceStockInput()"/>
-        </div>
+        </div>-->
         <div *ngIf="ruleFilterType == 'enabling'">
           &nbsp;
         </div>
@@ -132,11 +132,11 @@
         <span *ngIf="selectedDestinationCategories.length == 1">categoría seleccionada</span>
         <span *ngIf="selectedDestinationCategories.length != 1">categorías seleccionadas</span>
       </span>
-      <span *ngIf="ruleFilterType == 'stock'">
+      <!--<span *ngIf="ruleFilterType == 'stock'">
         Stock a reducir:
         <span *ngIf="stockToReduceDescription != ''">{{stockToReduceDescription}}</span>
         <span *ngIf="stockToReduceDescription == ''">0</span>
-        </span>
+        </span>-->
       <span *ngIf="ruleFilterType == 'enabling'"></span>
     </div>
     <div *ngIf="createRuleButtonActivation();" class="nr-rule-button" (click)="createRule()">
