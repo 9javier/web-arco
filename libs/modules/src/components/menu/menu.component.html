@@ -44,7 +44,7 @@
       </ion-item>
       <ion-list *ngIf="sub.open" lines="none">
         <ng-container *ngFor="let subSub of sub.children">
-          <ion-item *ngIf="!subSub.header"   class="sub-sub-item" [routerLink]="subSub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubitem(subSub)">
+          <ion-item *ngIf="!subSub.header"   class="sub-sub-item" [routerLink]="subSub.url" routerDirection="root" routerLinkActive="active" (click)="tapOptionSubSubitem(subSub)">
             <ion-icon [slot]="iconsDirection" [name]="subSub.icon"></ion-icon>
             <ion-label [ngClass]="{ fadeout: iconsDirection === 'end' }">
               {{ subSub.title }}

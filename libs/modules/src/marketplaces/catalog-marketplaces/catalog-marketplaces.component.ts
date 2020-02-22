@@ -15,6 +15,38 @@ export class CatalogMarketplacesComponent implements OnInit {
   private catalogTableHeader;
   private selectedProducts;
   private selectsPlaceholders = ['Marketplaces', 'Descripción', 'Familia'];
+  private marketplaces = [
+    {
+      name: 'Marketplaces',
+      marketId: '-'
+    },
+    {
+      name: 'KO',
+      marketId: '1'
+    },
+    {
+      name: 'Mini',
+      marketId: '2'
+    },
+    {
+      name: 'Amazon',
+      marketId: '3'
+    },
+    {
+      name: 'Spartoo',
+      marketId: '4'
+    },
+    {
+      name: 'Zalando',
+      marketId: '5'
+    },
+    {
+      name: 'Cdiscount',
+      marketId: '6'
+    }
+  ];
+  private description = ['Descripción'];
+  private family = ['Familia', 'Hombre', 'Mujer', 'Niño', 'Niña'];
   private tableValueSelect = [
     {
       name: 'Activos',
@@ -25,86 +57,16 @@ export class CatalogMarketplacesComponent implements OnInit {
       type: 2
     }
   ];
-  private preselect = this.tableValueSelect[0].name;
+  private actionPreselect = this.tableValueSelect[0].name;
+  private marketPreselect = this.marketplaces[0].name;
+  private descriptionPreselect = this.description[0];
+  private familyPreselect = this.family[0];
   private currentType: number = 1;
 
   constructor() { }
 
   ngOnInit() {
-    this.catalogData = [
-      {
-        reference: 1,
-        model: 'model1',
-        brand: 'brand1',
-        ko: {
-          symbol: '●',
-          stock: '120',
-          activate: true
-        },
-        mini: {
-          symbol: '',
-          stock: '',
-          activate: false
-        },
-        amazon: {
-          symbol: '●',
-          stock: '452',
-          activate: true
-        },
-        spartoo: {
-          symbol: '',
-          stock: '',
-          activate: false
-        },
-        zalando: {
-          symbol: '●',
-          stock: '788',
-          activate: true
-        },
-        cdiscount: {
-          symbol: '●',
-          stock: '58',
-          activate: false
-        }
-      },
-      {
-        ref: 2,
-        model: 'model2',
-        brand: 'brand2',
-        ko: {
-          symbol: '●',
-          stock: '120',
-          activate: false
-        },
-        mini: {
-          symbol: '●',
-          stock: '234',
-          activate: true
-        },
-        amazon: {
-          symbol: '',
-          stock: ''
-        },
-        spartoo: {
-          symbol: '●',
-          stock: '333',
-          activate: false
-        },
-        zalando: {
-          symbol: '',
-          stock: ''
-        },
-        cdiscount: {
-          symbol: '●',
-          stock: '858',
-          activate: true
-        }
-      }
-    ];
-    
-
     this.getProducts();
-    console.log(this.products);
     this.catalogTableData = new MatTableDataSource(this.products);
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
     this.selectedProducts = [];
@@ -125,11 +87,6 @@ export class CatalogMarketplacesComponent implements OnInit {
             status: 'active'
           },
           {
-            marketId: '2',
-            avaible: false,
-            status: 'sadasdada'
-          },
-          {
             marketId: '3',
             avaible: true,
             status: 'sadasdada'
@@ -147,16 +104,41 @@ export class CatalogMarketplacesComponent implements OnInit {
             stock: 123
           },
           {
-            marketId: '2',
-            stock: ''
-          },
-          {
             marketId: '3',
             stock: 12312
           },
           {
-            marketId: '6',
+            marketId: '5',
             stock: 5654
+          }
+        ]
+      },
+      {
+        reference: '987606',
+        name: 'test 2',
+        brand: 'brand test 2',
+        description: 'description test 2',
+        familfy: 'family test 2',
+        marketplaces: [
+          {
+            marketId: '2',
+            avaible: true,
+            status: 'asdasd'
+          },
+          {
+            marketId: '6',
+            avaible: true,
+            status: 'active'
+          }
+        ],
+        stocks: [
+          {
+            marketId: '2',
+            stock: 654
+          },
+          {
+            marketId: '6',
+            stock: 453543
           }
         ]
       }
@@ -169,6 +151,31 @@ export class CatalogMarketplacesComponent implements OnInit {
 
   getType(type) {
     this.currentType = type;
+  }
+
+  getMarket(filterMarket) {
+    let filteredMarket = [];
+
+    if(filterMarket.marketId !== '-') {
+      this.products.forEach(product => {
+        product.marketplaces.forEach(market => {
+          if(market.marketId == filterMarket.marketId) {
+            filteredMarket.push(product);
+          }
+        });
+      });
+      this.catalogTableData = new MatTableDataSource(filteredMarket);
+    } else {
+      this.catalogTableData = new MatTableDataSource(this.products);
+    }
+  }
+  
+  getDescription(description) {
+    console.log(description)
+  }
+
+  getFamily(family) {
+    console.log(family)
   }
 
   exportToExcel() {
