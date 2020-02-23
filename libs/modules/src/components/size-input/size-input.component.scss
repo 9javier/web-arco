@@ -1,0 +1,19 @@
+div {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  width: 40px;
+  margin: 8px;
+
+  span {
+    margin: 4px 0;
+  }
+  input {
+    text-align: center;
+    padding: 4px;
+  }
+}
+
+div.available-size {
+  background-color: var(--ion-color-size-available);
+}

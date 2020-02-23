@@ -1,0 +1,4 @@
+<div [ngClass]="item.available ? 'available-size' : ''">
+  <span>{{item.name}}</span>
+  <input id="{{'input_'+item.id}}" [(ngModel)]="item.quantity" (focusin)="selectValue(item.id)">
+</div>
