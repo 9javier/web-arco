@@ -1,5 +1,6 @@
 <ion-content>
   <div class="fields-to-search">
+    <loading-message></loading-message>
     <mat-list>
       <mat-list-item matRipple (click)="listItems(1)">
         <mat-icon mat-list-icon>list</mat-icon>
@@ -22,32 +23,21 @@
         <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
       </mat-list-item>
 
-      <mat-list-item matRipple (click)="listItems(4)" *ngIf="brandSelected && modelSelected && colorSelected">
-        <mat-icon mat-list-icon>list</mat-icon>
-        <h4 mat-line>Talla</h4>
-        <p mat-line> {{sizeSelected ? sizeSelected.name : 'seleccionar talla'}} </p>
-        <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
-      </mat-list-item>
-
-      <div class="check-btn">
-        <button mat-raised-button (click)="checkProduct()" [disabled]="!brandSelected || !modelSelected || !colorSelected || !sizeSelected" [ngClass]="!brandSelected || !modelSelected || !colorSelected || !sizeSelected ? 'disabled' : ''">COMPROBAR</button>
+      <div class="search-more-btn">
+        <button mat-raised-button>Buscar más...</button>
       </div>
     </mat-list>
-  </div>
 
-  <mat-divider></mat-divider>
-
-  <div class="items">
-    <loading-message></loading-message>
-    <h4 class="results" *ngIf="resultsList && resultsList.length > 0">Resultados</h4>
-
-    <div *ngFor="let item of resultsList">
-      <h4><span>{{item.model}}</span> • <span class="brand">{{item.brand}}</span></h4>
-      <p><span>{{item.color}}</span> • T/<span>{{item.size}}</span></p>
-      <p><span>{{item.reference}}</span></p>
-      <button mat-raised-button (click)="printProductReceived(item)">IMPRIMIR</button>
+    <div class="sizes">
+      <span>Tallas</span>
+      <div>
+      <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+      </div>
     </div>
   </div>
 
-  <mat-divider *ngIf="resultsList && resultsList.length > 0"></mat-divider>
+  <button mat-fab aria-label="Ver foto del modelo" class="fab simple">
+    <mat-icon>image</mat-icon>
+  </button>
+  <fab-extended *ngIf="brandSelected && modelSelected && colorSelected" tooltip="Imprimir los códigos de productos correspondientes" icon="print" label="IMPRIMIR" (clickButton)="printCodes()"></fab-extended>
 </ion-content>

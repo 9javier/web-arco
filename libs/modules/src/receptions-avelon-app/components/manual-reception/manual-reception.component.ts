@@ -20,7 +20,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public modelSelected: ReceptionAvelonModel.Data = null;
   public modelIdSelected: number = null;
   public colorSelected: ReceptionAvelonModel.Data = null;
-  public sizeSelected: ReceptionAvelonModel.Data = null;
 
   private listBrands: any[] = [];
   private listModels: any[] = [];
@@ -28,6 +27,8 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   private listSizes: any[] = [];
 
   public resultsList: any[] = [];
+
+  private qtyCodesToPrint: number = 0;
 
   constructor(
     private modalController: ModalController,
@@ -46,7 +47,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         icon: 'refresh',
         action: () => this.resetData()
       }
-    ])
+    ]);
   }
 
   ngOnDestroy() {
@@ -58,7 +59,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.modelSelected = null;
     this.modelIdSelected = null;
     this.colorSelected = null;
-    this.sizeSelected = null;
     this.listBrands = [];
     this.listModels = [];
     this.listColors = [];
@@ -111,15 +111,12 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
     modal.onDidDismiss().then((data) => {
       if (data && data.data) {
-        console.log('Test::data.data.itemSelected', data.data.itemSelected);
         if (data.data.filterListType == 'Marcas') {
           this.brandSelected = data.data.itemSelected;
         } else if (data.data.filterListType == 'Modelos') {
           this.modelSelected = data.data.itemSelected;
         } else if (data.data.filterListType == 'Colores') {
           this.colorSelected = data.data.itemSelected;
-        } else if (data.data.filterListType == 'Tallas') {
-          this.sizeSelected = data.data.itemSelected;
         }
         this.updateFilterLists(data.data.itemSelected, data.data.filterListType);
       }
@@ -128,46 +125,40 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     modal.present();
   }
 
-  public checkProduct() {
-    this.loadingMessageComponent.show(true);
-
+  public checkProduct(sizeIdToPrint: number) {
     const params: any = {
       providerId: this.receptionAvelonProvider.expeditionData.providerId,
       expedition: this.receptionAvelonProvider.expeditionData.reference,
       brandId: this.brandSelected.id,
       colorId: this.colorSelected.id,
-      sizeId: this.sizeSelected.id,
+      sizeId: sizeIdToPrint,
       modelId: this.modelIdSelected
     };
     this.receptionsAvelonService
       .printReceptionLabel(params)
       .subscribe((res) => {
-        this.loadingMessageComponent.show(false);
-        this.resultsList = [{
-          model: this.modelSelected.name,
-          brand: this.brandSelected.name,
-          color: this.colorSelected.name,
-          size: this.sizeSelected.name,
-          reference: res.reference
-        }];
-      }, (error) => {
-        this.loadingMessageComponent.show(false);
-      });
-  }
-
-  public printProductReceived(item) {
-    this.printerService.printTagBarcode([item.reference])
-      .subscribe((resPrint) => {
-        console.log('Print reference of reception successful');
-        if (typeof resPrint == 'boolean') {
-          console.log(resPrint);
-        } else {
-          resPrint.subscribe((resPrintTwo) => {
-            console.log('Print reference of reception successful two', resPrintTwo);
-          })
+        this.qtyCodesToPrint--;
+        if (this.qtyCodesToPrint == 0) {
+          this.loadingMessageComponent.show(false);
         }
+        this.printerService.printTagBarcode([res.reference])
+          .subscribe((resPrint) => {
+            console.log('Print reference of reception successful');
+            if (typeof resPrint == 'boolean') {
+              console.log(resPrint);
+            } else {
+              resPrint.subscribe((resPrintTwo) => {
+                console.log('Print reference of reception successful two', resPrintTwo);
+              })
+            }
+          }, (error) => {
+            console.error('Some error success to print reference of reception', error);
+          });
       }, (error) => {
-        console.error('Some error success to print reference of reception', error);
+        this.qtyCodesToPrint--;
+        if (this.qtyCodesToPrint == 0) {
+          this.loadingMessageComponent.show(false);
+        }
       });
   }
 
@@ -278,13 +269,33 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       this.listColors = listColors;
       if (!this.colorSelected && this.listColors.length == 1) {
         this.colorSelected = this.listColors[0];
+        this.modelIdSelected = this.modelSelected.available_ids.find(id => this.colorSelected.belongsModels.find(model => model == id));
       }
     }
     if (listSizes.length > 0) {
       this.listSizes = listSizes;
-      if (!this.sizeSelected && this.listSizes.length == 1) {
-        this.sizeSelected = this.listSizes[0];
+    }
+  }
+
+  public printCodes() {
+    this.qtyCodesToPrint = 0;
+    const sizesToPrint = this.listSizes.filter(s => {
+      if (s.quantity > 0) {
+        this.qtyCodesToPrint += s.quantity;
+        return true;
+      } else {
+        return false;
       }
+    });
+    if (sizesToPrint.length > 0) {
+      this.loadingMessageComponent.show(true, 'Imprimiendo códigos');
+      for (let size of sizesToPrint) {
+        for (let i = 0; i < size.quantity; i++) {
+          this.checkProduct(size.id);
+        }
+      }
+    } else {
+
     }
   }
 }
