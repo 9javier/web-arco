@@ -1,5 +1,6 @@
 <div class="content-ta">
+  <loading-message [message]="'UBICANDO'"></loading-message>
   <p class="error-positioning">{{errorMessage}}</p>
   <input hideKeyboard id="input-ta" class="ta-positioning" [placeholder]="dataToWrite" (keyup)="keyUpInput($event)" (focus)="onFocus($event)"
-    [(ngModel)]="inputPositioning">
+    [(ngModel)]="inputPositioning" [disabled]="isScannerBlocked">
 </div>
