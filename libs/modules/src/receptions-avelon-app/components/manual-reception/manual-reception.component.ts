@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {ModalController} from "@ionic/angular";
+import {ModalController, PopoverController} from "@ionic/angular";
 import {FilterItemsListComponent} from "../filter-items-list/filter-items-list.component";
 import {ReceptionAvelonModel, ReceptionsAvelonService} from "@suite/services";
 import {ReceptionAvelonProvider} from "../../../../../services/src/providers/reception-avelon/reception-avelon.provider";
 import {LoadingMessageComponent} from "../../../components/loading-message/loading-message.component";
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
+import {ModalModelImagesComponent} from "../modal-model-images/modal-model-images.component";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -32,6 +33,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   constructor(
     private modalController: ModalController,
+    private popoverController: PopoverController,
     private receptionsAvelonService: ReceptionsAvelonService,
     private printerService: PrinterService,
     private receptionAvelonProvider: ReceptionAvelonProvider,
@@ -275,6 +277,20 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     if (listSizes.length > 0) {
       this.listSizes = listSizes;
     }
+  }
+
+  public async showImages(ev) {
+    const popover = await this.popoverController.create({
+      component: ModalModelImagesComponent,
+      event: ev,
+      cssClass: 'popover-images',
+      mode: 'ios',
+      componentProps: {
+        image: 'https://cdn.shopify.com/s/files/1/0048/2912/products/helm-boots-holt-dark-natural-13973389934654_345x550.progressive.jpg?v=1578690892'
+      }
+    });
+
+    return await popover.present();
   }
 
   public printCodes() {

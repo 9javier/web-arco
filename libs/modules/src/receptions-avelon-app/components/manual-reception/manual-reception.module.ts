@@ -7,6 +7,7 @@ import {FilterItemsListModule} from "../filter-items-list/filter-items-list.modu
 import {LoadingMessageModule} from "../../../components/loading-message/loading-message.module";
 import {FabExtendedModule} from "../../../components/fab-extended/fab-extended.module";
 import {SizeInputModule} from "../../../components/size-input/size-input.module";
+import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.module";
 
 @NgModule({
   declarations: [ManualReceptionComponent],
@@ -21,7 +22,8 @@ import {SizeInputModule} from "../../../components/size-input/size-input.module"
     FilterItemsListModule,
     LoadingMessageModule,
     FabExtendedModule,
-    SizeInputModule
+    SizeInputModule,
+    ModalModelImagesModule
   ],
   exports: [ManualReceptionComponent]
 })
