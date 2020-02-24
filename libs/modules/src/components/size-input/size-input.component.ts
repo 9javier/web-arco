@@ -18,7 +18,7 @@ export class SizeInputComponent implements OnInit {
 
   public selectValue(itemId: number) {
     setTimeout(() => {
-      (<any>document.getElementById('input_'+itemId)).setSelectionRange(0, 99999);
+      (<any>document.getElementById('input_'+itemId)).select();
     }, 200);
   }
 }
