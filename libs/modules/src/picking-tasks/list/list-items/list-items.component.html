@@ -7,12 +7,15 @@
 
   <mat-grid-tile colspan="7" class="destinies-list">
     <div class="tile-value">
-      <p>
+      <p *ngIf="pickingAssignment.workWavesOrderWarehouses.length > 0">
          <span class="store-ref">
            {{ pickingAssignment.workWavesOrderWarehouses[0].warehouse.reference }}&nbsp;
          </span>
          {{ pickingAssignment.workWavesOrderWarehouses[0].warehouse.name }}
        </p>
+      <p *ngIf="!pickingAssignment.workWavesOrderWarehouses.length > 0">
+         DOMICILIO
+      </p>
        <p *ngIf="pickingAssignment.workWavesOrderWarehouses.length > 1" (click)="showStoresPopover($event)" class="show-stores-list">
          Ver más
        </p>

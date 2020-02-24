@@ -437,12 +437,8 @@ export class TableRequestsOrdersOSComponent implements OnInit {
 
     this.listDeliveryRequestOrdersSelected = new Array<number>();
     for (let iRequest in this.deliveryRequestOrdersSelection) {
-      let warehouseId = this.listRequestIdWarehouseId[iRequest].warehouse;
-      let qty = this.listRequestIdWarehouseId[iRequest].qty;
-      let selection = this.listWarehousesThresholdAndSelectedQty[warehouseId].selected;
       if (this.deliveryRequestOrdersSelection[iRequest]) {
         this.listDeliveryRequestOrdersSelected.push(parseInt(iRequest));
-        this.listWarehousesThresholdAndSelectedQty[warehouseId].selected = selection + qty;
       }
     }
 
