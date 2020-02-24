@@ -63,7 +63,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.toolbarProvider.optionsActions.next([]);
   }
 
-  private resetData() {
+  private resetData(dataToConcat = null) {
     this.brandSelected = null;
     this.modelSelected = null;
     this.modelIdSelected = null;
@@ -73,16 +73,55 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.listColors = [];
     this.listSizes = [];
     this.resultsList = [];
-    this.loadReceptions();
+    this.loadReceptions(dataToConcat);
   }
 
-  private loadReceptions() {
+  private loadReceptions(dataToConcat = null) {
     this.receptionsAvelonService
       .getReceptions(this.receptionAvelonProvider.expeditionData.providerId)
       .subscribe((res) => {
         this.listBrands = res.brands;
         this.listModels = res.models;
         this.listColors = res.colors;
+        if (dataToConcat) {
+          for (let brand of dataToConcat.brands) {
+            if (!this.listBrands.find(b => b.id == brand.id)) {
+              this.listBrands.push(brand);
+            }
+          }
+          for (let color of dataToConcat.colors) {
+            const colorInList = this.listColors.find(c => c.id == color.id);
+            if (!!colorInList) {
+              for (let model of color.belongsModels) {
+                if (!colorInList.belongsModels.find(m => m == model )) {
+                  colorInList.belongsModels.push(model);
+                }
+              }
+            } else {
+              this.listColors.push(color);
+            }
+          }
+          for (let model of dataToConcat.models) {
+            const modelInList = this.listModels.find(m => m.name == model.name);
+            if (!!modelInList) {
+              for (let modelId of model.available_ids) {
+                if (!modelInList.available_ids.find(i => i == modelId)) {
+                  modelInList.available_ids.push(modelId);
+                }
+              }
+              for (let photo in model.photos_models) {
+                if (!modelInList.photos_models) {
+                  modelInList.photos_models = {};
+                }
+                if (!modelInList.photos_models[photo]) {
+                  modelInList.photos_models[photo] = model.photos_models[photo];
+                }
+              }
+            } else {
+              this.listModels.push(model);
+            }
+          }
+        }
       });
   }
 
@@ -202,7 +241,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.modelIdSelected =  this.modelSelected.id;
       }
 
-      if (this.colorSelected) {
+      if (this.colorSelected && this.modelSelected) {
         this.modelIdSelected = this.modelSelected.available_ids.find(id => !!this.colorSelected.belongsModels.find(model => model == id));
       }
     }
@@ -223,6 +262,24 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     if (this.modelSelected && this.colorSelected) {
       this.loadSizes();
     }
+  }
+
+  public searchMore() {
+    this.receptionsAvelonService
+      .getReceptionsNotifiedProviders(this.receptionAvelonProvider.expeditionData.providerId)
+      .subscribe((data: ReceptionAvelonModel.Reception) => {
+        if (data.models.length <= 0 && data.colors.length <= 0 && data.brands.length <= 0) {
+          this.intermediaryService.presentToastError('No se han encontrado más datos para realizar la recepción.', PositionsToast.BOTTOM);
+        } else {
+          this.resetData({
+            brands: data.brands,
+            models: data.models,
+            colors: data.colors
+          });
+        }
+      }, (error) => {
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar más datos para buscar.', PositionsToast.BOTTOM);
+      });
   }
 
   public async showImages(ev) {
@@ -320,7 +377,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       })
       .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
         if (res.code == 200) {
-          console.log('Test::REsData', res.data);
           this.listSizes = res.data;
         } else {
           this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
