@@ -271,7 +271,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       this.listColors = listColors;
       if (!this.colorSelected && this.listColors.length == 1) {
         this.colorSelected = this.listColors[0];
-        this.modelIdSelected = this.modelSelected.available_ids.find(id => this.colorSelected.belongsModels.find(model => model == id));
+        this.modelIdSelected = this.modelSelected.available_ids.find(id => !!this.colorSelected.belongsModels.find(model => model == id));
       }
     }
     if (listSizes.length > 0) {
