@@ -12,6 +12,7 @@ import {LoadingMessageComponent} from "../../../components/loading-message/loadi
 import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/toolbar.provider";
 import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
 import {ModalModelImagesComponent} from "../modal-model-images/modal-model-images.component";
+import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -30,7 +31,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   private listBrands: any[] = [];
   private listModels: any[] = [];
   private listColors: any[] = [];
-  private listSizes: any[] = [];
+  private listSizes: ReceptionAvelonModel.LoadSizesList[] = [];
 
   public resultsList: any[] = [];
 
@@ -82,7 +83,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.listBrands = res.brands;
         this.listModels = res.models;
         this.listColors = res.colors;
-        this.listSizes = res.sizes;
       });
   }
 
@@ -102,10 +102,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       case 3:
         filterType = 'Colores';
         listItemsForFilter = this.listColors;
-        break;
-      case 4:
-        filterType = 'Tallas';
-        listItemsForFilter = this.listSizes;
         break;
     }
 
@@ -133,43 +129,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     modal.present();
   }
 
-  public checkProduct(sizeIdToPrint: number) {
-    const params: any = {
-      providerId: this.receptionAvelonProvider.expeditionData.providerId,
-      expedition: this.receptionAvelonProvider.expeditionData.reference,
-      brandId: this.brandSelected.id,
-      colorId: this.colorSelected.id,
-      sizeId: sizeIdToPrint,
-      modelId: this.modelIdSelected
-    };
-    this.receptionsAvelonService
-      .printReceptionLabel(params)
-      .subscribe((res) => {
-        this.qtyCodesToPrint--;
-        if (this.qtyCodesToPrint == 0) {
-          this.loadingMessageComponent.show(false);
-        }
-        this.printerService.printTagBarcode([res.reference])
-          .subscribe((resPrint) => {
-            console.log('Print reference of reception successful');
-            if (typeof resPrint == 'boolean') {
-              console.log(resPrint);
-            } else {
-              resPrint.subscribe((resPrintTwo) => {
-                console.log('Print reference of reception successful two', resPrintTwo);
-              })
-            }
-          }, (error) => {
-            console.error('Some error success to print reference of reception', error);
-          });
-      }, (error) => {
-        this.qtyCodesToPrint--;
-        if (this.qtyCodesToPrint == 0) {
-          this.loadingMessageComponent.show(false);
-        }
-      });
-  }
-
   private updateFilterLists(filterUsed, typeFilter: string) {
     let listModels = [];
     let listBrands = [];
@@ -195,18 +154,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         brandsFilter.forEach(elem => {
           if (listBrands.find(data => data.id === elem.id) === undefined) {
             listBrands.push(elem)
-          }
-        });
-
-        /****************************sizes*****************************/
-        const sizesFilter = this.listSizes.filter(elem => {
-          if (elem.belongsModels.find(elem => elem === modelId)) {
-            return elem
-          }
-        });
-        sizesFilter.forEach(elem => {
-          if (listSizes.find(data => data.id === elem.id) === undefined) {
-            listSizes.push(elem)
           }
         });
 
@@ -239,14 +186,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         }
       });
 
-      /****************************sizes*****************************/
-      const sizesFilter = this.listSizes.filter(elem => !!elem.belongsModels.find(model => !!filterUsed.available_ids.find(id => id == model)));
-      sizesFilter.forEach(elem => {
-        if (listSizes.find(data => data.id === elem.id) === undefined) {
-          listSizes.push(elem)
-        }
-      });
-
       /*****************************color****************************/
       const colorFilter = this.listColors.filter(elem => !!elem.belongsModels.find(model => !!filterUsed.available_ids.find(id => id == model)));
       colorFilter.forEach(elem => {
@@ -263,7 +202,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.modelIdSelected =  this.modelSelected.id;
       }
 
-      if (typeFilter == 'Colores') {
+      if (this.colorSelected) {
         this.modelIdSelected = this.modelSelected.available_ids.find(id => !!this.colorSelected.belongsModels.find(model => model == id));
       }
     }
@@ -280,8 +219,9 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
         this.modelIdSelected = this.modelSelected.available_ids.find(id => !!this.colorSelected.belongsModels.find(model => model == id));
       }
     }
-    if (listSizes.length > 0) {
-      this.listSizes = listSizes;
+
+    if (this.modelSelected && this.colorSelected) {
+      this.loadSizes();
     }
   }
 
@@ -305,20 +245,58 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   public printCodes() {
     this.qtyCodesToPrint = 0;
     const sizesToPrint = this.listSizes.filter(s => {
-      if (s.quantity > 0) {
-        this.qtyCodesToPrint += s.quantity;
-        return true;
-      } else {
-        return false;
-      }
+      return s.quantity > 0;
     });
+
     if (sizesToPrint.length > 0) {
       this.loadingMessageComponent.show(true, 'Imprimiendo códigos');
-      for (let size of sizesToPrint) {
-        for (let i = 0; i < size.quantity; i++) {
-          this.checkProduct(size.id);
+
+      const sizesMapped = sizesToPrint.map(s => {
+        return {
+          providerId: this.receptionAvelonProvider.expeditionData.providerId,
+          expedition: this.receptionAvelonProvider.expeditionData.reference,
+          brandId: this.brandSelected.id,
+          colorId: this.colorSelected.id,
+          sizeId: s.id,
+          modelId: this.modelIdSelected,
+          quantity: s.quantity
+        };
+      });
+
+      const params = [];
+      for (let size of sizesMapped) {
+        for (let q = 0; q < size.quantity; q++) {
+          params.push(size);
         }
       }
+
+      this.receptionsAvelonService
+        .printReceptionLabel({to_print: params})
+        .subscribe((res) => {
+          this.loadingMessageComponent.show(false);
+          const referencesToPrint = res.resultToPrint.map(r => r.reference);
+          if (referencesToPrint && referencesToPrint.length > 0) {
+            this.printerService.printTagBarcode(referencesToPrint)
+              .subscribe((resPrint) => {
+                console.log('Print reference of reception successful');
+                if (typeof resPrint == 'boolean') {
+                  console.log(resPrint);
+                } else {
+                  resPrint.subscribe((resPrintTwo) => {
+                    console.log('Print reference of reception successful two', resPrintTwo);
+                  })
+                }
+              }, (error) => {
+                console.error('Some error success to print reference of reception', error);
+              });
+          }
+          if (res.productsWithError && res.productsWithError.length > 0) {
+            this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
+          }
+        }, (error) => {
+          this.loadingMessageComponent.show(false);
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.', PositionsToast.BOTTOM);
+        });
     } else {
       this.intermediaryService.presentWarning('Indique qué talla(s) desea imprimir y qué cantidad de etiquetas quiere imprimir por cada talla.', null);
     }
@@ -330,5 +308,25 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     }
 
     return false;
+  }
+
+  private loadSizes() {
+    this.receptionsAvelonService
+      .postLoadSizesList({
+        providerId: this.receptionAvelonProvider.expeditionData.providerId,
+        modelId: this.modelIdSelected,
+        colorId: this.colorSelected.id,
+        brandId: this.brandSelected.id
+      })
+      .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
+        if (res.code == 200) {
+          console.log('Test::REsData', res.data);
+          this.listSizes = res.data;
+        } else {
+          this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+        }
+      }, (error) => {
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
+      });
   }
 }

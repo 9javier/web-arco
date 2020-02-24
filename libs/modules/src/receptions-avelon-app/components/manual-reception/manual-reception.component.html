@@ -30,8 +30,15 @@
 
     <div class="sizes">
       <span>Tallas</span>
-      <div>
-      <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+      <div *ngIf="modelSelected && colorSelected && listSizes && listSizes.length > 0">
+        <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+      </div>
+      <div *ngIf="modelSelected && colorSelected && (!listSizes || listSizes.length <= 0)" class="sizes-empty">
+        <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
+      </div>
+      <div *ngIf="!modelSelected || !colorSelected" class="sizes-select">
+        <p><span *ngIf="!modelSelected">Seleccione un modelo.</span>
+          <span *ngIf="!colorSelected">Seleccione un color.</span></p>
       </div>
     </div>
   </div>

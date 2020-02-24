@@ -458,12 +458,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.result.expedition = this.expedition;
 
     this.intermediaryService.presentLoading('Enviando');
-    const body = {
-      modelId: this.result.modelId,
-      colorId: this.result.colorId,
-      sizeId: this.result.sizeId
-    };
-    this.reception.printReceptionLabel(this.result).subscribe(
+    this.reception.printReceptionLabel({to_print: [this.result]}).subscribe(
       resp => {
         this.reception.getReceptions(this.providerId).subscribe(
           (info: ReceptionAvelonModel.Reception) => {
