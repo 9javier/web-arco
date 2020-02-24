@@ -255,10 +255,10 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
       if (!this.modelSelected && this.listModels.length == 1) {
         this.modelSelected = this.listModels[0];
         this.modelIdSelected =  this.modelSelected.id;
+      }
 
-        if (typeFilter == 'Colores') {
-          this.modelIdSelected = this.modelSelected.available_ids.find(id => !!this.colorSelected.belongsModels.find(model => model == id));
-        }
+      if (typeFilter == 'Colores') {
+        this.modelIdSelected = this.modelSelected.available_ids.find(id => !!this.colorSelected.belongsModels.find(model => model == id));
       }
     }
     if (listBrands.length > 0) {
