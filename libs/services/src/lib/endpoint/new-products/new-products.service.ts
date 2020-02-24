@@ -13,6 +13,8 @@ export class NewProductsService {
   private getIndexUrl:string = environment.apiBase+"/processes/receive-store/store-stock-new-product/all";
   private getStatusEnumUrl:string = environment.apiBase + "/types/status-prices";
   private getAllFiltersUrl: string = environment.apiBase + '/processes/receive-store/store-stock-new-product/filters';
+  private getListNewProductsFiltersUrl: string = environment.apiBase + '/processes/receive-store/list-new-product/filters';
+  private getListNewProducts: string = environment.apiBase + '/processes/receive-store/list-new-product/all';
 
   constructor(
     private http: HttpClient,
@@ -21,6 +23,12 @@ export class NewProductsService {
 
   getIndex(parameters):Observable<NewProductModel.ResponseNewProductsPaginated>{
     return this.http.post<NewProductModel.ResponseNewProduct>(this.getIndexUrl,parameters).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  getListNewproducts(parameters):Observable<NewProductModel.ResponseNewProductsPaginated>{
+    return this.http.post<NewProductModel.ResponseNewProduct>(this.getListNewProducts,parameters).pipe(map(response=>{
       return response.data;
     }));
   }
@@ -36,4 +44,11 @@ export class NewProductsService {
       return response.data;
     }));
   }
+
+  getListNewProductsFilters(form: any):Observable<any>{
+    return this.http.post(this.getListNewProductsFiltersUrl, form).pipe(map((response:any)=>{
+      return response.data;
+    }));
+  }
+
 }
