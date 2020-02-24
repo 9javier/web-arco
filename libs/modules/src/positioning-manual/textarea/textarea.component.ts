@@ -125,8 +125,13 @@ export class TextareaComponent implements OnInit {
     let dataWrited = (this.inputPositioning || "").trim();
 
     if ((event.keyCode === 13 || prova && dataWrited && !this.processInitiated) && !this.isScannerBlocked) {
+      this.isScannerBlocked = true;
+      document.getElementById('input-ta').blur();
+
       if (dataWrited === this.lastCodeScanned) {
         this.inputPositioning = null;
+        this.isScannerBlocked = false;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrited;
@@ -137,8 +142,6 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.processInitiated = true;
-      this.isScannerBlocked = true;
-      document.getElementById('input-ta').blur();
       if (!this.isStoreUser && (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD)) {
         this.processInitiated = false;
         this.intermediaryService.presentToastSuccess(`Inicio de ubicación en la posición ${dataWrited}`, TimesToastType.DURATION_SUCCESS_TOAST_2000, PositionsToast.BOTTOM).then(() => {
@@ -217,7 +220,7 @@ export class TextareaComponent implements OnInit {
   }
 
   private storeProductInContainer(params) {
-    this.loadingMessageComponent.show(true);
+    this.loadingMessageComponent.show(true, `Ubicando ${params.productReference || ''}`);
     this.inventoryService
       .postStore(params)
       .then(async (res: InventoryModel.ResponseStore) => {
