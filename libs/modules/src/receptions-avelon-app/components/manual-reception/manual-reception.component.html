@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <button *ngIf="modelSelected && colorSelected" mat-fab aria-label="Ver foto del modelo" class="fab simple" (click)="showImages($event)">
+  <button *ngIf="getPhotoUrl(modelIdSelected)" mat-fab aria-label="Ver foto del modelo" class="fab simple" (click)="showImages($event)">
     <mat-icon>image</mat-icon>
   </button>
   <fab-extended *ngIf="brandSelected && modelSelected && colorSelected" tooltip="Imprimir los códigos de productos correspondientes" icon="print" label="IMPRIMIR" (clickButton)="printCodes()"></fab-extended>
