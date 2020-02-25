@@ -10,6 +10,11 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { TagsInputOption } from '../components/tags-input/models/tags-input-option.model';
 import { FiltersModel } from '../../../services/src/models/endpoints/filters';
 import { PaginatorComponent } from '../components/paginator/paginator.component';
+import * as Filesave from 'file-saver';
+import { catchError } from 'rxjs/operators';
+import { from, Observable } from "rxjs";
+import { of } from 'rxjs';
+
 
 import {
   NewProductsService,
@@ -28,7 +33,7 @@ export class ListNewProductsComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //displayedColumns: string[] = ['select','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle'];
   
-  displayedColumns: string[] = ['select','references','warehouses','range', 'family','lifestyle','brand','colors','tarif'];
+  displayedColumns: string[] = ['select','Modelo','Warehouses','Talla', 'Familia','Lifestyle','Marca','Color','Precios'];
 
   dataSource;
   selection = new SelectionModel<Predistribution>(true, []);
@@ -77,6 +82,14 @@ export class ListNewProductsComponent implements OnInit {
   entities;
   pauseListenFormChange: boolean;
   lastUsedFilter: string;
+  formDefault: FormGroup;
+
+  formExcell: FormGroup = this.formBuilderExcell.group({
+    brands: [],
+    references: [],
+    size: [],
+  });
+
 
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
@@ -104,6 +117,7 @@ export class ListNewProductsComponent implements OnInit {
     private predistributionsService: PredistributionsService,
     private newProductsService: NewProductsService,
     private formBuilder: FormBuilder,
+    private formBuilderExcell: FormBuilder,
     private intermediaryService:IntermediaryService,
   ) {}
 
@@ -227,7 +241,6 @@ export class ListNewProductsComponent implements OnInit {
   getFilters() {
     this.newProductsService.getListNewProductsFilters(this.entities).subscribe(entities => {
       this.references = this.updateFilterSource(entities.models, 'models');
-      console.log(JSON.stringify(entities));
       this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
       //this.date_service = this.updateFilterSource(entities.date_service, 'date_service');
@@ -248,9 +261,10 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   async getColumns(form?: FormGroup){
+    // await this.intermediaryService.presentLoading();
     this.newProductsService.getListNewproducts(form.value).subscribe(
       (resp:any) => {
-        resp.filters.forEach(element => {
+        resp.filters["ordertypes"].forEach(element => {
           this.columns[element.name] = element.id;
         });
       },
@@ -288,7 +302,9 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   async getList(form?: FormGroup){
+    this.intermediaryService.presentLoading("Cargando Productos...");
     this.newProductsService.getListNewproducts(form.value).subscribe((resp:any) => {
+      this.intermediaryService.dismissLoading();
       if (resp.results) {
         JSON.stringify(resp.results);
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
@@ -560,6 +576,7 @@ export class ListNewProductsComponent implements OnInit {
   async sortData(event: Sort) {
     this.form.value.orderby.type = this.columns[event.active];
     this.form.value.orderby.order = event.direction;
+   
 
     this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
@@ -594,6 +611,84 @@ export class ListNewProductsComponent implements OnInit {
     }
 
     return '';
+  }
+
+  refresh(){
+    console.log("Actualizar...");
+  
+    this.form.patchValue({
+        status: 6,
+        brands: [],
+        models: [],
+        colors: [],
+        sizes: [],
+        warehouses:[],
+        families: [],
+        lifestyles: [],
+        seasons: [],
+        pagination: this.formBuilder.group({
+          page: 1,
+          limit: this.pagerValues[0]
+        }),
+        orderby: this.formBuilder.group({
+          type: 1,
+          order: "ASC"
+        })
+    });
+    this.getList(this.form);
+  }
+
+  fileExcell(){
+    this.intermediaryService.presentLoading("Descargando Archivo Excel...");
+    this.newProductsService.getFileExcell(this.form.value).pipe(
+      catchError(error => of(error)),
+      // map(file => file.error.text)
+    ).subscribe((data) => {
+      this.intermediaryService.dismissLoading();
+      
+        const blob = new Blob([data], { type: 'application/octet-stream' });
+        Filesave.saveAs(blob, `${Date.now()}.xlsx`);      
+    },
+    async err => {
+      await this.intermediaryService.dismissLoading()
+    },
+    async () => {
+      await this.intermediaryService.dismissLoading()
+    })
+
+  }
+
+  /**
+   * clear empty values of objecto to sanitize it
+   * @param object Object to sanitize
+   * @return the sanitized object
+   */
+  sanitize(object) {
+    /**mejorable */
+    object = JSON.parse(JSON.stringify(object));
+    if (!object.orderby.type) {
+      delete object.orderby.type;
+    } else {
+      object.orderby.type = parseInt(object.orderby.type);
+    }
+    if (!object.orderby.order) delete object.orderby.order;
+    Object.keys(object).forEach(key => {
+      if (object[key] instanceof Array) {
+        if (object[key][0] instanceof Array) {
+          object[key] = object[key][0];
+        } else {
+          for (let i = 0; i < object[key].length; i++) {
+            if (object[key][i] === null || object[key][i] === "") {
+              object[key].splice(i, 1);
+            }
+          }
+        }
+      }
+      if (object[key] === null || object[key] === "") {
+        delete object[key];
+      }
+    });
+    return object;
   }
 
 }

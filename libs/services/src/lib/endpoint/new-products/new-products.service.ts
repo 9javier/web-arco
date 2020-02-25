@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NewProductModel } from 'libs/services/src/models/endpoints/NewProduct';
 import { RequestsProvider } from '../../../providers/requests/requests.provider';
+import { ExcellModell } from 'libs/services/src/models/endpoints/Excell';
+import { AuthenticationService } from '../authentication/authentication.service';
+import { from, Observable } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +17,13 @@ export class NewProductsService {
   private getAllFiltersUrl: string = environment.apiBase + '/processes/receive-store/store-stock-new-product/filters';
   private getListNewProductsFiltersUrl: string = environment.apiBase + '/processes/receive-store/list-new-product/filters';
   private getListNewProducts: string = environment.apiBase + '/processes/receive-store/list-new-product/all';
+  private getListNewProductsFileExcel: string = environment.apiBase + '/inventory/export-to-excel/list-new-product';
 
   constructor(
     private http: HttpClient,
-    private requestsProvider: RequestsProvider
+    private requestsProvider: RequestsProvider,
+    private auth: AuthenticationService,
+
   ) { }
 
   getIndex(parameters):Observable<NewProductModel.ResponseNewProductsPaginated>{
@@ -31,6 +36,17 @@ export class NewProductsService {
     return this.http.post<NewProductModel.ResponseNewProduct>(this.getListNewProducts,parameters).pipe(map(response=>{
       return response.data;
     }));
+  }
+
+  getListNewproductsFileExcel(parameters):Observable<NewProductModel.ResponseNewProductsPaginated>{
+    return this.http.post<NewProductModel.ResponseNewProduct>(this.getListNewProductsFileExcel,parameters).pipe(map(response=>{
+      return response.data;
+    }));
+  }
+
+  
+  getFileExcell(form: any){
+    return this.http.post(this.getListNewProductsFileExcel, form,{responseType: 'blob'})
   }
 
   getStatusEnum():Observable<Array<NewProductModel.StatusType>>{
