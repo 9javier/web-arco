@@ -133,6 +133,7 @@ div.grid {
       div.row {
         height: 45%;
         border: 1px solid var(--ion-color-primary);
+        place-content: center;
       }
     }
     div.sizes-ean {

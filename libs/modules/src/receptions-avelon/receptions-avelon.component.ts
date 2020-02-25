@@ -4,7 +4,7 @@ import {
   ReceptionsAvelonService,
   ReceptionAvelonModel,
   IntermediaryService,
-  ProductsService
+  ProductsService, environment
 } from '@suite/services';
 import {Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef, ElementRef, AfterViewInit} from '@angular/core';
 import { Type } from './enums/type.enum';
@@ -688,5 +688,15 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }, (error) => {
         this.intermediaryService.presentToastError('Ha ocurrido un error al intentar cargar las tallas correspondientes.', PositionsToast.BOTTOM);
       });
+  }
+
+  public getPhotoUrl(modelId): string | boolean {
+    if (modelId && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
+      return environment.urlBase + this.modelSelected.photos_models[modelId];
+    } else {
+      return '../assets/img/placeholder-product.jpg';
+    }
+
+    return false;
   }
 }

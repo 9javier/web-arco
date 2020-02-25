@@ -63,10 +63,10 @@
       <div class="row sizes-image-ean" *ngIf="isProviderAvailable">
         <div class="col images">
           <div class="row">
-            <ion-img [src]="'https://images-na.ssl-images-amazon.com/images/I/61Yaf5BHLLL._AC_UL1200_.jpg'"></ion-img>
+            <ion-img [src]="getPhotoUrl(result.modelId)"></ion-img>
           </div>
           <div class="row">
-            <ion-img [src]="'https://m.media-amazon.com/images/I/71XsYh7veWL._SX700_.jpg'"></ion-img>
+            <ion-img [src]="'../assets/img/placeholder-product.jpg'"></ion-img>
           </div>
         </div>
 

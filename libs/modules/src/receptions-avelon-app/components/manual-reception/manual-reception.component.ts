@@ -356,7 +356,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getPhotoUrl(modelId): string | boolean {
+  public getPhotoUrl(modelId): string | boolean {
     if (modelId && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
       return environment.urlBase + this.modelSelected.photos_models[modelId];
     }
