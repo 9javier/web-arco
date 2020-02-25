@@ -302,6 +302,11 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   async getList(form?: FormGroup){
+    if(form.value.orderby.order==''){
+      console.log("solo order");
+      form.value.orderby.order = 'asc';
+    }
+
     this.intermediaryService.presentLoading("Cargando Productos...");
     this.newProductsService.getListNewproducts(form.value).subscribe((resp:any) => {
       this.intermediaryService.dismissLoading();
@@ -574,9 +579,9 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   async sortData(event: Sort) {
-    this.form.value.orderby.type = this.columns[event.active];
-    this.form.value.orderby.order = event.direction;
-   
+      console.log("Evento: "+JSON.stringify(event));
+      this.form.value.orderby.type = this.columns[event.active];
+      this.form.value.orderby.order = event.direction;
 
     this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
@@ -614,7 +619,6 @@ export class ListNewProductsComponent implements OnInit {
   }
 
   refresh(){
-    console.log("Actualizar...");
   
     this.form.patchValue({
         status: 6,
