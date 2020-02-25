@@ -5,22 +5,38 @@ ion-content {
     height: 100%;
     place-content: space-evenly;
 
-    div {
-      padding: 0 64px;
-      p.title {
-        font-size: 16px;
-        margin: 16px 0 32px;
-        font-weight: normal;
-      }
-
-      button {
-        background-color: var(--ion-color-primary);
-        color: var(--ion-color-primary-contrast);
-        height: 56px;
-        font-size: 18px;
+    div.scanner {
+      display: flex;
+      flex-direction: row;
+      flex: 2;
+      suite-ean-scanner {
         width: 100%;
-        mat-icon {
-          margin-left: 8px;
+      }
+    }
+
+    div.browser {
+      display: flex;
+      flex-direction: row;
+      flex: 3;
+      place-content: center;
+
+      div {
+        padding: 0 64px;
+        display: flex;
+        flex-direction: column;
+        place-content: center;
+        width: 100%;
+
+        button {
+          background-color: var(--ion-color-primary);
+          color: var(--ion-color-primary-contrast);
+          height: 112px;
+          font-size: 18px;
+          width: 100%;
+
+          mat-icon {
+            margin-left: 8px;
+          }
         }
       }
     }

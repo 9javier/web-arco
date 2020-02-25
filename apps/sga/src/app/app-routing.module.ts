@@ -174,6 +174,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'list-new-products',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/list-new-products/list-new-products.module#ListNewProductsComponentModule',
+    data: {
+      name: 'Nuevos Productos'
+    }
+  },
+  {
     path: 'audits',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/audits/audits.module#AuditsModule',

@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 export class PredistributionsComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
-  displayedColumns: string[] = ['article','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
+  displayedColumns: string[] = ['avelonOrder','references','sizes','warehouses','date_service','brands','providers','models','colors','category','family','lifestyle', 'distribution', 'reserved'];
   dataSourceOriginal;
   dataSource;
   selectionPredistribution = new SelectionModel<Predistribution>(true, []);
@@ -28,6 +28,7 @@ export class PredistributionsComponent implements OnInit {
 
   columns = {};
 
+  @ViewChild('filterButtonAvelonOrder') filterButtonAvelonOrder: FilterButtonComponent;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
   @ViewChild('filterButtonSizes') filterButtonSizes: FilterButtonComponent;
   @ViewChild('filterButtonWarehouses') filterButtonWarehouses: FilterButtonComponent;
@@ -41,6 +42,7 @@ export class PredistributionsComponent implements OnInit {
   @ViewChild('filterButtonLifestyle') filterButtonLifestyle: FilterButtonComponent;
 
 
+  isFilteringAvelonOrder: number = 0;
   isFilteringReferences: number = 0;
   isFilteringSizes: number = 0;
   isFilteringWarehouses: number = 0;
@@ -54,6 +56,7 @@ export class PredistributionsComponent implements OnInit {
   isFilteringLifestyle: number = 0;
 
   /**Filters */
+  avelonOrder: Array<TagsInputOption> = [];
   references: Array<TagsInputOption> = [];
   sizes: Array<TagsInputOption> = [];
   warehouses: Array<TagsInputOption> = [];
@@ -73,6 +76,7 @@ export class PredistributionsComponent implements OnInit {
 
   pagerValues = [10, 20, 80];
   form: FormGroup = this.formBuilder.group({
+    avelonOrder: [],
     references: [],
     sizes: [],
     warehouses: [],
@@ -88,8 +92,8 @@ export class PredistributionsComponent implements OnInit {
       page: 1,
       limit: this.pagerValues[0]
     }),
-    orderBy: this.formBuilder.group({
-      type: 1,
+    orderby: this.formBuilder.group({
+      type: 4,
       order: "asc"
     })
   });
@@ -117,38 +121,20 @@ export class PredistributionsComponent implements OnInit {
       /**true if only change the number of results */
       let flag = previousPageSize === page.pageSize;
       previousPageSize = page.pageSize;
-      this.form.get("pagination").patchValue({
+      this.form.value.pagination = {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
-      });
+      };
       this.getList(this.form)
     });
-    this.sort.sortChange.subscribe((sort: Sort) => {
-      console.log(sort);
-      this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
-        console.log(this.form.value);
-        if (sort.direction == '') {
-          this.form.value.orderBy ={
-            type: '1',
-            order: "ASC"
-          };
-        } else {
-          this.form.value.orderBy = {
-            type: this.columns[sort.active],
-            order: sort.direction.toUpperCase()
-          };
-        }
-        console.log(this.form.value);
-        this.getList(this.form);
 
-      });
-    });
     this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
     });
   }
   initEntity() {
     this.entities = {
+      avelonOrder: [],
       references: [],
       sizes: [],
       warehouses: [],
@@ -164,6 +150,7 @@ export class PredistributionsComponent implements OnInit {
   }
   initForm() {
     this.form.patchValue({
+      avelonOrder: [],
       references: [],
       sizes: [],
       warehouses: [],
@@ -248,11 +235,11 @@ export class PredistributionsComponent implements OnInit {
   }
 
   async savePredistributions() {
+    this.intermediaryService.presentLoading();
     let list = [];
 
     this.dataSource.data.forEach((dataRow, index) => {
-      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution ||
-        this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
+      if (this.dataSourceOriginal.data[index].distribution !== dataRow.distribution || this.dataSourceOriginal.data[index].reserved !== dataRow.reserved) {
         list.push({
           distribution: !!dataRow.distribution,
           reserved: !!dataRow.reserved,
@@ -263,8 +250,6 @@ export class PredistributionsComponent implements OnInit {
         })
       }
     });
-
-    this.intermediaryService.presentLoading();
 
     await this.predistributionsService.updateBlockReserved(list).subscribe((data) => {
       this.intermediaryService.presentToastSuccess("Actualizado predistribuciones correctamente");
@@ -282,7 +267,7 @@ export class PredistributionsComponent implements OnInit {
   }
   getFilters() {
     this.predistributionsService.entities().subscribe(entities => {
-      console.log(entities);
+      this.avelonOrder = this.updateFilterSource(entities.avelonOrder, 'avelonOrder');
       this.references = this.updateFilterSource(entities.references, 'references');
       this.sizes = this.updateFilterSource(entities.sizes, 'sizes');
       this.warehouses = this.updateFilterSource(entities.warehouses, 'warehouses');
@@ -304,8 +289,6 @@ export class PredistributionsComponent implements OnInit {
 
   }
   async getList(form?: FormGroup){
-    await this.intermediaryService.presentLoading();
-
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
@@ -335,10 +318,32 @@ export class PredistributionsComponent implements OnInit {
       }
     )
   }
-  applyFilters(filtersResult, filterType) {
+
+  async applyFilters(filtersResult, filterType) {
+    await this.intermediaryService.presentLoading();
     const filters = filtersResult.filters;
     switch (filterType) {
-      case 'references':
+      case 'avelonOrder':
+        let avelonOrderFiltered: string[] = [];
+        for (let avelonOrder of filters) {
+
+          if (avelonOrder.checked) avelonOrderFiltered.push(avelonOrder.id);
+        }
+
+        if (avelonOrderFiltered.length >= this.avelonOrder.length) {
+          this.form.value.avelonOrder = [];
+          this.isFilteringAvelonOrder = this.avelonOrder.length;
+        } else {
+          if (avelonOrderFiltered.length > 0) {
+            this.form.value.avelonOrder = avelonOrderFiltered;
+            this.isFilteringAvelonOrder = avelonOrderFiltered.length;
+          } else {
+            this.form.value.avelonOrder = ['99999'];
+            this.isFilteringAvelonOrder = this.avelonOrder.length;
+          }
+        }
+        break;
+        case 'references':
         let referencesFiltered: string[] = [];
         for (let reference of filters) {
 
@@ -502,7 +507,7 @@ export class PredistributionsComponent implements OnInit {
             this.form.value.date_service = dateServicesFiltered;
             this.isFilteringDateServices = dateServicesFiltered.length;
           } else {
-            this.form.value.date_service = [99999];
+            this.form.value.date_service = ['99999'];
             this.isFilteringDateServices = this.date_service.length;
           }
         }
@@ -546,7 +551,9 @@ export class PredistributionsComponent implements OnInit {
     this.lastUsedFilter = filterType;
     this.getList(this.form);
   }
+
   private reduceFilters(entities){
+    this.filterButtonAvelonOrder.listItems = this.reduceFilterEntities(this.avelonOrder, entities,'avelonOrder');
     this.filterButtonReferences.listItems = this.reduceFilterEntities(this.references, entities,'references');
     this.filterButtonSizes.listItems = this.reduceFilterEntities(this.sizes, entities,'sizes');
     this.filterButtonWarehouses.listItems = this.reduceFilterEntities(this.warehouses, entities,'warehouses');
@@ -597,7 +604,7 @@ export class PredistributionsComponent implements OnInit {
   }
 
   async getColumns(form?: FormGroup){
-    await this.intermediaryService.presentLoading();
+    // await this.intermediaryService.presentLoading();
     this.predistributionsService.index(form.value).subscribe(
       (resp:any) => {
         resp.filters.forEach(element => {
@@ -613,12 +620,20 @@ export class PredistributionsComponent implements OnInit {
     )
   }
 
-
   refreshPredistributions() {
     this.initEntity();
     this.initForm();
     this.getFilters();
     this.getList(this.form);
     this.listenChanges();
+  }
+
+  async sortData(event: Sort) {
+    this.form.value.orderby.type = this.columns[event.active];
+    this.form.value.orderby.order = event.direction;
+
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.form);
+    });
   }
 }

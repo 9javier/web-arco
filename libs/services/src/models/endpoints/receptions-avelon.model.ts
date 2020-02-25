@@ -8,6 +8,7 @@ export namespace ReceptionAvelonModel {
     newSelectd?: boolean
     belongsModels?: Array<number>
     state?:number;
+    available_ids?: number[]
   }
 
   export interface Reception {
@@ -16,6 +17,7 @@ export namespace ReceptionAvelonModel {
     colors: Array<Data>;
     sizes: Array<Data>;
     ean: string,
+    image?: string
   }
 
   export interface Providers {
@@ -70,4 +72,3 @@ export namespace ReceptionAvelonModel {
     reception_enabled: boolean
   }
 }
- 
