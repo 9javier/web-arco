@@ -148,8 +148,13 @@ export class TextareaComponent implements OnInit {
   async keyUpInput(event?,prova:boolean=false) {
     let dataWrited = (this.inputPicking || "").trim();
     if ((event.keyCode === 13 || prova && dataWrited) && !this.isScannerBlocked) {
+      this.isScannerBlocked = true;
+      document.getElementById('input-ta').blur();
+
       if (dataWrited === this.lastCodeScanned) {
         this.inputPicking = null;
+        this.isScannerBlocked = false;
+        this.focusToInput();
         return;
       }
       this.lastCodeScanned = dataWrited;
@@ -161,9 +166,6 @@ export class TextareaComponent implements OnInit {
       this.timeoutStarted = setTimeout(() => this.lastCodeScanned = 'start', this.timeMillisToResetScannedCode);
 
       this.inputPicking = null;
-
-      this.isScannerBlocked = true;
-      document.getElementById('input-ta').blur();
       if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.PACKING) {
         if(this.processInitiated && this.lastCarrierScanned == dataWrited){
           if (this.listProducts && this.listProducts.length > 0) {
@@ -406,7 +408,7 @@ export class TextareaComponent implements OnInit {
               pikingId: this.pickingId,
               productReference: dataWrited
             };
-            this.loadingMessageComponent.show(true);
+            this.loadingMessageComponent.show(true, `Procesando ${picking.productReference || ''}`);
             let subscribeResponse = await (async (res: InventoryModel.ResponsePicking) => {
               if (res.code === 200 || res.code === 201) {
                 this.listProducts = res.data.shoePickingPending;
@@ -533,7 +535,7 @@ export class TextareaComponent implements OnInit {
       } else if (this.scanContainerToNotFound) {
         if (this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER
           || this.itemReferencesProvider.checkCodeValue(dataWrited) === this.itemReferencesProvider.codeValue.CONTAINER_OLD) {
-          this.loadingMessageComponent.show(true);
+          this.loadingMessageComponent.show(true, `Comprobando ${dataWrited}`);
           this.postCheckContainerProduct(dataWrited, this.nexProduct.inventory.id)
             .subscribe((res: InventoryModel.ResponseCheckContainer) => {
               if (res.code === 200) {

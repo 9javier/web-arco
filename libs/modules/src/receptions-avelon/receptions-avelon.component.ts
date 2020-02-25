@@ -432,7 +432,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   enviar() {
     if( this.result.ean != undefined &&
       this.result.ean.length > 0 &&
-      this.oldEan !=  this.result.ean  
+      this.oldEan !=  this.result.ean
       ) {
       this.onKey();
       return;
@@ -564,16 +564,20 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             this.intermediaryService.dismissLoading();
           },
           () => {
-            this.typeScreen = result.type
+            this.typeScreen = result.type;
             this.reference = result.reference;
           })
       },
-      e =>  {
+      (err) =>  {
         this.intermediaryService.dismissLoading();
-        //this.intermediaryService.presentToastError(e.error.errors)
-        this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
-        this.isErrorEan = true;
-        this.oldEan = this.result.ean;
+        if (err.message === 'ProductsNoFoundToPrintException') {
+          this.intermediaryService.presentToastError("El producto no esta asignado a esta recepción");
+          this.resetAll();
+        } else {
+          this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
+          this.isErrorEan = true;
+          this.oldEan = this.result.ean;
+        }
       }
     )
   }
