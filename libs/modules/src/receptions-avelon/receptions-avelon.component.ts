@@ -570,7 +570,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       },
       (err) =>  {
         this.intermediaryService.dismissLoading();
-        if (err.message === 'ProductsNoFoundToPrintException') {
+        if (err.error.message === 'ProductsNoFoundToPrintException') {
           this.intermediaryService.presentToastError("El producto no esta asignado a esta recepción");
           this.resetAll();
         } else {
