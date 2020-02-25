@@ -1,4 +1,16 @@
 <ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <h1>Nuevos Productos</h1>
+      </ion-col>
+      <ion-col class="ion-align-self-center bt-right">
+        <ion-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
+          <ion-icon name="document"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
  <div class="incidences-container">
     <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
       <ng-container matColumnDef="select">
@@ -28,7 +40,7 @@
         </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="references">
+      <ng-container matColumnDef="Modelo">
         <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Articulo
          <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Articulo'"
                                [listItems]="entities.models"
@@ -39,7 +51,7 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.model.reference}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="warehouses">
+      <ng-container matColumnDef="Warehouses">
         <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Tienda
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouses [title]="'Tienda'"
                                [listItems]="entities.warehouses"
@@ -47,10 +59,10 @@
                                (applyFilters)="applyFilters($event, 'warehouses')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{element.warehouse.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{ element.warehouse.name }} {{element.warehouse.reference }} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="range">
+      <ng-container matColumnDef="Talla">
         <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Rango de talla
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonSizes [title]="'Rango de talla'"
                                [listItems]="entities.sizes"
@@ -61,7 +73,7 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info type-120">{{ processProductSizesRange(element) }}</mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="family">
+      <ng-container matColumnDef="Familia">
         <mat-header-cell class="my-sticky-col info type-240" *matHeaderCellDef mat-sort-header>Familia
        <suite-filter-button class="ion-margin-vertical filter" #filterButtonFamilies [title]="'Familia'"
                                [listItems]="entities.families"
@@ -72,7 +84,7 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info type-240"> {{element.model.family.name}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="lifestyle">
+      <ng-container matColumnDef="Lifestyle">
         <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>Estilo
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonLifestyles [title]="'Estilo'"
                                [listItems]="entities.lifestyles"
@@ -83,9 +95,9 @@
         <mat-cell *matCellDef="let element" class="info-product">{{element.model.lifestyle.name}}  </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="brand">
+      <ng-container matColumnDef="Marca">
         <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>Marca
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonBrands [title]="'Marcas'"
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonBrands [title]="'Marca'"
                                [listItems]="entities.brands"
                                [isFiltering]="isFilteringBrands != entities.brands.length"
                                (applyFilters)="applyFilters($event, 'brands')">
@@ -94,7 +106,7 @@
         <mat-cell *matCellDef="let element" class="info-product">{{element.model.brand.name}}  </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="colors">
+      <ng-container matColumnDef="Color">
         <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>Color
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonColors [title]="'Color'"
                                [listItems]="entities.colors"
@@ -105,8 +117,8 @@
         <mat-cell *matCellDef="let element" class="info-product">{{element.model.color.name}}  </mat-cell>
       </ng-container>
       
-      <ng-container matColumnDef="tarif">
-        <mat-header-cell class="info-product" *matHeaderCellDef mat-sort-header>Precio tarifa
+      <ng-container matColumnDef="Precios">
+        <mat-header-cell class="info-product" *matHeaderCellDef>Precio tarifa
          <!--<suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Precio tarifa'"
                                [listItems]="entities.providers"
                                [isFiltering]="isFilteringProviders != entities.providers.length"
