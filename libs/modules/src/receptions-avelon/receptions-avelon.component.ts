@@ -179,6 +179,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               break;
             case Type.EAN_CODE:
               this.eanInput.nativeElement.value = data.selected.id;
+              this.result.ean = this.eanInput.nativeElement.value;
               break;
             case undefined:
               this.expedition = data.selected.id;
@@ -424,8 +425,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   enviar() {
-    console.log('Test::', this.listSizes);
-
     if( this.result.ean != undefined &&
       this.result.ean.length > 0 &&
       this.oldEan !=  this.result.ean  

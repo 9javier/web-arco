@@ -53,7 +53,7 @@ export class VirtualKeyboardComponent implements OnInit, AfterViewInit {
 
   onKeyPress = (button: string) => {
     if (button === "{shift}" || button === "{lock}") this.handleShift();
-    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER)) this.selectItem(this.searchTerm);
+    if (button === "{enter}" && (!this.type || this.type == Type.EXPEDITION_NUMBER || this.type == Type.EAN_CODE)) this.selectItem(this.searchTerm);
   };
 
   handleShift = () => {
