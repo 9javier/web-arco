@@ -30,6 +30,8 @@ export class MarketplacesService {
   private getColorsRuleFilters = this.apiBase + "/api/RuleFilter/3";
   private getFeaturesRuleFilters = this.apiBase + "/api/RuleFilter/2";
   private getSizesRuleFilters = this.apiBase + "/api/RuleFilter/4";
+  private postProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
+  private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
 
   constructor(
     private http: HttpClient
@@ -141,6 +143,18 @@ export class MarketplacesService {
 
   updateRulesConfigurations(ruleConfigurationId, data): Observable<any> {
     return this.http.put<any>(this.updateRulesConfigurationsUrl.replace('{{id}}', ruleConfigurationId.toString()), data, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getProductCategory(): Observable<any> {
+    return this.http.get<any>(this.getProductCategoryUrl, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  postProductCategory(data): Observable<any> {
+    return this.http.post<any>(this.postProductCategoryUrl, data, {}).pipe(map(response => {
       return response;
     }));
   }

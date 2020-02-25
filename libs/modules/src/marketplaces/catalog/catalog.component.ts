@@ -15,6 +15,7 @@ export class CatalogComponent implements OnInit {
   private catalogTableData;
   private catalogTableHeader;
   private selectedProducts;
+  private products;
 
   constructor(
     private route: ActivatedRoute,
@@ -24,6 +25,13 @@ export class CatalogComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getProducts();
+    this.catalogTableData = new MatTableDataSource(this.catalogData);
+    this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
+    this.selectedProducts = [];
+  }
+
+  getProducts() {
     this.catalogData = [
       {
         ref: 1,
@@ -74,9 +82,6 @@ export class CatalogComponent implements OnInit {
         active: false
       }
     ];
-    this.catalogTableData = new MatTableDataSource(this.catalogData);
-    this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'color', 'family', 'description', 'pvp', 'discount', 'units', 'active'];
-    this.selectedProducts = [];
   }
 
   selectProductRow(product) {

@@ -21,8 +21,8 @@
       </mat-option>
     </mat-select>
   </div>
-  <div class="mp-catalog-table-wrapper">
-    <table mat-table [dataSource]="catalogTableData">
+  <div class="mp-catalog-table-wrapper" #TABLE>
+    <table mat-table #table [dataSource]="catalogTableData">
 
       <tr mat-header-row *matHeaderRowDef="catalogTableHeader; sticky: true;"></tr>
       <tr mat-row *matRowDef="let row; columns: catalogTableHeader;"></tr>

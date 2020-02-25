@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'suite-catalog-marketplaces',
@@ -9,6 +10,7 @@ import { MatTableDataSource } from '@angular/material';
 
 export class CatalogMarketplacesComponent implements OnInit {
 
+  @ViewChild('TABLE') table: ElementRef;
   private catalogData;
   private products: any[];
   private catalogTableData;
@@ -179,6 +181,12 @@ export class CatalogMarketplacesComponent implements OnInit {
   }
 
   exportToExcel() {
-    console.log('Export to Excel');
+    console.log(this.table)
+    const ws: XLSX.WorkSheet=XLSX.utils.table_to_sheet(this.table.nativeElement);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'catalog-marketplaces');
+    
+    XLSX.writeFile(wb, 'catalog-marketplaces.xlsx');
   }
+  
 }

@@ -13,6 +13,7 @@ export class MarketplacesPrestaService {
   private getSizesPrestaUrl = this.apiBase + '/sizes?task=get_sizes_markets&all_info=true';
   private getColorsPrestaUrl = this.apiBase + '/colors?task=get_colors&all_info=true';
   private getFeaturesPrestaUrl = this.apiBase + '/features?task=get_features&all_info=true';
+  private getCategoriesPrestaUrl = this.apiBase + '/products?task=get_all_categories';
 
   constructor(
     private http: HttpClient
@@ -38,6 +39,12 @@ export class MarketplacesPrestaService {
 
   getFeatures():Observable<any> { 
     return this.http.get<any>(this.getFeaturesPrestaUrl, {}).pipe(map(response=>{
+      return response;
+    }));
+  }
+
+  getCategories():Observable<any> { 
+    return this.http.get<any>(this.getCategoriesPrestaUrl, {}).pipe(map(response=>{
       return response;
     }));
   }
