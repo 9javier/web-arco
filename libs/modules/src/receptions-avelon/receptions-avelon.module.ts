@@ -11,6 +11,7 @@ import { ScreenResultComponent } from './components/screen-result/screen-result.
 import { useAnimation, transition, trigger, style, animate } from '@angular/animations';
 import {MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule} from "@angular/material";
 import {InfoModalModule} from "./info-modal/info-modal.module";
+import {SizeInputModule} from "../components/size-input/size-input.module";
 
 
 const routes: Routes = [
@@ -36,6 +37,7 @@ const routes: Routes = [
     MatSelectModule,
     MatInputModule,
     ReactiveFormsModule,
+    SizeInputModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

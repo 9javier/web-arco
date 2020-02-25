@@ -35,8 +35,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   public resultsList: any[] = [];
 
-  private qtyCodesToPrint: number = 0;
-
   constructor(
     private modalController: ModalController,
     private popoverController: PopoverController,
@@ -300,7 +298,6 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
   }
 
   public printCodes() {
-    this.qtyCodesToPrint = 0;
     const sizesToPrint = this.listSizes.filter(s => {
       return s.quantity > 0;
     });

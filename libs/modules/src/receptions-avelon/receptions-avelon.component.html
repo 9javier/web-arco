@@ -1,17 +1,18 @@
 <ion-content [ngClass]="{'ion-padding': typeScreen == undefined}" >
 
   <ng-container *ngIf="typeScreen == undefined; else screen">
-    <ion-grid fixed>
-      <ion-row class="row-selectors">
+    <div class="grid">
+      <div class="row form">
         <form>
-          <div>
+          <div class="col">
             <mat-form-field id="expeditionReference">
               <mat-label>Nº Expedicion</mat-label>
-              <input #expedition [value]="expedit" type="text"  matInput (focusin)="changeShowCheck()">
+              <input #expedition [value]="expedit" type="text" matInput (focusin)="changeShowCheck()">
             </mat-form-field>
             <i slot="end" class="material-icons" (click)="openVirtualKeyboard(null, objectType.EXPEDITION_NUMBER)" id="expeditionKeyboard">keyboard</i>
           </div>
-          <div>
+
+          <div class="col">
             <mat-form-field id="providerSelector">
               <mat-label>Proveedor</mat-label>
               <input #provider type="text" matInput [formControl]="myControl"  [matAutocomplete]="auto" (focusin)="changeShowCheck()">
@@ -23,72 +24,91 @@
             </mat-form-field>
             <i slot="end" class="material-icons" (click)="openVirtualKeyboard(providers, objectType.PROVIDER)" id="providerKeyboard">keyboard</i>
           </div>
-          <div>
+
+          <div class="col">
             <div>
               <ion-button (click)="loadProvider()" [ngClass]="showCheck ? '' : 'hide'">comprobar</ion-button>
               <ion-button (click)="returnHome()" [ngClass]="isProviderAvailable ? '' : 'hide'">resetear</ion-button>
             </div>
           </div>
         </form>
-      </ion-row>
+      </div>
 
-      <ion-row *ngIf="isProviderAvailable" class="ion-margin-top">
-        <ion-col size="4">
+      <div class="row selectors" *ngIf="isProviderAvailable">
+        <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
             <ion-title> Marcas </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
           <suite-lists type="brands"></suite-lists>
-        </ion-col>
+        </div>
 
-        <ion-col size="4">
+        <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.models, objectType.MODEL)">
             <ion-title> Modelos </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
           <suite-lists type="models" ></suite-lists>
-        </ion-col>
+        </div>
 
-        <ion-col size="4">
+        <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.colors, objectType.COLOR)">
             <ion-title> Colores </ion-title>
             <i slot="end" class="material-icons">keyboard</i>
           </ion-item>
           <suite-lists type="colors"></suite-lists>
-        </ion-col>
-      </ion-row>
+        </div>
+      </div>
 
-      <ion-row *ngIf="isProviderAvailable">
-        <ion-col size="4" id="pictureContainer">
-          <div>
-            <ion-img *ngIf="response.image" [src]="response.image"></ion-img>
+      <div class="row sizes-image-ean" *ngIf="isProviderAvailable">
+        <div class="col images">
+          <div class="row">
+            <ion-img [src]="'https://images-na.ssl-images-amazon.com/images/I/61Yaf5BHLLL._AC_UL1200_.jpg'"></ion-img>
           </div>
-        </ion-col>
+          <div class="row">
+            <ion-img [src]="'https://m.media-amazon.com/images/I/71XsYh7veWL._SX700_.jpg'"></ion-img>
+          </div>
+        </div>
 
-        <ion-col size="4" id="sizeContainer" align-self-end>
-          <ion-row>
-            <suite-sizes [hidden]="!(result.brandId && result.modelId && result.colorId)"></suite-sizes>
-          </ion-row>
-          <ion-row>
-            <ion-item lines="none">
-              <ion-label>EAN:</ion-label>
-              <ion-input [(ngModel)]="result.ean" type="text" ></ion-input>
-            </ion-item>
-          </ion-row>
-        </ion-col>
-
-        <ion-col size="4" id="printContainer">
-          <div class="refresh-search-more">
+        <div class="col sizes-ean">
+          <div class="row actions">
             <ion-button (click)="resetAll()" id="refresh">
               <ion-icon name="refresh"></ion-icon>
             </ion-button>
             <ion-button class="ion-float-end" (click)="buscarMas()">buscar mas</ion-button>
           </div>
-          <ion-button (click)="enviar()" id="print"> imprimir </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
 
+          <div class="row sizes">
+            <span>Tallas</span>
+            <div *ngIf="result.modelId && result.colorId && listSizes.length > 0">
+              <size-input *ngFor="let size of listSizes" [item]="size"></size-input>
+            </div>
+            <div *ngIf="result.modelId && result.colorId && (!listSizes || listSizes.length <= 0)" class="sizes-empty">
+              <p>No se han podido cargar tallas para la marca, el modelo y el color seleccionados.</p>
+            </div>
+            <div *ngIf="!result.modelId || !result.colorId" class="sizes-select">
+              <p><span *ngIf="!result.modelId">Seleccione un modelo.</span>
+                <span *ngIf="!result.colorId">Seleccione un color.</span></p>
+            </div>
+          </div>
+
+          <div class="row ean">
+            <div class="col ean">
+              <div>
+                <mat-form-field id="eanCode">
+                  <mat-label>EAN</mat-label>
+                  <input #ean [value]="result.ean" type="text" matInput>
+                </mat-form-field>
+                <i slot="end" class="material-icons" (click)="openVirtualKeyboard(null, objectType.EAN_CODE)" id="eanKeyboard">keyboard</i>
+              </div>
+            </div>
+            <div class="col">
+              <ion-button (click)="enviar()" id="print"> imprimir </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-container>
 
   <ng-template #screen>

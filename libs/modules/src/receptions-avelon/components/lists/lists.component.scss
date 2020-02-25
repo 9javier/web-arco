@@ -1,6 +1,5 @@
 .list-wrapper {
-  height: 250px;
-  max-height: 250px;
+  height: calc(30vh - 50px); // 40vh is the height of the section - 50px is the height of ion-item used as header
   overflow-y: scroll;
 }
 
