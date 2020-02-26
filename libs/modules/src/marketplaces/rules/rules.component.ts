@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ModalController} from '@ionic/angular';
 import {NewRuleComponent} from './new-rule/new-rule.component';
+import {CategoriesComponent} from '../categories/categories.component';
+
 import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MatTableDataSource} from '@angular/material';
 
@@ -232,6 +234,16 @@ export class RulesComponent implements OnInit {
         });
       }
     });
+
+    modal.present();
+  }
+
+  async openModalCategories(): Promise<void> {
+    let modal = await this.modalController.create({
+      component: CategoriesComponent
+    });
+
+    modal.onDidDismiss().then((data) => {})
 
     modal.present();
   }

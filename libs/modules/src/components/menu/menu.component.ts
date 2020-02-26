@@ -18,7 +18,8 @@ interface MenuSectionGroupItem {
   title: string,
   open: boolean,
   type: 'wrapper',
-  children: (MenuSectionGroupItem | MenuSectionItem)[]
+  children: (MenuSectionGroupItem | MenuSectionItem)[],
+  thirdLevel?: boolean
 }
 
 interface MenuSectionItem {
@@ -316,7 +317,8 @@ export class MenuComponent implements OnInit {
           open: true,
           type: 'wrapper',
           id: 'miniprecios',
-          icon: 'add-circle-outline',
+          icon: 'add-circle',
+          thirdLevel: true,
           children: [
             {
               title: 'Mapeos',
@@ -791,7 +793,17 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  tapOptionSubSubitem(menuItem) {
+    console.log(menuItem)
+  }
+
   openSubMenuItem(menuItem) {
+    if(menuItem.thirdLevel && !menuItem.open) {
+      menuItem.icon = 'add-circle';
+    } else if(menuItem.thirdLevel && menuItem.open) {
+      menuItem.icon = 'add-circle-outline';
+    }
+
     if (this.iconsDirection === 'end') {
       this.toggleSidebar();
     }
