@@ -11,6 +11,8 @@ import {map, switchMap} from 'rxjs/operators';
 import {from} from "rxjs";
 import {RequestsProvider} from "../../../providers/requests/requests.provider";
 import {HttpRequestModel} from "../../../models/endpoints/HttpRequest";
+import { UserModel } from '../../..';
+import { DamagedModel } from '../../../models/endpoints/Damaged';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +27,8 @@ export class ProductsService {
   private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
   private relabelPrint: string = environment.apiBase + '/products/relabel/print';
   private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
+  private postDamagedListUrl: string = environment.apiBase + '/products/damaged';
+  private postDamagedFiltersUrl: string = environment.apiBase + '/products/damaged/filters';
 
   constructor(
     private http: HttpClient,
@@ -74,5 +78,24 @@ export class ProductsService {
     return this.http.post(this.getAllFiltersUrl, form).pipe(map((response:any)=>{
       return response.data;
     }));
+  }
+
+  /**
+   * Damaged Shoes
+   */
+  getDamagedFilters(parameters?: DamagedModel.FilterOptionsRequest): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postDamagedFiltersUrl, parameters); // ToDo: Change URL Endpoint
+  }
+
+  getDamagedList(parameters?: DamagedModel.Filters): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post(this.postDamagedListUrl, parameters);
+  }
+
+  postDamagedUpdate(parameters?: DamagedModel.Permission[]): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post('', parameters); // ToDo: Change URL Endpoint
+  }
+
+  postDamagedNew(parameters?: DamagedModel.ModalResponse): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.post('', parameters); // ToDo: Change URL Endpoint
   }
 }
