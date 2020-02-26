@@ -67,6 +67,7 @@ export class JailComponent implements OnInit {
 
   /**List of SearchInContainer */
   results: Array<CarrierModel.SearchInContainer> = [];
+  allResults: Array<CarrierModel.SearchInContainer> = [];
 
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild('filterButtonReferences') filterButtonReferences: FilterButtonComponent;
@@ -87,8 +88,8 @@ export class JailComponent implements OnInit {
       limit: this.pagerValues[0]
     }),
     orderby: this.formBuilder.group({
-      type: '',
-      order: "ASC"
+      type: null,
+      order: "DESC"
     })
   });
 
@@ -135,7 +136,7 @@ export class JailComponent implements OnInit {
 
   displayedColumns = ['select', 'reference', 'packing', 'warehouse', 'destiny', 'products-status', 'sealed', 'isSend', "update", 'open-modal', 'buttons-print',];
   dataSource: any;
-  listCarriers = [];
+  listAllCarriers = [];
   expandedElement: CarrierModel.Carrier;
 
   carriers: Array<CarrierModel.Carrier> = [];
@@ -192,11 +193,14 @@ export class JailComponent implements OnInit {
       filters: null
     };
     this.intermediaryService.presentLoading();
+    await this.carrierService.getFilters().subscribe(sql_result => {
+      this.listAllCarriers = sql_result.data.results;
+    });
+
     await this.carrierService.searchInContainer(body).subscribe(sql_result => {
       this.results = sql_result.data.results;
       this.initSelectForm();
       this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
-      this.listCarriers = this.results;
 
       let paginator: any = sql_result.data.pagination;
       this.paginator.length = paginator.totalResults;
@@ -263,8 +267,8 @@ export class JailComponent implements OnInit {
         limit: this.pagerValues[0]
       }),
       orderby: this.formBuilder.group({
-        type: '',
-        order: "ASC"
+        type: null,
+        order: "DESC"
       })
     });
     JailComponent.deleteArrow();
@@ -510,9 +514,9 @@ export class JailComponent implements OnInit {
           }
         }
       }
-      if (object[key] === null || object[key] === "") {
+      /*if (object[key] === null || object[key] === "") {
         delete object[key];
-      }
+      }*/
     });
     return object;
   }
@@ -623,12 +627,40 @@ export class JailComponent implements OnInit {
     if(applyFilter){
       parameters.pagination.page = 1;
     }
+
+    let body: CallToService={
+      pagination: parameters.pagination,
+      orderby: parameters.orderby,
+      filters: {
+        references: parameters.references,
+        types: parameters.types,
+        origins: parameters.origins,
+        destinies: parameters.destinies,
+        products: parameters.products,
+      }
+    };
+
+    if(this.isFilteringReferences == this.references.length){
+      body.filters.references = null;
+    }
+    if(this.isFilteringTypes == this.types.length){
+      body.filters.types = null;
+    }
+    if(this.isFilteringOrigins == this.origins.length){
+      body.filters.origins = null;
+    }
+    if(this.isFilteringDestinies == this.destinies.length){
+      body.filters.destinies = null;
+    }
+    if(this.isFilteringProducts == this.products.length) {
+      body.filters.products = null;
+    }
+
     this.intermediaryService.presentLoading();
-    this.carrierService.searchInContainer(parameters).subscribe(sql_result => {
+    this.carrierService.searchInContainer(body).subscribe(sql_result => {
       this.intermediaryService.dismissLoading();
       this.results = sql_result.data.results;
       this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
-      this.listCarriers = this.results;
       this.initSelectForm();
       let paginator: any = sql_result.data.pagination;
 
@@ -645,7 +677,7 @@ export class JailComponent implements OnInit {
         });
       })));
 
-      //Reduce all filters
+      /*//Reduce all filters
       if (this.lastUsedFilter != 'references') {
         let filteredReferences = sql_result.data.filters['references'] as unknown as string[];
         for (let index in this.references) {
@@ -680,7 +712,7 @@ export class JailComponent implements OnInit {
           this.products[index].hide = !filteredProducts.includes(this.products[index].reference);
         }
         this.filterButtonProducts.listItems = this.products;
-      }
+      }*/
 
       if(applyFilter){
         this.saveFilters();
@@ -723,11 +755,11 @@ export class JailComponent implements OnInit {
    */
   getFilters(stable: boolean = false) {
 
-    this.updateFilterSourceReferences(this.listCarriers, stable);
-    this.updateFilterSourceTypes(this.listCarriers, stable);
-    this.updateFilterSourceOrigins(this.listCarriers, stable);
-    this.updateFilterSourceDestinies(this.listCarriers, stable);
-    this.updateFilterSourceProducts(this.listCarriers, stable);
+    this.updateFilterSourceReferences(this.listAllCarriers, stable);
+    this.updateFilterSourceTypes(this.listAllCarriers, stable);
+    this.updateFilterSourceOrigins(this.listAllCarriers, stable);
+    this.updateFilterSourceDestinies(this.listAllCarriers, stable);
+    this.updateFilterSourceProducts(this.listAllCarriers, stable);
 
     this.isFilteringReferences = this.references.length;
     this.isFilteringTypes = this.types.length;
@@ -745,10 +777,10 @@ export class JailComponent implements OnInit {
     });
   }
 
-  private updateFilterSourceReferences(listCarriers: any, stable: boolean) {
+  private updateFilterSourceReferences(listAllCarriers: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let referencesList: any[] = [];
-    listCarriers.forEach(key => {
+    listAllCarriers.forEach(key => {
       if(!referencesList.find( f => f.value == key['reference'])) {
         referencesList.push({value: key['reference']});
       }
@@ -761,10 +793,10 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceTypes(listCarriers: any, stable: boolean) {
+  private updateFilterSourceTypes(listAllCarriers: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let typesList: any[] = [];
-    listCarriers.forEach(key => {
+    listAllCarriers.forEach(key => {
       if(!typesList.find( f => f.value == key['type'].name)) {
         typesList.push({value: key['type'].name});
       }
@@ -777,10 +809,10 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceOrigins(listCarriers: any, stable: boolean) {
+  private updateFilterSourceOrigins(listAllCarriers: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let originsList: any[] = [];
-    listCarriers.forEach(key => {
+    listAllCarriers.forEach(key => {
       if(!originsList.find( f => f.reference == key['origin'].reference)){
         originsList.push({reference: key['origin'].reference, name: key['origin'].name});
       }
@@ -792,10 +824,10 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceDestinies(listCarriers: any, stable: boolean) {
+  private updateFilterSourceDestinies(listAllCarriers: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let destiniesList: any[] = [];
-    listCarriers.forEach(key => {
+    listAllCarriers.forEach(key => {
         key['destiny'].forEach(destiny => {
           if (!destiniesList.find(f => f.reference == destiny['reference'])) {
             destiniesList.push({reference: destiny['reference'], name: destiny['name']});
@@ -809,10 +841,10 @@ export class JailComponent implements OnInit {
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
   }
 
-  private updateFilterSourceProducts(listCarriers: any, stable: boolean) {
+  private updateFilterSourceProducts(listAllCarriers: any, stable: boolean) {
     this.pauseListenFormChange = true;
     let productsList: any[] = [];
-    listCarriers.forEach(key => {
+    listAllCarriers.forEach(key => {
       if(!productsList.find( f => f.value == key['product'])) {
         productsList.push({value: key['product']});
       }
@@ -912,11 +944,42 @@ export class JailComponent implements OnInit {
 
   loadCarriers(): void {
     let parameters = this.sanitize(this.getFormValueCopy());
+    if(!parameters.orderby.type){
+      parameters.orderby.type = null;
+    }
+
+    let body: CallToService={
+      pagination: parameters.pagination,
+      orderby: parameters.orderby,
+      filters: {
+        references: parameters.references,
+        types: parameters.types,
+        origins: parameters.origins,
+        destinies: parameters.destinies,
+        products: parameters.products,
+      }
+    };
+
+    if(this.isFilteringReferences == this.references.length){
+      body.filters.references = null;
+    }
+    if(this.isFilteringTypes == this.types.length){
+      body.filters.types = null;
+    }
+    if(this.isFilteringOrigins == this.origins.length){
+      body.filters.origins = null;
+    }
+    if(this.isFilteringDestinies == this.destinies.length){
+      body.filters.destinies = null;
+    }
+    if(this.isFilteringProducts == this.products.length) {
+      body.filters.products = null;
+    }
+
     this.intermediaryService.presentLoading("Actualizando...");
-    this.carrierService.searchInContainer(parameters).subscribe(sql_result => {
+    this.carrierService.searchInContainer(body).subscribe(sql_result => {
       this.results = sql_result.data.results;
       this.dataSource = new MatTableDataSource<CarrierModel.SearchInContainer>(this.results);
-      this.listCarriers = this.results;
       this.initSelectForm();
       let paginator: any = sql_result.data.pagination;
 

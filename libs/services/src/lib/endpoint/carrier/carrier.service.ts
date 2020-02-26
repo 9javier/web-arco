@@ -42,6 +42,7 @@ export class CarrierService {
   private typeMovement = environment.apiBase + '/types/movement-history';
   private sendexcell = environment.apiBase + "/packing/export-to-excel";
   private searchInContainerUrl = environment.apiBase + "/packing/search";
+  private getFiltersUrl = environment.apiBase + "/packing/filters";
 
   constructor(
     private http: HttpClient,
@@ -77,7 +78,12 @@ export class CarrierService {
     }));
   }
 
-
+  getFilters(): Observable<CarrierModel.ResponseSearchInContainer> {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post<CarrierModel.ResponseSearchInContainer>(this.getFiltersUrl, { headers });
+    }));
+  }
 
   /**
    * @author Gaetano Sabino
