@@ -3,7 +3,6 @@ import {ModalController, NavParams} from '@ionic/angular';
 import {MarketplacesService} from '../../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MarketplacesMgaService} from '../../../../../services/src/lib/endpoint/marketplaces-mga/marketplaces-mga.service';
 import {forkJoin} from "rxjs";
-import { MatTableDataSource, MatPaginator } from '@angular/material';
 
 @Component({
   selector: 'suite-new-rule',
@@ -19,8 +18,7 @@ export class NewRuleComponent implements OnInit {
   @ViewChild('ruleNameWindow') ruleNameWindow;
   @ViewChild('includeReferenceInput') includeReferenceInput;
   @ViewChild('excludeReferenceInput') excludeReferenceInput;
-  @ViewChild('paginatorCategories') paginatorCategories: MatPaginator;
-  
+
   private mode;
   private rule;
   private ruleFilterType;
@@ -46,10 +44,6 @@ export class NewRuleComponent implements OnInit {
   private excludeReferenceArray;
   private referencesExceptions;
   private categorySearched;
-
-  private marketCategories = [];
-  private displayedColumns: string[] = ['check', 'id', 'name'];
-  private dataSource = new MatTableDataSource();
 
   constructor(
     private modalController: ModalController,
@@ -80,19 +74,6 @@ export class NewRuleComponent implements OnInit {
     this.excludeReferenceText = '';
     this.excludeReferenceArray = [];
     this.categorySearched = '';
-
-    this.marketplacesService.getProductCategory().subscribe(data => {
-      if(data) {
-        data.forEach(item => {
-          this.marketCategories.push({
-            id: item.market_category_id,
-            name: item.name
-          });
-        });
-        this.dataSource = new MatTableDataSource(this.marketCategories);
-        setTimeout(() => this.dataSource.paginator = this.paginatorCategories);
-      }
-    });
 
     this.categoryList = [
       {
