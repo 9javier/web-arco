@@ -142,20 +142,7 @@ export class NewRuleComponent implements OnInit {
         items: []
       },
     ];
-    this.destinationCategories = [
-      {
-        id: 3,
-        name: 'MUJER'
-      },
-      {
-        id: 4,
-        name: 'HOMBRE'
-      },
-      {
-        id: 1592,
-        name: 'NIÑOS'
-      }
-    ];
+    this.destinationCategories = [];
 
     forkJoin([
       this.marketplacesService.getBrands(),
@@ -256,6 +243,13 @@ export class NewRuleComponent implements OnInit {
 
       this.selectedCategoryGroupFilter = this.categoryList[0].id;
       this.selectedCategoryGroupFilterObject = {...this.categoryList[0]};
+
+      if (this.ruleFilterType == "categories") {
+        this.marketplacesService.getMarketCategories().subscribe(data => {
+          this.destinationCategories = data;
+          this.destinationCategories.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+        });
+      }
 
       if (this.mode == 'edit') {
         this.rule = this.navParams.get('rule');
@@ -918,9 +912,14 @@ export class NewRuleComponent implements OnInit {
         return true;
 
         break;
+
       case 'categories':
 
-        return this.selectedDestinationCategories.length;
+        if (this.mode != 'edit') {
+          return this.selectedDestinationCategories.length;
+        }
+
+        return true;
 
         break;
 

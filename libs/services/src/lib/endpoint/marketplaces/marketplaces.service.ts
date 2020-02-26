@@ -30,6 +30,7 @@ export class MarketplacesService {
   private getColorsRuleFilters = this.apiBase + "/api/RuleFilter/3";
   private getFeaturesRuleFilters = this.apiBase + "/api/RuleFilter/2";
   private getSizesRuleFilters = this.apiBase + "/api/RuleFilter/4";
+  private getCategories = this.apiBase + "/api/ProductCategory";
 
   constructor(
     private http: HttpClient
@@ -144,4 +145,11 @@ export class MarketplacesService {
       return response;
     }));
   }
+
+  getMarketCategories(): Observable<any> {
+    return this.http.get<any>(this.getCategories, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
 }
