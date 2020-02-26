@@ -13,53 +13,37 @@
   </ion-grid>
  <div class="incidences-container">
     <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)" class="table-incidences">
-      <ng-container matColumnDef="select">
-        <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
-
-          <div class="content-checkbox">
-            <ng-container *ngIf="dataSource !== undefined" >
-              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
-                            [checked]="selection.hasValue() && isAllSelected()"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()"
-                            [aria-label]="checkboxLabel()">
-              </mat-checkbox>
-            </ng-container>
-          </div>
-            <div>Todas</div>
+      <ng-container matColumnDef="Fecha">
+        <mat-header-cell class="my-sticky-col info" *matHeaderCellDef mat-sort-header>Fecha
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonDates [title]="'Fecha'"
+                               [listItems]="entities.dates"
+                               [isFiltering]="isFilteringDates != entities.dates.length"
+                               (applyFilters)="applyFilters($event, 'dates')">
+          </suite-filter-button>
         </mat-header-cell>
-        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
-          <ng-container *ngIf="dataSource !== undefined" >
-            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
-                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
-            </mat-checkbox>
-          </ng-container>
-        </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.dates ? element.dates.name : ''}} </mat-cell>
       </ng-container>
 
-      <ng-container matColumnDef="Modelo">
-        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Articulo
-         <suite-filter-button class="ion-margin-vertical filter" #filterButtonReferences [title]="'Articulo'"
+      <ng-container matColumnDef="Articulo">
+        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Articulo
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonModels [title]="'Articulo'"
                                [listItems]="entities.models"
                                [isFiltering]="isFilteringModels != entities.models.length"
                                (applyFilters)="applyFilters($event, 'models')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.model.reference}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{element.model ? element.model.reference : ''}} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Warehouses">
-        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Tienda
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef mat-sort-header>Tienda
           <suite-filter-button class="ion-margin-vertical filter" #filterButtonWarehouses [title]="'Tienda'"
                                [listItems]="entities.warehouses"
                                [isFiltering]="isFilteringWarehouses != entities.warehouses.length"
                                (applyFilters)="applyFilters($event, 'warehouses')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{ element.warehouse.name }} {{element.warehouse.reference }} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number"> {{element.warehouse.reference }} {{ element.warehouse.name }} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Talla">
@@ -73,6 +57,17 @@
         <mat-cell *matCellDef="let element" class="my-sticky-col info type-120">{{ processProductSizesRange(element) }}</mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="Modelo">
+        <mat-header-cell class="my-sticky-col info type-120" *matHeaderCellDef mat-sort-header>Modelo
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonNameModels [title]="'Modelo'"
+                               [listItems]="entities.nameModels"
+                               [isFiltering]="isFilteringNameModels != entities.nameModels.length"
+                               (applyFilters)="applyFilters($event, 'nameModels')">
+          </suite-filter-button>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-120"> {{element.model ? element.model.name : ''}} </mat-cell>
+      </ng-container>
+
       <ng-container matColumnDef="Familia">
         <mat-header-cell class="my-sticky-col info type-240" *matHeaderCellDef mat-sort-header>Familia
        <suite-filter-button class="ion-margin-vertical filter" #filterButtonFamilies [title]="'Familia'"
@@ -81,7 +76,7 @@
                                (applyFilters)="applyFilters($event, 'families')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="my-sticky-col info type-240"> {{element.model.family.name}} </mat-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info type-240"> {{element.model.family ? element.model.family.name : '' }} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Lifestyle">
@@ -92,7 +87,7 @@
                                (applyFilters)="applyFilters($event, 'lifestyles')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product">{{element.model.lifestyle.name}}  </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.lifestyle ? element.model.lifestyle.name : '' }} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Marca">
@@ -103,7 +98,7 @@
                                (applyFilters)="applyFilters($event, 'brands')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product">{{element.model.brand.name}}  </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.brand ? element.model.brand.name : '' }} </mat-cell>
       </ng-container>
 
       <ng-container matColumnDef="Color">
@@ -114,21 +109,9 @@
                                (applyFilters)="applyFilters($event, 'colors')">
           </suite-filter-button>
         </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product">{{element.model.color.name}}  </mat-cell>
-      </ng-container>
-      
-      <ng-container matColumnDef="Precios">
-        <mat-header-cell class="info-product" *matHeaderCellDef>Precio tarifa
-         <!--<suite-filter-button class="ion-margin-vertical filter" #filterButtonProviders [title]="'Precio tarifa'"
-                               [listItems]="entities.providers"
-                               [isFiltering]="isFilteringProviders != entities.providers.length"
-                               (applyFilters)="applyFilters($event, 'providers')">
-          </suite-filter-button>-->
-        </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="info-product"> {{ getFinalPrice(element) }}€ </mat-cell>
+        <mat-cell *matCellDef="let element" class="info-product"> {{element.model.color ? element.model.color.name : '' }} </mat-cell>
       </ng-container>
 
-      
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
       </mat-row>
