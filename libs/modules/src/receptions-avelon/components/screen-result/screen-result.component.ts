@@ -16,7 +16,6 @@ export class ScreenResultComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this.type);
     this.printCodes();
   }
 
@@ -27,7 +26,6 @@ export class ScreenResultComponent implements OnInit {
   private async printCodes() {
     let codes = [this.reference];
     if ((<any>window).cordova) {
-      console.log(JSON.stringify(codes));
       this.printerService.print({ text: codes, type: 2 });
     } else {
       return await this.printerService.printBarcodesOnBrowser(codes);
