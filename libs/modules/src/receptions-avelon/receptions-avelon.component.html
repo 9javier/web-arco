@@ -103,7 +103,7 @@
               </div>
             </div>
             <div class="col">
-              <ion-button (click)="enviar()" id="print"> imprimir </ion-button>
+              <ion-button (click)="printProductsLoading()" id="print"> imprimir </ion-button>
             </div>
           </div>
         </div>
@@ -112,6 +112,6 @@
   </ng-container>
 
   <ng-template #screen>
-    <suite-screen-result [type]="typeScreen" [reference]="reference" (screenExit)="screenExit($event)"></suite-screen-result>
+    <suite-screen-result [type]="typeScreen" [references]="referencesToPrint" (screenExit)="screenExit($event)"></suite-screen-result>
   </ng-template>
 </ion-content>

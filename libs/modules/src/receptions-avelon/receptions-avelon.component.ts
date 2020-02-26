@@ -15,6 +15,7 @@ import {FormControl} from "@angular/forms";
 import {map, startWith} from "rxjs/operators";
 import {InfoModalComponent} from "./info-modal/info-modal.component";
 import {PositionsToast} from "../../../services/src/models/positionsToast.type";
+import {ScreenResult} from "./enums/screen_result.enum";
 
 @Component({
   selector: 'suite-receptions-avelon',
@@ -39,7 +40,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   interval: any;
   option: any;
   typeScreen: number;
-  reference: string;
+  referencesToPrint: string[];
   filter;
   objectType = Type;
   filterData: ReceptionAvelonModel.Reception;
@@ -87,6 +88,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.providerInput.nativeElement.value = "";
     this.expeditionInput.nativeElement.value = "";
     this.eanInput.nativeElement.value = "";
+    this.listSizes = [];
 
     this.ngOnInit();
   }
@@ -109,6 +111,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.response = new Reception();
     this.filterData = new Reception();
     this.typeScreen = undefined;
+    this.referencesToPrint = [];
     this.isProviderAvailable = false;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
@@ -424,123 +427,26 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     });
   }
 
-  enviar() {
-    if( this.result.ean != undefined &&
-      this.result.ean.length > 0 &&
-      this.oldEan !=  this.result.ean  
-      ) {
-      this.onKey();
-      return;
-    }
-    if (!this.result.brandId) {
-      this.alertMessage('Debe seleccionar una marca');
-      return;
-    }
-    if (!this.result.colorId) {
-      this.alertMessage('Debe seleccionar un color');
-      return;
-    }
-    if (!this.result.modelId) {
-      this.alertMessage('Debe seleccionar un modelo');
-      return;
-    }
+  public printProductsLoading() {
+    this.intermediaryService.presentLoading('Enviando').then(() => this.printProducts());
+  }
 
-    const sizesToPrint = this.listSizes.filter(s => {
-      return s.quantity > 0;
-    });
-    if (sizesToPrint.length <= 0) {
-      this.alertMessage('Debe seleccionar una talla');
-      return;
-    }
-
-    if (!this.result.ean) {
-      delete this.result.ean;
-    }
-    this.result.providerId = this.providerId;
-    this.result.expedition = this.expedition;
-
-    this.intermediaryService.presentLoading('Enviando');
-
-    //region new
-    const sizesMapped = sizesToPrint.map(s => {
-      return {
-        providerId: this.providerId,
-        expedition: this.expedition,
-        brandId: this.result.brandId,
-        colorId: this.result.colorId,
-        sizeId: s.id,
-        modelId: this.result.modelId,
-        quantity: s.quantity
-      };
-    });
-
-    const params = [];
-    for (let size of sizesMapped) {
-      for (let q = 0; q < size.quantity; q++) {
-        params.push(size);
-      }
-    }
-
-    /*this.reception
-      .printReceptionLabel({to_print: params})
-      .subscribe((res) => {
-        const referencesToPrint = res.resultToPrint.map(r => r.reference);
-        if (referencesToPrint && referencesToPrint.length > 0) {
-          this.printerService.printTagBarcode(referencesToPrint)
-            .subscribe((resPrint) => {
-              console.log('Print reference of reception successful');
-              if (typeof resPrint == 'boolean') {
-                console.log(resPrint);
-              } else {
-                resPrint.subscribe((resPrintTwo) => {
-                  console.log('Print reference of reception successful two', resPrintTwo);
-                })
-              }
-            }, (error) => {
-              console.error('Some error success to print reference of reception', error);
-            });
-        }
-
-        this.typeScreen = res.resultToPrint.type;
-        this.reference = res.resultToPrint.reference;
-        if (res.productsWithError && res.productsWithError.length > 0) {
+  private printProducts() {
+    if (!this.providerId || !this.expedition) {
+      this.intermediaryService.dismissLoading();
+      this.intermediaryService.presentToastError('No se detectan el proveedor y la expedición asignados. Pruebe a reiniciar el proceso. Si persiste el error contacte con su responsable.');
+    } else {
+      const eanSet = this.eanInput.nativeElement.value;
+      if (eanSet && eanSet != this.oldEan) {
+        this.checkEanAndPrint(eanSet);
+      } else {
+        if (this.checkIfSelectMandatoryFields()) {
+          this.notifyReceptionAndPrint();
+        } else {
           this.intermediaryService.dismissLoading();
-          this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.', PositionsToast.BOTTOM);
         }
-      }, (error) => {
-        this.intermediaryService.dismissLoading();
-        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.', PositionsToast.BOTTOM);
-      });*/
-    //endregion
-
-    //region old
-    this.reception.printReceptionLabel({to_print: params}).subscribe(
-      resp => {
-        this.reception.getReceptions(this.providerId).subscribe(
-          (info: ReceptionAvelonModel.Reception) => {
-            this.response = info;
-            this.response.brands = this.clearSelected(this.response.brands);
-            this.response.models = this.clearSelected(this.response.models);
-            this.response.colors = this.clearSelected(this.response.colors);
-            this.typeScreen = resp.type;
-            this.reference = resp.reference;
-            this.intermediaryService.dismissLoading();
-          },
-          () => {
-            this.typeScreen = resp.type
-            this.reference = resp.reference
-          }
-        );
-      },
-      e => {
-        this.intermediaryService.dismissLoading();
-          this.intermediaryService.presentToastError(e.error.errors)
-      },
-      () => {
-        this.intermediaryService.dismissLoading();
       }
-    );
-    //endregion
+    }
   }
 
   clearSelected(array: Array<ReceptionAvelonModel.Data>) {
@@ -592,38 +498,40 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     return array;
   }
 
-  onKey() {
+  onKey(ean: string) {
     this.intermediaryService.presentLoading('Enviando');
-    this.reception.eanProductPrint(this.result.ean, this.expedition, this.providerId).subscribe(
-      result => {
+    this.reception
+      .eanProductPrint(ean, this.expedition, this.providerId)
+      .subscribe((resultCheck) => {
+        this.reception
+          .printReceptionLabel({to_print: [resultCheck]})
+          .subscribe((resultPrint) => {
+
+          });
+
         this.reception.getReceptions(this.providerId).subscribe(
           (info: ReceptionAvelonModel.Reception) => {
             this.response = info;
             this.response.brands = this.clearSelected(this.response.brands);
             this.response.models = this.clearSelected(this.response.models);
             this.response.colors = this.clearSelected(this.response.colors);
-            this.typeScreen = result.type;
-            this.reference = result.reference;
+            this.typeScreen = resultCheck.type;
             this.intermediaryService.dismissLoading();
           },
           () => {
-            this.typeScreen = result.type
-            this.reference = result.reference;
+            this.typeScreen = resultCheck.type
           })
-      },
-      e =>  {
+      }, e => {
         this.intermediaryService.dismissLoading();
-        //this.intermediaryService.presentToastError(e.error.errors)
         this.intermediaryService.presentToastError("Debe seleccionar marca,modelo,color y talla");
         this.isErrorEan = true;
         this.oldEan = this.result.ean;
-      }
-    )
+      });
   }
 
- async screenExit(e) {
+  async screenExit(e) {
   this.typeScreen = undefined;
-  this.reference = '';
+  this.referencesToPrint = [];
   this.resetAll();
 
   }
@@ -690,13 +598,161 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
 
-  public getPhotoUrl(modelId): string | boolean {
+  private checkEanAndPrint(ean) {
+    this.reception
+      .eanProductPrint(ean, this.expedition, this.providerId)
+      .subscribe((resultCheck) => {
+        this.intermediaryService.dismissLoading();
+        if (resultCheck.resultToPrint && resultCheck.resultToPrint.length > 0) {
+          const resultEan = resultCheck.resultToPrint[0];
+          this.typeScreen = resultEan.type;
+          this.referencesToPrint = resultEan.reference;
+        } else {
+          let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN introducido.';
+          if (resultCheck.productsWithError && resultCheck.productsWithError.length > 0) {
+            errorMessage = resultCheck.productsWithError[0];
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      }, e => {
+        if (e.error.code == 400 && e.error.message == 'InvalidEanException') {
+          if (this.checkIfSelectMandatoryFields()) {
+            if (this.checkOnlyOneSizeAndOneQuantity()) {
+              this.notifyReceptionAndPrint(ean);
+            } else {
+              this.intermediaryService.dismissLoading();
+            }
+          } else {
+            this.intermediaryService.dismissLoading();
+          }
+        } else {
+          this.intermediaryService.dismissLoading();
+          let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN introducido.';
+          if (e.error.errors) {
+            errorMessage = e.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+        }
+      });
+  }
+
+  // check if all fields mandatory are selected to receive the product (brand, model, color and at least one size)
+  private checkIfSelectMandatoryFields(): boolean {
+    const errorsMessages: string[] = [];
+
+    if (!this.result.brandId) {
+      errorsMessages.push('Una marca.');
+    }
+    if (!this.result.modelId) {
+      errorsMessages.push('Un modelo.');
+    }
+    if (!this.result.colorId) {
+      errorsMessages.push('Un color.');
+    }
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    if (sizesToPrint.length <= 0) {
+      errorsMessages.push('Al menos una talla.');
+    }
+
+    if (errorsMessages.length > 0) {
+      const messageAsList = errorsMessages.map(m => `<li>${m}</li>`);
+      this.intermediaryService.presentWarning('Se ha detectado que faltan campos por seleccionar para poder realizar la recepción del producto y la impresión de su código único. Para poder continuar compruebe que ha seleccionado: <ul>' + messageAsList + '</ul>', null);
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // check that user only has selected one size and one unity for that size to associate to EAN code
+  private checkOnlyOneSizeAndOneQuantity(): boolean {
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    if (sizesToPrint.length > 1) {
+      this.intermediaryService.presentWarning('Seleccione solo una talla para asociar al EAN escaneado. Asegúrese de que solo ha indicado 1 Ud. de la talla que desea asociar al código.', null);
+      return false;
+    } else if (sizesToPrint[0].quantity > 1) {
+      this.intermediaryService.presentWarning('Solo puede asociar a este EAN 1 Ud. de la talla indicada.', null);
+      return false;
+    }
+
+    return true;
+  }
+
+  // notify as received all products selected (with multiple sizes) and redirect user to location page (sorter or warehouse)
+  private notifyReceptionAndPrint(eanToAssociate: string = null) {
+    const paramsRequest = [];
+
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+    const sizesMapped = sizesToPrint.map(s => {
+      const sizeMapped: any = {
+        providerId: this.providerId,
+        expedition: this.expedition,
+        brandId: this.result.brandId,
+        colorId: this.result.colorId,
+        sizeId: s.id,
+        modelId: this.result.modelId,
+        quantity: s.quantity
+      };
+      if (eanToAssociate) {
+        sizeMapped.ean = eanToAssociate;
+      }
+      return sizeMapped;
+    });
+    for (let size of sizesMapped) {
+      for (let q = 0; q < size.quantity; q++) {
+        paramsRequest.push(size);
+      }
+    }
+
+    this.reception
+      .printReceptionLabel({to_print: paramsRequest})
+      .subscribe((res) => {
+        // refresh the data
+        this.reception
+          .getReceptions(this.providerId)
+          .subscribe((info: ReceptionAvelonModel.Reception) => {
+            this.response = info;
+            this.response.brands = this.clearSelected(this.response.brands);
+            this.response.models = this.clearSelected(this.response.models);
+            this.response.colors = this.clearSelected(this.response.colors);
+          });
+
+        if (res.resultToPrint && res.resultToPrint.length > 0) {
+          const someProductToSorter = !!res.resultToPrint.find(r => r.type == ScreenResult.SORTER_VENTILATION);
+
+          if (someProductToSorter) {
+            this.typeScreen = ScreenResult.SORTER_VENTILATION;
+          }
+
+          this.referencesToPrint = res.resultToPrint.map(r => r.reference);
+        }
+
+        if (res.productsWithError && res.productsWithError.length > 0) {
+          let errorMessage = `No se han podido generar e imprimir alguna de las etiquetas necesarias (${res.productsWithError.length}). <br/>Se detalla la incidencia a continuación: <ul>`;
+          for (let error of res.productsWithError) {
+            errorMessage += `<li>${error.reason}</li>`
+          }
+          errorMessage += '</ul>';
+          this.intermediaryService.presentWarning(errorMessage, null);
+          this.intermediaryService.presentToastError('Ha ocurrido un error inesperado al intentar imprimir algunas de las etiquetas necesarias.');
+        }
+        this.intermediaryService.dismissLoading();
+      }, (error) => {
+        this.intermediaryService.dismissLoading();
+        this.intermediaryService.presentToastError('Ha ocurrido un error al intentar imprimir las etiquetas necesarias.');
+      });
+  }
+
+  public getPhotoUrl(modelId): string {
     if (modelId && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
       return environment.urlBase + this.modelSelected.photos_models[modelId];
     } else {
       return '../assets/img/placeholder-product.jpg';
     }
-
-    return false;
   }
 }
