@@ -8,8 +8,13 @@ import { SizesComponent } from './components/sizes/sizes.component';
 import { VirtualKeyboardModule } from '../components/virtual-keyboard/virtual-keyboard.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { ScreenResultComponent } from './components/screen-result/screen-result.component';
-import { useAnimation, transition, trigger, style, animate } from '@angular/animations';
-import {MatAutocompleteModule, MatFormFieldModule, MatInputModule, MatSelectModule} from "@angular/material";
+import {
+  MatAutocompleteModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatSelectModule,
+  MatTooltipModule
+} from "@angular/material";
 import {InfoModalModule} from "./info-modal/info-modal.module";
 import {SizeInputModule} from "../components/size-input/size-input.module";
 
@@ -37,7 +42,8 @@ const routes: Routes = [
     MatSelectModule,
     MatInputModule,
     ReactiveFormsModule,
-    SizeInputModule
+    SizeInputModule,
+    MatTooltipModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

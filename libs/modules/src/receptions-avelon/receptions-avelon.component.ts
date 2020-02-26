@@ -190,7 +190,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     );
 
     this.virtualKeyboardService
-      .openVirtualKeyboard(dataList, type)
+      .openVirtualKeyboard({dataList, type})
       .then((popover: any) => {
         popover.onDidDismiss().then(() => {
           keyboardEventEmitterSubscribe.unsubscribe();
