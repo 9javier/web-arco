@@ -16,12 +16,10 @@ export class UserTimeService {
   private getListUsersRegisterUrl: string = environment.apiBase + "/users-register-time/";
   private getNewUserListUrl: string = environment.apiBase + '/users-register-time/users-pickings';
   private getUserShoesPicking: string = environment.apiBase + '/workwaves/users/picking';
- ;
 
   constructor(
-    private http:HttpClient,
-    
-  ) { }
+    private http: HttpClient,
+  ){}
 
     /**
      * Register a time of work of employee in the system
@@ -51,6 +49,7 @@ export class UserTimeService {
       return response.data;
     }));
   }
+
   /**
    * List employees and if they are active or inactive
    */
@@ -60,16 +59,10 @@ export class UserTimeService {
     }));
   }
 
-  getUsersShoesPicking(body:Array<Number>){
-    return this.http.post(this.getUserShoesPicking,body).pipe(map(response=>{
-      return response;
-      
+  getUsersShoesPicking(parameters: number[]):Observable<UserTimeModel.PickingsUser[]>{
+    return this.http.post<UserTimeModel.ListPickingsUsersResponse>(this.getUserShoesPicking, parameters).pipe(map(response=>{
+      return response.data;
     }));
-
-  
   }
-
-
-
 
 }

@@ -5,45 +5,33 @@
         <ion-icon name="close" class="toogleArrow"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Lista Users</ion-title>
+    <ion-title>Seleccione usuario para picking</ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-contect padding="true">
 
+<ion-content padding="true">
   <ion-list>
     <ion-radio-group>
-
       <ion-list-header>
-<!--        <ion-label>Lista Usuarios con Picking</ion-label>-->
         <ion-grid>
           <ion-row>
             <ion-col size="1"></ion-col>
             <ion-col align-self-start>Nombre</ion-col>
-            <ion-col align-self-end>Lista Pickings</ion-col>
+            <ion-col align-self-end>Pickings pendientes</ion-col>
           </ion-row>
         </ion-grid>
       </ion-list-header>
-
-      <ion-item  *ngFor="let user of users" >
+      <ion-item *ngFor="let user of users">
+        <ion-radio slot="start" [value]="user.id" (click)="selectedUserId = user.id"></ion-radio>
+        <ion-label>{{user.name}}</ion-label>
         <ion-label slot="end">{{user.shoes}}</ion-label>
-        <ion-label >{{user.name}}</ion-label>
-<!--        <ion-label>{{user.listaZapatos}}</ion-label>-->
-        <ion-radio slot="start" [value]="user.id" (click)="valorId(user)"  ></ion-radio>
       </ion-item>
     </ion-radio-group>
-
   </ion-list>
+</ion-content>
 
-
-
-
-</ion-contect>
 <ion-footer>
   <ion-toolbar>
-    <ion-button [disabled]="!id_user" slot="end" (click)="enviar()" type="button" color="dark">Enviar</ion-button>
-
+    <ion-button [disabled]="!selectedUserId" slot="end" (click)="send()" type="button" color="dark">Lanzar</ion-button>
   </ion-toolbar>
 </ion-footer>
-
-
-
