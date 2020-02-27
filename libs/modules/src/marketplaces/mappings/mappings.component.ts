@@ -425,7 +425,7 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id) {
+      if (item.originDataId == element.avelonData.id && item.typeMapped == 5) {
         update = true;
         idToUpdate = item.id;
       }
@@ -475,7 +475,7 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id) {
+      if (item.originDataId == element.avelonData.id && item.typeMapped == 3) {
         update = true;
         idToUpdate = item.id;
       }
@@ -525,7 +525,7 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id) {
+      if (item.originDataId == element.avelonData.id && item.typeMapped == 4) {
         update = true;
         idToUpdate = item.id;
       }
@@ -575,7 +575,7 @@ export class MappingsComponent implements OnInit {
     let idToUpdate: number = 0;
 
     this.dataDBsave.forEach(item => {
-      if (item.originDataId == element.avelonData.id && item.aditionalMapInfo == element.avelonData.group) {
+      if (item.originDataId == element.avelonData.id && item.typeMapped == 2 && item.aditionalMapInfo == element.avelonData.group) {
         update = true;
         idToUpdate = item.id;
       }
