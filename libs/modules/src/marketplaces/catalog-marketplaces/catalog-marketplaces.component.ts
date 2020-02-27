@@ -71,89 +71,14 @@ export class CatalogMarketplacesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    
     this.marketplacesService.getProductCatalog().subscribe(data => {
-      if(data) {
         console.log(data)
-      } 
+        this.products = data.data;
+        this.catalogTableData = new MatTableDataSource(this.products);
     });
-
-    this.getProducts();
-    this.catalogTableData = new MatTableDataSource(this.products);
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
     this.selectedProducts = [];
-  }
-
-  getProducts() {
-    this.products = [
-      {
-        reference: '123456',
-        name: 'test',
-        brand: 'brand test',
-        description: 'description test',
-        familfy: 'family test',
-        marketplaces: [
-          {
-            marketId: '1',
-            avaible: true,
-            status: 'active'
-          },
-          {
-            marketId: '3',
-            avaible: true,
-            status: 'sadasdada'
-          },
-          
-          {
-            marketId: '5',
-            avaible: true,
-            status: 'active'
-          }
-        ],
-        stocks: [
-          {
-            marketId: '1',
-            stock: 123
-          },
-          {
-            marketId: '3',
-            stock: 12312
-          },
-          {
-            marketId: '5',
-            stock: 5654
-          }
-        ]
-      },
-      {
-        reference: '987606',
-        name: 'test 2',
-        brand: 'brand test 2',
-        description: 'description test 2',
-        familfy: 'family test 2',
-        marketplaces: [
-          {
-            marketId: '2',
-            avaible: true,
-            status: 'asdasd'
-          },
-          {
-            marketId: '6',
-            avaible: true,
-            status: 'active'
-          }
-        ],
-        stocks: [
-          {
-            marketId: '2',
-            stock: 654
-          },
-          {
-            marketId: '6',
-            stock: 453543
-          }
-        ]
-      }
-    ];
   }
 
   selectProductRow(row) {
@@ -167,16 +92,16 @@ export class CatalogMarketplacesComponent implements OnInit {
   getMarket(filterMarket) {
     let filteredMarket = [];
 
-    if(filterMarket.marketId !== '-') {
+    if(this.products.length > 0 && filterMarket.marketId !== '-') {
       this.products.forEach(product => {
-        product.marketplaces.forEach(market => {
+        product.productsMarkets.forEach(market => {
           if(market.marketId == filterMarket.marketId) {
             filteredMarket.push(product);
           }
         });
       });
       this.catalogTableData = new MatTableDataSource(filteredMarket);
-    } else {
+    } else if(this.products.length > 0) {
       this.catalogTableData = new MatTableDataSource(this.products);
     }
   }
