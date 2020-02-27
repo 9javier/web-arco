@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource, MatPaginator } from '@angular/material';
 import * as XLSX from 'xlsx';
 import { MarketplacesService } from 'libs/services/src/lib/endpoint/marketplaces/marketplaces.service';
 
@@ -12,6 +12,8 @@ import { MarketplacesService } from 'libs/services/src/lib/endpoint/marketplaces
 export class CatalogMarketplacesComponent implements OnInit {
 
   @ViewChild('TABLE') table: ElementRef;
+  @ViewChild('paginatorCatalog') paginatorCatalog: MatPaginator;
+
   private catalogData;
   private products: any[];
   private catalogTableData;
@@ -76,6 +78,7 @@ export class CatalogMarketplacesComponent implements OnInit {
         console.log(data)
         this.products = data.data;
         this.catalogTableData = new MatTableDataSource(this.products);
+        setTimeout(() => this.catalogTableData.paginator = this.paginatorCatalog);
     });
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
     this.selectedProducts = [];
