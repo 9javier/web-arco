@@ -178,7 +178,7 @@ export class ReceptionssAvelonComponent implements OnInit {
     const selectedReceptions = this.getListReceptions();
     const selectedReceptionsIds: number[] = [];
     for(let reception of selectedReceptions){
-      selectedReceptionsIds.push(reception.expeditionLineId);
+      selectedReceptionsIds.push(parseInt(reception.expeditionLineId));
     }
 
     modal.onDidDismiss().then(async response => {
@@ -186,14 +186,14 @@ export class ReceptionssAvelonComponent implements OnInit {
         await this.intermediaryService.presentLoading();
         const parameters: PredistributionModel.PickingRequest = {
           receptionIds: selectedReceptionsIds,
-          destinies: [{warehouseId: selectedReceptions[0].warehouseId, userId: response.data}]
+          destinies: [{warehouseId: Number(parseInt(selectedReceptions[0].warehouseId)), userId: response.data}]
         };
         await this.predistributionsService.newDirectPicking(parameters).then(async response => {
           if (response.code == 201) {
             await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
             await this.router.navigate(['workwaves-scheduled'], {replaceUrl: true}).then(async () => await this.intermediaryService.dismissLoading());
           } else {
-            console.error(response.message);
+            console.log('ERROR:', response);
             await this.intermediaryService.dismissLoading()
           }
         }, async error => {

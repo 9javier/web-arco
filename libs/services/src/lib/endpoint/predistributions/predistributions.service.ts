@@ -28,8 +28,11 @@ export class PredistributionsService {
   private updateBlockReservedUrl: string;
   private updateBlockReservedUrl2: string;
   private newDirectPickingUrl: string;
-  private requestsProvider: RequestsProvider;
-  constructor(private http: HttpClient) {
+
+  constructor(
+    private http: HttpClient,
+    private requestsProvider: RequestsProvider
+  ) {
     this.baseUrl = environment.apiSorter;
     this.indexUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress`;
     this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`;
@@ -38,7 +41,6 @@ export class PredistributionsService {
     this.index2Url = `${this.baseUrl}/reception/expedition/lines-destiny-impress/blocked`;
     this.entitiesBlockedUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/filters-blocked`;
     this.newDirectPickingUrl = `${this.baseUrl}/workwaves/confirm/matchLineRequest-res`;
-
   }
 
   index(body: PredistributionModel.IndexRequest): Observable<PredistributionModel.DataSource> {
