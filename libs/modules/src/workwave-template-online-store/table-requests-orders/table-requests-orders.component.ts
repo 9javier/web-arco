@@ -3,7 +3,6 @@ import { PickingParametrizationProvider } from "../../../../services/src/provide
 import { Events } from "@ionic/angular";
 import { WorkwaveModel } from "../../../../services/src/models/endpoints/Workwaves";
 import * as moment from 'moment';
-import { WorkwavesService } from 'libs/services/src/lib/endpoint/workwaves/workwaves.service';
 
 @Component({
   selector: 'table-requests-orders',
@@ -23,6 +22,7 @@ export class TableRequestsOrdersOSComponent implements OnInit {
   private FILTER_QUANTITY_LAUNCH: number = 7;
 
   @Output() changeRequestOrder = new EventEmitter();
+  @Output() loadTeamAssignations = new EventEmitter();
 
   listRequestOrders: WorkwaveModel.MatchLineRequestOnlineStore[] = [];
   listRequestOrdersFinal: WorkwaveModel.MatchLineRequestOnlineStore[] = [];
@@ -51,18 +51,13 @@ export class TableRequestsOrdersOSComponent implements OnInit {
 
   private listWarehousesThresholdAndSelectedQty: any = {};
   private listRequestIdWarehouseId: any = {};
-  public buttonAvailability: boolean = true;
   public loadingListRequestOrdersOnlineStore: number = 0;
   private updating: boolean = false;
 
   constructor(
     public events: Events,
-    public pickingParametrizationProvider: PickingParametrizationProvider,
-    private serviceG: WorkwavesService
-  ) {
-
-
-  }
+    public pickingParametrizationProvider: PickingParametrizationProvider
+  ) {}
 
   showArrow(colNumber, dirDown) {
     let htmlColumn = document.getElementsByClassName('title')[colNumber] as HTMLElement;
@@ -362,13 +357,27 @@ export class TableRequestsOrdersOSComponent implements OnInit {
 
   orderAssignment() {
     this.updating = true;
-    let aux = this.serviceG.orderAssignment.value;
+    let aux = {
+      data: {
+        store: {
+          groupsWarehousePickingId: '',
+          thresholdConsolidated: '',
+        },
+        typesShippingOrders: []
+      },
+      store: false,
+      type: false
+    };
     aux.store = true;
     aux.type = true;
     aux.data.typesShippingOrders = [];
-    if (document.getElementById('onlineCheck').getAttribute('aria-checked') == 'true') aux.data.typesShippingOrders.push(30);
-    if (document.getElementById('shopCheck').getAttribute('aria-checked') == 'true') aux.data.typesShippingOrders.push(20);
-    this.serviceG.orderAssignment.next(aux);
+    if (document.getElementById('onlineCheck').getAttribute('aria-checked') == 'true') {
+      aux.data.typesShippingOrders.push(30);
+    }
+    if (document.getElementById('shopCheck').getAttribute('aria-checked') == 'true') {
+      aux.data.typesShippingOrders.push(20);
+    }
+    this.changeRequestOrder.emit(aux);
   }
 
   selectAllRequestOrder() {
@@ -394,11 +403,7 @@ export class TableRequestsOrdersOSComponent implements OnInit {
     }
 
     this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
-
-    let aux = this.serviceG.requestUser.value;
-    aux.data.table = { listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty };
-    aux.table = incrementTeamCounter === false;
-    this.serviceG.requestUser.next(aux);
+    this.loadTeamAssignations.emit({table: incrementTeamCounter === false, data: {table: { listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty }}});
   }
 
   applyFilters(filtersResult: any) {

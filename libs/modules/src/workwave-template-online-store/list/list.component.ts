@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Location } from "@angular/common";
 import {
-  GroupWarehousePickingModel,
   GroupWarehousePickingService, IntermediaryService,
   UserTimeModel,
   UserTimeService
@@ -24,7 +23,6 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 })
 export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
-  private GROUPS_WAREHOUSES_LOADED = "groups-warehouses-loaded-os";
   private EMPLOYEES_LOADED = "employees-loaded-os";
   private REQUEST_ORDERS_LOADED = "request-orders-loaded-os";
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded-os";
@@ -40,17 +38,15 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   disableEdition: boolean = false;
 
   listTypesToUpdate: Array<number> = new Array<number>();
-  listGroupsWarehousesToUpdate: Array<GroupWarehousePickingModel.GroupWarehousesSelected> = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>();
   listEmployeesToUpdate: Array<number> = new Array<number>();
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
-  private listWarehousesThresholdAndSelectedQty: any = {};
-  private checkRequestsSelectedIsOverThreshold: boolean = false;
   private ObservablePendings: Array<any> = new Array();
-
 
   private loading: HTMLIonLoadingElement = null;
   enlarged = false;
   responseQuantities: WorkwaveModel.AssignationsByRequests[];
+
+  fieldsToLoadTeamAssignations: any = {};
 
   constructor(
     private location: Location,
@@ -63,22 +59,10 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
     private userTimeService: UserTimeService,
     private workwavesService: WorkwavesService,
     private pickingParametrizationProvider: PickingParametrizationProvider,
-  ) {
-    this.workwavesService.requestUser.subscribe(res => {
-      if (res.user === true && res.table === true) {
-        res.data.user = this.tableEmployees.getSelectedEmployees();
-        this.employeeChanged(res.data);
-      }
-    })
-
-    this.workwavesService.orderAssignment.subscribe(res => {
-      if (res.store === true && res.type === true) {
-        this.typeChanged(res.data.typesShippingOrders);
-      }
-    })
-  }
+  ) {}
 
   ngOnInit() {
+    this.fieldsToLoadTeamAssignations = {};
     this.pickingParametrizationProvider.loadingListEmployees = 0;
     this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore = 0;
     this.tableRequests.loadingListRequestOrdersOnlineStore = 0;
@@ -242,9 +226,29 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   }
 
   requestOrderChanged(data) {
-    this.listWarehousesThresholdAndSelectedQty = data.listThreshold;
-    this.listRequestOrdersToUpdate = data.listSelected;
-    this.loadTeamAssignations();
+    if (data.store === true && data.type === true) {
+      this.typeChanged(data.data.typesShippingOrders);
+    }
+  }
+
+  loadTeamAssignationsEmitted(data) {
+    if (typeof data.user != 'undefined') {
+      this.fieldsToLoadTeamAssignations.user = data.user;
+    }
+    if (typeof data.table != 'undefined') {
+      this.fieldsToLoadTeamAssignations.table = data.table;
+    }
+    if (typeof data.data != 'undefined') {
+      this.fieldsToLoadTeamAssignations.data = data.data;
+    }
+    if (typeof this.fieldsToLoadTeamAssignations.data == 'undefined') {
+      this.fieldsToLoadTeamAssignations.data = {};
+    }
+
+    if (this.fieldsToLoadTeamAssignations.user === true && this.fieldsToLoadTeamAssignations.table === true) {
+      this.fieldsToLoadTeamAssignations.data.user = this.tableEmployees.getSelectedEmployees();
+      this.employeeChanged(this.fieldsToLoadTeamAssignations.data);
+    }
   }
   //endregion
 
