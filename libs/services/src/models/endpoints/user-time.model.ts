@@ -20,10 +20,15 @@ export namespace UserTimeModel{
     usersInactive: Array<User>
   }
 
+  export interface PickingInfo {
+    quantityShoes: number,
+    temporary: boolean
+  }
+
   export interface PickingsUser {
     id: number,
     name: string,
-    shoes: number
+    pickings: PickingInfo[]
   }
 
   export interface ListPickingsUsersResponse extends Request.Success {
