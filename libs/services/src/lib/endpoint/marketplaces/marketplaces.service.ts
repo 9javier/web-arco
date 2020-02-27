@@ -34,6 +34,7 @@ export class MarketplacesService {
   private postProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
+  private getCategories = this.apiBase + "/api/ProductCategory";
 
   constructor(
     private http: HttpClient
@@ -149,8 +150,8 @@ export class MarketplacesService {
     }));
   }
 
-  getProductCategory(): Observable<any> {
-    return this.http.get<any>(this.getProductCategoryUrl, {}).pipe(map(response => {
+  getMarketCategories(): Observable<any> {
+    return this.http.get<any>(this.getCategories, {}).pipe(map(response => {
       return response;
     }));
   }

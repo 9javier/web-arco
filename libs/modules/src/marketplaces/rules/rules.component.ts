@@ -2,8 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ModalController} from '@ionic/angular';
 import {NewRuleComponent} from './new-rule/new-rule.component';
-import {CategoriesComponent} from '../categories/categories.component';
-
 import {MarketplacesService} from '../../../../services/src/lib/endpoint/marketplaces/marketplaces.service';
 import {MatTableDataSource} from '@angular/material';
 
@@ -60,13 +58,20 @@ export class RulesComponent implements OnInit {
 
   getValues() {
     this.dataSourceEnabling = [];
+    this.dataSourceCategories = [];
     this.marketplacesService.getRulesConfigurations(this.market).subscribe((data: any) => {
       if (data && data.length) {
         for (let ruleConfiguration of data) {
+          let type = "enabling";
+          let categories = [];
+          if (ruleConfiguration.categories && ruleConfiguration.categories.length) {
+            type = "categories";
+            categories = ruleConfiguration.categories;
+          }
           let rule = {
             id: ruleConfiguration.id,
             name: ruleConfiguration.name,
-            filterType: "enabling",
+            filterType: type,
             categoriesFilter: [],
             minPriceFilter: "0.00",
             maxPriceFilter: "0.00",
@@ -75,7 +80,8 @@ export class RulesComponent implements OnInit {
             destinationCategories: [],
             // stockToReduce: 0,
             referencesExceptions: [],
-            description: ruleConfiguration.description
+            description: ruleConfiguration.description,
+            categories: categories
           };
 
           if (ruleConfiguration.rulesFilters) {
@@ -89,7 +95,7 @@ export class RulesComponent implements OnInit {
               };
               switch (ruleFilter.ruleFilterType) {
                 case 2:
-                  category.group = ruleConfiguration.dataGroup;
+                  category.group = ruleFilter.dataGroup;
                   break;
                 case 3:
                   category.group = 16;
@@ -116,11 +122,20 @@ export class RulesComponent implements OnInit {
             }
           }
 
-          this.dataSourceEnabling.push(rule);
+          switch (rule.filterType) {
+            case "enabling":
+              this.dataSourceEnabling.push(rule);
+              break;
+
+            case "categories":
+              this.dataSourceCategories.push(rule);
+              break;
+          }
 
         }
 
         this.dataSourceRulesEnabling = new MatTableDataSource(this.dataSourceEnabling);
+        this.dataSourceRulesCategories = new MatTableDataSource(this.dataSourceCategories);
       }
     });
   }
@@ -147,7 +162,8 @@ export class RulesComponent implements OnInit {
           ],
           referenceExceptions: {},
           ruleDataValidactionAttributes: [
-          ]
+          ],
+          categories: data.data.destinationCategories
         };
 
         for (let category of data.data.categoriesFilter) {
@@ -221,16 +237,6 @@ export class RulesComponent implements OnInit {
     modal.present();
   }
 
-  async openModalCategories(): Promise<void> {
-    let modal = await this.modalController.create({
-      component: CategoriesComponent
-    });
-
-    modal.onDidDismiss().then((data) => {})
-
-    modal.present();
-  }
-
   async editRule(ruleToEdit): Promise<void> {
     let rule = JSON.parse(JSON.stringify(ruleToEdit));
     let modal = await this.modalController.create({
@@ -243,7 +249,7 @@ export class RulesComponent implements OnInit {
         maxPriceFilter: rule.maxPriceFilter,
         // stockFilter: rule.stockFilter,
         numberOfProducts: rule.products,
-        selectedDestinationCategories: rule.destinationCategories,
+        selectedDestinationCategories: rule.categories,
         // stockToReduce: rule.stockToReduce,
         referencesExceptions: rule.referencesExceptions,
         id: rule.id,
@@ -264,7 +270,8 @@ export class RulesComponent implements OnInit {
           ],
           referenceExceptions: {},
           ruleDataValidactionAttributes: [
-          ]
+          ],
+          categories: data.data.destinationCategories
         };
 
         for (let category of data.data.categoriesFilter) {

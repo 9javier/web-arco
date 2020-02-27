@@ -54,6 +54,7 @@
 
             &.white-space {
               margin-left: 20px;
+              visibility: hidden;
             }
 
           }
@@ -111,6 +112,7 @@
                   border-right: none;
                   margin-bottom: 0;
                   background-color: #fff;
+                  visibility: hidden;
 
                 }
 
@@ -157,6 +159,7 @@
                     border-right: none;
                     margin-bottom: 0;
                     display: flex;
+                    visibility: visible;
 
                     i {
                       margin-top: 42px;

@@ -7,15 +7,12 @@ import {MatRadioModule, MatSelectModule, MatTableModule} from '@angular/material
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { NewRuleComponent } from './new-rule/new-rule.component';
-import {CategoriesComponent} from '../categories/categories.component';
-
 import {FormsModule} from "@angular/forms";
-import { ManageFilteredProductsComponent } from './manage-filtered-products/manage-filtered-products/manage-filtered-products.component';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 @NgModule({
-  declarations: [NewRuleComponent, ManageFilteredProductsComponent, CategoriesComponent],
+  declarations: [NewRuleComponent],
   imports: [
     CommonModule,
     IonicModule,
@@ -27,6 +24,6 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     FormsModule,
     MatPaginatorModule
   ], 
-  entryComponents: [NewRuleComponent, ManageFilteredProductsComponent, CategoriesComponent]
+  entryComponents: [NewRuleComponent]
 })
 export class RulesModule { }

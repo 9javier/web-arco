@@ -54,6 +54,7 @@
 
             &.white-space {
               margin-left: 20px;
+              visibility: hidden;
             }
 
           }
@@ -78,11 +79,6 @@
         display: flex;
         flex-direction: column;
         min-height: 480px;
-
-        .buttons {
-          display: flex;
-          justify-content: space-between;
-        }
 
         & > div {
           max-height: 406px;
