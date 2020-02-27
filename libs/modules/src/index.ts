@@ -172,6 +172,10 @@ export * from './prices/prices.module';
 export * from './new-products/new-products.component';
 export * from './new-products/new-products.module';
 
+/**New Products */
+export * from './list-new-products/list-new-products.component';
+export * from './list-new-products/list-new-products.module';
+
 /**Tags-input */
 export * from './components/tags-input/tags-input.component';
 export * from './components/tags-input/tags-input.module';

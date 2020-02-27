@@ -84,6 +84,13 @@ export class MenuComponent implements OnInit {
           icon: 'apps'
         },
         {
+          title: 'Nuevos Productos',
+          id: 'list-new-products',
+          url: '/list-new-products',
+          icon: 'basket',
+          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        },
+        {
           title: 'Incidencias',
           id: 'incidences',
           url: '/incidences',

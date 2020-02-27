@@ -12,6 +12,7 @@ import { ListasProductosComponent } from './lista/listas-productos/listas-produc
 import { ListaModule } from './lista/lista.module';
 import { ListProductsCarrierComponent } from '../components/list-products-carrier/list-products-carrier.component';
 import { ListProductsCarrierModule } from '../components/list-products-carrier/list-products-carrier.module';
+import {LoadingMessageModule} from "../components/loading-message/loading-message.module";
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { ListProductsCarrierModule } from '../components/list-products-carrier/l
     MatGridListModule,
     HideKeyboardModule,
     ListaModule,
-    ListProductsCarrierModule
+    ListProductsCarrierModule,
+    LoadingMessageModule
   ],
   entryComponents: [PickingManualComponent, TextareaComponent, ListProductsCarrierComponent]
 })
