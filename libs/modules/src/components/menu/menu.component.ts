@@ -794,7 +794,9 @@ export class MenuComponent implements OnInit {
   }
 
   tapOptionSubSubitem(menuItem) {
-    console.log(menuItem)
+    this.menuController.close();
+    this.menuTitle.emit(menuItem.title);
+
   }
 
   openSubMenuItem(menuItem) {
