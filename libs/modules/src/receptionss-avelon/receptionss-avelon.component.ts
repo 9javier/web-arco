@@ -18,6 +18,7 @@ import {
 import { ModalUserComponent } from "../components/modal-user/modal-user.component";
 import { Router } from '@angular/router';
 import * as _ from "lodash";
+import {TimesToastType} from "../../../services/src/models/timesToastType";
 
 @Component({
   selector: 'suite-receptionss-avelon',
@@ -105,6 +106,7 @@ export class ReceptionssAvelonComponent implements OnInit {
     private formBuilder: FormBuilder,
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -166,26 +168,56 @@ export class ReceptionssAvelonComponent implements OnInit {
     })
   }
 
-  async presentModal() {
-   let ListReceptions = this.getListReceptions();
+  async newPicking() {
+    await this.intermediaryService.presentLoading();
+
     const modal = await this.modalController.create({
-      component: ModalUserComponent,
-      componentProps: {
-        ListReceptions
+      component: ModalUserComponent
+    });
+
+    const selectedReceptions = this.getListReceptions();
+    const selectedReceptionsIds: number[] = [];
+    for(let reception of selectedReceptions){
+      selectedReceptionsIds.push(reception.expeditionLineId);
+    }
+
+    modal.onDidDismiss().then(async response => {
+      if(response.data) {
+        await this.intermediaryService.presentLoading();
+        const parameters: PredistributionModel.PickingRequest = {
+          receptionIds: selectedReceptionsIds,
+          destinies: [{warehouseId: selectedReceptions[0].warehouseId, userId: response.data}]
+        };
+        await this.predistributionsService.newDirectPicking(parameters).then(async response => {
+          if (response.code == 201) {
+            await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
+            await this.router.navigate(['workwaves-scheduled'], {replaceUrl: true}).then(async () => await this.intermediaryService.dismissLoading());
+          } else {
+            console.error(response.message);
+            await this.intermediaryService.dismissLoading()
+          }
+        }, async error => {
+          console.error(error);
+          await this.intermediaryService.dismissLoading();
+        });
       }
     });
-    modal.onDidDismiss().then((p) => {
-      this.initEntity();
-     this.initForm();
-     this.getFilters();
-     this.getList(this.form);
-     this.listenChanges();
-     this.isAllSelected();
-    this.selection.clear();
-    });
 
+    await modal.present().then(async () => await this.intermediaryService.dismissLoading());
+  }
 
-    return await modal.present();
+  sameDestiny(): boolean{
+    const selectedReceptions = this.getListReceptions();
+
+    const firstWarehouseId = selectedReceptions[0].warehouseId;
+
+    for(let reception of selectedReceptions){
+      if(reception.warehouseId != firstWarehouseId){
+        return false;
+      }
+    }
+
+    return true;
   }
 
   close():void{
@@ -231,15 +263,15 @@ export class ReceptionssAvelonComponent implements OnInit {
     let receptionList =[];
         receptionList.length=0;
        for(let i=0; i<this.selection.selected.length; i++){
-         let distribution =JSON.stringify(this.selection.selected[i].distribution);
-         let reserved =JSON.stringify(this.selection.selected[i].reserved);
+         let expeditionLineId =JSON.stringify(this.selection.selected[i].expeditionLineId);
          let modelId = JSON.stringify(this.selection.selected[i]['model'].id);
          let sizeId = JSON.stringify(this.selection.selected[i]['size'].id);
          let warehouseId = JSON.stringify(this.selection.selected[i]['warehouse'].id);
            receptionList.push({
-          modelId: modelId,
-           sizeId: sizeId,
-           warehouseId: warehouseId
+             expeditionLineId: expeditionLineId,
+             modelId: modelId,
+             sizeId: sizeId,
+             warehouseId: warehouseId
          });
 
        }
@@ -271,10 +303,6 @@ export class ReceptionssAvelonComponent implements OnInit {
       return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
     }
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.id + 1}`;
-  }
-
-  savePredistributions(){
-    this.presentModal();
   }
 
   getFilters() {
