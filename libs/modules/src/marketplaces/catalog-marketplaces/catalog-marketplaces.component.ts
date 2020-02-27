@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import * as XLSX from 'xlsx';
+import { MarketplacesService } from 'libs/services/src/lib/endpoint/marketplaces/marketplaces.service';
 
 @Component({
   selector: 'suite-catalog-marketplaces',
@@ -65,9 +66,17 @@ export class CatalogMarketplacesComponent implements OnInit {
   private familyPreselect = this.family[0];
   private currentType: number = 1;
 
-  constructor() { }
+  constructor(
+    private marketplacesService: MarketplacesService
+  ) { }
 
   ngOnInit() {
+    this.marketplacesService.getProductCatalog().subscribe(data => {
+      if(data) {
+        console.log(data)
+      } 
+    });
+
     this.getProducts();
     this.catalogTableData = new MatTableDataSource(this.products);
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];

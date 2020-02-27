@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {environment} from "../../../environments/environment";
+import {environment} from "../../../environments/environment.dev";
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,7 @@ import {environment} from "../../../environments/environment";
 export class MarketplacesService {
 
   private apiBase = environment.apiRule;
+  private apiMiddleware = environment.apiMiddleware;
   private getMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
   private postMapDataRulesUrl = this.apiBase + "/api/MapDataRules";
   private updateMapDataRulesUrl = this.apiBase + "/api/MapDataRules/";
@@ -32,6 +33,7 @@ export class MarketplacesService {
   private getSizesRuleFilters = this.apiBase + "/api/RuleFilter/4";
   private postProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
   private getProductCategoryUrl = this.apiBase + "/api/ProductCategory/";
+  private getProductCatalogUrl = this.apiMiddleware + "/api/v1/product";
 
   constructor(
     private http: HttpClient
@@ -155,6 +157,12 @@ export class MarketplacesService {
 
   postProductCategory(data): Observable<any> {
     return this.http.post<any>(this.postProductCategoryUrl, data, {}).pipe(map(response => {
+      return response;
+    }));
+  }
+
+  getProductCatalog(): Observable<any> {
+    return this.http.get<any>(this.getProductCatalogUrl, {}).pipe(map(response => {
       return response;
     }));
   }

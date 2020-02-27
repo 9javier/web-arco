@@ -212,6 +212,7 @@ export class RulesComponent implements OnInit {
         ruleConfiguration.referenceExceptions = exceptions;
 
         this.marketplacesService.postRulesConfigurations(ruleConfiguration).subscribe(data => {
+          console.log(data)
           this.getValues();
         });
       }

@@ -132,13 +132,13 @@ export class MappingsComponent implements OnInit {
               return searchSize.avelonData.name.trim() === size.name.trim();
             })) {
               this.dataSourceSizes.push({
-                avelonData: {id: size.name.trim(), name: size.name.trim()},
+                avelonData: {id: size.externalId, name: size.name.trim()},
                 marketData: {id: -1, name: null}
               });
             }
           } else {
             this.dataSourceSizes.push({
-              avelonData: {id: size.name.trim(), name: size.name.trim()},
+              avelonData: {id: size.externalId, name: size.name.trim()},
               marketData: {id: -1, name: null}
             });
           }
@@ -300,10 +300,10 @@ export class MappingsComponent implements OnInit {
           if (!this.sizesList.find(searchSize => {
             return searchSize.name.trim() === size.name.trim();
           })) {
-            this.sizesList.push({id: size.name, name: size.name});
+            this.sizesList.push({id: size.id, name: size.name});
           }
         } else {
-          this.sizesList.push({id: size.name, name: size.name});
+          this.sizesList.push({id: size.id, name: size.name});
         }
       }
       this.sizesList.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
@@ -711,6 +711,7 @@ export class MappingsComponent implements OnInit {
               sizes.push(size);
             }
           }
+          console.log(sizes)
           this.dataSourceMappingSizes.data = sizes;
         } else {
           this.dataSourceMappingSizes.data = this.dataSourceSizes.slice();
