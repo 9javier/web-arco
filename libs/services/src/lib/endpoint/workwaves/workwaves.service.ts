@@ -225,8 +225,8 @@ export class WorkwavesService {
     }));
   }
 
-  postMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsMatchLineRequestOnlineStore): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.postMatchLineRequestOnlineStoreUrl, params);
+  postMatchLineRequestOnlineStore(params: WorkwaveModel.ParamsMatchLineRequestOnlineStore): Observable<HttpRequestModel.Response> {
+    return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequest>(this.postMatchLineRequestOnlineStoreUrl, params);
   }
 
   postAssignUserToMatchLineRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequest): Observable<WorkwaveModel.UsersAndAssignationsQuantities> {
@@ -235,14 +235,8 @@ export class WorkwavesService {
     }));
   }
 
-  // postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore) : Observable<WorkwaveModel.UsersAndAssignationsQuantities> {
-  //   return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequestOnlineStore>(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params).pipe(map(response => {
-  //     return response.data;
-  //   }));
-  // }
-
-  postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params);
+  postAssignUserToMatchLineOnlineStoreRequest(params: WorkwaveModel.ParamsAssignUserToMatchLineRequestOnlineStore): Observable<HttpRequestModel.Response> {
+    return this.http.post<WorkwaveModel.ResponseAssignUserToMatchLineRequest>(this.postAssignUserToMatchLineOnlineStoreRequestUrl, params);
   }
 
   postConfirmMatchLineRequest(params: WorkwaveModel.ParamsConfirmMatchLineRequest): Observable<WorkwaveModel.DataConfirmMatchLineRequest> {
