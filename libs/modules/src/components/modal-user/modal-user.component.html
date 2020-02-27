@@ -9,25 +9,31 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding="true">
-  <ion-list>
-    <ion-radio-group>
-      <ion-list-header>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="1"></ion-col>
-            <ion-col align-self-start>Nombre</ion-col>
-            <ion-col align-self-end>Pickings pendientes</ion-col>
-          </ion-row>
-        </ion-grid>
-      </ion-list-header>
-      <ion-item *ngFor="let user of users">
-        <ion-radio slot="start" [value]="user.id" (click)="selectedUserId = user.id"></ion-radio>
-        <ion-label>{{user.name}}</ion-label>
-        <ion-label slot="end">{{user.shoes}}</ion-label>
-      </ion-item>
-    </ion-radio-group>
-  </ion-list>
+<ion-content class="scroll-list">
+  <ion-radio-group>
+    <mat-grid-list
+      *ngFor="let user of users"
+      class="team-assignations-line"
+      [cols]="getCols()*10"
+      rowHeight="48px">
+
+      <mat-grid-tile class="employee" [colspan]="getCols()*3">
+        <ion-radio slot="start" (click)="selectedUserId = user.id"></ion-radio>
+        <div class="tile-value">{{user.name}}</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile
+        class="assignation"
+        *ngFor="let picking of user.pickings"
+        [ngClass]="picking.temporary ? 'temporal' : 'fixed'"
+        [colspan]="picking.quantityShoes*7">
+
+        <div class="tile-value">{{picking.quantityShoes}}</div>
+
+      </mat-grid-tile>
+
+    </mat-grid-list>
+  </ion-radio-group>
 </ion-content>
 
 <ion-footer>

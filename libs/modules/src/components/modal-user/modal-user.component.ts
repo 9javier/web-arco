@@ -57,4 +57,18 @@ export class ModalUserComponent implements OnInit {
     await this.modalController.dismiss(this.selectedUserId);
   }
 
+  getCols(): number{
+    let max: number = 0;
+    for(let user of this.users){
+      let userTotal: number = 0;
+      for(let picking of user.pickings){
+        userTotal += picking.quantityShoes;
+      }
+      if(userTotal > max){
+        max = userTotal;
+      }
+    }
+    return max;
+  }
+
 }
