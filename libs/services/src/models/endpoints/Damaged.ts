@@ -1,56 +1,32 @@
 export namespace DamagedModel {
 
   export interface List {
-    permissions: Permission[],
+    classifications: Classifications[],
+    statuses: Status[],
     list_actions: Action[]
   }
 
-  export interface Permission {
-    id: number,
-    classification: {
-      id: number,
-      name: string,
-    },
-    status: {
-      id: number,
-      name: string,
-    },
-    actions: Action[]
-  }
-
-  export interface Action {
+  export interface Classifications {
     createdAt: string,
     updatedAt: string,
     id: number,
-    name: string,
-    status: boolean
+    defectType: number,
+    ticketEmit: boolean,
+    passHistory: boolean,
+    requirePhoto: boolean,
+    requireContact: boolean,
+    requireOk: boolean,
+    allowOrders: boolean
   }
 
-  export interface Filters {
-    classifications?: number[],
-    statuses?: number[]
-  }
-
-  export interface FilterOptionsRequest {
-    type: {
-      classifications: boolean,
-      statuses: boolean
-    },
-    currentFilter?: {
-      id: number,
-      value?: string
-    }[]
-  }
-
-  export interface FilterOptions {
-    classifications?: FilterOption[],
-    statuses?: FilterOption[]
-  }
-
-  export interface FilterOption {
+  export interface Status {
     id: number,
-    value: string,
-    checked?: boolean
+    name: string
+  }
+
+  export interface Action {
+    id: number,
+    name: string
   }
 
   export interface ModalResponse {
@@ -63,12 +39,8 @@ export namespace DamagedModel {
     }[]
   }
 
-  export interface Classification {
-    id?: number;
-    name: string;
-  }
   export interface ResponseIndex {
-    data: Classification[];
+    data: List;
   }
   export interface ResponseStore {
     data: {

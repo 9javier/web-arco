@@ -1,37 +1,68 @@
 <ion-content>
-  <ion-row>
-    <ion-col id="reset">
-      <ion-button (click)="resetFilters()" matTooltip="Reiniciar filtros" matTooltipClass="tooltip">
-        <ion-icon name="refresh"></ion-icon>
-      </ion-button>
-    </ion-col>
-  </ion-row>
   <div class="table-container">
-    <mat-table [dataSource]="tablePermissions">
-      <ng-container matColumnDef="classification">
+    <mat-table [dataSource]="tableClassifications">
+      <ng-container matColumnDef="statusId">
         <mat-header-cell *matHeaderCellDef>
-          <span class="title">Clasificación</span>
-          <mat-icon (click)="openFilter('Clasificaciones')">{{isFiltering('classification')}}</mat-icon>
+          <span class="title">Estado Id</span>
         </mat-header-cell>
-        <mat-cell *matCellDef="let permission">{{permission.classification.name}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{element.defectType}}</mat-cell>
       </ng-container>
       <ng-container matColumnDef="status">
         <mat-header-cell *matHeaderCellDef>
           <span class="title">Estado</span>
-          <mat-icon (click)="openFilter('Estados')">{{isFiltering('status')}}</mat-icon>
         </mat-header-cell>
-        <mat-cell *matCellDef="let permission">{{permission.status.name}}</mat-cell>
+        <mat-cell *matCellDef="let element">{{getStatusName(element.defectType)}}</mat-cell>
       </ng-container>
-      <ng-container *ngFor="let action of tableActions; let i = index" matColumnDef="{{action.id}}">
+      <ng-container matColumnDef="ticketEmit">
         <mat-header-cell *matHeaderCellDef class="center">
-          <span class="title">{{action.name}}</span>
+          <span class="title">Emite Ticket</span>
         </mat-header-cell>
-        <mat-cell *matCellDef="let permission" class="center">
-          <mat-checkbox [checked]="isChecked(action, permission.actions)" (change)="changeAction(action, permission.id)"></mat-checkbox>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.ticketEmit" (change)="changeAction($event, element.defectType, 'ticketEmit')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="passHistory">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Pasa Histórico</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.passHistory" (change)="changeAction($event, element.defectType,'passHistory')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="requirePhoto">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Requiere Foto</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.requirePhoto" (change)="changeAction($event, element.defectType,'requirePhoto')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="requireContact">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Requiere Contácto</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.requireContact" (change)="changeAction($event, element.defectType, 'requireContact')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="requireOk">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">Requiere Ok</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.requireOk" (change)="changeAction($event, element.defectType,'requireOk')"></mat-checkbox>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="allowOrders">
+        <mat-header-cell *matHeaderCellDef class="center">
+          <span class="title">No apto para pedidos</span>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="center">
+          <mat-checkbox [checked]="element.allowOrders" (change)="changeAction($event, element.defectType,'allowOrders')"></mat-checkbox>
         </mat-cell>
       </ng-container>
       <mat-header-row *matHeaderRowDef="tableColumns; sticky: true"></mat-header-row>
-      <mat-row *matRowDef="let permission; columns: tableColumns;"></mat-row>
+      <mat-row *matRowDef="let element; columns: tableColumns;"></mat-row>
     </mat-table>
   </div>
 </ion-content>

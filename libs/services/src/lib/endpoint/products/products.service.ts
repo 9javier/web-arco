@@ -27,7 +27,7 @@ export class ProductsService {
   private getExtendedInfoUrl: string = environment.apiBase + '/products/info/extended/';
   private relabelPrint: string = environment.apiBase + '/products/relabel/print';
   private getAllFiltersUrl: string = environment.apiBase + '/filter/prices/tariff/entities';
-  private postDamagedListUrl: string = environment.apiBase + '/products/damaged';
+  private postDamagedListUrl: string = environment.apiBase + '/classification';
   private postDamagedFiltersUrl: string = environment.apiBase + '/products/damaged/filters';
 
   constructor(
@@ -83,16 +83,13 @@ export class ProductsService {
   /**
    * Damaged Shoes
    */
-  getDamagedFilters(parameters?: DamagedModel.FilterOptionsRequest): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.postDamagedFiltersUrl, parameters); // ToDo: Change URL Endpoint
+
+  getDamagedList(): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.get(this.postDamagedListUrl);
   }
 
-  getDamagedList(parameters?: DamagedModel.Filters): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post(this.postDamagedListUrl, parameters);
-  }
-
-  postDamagedUpdate(parameters?: DamagedModel.Permission[]): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post('', parameters); // ToDo: Change URL Endpoint
+  postDamagedUpdate(parameters?: DamagedModel.Classifications[]): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.postDamagedListUrl, parameters);
   }
 
   postDamagedNew(parameters?: DamagedModel.ModalResponse): Promise<HttpRequestModel.Response> {
