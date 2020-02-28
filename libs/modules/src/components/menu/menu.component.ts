@@ -195,6 +195,12 @@ export class MenuComponent implements OnInit {
           icon: 'cog'
         },
         {
+          title: 'Parametrización de Daños',
+          id: 'damaged-shoes',
+          url: '/damaged-shoes',
+          icon: 'cog'
+        },
+        {
           title: 'Almacenes',
           id: 'warehouses',
           url: '/warehouses',
