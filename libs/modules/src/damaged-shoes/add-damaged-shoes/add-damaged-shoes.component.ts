@@ -65,4 +65,9 @@ export class AddDamagedShoesComponent implements OnInit {
   async submit() {
     await this.modalController.dismiss(this.form);
   }
+
+  changeDefectType(defectType: number) {
+    this.selectedDefectType = defectType;
+    this.form.defectType = this.selectedDefectType;
+  }
 }

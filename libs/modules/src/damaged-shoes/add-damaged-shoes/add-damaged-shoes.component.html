@@ -14,7 +14,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Estado*</mat-label>
         <mat-icon matPrefix>format_line_spacing</mat-icon>
-        <mat-select [(value)]="selectedDefectType">
+        <mat-select (selectionChange)="changeDefectType($event.value)" [(value)]="selectedDefectType">
           <mat-option *ngFor="let status of tStatus" [value]="status.id">
             {{status.name}}
           </mat-option>

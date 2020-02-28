@@ -72,7 +72,6 @@ export class DamagedShoesComponent implements OnInit {
   async getData() {
     await this.productsService.getDamagedList().then(response => {
       const list: DamagedModel.List = response.data;
-      console.log(list);
       this.originalClassifications = JSON.stringify(list.classifications);
       this.tableClassifications = list.classifications;
       this.originalTableStatus = JSON.parse(JSON.stringify(list.statuses));
