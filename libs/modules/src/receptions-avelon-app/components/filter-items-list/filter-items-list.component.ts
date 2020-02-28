@@ -10,13 +10,16 @@ export class FilterItemsListComponent implements OnInit {
 
   public filterListType: string = '';
   public listItems: {id: number, name: string}[] = [];
+  public searchText: string = null;
+
+  private originaListItems = [];
 
   constructor(
     private modalController: ModalController
   ) { }
 
   ngOnInit() {
-
+    this.originaListItems = JSON.parse(JSON.stringify(this.listItems));
   }
 
   public close() {
@@ -25,5 +28,20 @@ export class FilterItemsListComponent implements OnInit {
 
   public selectItem(itemSelected) {
     this.modalController.dismiss({filterListType: this.filterListType, itemSelected});
+  }
+
+  public changeSearchData() {
+    if (this.searchText) {
+      this.listItems = this.originaListItems.filter(i => {
+        return i.name.toUpperCase().includes(this.searchText.toUpperCase());
+      });
+    } else {
+      this.listItems = JSON.parse(JSON.stringify(this.originaListItems));
+    }
+  }
+
+  public resetSearchBar() {
+    this.searchText = null;
+    this.changeSearchData();
   }
 }

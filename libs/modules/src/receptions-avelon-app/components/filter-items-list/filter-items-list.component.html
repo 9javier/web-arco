@@ -5,7 +5,14 @@
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>{{ filterListType }}</ion-title>
+
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" matInput [placeholder]="filterListType" [(ngModel)]="searchText" (ngModelChange)="changeSearchData()">
+      <button mat-button *ngIf="searchText" mat-icon-button aria-label="Clear" (click)="resetSearchBar()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </ion-toolbar>
 </ion-header>
 

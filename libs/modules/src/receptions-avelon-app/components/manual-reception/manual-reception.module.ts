@@ -5,6 +5,9 @@ import { ManualReceptionComponent } from './manual-reception.component';
 import {MatButtonModule, MatIconModule, MatListModule, MatRippleModule} from "@angular/material";
 import {FilterItemsListModule} from "../filter-items-list/filter-items-list.module";
 import {LoadingMessageModule} from "../../../components/loading-message/loading-message.module";
+import {FabExtendedModule} from "../../../components/fab-extended/fab-extended.module";
+import {SizeInputModule} from "../../../components/size-input/size-input.module";
+import {ModalModelImagesModule} from "../modal-model-images/modal-model-images.module";
 
 @NgModule({
   declarations: [ManualReceptionComponent],
@@ -17,7 +20,10 @@ import {LoadingMessageModule} from "../../../components/loading-message/loading-
     MatButtonModule,
     MatRippleModule,
     FilterItemsListModule,
-    LoadingMessageModule
+    LoadingMessageModule,
+    FabExtendedModule,
+    SizeInputModule,
+    ModalModelImagesModule
   ],
   exports: [ManualReceptionComponent]
 })

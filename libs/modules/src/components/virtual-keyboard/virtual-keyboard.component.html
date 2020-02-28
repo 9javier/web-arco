@@ -1,6 +1,6 @@
 <div class="content-keyboard">
   <div class="content-input">
-    <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()" clearIcon="false" searchIcon="false" placeholder="Ingrese el texto"></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()" clearIcon="false" searchIcon="false" [placeholder]="placeholder"></ion-searchbar>
   </div>
   <div class="container-key-list">
     <div class="simple-keyboard"></div>

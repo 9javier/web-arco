@@ -1,4 +1,5 @@
 div.fields-to-search {
+  padding-bottom: 88px;
   mat-list-item {
     height: 56px;
   }
@@ -8,44 +9,57 @@ div.fields-to-search {
     padding: 4px;
     position: absolute;
   }
-  div.check-btn {
+  div.search-more-btn {
     text-align: end;
     padding: 8px 16px 16px;
     button {
       color: white;
       background: black;
     }
-    button.disabled {
-      background-color: #8e8e8e;
+  }
+  div.sizes {
+    padding: 8px;
+    position: relative;
+    span {
+      position: absolute;
+      top: -5px;
+      left: 20px;
+      padding: 0 4px;
+      background: var(--ion-color-primary-contrast);
+    }
+    div {
+      display: flex;
+      flex-wrap: wrap;
+      place-content: center;
+      border: 1px solid var(--ion-color-primary);
+      padding: 8px;
+    }
+
+    div.sizes-empty {
+      text-align: center;
+      p {
+        text-align: center;
+      }
+    }
+    div.sizes-select {
+      span {
+        position: initial;
+      }
     }
   }
 }
 
-div.items {
-  padding: 16px;
-  position: relative;
+/* Custom styles for FAB's section*/
+fab-extended {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+}
 
-  h4.results {
-    margin: 0 0 16px;
-    text-align: center;
-  }
-  div {
-    position: relative;
-    h4, p {
-      margin: 0;
-      span.brand {
-        font-style: italic;
-      }
-    }
-    p {
-      margin: 4px 0;
-    }
-    button {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      color: white;
-      background: black;
-    }
-  }
+button.fab.simple {
+  color: var(--ion-color-primary-contrast);
+  background: var(--ion-color-primary);
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
 }

@@ -43,7 +43,7 @@ export class EanScannerComponent implements OnInit {
         .eanProductPrint(response, this.expeditionDataToQuery.reference, this.expeditionDataToQuery.providerId)
         .subscribe((resultCheck) => {
           this.receptionsAvelonService
-            .printReceptionLabel(resultCheck)
+            .printReceptionLabel({to_print: [resultCheck]})
             .subscribe((resultPrint) => {
               this.processFinishOk({
                 hideLoading: true,

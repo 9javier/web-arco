@@ -1,0 +1,4 @@
+<div [ngClass]="item.available ? 'available-size' : ''" matTooltipClass="tooltip" [matTooltip]="item.quantity + ' Uds.'">
+  <span>{{item.name}}</span>
+  <input id="{{'input_'+item.id}}" [(ngModel)]="item.quantity" (click)="selectValue(item)" type="number">
+</div>

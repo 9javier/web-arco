@@ -8,7 +8,8 @@ export namespace ReceptionAvelonModel {
     newSelectd?: boolean
     belongsModels?: Array<number>
     state?:number;
-    available_ids?: number[]
+    available_ids?: number[],
+    photos_models?: any
   }
 
   export interface Reception {
@@ -45,6 +46,10 @@ export namespace ReceptionAvelonModel {
     brandId: number;
   }
 
+  export interface ParamsToPrint {
+    to_print: Print[]
+  }
+
   //region CheckExpeditionsByNumberAndProvider
   export interface ParamsCheckExpeditionsByNumberAndProvider {
     providerId: number,
@@ -58,6 +63,26 @@ export namespace ReceptionAvelonModel {
   }
   export interface ResponseCheckExpeditionsByNumberAndProvider extends HttpRequestModel.Response {
     data: CheckExpeditionsByNumberAndProvider
+  }
+  //endregion
+
+  //region LoadSizesList
+  export interface ParamsLoadSizesList {
+    modelId: number,
+    colorId: number,
+    providerId: number,
+    brandId: number
+  }
+  export interface LoadSizesList {
+    id: number,
+    number: string,
+    name: string,
+    reference: string,
+    available: boolean,
+    quantity: number
+  }
+  export interface ResponseLoadSizesList extends HttpRequestModel.Response {
+    data: LoadSizesList[]
   }
   //endregion
 

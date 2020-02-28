@@ -16,14 +16,11 @@ export class ListsComponent implements OnInit {
   constructor(private receptions: ReceptionsAvelonService) {}
 
   ngOnInit() {
-    console.log(this.type);
-
     switch (this.type) {
       case 'brands':
         this.receptions.getBrandsList().subscribe(datos => {
           setTimeout(() => {
             this.brands = datos;
-            console.log('brands', this.brands);
             this.brands.forEach(elem => {
               if (elem.selected) {
                 this.seleccionado.emit(elem);
@@ -38,7 +35,6 @@ export class ListsComponent implements OnInit {
         this.receptions.getModelsList().subscribe(datos => {
           setTimeout(() => {
             this.models = datos;
-            console.log('models', this.models);
             this.models.forEach(elem => {
               if (elem.selected) {
                 this.seleccionado.emit(elem);
@@ -53,7 +49,6 @@ export class ListsComponent implements OnInit {
         setTimeout(() => {
           this.receptions.getColorsList().subscribe(datos => {
             this.colors = datos;
-            console.log('colors', this.colors);
             this.colors.forEach(elem => {
               if (elem.selected) {
                 this.seleccionado.emit(elem);
@@ -69,17 +64,11 @@ export class ListsComponent implements OnInit {
 
   async selected(dato: ReceptionAvelonModel.Data) {
     setTimeout(() => {
-      console.log('selected');
-      
       dato.selected = !dato.selected;
-      console.log(dato.selected);
-      
       if (dato.selected) {
         this.receptions.setEmitList({ type: this.type, dato })
-        // this.seleccionado.emit({ type: this.type, dato });
       } else {
         this.receptions.setEmitList({ type: this.type, dato })
-        // this.seleccionado.emit({ type: this.type, dato: undefined });
       }
       switch (this.type) {
         case 'models':
