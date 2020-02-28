@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Location } from "@angular/common";
 import {
+  GroupWarehousePickingModel,
   GroupWarehousePickingService, IntermediaryService,
   UserTimeModel,
   UserTimeService
@@ -23,6 +24,7 @@ import { TimesToastType } from '../../../../services/src/models/timesToastType';
 })
 export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
+  private GROUPS_WAREHOUSES_LOADED = "groups-warehouses-loaded-os";
   private EMPLOYEES_LOADED = "employees-loaded-os";
   private REQUEST_ORDERS_LOADED = "request-orders-loaded-os";
   private TEAM_ASSIGNATIONS_LOADED = "team-assignations-loaded-os";
@@ -38,8 +40,12 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   disableEdition: boolean = false;
 
   listTypesToUpdate: Array<number> = new Array<number>();
+  listGroupsWarehousesToUpdate: Array<GroupWarehousePickingModel.GroupWarehousesSelected> = new Array<GroupWarehousePickingModel.GroupWarehousesSelected>();
   listEmployeesToUpdate: Array<number> = new Array<number>();
   listRequestOrdersToUpdate: Array<number> = new Array<number>();
+  listDeliveryRequestOrdersToUpdate: Array<number> = new Array<number>();
+  private listWarehousesThresholdAndSelectedQty: any = {};
+  private checkRequestsSelectedIsOverThreshold: boolean = false;
   private ObservablePendings: Array<any> = new Array();
 
   private loading: HTMLIonLoadingElement = null;
@@ -148,10 +154,11 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   }
 
   private loadTeamAssignations() {
-    if (this.listEmployeesToUpdate.length > 0 && this.listRequestOrdersToUpdate.length > 0) {
+    if (this.listEmployeesToUpdate.length > 0 && (this.listRequestOrdersToUpdate.length > 0 || this.listDeliveryRequestOrdersToUpdate.length > 0)) {
       let obs = this.workwavesService
         .postAssignUserToMatchLineOnlineStoreRequest({
           requestIds: this.listRequestOrdersToUpdate,
+          deliveryRequestIds: this.listDeliveryRequestOrdersToUpdate,
           userIds: this.listEmployeesToUpdate
         });
       this.ObservablePendings.push(obs);
@@ -187,7 +194,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   saveWorkWave() {
     if (this.listEmployeesToUpdate.length < 1) {
       this.intermediaryService.presentToastError('Seleccione almenos un usuario para generar las tareas de picking.', TimesToastType.DURATION_ERROR_TOAST);
-    } else if (this.listRequestOrdersToUpdate.length < 1) {
+    } else if (this.listRequestOrdersToUpdate.length < 1 && this.listDeliveryRequestOrdersToUpdate.length < 1) {
       this.intermediaryService.presentToastError('Seleccione almenos una operación de envío para generar las tareas de picking.', TimesToastType.DURATION_ERROR_TOAST);
     } else {
       this.presentAlertConfirmPickings();
@@ -209,6 +216,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   employeeChanged(data) {
     this.listEmployeesToUpdate = data.user;
     this.listRequestOrdersToUpdate = data.table.listSelected;
+    this.listDeliveryRequestOrdersToUpdate = data.table.listSelectedDelivery;
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     this.loadTeamAssignations();
   }
@@ -257,6 +265,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
       .postConfirmMatchLineRequestOnlineStore({
         type: this.TYPE_EXECUTION_ID,
         requestIds: this.listRequestOrdersToUpdate,
+        deliveryRequestIds: this.listDeliveryRequestOrdersToUpdate,
         userIds: this.listEmployeesToUpdate
       })
       .then((res: WorkwaveModel.ResponseConfirmMatchLineRequestOnlineStore) => {
