@@ -92,7 +92,7 @@ export class ProductsService {
     return this.requestsProvider.put(this.postDamagedListUrl, parameters);
   }
 
-  postDamagedNew(parameters?: DamagedModel.ModalResponse): Promise<HttpRequestModel.Response> {
-    return this.requestsProvider.post('', parameters); // ToDo: Change URL Endpoint
+  postDamagedNew(parameters?: any): Promise<HttpRequestModel.Response> {
+    return this.requestsProvider.put(this.postDamagedListUrl, parameters); // ToDo: Change URL Endpoint
   }
 }

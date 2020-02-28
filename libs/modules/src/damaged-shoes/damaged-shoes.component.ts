@@ -10,10 +10,10 @@ import { AddDamagedShoesComponent } from './add-damaged-shoes/add-damaged-shoes.
   styleUrls: ['./damaged-shoes.component.scss'],
 })
 export class DamagedShoesComponent implements OnInit {
-  DEFAULT_STATUS: number = 1;
   originalClassifications: string;
-  modalClassifications: DamagedModel.Classifications[];
   tableClassifications: DamagedModel.Classifications[];
+  originalTableStatus: DamagedModel.Status[];
+  tableAction: DamagedModel.Action[];
   tableStatus: DamagedModel.Status[];
   tableColumns = ['statusId', 'status', 'ticketEmit', 'passHistory', 'requirePhoto', 'requireContact', 'requireOk', 'allowOrders'];
 
@@ -48,12 +48,11 @@ export class DamagedShoesComponent implements OnInit {
   }
 
   async newAction() {
-    await this.getModalPermissions();
     const modal = await this.modalController.create({
       component: AddDamagedShoesComponent,
       componentProps: {
-        tPermissions: this.modalClassifications,
-        tActions: this.tableStatus
+        tAction: this.tableAction,
+        tStatus: this.tableStatus
       }
     });
 
@@ -73,23 +72,22 @@ export class DamagedShoesComponent implements OnInit {
   async getData() {
     await this.productsService.getDamagedList().then(response => {
       const list: DamagedModel.List = response.data;
+      console.log(list);
       this.originalClassifications = JSON.stringify(list.classifications);
       this.tableClassifications = list.classifications;
-      this.tableStatus = list.statuses;
-    //   this.tableActions = list.list_actions;
-    //   if (this.tableActions.length > 0) {
-    //     for (let action of this.tableActions) {
-    //       this.tableColumns.push(action.id.toString());
-    //     }
-    //   }
-    });
-  }
+      this.originalTableStatus = JSON.parse(JSON.stringify(list.statuses));
+      this.tableAction = list.list_actions;
+      this.tableStatus = list.statuses.filter((status) => {
+        let result = true;
+        list.classifications.forEach((item) => {
+          if (item.defectType === status.id) {
+            result = false;
+          }
+        });
 
-  async getModalPermissions(){
-    // await this.productsService.getDamagedList({classifications: [], statuses: []}).then(response => {
-    //   const list: DamagedModel.List = response.data;
-    //   this.modalPermissions = list.permissions;
-    // });
+        return result;
+      });
+    });
   }
 
   async postData() {
@@ -105,7 +103,17 @@ export class DamagedShoesComponent implements OnInit {
   }
 
   async postNewPermission(data: DamagedModel.ModalResponse){
-    // await this.productsService.postDamagedNew(data);
+    const item = {
+      defectType: data.defectType,
+      ticketEmit: data.actions[0].isChecked,
+      passHistory: data.actions[1].isChecked,
+      requirePhoto: data.actions[2].isChecked,
+      requireContact: data.actions[3].isChecked,
+      requireOk: data.actions[4].isChecked,
+      allowOrders: data.actions[5].isChecked
+    };
+
+    await this.productsService.postDamagedNew([item]);
   }
 
   isChecked(action: DamagedModel.Status, permissionActions: DamagedModel.Status[]): boolean {
@@ -118,7 +126,7 @@ export class DamagedShoesComponent implements OnInit {
   }
 
   getStatusName(defectType: number) {
-    const status = this.tableStatus.find((x) => x.id === defectType);
+    const status = this.originalTableStatus.find((x) => x.id === defectType);
     return status.name;
   }
 }
