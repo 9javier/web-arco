@@ -15,7 +15,6 @@ import { catchError } from 'rxjs/operators';
 import { from, Observable } from "rxjs";
 import { of } from 'rxjs';
 
-
 import {
   NewProductsService,
   UserTimeModel
@@ -93,7 +92,7 @@ export class ListNewProductsComponent implements OnInit {
   formExcell: FormGroup = this.formBuilderExcell.group({
     brands: [],
     references: [],
-    size: [],
+    sizes: [],
   });
 
 
@@ -126,14 +125,13 @@ export class ListNewProductsComponent implements OnInit {
     private newProductsService: NewProductsService,
     private formBuilder: FormBuilder,
     private formBuilderExcell: FormBuilder,
-    private intermediaryService:IntermediaryService,
+    private intermediaryService:IntermediaryService
   ) {}
 
   ngOnInit(): void {
     this.initEntity();
     this.initForm();
     this.getFilters();
-    this.getColumns(this.form);
     this.getList(this.form);
     this.listenChanges();
   }
@@ -149,10 +147,6 @@ export class ListNewProductsComponent implements OnInit {
         limit: page.pageSize,
         page: flag ? page.pageIndex : 1
       };
-      this.getList(this.form)
-    });
-
-    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
       this.getList(this.form);
     });
   }
@@ -274,35 +268,20 @@ export class ListNewProductsComponent implements OnInit {
     })
   }
 
-  async getColumns(form?: FormGroup){
-    // await this.intermediaryService.presentLoading();
-    this.newProductsService.getListNewproducts(form.value).subscribe(
-      (resp:any) => {
-        resp.filters["ordertypes"].forEach(element => {
-          this.columns[element.name] = element.id;
-        });
-      },
-      async err => {
-        await this.intermediaryService.dismissLoading()
-      },
-      async () => {
-        await this.intermediaryService.dismissLoading()
-      }
-    )
-  }
-
   private updateFilterSource(dataEntity: FiltersModel.Default[], entityName: string) {
     let resultEntity = [];
     this.pauseListenFormChange = true;
     let dataValue = this.form.get(entityName).value;
+
     if(entityName == "dates"){
-      dataEntity.forEach(date => {
-        let entity = {  id: null, reference: null, name: null, value: null, checked: null, hide: null };
-        entity.name = date;
-        entity.value = date;
+      resultEntity = dataEntity.map(entity => {
+        entity.id = null;
+        entity.reference = null;
+        entity.name = entity.name;
+        entity.value = entity.name;
         entity.checked = true;
         entity.hide = false;
-        resultEntity.push(entity);
+        return entity;
       });
     }else {
       resultEntity = dataEntity.map(entity => {
@@ -327,7 +306,6 @@ export class ListNewProductsComponent implements OnInit {
     }
 
     setTimeout(() => { this.pauseListenFormChange = false; }, 0);
-
     return resultEntity;
   }
 
@@ -342,7 +320,11 @@ export class ListNewProductsComponent implements OnInit {
       if (resp.results) {
         JSON.stringify(resp.results);
         this.dataSource = new MatTableDataSource<PredistributionModel.Predistribution>(resp.results);
+
         const paginator = resp.pagination;
+        resp.filters["ordertypes"].forEach(element => {
+          this.columns[element.name] = element.id;
+        });
 
         this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
@@ -449,10 +431,8 @@ export class ListNewProductsComponent implements OnInit {
       case 'dates':
         let datesFiltered: string[] = [];
         for (let date of filters) {
-
           if (date.checked) datesFiltered.push(date.name);
         }
-
         if (datesFiltered.length >= this.dates.length) {
           this.form.value.dates = [];
           this.isFilteringDates = this.dates.length;
@@ -470,10 +450,8 @@ export class ListNewProductsComponent implements OnInit {
       case 'models':
         let modelsFiltered: string[] = [];
         for (let model of filters) {
-
           if (model.checked) modelsFiltered.push(model.id);
         }
-
         if (modelsFiltered.length >= this.models.length) {
           this.form.value.models = [];
           this.isFilteringModels = this.models.length;
@@ -491,10 +469,8 @@ export class ListNewProductsComponent implements OnInit {
       case 'nameModels':
         let nameModelsFiltered: string[] = [];
         for (let model of filters) {
-
           if (model.checked) nameModelsFiltered.push(model.id);
         }
-
         if (nameModelsFiltered.length >= this.nameModels.length) {
           this.form.value.nameModels = [];
           this.isFilteringNameModels = this.nameModels.length;
@@ -643,16 +619,14 @@ export class ListNewProductsComponent implements OnInit {
   private reduceFilterEntities(arrayEntity: any[], entities: any, entityName: string) {
     if (this.lastUsedFilter !== entityName) {
       let filteredEntity = entities[entityName] as unknown as string[];
-
-      arrayEntity.forEach((item) => {
-        item.hide = filteredEntity.includes(item.value);
-      });
+        arrayEntity.forEach((item) => {
+          item.hide = filteredEntity.includes(item.value);
+        });
       return arrayEntity;
     }
   }
 
   async sortData(event: Sort) {
-      console.log("Evento: "+JSON.stringify(event));
       this.form.value.orderby.type = this.columns[event.active];
       this.form.value.orderby.order = event.direction;
 
