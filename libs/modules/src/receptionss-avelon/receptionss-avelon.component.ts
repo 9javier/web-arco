@@ -191,7 +191,8 @@ export class ReceptionssAvelonComponent implements OnInit {
         await this.predistributionsService.newDirectPicking(parameters).then(async response => {
           if (response.code == 201) {
             await this.intermediaryService.presentToastSuccess('Tarea de picking generada con éxito.', TimesToastType.DURATION_SUCCESS_TOAST_3750);
-            await this.router.navigate(['workwaves-scheduled/pickings'], {replaceUrl: true}).then(async () => await this.intermediaryService.dismissLoading());
+            await this.intermediaryService.dismissLoading();
+            await this.router.navigate(['workwaves-scheduled/pickings'], {replaceUrl: true});
           } else {
             console.log('ERROR:', response);
             await this.intermediaryService.dismissLoading()
