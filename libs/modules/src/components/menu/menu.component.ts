@@ -356,7 +356,7 @@ export class MenuComponent implements OnInit {
           id: 'print-product',
           url: 'print/product/relabel',
           icon: 'barcode',
-          tooltip: 'Imprimir nuevas etiquetas de productos mediante el escáner'
+          tooltip: 'Imprimir nuevas etiquetas de productos con cámara'
         },
         {
           title: 'Reetiquetado productos manual',
@@ -388,7 +388,7 @@ export class MenuComponent implements OnInit {
           id: 'print-price-tag',
           url: 'print/tag/price',
           icon: 'pricetags',
-          tooltip: 'Impresión de etiquetas de exposición escaneando los productos'
+          tooltip: 'Imprimir etiquetas de exposición escaneando los productos con cámara'
         },
         {
           title: 'Código exposición manual',
@@ -413,18 +413,18 @@ export class MenuComponent implements OnInit {
       icon: 'send',
       children: [
         {
-          title: 'Ubicar/escanear',
+          title: 'Ubicar/escanear con cámara',
           id: 'positioning',
           icon: 'locate',
           url: 'positioning',
-          tooltip: 'Ubicar mediante escáner de cámara'
+          tooltip: 'Escanear artículos mediante cámara para ubicar'
         },
         {
-          title: 'Ubicar/escanear manualmente',
+          title: 'Ubicar/escanear con láser',
           icon: 'locate',
           url: '/positioning/manual',
           id: 'positioning-manual',
-          tooltip: 'Ubicar mediante láser'
+          tooltip: 'Escanear artículos mediante láser para ubicar'
         },
         {
           title: 'Ubicar no aptos online',
@@ -441,14 +441,14 @@ export class MenuComponent implements OnInit {
           tooltip: 'Traspasos pendientes de realizar'
         },
         {
-          title: 'Tareas de Picking',
+          title: 'Tareas de picking con cámara',
           id: 'picking-task',
           icon: 'qr-scanner',
           url: '/picking-tasks',
           tooltip: 'Tareas de picking asignadas para realizarlas con el escáner de la cámara'
         },
         {
-          title: 'Tareas de picking manualmente',
+          title: 'Tareas de picking con láser',
           icon: 'qr-scanner',
           url: '/picking-tasks/manual',
           id: 'picking-tasks-manual',
@@ -473,7 +473,7 @@ export class MenuComponent implements OnInit {
           id: 'reception',
           url: 'reception',
           icon: 'archive',
-          tooltip: 'Recepcionar embalaje completo escaneando su código con la cámara'
+          tooltip: 'Recepcionar embalaje completo escaneando la etiqueta con cámara'
         },
         {
           title: 'Recepcionar par a par',
@@ -497,21 +497,21 @@ export class MenuComponent implements OnInit {
           tooltip: 'Imprimir nuevas etiquetas de embalajes'
         },
         {
-          title: 'Precintar embalaje',
+          title: 'Precintar embalaje con cámara',
           id: 'packing-seal',
           url: 'packing/seal',
           icon: 'paper-plane',
           tooltip: 'Precintar embalaje para enviar desde el escáner de la cámara'
         },
         {
-          title: 'Precintar embalaje manual',
+          title: 'Precintar embalaje con láser',
           id: 'packing-seal-manual',
           url: '/packing/seal/manual',
           icon: 'paper-plane',
           tooltip: 'Precintar embalaje para enviar desde el láser'
         },
         {
-          title: 'Traspaso embalaje',
+          title: 'Traspaso contenido embalaje',
           id: 'packing-transfer',
           url: '/packing/transfer',
           icon: 'redo',
@@ -565,13 +565,15 @@ export class MenuComponent implements OnInit {
           title: 'Entrada',
           id: 'sorter-input',
           url: '/sorter/input',
-          icon: 'log-in'
+          icon: 'log-in',
+          tooltip: 'Escanear artículos con entrada en sorter'
         },
         {
           title: 'Salida',
           id: 'sorter-output',
           url: '/sorter/output',
-          icon: 'log-out'
+          icon: 'log-out',
+          tooltip: 'Vaciado de calles'
         }
       ]
     },
