@@ -143,7 +143,36 @@ export class MappingsComponent implements OnInit {
             });
           }
         });
-        this.dataSourceSizes.sort((a, b) => (a.avelonData.name.toLowerCase() > b.avelonData.name.toLowerCase()) ? 1 : ((b.avelonData.name.toLowerCase() > a.avelonData.name.toLowerCase()) ? -1 : 0));
+
+        let sizeTransformed = [];
+
+        for (let sizeValue of this.dataSourceSizes.slice()) {
+          let numbers = '';
+          let letters = '';
+          for (let i = 0; i < sizeValue.avelonData.name.length; i++) {
+            if  (isNaN(sizeValue.avelonData.name[i])) {
+              letters = sizeValue.avelonData.name.substr(i, sizeValue.avelonData.name.length);
+              break;
+            } else {
+              numbers += sizeValue.avelonData.name[i];
+            }
+          }
+          if (numbers == '') {
+            numbers = '999999';
+          }
+          sizeTransformed.push({sizeValue, numbers, letters});
+        }
+
+        sizeTransformed.sort((a, b) => (parseInt(a.numbers) > parseInt(b.numbers)) ? 1 : ((parseInt(b.numbers) > parseInt(a.numbers)) ? -1 : (a.letters.toLowerCase() > b.letters.toLowerCase()) ? 1 : ((b.letters.toLowerCase() > a.letters.toLowerCase()) ? -1 : 0)));
+
+        let sortedSizes = [];
+
+        for (let size of sizeTransformed) {
+          sortedSizes.push(size.sizeValue);
+        }
+
+        this.dataSourceSizes = sortedSizes.slice();
+
         this.dataSourceMappingSizes = new MatTableDataSource(this.dataSourceSizes);
         setTimeout(() => this.dataSourceMappingSizes.paginator = this.paginatorSizes);
         this.showingSizes = this.dataSourceMappingSizes.data.slice(0, 10);
@@ -209,13 +238,13 @@ export class MappingsComponent implements OnInit {
 
             let colorMarket = {id: -1, name: null};
 
-            if (item.marketDataId != -1) {
-              this.colorsList.forEach(color => {
-                if (color.id == item.marketDataId) {
-                  colorMarket = color;
-                }
-              })
-            }
+
+            this.colorsList.forEach(color => {
+              if (color.id == item.marketDataId) {
+                colorMarket = color;
+              }
+            });
+
             dataColor.forEach(data => {
               if (data.avelonData.id == item.originDataId) {
                 data.marketData = {
@@ -236,13 +265,12 @@ export class MappingsComponent implements OnInit {
 
             let sizeMarket = {id: -1, name: null};
 
-            if (item.marketDataId != -1) {
-              this.sizesList.forEach(size => {
-                if (size.id == item.marketDataId) {
-                  sizeMarket = size;
-                }
-              })
-            }
+            this.sizesList.forEach(size => {
+              if (size.id == item.marketDataId) {
+                sizeMarket = size;
+              }
+            });
+
             dataSize.forEach(data => {
               if (data.avelonData.id == item.originDataId) {
                 data.marketData = {
@@ -263,13 +291,12 @@ export class MappingsComponent implements OnInit {
 
             let brandMarket = {id: -1, name: null};
 
-            if (item.marketDataId != -1) {
-              this.brandsList.forEach(brand => {
-                if (brand.id == item.marketDataId) {
-                  brandMarket = brand;
-                }
-              })
-            }
+            this.brandsList.forEach(brand => {
+              if (brand.id == item.marketDataId) {
+                brandMarket = brand;
+              }
+            });
+
             dataBrand.forEach(data => {
               if (data.avelonData.id == item.originDataId) {
                 data.marketData = {
