@@ -99,6 +99,9 @@ export * from './role-assignment/role-assignment.module';
 export * from './damaged-shoes/damaged-shoes.component';
 export * from './damaged-shoes/damaged-shoes.module';
 
+// export * from './defective-management/defective-management.component';
+// export * from './defective-management/defective-management.module';
+
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/breadcrumb/breadcrumb.module';
