@@ -27,6 +27,7 @@ import { catchError } from 'rxjs/operators';
 import { ProductRelocationComponent } from './modals/product-relocation/product-relocation.component';
 import { PermissionsService } from '../../../services/src/lib/endpoint/permissions/permissions.service';
 
+declare let window: any;
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
