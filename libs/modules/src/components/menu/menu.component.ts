@@ -303,6 +303,12 @@ export class MenuComponent implements OnInit {
           icon: 'pricetags'
         },
         {
+          title: 'Recepcion Final',
+          id: 'reception-final',
+          url: '/reception-final',
+          icon: 'pricetags'
+        },
+        {
           title: 'Predistribuciones',
           id: 'predistributions',
           url: '/predistributions',
