@@ -1,0 +1,29 @@
+<div class="popover-filters main-element">
+  <mat-form-field appearance="outline" class="search" *ngIf="filterType == 'search'">
+    <mat-label>{{title}}</mat-label>
+    <input matInput placeholder="Buscar..." [(ngModel)]="typedFilter" (ngModelChange)="searchInFilterList($event)">
+  </mat-form-field>
+
+  <div class="scroll-list">
+    <div *ngFor="let item of itemsToRender">
+      <ion-item lines="none" *ngIf="!item.hide">
+        <ion-checkbox [checked]="item.checked" (ionChange)="checkSelected($event, item)"></ion-checkbox>
+        <ion-label>{{item.value}}</ion-label>
+      </ion-item>
+    </div>
+    <div *ngIf="hiddenItems()">
+      <ion-item>
+        <ion-button (click)="showAllItems()">Mostrar más opciones</ion-button>
+      </ion-item>
+    </div>
+  </div>
+
+  <div class="apply">
+    <ion-checkbox [(ngModel)]="allSelected" (ngModelChange)="selectAll()"></ion-checkbox>
+    <ion-button size="small" class="reset" (click)="resetFilters()">Reiniciar</ion-button>
+    <ion-button *ngIf="underTheLimit()" size="small" (click)="applyFilters()">Aplicar</ion-button>
+    <div *ngIf="!underTheLimit()" [matTooltip]="'Demasiadas opciones seleccionadas. Máximo 100.'">
+      <ion-button size="small" disabled="true" >Aplicar</ion-button>
+    </div>
+  </div>
+</div>

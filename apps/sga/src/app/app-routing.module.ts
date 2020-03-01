@@ -158,6 +158,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'damaged-shoes',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
+    data: {
+      name: 'Parametrización de Daños'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
@@ -229,6 +237,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/global-variables/global-variables.module#GlobalVariablesModule',
     data: {
       name: 'Variables globales'
+    }
+  },
+  {
+    path: 'damaged-shoes',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
+    data: {
+      name: 'Parametrización de Daños'
     }
   },
   {
@@ -366,7 +382,7 @@ const routes: Routes = [
       name: 'Predistribuciones'
     }
   },
-  { 
+  {
     path:'receptions',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/receptionss-avelon/receptionss-avelon.module#ReceptionssAvelonModule',
@@ -374,7 +390,7 @@ const routes: Routes = [
       name: 'Recepciones2'
     }
   },
-  { 
+  {
     path:'pr-ta-se-av',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/products-avelon/products-avelon.module#ProductsAvelonModule',
