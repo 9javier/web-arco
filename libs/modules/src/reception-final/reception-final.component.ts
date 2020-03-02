@@ -13,7 +13,7 @@ import * as Filesave from 'file-saver';
 import { catchError } from 'rxjs/operators';
 import { from, Observable } from "rxjs";
 import { of } from 'rxjs';
-import { ModalController} from '@ionic/angular';
+import { ModalController,  AlertController} from '@ionic/angular';
 import { ModalReceptionFinalComponent } from "../components/modal-reception-final/modal-reception-final.component";
 import { ReceptionFinalService } from '../../../services/src/lib/endpoint/reception-final/reception-final.service';
 import { ReceptionFinalModel } from 'libs/services/src/models/endpoints/reception-final';
@@ -54,12 +54,14 @@ export class ReceptionFinalComponent implements OnInit {
   
   constructor(
     private predistributionsService: PredistributionsService,
-    private receptioFinalService: ReceptionFinalService,
+    private receptionFinalService: ReceptionFinalService,
     private newProductsService: NewProductsService,
     private formBuilder: FormBuilder,
     private formBuilderExcell: FormBuilder,
     private intermediaryService:IntermediaryService,
     private modalController: ModalController,
+    private alertController: AlertController
+
   ) {}
 
   ngOnInit(): void {
@@ -131,7 +133,7 @@ export class ReceptionFinalComponent implements OnInit {
   async getList(){
 
     this.intermediaryService.presentLoading("Cargando Reception Final...");
-    this.receptioFinalService.getIndex().subscribe((resp:any) => {
+    this.receptionFinalService.getIndex().subscribe((resp:any) => {
       this.intermediaryService.dismissLoading();
       if (resp) {
       
@@ -163,8 +165,7 @@ export class ReceptionFinalComponent implements OnInit {
   }
 
   delete(){
-    let ListReceptions = this.getListReceptions();
-    this.presentModalDelete(ListReceptions);
+    this.deleteTemplate();
   }
   
 
@@ -219,7 +220,7 @@ async presentModalUpdate(whUpdate) {
   modal.onDidDismiss().then(() => {
       this.selection.clear();
       this.getList();
-  });;
+  });
 
   return await modal.present();
 
@@ -259,6 +260,53 @@ edit(id,idWh, warehouse){
       return numSelected === numRows;
     }
     return false
+  }
+
+
+  async deleteTemplate() {
+    const prompt = await this.alertController.create({
+      message: '¿Seguro desea eliminar las recepciones ?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        }, {
+          text: 'Ok',
+          handler: (data) => {
+           let ListReceptions= this.getListReceptions();
+            ListReceptions.forEach(element => {
+              this.deleteReception(element.id);
+          });  
+            
+        }
+        }
+      ]
+    })
+    prompt.onDidDismiss().then(() => {
+      this.selection.clear();
+      this.getList();
+  })
+    await prompt.present();
+
+  }
+
+  async deleteReception(idReceptionFinal){
+    let This = this;
+   await this.receptionFinalService.destroyReceptionFinal(idReceptionFinal).subscribe(function(data){
+      This.intermediaryService.presentToastSuccess("Eliminando Recepcion Final");
+      This.intermediaryService.dismissLoading();
+      This.close();
+      }, (error) => {
+       This.intermediaryService.presentToastError("Error al eliminar la recepcion final");
+       This.intermediaryService.dismissLoading();
+     }, () => {
+       This.intermediaryService.dismissLoading();
+     });
+     this.close();
+
   }
 
 }

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit} from '@angular/core';
 import {MatListModule} from '@angular/material/list';
 import {FormBuilder} from "@angular/forms";
-import {ModalController} from "@ionic/angular";
+import {ModalController, AlertController} from "@ionic/angular";
 import { IntermediaryService } from './../../../../services/src/lib/endpoint/intermediary/intermediary.service';
 import { PredistributionsService } from '../../../../services/src/lib/endpoint/predistributions/predistributions.service';
 import { PredistributionModel } from '../../../../services/src/models/endpoints/Predistribution';
@@ -46,7 +46,8 @@ export class ModalReceptionFinalComponent implements OnInit {
     private intermediaryService:IntermediaryService,
     private predistributionsService:PredistributionsService,
     private userTimeService: UserTimeService,
-    private receptionFinalService: ReceptionFinalService
+    private receptionFinalService: ReceptionFinalService,
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
@@ -122,6 +123,8 @@ export class ModalReceptionFinalComponent implements OnInit {
     });
     
   }
+
+
 
   async deleteReception(idReceptionFinal){
     let This = this;
