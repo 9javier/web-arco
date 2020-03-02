@@ -31,7 +31,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   public expedit:string="";
   response: ReceptionAvelonModel.Reception;
-  oldBrands: ReceptionAvelonModel.Data[];
+  oldBrands: ReceptionAvelonModel.Data[] = [];
   subscriptions: Subscription;
   providers: Array<any>;
   isProviderAvailable: boolean;
