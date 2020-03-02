@@ -1,20 +1,22 @@
 <div class="catalog-marketplaces">
   <div class="catalog-selects">
-    <mat-select [(ngModel)]="marketPreselect">
-      <mat-option *ngFor="let item of marketplaces" [value]="item.name" (click)="getMarket(item)">
-        {{item.name}}
-      </mat-option>
-    </mat-select>
-    <mat-select [(ngModel)]="descriptionPreselect">
-      <mat-option *ngFor="let item of description" [value]="item" (click)="getDescription(item)">
-        {{item}}
-      </mat-option>
-    </mat-select>
-    <mat-select [(ngModel)]="familyPreselect">
-      <mat-option *ngFor="let item of family" [value]="item" (click)="getFamily(item)">
-        {{item}}
-      </mat-option>
-    </mat-select>
+    <div>
+      <mat-select [(ngModel)]="marketPreselect">
+        <mat-option *ngFor="let item of marketplaces" [value]="item.name" (click)="getMarket(item)">
+          {{item.name}}
+        </mat-option>
+      </mat-select>
+      <mat-select [(ngModel)]="descriptionPreselect">
+        <mat-option *ngFor="let item of description" [value]="item" (click)="getDescription(item)">
+          {{item}}
+        </mat-option>
+      </mat-select>
+      <mat-select [(ngModel)]="familyPreselect">
+        <mat-option *ngFor="let item of family" [value]="item" (click)="getFamily(item)">
+          {{item}}
+        </mat-option>
+      </mat-select>
+    </div>
     <mat-select [(ngModel)]="actionPreselect">
       <mat-option *ngFor="let item of tableValueSelect" [value]="item.name" (click)="getType(item.type)">
         {{item.name}}

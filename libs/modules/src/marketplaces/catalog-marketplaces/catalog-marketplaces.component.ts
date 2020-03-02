@@ -74,7 +74,6 @@ export class CatalogMarketplacesComponent implements OnInit {
   ngOnInit() {
     
     this.marketplacesService.getProductCatalog().subscribe(data => {
-        console.log(data)
         this.products = data.data;
         this.catalogTableData = new MatTableDataSource(this.products);
     });
@@ -116,8 +115,28 @@ export class CatalogMarketplacesComponent implements OnInit {
   }
 
   exportToExcel() {
-    console.log(this.table)
     const ws: XLSX.WorkSheet=XLSX.utils.table_to_sheet(this.table.nativeElement);
+    for (let i = 0; i < this.products.length + 1; i++) {
+      ws['A' + (i + 1)].t = ws['B' + (i + 1)].t;
+      ws['B' + (i + 1)].t = ws['C' + (i + 1)].t;
+      ws['C' + (i + 1)].t = ws['D' + (i + 1)].t;
+      ws['D' + (i + 1)].t = ws['E' + (i + 1)].t;
+      ws['E' + (i + 1)].t = ws['F' + (i + 1)].t;
+      ws['F' + (i + 1)].t = ws['G' + (i + 1)].t;
+      ws['G' + (i + 1)].t = ws['H' + (i + 1)].t;
+      ws['H' + (i + 1)].t = ws['I' + (i + 1)].t;
+      ws['I' + (i + 1)].t = ws['J' + (i + 1)].t;
+      ws['A' + (i + 1)].v = ws['B' + (i + 1)].v;
+      ws['B' + (i + 1)].v = ws['C' + (i + 1)].v;
+      ws['C' + (i + 1)].v = ws['D' + (i + 1)].v;
+      ws['D' + (i + 1)].v = ws['E' + (i + 1)].v;
+      ws['E' + (i + 1)].v = ws['F' + (i + 1)].v;
+      ws['F' + (i + 1)].v = ws['G' + (i + 1)].v;
+      ws['G' + (i + 1)].v = ws['H' + (i + 1)].v;
+      ws['H' + (i + 1)].v = ws['I' + (i + 1)].v;
+      ws['I' + (i + 1)].v = ws['J' + (i + 1)].v;
+      delete ws['J' + (i + 1)];
+    }
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'catalog-marketplaces');
     

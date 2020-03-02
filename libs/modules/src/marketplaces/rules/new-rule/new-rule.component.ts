@@ -236,8 +236,40 @@ export class NewRuleComponent implements OnInit {
             }
           });
         }
-        for (let category of this.categoryList) {
-          category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+        for (let i = 0; i < this.categoryList.length; i++) {
+          let category = this.categoryList[i];
+          if (i != 9) {
+            category.items.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()) ? 1 : ((b.name.toLowerCase() > a.name.toLowerCase()) ? -1 : 0));
+          } else {
+            let categoriesTransformed = [];
+
+            for (let sizeValue of category.items.slice()) {
+              let numbers = '';
+              let letters = '';
+              for (let i = 0; i < sizeValue.name.length; i++) {
+                if  (isNaN(sizeValue.name[i])) {
+                  letters = sizeValue.name.substr(i, sizeValue.name.length);
+                  break;
+                } else {
+                  numbers += sizeValue.name[i];
+                }
+              }
+              if (numbers == '') {
+                numbers = '999999';
+              }
+              categoriesTransformed.push({sizeValue, numbers, letters});
+            }
+
+            categoriesTransformed.sort((a, b) => (parseInt(a.numbers) > parseInt(b.numbers)) ? 1 : ((parseInt(b.numbers) > parseInt(a.numbers)) ? -1 : (a.letters.toLowerCase() > b.letters.toLowerCase()) ? 1 : ((b.letters.toLowerCase() > a.letters.toLowerCase()) ? -1 : 0)));
+
+            let sortedSizes = [];
+
+            for (let size of categoriesTransformed) {
+              sortedSizes.push(size.sizeValue);
+            }
+
+            category.items = sortedSizes.slice();
+          }
         }
       }
 
@@ -247,7 +279,13 @@ export class NewRuleComponent implements OnInit {
       if (this.ruleFilterType == "categories") {
         this.marketplacesService.getMarketCategories().subscribe(data => {
           this.destinationCategories = data;
-          this.destinationCategories.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+          this.destinationCategories.sort((a, b) => {
+            if (isNaN(a.market_category_id) || isNaN(b.market_category_id)) {
+              return ((a.market_category_id > b.market_category_id) ? 1 : ((b.market_category_id > a.market_category_id) ? -1 : 0));
+            } else {
+              return ((parseInt(a.market_category_id) > parseInt(b.market_category_id)) ? 1 : ((parseInt(b.market_category_id) > parseInt(a.market_category_id)) ? -1 : 0));
+            }
+          });
         });
       }
 
@@ -915,11 +953,7 @@ export class NewRuleComponent implements OnInit {
 
       case 'categories':
 
-        if (this.mode != 'edit') {
-          return this.selectedDestinationCategories.length;
-        }
-
-        return true;
+        return this.selectedDestinationCategories.length;
 
         break;
 
