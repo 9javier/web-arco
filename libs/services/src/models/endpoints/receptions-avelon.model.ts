@@ -9,7 +9,8 @@ export namespace ReceptionAvelonModel {
     belongsModels?: Array<number>
     state?:number;
     available_ids?: number[],
-    photos_models?: any
+    photos_models?: any,
+    color?: string
   }
 
   export interface Reception {

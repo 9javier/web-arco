@@ -19,6 +19,9 @@ export class ListsComponent implements OnInit {
     switch (this.type) {
       case 'brands':
         this.receptions.getBrandsList().subscribe(datos => {
+          for(let brand of datos){
+            brand.color = 'green';
+          }
           setTimeout(() => {
             this.brands = datos;
             this.brands.forEach(elem => {
@@ -33,6 +36,9 @@ export class ListsComponent implements OnInit {
         break;
       case 'models':
         this.receptions.getModelsList().subscribe(datos => {
+          for(let model of datos){
+            model.color = 'orange';
+          }
           setTimeout(() => {
             this.models = datos;
             this.models.forEach(elem => {
@@ -48,6 +54,9 @@ export class ListsComponent implements OnInit {
       case 'colors':
         setTimeout(() => {
           this.receptions.getColorsList().subscribe(datos => {
+            for(let color of datos){
+              color.color = 'red';
+            }
             this.colors = datos;
             this.colors.forEach(elem => {
               if (elem.selected) {
