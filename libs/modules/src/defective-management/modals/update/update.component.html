@@ -5,11 +5,11 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>Actualizar grupo</ion-title>
+        <ion-title>{{ isParent ? 'Actualizar grupo' : 'Actualizar Tipo Defectuoso'}}</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-    <suite-data [group]="group"></suite-data>
+    <suite-data [group]="element"></suite-data>
 </ion-content>
 <ion-footer>
     <ion-toolbar>

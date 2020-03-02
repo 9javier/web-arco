@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DefectiveManagementModel } from '../../../models/endpoints/defective-management-model';
+import { DefectiveManagementChildModel } from '../../../models/endpoints/DefectiveManagementChild';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,8 @@ export class DefectiveManagementService {
   /**Urls for group Defective Management service */
   private groupDefectiveManagementUrl: string = environment.apiBase + "/defects/parent";
   private singleDefectiveManagementUrl: string = environment.apiBase + "/defects/parent/{{id}}";
+  private defectiveChildManagementUrl: string = environment.apiBase + "/defects/child";
+  private singleDefectiveChildManagementUrl: string = environment.apiBase + "/defects/child/{{id}}";
 
   displayedColumns: string[] = ['name'];
 
@@ -50,6 +53,16 @@ export class DefectiveManagementService {
   }
 
   /**
+   * Save a new group into server
+   * @param singleDefectiveManagement the group to be saved
+   */
+  storeChild(singleDefectiveManagement: DefectiveManagementChildModel.RequestDefectiveManagementChild): Observable<DefectiveManagementChildModel.DefectiveManagementChild> {
+    return this.http.post<DefectiveManagementChildModel.ResponseSingleDefectiveManagementChild>(this.defectiveChildManagementUrl, singleDefectiveManagement).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  /**
    * Update a new group into server
    * @param id - the id of the group to  be updated
    * @param groupDefectiveManagement the new group
@@ -62,11 +75,31 @@ export class DefectiveManagementService {
   }
 
   /**
+   * Update a new group into server
+   * @param id - the id of the group to  be updated
+   * @param singleDefectiveManagement the new group
+   */
+  updateChild(id: number, singleDefectiveManagement: DefectiveManagementChildModel.RequestDefectiveManagementChild): Observable<DefectiveManagementChildModel.DefectiveManagementChild> {
+    return this.http.put<DefectiveManagementChildModel.ResponseSingleDefectiveManagementChild>(this.singleDefectiveChildManagementUrl
+      .replace("{{id}}", String(id)), singleDefectiveManagement).pipe(map(response => {
+      return response.data;
+    }));
+  }
+
+  /**
   * Delete a group in server
   * @param id - the id of the group to be deleted
   */
   delete(id: number) {
     return this.http.delete(this.singleDefectiveManagementUrl.replace("{{id}}", String(id)));
+  }
+
+  /**
+  * Delete a group in server
+  * @param id - the id of the group to be deleted
+  */
+  deleteChildren(id: number) {
+    return this.http.delete(this.singleDefectiveChildManagementUrl.replace("{{id}}", String(id)));
   }
 
 }

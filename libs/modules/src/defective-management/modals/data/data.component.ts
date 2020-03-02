@@ -7,10 +7,14 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
   styleUrls: ['./data.component.scss']
 })
 export class DataComponent implements OnInit {
-
+  @Input() set parentId(_parent){
+    if(_parent)
+      this.form.get("defectTypeParent").patchValue(_parent, {emitEvent: false});
+  };
   form:FormGroup = this.formBuilder.group({
     id:'',
-    name:['',[Validators.required]]
+    name:['',[Validators.required]],
+    defectTypeParent:['']
   });
 
   @Input() set group(_group){

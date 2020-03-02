@@ -7,6 +7,7 @@ import { StoreComponent } from './modals/store/store.component';
 import { from, Observable } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
 import { UpdateComponent } from './modals/update/update.component';
+import { DefectiveManagementChildModel } from '../../../services/src/models/endpoints/DefectiveManagementChild';
 
 @Component({
   selector: 'suite-defective-management',
@@ -14,8 +15,10 @@ import { UpdateComponent } from './modals/update/update.component';
   styleUrls: ['./defective-management.component.scss'],
 })
 export class DefectiveManagementComponent implements OnInit {
+  toSelectChildren = false;
   toSelectGroup = false;
   groupsToSelect: DefectiveManagementModel.DefectiveManagementParent[] = [];
+  groupsChildrenToSelect: DefectiveManagementChildModel.DefectiveManagementChild[] = [];
   groupsDefectiveManagement: DefectiveManagementModel.DefectiveManagementParent[];
 
   constructor(
@@ -42,7 +45,8 @@ export class DefectiveManagementComponent implements OnInit {
 
   async addDefective() {
     let modal = await this.modalController.create({
-      component: StoreComponent
+      component: StoreComponent,
+      componentProps: { isParent: true }
     });
     modal.onDidDismiss().then(async () => {
       await this.getData();
@@ -71,7 +75,7 @@ export class DefectiveManagementComponent implements OnInit {
 
         let modal = await this.modalController.create({
           component: UpdateComponent,
-          componentProps: { group: groupSelected }
+          componentProps: { group: groupSelected, isParent: true }
         });
         modal.onDidDismiss().then(async () => {
           await this.getData();
@@ -130,5 +134,100 @@ export class DefectiveManagementComponent implements OnInit {
       await this.getData();
       await this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los grupos");
     });
+  }
+
+  onChanged(parentId: number, child: DefectiveManagementChildModel.DefectiveManagementChild) {
+    this.toSelectChildren = true;
+    let exits: boolean = this.groupsChildrenToSelect.some((childX) => childX.id === child.id);
+
+    child.defectTypeParent = parentId;
+
+    if(!exits) {
+      this.groupsChildrenToSelect.push(child);
+    } else {
+      const indexOf = this.groupsChildrenToSelect.map((childX) => childX.id).indexOf(child.id);
+      this.groupsChildrenToSelect.splice(indexOf, 1 );
+    }
+    if(this.groupsChildrenToSelect.length === 0) {
+      this.toSelectChildren = false;
+    }
+  }
+
+  async presentDeleteChildrenAlert() {
+    const alert = await this.alertController.create({
+      header: 'Eliminar Tipos de Defectuosos',
+      message: `¿Está seguro que desea eliminar los tipos de defectuosos seleccionados?`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Vale',
+          handler: () => {
+            this.removeDefectiveType();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async removeDefectiveType() {
+    await this.intermediaryService.presentLoading();
+
+    let deletions: Observable<any> = new Observable(observer => observer.next());
+    this.groupsChildrenToSelect.forEach(child => {
+      deletions = deletions.pipe(switchMap(() => {
+        return (this.defectiveManagementService.deleteChildren(child.id))
+      }))
+    });
+
+    this.groupsChildrenToSelect = [];
+    this.toSelectChildren = false;
+
+    deletions.subscribe(async () => {
+      await this.intermediaryService.dismissLoading();
+      await this.getData();
+      await this.intermediaryService.presentToastSuccess("Tipos de defectuosos eliminados con exito");
+    }, async () => {
+      await this.intermediaryService.dismissLoading();
+      await this.getData();
+      await this.intermediaryService.presentToastError("No se pudieron eliminar algunos de los tipos de defectuosos");
+    });
+  }
+
+  updateDefectiveChild() {
+    from(this.groupsChildrenToSelect).pipe(first()).subscribe(async (childSelected) => {
+      if (childSelected && childSelected.id) {
+        let modal = await this.modalController.create({
+          component: UpdateComponent,
+          componentProps: { child: childSelected, isParent: false }
+        });
+        modal.onDidDismiss().then(async () => {
+          await this.getData();
+          this.groupsChildrenToSelect = [];
+          this.toSelectChildren = false;
+        });
+        await modal.present();
+      } else {
+        await this.intermediaryService.presentToastError("Error al actualizar el tipo de defectuoso");
+      }
+    });
+  }
+
+  async addDefectiveChild(parentId: number) {
+    let modal = await this.modalController.create({
+      component: StoreComponent,
+      componentProps: { parentId, isParent: false }
+    });
+    modal.onDidDismiss().then(async () => {
+      await this.getData();
+    });
+    await modal.present();
   }
 }

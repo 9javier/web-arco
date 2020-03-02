@@ -4,6 +4,7 @@ export namespace DefectiveManagementChildModel {
   export interface DefectiveManagementChild {
     id?: number;
     name?: string;
+    defectTypeParent?: number;
   }
 
   export interface ResponseSingle extends Request.Success{
@@ -42,5 +43,13 @@ export namespace DefectiveManagementChildModel {
 
   export interface ResponseListAllDefectiveManagementChild extends HttpRequestModel.Response {
     data: DefectiveManagementChild[]
+  }
+
+  export interface RequestDefectiveManagementChild {
+    name: string;
+  }
+
+  export interface ResponseSingleDefectiveManagementChild extends Request.Success{
+    data: DefectiveManagementChild;
   }
 }

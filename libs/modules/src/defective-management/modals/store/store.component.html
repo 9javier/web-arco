@@ -6,11 +6,11 @@
                 <ion-icon name="close" class="toogleArrow"></ion-icon>
             </ion-button>
         </ion-buttons>
-        <ion-title>Crear Grupo Defectuoso</ion-title>
+        <ion-title>{{isParent ? 'Crear Grupo Defectuoso' : 'Crear Tipo de Defectuoso'}}</ion-title>
     </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-    <suite-data></suite-data>
+    <suite-data [parentId]="parentId"></suite-data>
 </ion-content>
 <ion-footer>
     <ion-toolbar>
