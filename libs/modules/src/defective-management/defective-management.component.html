@@ -1,3 +1,41 @@
-<p>
-  defective-management works!
-</p>
+<ion-content class="ion-padding">
+  <ion-text color="primary">
+    <suite-breadcrumb></suite-breadcrumb>
+  </ion-text>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <mat-accordion multi="false">
+          <mat-expansion-panel *ngFor="let defect of groupsDefectiveManagement">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <ion-checkbox style="margin-right: 5px" (click)="activateDelete(defect)"></ion-checkbox>
+                {{ defect.name }}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <h2 class="example-h2"> Tipos de defectuosos </h2>
+            <mat-selection-list #childrenSelection *ngFor="let child of defect.defectTypeChild">
+              <mat-list-option>
+                <p>{{ child.name }}</p>
+              </mat-list-option>
+            </mat-selection-list>
+            <p class="ion-text-center" *ngIf="defect.defectTypeChild.length === 0"> No existen datos</p>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+<ion-fab vertical="bottom" horizontal="end">
+  <ion-fab-button matTooltip="Agregar un Grupo de Defectuosos" matTooltipClass="tooltip" *ngIf="!toSelectGroup" (click)="addDefective()">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button matTooltip="Actualizar Grupo de Defectuosos" matTooltipClass="tooltip" *ngIf="groupsToSelect.length === 1" (click)="updateDefective()">
+    <ion-icon name="create"></ion-icon>
+  </ion-fab-button>
+  <div style="height: 5px"></div>
+  <ion-fab-button matTooltip="Eliminar Grupo de Defectuosos" matTooltipClass="tooltip" *ngIf="toSelectGroup" (click)="presentDeleteAlert()" color="danger">
+    <ion-icon name="trash"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
