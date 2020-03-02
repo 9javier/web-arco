@@ -1,0 +1,83 @@
+
+
+
+<ion-content>
+  
+ <div class="incidences-container">
+    <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)"  class="table-incidences">
+      <ng-container matColumnDef="select">
+        <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+
+          <div class="content-checkbox">
+            <ng-container *ngIf="dataSource !== undefined" >
+              <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                            [matRippleColor]="'white'" class="custom-checkbox" (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </ng-container>
+          </div>
+            <div>Todas</div>
+        </mat-header-cell>
+        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+          <ng-container  >
+            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+     
+
+
+      <ng-container matColumnDef="Warehouses">
+        <mat-header-cell class="my-sticky-col info number" *matHeaderCellDef>Tienda
+          
+        </mat-header-cell>
+        <mat-cell *matCellDef="let element" class="my-sticky-col info number" (click)="edit(element.id, element.warehouseId.id, element.warehouseId.reference + ' '+ element.warehouseId.name)">{{ element.warehouseId.reference }} {{element.warehouseId.name }} </mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="reception">
+        <mat-header-cell class="my-sticky-col info  checkbox header-checkbox" *matHeaderCellDef>
+            <div>Reception Final</div>
+        </mat-header-cell>
+        <mat-cell class="my-sticky-col info checkbox" *matCellDef="let row">
+          <ng-container  >
+            <mat-checkbox disableRipple matRipple [matRippleCentered]="true" [matRippleUnbounded]="true" [matRippleRadius]="20"
+                          [matRippleColor]="'black'" (click)="$event.stopPropagation()"
+                          [checked]="selectionReception.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)"
+                          [disabled]="true">
+            </mat-checkbox>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+     
+      <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
+      </mat-row>
+    </mat-table>
+  </div>
+  
+  <ion-grid>
+    <ion-row>
+      <ion-col size='8'>
+        <suite-paginator [pagerValues]="pagerValues"></suite-paginator>
+      </ion-col>
+      <ion-col>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+
+<ion-footer class="footer-products">
+  <ion-fab vertical="bottom" horizontal="end" class="horizontal-fab">
+    <ion-fab-button *ngIf="isEnableSend()" color="danger" matTooltip="Eliminar recepciones" matTooltipClass="tooltip" (click)="delete()"><i class="material-icons">delete</i></ion-fab-button>
+    <ion-fab-button  matTooltip="Reccepcion Final" matTooltipClass="tooltip" (click)="save()"><i class="material-icons">add</i></ion-fab-button>
+  </ion-fab>
+</ion-footer>

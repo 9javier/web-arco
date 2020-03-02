@@ -298,6 +298,10 @@ export  * from './regions/regions.module';
 export  * from './receptions-avelon/receptions-avelon.component'
 export  * from './receptions-avelon/receptions-avelon.module';
 
+/**Reception Final */
+export  * from './reception-final/reception-final.component'
+export  * from './reception-final/reception-final.module';
+
 // // /**Predistributions */
 export  * from './predistributions/predistributions.component'
 export  * from './predistributions/predistributions.module';
@@ -322,3 +326,4 @@ export  * from './receptions-avelon-app/receptions-avelon-app.module';
 
 export  * from './expeditions-pending-app/expeditions-pending-app.component'
 export  * from './expeditions-pending-app/expeditions-pending-app.module';
+

@@ -382,6 +382,14 @@ const routes: Routes = [
       name: 'Recepciones'
     }
   },
+  { 
+    path:'reception-final',
+    canActivate:[AuthGuard],
+    loadChildren: '../../../../libs/modules/src/reception-final/reception-final.module#ReceptionFinalModule',
+    data: {
+      name: 'ReceptionFinal'
+    }
+  },
   {
     path:'predistributions',
     canActivate:[AuthGuard],
