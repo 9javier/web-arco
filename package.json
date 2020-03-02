@@ -78,8 +78,7 @@
     "simple-keyboard": "^2.27.27",
     "simple-keyboard-layouts": "^1.10.12",
     "xlsx": "^0.15.3",
-    "zone.js": "^0.8.26",
-    "cordova-browser": "6.0.0"
+    "zone.js": "^0.8.26"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.0",

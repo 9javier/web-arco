@@ -201,6 +201,12 @@ export class MenuComponent implements OnInit {
           icon: 'cog'
         },
         {
+          title: 'Gestión Defectuosos',
+          id: 'defective-management',
+          url: '/defective-management',
+          icon: 'cog'
+        },
+        {
           title: 'Almacenes',
           id: 'warehouses',
           url: '/warehouses',

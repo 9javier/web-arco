@@ -166,6 +166,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'defective-management',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
+    data: {
+      name: 'Gestión Defectuosos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
@@ -245,6 +253,14 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
     data: {
       name: 'Parametrización de Daños'
+    }
+  },
+  {
+    path: 'defective-management',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
+    data: {
+      name: 'Gestión Defectuosos'
     }
   },
   {
