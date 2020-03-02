@@ -82,13 +82,13 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
   }
 
   ngOnDestroy() {
-
-    this.ObservablePendings.map(obs => {
-      try {
-        <Observable<any>>obs.unsubscribe();
-      } catch (error) {
+    try {
+      for (let observable of this.ObservablePendings) {
+        observable.unsubscribe();
       }
-    })
+    } catch (error) {
+      console.error('error -> ', error);
+    }
   }
 
   private loadDefaultWorkWaveData() {
@@ -103,8 +103,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
 
   private loadEmployees() {
     let obs = this.userTimeService.getListUsersRegister();
-    this.ObservablePendings.push(obs);
-    obs.subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
+    this.ObservablePendings.push(obs.subscribe((res: UserTimeModel.ListUsersRegisterTimeActiveInactive) => {
       this.pickingParametrizationProvider.listEmployees = res;
       this.events.publish(this.EMPLOYEES_LOADED);
       this.pickingParametrizationProvider.loadingListEmployees--;
@@ -113,15 +112,15 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
       this.pickingParametrizationProvider.listEmployees = { usersActive: [], usersInactive: [] };
       this.events.publish(this.EMPLOYEES_LOADED);
       this.pickingParametrizationProvider.loadingListEmployees--;
-    });
+    }));
   }
 
   private loadRequestOrders() {
     this.pickingParametrizationProvider.loadingListTeamAssignations++;
     if (this.listTypesToUpdate.length > 0) {
       let obs = this.workwavesService.postMatchLineRequestOnlineStore({ preparationLinesTypes: this.listTypesToUpdate });
-      this.ObservablePendings.push(obs);
-      obs.subscribe((res: WorkwaveModel.ResponseMatchLineRequestOnlineStore) => {
+      this.ObservablePendings.push(obs.subscribe((res: WorkwaveModel.ResponseMatchLineRequestOnlineStore) => {
+        console.log('Test::Subscribe');
         if (res.code === 201) {
           this.pickingParametrizationProvider.listRequestOrdersOnlineStore = res.data;
           this.events.publish(this.REQUEST_ORDERS_LOADED);
@@ -143,7 +142,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
         this.pickingParametrizationProvider.loadingListRequestOrdersOnlineStore--;
         this.tableRequests.loadingListRequestOrdersOnlineStore--;
         this.pickingParametrizationProvider.loadingListTeamAssignations--;
-      });
+      }));
     } else {
       this.pickingParametrizationProvider.listRequestOrdersOnlineStore = [];
       this.events.publish(this.REQUEST_ORDERS_LOADED);
@@ -161,8 +160,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
           deliveryRequestIds: this.listDeliveryRequestOrdersToUpdate,
           userIds: this.listEmployeesToUpdate
         });
-      this.ObservablePendings.push(obs);
-      obs.subscribe((res: WorkwaveModel.ResponseAssignUserToMatchLineRequestOnlineStore) => {
+      this.ObservablePendings.push(obs.subscribe((res: WorkwaveModel.ResponseAssignUserToMatchLineRequestOnlineStore) => {
         if (res.code === 201) {
           let resData = res.data;
           this.pickingParametrizationProvider.listTeamAssignations = resData.assignations;
@@ -183,7 +181,7 @@ export class ListWorkwaveTemplateRebuildOSComponent implements OnInit {
         this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
         this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
         this.pickingParametrizationProvider.loadingListTeamAssignations--;
-      });
+      }));
     } else {
       this.pickingParametrizationProvider.listTeamAssignations = new Array<WorkwaveModel.TeamAssignations>();
       this.events.publish(this.TEAM_ASSIGNATIONS_LOADED);
