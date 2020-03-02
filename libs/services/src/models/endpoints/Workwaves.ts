@@ -144,7 +144,8 @@ export namespace WorkwaveModel {
     pickingId: number,
     pickingTypeId?: PickingType,
     quantityShoes: string,
-    temporary: boolean
+    temporary: boolean,
+    deliveryRequest?: boolean
   }
 
   export interface TeamAssignations {

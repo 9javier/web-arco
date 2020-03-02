@@ -226,8 +226,8 @@ export class TableRequestsOrdersOSComponent implements OnInit {
         if (this.listRequestOrders.length > 0) {
 
           for (let request of this.listRequestOrders) {
-            if(request.request) this.requestOrdersSelection[request.request.id] = true;
-            if(request.deliveryRequest) this.deliveryRequestOrdersSelection[request.deliveryRequest.id] = true;
+            if(request.request && request.quantityMatchWarehouse > 0) this.requestOrdersSelection[request.request.id] = true;
+            if(request.deliveryRequest && request.quantityMatchWarehouse > 0) this.deliveryRequestOrdersSelection[request.deliveryRequest.id] = true;
             if (typeof this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] == 'undefined') {
               this.listWarehousesThresholdAndSelectedQty[request.destinyWarehouse.id] = { max: request.destinyWarehouse.thresholdShippingStore, selected: 0, warehouse: request.destinyWarehouse.name };
             }
@@ -395,28 +395,30 @@ export class TableRequestsOrdersOSComponent implements OnInit {
   }
 
   orderAssignment() {
-    this.updating = true;
-    let aux = {
-      data: {
-        store: {
-          groupsWarehousePickingId: '',
-          thresholdConsolidated: '',
+    if (!this.requestsOrdersAreLoading()) {
+      this.updating = true;
+      let aux = {
+        data: {
+          store: {
+            groupsWarehousePickingId: '',
+            thresholdConsolidated: '',
+          },
+          typesShippingOrders: []
         },
-        typesShippingOrders: []
-      },
-      store: false,
-      type: false
-    };
-    aux.store = true;
-    aux.type = true;
-    aux.data.typesShippingOrders = [];
-    if (document.getElementById('onlineCheck').getAttribute('aria-checked') == 'true') {
-      aux.data.typesShippingOrders.push(30);
+        store: false,
+        type: false
+      };
+      aux.store = true;
+      aux.type = true;
+      aux.data.typesShippingOrders = [];
+      if (document.getElementById('onlineCheck').getAttribute('aria-checked') == 'true') {
+        aux.data.typesShippingOrders.push(30);
+      }
+      if (document.getElementById('shopCheck').getAttribute('aria-checked') == 'true') {
+        aux.data.typesShippingOrders.push(20);
+      }
+      this.changeRequestOrder.emit(aux);
     }
-    if (document.getElementById('shopCheck').getAttribute('aria-checked') == 'true') {
-      aux.data.typesShippingOrders.push(20);
-    }
-    this.changeRequestOrder.emit(aux);
   }
 
   selectAllRequestOrder() {
@@ -451,16 +453,19 @@ export class TableRequestsOrdersOSComponent implements OnInit {
         this.listDeliveryRequestOrdersSelected.push(parseInt(iRequest));
       }
     }
-//TODO revisar esto
-    this.allRequestOrdersSelected = this.listRequestOrdersSelected.length + this.listDeliveryRequestOrdersSelected.length == this.listRequestOrders.length;
 
-    let aux = this.serviceG.requestUser.value;
-    aux.data.table = { listSelected: this.listRequestOrdersSelected, listSelectedDelivery: this.listDeliveryRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty };
-    aux.table = incrementTeamCounter === false;
-    this.serviceG.requestUser.next(aux);
-//---------------------------
-    this.allRequestOrdersSelected = this.listRequestOrdersSelected.length == this.listRequestOrders.length;
-    this.loadTeamAssignations.emit({table: incrementTeamCounter === false, data: {table: { listSelected: this.listRequestOrdersSelected, listThreshold: this.listWarehousesThresholdAndSelectedQty }}});
+    this.allRequestOrdersSelected = this.listRequestOrdersSelected.length + this.listDeliveryRequestOrdersSelected.length == this.listRequestOrders.length;
+    const toEmit = {
+      table: incrementTeamCounter === false,
+      data: {
+        table: {
+          listSelected: this.listRequestOrdersSelected,
+          listThreshold: this.listWarehousesThresholdAndSelectedQty,
+          listSelectedDelivery: this.listDeliveryRequestOrdersSelected
+        }
+      }
+    }
+    this.loadTeamAssignations.emit(toEmit);
   }
 
   applyFilters(filtersResult: any) {

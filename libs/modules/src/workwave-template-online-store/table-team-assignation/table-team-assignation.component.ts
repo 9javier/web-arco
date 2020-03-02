@@ -87,7 +87,9 @@ export class TableTeamAssignationOSComponent implements OnInit {
   }
 
   userSelected() {
-    this.loadTeamAssignations.emit({user: true, table: true});
+    if (!this.userAssignationsAreLoading()) {
+      this.loadTeamAssignations.emit({user: true, table: true});
+    }
   }
 
   showConsolidatedBreakdown(pickingId: number) {

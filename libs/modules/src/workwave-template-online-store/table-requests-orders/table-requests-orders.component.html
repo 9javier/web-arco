@@ -127,7 +127,7 @@
       <mat-grid-tile class="checkbox" colspan="1">
         <div class="tile-value left-value">
           <ion-checkbox *ngIf="requestOrder.request" [(ngModel)]="requestOrdersSelection[requestOrder.request.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
-          <ion-checkbox *ngIf="requestOrder.deliveryRequest" [(ngModel)]="deliveryRequestOrdersSelection[requestOrder.deliveryRequest.id]" (ngModelChange)="selectRequestOrder(true)"></ion-checkbox>
+          <ion-checkbox *ngIf="requestOrder.deliveryRequest" [(ngModel)]="deliveryRequestOrdersSelection[requestOrder.deliveryRequest.id]" (ngModelChange)="selectRequestOrder(true)" [disabled]="requestOrder.quantityMatchWarehouse == 0"></ion-checkbox>
         </div>
       </mat-grid-tile>
 
