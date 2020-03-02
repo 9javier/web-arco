@@ -26,6 +26,22 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
+    export interface Product extends Enum {
+      id:number;
+      reference:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
+    export interface User extends Enum {
+      id:number;
+      name:string;
+      value:string;
+      checked:boolean;
+      hide:boolean;
+    }
+
     export interface Color extends Enum {
       id:number;
       name:string;
@@ -94,12 +110,20 @@ export namespace FiltersModel{
       hide:boolean;
     }
 
-  export interface ResponseModel extends Request.Success{
+    export interface ResponseModel extends Request.Success{
       data:Array<Model>;
     }
 
+    export interface ResponseProduct extends Request.Success{
+      data:Array<Product>;
+    }
+
+    export interface ResponseUser extends Request.Success{
+      data:Array<User>;
+    }
+
     export interface ResponseBrand extends Request.Success{
-        data:Array<Brand>
+      data:Array<Brand>
     }
 
     export interface ResponseColor extends Request.Success{
