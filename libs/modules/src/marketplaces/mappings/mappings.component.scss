@@ -87,9 +87,11 @@
 
           & > table {
             width: 100%;
+            min-width: 522px;
 
             tr {
               height: 34px;
+              display: flex;
 
               td {
                 padding: 0!important;
@@ -105,10 +107,14 @@
                 overflow-x: hidden;
                 text-align: center;
                 vertical-align: middle;
+                display: flex;
+                justify-content: center;
+                align-items: center;
 
                 &.mp-mapping-blank-column {
                   padding: 0 5px!important;
-                  width: fit-content;
+                  width: 34px;
+                  min-width: 34px;
                   border-right: none;
                   margin-bottom: 0;
                   background-color: #fff;
@@ -116,9 +122,19 @@
 
                 }
 
+                & > span {
+                  width: 100%;
+                }
+
               }
 
               &:first-of-type {
+                height: fit-content;
+
+                td {
+                  height: 34px;
+                }
+
                 th {
                   padding: 0!important;
                   width: 50%;
@@ -127,6 +143,7 @@
                   border-bottom: none;
                   border-right: 1px solid #c7c8ce;
                   vertical-align: top;
+                  height: 71px;
 
                   &.empty-table-border {
                     border-bottom: 1px solid #c7c8ce;;
