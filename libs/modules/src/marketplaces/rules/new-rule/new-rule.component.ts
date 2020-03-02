@@ -953,11 +953,7 @@ export class NewRuleComponent implements OnInit {
 
       case 'categories':
 
-        if (this.mode != 'edit') {
-          return this.selectedDestinationCategories.length;
-        }
-
-        return true;
+        return this.selectedDestinationCategories.length;
 
         break;
 
