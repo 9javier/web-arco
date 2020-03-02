@@ -31,7 +31,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   public expedit:string="";
   response: ReceptionAvelonModel.Reception;
-  dato: ReceptionAvelonModel.Data;
+  oldBrands: ReceptionAvelonModel.Data[];
   subscriptions: Subscription;
   providers: Array<any>;
   isProviderAvailable: boolean;
@@ -63,7 +63,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   myControl = new FormControl();
   filteredProviders: Observable<any[]>;
   showCheck: boolean = true;
-  itemParent: ReceptionAvelonModel.Data;
 
   modelSelected: any = null;
 
@@ -371,61 +370,140 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.listSizes = [];
   }
 
-  listSelected() {
-    this.reception.getEmitList().subscribe((e:any) => {
-      this.dato = e.dato;
-      if (!this.result.modelId && !this.result.brandId && !this.result.colorId) {
-        this.itemParent = this.dato;
-      }
+  goBack(type: string) {
 
-      switch (e.type) {
+    switch (type) {
+      case 'brands':
+        if(this.oldBrands.length > 0) {
+          this.response.brands = JSON.parse(JSON.stringify(this.oldBrands));
+        }else{
+          this.response.brands = this.filterData.brands;
+        }
+        for (let brand of this.response.brands) {
+          brand.selected = false;
+        }
+        this.reception.setBrandsList(this.response.brands);
+        break;
+      case 'models':
+        const models = this.filterData.models;
+        if(this.result.colorId){
+          this.response.models = [];
+          const color = this.filterData.colors.find(c => c.id == this.result.colorId);
+          for(let model of models){
+            if(color.belongsModels.includes(model.id)){
+              model.selected = false;
+              this.response.models.push(model);
+            }else{
+              for(let modelId of model.available_ids){
+                if(color.belongsModels.includes(modelId)){
+                  model.selected = false;
+                  this.response.models.push(model);
+                  break;
+                }
+              }
+            }
+          }
+        }else{
+          for(let model of models) {
+            model.selected = false;
+          }
+          this.response.models = models;
+        }
+        this.reception.setModelsList(this.response.models);
+        break;
+      case 'colors':
+        const colors = this.filterData.colors;
+        if(this.result.modelId){
+          this.response.colors = [];
+          const model = this.filterData.models.find(m => m.id == this.result.modelId);
+          for(let color of colors){
+            if(color.belongsModels.includes(model.id)){
+              color.selected = false;
+              this.response.colors.push(color);
+            }else{
+              for(let modelId of model.available_ids){
+                if(color.belongsModels.includes(modelId)){
+                  color.selected = false;
+                  this.response.colors.push(color);
+                  break;
+                }
+              }
+            }
+          }
+        }else{
+          for(let color of colors) {
+            color.selected = false;
+          }
+          this.response.colors = colors;
+        }
+        this.reception.setColorsList(this.response.colors);
+    }
+
+  }
+
+  listSelected() {
+    this.reception.getEmitList().subscribe((event: any) => {
+
+      switch (event.type) {
         case 'brands':
-          if (e.dato.selected) {
-            this.result.brandId = e.dato.id;
-            const timeout = setTimeout(() => {
-              this.updateList(this.dato);
+          if (event.dato.selected) {
+            this.oldBrands = JSON.parse(JSON.stringify(this.response.brands));
+            this.result.brandId = event.dato.id;
+            setTimeout(() => {
+              this.updateList(event.dato);
             }, 0);
           } else {
             this.result.brandId = undefined;
-
-            if (this.dato.id === this.itemParent.id) {
-              this.reset();
+            this.goBack('brands');
+            if(!this.result.modelId){
+              this.goBack('models');
+            }
+            if(!this.result.colorId){
+              this.goBack('colors');
             }
           }
           break;
         case 'models':
-          if (e.dato.selected) {
-            this.result.modelId = e.dato.id;
-            this.modelSelected = e.dato;
-            const timeout = setTimeout(() => {
-              this.updateList(this.dato);
+          if (event.dato.selected) {
+            this.result.modelId = event.dato.id;
+            this.modelSelected = event.dato;
+            setTimeout(() => {
+              this.updateList(event.dato);
             }, 0);
           } else {
             this.result.modelId = undefined;
             this.modelSelected = null;
-
-            if (this.dato.id === this.itemParent.id) {
-              this.reset();
+            this.goBack('models');
+            if (!this.result.brandId) {
+              this.goBack('brands');
+            }
+            if (!this.result.colorId) {
+              this.goBack('colors');
             }
           }
           break;
         case 'colors':
-          if (e.dato.selected) {
-            this.result.colorId = e.dato.id;
+          if (event.dato.selected) {
+            this.result.colorId = event.dato.id;
             if (this.modelSelected) {
-              this.result.modelId = this.modelSelected.available_ids.find(id => e.dato.belongsModels.find(model => model == id));
+              this.result.modelId = this.modelSelected.available_ids.find(id => event.dato.belongsModels.find(model => model == id));
             }
-            const timeout = setTimeout(() => {
-              this.updateList(this.dato);
+            setTimeout(() => {
+              this.updateList(event.dato);
             }, 0);
           } else {
             this.result.colorId = undefined;
-            if (this.dato.id === this.itemParent.id) {
-              this.reset();
+            this.goBack('colors');
+            if (!this.result.brandId) {
+              this.goBack('brands');
+            }
+            if (!this.result.modelId) {
+              this.goBack('models');
             }
           }
           break;
       }
+
     });
   }
 
