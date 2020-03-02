@@ -610,15 +610,15 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           this.typeScreen = resultEan.type;
           this.referencesToPrint = [resultEan.reference];
         } else {
-          let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN introducido.';
+          let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN '+ean+' introducido.';
           if (resultCheck.productsWithError && resultCheck.productsWithError.length > 0) {
-            errorMessage = resultCheck.productsWithError[0];
+            errorMessage = 'EAN ' + ean + ': '+ resultCheck.productsWithError[0].reason;
           }
           this.intermediaryService.presentToastError(errorMessage);
         }
       }, e => {
         if (e.error.code == 400 && e.error.message == 'InvalidEanException') {
-          if (this.checkIfSelectMandatoryFields()) {
+          if (this.checkIfSelectMandatoryFields(ean)) {
             if (this.checkOnlyOneSizeAndOneQuantity()) {
               this.notifyReceptionAndPrint(ean);
             } else {
@@ -639,8 +639,16 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   // check if all fields mandatory are selected to receive the product (brand, model, color and at least one size)
-  private checkIfSelectMandatoryFields(): boolean {
+  private checkIfSelectMandatoryFields(ean?: string): boolean {
     const errorsMessages: string[] = [];
+    const sizesToPrint = this.listSizes.filter(s => {
+      return s.quantity > 0;
+    });
+
+    if(ean && (!this.result.brandId || !this.result.modelId || !this.result.colorId || sizesToPrint.length <= 0)){
+      this.intermediaryService.presentWarning('Código EAN '+ean+ ' no registrado en el sistema. <br><br>Por favor seleccione Marca, Modelo, Color y una talla para imprimir la etiqueta y registrar el EAN en el sistema', null);
+      return false;
+    }
 
     if (!this.result.brandId) {
       errorsMessages.push('Una marca.');
@@ -651,9 +659,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     if (!this.result.colorId) {
       errorsMessages.push('Un color.');
     }
-    const sizesToPrint = this.listSizes.filter(s => {
-      return s.quantity > 0;
-    });
     if (sizesToPrint.length <= 0) {
       errorsMessages.push('Al menos una talla.');
     }
