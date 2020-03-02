@@ -3,27 +3,28 @@
   overflow-y: scroll;
 }
 
-.selected {
-  --background: #249f29;
-  color: #ffffff;
-}
-.unselected {
-  --background: #00000000;
-}
-
-.newSelected {
-  --background: darkblue;
-  color: #ffffff;
-}
-
 .green{
   color: #00ff00;
 }
-
 .orange{
   color: #ff8000;
 }
-
 .red{
   color: #ff0000;
+}
+.white{
+  color: #ffffff;
+}
+
+.greenB {
+  --background: #00ff00;
+}
+.orangeB {
+  --background: #ff8000;
+}
+.redB {
+  --background: #ff0000;
+}
+.whiteB {
+  --background: #ffffff;
 }

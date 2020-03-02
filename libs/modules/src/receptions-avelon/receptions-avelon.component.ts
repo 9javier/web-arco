@@ -567,11 +567,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         item => item.id === element.id
       );
       if (findIndexResult >= 0) {
-        if (element.newSelectd) {
-          array[findIndexResult].newSelectd = element.newSelectd;
+        if (element.newSelected) {
+          array[findIndexResult].newSelected = element.newSelected;
         }
       } else {
-        element.newSelectd = true;
+        element.newSelected = true;
         array.push(element);
       }
     });

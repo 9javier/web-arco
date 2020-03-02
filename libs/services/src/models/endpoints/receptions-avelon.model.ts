@@ -5,7 +5,7 @@ export namespace ReceptionAvelonModel {
     id: number;
     name: string;
     selected: boolean;
-    newSelectd?: boolean
+    newSelected?: boolean
     belongsModels?: Array<number>
     state?:number;
     available_ids?: number[],
