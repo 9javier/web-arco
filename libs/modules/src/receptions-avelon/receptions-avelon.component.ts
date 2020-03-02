@@ -608,7 +608,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         if (resultCheck.resultToPrint && resultCheck.resultToPrint.length > 0) {
           const resultEan = resultCheck.resultToPrint[0];
           this.typeScreen = resultEan.type;
-          this.referencesToPrint = resultEan.reference;
+          this.referencesToPrint = [resultEan.reference];
         } else {
           let errorMessage = 'Ha ocurrido un error al intentar comprobar el EAN introducido.';
           if (resultCheck.productsWithError && resultCheck.productsWithError.length > 0) {
