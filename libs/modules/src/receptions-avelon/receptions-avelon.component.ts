@@ -756,7 +756,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   }
 
   public getPhotoUrl(modelId): string {
-    if (modelId && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
+    if (modelId && this.modelSelected && this.modelSelected.photos_models && this.modelSelected.photos_models[modelId]) {
       return environment.urlBase + this.modelSelected.photos_models[modelId];
     } else {
       return '../assets/img/placeholder-product.jpg';
