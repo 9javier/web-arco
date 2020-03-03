@@ -1,11 +1,6 @@
 import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
-import {
-  ReceptionsAvelonService,
-  ReceptionAvelonModel,
-  IntermediaryService,
-  ProductsService, environment
-} from '@suite/services';
+import {ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService, environment} from '@suite/services';
 import {Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef, ElementRef, AfterViewInit} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
@@ -200,22 +195,21 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
 
-  checkProvider(data: ReceptionAvelonModel.CheckProvider) {
-    this.intermediaryService.presentLoading('Cargando');
+  async checkProvider(data: ReceptionAvelonModel.CheckProvider) {
+    await this.intermediaryService.presentLoading('Cargando');
     this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
-        this.response = info;
-        this.response.brands = this.clearSelected(this.response.brands);
-        this.response.models = this.clearSelected(this.response.models);
-        this.response.colors = this.clearSelected(this.response.colors);
-        this.filterData.brands = this.clearSelected(info.brands);
-        this.filterData.models = this.clearSelected(info.models);
-        this.filterData.colors = this.clearSelected(info.colors);
-        this.filterData.sizes = this.clearSelected(info.sizes);
+      this.response = info;
+      this.response.brands = this.clearSelected(this.response.brands);
+      this.response.models = this.clearSelected(this.response.models);
+      this.response.colors = this.clearSelected(this.response.colors);
+      this.filterData.brands = this.clearSelected(info.brands);
+      this.filterData.models = this.clearSelected(info.models);
+      this.filterData.colors = this.clearSelected(info.colors);
 
-        this.reset();
-        this.expedition = data.expedition;
-        this.intermediaryService.dismissLoading();
-      });
+      this.reset();
+      this.expedition = data.expedition;
+
+    },error => {}, async () => await this.intermediaryService.dismissLoading());
   }
 
   async alertMessage(message: string) {
@@ -337,7 +331,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       this.loadSizes();
     }
   }
-
 
   reset(dato?: ReceptionAvelonModel.Data) {
     this.response.models = this.filterData.models;
@@ -642,11 +635,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             }
           });
 
-          modal.onDidDismiss().then(response => {
+          modal.onDidDismiss().then(async response => {
             if (response.data && response.data.reception) {
               this.showCheck = false;
               this.isProviderAvailable = true;
-              this.checkProvider(data);
+              await this.checkProvider(data);
             }
           });
 
@@ -840,4 +833,5 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       return '../assets/img/placeholder-product.jpg';
     }
   }
+
 }
