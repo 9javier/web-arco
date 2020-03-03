@@ -84,13 +84,6 @@ export class MenuComponent implements OnInit {
           icon: 'apps'
         },
         {
-          title: 'Nuevos Productos',
-          id: 'list-new-products',
-          url: '/list-new-products',
-          icon: 'basket',
-          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
-        },
-        {
           title: 'Incidencias',
           id: 'incidences',
           url: '/incidences',
@@ -169,6 +162,21 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Control de exposición',
+      open: true,
+      type: 'wrapper',
+      icon: 'cart',
+      children: [
+        {
+          title: 'Productos sin imprimir',
+          id: 'list-new-products',
+          url: '/list-new-products',
+          icon: 'basket',
+          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        }
+      ]
+    },
+    {
       title: 'Picking tiendas',
       open: true,
       type: 'wrapper',
@@ -192,6 +200,24 @@ export class MenuComponent implements OnInit {
           title: 'Variables globales',
           id: 'global-variables',
           url: '/global-variables',
+          icon: 'cog'
+        },
+        {
+          title: 'Parametrización de Daños',
+          id: 'damaged-shoes',
+          url: '/damaged-shoes',
+          icon: 'cog'
+        },
+        {
+          title: 'Gestión Defectuosos',
+          id: 'defective-management',
+          url: '/defective-management',
+          icon: 'cog'
+        },
+        {
+          title: 'Registro de Defectuosos',
+          id: 'defective-registry',
+          url: '/defective-registry',
           icon: 'cog'
         },
         {
@@ -300,6 +326,12 @@ export class MenuComponent implements OnInit {
           title: 'Proceso recepción',
           id: 'receptions-avelon',
           url: '/receptions-avelon',
+          icon: 'pricetags'
+        },
+        {
+          title: 'Recepcion Final',
+          id: 'reception-final',
+          url: '/reception-final',
           icon: 'pricetags'
         },
         {

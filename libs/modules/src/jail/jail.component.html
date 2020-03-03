@@ -52,7 +52,7 @@
         <td mat-cell *matCellDef="let element" class="right-content left-border">
           <i
             matTooltip="Enviar {{typeById(element.packingType)?.name | lowercase}} {{ element.packingInventorys && element.packingInventorys.length > 0 ? '' : 'vacía' }}"
-            matTooltipClass="tooltip" *ngIf="isAvailableSend(element)" (click)="toSend($event,element)"
+            matTooltipClass="tooltip" *ngIf="isAvailableSend(element) && element.packingInventorys.length == 0" (click)="toSend($event,element)"
             class="material-icons action-icon">send</i>
         </td>
       </ng-container>
