@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { CarrierModel } from 'libs/services/src/models/endpoints/carrier.model';
-import { Observable } from 'rxjs';
 import { RequestsProvider } from "../../../providers/requests/requests.provider";
 import { HttpRequestModel } from "../../../models/endpoints/HttpRequest";
 import { environment } from '../../../environments/environment';
+import {ExcellModell} from "../../../models/endpoints/Excell";
+import {Injectable} from '@angular/core';
+import {IncidenceModel} from "../../../models/endpoints/Incidence";
+import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
+import {AuthenticationService, TypeModel} from "@suite/services";
+import {from, Observable} from "rxjs";
+import {switchMap} from "rxjs/operators";
+import {InventoryModel} from "../../../models/endpoints/Inventory";
 
 @Injectable({
   providedIn: 'root'
@@ -35,11 +40,12 @@ export class CarrierService {
   private getAllWhsonCarries = environment.apiBase + '/packing/getWhs/getWhsOnCarrier';
   private movementHistory = environment.apiBase + '/packing/warehouse/movementHistory';
   private typeMovement = environment.apiBase + '/types/movement-history';
+  private sendexcell = environment.apiBase + "/packing/export-to-excel";
 
   constructor(
     private http: HttpClient,
-    private requestsProvider: RequestsProvider
-
+    private requestsProvider: RequestsProvider,
+    private auth: AuthenticationService,
   ) {
   }
   /**
@@ -84,7 +90,7 @@ export class CarrierService {
       .set(cars)
       .where('id = :id', { id: cars.getId() })
       .execute();
-    
+
     */
   }
 
@@ -219,4 +225,14 @@ export class CarrierService {
         map(elem => elem.data)
       );
   }
+
+  getFileExcell(parameters: ExcellModell.fileExcell) {
+    return from(this.auth.getCurrentToken()).pipe(switchMap(token => {
+      // let headers:HttpHeaders = new HttpHeaders({Authorization:token});
+
+      let headers: HttpHeaders = new HttpHeaders({ Authorization: token });
+      return this.http.post(this.sendexcell, parameters, { headers, responseType: 'blob' });
+    }));
+  }
+
 }
