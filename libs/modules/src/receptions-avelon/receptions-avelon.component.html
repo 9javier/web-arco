@@ -63,7 +63,7 @@
       <div class="row sizes-image-ean" *ngIf="isProviderAvailable">
         <div class="col images">
           <div class="row">
-            <ion-img [src]="getPhotoUrl(result.modelId)"></ion-img>
+            <ion-img *ngIf="result && getPhotoUrl(result.modelId)" [src]="getPhotoUrl(result.modelId)"></ion-img>
           </div>
           <div class="row">
             <ion-img [src]="'../assets/img/placeholder-product.jpg'"></ion-img>
