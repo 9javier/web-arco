@@ -75,6 +75,7 @@ export class CatalogMarketplacesComponent implements OnInit {
     
     this.marketplacesService.getProductCatalog().subscribe(data => {
         this.products = data.data;
+        this.products.sort((a, b) => (parseInt(a.reference) > parseInt(b.reference)) ? 1 : ((parseInt(b.reference) > parseInt(a.reference)) ? -1 : 0));
         this.catalogTableData = new MatTableDataSource(this.products);
     });
     this.catalogTableHeader = ['select', 'ref', 'model', 'brand', 'KO', 'Mini', 'Amazon', 'Spartoo', 'Zalando', 'CDiscount'];
