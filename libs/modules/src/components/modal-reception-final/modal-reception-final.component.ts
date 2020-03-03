@@ -75,7 +75,7 @@ export class ModalReceptionFinalComponent implements OnInit {
     if( this.warehouseId >0){
       let object = {
         receptionFinal: reception,
-        warehouseId: this.warehouseId
+        warehouse: this.warehouseId
       }
    
     this.save(object);
