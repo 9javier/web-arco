@@ -162,7 +162,6 @@ export class ReceptionFinalComponent implements OnInit {
       if (resp.results) {
       
         this.dataSource = new MatTableDataSource<ReceptionFinalModel.receptionFinal>(resp.results);
-        console.log("resultado: "+this.dataSource.data.results);
         const paginator = resp.pagination;
 
         this.paginator.length = paginator.totalResults;
@@ -170,7 +169,7 @@ export class ReceptionFinalComponent implements OnInit {
         this.paginator.lastPage = paginator.lastPage;
         this.selectionReception.clear();
 
-        this.dataSource.results.forEach(row => {
+        resp.results.forEach(row => {
           if (row.receptionFinal == true) {
             this.selectionReception.select(row);
           }

@@ -10,7 +10,7 @@ export namespace ReceptionFinalModel{
     export interface receptionFinalData{
       
         id:number,
-        recepTtionFinal:boolean,
+        receptionFinal:boolean,
         warehouseId:{
             id: number,
             name: string,
