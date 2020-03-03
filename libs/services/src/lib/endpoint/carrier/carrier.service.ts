@@ -7,7 +7,7 @@ import {ExcellModell} from "../../../models/endpoints/Excell";
 import {Injectable} from '@angular/core';
 import {IncidenceModel} from "../../../models/endpoints/Incidence";
 import {HttpClient, HttpHeaders, HttpResponse} from "@angular/common/http";
-import {AuthenticationService, TypeModel} from "@suite/services";
+import {AuthenticationService} from "../authentication/authentication.service";
 import {from, Observable} from "rxjs";
 import {switchMap} from "rxjs/operators";
 import {InventoryModel} from "../../../models/endpoints/Inventory";
