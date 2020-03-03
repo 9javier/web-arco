@@ -13,7 +13,7 @@ import { from, Observable } from "rxjs";
   providedIn: 'root'
 })
 export class ReceptionFinalService {
-  private getIndexUrl:string = environment.apiBase+"/final-reception";
+  private getIndexUrl:string = environment.apiBase+"/final-reception/all";
   private updateRecepFinalUrl:string = environment.apiBase+"/final-reception/";
   private getWarehouseUrl:string = environment.apiBase+"/final-reception/warehouses";
   private getByIdWarehouseUrl:string = environment.apiBase+"/final-reception/";
@@ -31,8 +31,8 @@ export class ReceptionFinalService {
 
   ) { }
 
-  getIndex(){
-    return this.http.get<ReceptionFinalModel.receptionFinal>(this.getIndexUrl).pipe(map(response=>{
+  getIndex(body){
+    return this.http.post<ReceptionFinalModel.receptionFinal>(this.getIndexUrl,body).pipe(map(response=>{
       return response.data;
     }));
   }

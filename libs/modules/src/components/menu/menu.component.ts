@@ -207,6 +207,12 @@ export class MenuComponent implements OnInit {
           icon: 'cog'
         },
         {
+          title: 'Recepcion Final',
+          id: 'reception-final',
+          url: '/reception-final',
+          icon: 'pricetags'
+        },
+        {
           title: 'Registro de Defectuosos',
           id: 'defective-registry',
           url: '/defective-registry',
@@ -318,12 +324,6 @@ export class MenuComponent implements OnInit {
           title: 'Proceso recepción',
           id: 'receptions-avelon',
           url: '/receptions-avelon',
-          icon: 'pricetags'
-        },
-        {
-          title: 'Recepcion Final',
-          id: 'reception-final',
-          url: '/reception-final',
           icon: 'pricetags'
         },
         {

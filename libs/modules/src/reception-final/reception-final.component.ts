@@ -47,6 +47,12 @@ export class ReceptionFinalComponent implements OnInit {
   columns = {};
   pagerValues = [10, 20, 80];
   
+  pagination={
+    page: 1,
+    limit: this.pagerValues[0]
+  }
+
+
 
   dataSource
   
@@ -69,10 +75,28 @@ export class ReceptionFinalComponent implements OnInit {
     //this.initForm();
     //this.getFilters();
     //this.getColumns(this.form);
-    this.getList();
+    this.getList(this.pagination);
+    this.listenChanges();
   }
 
+  listenChanges() {
+    let previousPageSize = this.pagination.limit;
+    /**detect changes in the paginator */
+    this.paginator.page.subscribe(page => {
+      /**true if only change the number of results */
+      let flag = previousPageSize === page.pageSize;
+      previousPageSize = page.pageSize;
+      this.pagination = {
+        limit: page.pageSize,
+        page: flag ? page.pageIndex : 1
+      };
+      this.getList(this.pagination)
+    });
 
+    this.intermediaryService.presentLoading('Cargando Filtros...').then(() => {
+      this.getList(this.pagination);
+    });
+  }
  
 
   close():void{
@@ -130,24 +154,23 @@ export class ReceptionFinalComponent implements OnInit {
   }
 
 
-  async getList(){
+  async getList(pagination){
 
     this.intermediaryService.presentLoading("Cargando Reception Final...");
-    this.receptionFinalService.getIndex().subscribe((resp:any) => {
+    this.receptionFinalService.getIndex(pagination).subscribe((resp:any) => {
       this.intermediaryService.dismissLoading();
-      if (resp) {
+      if (resp.results) {
       
-        this.dataSource = new MatTableDataSource<ReceptionFinalModel.receptionFinal>(resp);
-        //const paginator = resp.pagination;
+        this.dataSource = new MatTableDataSource<ReceptionFinalModel.receptionFinal>(resp.results);
+        console.log("resultado: "+this.dataSource.data.results);
+        const paginator = resp.pagination;
 
-        /*this.paginator.length = paginator.totalResults;
+        this.paginator.length = paginator.totalResults;
         this.paginator.pageIndex = paginator.selectPage;
-        this.paginator.lastPage = paginator.lastPage;*/
-        //this.selectionPredistribution.clear();
-        //this.selectionReserved.clear();
+        this.paginator.lastPage = paginator.lastPage;
         this.selectionReception.clear();
 
-        this.dataSource.data.forEach(row => {
+        this.dataSource.results.forEach(row => {
           if (row.receptionFinal == true) {
             this.selectionReception.select(row);
           }
@@ -183,7 +206,8 @@ export class ReceptionFinalComponent implements OnInit {
       })
       modal.onDidDismiss().then(() => {
           this.selection.clear();
-          this.getList();
+          this.getList(this.pagination);
+          this.listenChanges();
       });;
 
       return await modal.present();
@@ -201,7 +225,8 @@ export class ReceptionFinalComponent implements OnInit {
     })
     modal.onDidDismiss().then(() => {
         this.selection.clear();
-        this.getList();
+        this.getList(this.pagination);
+        this.listenChanges();
     });;
 
     return await modal.present();
@@ -219,7 +244,8 @@ async presentModalUpdate(whUpdate) {
   })
   modal.onDidDismiss().then(() => {
       this.selection.clear();
-      this.getList();
+      this.getList(this.pagination);
+      this.listenChanges();
   });
 
   return await modal.present();
@@ -287,7 +313,8 @@ edit(id,idWh, warehouse){
     })
     prompt.onDidDismiss().then(() => {
       this.selection.clear();
-      this.getList();
+      this.getList(this.pagination);
+      this.listenChanges();
   })
     await prompt.present();
 

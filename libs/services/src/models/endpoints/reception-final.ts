@@ -8,7 +8,7 @@ export namespace ReceptionFinalModel{
 
 
     export interface receptionFinalData{
-        
+      
         id:number,
         recepTtionFinal:boolean,
         warehouseId:{
@@ -21,6 +21,13 @@ export namespace ReceptionFinalModel{
             has_racks: boolean,
             is_outlet: boolean,
             packingType: number
+        },
+        pagination: {
+            selectPage: number,
+            firstPage: number,
+            lastPage: number,
+            limit: number,
+            totalResults: number
         }
     }
 
