@@ -169,6 +169,21 @@ export class MenuComponent implements OnInit {
       ]
     },
     {
+      title: 'Control de exposición',
+      open: true,
+      type: 'wrapper',
+      icon: 'cart',
+      children: [
+        {
+          title: 'Productos sin imprimir',
+          id: 'list-new-products',
+          url: '/list-new-products',
+          icon: 'basket',
+          tooltip: 'Listado de nuevos productos recibidos que aún no han sido impresos'
+        }
+      ]
+    },
+    {
       title: 'Picking tiendas',
       open: true,
       type: 'wrapper',
