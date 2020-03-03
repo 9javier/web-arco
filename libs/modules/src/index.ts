@@ -102,6 +102,9 @@ export * from './damaged-shoes/damaged-shoes.module';
 export * from './defective-management/defective-management.component';
 export * from './defective-management/defective-management.module';
 
+export * from './defective-registry/defective-registry.component';
+export * from './defective-registry/defective-registry.module';
+
 /**breadcrumb */
 export * from './components/breadcrumb/breadcrumb.component';
 export * from './components/breadcrumb/breadcrumb.module';
