@@ -1,116 +1,273 @@
- <ion-content padding="true">
+<ion-content>
 
-<form [formGroup]="formVar">
-    <div class="form-fields">
-      <ion-row>
+    <form [formGroup]="formVar">
+        <div class="form-fields">
+          <ion-row>
 
-        <ion-col size="6">
-          <div class="content-select">
-            <ion-label class="title-select">Almacén</ion-label>
-            <ion-item class="content-icon-select">
-              <ion-item>
-                <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' [(ngModel)]="valueWarehouse" (ionChange)="getAllInfo()">
-                  <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.reference }} - {{ warehouse.name }}</ion-select-option>
-                </ion-select>
-              </ion-item>
-            </ion-item>
+            <ion-col size="9" *ngIf="isMobileApp">
+              <div class="content-select-mobile">
+                <ion-label class="title-select">Almacén</ion-label>
+                <ion-item class="content-icon-select">
+                  <ion-item>
+                    <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' [(ngModel)]="valueWarehouse" (ionChange)="getAllInfo()">
+                      <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.reference }} - {{ warehouse.name }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-item>
+              </div>
+            </ion-col>
+
+            <ion-col size="6" *ngIf="!isMobileApp">
+              <div class="content-select-normal">
+                <ion-label class="title-select">Almacén</ion-label>
+                <ion-item class="content-icon-select">
+                  <ion-item>
+                    <ion-select placeholder="Almacén" interface="popover" formControlName='warehouse' [(ngModel)]="valueWarehouse" (ionChange)="getAllInfo()">
+                      <ion-select-option *ngFor="let warehouse of whs" [value]="warehouse.id" selected="{{ warehouse.id == whsCode }}">{{ warehouse.reference }} - {{ warehouse.name }}</ion-select-option>
+                    </ion-select>
+                  </ion-item>
+                </ion-item>
+              </div>
+            </ion-col>
+
+          </ion-row>
+
+          <hr>
+
+          <div class="content-info-mobile" *ngIf="isMobileApp">
+           <ion-row>
+              <ion-col size="6">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small" color="dark">Nº Tienda:</ion-title>
+                  <ion-label color="primary"> {{ nStore  }} </ion-label>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="6">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small"  color="dark">En Tienda:</ion-title>
+                  <ion-label color="primary"> {{ jOnStore  }} </ion-label>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="6">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small"  color="dark">En Tránsito Ida:</ion-title>
+                  <ion-label color="primary"> {{ jOnTI  }} </ion-label>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="6">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small"  color="dark">En Tránsito Vuelta:</ion-title>
+                  <ion-label color="primary"> {{ jOnTV  }} </ion-label>
+                </ion-item>
+              </ion-col>
+           </ion-row>
           </div>
-        </ion-col>
 
-      </ion-row>
+          <div class="content-info-normal" *ngIf="!isMobileApp">
+            <ion-row>
+              <ion-col size="3">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small" color="dark">Nº Tienda:</ion-title>
+                  <ion-label color="primary"> {{ nStore  }} </ion-label>
+                </ion-item>
+              </ion-col>
 
-      <hr>
+              <ion-col size="3">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small"  color="dark">En Tienda:</ion-title>
+                  <ion-label color="primary"> {{ jOnStore  }} </ion-label>
+                </ion-item>
+              </ion-col>
 
-      <ion-row>
-        <ion-col size="6" >
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">N° y nombre de Tienda:</ion-title>
-            <ion-label color="primary"> {{ nStore  }} </ion-label>
-          </ion-item>
-        </ion-col>
+              <ion-col size="3">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small"  color="dark">En Tránsito Ida:</ion-title>
+                  <ion-label color="primary"> {{ jOnTI  }} </ion-label>
+                </ion-item>
+              </ion-col>
 
-        <ion-col size="6">
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Embalajes en tienda:</ion-title>
-            <ion-label color="primary"> {{ jOnStore  }} </ion-label>
-          </ion-item>
-        </ion-col>
+              <ion-col size="3">
+                <ion-item class="item-text-wrap">
+                  <ion-title size="small"  color="dark">En Tránsito Vuelta:</ion-title>
+                  <ion-label color="primary"> {{ jOnTV  }} </ion-label>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </div>
+        </div>
+    </form>
+    <div class="table-container">
+      <table mat-table multiTemplateDataRows [dataSource]="listHistory" matSort *ngIf="valueWarehouse">
 
-        <ion-col size="6">
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Embalajes en tránsito Ida:</ion-title>
-            <ion-label color="primary"> {{ jOnTI  }} </ion-label>
-          </ion-item>
-        </ion-col>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
 
-        <ion-col size="6">
-          <ion-item class="item-text-wrap">
-            <ion-title size="small"  color="dark">Embalajes en tránsito Vuelta:</ion-title>
-            <ion-label color="primary"> {{ jOnTV  }} </ion-label>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-    </div>
-</form>
-    <table mat-table [dataSource]="listHistory" matSort>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-        <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef >
-                Tipo
+          <ng-container *ngIf="isMobileApp" matColumnDef="reference">
+            <th class="mobile" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('reference')">Nombre del bulto</span>
+              <suite-filter-button #filterButtonReferences class="filter" [title]="'Nombre del bulto'" [listItems]="references"
+                                   [isFiltering]="isFilteringReferences != references.length"
+                                   (applyFilters)="applyFilters($event, 'references')">
+              </suite-filter-button>
             </th>
-            <td mat-cell *matCellDef="let item">
-                {{ item?.type?.name }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="origin">
-          <th mat-header-cell *matHeaderCellDef >
-            Origen
-          </th>
-          <td mat-cell *matCellDef="let item">
-            {{ item?.originWarehouse }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="destiny">
-          <th mat-header-cell *matHeaderCellDef >
-            Destino
-          </th>
-          <td mat-cell *matCellDef="let item">
-            {{ item?.destinyWarehouse }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="dateSend">
-            <th mat-header-cell *matHeaderCellDef >
-                Fecha y hora envío
-            </th>
-            <td mat-cell *matCellDef="let item">
-                {{ item?.dateSend | date: 'dd/MM/yyyy HH:mm' }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="dateReceive">
-            <th mat-header-cell *matHeaderCellDef >
-                Fecha y hora recepción
-            </th>
-            <td mat-cell *matCellDef="let item">
-                {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="reference">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="reference">
-                Nombre del bulto
-            </th>
-            <td mat-cell *matCellDef="let item">
+            <td class="mobile" mat-cell *matCellDef="let item">
               {{ item.reference }}
             </td>
-        </ng-container>
-    </table>
-    <!-- <suite-paginator [pagerValues]="pagerValues"></suite-paginator> -->
+          </ng-container>
+
+          <ng-container *ngIf="!isMobileApp" matColumnDef="reference">
+            <th class="normal" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('reference')">Nombre del bulto</span>
+              <suite-filter-button #filterButtonReferences class="filter" [title]="'Nombre del bulto'" [listItems]="references"
+                                   [isFiltering]="isFilteringReferences != references.length"
+                                   (applyFilters)="applyFilters($event, 'references')">
+              </suite-filter-button>
+            </th>
+            <td class="normal" mat-cell *matCellDef="let item">
+              {{ item.reference }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="isMobileApp" matColumnDef="type">
+            <th class="mobile" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('type')">Tipo</span>
+              <suite-filter-button #filterButtonTypes class="filter" [title]="'Tipo'" [listItems]="types"
+                                   [isFiltering]="isFilteringTypes != types.length"
+                                   (applyFilters)="applyFilters($event, 'types')">
+              </suite-filter-button>
+            </th>
+            <td class="mobile" mat-cell *matCellDef="let item">
+              {{ item?.type?.name }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="!isMobileApp" matColumnDef="type">
+            <th class="normal" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('type')">Tipo</span>
+              <suite-filter-button #filterButtonTypes class="filter" [title]="'Tipo'" [listItems]="types"
+                                   [isFiltering]="isFilteringTypes != types.length"
+                                   (applyFilters)="applyFilters($event, 'types')">
+              </suite-filter-button>
+            </th>
+            <td class="normal" mat-cell *matCellDef="let item">
+              {{ item?.type?.name }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="isMobileApp" matColumnDef="origin">
+            <th class="mobile" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('origin')">Origen</span>
+              <suite-filter-button #filterButtonOrigins class="filter" [title]="'Origen'" [listItems]="origins"
+                                   [isFiltering]="isFilteringOrigins != origins.length"
+                                   (applyFilters)="applyFilters($event, 'origins')">
+              </suite-filter-button>
+            </th>
+            <td class="mobile" mat-cell *matCellDef="let item">
+              {{ item?.originWarehouse }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="!isMobileApp" matColumnDef="origin">
+            <th class="normal" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('origin')">Origen</span>
+              <suite-filter-button #filterButtonOrigins class="filter" [title]="'Origen'" [listItems]="origins"
+                                   [isFiltering]="isFilteringOrigins != origins.length"
+                                   (applyFilters)="applyFilters($event, 'origins')">
+              </suite-filter-button>
+            </th>
+            <td class="normal" mat-cell *matCellDef="let item">
+              {{ item?.originWarehouse }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="isMobileApp" matColumnDef="destiny">
+            <th class="mobile" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('destiny')">Destino</span>
+              <suite-filter-button #filterButtonDestinies class="filter" [title]="'Destino'" [listItems]="destinies"
+                                   [isFiltering]="isFilteringDestinies != destinies.length"
+                                   (applyFilters)="applyFilters($event, 'destinies')">
+              </suite-filter-button>
+            </th>
+            <td class="mobile" mat-cell *matCellDef="let item">
+              {{ item?.destinyWarehouse }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="!isMobileApp" matColumnDef="destiny">
+            <th class="normal" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('destiny')">Destino</span>
+              <suite-filter-button #filterButtonDestinies class="filter" [title]="'Destino'" [listItems]="destinies"
+                                   [isFiltering]="isFilteringDestinies != destinies.length"
+                                   (applyFilters)="applyFilters($event, 'destinies')">
+              </suite-filter-button>
+            </th>
+            <td class="normal" mat-cell *matCellDef="let item">
+              {{ item?.destinyWarehouse }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="isMobileApp" matColumnDef="dateSend">
+            <th class="mobile" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('dateSend')">Fecha y hora envío</span>
+              <suite-filter-button #filterButtonDatesSend class="filter" [title]="'Fecha y hora envío'" [listItems]="datesSend"
+                                   [isFiltering]="isFilteringDatesSend != datesSend.length"
+                                   (applyFilters)="applyFilters($event, 'datesSend')">
+              </suite-filter-button>
+            </th>
+            <td class="mobile" mat-cell *matCellDef="let item">
+              {{ item?.dateSend | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="!isMobileApp" matColumnDef="dateSend">
+            <th class="normal" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('dateSend')">Fecha y hora envío</span>
+              <suite-filter-button #filterButtonDatesSend class="filter" [title]="'Fecha y hora envío'" [listItems]="datesSend"
+                                   [isFiltering]="isFilteringDatesSend != datesSend.length"
+                                   (applyFilters)="applyFilters($event, 'datesSend')">
+              </suite-filter-button>
+            </th>
+            <td class="normal" mat-cell *matCellDef="let item">
+              {{ item?.dateSend | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="isMobileApp" matColumnDef="dateReceive">
+            <th class="mobile" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('dateReceive')">Fecha y hora recepción</span>
+              <suite-filter-button #filterButtonDatesReceive class="filter" [title]="'Fecha y hora recepción'" [listItems]="datesReceive"
+                                   [isFiltering]="isFilteringDatesReceive != datesReceive.length"
+                                   (applyFilters)="applyFilters($event, 'datesReceive')">
+              </suite-filter-button>
+            </th>
+            <td class="mobile" mat-cell *matCellDef="let item">
+              {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <ng-container *ngIf="!isMobileApp" matColumnDef="dateReceive">
+            <th class="normal" mat-header-cell *matHeaderCellDef>
+              <span class="title" (click)="sort('dateReceive')">Fecha y hora recepción</span>
+              <suite-filter-button #filterButtonDatesReceive class="filter" [title]="'Fecha y hora recepción'" [listItems]="datesReceive"
+                                   [isFiltering]="isFilteringDatesReceive != datesReceive.length"
+                                   (applyFilters)="applyFilters($event, 'datesReceive')">
+              </suite-filter-button>
+            </th>
+            <td class="normal" mat-cell *matCellDef="let item">
+              {{ item?.dateReceive | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+      </table>
+    </div>
+   <ion-fab *ngIf="valueWarehouse" vertical="bottom" horizontal="end" class="horizontal-fab">
+     <ion-fab-button matTooltip="Descargar Excel" matTooltipClass="tooltip" color="primary" (click)="fileExcell()">
+       <ion-icon name="document"></ion-icon>
+     </ion-fab-button>
+   </ion-fab>
+
+   <suite-paginator [pagerValues]="pagerValues" *ngIf="valueWarehouse"></suite-paginator>
 </ion-content>
