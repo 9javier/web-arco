@@ -1,5 +1,5 @@
 {
-	"features": [
+  "features": [
     {
       "group": "9",
       "id": "116",
@@ -9,6 +9,11 @@
       "group": "9",
       "id": "117",
       "name": "-"
+    },
+    {
+      "group": "9",
+      "id": "118",
+      "name": "Tacón 3 cm"
     },
     {
       "group": "9",
@@ -74,6 +79,11 @@
       "group": "6",
       "id": "137",
       "name": "Piel y textil"
+    },
+    {
+      "group": "6",
+      "id": "138",
+      "name": "Desconocido"
     },
     {
       "group": "6",
@@ -151,14 +161,444 @@
       "name": "TÉXTIL-SINTÉTICO-PIEL"
     },
     {
+      "group": "9",
+      "id": "314",
+      "name": "40x32 cm"
+    },
+    {
       "group": "7",
       "id": "347",
       "name": "Textil, sintético y piel"
     },
     {
       "group": "14",
+      "id": "560",
+      "name": "Hombre"
+    },
+    {
+      "group": "14",
+      "id": "564",
+      "name": "Niña"
+    },
+    {
+      "group": "14",
+      "id": "565",
+      "name": "Niño"
+    },
+    {
+      "group": "14",
       "id": "566",
       "name": "Mujer"
+    },
+    {
+      "group": "14",
+      "id": "567",
+      "name": "Unisex"
+    },
+    {
+      "group": "9",
+      "id": "577",
+      "name": "SPORT DEPORTIVO RUNNING"
+    },
+    {
+      "group": "9",
+      "id": "578",
+      "name": "SPORT DEPORTIVO RETRO RUNNING"
+    },
+    {
+      "group": "9",
+      "id": "579",
+      "name": "SPORT DEPORTIVO STREET "
+    },
+    {
+      "group": "9",
+      "id": "580",
+      "name": "CORE ZAPATO DEPORTIVO BAMBA"
+    },
+    {
+      "group": "9",
+      "id": "581",
+      "name": "CORE BOTÍN DEPORTIVO BAMBA"
+    },
+    {
+      "group": "9",
+      "id": "582",
+      "name": "CORE ZAPATO DEPORTIVO CASUAL"
+    },
+    {
+      "group": "9",
+      "id": "583",
+      "name": "TIMELESS ZAPATO DEPORTIVO CASUAL"
+    },
+    {
+      "group": "9",
+      "id": "584",
+      "name": "CORE BOTÍN DEPORTIVO CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "585",
+      "name": "TIMELESS BOTÍN DEPORTIVO CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "586",
+      "name": "CORE ALPARGATA ESPARTO HOMBRE"
+    },
+    {
+      "group": "9",
+      "id": "587",
+      "name": "TIMELESS ALPARGATA ESPARTO HOMBR"
+    },
+    {
+      "group": "9",
+      "id": "588",
+      "name": "CORE SLIPPERS"
+    },
+    {
+      "group": "9",
+      "id": "589",
+      "name": "CORE SANDALIA HOMBRE "
+    },
+    {
+      "group": "9",
+      "id": "590",
+      "name": "TIMELESS SANDALIA HOMBRE "
+    },
+    {
+      "group": "9",
+      "id": "591",
+      "name": "CORE NÁUTICO BLUCHER"
+    },
+    {
+      "group": "9",
+      "id": "592",
+      "name": "TIMELESS NÁUTICO BLUCHER"
+    },
+    {
+      "group": "9",
+      "id": "593",
+      "name": "CONFORT NÁUTICO BLUCHER"
+    },
+    {
+      "group": "9",
+      "id": "594",
+      "name": "CORE NÁUTICO COPETE "
+    },
+    {
+      "group": "9",
+      "id": "595",
+      "name": "TIMELESS NÁUTICO COPETE "
+    },
+    {
+      "group": "9",
+      "id": "596",
+      "name": "CONFORT NÁUTICO COPETE "
+    },
+    {
+      "group": "9",
+      "id": "597",
+      "name": "CONFORT TIMBERLAND "
+    },
+    {
+      "group": "9",
+      "id": "598",
+      "name": "CONFORT ZAPATO DEPORTIVO CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "599",
+      "name": "CONFORT BOTÍN DEPORTIVO CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "600",
+      "name": "CORE ZAPATO BLUCHER CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "601",
+      "name": "TIMELESS ZAPATO BLUCHER CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "602",
+      "name": "CONFORT ZAPATO BLUCHER CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "603",
+      "name": "CONFORT ZAPATO COPETE CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "604",
+      "name": "CORE BOTÍN BLUCHER CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "605",
+      "name": "TIMELESS BOTÍN BLUCHER CASUAL"
+    },
+    {
+      "group": "9",
+      "id": "606",
+      "name": "CONFORT BOTÍN BLUCHER CASUAL"
+    },
+    {
+      "group": "9",
+      "id": "607",
+      "name": "CONFORT ZAPATO BLUCHER CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "608",
+      "name": "CONFORT COPETE CLÁSICO "
+    },
+    {
+      "group": "9",
+      "id": "609",
+      "name": "CONFORT BOTÍN BLUCHER CASUAL "
+    },
+    {
+      "group": "9",
+      "id": "610",
+      "name": "TIMELESS ZAPATO BLUCHER SLIM "
+    },
+    {
+      "group": "9",
+      "id": "611",
+      "name": "TIMELESS BOTÍN BLUCHER SLIM "
+    },
+    {
+      "group": "9",
+      "id": "612",
+      "name": "TIMELESS MOCASÍN HOMBRE "
+    },
+    {
+      "group": "9",
+      "id": "613",
+      "name": "TIMELESS BOTÍN BLUCHER FORMAL "
+    },
+    {
+      "group": "9",
+      "id": "614",
+      "name": "TIMELESS ZAPATO BLUCHER FORMAL "
+    },
+    {
+      "group": "9",
+      "id": "615",
+      "name": "TIMELESS BOTA FORMAL "
+    },
+    {
+      "group": "9",
+      "id": "616",
+      "name": "TIMELESS ZAPATOS VESTIR \"TRAJE\" "
+    },
+    {
+      "group": "9",
+      "id": "617",
+      "name": "CORE DEPORTIVO MONTAÑA "
+    },
+    {
+      "group": "9",
+      "id": "618",
+      "name": "CORE BOTÍN MONTAÑA "
+    },
+    {
+      "group": "9",
+      "id": "619",
+      "name": "CORE BOTA/ZAPATO MARTENS "
+    },
+    {
+      "group": "9",
+      "id": "620",
+      "name": "CORE BOTÍN/ZAPATO PANAMA"
+    },
+    {
+      "group": "9",
+      "id": "621",
+      "name": "CORE BOTA PANAMA"
+    },
+    {
+      "group": "9",
+      "id": "622",
+      "name": "CONFORT OUTDOOR"
+    },
+    {
+      "group": "9",
+      "id": "626",
+      "name": "SPORT ZAP/BOTÍN DEPORT CLASSIC "
+    },
+    {
+      "group": "9",
+      "id": "627",
+      "name": "SPORT DEPORTIVO BAMBA (WOMAN) "
+    },
+    {
+      "group": "9",
+      "id": "628",
+      "name": "CONFORT SANDALIA HOMBRE "
+    },
+    {
+      "group": "9",
+      "id": "629",
+      "name": "CONFORT ZAPATO BLUCHER CLASICO"
+    },
+    {
+      "group": "9",
+      "id": "630",
+      "name": "CASTELLANOS"
+    },
+    {
+      "group": "9",
+      "id": "631",
+      "name": "CORE BOTA/BOTÍN WORKER "
+    },
+    {
+      "group": "9",
+      "id": "632",
+      "name": "CONFORT MOCASÍN"
+    },
+    {
+      "group": "9",
+      "id": "635",
+      "name": "delete"
+    },
+    {
+      "group": "16",
+      "id": "658",
+      "name": "BAILARINA"
+    },
+    {
+      "group": "16",
+      "id": "659",
+      "name": "BOTA ALTA"
+    },
+    {
+      "group": "16",
+      "id": "660",
+      "name": "BOTA CABALLERO"
+    },
+    {
+      "group": "16",
+      "id": "661",
+      "name": "BOTA DE AGUA"
+    },
+    {
+      "group": "16",
+      "id": "662",
+      "name": "BOTA DE MONTAÑA"
+    },
+    {
+      "group": "16",
+      "id": "663",
+      "name": "BOTA MEDIA CAÑA"
+    },
+    {
+      "group": "16",
+      "id": "664",
+      "name": "BOTAS ESQUIMALES"
+    },
+    {
+      "group": "16",
+      "id": "665",
+      "name": "BOTIN CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "666",
+      "name": "BOTIN CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "667",
+      "name": "BOTIN PLANO"
+    },
+    {
+      "group": "16",
+      "id": "668",
+      "name": "CHANCLA"
+    },
+    {
+      "group": "16",
+      "id": "669",
+      "name": "COLEGIAL"
+    },
+    {
+      "group": "16",
+      "id": "670",
+      "name": "COMPLEMENTOS"
+    },
+    {
+      "group": "16",
+      "id": "671",
+      "name": "DEPORTIVAS"
+    },
+    {
+      "group": "16",
+      "id": "672",
+      "name": "ESPARTO CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "673",
+      "name": "ESPARTO PLANO"
+    },
+    {
+      "group": "16",
+      "id": "674",
+      "name": "MOCASIN"
+    },
+    {
+      "group": "16",
+      "id": "675",
+      "name": "NAUTICO"
+    },
+    {
+      "group": "16",
+      "id": "676",
+      "name": "SALÓN"
+    },
+    {
+      "group": "16",
+      "id": "677",
+      "name": "SANDALIA CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "678",
+      "name": "SANDALIA PLANAFORMA"
+    },
+    {
+      "group": "16",
+      "id": "679",
+      "name": "SANDALIA TACON"
+    },
+    {
+      "group": "16",
+      "id": "680",
+      "name": "ZAPATILLA"
+    },
+    {
+      "group": "16",
+      "id": "681",
+      "name": "ZAPATO CUÑA"
+    },
+    {
+      "group": "16",
+      "id": "682",
+      "name": "ZAPATO PLANO"
+    },
+    {
+      "group": "16",
+      "id": "683",
+      "name": "ZAPATO TACÓN"
+    },
+    {
+      "group": "16",
+      "id": "684",
+      "name": "ZUECO"
     },
     {
       "group": "16",
@@ -262,6 +702,11 @@
     },
     {
       "group": "16",
+      "id": "705",
+      "name": "ROPA"
+    },
+    {
+      "group": "16",
       "id": "706",
       "name": "SALÓN"
     },
@@ -312,8 +757,18 @@
     },
     {
       "group": "14",
+      "id": "716",
+      "name": "Consumibles"
+    },
+    {
+      "group": "14",
       "id": "717",
       "name": "Productos limpieza"
+    },
+    {
+      "group": "14",
+      "id": "718",
+      "name": "No asignado"
     },
     {
       "group": "14",
@@ -352,12 +807,37 @@
     },
     {
       "group": "7",
+      "id": "726",
+      "name": "VEGANO"
+    },
+    {
+      "group": "16",
+      "id": "727",
+      "name": "LONAS BAMBAS"
+    },
+    {
+      "group": "7",
       "id": "729",
       "name": "Amphibiox"
+    },
+    {
+      "group": "7",
+      "id": "730",
+      "name": "ImacTex"
+    },
+    {
+      "group": "7",
+      "id": "731",
+      "name": "ImacTex"
+    },
+    {
+      "group": "16",
+      "id": "742",
+      "name": "GAFAS"
     }
   ],
 
-	"colors": [
+  "colors": [
     {
       "id": "189",
       "name": "Acero"
@@ -588,7 +1068,7 @@
     }
   ],
 
-	"brands": [
+  "brands": [
     {
       "id": "345",
       "name": "ADIDAS"
@@ -1287,14 +1767,46 @@
     }
   ],
 
-	"sizes": [
+  "sizes": [
+    {
+      "id": "255",
+      "name": " "
+    },
+    {
+      "id": "298",
+      "name": ""
+    },
+    {
+      "id": "330",
+      "name": "0/12"
+    },
     {
       "id": "329",
       "name": "100"
     },
     {
+      "id": "274",
+      "name": "15"
+    },
+    {
+      "id": "275",
+      "name": "16"
+    },
+    {
+      "id": "271",
+      "name": "17"
+    },
+    {
+      "id": "282",
+      "name": "17.5"
+    },
+    {
       "id": "272",
       "name": "18"
+    },
+    {
+      "id": "283",
+      "name": "18.5"
     },
     {
       "id": "273",
@@ -1307,6 +1819,10 @@
     {
       "id": "256",
       "name": "20"
+    },
+    {
+      "id": "276",
+      "name": "20.5"
     },
     {
       "id": "257",
@@ -1385,6 +1901,10 @@
       "name": "29"
     },
     {
+      "id": "281",
+      "name": "29.5"
+    },
+    {
       "id": "266",
       "name": "30"
     },
@@ -1409,8 +1929,16 @@
       "name": "32"
     },
     {
+      "id": "289",
+      "name": "32.5"
+    },
+    {
       "id": "269",
       "name": "33"
+    },
+    {
+      "id": "290",
+      "name": "33.5"
     },
     {
       "id": "270",
@@ -1505,6 +2033,10 @@
       "name": "43"
     },
     {
+      "id": "245",
+      "name": "43.5"
+    },
+    {
       "id": "233",
       "name": "44"
     },
@@ -1517,12 +2049,44 @@
       "name": "45"
     },
     {
+      "id": "247",
+      "name": "45.5"
+    },
+    {
       "id": "235",
       "name": "46"
     },
     {
+      "id": "248",
+      "name": "46.5"
+    },
+    {
       "id": "251",
       "name": "47"
+    },
+    {
+      "id": "252",
+      "name": "47.5"
+    },
+    {
+      "id": "253",
+      "name": "48"
+    },
+    {
+      "id": "318",
+      "name": "48.5"
+    },
+    {
+      "id": "254",
+      "name": "49"
+    },
+    {
+      "id": "325",
+      "name": "80"
+    },
+    {
+      "id": "326",
+      "name": "85"
     },
     {
       "id": "327",
@@ -1537,7 +2101,7 @@
       "name": "L"
     },
     {
-      "id": "305",
+      "id": "321",
       "name": "M"
     },
     {
@@ -1545,12 +2109,20 @@
       "name": "S"
     },
     {
-      "id": "230",
+      "id": "313",
       "name": "U"
     },
     {
-      "id": "313",
-      "name": "U"
+      "id": "323",
+      "name": "XL"
+    },
+    {
+      "id": "319",
+      "name": "XS"
+    },
+    {
+      "id": "324",
+      "name": "XXL"
     }
   ]
 }
