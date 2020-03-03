@@ -144,7 +144,8 @@ export namespace WorkwaveModel {
     pickingId: number,
     pickingTypeId?: PickingType,
     quantityShoes: string,
-    temporary: boolean
+    temporary: boolean,
+    deliveryRequest?: boolean
   }
 
   export interface TeamAssignations {
@@ -156,7 +157,8 @@ export namespace WorkwaveModel {
     pickingId: number,
     pickingTypeId: string,
     quantityShoes: string,
-    requestId: number,
+    requestId?: number,
+    deliveryRequestId?: number,
     requestReference: number,
     destinyShopId: number
   }
@@ -260,10 +262,14 @@ export namespace WorkwaveModel {
     destinyWarehouse: WarehouseModel.Warehouse,
     quantityMatchWarehouse: number,
     quantityOrder: string,
-    request: {
+    request?: {
       id: number,
       requestId: number,
       date: string
+    },
+    deliveryRequest?: {
+      id: number,
+      externalId: string
     },
     preparationLinesTypes: {
       id: number,
@@ -278,6 +284,7 @@ export namespace WorkwaveModel {
   // Get users-assignations for online and store requests
   export interface ParamsAssignUserToMatchLineRequestOnlineStore {
     requestIds: number[],
+    deliveryRequestIds: number[],
     userIds: number[]
   }
   export interface AssignUserToMatchLineRequestOnlineStore {
@@ -292,6 +299,7 @@ export namespace WorkwaveModel {
   export interface ParamsConfirmMatchLineRequestOnlineStore {
     type: number,
     requestIds: number[],
+    deliveryRequestIds: number[],
     userIds: number[]
   }
   export interface ConfirmMatchLineRequestOnlineStore {

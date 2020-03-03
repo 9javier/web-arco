@@ -50,7 +50,7 @@
         [matTooltip]="tooltipValue"
         [matTooltipDisabled]="tooltipValue == null"
         (mouseover)="showConsolidatedBreakdown(assignation.pickingId)">
-        <div class="tile-value">{{assignation.quantityShoes}}</div>
+        <div class="tile-value">{{assignation.quantityShoes}}{{assignation.deliveryRequest ? ' (DOMICILIO)' : ' (TIENDA)'}}</div>
       </mat-grid-tile>
     </mat-grid-list>
   </div>
