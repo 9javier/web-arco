@@ -174,6 +174,14 @@ const routes: Routes = [
     }
   },
   {
+    path: 'defective-registry',
+    canActivate: [AuthGuard],
+    loadChildren: '../../../../libs/modules/src/defective-registry/defective-registry.module#DefectiveRegistryModule',
+    data: {
+      name: 'Registro de Defectuosos'
+    }
+  },
+  {
     path: 'warehouses/halls',
     canActivate: [AuthGuard],
     loadChildren: '../../../../libs/modules/src/halls/halls.module#HallsModule',
@@ -245,22 +253,6 @@ const routes: Routes = [
     loadChildren: '../../../../libs/modules/src/global-variables/global-variables.module#GlobalVariablesModule',
     data: {
       name: 'Variables globales'
-    }
-  },
-  {
-    path: 'damaged-shoes',
-    canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/damaged-shoes/damaged-shoes.module#DamagedShoesModule',
-    data: {
-      name: 'Parametrización de Daños'
-    }
-  },
-  {
-    path: 'defective-management',
-    canActivate: [AuthGuard],
-    loadChildren: '../../../../libs/modules/src/defective-management/defective-management.module#DefectiveManagementModule',
-    data: {
-      name: 'Gestión Defectuosos'
     }
   },
   {
@@ -382,7 +374,7 @@ const routes: Routes = [
       name: 'Recepciones'
     }
   },
-  { 
+  {
     path:'reception-final',
     canActivate:[AuthGuard],
     loadChildren: '../../../../libs/modules/src/reception-final/reception-final.module#ReceptionFinalModule',
