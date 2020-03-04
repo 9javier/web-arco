@@ -7,6 +7,10 @@ export namespace DefectiveManagementModel {
         updatedAt: string;
         id: number;
         name: string;
+        deletedChild?: boolean;
+        updateChild?: boolean;
+        addedChild?: boolean;
+        open?: boolean;
         defectTypeChild: Array<DefectiveManagementChildModel.DefectiveManagementChild>
     }
 
