@@ -27,8 +27,8 @@ input[type=number] {
 }
 
 .greenB {
-  background-color: #00ff00;
+  --background: var(--ion-color-receptions-green);
 }
 .orangeB {
-  background-color: #ff8000;
+  --background: var(--ion-color-receptions-orange);
 }
