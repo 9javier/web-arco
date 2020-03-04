@@ -21,7 +21,8 @@ import { DefectiveRegistryModel } from '../../../models/endpoints/DefectiveRegis
 })
 export class DefectiveRegistryService {
   private baseUrl: string;
-  private indexUrl: string;
+  private indexRegistryHistoricFalseUrl: string;
+  private indexHistoricTrueUrl: string;
   private entitiesFiltersUrl: string;
 
   private index2Url: string;
@@ -30,7 +31,8 @@ export class DefectiveRegistryService {
   private updateBlockReservedUrl2: string;
   constructor(private http: HttpClient) {
     this.baseUrl = environment.apiSorter;
-    this.indexUrl = `${this.baseUrl}/defects/registry/all`;
+    this.indexRegistryHistoricFalseUrl = `${this.baseUrl}/defects/registry/all/false`;
+    this.indexHistoricTrueUrl = `${this.baseUrl}/defects/registry/all`;
     this.entitiesFiltersUrl = `${this.baseUrl}/defects/registry/filters`;
 
     this.entitiesUrl = `${this.baseUrl}/reception/expedition/lines-destiny-impress/entites`;
@@ -39,8 +41,14 @@ export class DefectiveRegistryService {
 
   }
 
-  index(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
-    return this.http.post<HttpRequestModel.Response>(this.indexUrl,body).pipe(
+  indexHistoricTrue(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
+    return this.http.post<HttpRequestModel.Response>(this.indexHistoricTrueUrl,body).pipe(
+      map(resp => resp.data)
+    )
+  }
+
+  indexHistoricFalse(body: DefectiveRegistryModel.IndexRequest): Observable<DefectiveRegistryModel.DataSource> {
+    return this.http.post<HttpRequestModel.Response>(this.indexRegistryHistoricFalseUrl,body).pipe(
       map(resp => resp.data)
     )
   }

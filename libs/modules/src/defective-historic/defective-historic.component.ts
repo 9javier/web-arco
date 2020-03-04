@@ -13,11 +13,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
 
 @Component({
-  selector: 'suite-defective-registry',
-  templateUrl: './defective-registry.component.html',
-  styleUrls: ['./defective-registry.component.scss'],
+  selector: 'suite-defective-historic',
+  templateUrl: './defective-historic.component.html',
+  styleUrls: ['./defective-historic.component.scss'],
 })
-export class DefectiveRegistryComponent implements OnInit {
+export class DefectiveHistoricComponent implements OnInit {
   @ViewChild(PaginatorComponent) paginator: PaginatorComponent;
   @ViewChild(MatSort) sort: MatSort;
   displayedColumns: string[] = ['select','storeDetection','dateDetection','statusManagementDefect','defectTypeParent','defectTypeChild','numberObservations','barCode','photo','warehouse','factoryReturn'];
@@ -174,7 +174,7 @@ export class DefectiveRegistryComponent implements OnInit {
   }
 
   async getColumns(form?: FormGroup){
-    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe(
+    this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe(
       (resp:any) => {
         resp.filters.forEach(element => {
           this.columns[element.name] = element.id;
@@ -248,7 +248,7 @@ export class DefectiveRegistryComponent implements OnInit {
   }
 
   async getList(form?: FormGroup){
-    this.defectiveRegistryService.indexHistoricFalse(form.value).subscribe((resp:any) => {
+    this.defectiveRegistryService.indexHistoricTrue(form.value).subscribe((resp:any) => {
         if (resp.results) {
           this.dataSource = new MatTableDataSource<DefectiveRegistryModel.DefectiveRegistry>(resp.results);
           const paginator = resp.pagination;
