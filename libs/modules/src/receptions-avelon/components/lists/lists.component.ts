@@ -31,7 +31,7 @@ export class ListsComponent implements OnInit {
     }
     list.subscribe(datos => {
       setTimeout(() => {
-        this.data = datos;
+        this.data = datos.sort((a, b) => a.name.trim().localeCompare(b.name.trim()));
         this.data.forEach(elem => {
           if (elem.selected) {
             this.seleccionado.emit(elem);

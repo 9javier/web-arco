@@ -19,7 +19,7 @@ export class FilterItemsListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.originaListItems = JSON.parse(JSON.stringify(this.listItems));
+    this.originaListItems = JSON.parse(JSON.stringify(this.listItems.sort((a, b) => a.name.trim().localeCompare(b.name.trim()))));
   }
 
   public close() {
