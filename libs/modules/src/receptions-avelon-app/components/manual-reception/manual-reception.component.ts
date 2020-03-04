@@ -13,6 +13,7 @@ import {ToolbarProvider} from "../../../../../services/src/providers/toolbar/too
 import {PrinterService} from "../../../../../services/src/lib/printer/printer.service";
 import {ModalModelImagesComponent} from "../modal-model-images/modal-model-images.component";
 import {PositionsToast} from "../../../../../services/src/models/positionsToast.type";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'suite-manual-reception',
@@ -49,7 +50,8 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     private printerService: PrinterService,
     private intermediaryService: IntermediaryService,
     private receptionAvelonProvider: ReceptionAvelonProvider,
-    private toolbarProvider: ToolbarProvider
+    private toolbarProvider: ToolbarProvider,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -434,6 +436,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
                     console.log('Print reference of reception successful two', resPrintTwo);
                   })
                 }
+                this.router.navigate(['receptions-avelon', 'app']);
               }, (error) => {
                 console.error('Some error success to print reference of reception', error);
               });
