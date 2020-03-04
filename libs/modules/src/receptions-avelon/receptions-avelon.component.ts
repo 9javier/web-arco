@@ -154,7 +154,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
     if(list) {
       list.forEach(item => {
-        dataList.push({id: item.id, value: item.name});
+        dataList.push({id: item.id, value: item.name, color: item.color});
       });
     }
 
