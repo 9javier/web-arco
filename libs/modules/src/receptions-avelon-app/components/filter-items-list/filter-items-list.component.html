@@ -19,7 +19,7 @@
 <ion-content>
   <mat-list>
     <mat-list-item matRipple (click)="selectItem(item)" *ngFor="let item of listItems">
-      <h4 mat-line>{{item.name}}</h4>
+      <h4 mat-line [ngClass]="{'green': item.color == 'green', 'orange': item.color == 'orange', 'red': item.color == 'red'}">{{item.name}}</h4>
     </mat-list-item>
   </mat-list>
 </ion-content>

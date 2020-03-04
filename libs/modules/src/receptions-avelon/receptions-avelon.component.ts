@@ -1,11 +1,6 @@
 import {AlertController, ModalController} from '@ionic/angular';
 import {Observable, Subscription} from 'rxjs';
-import {
-  ReceptionsAvelonService,
-  ReceptionAvelonModel,
-  IntermediaryService,
-  ProductsService, environment
-} from '@suite/services';
+import {ReceptionsAvelonService, ReceptionAvelonModel, IntermediaryService, ProductsService, environment} from '@suite/services';
 import {Component, OnInit, OnDestroy, ViewChild, AfterContentInit, ChangeDetectorRef, ElementRef, AfterViewInit} from '@angular/core';
 import { Type } from './enums/type.enum';
 import { VirtualKeyboardService } from '../components/virtual-keyboard/virtual-keyboard.service';
@@ -51,6 +46,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   public stateAnimationInfo: string = 'out';
 
   public expedit:string="";
+  expeditionLines: {
+    id: number,
+    state: number,
+    brandId: number,
+    modelId: number,
+    colorId: number
+  }[];
   response: ReceptionAvelonModel.Reception;
   oldBrands: ReceptionAvelonModel.Data[] = [];
   subscriptions: Subscription;
@@ -177,7 +179,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
     if(list) {
       list.forEach(item => {
-        dataList.push({id: item.id, value: item.name});
+        dataList.push({id: item.id, value: item.name, color: item.color});
       });
     }
 
@@ -225,22 +227,22 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
 
-  checkProvider(data: ReceptionAvelonModel.CheckProvider) {
-    this.intermediaryService.presentLoading('Cargando');
+  async checkProvider(data: ReceptionAvelonModel.CheckProvider) {
+    await this.intermediaryService.presentLoading('Cargando');
     this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
-        this.response = info;
-        this.response.brands = this.clearSelected(this.response.brands);
-        this.response.models = this.clearSelected(this.response.models);
-        this.response.colors = this.clearSelected(this.response.colors);
-        this.filterData.brands = this.clearSelected(info.brands);
-        this.filterData.models = this.clearSelected(info.models);
-        this.filterData.colors = this.clearSelected(info.colors);
-        this.filterData.sizes = this.clearSelected(info.sizes);
+      this.response = info;
+      this.expeditionLines = info.lines;
+      this.response.brands = this.clearSelected(this.response.brands);
+      this.response.models = this.clearSelected(this.response.models);
+      this.response.colors = this.clearSelected(this.response.colors);
+      this.filterData.brands = this.clearSelected(info.brands);
+      this.filterData.models = this.clearSelected(info.models);
+      this.filterData.colors = this.clearSelected(info.colors);
 
-        this.reset();
-        this.expedition = data.expedition;
-        this.intermediaryService.dismissLoading();
-      });
+      this.reset();
+      this.expedition = data.expedition;
+
+    },error => {}, async () => await this.intermediaryService.dismissLoading());
   }
 
   async alertMessage(message: string) {
@@ -363,7 +365,6 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
-
   reset(dato?: ReceptionAvelonModel.Data) {
     this.response.models = this.filterData.models;
     this.response.colors = this.filterData.colors;
@@ -393,6 +394,12 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.expedit =this.expedition;
     this.result.ean="";
     this.listSizes = [];
+  }
+
+  resetSizes(){
+    for(let size of this.listSizes){
+      size.quantity = 0;
+    }
   }
 
   goBack(type: string) {
@@ -487,6 +494,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.goBack('colors');
             }
           }
+          this.getModelAndColorColors(this.result.brandId);
           break;
         case 'models':
           if (event.dato.selected) {
@@ -506,6 +514,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.goBack('colors');
             }
           }
+          this.getColorColors(this.result.modelId);
           break;
         case 'colors':
           if (event.dato.selected) {
@@ -530,6 +539,87 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
 
     });
+  }
+
+  getModelAndColorColors(brandId: number){
+    let greenModels: number[] = [];
+    let orangeModels: number[] = [];
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!brandId || line.brandId == brandId){
+        if(line.state == 2){
+          if(!greenModels.includes(line.modelId)){
+            greenModels.push(line.modelId);
+          }
+          if(!greenColors.includes(line.colorId)){
+            greenColors.push(line.colorId);
+          }
+        }else{
+          if(!orangeModels.includes(line.modelId)){
+            orangeModels.push(line.modelId);
+          }
+          if(!orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
+      }
+    }
+    orangeModels = orangeModels.filter(model => {return !greenModels.includes(model)});
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let model of this.response.models){
+      if(greenModels.includes(model.id)){
+        model.color = 'green';
+      }else{
+        if(orangeModels.includes(model.id)){
+          model.color = 'orange';
+        }else{
+          model.color = 'red';
+        }
+      }
+    }
+    for(let color of this.response.colors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
+    this.reception.setModelsList(this.response.models);
+    this.reception.setColorsList(this.response.colors);
+  }
+
+  getColorColors(modelId: number){
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!modelId || line.modelId == modelId){
+        if(line.state == 2 && !greenColors.includes(line.colorId)){
+          greenColors.push(line.colorId);
+        }else{
+          if(line.state != 2 && !orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
+      }
+    }
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let color of this.response.colors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
+    this.reception.setColorsList(this.response.colors);
   }
 
   public printProductsLoading() {
@@ -592,11 +682,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
         item => item.id === element.id
       );
       if (findIndexResult >= 0) {
-        if (element.newSelectd) {
-          array[findIndexResult].newSelectd = element.newSelectd;
+        if (element.newSelected) {
+          array[findIndexResult].newSelected = element.newSelected;
         }
       } else {
-        element.newSelectd = true;
+        element.newSelected = true;
         array.push(element);
       }
     });
@@ -667,11 +757,11 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
             }
           });
 
-          modal.onDidDismiss().then(response => {
+          modal.onDidDismiss().then(async response => {
             if (response.data && response.data.reception) {
               this.showCheck = false;
               this.isReceptionStarted = true;
-              this.checkProvider(data);
+              await this.checkProvider(data);
             }
           });
 
@@ -686,12 +776,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   private loadSizes() {
     this.reception
-      .postLoadSizesList({
-        providerId: this.providerId,
-        modelId: this.result.modelId,
-        colorId: this.result.colorId,
-        brandId: this.result.brandId
-      })
+      .postLoadSizesList({modelId: this.result.modelId, colorId: this.result.colorId})
       .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
         if (res.code == 200) {
           this.listSizes = res.data;

@@ -63,3 +63,21 @@ button.fab.simple {
   bottom: 16px;
   left: 16px;
 }
+
+.sizes{
+  ion-button{
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+.green{
+  color: var(--ion-color-receptions-green);
+}
+.orange{
+  color: var(--ion-color-receptions-orange);
+}
+.red{
+  color: var(--ion-color-receptions-red);
+}

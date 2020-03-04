@@ -3,15 +3,28 @@
   overflow-y: scroll;
 }
 
-.selected {
-  --background: #249f29;
-  color: #ffffff;
+.green{
+  color: var(--ion-color-receptions-green);
 }
-.unselected {
-  --background: #00000000;
+.orange{
+  color: var(--ion-color-receptions-orange);
+}
+.red{
+  color: var(--ion-color-receptions-red);
+}
+.white{
+  color: var(--ion-color-receptions-white);
 }
 
-.newSelected {
-  --background: darkblue;
-  color: #ffffff;
+.greenB {
+  --background: var(--ion-color-receptions-green);
+}
+.orangeB {
+  --background: var(--ion-color-receptions-orange);
+}
+.redB {
+  --background: var(--ion-color-receptions-red);
+}
+.whiteB {
+  --background: var(--ion-color-receptions-white);
 }

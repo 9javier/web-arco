@@ -9,7 +9,7 @@ import {ModalController} from "@ionic/angular";
 export class FilterItemsListComponent implements OnInit {
 
   public filterListType: string = '';
-  public listItems: {id: number, name: string}[] = [];
+  public listItems: {id: number, name: string, color: string}[] = [];
   public searchText: string = null;
 
   private originaListItems = [];

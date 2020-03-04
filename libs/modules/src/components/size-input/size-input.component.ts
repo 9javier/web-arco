@@ -10,7 +10,15 @@ import { app } from '../../../../services/src/environments/environment';
 })
 export class SizeInputComponent implements OnInit {
 
-  @Input() item: any = null;
+  @Input() item: {
+    id: number,
+    number: string,
+    name: string,
+    reference: string,
+    available: boolean,
+    quantity: number,
+    color: string
+  } = null;
 
   constructor(
     private virtualKeyboardService: VirtualKeyboardService

@@ -5,18 +5,25 @@ export namespace ReceptionAvelonModel {
     id: number;
     name: string;
     selected: boolean;
-    newSelectd?: boolean
+    newSelected?: boolean
     belongsModels?: Array<number>
     state?:number;
     available_ids?: number[],
-    photos_models?: any
+    photos_models?: any,
+    color?: string
   }
 
   export interface Reception {
-    brands: Array<Data>;
-    models: Array<Data>;
-    colors: Array<Data>;
-    sizes: Array<Data>;
+    brands: Array<Data>,
+    models: Array<Data>,
+    colors: Array<Data>,
+    lines: {
+      id: number,
+      state: number,
+      brandId: number,
+      modelId: number,
+      colorId: number
+    }[],
     ean: string,
     image?: string
   }
@@ -81,9 +88,7 @@ export namespace ReceptionAvelonModel {
   //region LoadSizesList
   export interface ParamsLoadSizesList {
     modelId: number,
-    colorId: number,
-    providerId: number,
-    brandId: number
+    colorId: number
   }
   export interface LoadSizesList {
     id: number,
@@ -91,7 +96,8 @@ export namespace ReceptionAvelonModel {
     name: string,
     reference: string,
     available: boolean,
-    quantity: number
+    quantity: number,
+    color?: string
   }
   export interface ResponseLoadSizesList extends HttpRequestModel.Response {
     data: LoadSizesList[]
