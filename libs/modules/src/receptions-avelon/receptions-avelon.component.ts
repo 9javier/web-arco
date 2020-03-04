@@ -16,11 +16,27 @@ import {map, startWith} from "rxjs/operators";
 import {InfoModalComponent} from "./info-modal/info-modal.component";
 import {PositionsToast} from "../../../services/src/models/positionsToast.type";
 import {ScreenResult} from "./enums/screen_result.enum";
+import {FormHeaderReceptionComponent} from "./components/form-header-reception/form-header-reception.component";
+import {InfoHeaderReceptionComponent} from "./components/info-header-reception/info-header-reception.component";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'suite-receptions-avelon',
   templateUrl: './receptions-avelon.component.html',
-  styleUrls: ['./receptions-avelon.component.scss']
+  styleUrls: ['./receptions-avelon.component.scss'],
+  animations: [
+    trigger('fadein', [
+      state('out', style({ opacity: 0, display: 'none' })),
+      transition('in => out', [
+        style({ opacity: 1, display: 'flex' }),
+        animate('300ms ease-out', style({ opacity: 0, display: 'none' }))
+      ]),
+      transition('out => in', [
+        style({ opacity: 0, display: 'none' }),
+        animate('1ms ease-out', style({ opacity: 1, display: 'flex' }))
+      ])
+    ])
+  ]
 })
 export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterContentInit, AfterViewInit{
 
@@ -28,13 +44,18 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   @ViewChild('provider') providerInput: ElementRef;
   @ViewChild('expedition') expeditionInput: ElementRef;
   @ViewChild('ean') eanInput: ElementRef;
+  @ViewChild(FormHeaderReceptionComponent) formHeaderReceptionComponent: FormHeaderReceptionComponent;
+  @ViewChild(InfoHeaderReceptionComponent) infoHeaderReceptionComponent: InfoHeaderReceptionComponent;
+
+  public stateAnimationForm: string = 'in';
+  public stateAnimationInfo: string = 'out';
 
   public expedit:string="";
   response: ReceptionAvelonModel.Reception;
   oldBrands: ReceptionAvelonModel.Data[] = [];
   subscriptions: Subscription;
   providers: Array<any>;
-  isProviderAvailable: boolean;
+  isReceptionStarted: boolean;
   expedition: string;
   providerId: number;
   interval: any;
@@ -83,11 +104,15 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   }
 
-  returnHome(){
-    this.providerInput.nativeElement.value = "";
-    this.expeditionInput.nativeElement.value = "";
+  resetReceptionProcess(){
     this.eanInput.nativeElement.value = "";
     this.listSizes = [];
+
+    this.stateAnimationForm = 'in';
+    this.stateAnimationInfo = 'out';
+    this.isReceptionStarted = false;
+    this.formHeaderReceptionComponent.resetProcess();
+    this.infoHeaderReceptionComponent.loadInfoExpedition(null, null);
 
     this.ngOnInit();
   }
@@ -111,7 +136,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     this.filterData = new Reception();
     this.typeScreen = undefined;
     this.referencesToPrint = [];
-    this.isProviderAvailable = false;
+    this.isReceptionStarted = false;
     this.subscriptions = this.reception.getAllProviders().subscribe(
       (data: Array<ReceptionAvelonModel.Providers>) => {
         this.providers = data;
@@ -645,14 +670,14 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
           modal.onDidDismiss().then(response => {
             if (response.data && response.data.reception) {
               this.showCheck = false;
-              this.isProviderAvailable = true;
+              this.isReceptionStarted = true;
               this.checkProvider(data);
             }
           });
 
           modal.present();
         }else{
-          this.isProviderAvailable = false;
+          this.isReceptionStarted = false;
           this.alertMessage('No se ha encontrado esa expedición');
         }
       });
@@ -839,5 +864,107 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     } else {
       return '../assets/img/placeholder-product.jpg';
     }
+  }
+
+  public checkExpedition(data) {
+    this.formHeaderReceptionComponent.checkingExpedition(true);
+    this.reception
+      .checkExpeditionByReference(data)
+      .subscribe(async (res) => {
+        if (res.code == 200) {
+          if (res.data.expedition_available) {
+            /*const modal = await this.modalController.create({
+              component: InfoModalComponent,
+              componentProps: {
+                expedition: res.data.expedition,
+                anotherExpeditions: res.data.another_expeditions
+              }
+            });
+            modal.onDidDismiss().then(response => {
+              if (response.data && response.data.reception) {
+                this.checkProvider(data);
+              }
+            });
+            modal.present();
+*/
+            this.formHeaderReceptionComponent.checkingExpedition(false);
+
+            // TODO test
+            this.stateAnimationForm = 'out';
+            this.stateAnimationInfo = 'in';
+            this.isReceptionStarted = true;
+            this.infoHeaderReceptionComponent.loadInfoExpedition(res.data.expedition.reference, {name: res.data.expedition.provider_name, id: res.data.expedition.provider_id.toString()});
+          } else {
+            this.isReceptionStarted = false;
+            this.alertMessage(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`);
+            this.formHeaderReceptionComponent.checkingExpedition(false);
+          }
+        } else {
+          this.stateAnimationForm = 'in';
+          this.stateAnimationInfo = 'out';
+          this.isReceptionStarted = false;
+          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formHeaderReceptionComponent.checkingExpedition(false);
+        }
+      }, (e) => {
+        this.stateAnimationForm = 'in';
+        this.stateAnimationInfo = 'out';
+        this.isReceptionStarted = false;
+        let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+        this.formHeaderReceptionComponent.checkingExpedition(false);
+      });
+  }
+
+  public listByProvider(data) {
+    this.formHeaderReceptionComponent.checkingProvider(true);
+    this.reception
+      .checkExpeditionsByProvider(data)
+      .subscribe((res) => {
+        if (res.code == 200) {
+          if (res.data.has_expeditions) {
+            this.formHeaderReceptionComponent.checkingProvider(false);
+
+            // TODO test
+            this.stateAnimationForm = 'out';
+            this.stateAnimationInfo = 'in';
+            this.isReceptionStarted = true;
+            this.infoHeaderReceptionComponent.loadInfoExpedition(res.data.expeditions[0].reference, {name: res.data.expeditions[0].provider_name, id: res.data.expeditions[0].provider_id.toString()});
+          } else {
+            this.stateAnimationForm = 'in';
+            this.stateAnimationInfo = 'out';
+            this.isReceptionStarted = false;
+            this.alertMessage(`No hay expediciones pendientes para el proveedor ${res.data.provider_queried}.`);
+            this.formHeaderReceptionComponent.checkingProvider(false);
+          }
+        } else {
+          this.stateAnimationForm = 'in';
+          this.stateAnimationInfo = 'out';
+          this.isReceptionStarted = false;
+          let errorMessage = 'Ha ocurrido un error al intentar consultar la expedición indicada.';
+          if (res.error && res.error.errors) {
+            errorMessage = res.error.errors;
+          }
+          this.intermediaryService.presentToastError(errorMessage);
+          this.formHeaderReceptionComponent.checkingProvider(false);
+        }
+      }, (e) => {
+        this.stateAnimationForm = 'in';
+        this.stateAnimationInfo = 'out';
+        this.isReceptionStarted = false;
+        let errorMessage = 'Ha ocurrido un error al intentar consultar las expediciones del proveedor.';
+        if (e.error && e.error.errors) {
+          errorMessage = e.error.errors;
+        }
+        this.intermediaryService.presentToastError(errorMessage);
+        this.formHeaderReceptionComponent.checkingProvider(false);
+      });
   }
 }

@@ -2,39 +2,12 @@
 
   <ng-container *ngIf="typeScreen == undefined; else screen">
     <div class="grid">
-      <div class="row form">
-        <form>
-          <div class="col">
-            <mat-form-field id="expeditionReference">
-              <mat-label>Nº Expedicion</mat-label>
-              <input #expedition [value]="expedit" type="text" matInput (focusin)="changeShowCheck()">
-            </mat-form-field>
-            <i slot="end" class="material-icons" (click)="openVirtualKeyboard(null, objectType.EXPEDITION_NUMBER)" id="expeditionKeyboard">keyboard</i>
-          </div>
-
-          <div class="col">
-            <mat-form-field id="providerSelector">
-              <mat-label>Proveedor</mat-label>
-              <input #provider type="text" matInput [formControl]="myControl"  [matAutocomplete]="auto" (focusin)="changeShowCheck()">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let provider of filteredProviders | async" [value]="provider">
-                  {{provider.name}}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-            <i slot="end" class="material-icons" (click)="openVirtualKeyboard(providers, objectType.PROVIDER)" id="providerKeyboard">keyboard</i>
-          </div>
-
-          <div class="col">
-            <div>
-              <ion-button (click)="loadProvider()" [ngClass]="showCheck ? '' : 'hide'">comprobar</ion-button>
-              <ion-button (click)="returnHome()" [ngClass]="isProviderAvailable ? '' : 'hide'">resetear</ion-button>
-            </div>
-          </div>
-        </form>
+      <div class="row headers">
+        <suite-form-header-reception [@fadein]="stateAnimationForm" class="row form" (checkExpedition)="checkExpedition($event)" (listByProvider)="listByProvider($event)"></suite-form-header-reception>
+        <suite-info-header-reception [@fadein]="stateAnimationInfo" (resetReception)="resetReceptionProcess()"></suite-info-header-reception>
       </div>
 
-      <div class="row selectors" *ngIf="isProviderAvailable">
+      <div class="row selectors" *ngIf="isReceptionStarted">
         <div class="col">
           <ion-item lines="none" (click)="openVirtualKeyboard(response.brands, objectType.BRAND)">
             <ion-title> Marcas </ion-title>
@@ -60,7 +33,7 @@
         </div>
       </div>
 
-      <div class="row sizes-image-ean" *ngIf="isProviderAvailable">
+      <div class="row sizes-image-ean" *ngIf="isReceptionStarted">
         <div class="col images">
           <div class="row">
             <ion-img *ngIf="result && getPhotoUrl(result.modelId)" [src]="getPhotoUrl(result.modelId)"></ion-img>

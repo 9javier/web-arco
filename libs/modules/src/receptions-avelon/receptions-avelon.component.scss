@@ -90,26 +90,17 @@ div.grid {
     flex-direction: column;
   }
 
-  div.form {
+  div.row.headers {
+    position: relative;
+    width: 100%;
     height: 80px;
-    form {
+    margin-bottom: 16px;
+    suite-form-header-reception, suite-info-header-reception {
+      position: absolute;
       width: 100%;
       display: flex;
       flex-direction: row;
-      div {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        padding: 8px;
-
-        div {
-          flex-direction: row;
-          ion-button.hide {
-            display: none;
-          }
-        }
-      }
+      height: 80px;
     }
   }
   div.selectors {
@@ -124,7 +115,7 @@ div.grid {
     }
   }
   div.sizes-image-ean {
-    height: calc(100% - 30vh - 80px);
+    height: calc(100% - 30vh - 96px);
     padding-top: 16px;
     div.images {
       width: 40vw;
