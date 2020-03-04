@@ -11,6 +11,7 @@ import { DefectiveRegistryService } from '../../../services/src/lib/endpoint/def
 import { DefectiveRegistryModel } from '../../../services/src/models/endpoints/DefectiveRegistry';
 import { SelectionModel } from '@angular/cdk/collections';
 import DefectiveRegistry = DefectiveRegistryModel.DefectiveRegistry;
+import { RegistryDetailsComponent } from './modals/registry-details/registry-details.component';
 
 @Component({
   selector: 'suite-defective-registry',
@@ -520,5 +521,14 @@ export class DefectiveRegistryComponent implements OnInit {
 
     this.lastUsedFilter = filterType;
     this.getList(this.form);
+  }
+
+  async goDetails(registry: DefectiveRegistryModel.DefectiveRegistry) {
+    return (await this.modalController.create({
+      component: RegistryDetailsComponent,
+      componentProps: {
+        registry: registry
+      }
+    })).present();
   }
 }

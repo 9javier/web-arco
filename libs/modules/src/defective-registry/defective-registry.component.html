@@ -29,8 +29,8 @@
       </ng-container>
 
       <ng-container matColumnDef="product">
-        <mat-header-cell class="my-sticky-col info reference" *matHeaderCellDef mat-sort-header>Producto
-          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProduct [title]="'Producto'"
+        <mat-header-cell class="my-sticky-col info reference" *matHeaderCellDef mat-sort-header>Código de Producto
+          <suite-filter-button class="ion-margin-vertical filter" #filterButtonProduct [title]="'Códigos de Productos'"
                                [listItems]="entities.product"
                                [isFiltering]="isFilteringProduct != entities.product.length"
                                (applyFilters)="applyFilters($event, 'product')">
@@ -150,7 +150,7 @@
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
+      <mat-row (click)="goDetails(row)" *matRowDef="let row; columns: displayedColumns;" class="incidence-row">
       </mat-row>
     </mat-table>
   </div>
