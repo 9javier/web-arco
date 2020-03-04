@@ -61,6 +61,12 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
     this.toolbarProvider.optionsActions.next([]);
   }
 
+  resetSizes(){
+    for(let size of this.listSizes){
+      size.quantity = 0;
+    }
+  }
+
   private resetData(dataToConcat = null) {
     this.brandSelected = null;
     this.modelSelected = null;
