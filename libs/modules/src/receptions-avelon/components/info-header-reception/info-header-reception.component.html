@@ -1,0 +1,16 @@
+<div class="container">
+  <span class="title">Información de la expedición que se está recepcionando</span>
+  <div class="row data">
+    <div class="col">
+      <div class="row expedition" *ngIf="expeditionReference">
+        Expedición <span>#{{expeditionReference}}</span>
+      </div>
+      <div class="row provider" *ngIf="provider">
+        Proveedor: {{provider.name}}
+      </div>
+    </div>
+    <div class="col reset">
+      <ion-button (click)="resetReceptionProcess()">REINICIAR RECEPCIÓN</ion-button>
+    </div>
+  </div>
+</div>

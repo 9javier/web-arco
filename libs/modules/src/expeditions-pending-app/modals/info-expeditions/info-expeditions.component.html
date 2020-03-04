@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button matTooltip="Cerrar" matTooltipClass="tooltip" (click)="close()">
+        <ion-icon name="close" class="toogleArrow"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title> {{title}} </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <expedition-info (receptionExpedition)="receptionExpedition($event)" [expedition]="expedition"></expedition-info>
+  <another-expeditions (receptionExpedition)="receptionExpedition($event)" [titleAnotherExpeditions]="titleAnotherExpeditions" [anotherExpeditions]="anotherExpeditions" [expedition]="expedition"></another-expeditions>
+</ion-content>

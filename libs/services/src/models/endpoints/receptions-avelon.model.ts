@@ -62,14 +62,26 @@ export namespace ReceptionAvelonModel {
     providerId: number,
     expeditionNumber: string
   }
-  export interface CheckExpeditionsByNumberAndProvider {
+  export interface CheckExpedition {
     expedition_available: boolean,
     has_expeditions: boolean,
     another_expeditions: Expedition[],
-    expedition: Expedition
+    expedition: Expedition,
+    expedition_reference_queried: string
+  }
+  export interface CheckExpeditionsByProvider {
+    has_expeditions: boolean,
+    expeditions: Expedition[],
+    provider_queried: string
   }
   export interface ResponseCheckExpeditionsByNumberAndProvider extends HttpRequestModel.Response {
-    data: CheckExpeditionsByNumberAndProvider
+    data: CheckExpedition
+  }
+  export interface ResponseCheckExpeditionByReference extends HttpRequestModel.Response {
+    data: CheckExpedition
+  }
+  export interface ResponseCheckExpeditionsByProvider extends HttpRequestModel.Response {
+    data: CheckExpeditionsByProvider
   }
   //endregion
 
