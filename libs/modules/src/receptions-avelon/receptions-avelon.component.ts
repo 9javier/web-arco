@@ -866,6 +866,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     }
   }
 
+  // check if the expedition selected by reference is available and get her data
   public checkExpedition(data) {
     this.formHeaderReceptionComponent.checkingExpedition(true);
     this.reception
@@ -873,7 +874,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       .subscribe(async (res) => {
         if (res.code == 200) {
           if (res.data.expedition_available) {
-            /*const modal = await this.modalController.create({
+            const modal = await this.modalController.create({
               component: InfoModalComponent,
               componentProps: {
                 expedition: res.data.expedition,
@@ -881,19 +882,23 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               }
             });
             modal.onDidDismiss().then(response => {
-              if (response.data && response.data.reception) {
-                this.checkProvider(data);
+              if (response.data && response.data.reception && response.data.expedition) {
+                const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
+                const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
+                  expedition: expedition.reference,
+                  providerId: expedition.provider_id
+                };
+                this.checkProvider(fieldsToLoadData);
+
+                this.stateAnimationForm = 'out';
+                this.stateAnimationInfo = 'in';
+                this.isReceptionStarted = true;
+                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
               }
             });
             modal.present();
-*/
-            this.formHeaderReceptionComponent.checkingExpedition(false);
 
-            // TODO test
-            this.stateAnimationForm = 'out';
-            this.stateAnimationInfo = 'in';
-            this.isReceptionStarted = true;
-            this.infoHeaderReceptionComponent.loadInfoExpedition(res.data.expedition.reference, {name: res.data.expedition.provider_name, id: res.data.expedition.provider_id.toString()});
+            this.formHeaderReceptionComponent.checkingExpedition(false);
           } else {
             this.isReceptionStarted = false;
             this.alertMessage(`No hay ninguna expedición con referencia ${res.data.expedition_reference_queried} pendiente de recepción.`);
@@ -923,20 +928,40 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       });
   }
 
+  // check if the provider selected have expeditions to receive
   public listByProvider(data) {
     this.formHeaderReceptionComponent.checkingProvider(true);
     this.reception
       .checkExpeditionsByProvider(data)
-      .subscribe((res) => {
+      .subscribe(async (res) => {
         if (res.code == 200) {
           if (res.data.has_expeditions) {
-            this.formHeaderReceptionComponent.checkingProvider(false);
+            const modal = await this.modalController.create({
+              component: InfoModalComponent,
+              componentProps: {
+                anotherExpeditions: res.data.expeditions,
+                title: `Expediciones para ${res.data.provider_queried}`,
+                titleAnotherExpeditions: 'Listado de expediciones'
+              }
+            });
+            modal.onDidDismiss().then(response => {
+              if (response.data && response.data.reception && response.data.expedition) {
+                const expedition: ReceptionAvelonModel.Expedition = response.data.expedition;
+                const fieldsToLoadData: ReceptionAvelonModel.CheckProvider = {
+                  expedition: expedition.reference,
+                  providerId: expedition.provider_id
+                };
+                this.checkProvider(fieldsToLoadData);
 
-            // TODO test
-            this.stateAnimationForm = 'out';
-            this.stateAnimationInfo = 'in';
-            this.isReceptionStarted = true;
-            this.infoHeaderReceptionComponent.loadInfoExpedition(res.data.expeditions[0].reference, {name: res.data.expeditions[0].provider_name, id: res.data.expeditions[0].provider_id.toString()});
+                this.stateAnimationForm = 'out';
+                this.stateAnimationInfo = 'in';
+                this.isReceptionStarted = true;
+                this.infoHeaderReceptionComponent.loadInfoExpedition(expedition.reference, {name: expedition.provider_name, id: expedition.provider_id.toString()});
+              }
+            });
+            modal.present();
+
+            this.formHeaderReceptionComponent.checkingProvider(false);
           } else {
             this.stateAnimationForm = 'in';
             this.stateAnimationInfo = 'out';

@@ -11,20 +11,17 @@ import {DateTimeParserService} from "../../../../services/src/lib/date-time-pars
 })
 export class InfoModalComponent implements OnInit {
 
-  expedition: Expedition;
-  anotherExpeditions: Expedition[];
-  expeditionNumber: string;
-  providerName: string;
+  title: string = 'Información de la expedición';
+  titleAnotherExpeditions: string = 'Otras expediciones';
+  expedition: Expedition = null;
+  anotherExpeditions: Expedition[] = [];
 
   constructor(
     private modalController: ModalController,
     private dateTimeParserService: DateTimeParserService
   ){}
 
-  ngOnInit() {
-    this.providerName = this.expedition.provider_name;
-    this.expeditionNumber = this.expedition.reference;
-  }
+  ngOnInit() {}
 
   stringStates(expedition: Expedition){
     const stringStates: string[] = [];
@@ -39,13 +36,10 @@ export class InfoModalComponent implements OnInit {
   }
 
   async close() {
-    await this.modalController.dismiss({reception: false});
+    await this.modalController.dismiss();
   }
 
-  async reception() {
-    await this.modalController.dismiss({reception: true});
+  async reception(expedition: Expedition) {
+    await this.modalController.dismiss({reception: true, expedition});
   }
-
-
-
 }
