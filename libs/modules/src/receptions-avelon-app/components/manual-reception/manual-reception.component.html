@@ -5,21 +5,30 @@
       <mat-list-item matRipple (click)="listItems(1)">
         <mat-icon mat-list-icon>list</mat-icon>
         <h4 mat-line>Marca</h4>
-        <p mat-line> {{brandSelected ? brandSelected.name : 'seleccionar marca'}} </p>
+        <p mat-line [ngClass]="{
+          'green': brandSelected && brandSelected.color == 'green',
+          'orange': brandSelected && brandSelected.color == 'orange',
+          'red': brandSelected && brandSelected.color == 'red'}"> {{brandSelected ? brandSelected.name : 'seleccionar marca'}} </p>
         <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
       </mat-list-item>
 
       <mat-list-item matRipple (click)="listItems(2)">
         <mat-icon mat-list-icon>list</mat-icon>
         <h4 mat-line>Modelo</h4>
-        <p mat-line> {{modelSelected ? modelSelected.name : 'seleccionar modelo'}} </p>
+        <p mat-line [ngClass]="{
+          'green': modelSelected && modelSelected.color == 'green',
+          'orange': modelSelected && modelSelected.color == 'orange',
+          'red': modelSelected && modelSelected.color == 'red'}"> {{modelSelected ? modelSelected.name : 'seleccionar modelo'}} </p>
         <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
       </mat-list-item>
 
       <mat-list-item matRipple (click)="listItems(3)">
         <mat-icon mat-list-icon>list</mat-icon>
         <h4 mat-line>Color</h4>
-        <p mat-line> {{colorSelected ? colorSelected.name : 'seleccionar color'}} </p>
+        <p mat-line [ngClass]="{
+          'green': colorSelected && colorSelected.color == 'green',
+          'orange': colorSelected && colorSelected.color == 'orange',
+          'red': colorSelected && colorSelected.color == 'red'}"> {{colorSelected ? colorSelected.name : 'seleccionar color'}} </p>
         <mat-icon mat-list-icon class="right">keyboard_arrow_right</mat-icon>
       </mat-list-item>
 
