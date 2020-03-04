@@ -4,27 +4,27 @@
 }
 
 .green{
-  color: #00ff00;
+  color: var(--ion-color-receptions-green);
 }
 .orange{
-  color: #ff8000;
+  color: var(--ion-color-receptions-orange);
 }
 .red{
-  color: #ff0000;
+  color: var(--ion-color-receptions-red);
 }
 .white{
-  color: #ffffff;
+  color: var(--ion-color-receptions-white);
 }
 
 .greenB {
-  --background: #00ff00;
+  --background: var(--ion-color-receptions-green);
 }
 .orangeB {
-  --background: #ff8000;
+  --background: var(--ion-color-receptions-orange);
 }
 .redB {
-  --background: #ff0000;
+  --background: var(--ion-color-receptions-red);
 }
 .whiteB {
-  --background: #ffffff;
+  --background: var(--ion-color-receptions-white);
 }

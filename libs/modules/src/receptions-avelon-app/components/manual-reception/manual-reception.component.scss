@@ -73,11 +73,11 @@ button.fab.simple {
 }
 
 .green{
-  color: #00ff00;
+  color: var(--ion-color-receptions-green);
 }
 .orange{
-  color: #ff8000;
+  color: var(--ion-color-receptions-orange);
 }
 .red{
-  color: #ff0000;
+  color: var(--ion-color-receptions-red);
 }
