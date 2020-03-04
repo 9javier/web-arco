@@ -10,7 +10,7 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./photo-modal.component.scss']
 })
 export class PhotoModalComponent implements OnInit {
-  apiURL: string = 'http://192.168.1.103:8081/api/upload-files'
+  apiURL: string = 'http://localhost:8081/api/upload-files'
   imgData: string;
   imgUrl: any;
   constructor(
