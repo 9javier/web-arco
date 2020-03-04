@@ -751,7 +751,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
 
   private loadSizes() {
     this.reception
-      .postLoadSizesList({modelId: this.result.modelId})
+      .postLoadSizesList({modelId: this.result.modelId, colorId: this.result.colorId})
       .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
         if (res.code == 200) {
           this.listSizes = res.data;

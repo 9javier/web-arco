@@ -75,7 +75,8 @@ export namespace ReceptionAvelonModel {
 
   //region LoadSizesList
   export interface ParamsLoadSizesList {
-    modelId: number
+    modelId: number,
+    colorId: number
   }
   export interface LoadSizesList {
     id: number,

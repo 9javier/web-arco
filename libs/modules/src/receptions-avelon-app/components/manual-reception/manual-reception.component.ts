@@ -460,7 +460,7 @@ export class ManualReceptionComponent implements OnInit, OnDestroy {
 
   private loadSizes() {
     this.receptionsAvelonService
-      .postLoadSizesList({modelId: this.modelIdSelected})
+      .postLoadSizesList({modelId: this.modelIdSelected, colorId: this.colorSelected.id})
       .subscribe((res: ReceptionAvelonModel.ResponseLoadSizesList) => {
         if (res.code == 200) {
           this.listSizes = res.data;
