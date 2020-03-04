@@ -25,6 +25,13 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
   @ViewChild('ean') eanInput: ElementRef;
 
   public expedit:string="";
+  expeditionLines: {
+    id: number,
+    state: number,
+    brandId: number,
+    modelId: number,
+    colorId: number
+  }[];
   response: ReceptionAvelonModel.Reception;
   oldBrands: ReceptionAvelonModel.Data[] = [];
   subscriptions: Subscription;
@@ -199,6 +206,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
     await this.intermediaryService.presentLoading('Cargando');
     this.reception.getReceptions(data.providerId).subscribe((info: ReceptionAvelonModel.Reception) => {
       this.response = info;
+      this.expeditionLines = info.lines;
       this.response.brands = this.clearSelected(this.response.brands);
       this.response.models = this.clearSelected(this.response.models);
       this.response.colors = this.clearSelected(this.response.colors);
@@ -455,6 +463,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.goBack('colors');
             }
           }
+          this.getModelAndColorColors(this.result.brandId);
           break;
         case 'models':
           if (event.dato.selected) {
@@ -474,6 +483,7 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
               this.goBack('colors');
             }
           }
+          this.getColorColors(this.result.modelId);
           break;
         case 'colors':
           if (event.dato.selected) {
@@ -498,6 +508,39 @@ export class ReceptionsAvelonComponent implements OnInit, OnDestroy, AfterConten
       }
 
     });
+  }
+
+  getModelAndColorColors(brandId: number){
+
+  }
+
+  getColorColors(modelId: number){
+    let greenColors: number[] = [];
+    let orangeColors: number[] = [];
+    for(let line of this.expeditionLines){
+      if(!modelId || line.modelId == modelId){
+        if(line.state == 2 && !greenColors.includes(line.colorId)){
+          greenColors.push(line.colorId);
+        }else{
+          if(line.state != 2 && !orangeColors.includes(line.colorId)){
+            orangeColors.push(line.colorId);
+          }
+        }
+      }
+    }
+    orangeColors = orangeColors.filter(color => {return !greenColors.includes(color)});
+    for(let color of this.response.colors){
+      if(greenColors.includes(color.id)){
+        color.color = 'green';
+      }else{
+        if(orangeColors.includes(color.id)){
+          color.color = 'orange';
+        }else{
+          color.color = 'red';
+        }
+      }
+    }
+    this.reception.setColorsList(this.response.colors);
   }
 
   public printProductsLoading() {

@@ -17,6 +17,13 @@ export namespace ReceptionAvelonModel {
     brands: Array<Data>,
     models: Array<Data>,
     colors: Array<Data>,
+    lines: {
+      id: number,
+      state: number,
+      brandId: number,
+      modelId: number,
+      colorId: number
+    }[],
     ean: string,
     image?: string
   }
