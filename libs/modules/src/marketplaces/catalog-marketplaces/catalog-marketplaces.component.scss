@@ -158,6 +158,18 @@
             }
 
           }
+
+          &.table-empty {
+            th {
+              border-bottom: 1px solid #c7c8ce;
+
+              &:first-of-type {
+                border-bottom: none;
+              }
+
+            }
+          }
+
         }
 
         &:last-of-type {

@@ -45,7 +45,7 @@ export class CatalogMarketplacesComponent implements OnInit {
       marketId: '5'
     },
     {
-      name: 'Cdiscount',
+      name: 'CDiscount',
       marketId: '6'
     }
   ];
@@ -72,6 +72,7 @@ export class CatalogMarketplacesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.products = [];
     
     this.marketplacesService.getProductCatalog().subscribe(data => {
         this.products = data.data;

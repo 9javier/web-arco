@@ -314,10 +314,10 @@ export class MenuComponent implements OnInit {
         },
         {
           title: 'Miniprecios',
-          open: true,
+          open: false,
           type: 'wrapper',
           id: 'miniprecios',
-          icon: 'add-circle',
+          icon: 'add-circle-outline',
           thirdLevel: true,
           children: [
             {
